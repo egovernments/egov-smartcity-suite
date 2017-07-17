@@ -45,6 +45,15 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<script type="text/javascript">
+$(document).ready(function()
+{	
+	if($("#currentDesignation").val() == 'Commissioner') {
+		$('#Forward').hide();
+	}
+}); 
+</script>
+<style>
 <style>
 body
 {
@@ -63,6 +72,7 @@ body
 			    <jsp:include page="../../common/ownerDetailsView.jsp"></jsp:include>
 			    <form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 			    <form:hidden path="" name="mode" id="mode" value="${mode}"/>
+			    <input type="hidden" id="currentDesignation" name="currentDesignation" value="${currentDesignation}"/>
 				<div class="panel-heading">
 					<div class="panel-title">
 						<spring:message code="lbl.exemption.heading" />
@@ -77,10 +87,16 @@ body
 							<c:out default="N/A" value="${property.taxExemptedReason.name}"></c:out>
 						</div>
 					</div>
+					<c:if test="${attachedDocuments.size() > 0}">
+							<div>
+								<jsp:include page="taxexemption-document-view.jsp"></jsp:include>
+							</div>
+					</c:if>
 				</div>
 			</div>
-			 <c:choose>
-            <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}">
+			<c:choose>
+			<c:when test="${currentDesignation != 'Commissioner'}">
+            <%-- <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}"> --%>
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>

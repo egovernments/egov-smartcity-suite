@@ -45,7 +45,7 @@ $(document).ready(function(){
 	$('#bankId').trigger('blur');
 	$bankBranchId=$('#bankBranchId').val();
 	callbankdetails();
-	$('#paymentmode').change(function(){
+	$('#paymentMode').change(function(){
 	callbankdetails();
 	
 	});
@@ -97,22 +97,22 @@ $("#resultTable").on('click','tbody tr',function(event) {
 
 
 function callbankdetails(){
-	if ($('#paymentmode :selected').text().localeCompare("RTGS") == 0 ) {  
+	if ($('#paymentMode :selected').text().localeCompare("RTGS") == 0 ) {  
 		$("#b1details").show();
     	$("#b2details").show();
     	$("#b3details").show();
 	}
-	else if($('#paymentmode :selected').text().localeCompare("RTGS") != -1)  {
+	else if($('#paymentMode :selected').text().localeCompare("RTGS") != -1)  {
 		$("#b1details").hide();
     	$("#b2details").hide();
     	$("#b3details").hide();
 	}
-	else if ($('#paymentmode :selected').text().localeCompare("Cash") != -1) {  
+	else if ($('#paymentMode :selected').text().localeCompare("Cash") != -1) {  
 		$("#b1details").hide();
     	$("#b2details").hide();
     	$("#b3details").hide();
 	}
-	else if($('#paymentmode :selected').text().localeCompare("Cheque") != -1)  {
+	else if($('#paymentMode :selected').text().localeCompare("Cheque") != -1)  {
 		$("#b1details").hide();
     	$("#b2details").hide();
     	$("#b3details").hide();

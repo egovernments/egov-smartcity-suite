@@ -86,7 +86,6 @@ public class CFinancialYearController {
     @Autowired
     private MessageSource messageSource;
 
-    private final SimpleDateFormat dtFormat = new SimpleDateFormat("dd/MM/yyyy");
 
     private void prepareNewForm(final Model model) {
     }
@@ -94,6 +93,7 @@ public class CFinancialYearController {
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
         prepareNewForm(model);
+        final SimpleDateFormat dtFormat = new SimpleDateFormat("dd/MM/yyyy");
         final CFinancialYear financialYear = new CFinancialYear();
         if (financialYear.getcFiscalPeriod().isEmpty())
             financialYear.addCFiscalPeriod(new CFiscalPeriod());
@@ -177,7 +177,7 @@ public class CFinancialYearController {
     @RequestMapping(value = "/search/{mode}", method = RequestMethod.GET)
     public String search(@PathVariable("mode") final String mode, final Model model) {
         final CFinancialYear cFinancialYear = new CFinancialYear();
-        model.addAttribute("financialYears", cFinancialYearRepository.findAll());
+        model.addAttribute("financialYears", cFinancialYearService.findAll());
         prepareNewForm(model);
         model.addAttribute("CFinancialYear", cFinancialYear);
         return CFINANCIALYEAR_SEARCH;

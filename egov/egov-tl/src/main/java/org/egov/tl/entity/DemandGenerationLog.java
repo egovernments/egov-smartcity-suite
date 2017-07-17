@@ -55,8 +55,9 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Objects;
+import java.util.Set;
 
 @Entity
 @Table(name = "egtl_demandgenerationlog")
@@ -80,7 +81,17 @@ public class DemandGenerationLog extends AbstractAuditable {
     private ProcessStatus demandGenerationStatus;
 
     @OneToMany(mappedBy = "demandGenerationLog", cascade = CascadeType.ALL, fetch = FetchType.EAGER)
-    private List<DemandGenerationLogDetail> details = new ArrayList<>();
+    private Set<DemandGenerationLogDetail> details = new HashSet<>();
+
+    protected DemandGenerationLog() {
+        //for hibernate
+    }
+
+    public DemandGenerationLog(String installmentYear) {
+        this.installmentYear = installmentYear;
+        this.executionStatus = ProcessStatus.INPROGRESS;
+        this.demandGenerationStatus = ProcessStatus.INCOMPLETE;
+    }
 
     @Override
     public Long getId() {
@@ -113,15 +124,31 @@ public class DemandGenerationLog extends AbstractAuditable {
     }
 
     public void setDemandGenerationStatus(final ProcessStatus demandGenerationStatus) {
+
         this.demandGenerationStatus = demandGenerationStatus;
     }
 
-    public List<DemandGenerationLogDetail> getDetails() {
+    public Set<DemandGenerationLogDetail> getDetails() {
         return details;
     }
 
-    public void setDetails(final List<DemandGenerationLogDetail> details) {
+    public void setDetails(final Set<DemandGenerationLogDetail> details) {
         this.details = details;
+    }
+
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof DemandGenerationLog))
+            return false;
+        DemandGenerationLog that = (DemandGenerationLog) other;
+        return Objects.equals(installmentYear, that.installmentYear);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(installmentYear);
     }
 
 }

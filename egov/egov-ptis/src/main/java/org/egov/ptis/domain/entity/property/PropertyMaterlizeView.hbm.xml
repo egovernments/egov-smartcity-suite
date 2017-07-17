@@ -44,7 +44,7 @@
 
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.PropertyMaterlizeView"
-		table="EGPT_MV_PROPERTYINFO" polymorphism="explicit">
+		table="EGPT_VIEW_PROPERTYINFO" polymorphism="explicit" mutable="false">
 
 		<composite-id>
 			<key-property name="basicPropertyID" column="BASICPROPERTYID" />
@@ -93,6 +93,12 @@
 		<property name="assessmentDate" column="assessmentdate"/>
 		<property name="lastUpdated" column="lastupdated"/>
 		<property name="surveyNo" column="surveyNo"/>
+		<property name="duePeriod" column="DUEPERIOD" />
+		<property name="advance" column="ADVANCE"/>
+		<property name="oldMuncipalNum" column="OLDMUNCIPALNUMBER" />
+		<property name="rebate" column="REBATE"/>
+		<property name="adjustment" column="ADJUSTMENT"/>
+		<property name="usage" column="usage"/>
 		
 		<set name="instDmdColl" table="EGPT_MV_INST_DEM_COLL" order-by="id_installment" >
             <key>

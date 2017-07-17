@@ -55,7 +55,7 @@
 	</script>
 <body >
        <div class="new-page-header">
-			Search Contractor Grade
+			<s:text name='contractor.grade.header.search' />
 		</div>
 		<s:if test="%{hasErrors()}">
        		 <div class="alert alert-danger">
@@ -136,7 +136,7 @@
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Grade" titleKey="contractor.grade.master.grade"
+						title="Contractor Class" titleKey="contractor.grade.master.grade"
 						style="width:20%;text-align:left" property="grade"/>
 																		
 					<display:column headerClass="pagetableth" class="pagetabletd" 
@@ -158,11 +158,8 @@
 					</display:column>
 					
 					<display:column headerClass="pagetableth" class="pagetabletd" 
-						title="Edit/View" style="width:13%;text-align:left" >
+						title="View" style="width:13%;text-align:left" >
 						
-									<a class="btn btn-default" href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=edit">
-										<s:text name="sor.edit" /></a>
-									
 									<a class="btn btn-default" href="${pageContext.request.contextPath}/masters/contractorGrade-edit.action?id=<s:property value='%{#attr.currentRow.id}'/>&mode=view">
 										<s:text name="sor.view" />
 									</a>

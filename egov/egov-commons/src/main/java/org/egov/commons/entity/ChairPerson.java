@@ -39,9 +39,7 @@
  */
 package org.egov.commons.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -52,11 +50,19 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-import java.util.Date;
+
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "eg_chairperson")
 @SequenceGenerator(name = ChairPerson.SEQ_CHAIRPERSON, sequenceName = ChairPerson.SEQ_CHAIRPERSON, allocationSize = 1)
+@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
 public class ChairPerson extends AbstractAuditable {
 
     private static final long serialVersionUID = -984106322171286285L;
@@ -65,21 +71,25 @@ public class ChairPerson extends AbstractAuditable {
 
     @Id
     @GeneratedValue(generator = SEQ_CHAIRPERSON, strategy = GenerationType.SEQUENCE)
+    @Audited
     private Long id;
 
     @NotNull
     @SafeHtml
     @Length(min = 2, max = 100)
+    @Audited
     private String name;
 
     @NotNull
     @Temporal(value = TemporalType.DATE)
+    @Audited
     private Date fromDate;
 
-    
     @Temporal(value = TemporalType.DATE)
+    @Audited
     private Date toDate;
 
+    @Audited
     private boolean active;
 
     @Override

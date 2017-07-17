@@ -1,3 +1,42 @@
+/*
+ * eGov suite of products aim to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
+ *
+ *  Copyright (C) 2016  eGovernments Foundation
+ *
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
+ *
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
+ *
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ *
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
+ *
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ */
 /*Default settings - Font*/
 @font-face {
   font-family: regular;
@@ -451,7 +490,7 @@ label.error {
 .page-container.horizontal-menu header.navbar.navbar-fixed-top {
   position: fixed;
   min-height: 63px;
-  z-index: 10000;
+  z-index: 999;
 }
 .page-container.horizontal-menu header.navbar.navbar-fixed-top.border-header {
   border-bottom: 1px solid #5a3e1b;
@@ -1646,7 +1685,13 @@ label.error {
 }
 .form-group {
   margin-bottom: 0px;
+}
+.form-group.overflow {
   overflow: auto;
+}
+.form-group label.align-top {
+  position: relative;
+  top: -15px;
 }
 .form-group div {
   margin-bottom: 15px;
@@ -1698,7 +1743,7 @@ label.error {
 .set-mandatory {
   position: absolute;
   top: 4px;
-  right: 7px;
+  right: 0px;
   z-index: 10;
 }
 .g-recaptcha div {
@@ -1801,12 +1846,12 @@ label.error {
   background: #f7f7f7;
 }
 /*datatable overrided properties*/
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   table.dataTable {
     display: block;
   }
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   table.dataTable thead {
     display: none;
   }
@@ -1823,7 +1868,7 @@ table.dataTable thead tr > th:hover {
 table.dataTable tbody {
   font-size: 13px;
 }
-@media (max-width: 768px) {
+@media screen and (max-width: 768px) {
   table.dataTable tbody {
     display: block;
   }
@@ -1890,6 +1935,9 @@ table.dataTable tbody.no-pointer tr:hover {
 .pagination .active > span:focus {
   background-color: #6b4f2c;
   border-color: #6b4f2c;
+}
+.buttons-margin {
+  margin-top: 10px;
 }
 /*Footer*/
 footer.main {

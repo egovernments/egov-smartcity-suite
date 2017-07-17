@@ -40,7 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<tr>
 		<td class="bluebox2" width="5%">
 			&nbsp;
@@ -175,23 +175,11 @@
 	
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : </td>
-		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
-		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox">
 			<span class="bold"><s:property value="%{property.propertyDetail.occupancyCertificationNo}"/></span>
 		</td>
-	</tr>
-	<tr id="appurtenantRow">
-		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="extent.appurtntland"></s:text> :</td>
-		<td class="bluebox">
-			<span class="bold"><s:property value="%{property.propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
-		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
+		<td class="bluebox" colspan="2">&nbsp;</td>
 	</tr>
 	
 	<!-- Amenities section -->
@@ -240,7 +228,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center" class="formmainbox" style="box-shadow:none;"> 
+			<div align="center" class="overflow-x-scroll" style="box-shadow:none;"> 
 				<%@ include file="../common/FloorViewForRevPetition.jsp"%>
 				<br/>
 			</div>
@@ -260,13 +248,6 @@
 			</div>
 		</td>
 	</tr>
-	<s:if test="%{!documentTypes.isEmpty()}">
-		<tr>
-			<td colspan="5">
-				<%@ include file="../common/DocumentUploadView.jsp"%>
-			</td>
-		</tr>
-	</s:if>
 	<!-- Displaying existing and revised tax details -->
 	<tr>
 		<td colspan="5">

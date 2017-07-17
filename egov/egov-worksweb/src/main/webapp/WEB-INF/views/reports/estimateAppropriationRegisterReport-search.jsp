@@ -58,7 +58,7 @@
 					<th><spring:message code="lbl.estimatenumber" /></th>
 					<th><spring:message code="lbl.wincode" /></th>
 					<th><spring:message code="lbl.nameofwork" /></th>
-					<th><spring:message code="lbl.estimate.date" /></th>
+					<th><spring:message code="lbl.dateofproposal" /></th>
 					<th><spring:message code="lbl.estimate.value" /></th>
 					<th><spring:message code="lbl.cumulativetotal" /></th>
 					<th><spring:message code="lbl.balanceavailable" /></th>

@@ -88,7 +88,7 @@
 						</div>
 						<div class="row add-border">
 							<div class="col-xs-3 add-margin">
-								<spring:message code="lbl.caseNumber" />
+								<spring:message code="lbl.casenumber" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
 								<c:out value="${legalCase.caseNumber}" />
@@ -153,7 +153,7 @@
 								<spring:message code="lbl.officerincharge" />
 							</div>
 							<div class="col-xs-3 add-margin view-content">
-								<c:out value="${legalCase.officerIncharge}" />
+								<c:out value="${legalCase.officerIncharge.name}" />
 							</div>
 
 
@@ -172,7 +172,7 @@
 								<spring:message code="lbl.fieldbycarp" />
 							</div>
 							<div class="col-sm-3 add-margin view-content">
-								${legalCase.isfiledbycorporation}</div>
+								${legalCase.isFiledByCorporation}</div>
 							<div class="col-xs-3 add-margin">
 								<spring:message code="lbl.oldreferencenumber" />
 							</div>
@@ -185,7 +185,6 @@
 
 				</div>
 			</div>
-		</div>
 		<div class="panel-heading">
 			<div class="panel-title">
 				<spring:message code="lbl.bipartisanDetails.details" />
@@ -353,7 +352,6 @@
 				</c:forEach>
 			</tbody>
 		</table>
-	</div>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
@@ -382,22 +380,12 @@
 		</div>
 	</div>
 	<jsp:include page="documentdetails-view.jsp"></jsp:include>
-	<%-- <div class="form-group">
-		<label class="col-sm-3 control-label text-right"><font
-			size="2"><spring:message code="lbl.mesg.document" /></font> </label>
-		<div class="col-sm-3 add-margin">
-
-			<input type="file" id="file" name="legalCaseDocuments[0].files"
-				class="file-ellipsis upload-file">
-
-			<form:errors path="legalCaseDocuments[0].files"
-				cssClass="add-margin error-msg" />
-		</div>
-	</div> --%>
 	<div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>
 		</div>
+	</div>
+	</div>
 	</div>
 </form:form>

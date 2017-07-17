@@ -94,6 +94,13 @@ public class PropertyTypeMasterHibernateDAO implements PropertyTypeMasterDAO {
     public List<PropertyTypeMaster> findAllExcludeEWSHS() {
         return getCurrentSession().createQuery("from PropertyTypeMaster where type != 'EWSHS' ").list();
     }
+    
+    @SuppressWarnings("unchecked")
+    @Override
+    public List<PropertyTypeMaster> findBuiltUpOwnerShipTypes() {
+        return getCurrentSession().createQuery("from PropertyTypeMaster where code not in ('EWSHS','VAC_LAND') ").list();
+    }
+    
 
     @Override
     public PropertyTypeMaster create(final PropertyTypeMaster propertyTypeMaster) {

@@ -100,11 +100,11 @@ public abstract class GenericWorkFlowController {
             if (null != model.getCurrentState())
                 wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
                         container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                        model.getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate());
+                        model.getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
             else
                 wfMatrix = customizedWorkFlowService.getWfMatrix(model.getStateType(),
                         container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                        State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate());
+                        State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
         return wfMatrix == null ? "" : wfMatrix.getNextAction();
     }
 
@@ -125,12 +125,12 @@ public abstract class GenericWorkFlowController {
         else if (null != model.getCurrentState())
             validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(), container
                     .getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(), model
-                    .getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate());
+                    .getCurrentState().getValue(), container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
         else
             // FIXME This May not work
             validActions = customizedWorkFlowService.getNextValidActions(model.getStateType(),
                     container.getWorkFlowDepartment(), container.getAmountRule(), container.getAdditionalRule(),
-                    State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate());
+                    State.DEFAULT_STATE_VALUE_CREATED, container.getPendingActions(), model.getCreatedDate(),container.getCurrentDesignation());
         return validActions;
     }
 

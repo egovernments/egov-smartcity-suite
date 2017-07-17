@@ -77,9 +77,7 @@
 				else{
 					bootbox.alert("This row can not be deleted");
 				}
-			}
-			
-			        
+			}	        
 		});
 
 		if(jQuery('#isviewmode'))
@@ -174,7 +172,9 @@
 				var index = '<s:property value="#stat.index"/>';
 				updateSLGrid('serviceAccountDetail.glCodeId.glcode',index,'<s:property value="serviceAccountDetail.glCodeId.glcode"/>');
 				updateSLGrid('serviceAccountDetail.glCodeId.id',index,'<s:property value="serviceAccountDetail.glCodeId.id"/>');
-				updateSLGrid('detailType.id',index,'<s:property value="detailType.id"/>');
+				 setTimeout(function(){
+					 updateSLDetailDropdown('detailType.id',index,'<s:property value="detailType.id"/>');
+					 }, 1000);
 				updateSLGrid('detailType.name',index,'<s:property value="detailType.name"/>');
 				updateSLGrid('detailCode',index,'<s:property value="detailCode"/>');
 				updateSLGrid('detailKeyId',index,'<s:property value="detailKeyId"/>');
@@ -244,14 +244,18 @@ success: function(o) {
     }
 }
 function updateGridSLDropdownGL(field,index,value){
-
-	document.getElementById('subledgerDetails['+index+'].'+field).value=value;
+	var element = document.getElementById('subledgerDetails['+index+'].'+field)
+	if(value != "" ){
+	element.options.length=2;
+	element.options[1].value=value;
+	element.options[1].selected = true;
+	}
 	loadDetailType(index);
 }
 
 var loadDetailType = function(index) { 
 		var subledgerid=document.getElementById('subledgerDetails['+index+'].serviceAccountDetail.glCodeId.id');
-		var accountCode = subledgerid.options[subledgerid.selectedIndex].text;
+		var accountCode = subledgerid.options[subledgerid.selectedIndex].text.trim();
 		document.getElementById('subledgerDetails['+index+'].serviceAccountDetail.glCodeId.glcode').value =accountCode;
 		var url = path+'/receipts/ajaxReceiptCreate-getDetailTypeForService.action?accountCode='+accountCode+'&index='+index;
 		var transaction = YAHOO.util.Connect.asyncRequest('POST', url, postType, null);
@@ -269,11 +273,11 @@ success: function(o) {
 			{
 				obj = document.getElementById('subledgerDetails['+parseInt(eachItem[0])+']'+'.detailType.id');
 				if(obj!=null)
-					obj.options.length=detailRecord.length+1;
+					obj.options.length=detailRecord.length+1; 	
 			}
 			if(obj!=null)
 			{
-				obj.options[i+1].text=eachItem[1];
+				obj.options[i+1].text=eachItem[1];     
 				obj.options[i+1].value=eachItem[2];
 				document.getElementById('subledgerDetails['+parseInt(eachItem[0])+']'+'.detailType.name').value = eachItem[1];
 			}
@@ -285,16 +289,13 @@ success: function(o) {
 				d.options[0].text='---Select---';
 				d.options[0].value=0;
 			}
-		} 
+		} 	
 			<s:iterator value="subledgerDetails" status="stat">
 			if('<s:property value="detailType.id"/>' !="" || '<s:property value="detailType.id"/>' !=0){
 				var index = '<s:property value="#stat.index"/>';
 				updateSLDetailDropdown('detailType.id',index,'<s:property value="detailType.id"/>');
 			}
-				
 			</s:iterator>
-		
-		
     },
     failure: function(o) {
     	bootbox.alert('failure');
@@ -302,9 +303,15 @@ success: function(o) {
 }
 
 function updateSLDetailDropdown(field,index,value){
-	document.getElementById('subledgerDetails['+index+'].'+field).value=value;
+	var element = document.getElementById(SUBLEDGERLIST+'['+index+'].'+field);
+	if(value != "" ){
+		for(var k=0;k<3;k++){
+			if(element.options[k].value.trim() == value.trim()){
+				element.options[k].selected=true;
+			}
+		}
+	}
 }
-
 
 </script>
 

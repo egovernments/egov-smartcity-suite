@@ -1,41 +1,41 @@
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~      accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~       Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~       The updated version of eGov suite of products as by eGovernments Foundation
+  ~       is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~       This program is free software: you can redistribute it and/or modify
+  ~       it under the terms of the GNU General Public License as published by
+  ~       the Free Software Foundation, either version 3 of the License, or
+  ~       any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~       This program is distributed in the hope that it will be useful,
+  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~       GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~       You should have received a copy of the GNU General Public License
+  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~       http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~       In addition to the terms of the GPL license to be adhered to in using this
+  ~       program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~           1) All versions of this program, verbatim or modified must carry this
+  ~              Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~           2) Any misrepresentation of the origin of the material is prohibited. It
+  ~              is required that all modified versions of this material be marked in
+  ~              reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~           3) This license does not grant any rights to any user of the program
+  ~              with regards to rights under trademark law for use of the trade names
+  ~              or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -52,42 +52,34 @@
 <!-- <script type="text/javascript" src="/ptis/javascript/unitRentAgreement.js"></script> -->
 
 <script type="text/javascript">
-		jQuery.noConflict();
-		jQuery("#loadingMask").remove();
-	  function loadOnStartUp() {
-		//enableFieldsForPropType();
-		//toggleFloorDetails();
-   		//setCorrCheckBox();
+	jQuery.noConflict();
+	jQuery("#loadingMask").remove();
+	function loadOnStartUp() {
    		var propType = '<s:property value="%{propertyDetail.propertyTypeMaster.type}"/>';
-   		var appurtenantLandChecked = '<s:property value="%{propertyDetail.appurtenantLandChecked}"/>';
-		enableFieldsForPropTypeView(propType,appurtenantLandChecked);
+		enableFieldsForPropTypeView(propType,false);
 		var mutationReason = '<s:property value="%{propertyDetail.propertyMutationMaster.mutationName}"/>';
 		showMutationFields(mutationReason);
-		if(appurtenantLandChecked == null) {
-			jQuery('#appurtenantRow').hide();
-		}
-		//var buildingPlanDetailsChecked = '<s:property value="%{propertyDetail.buildingPlanDetailsChecked}"/>';
-		//if(buildingPlanDetailsChecked != 'true') {
-		//	jQuery('tr.bpddetails').hide();
-		//}
 		var structure = '<s:property value="%{propertyDetail.structure}"/>';
 		if(structure == 'false') {
 			jQuery('td.siteowner').hide();
 		}
-   		
-	}
- function setCorrCheckBox(){
-    
-     <s:if test="%{isAddressCheck()}">
-			document.getElementById("corrAddressDiff").checked=true;
-	</s:if>
-   }
 
- function onSubmit(action,obj) {
-	 document.getElementById('workflowBean.actionName').value = obj.id;
+		var userDesign = '<s:property value="%{currentDesignation}"/>';
+		if(userDesign == 'Commissioner') {
+			jQuery('#Forward').hide();
+		} 
+	}
+ 	function setCorrCheckBox(){
+    	<s:if test="%{isAddressCheck()}">
+			document.getElementById("corrAddressDiff").checked=true;
+		</s:if>
+   	}
+
+	function onSubmit(action,obj) {
+		document.getElementById('workflowBean.actionName').value = obj.id;
 		document.forms[0].action = action;
 		document.forms[0].submit;
-	   return true;
+		return true;
 	}
 	
 	function onSubmit() {
@@ -129,7 +121,7 @@
   	}  
 
 </script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </head>
 
 <body onload="loadOnStartUp();">
@@ -172,7 +164,11 @@
 							</td>
 						</tr>
 					</s:if>
-					
+					<s:if test="%{!assessmentDocumentTypes.isEmpty()}">
+						<tr>
+							<%@ include file="document-typedetails-view.jsp"%>
+						</tr>
+					</s:if>
 					<s:if test="%{!documentTypes.isEmpty()}">
 							<tr>
 							   <td colspan="5">
@@ -185,21 +181,18 @@
 						<tr>
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
-					</s:if>
-					<s:if test="%{!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}">
+					</s:if> 
+					<s:if test="%{currentDesignation != null && !currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr> 
-					</s:if>
+					</s:if> 
 				</table>
 				<br/>
-				<s:if test="%{(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
-				     model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED))}"> 
+				<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>
-								<%-- <td width="10%" class="${approverEvenCSS}">&nbsp;</td> --%>
 								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
 								<td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>:</td>
 								<td class="${approverEvenTextCSS}"><textarea
@@ -219,10 +212,9 @@
 						</div> </font>
 				</tr>
 
-				<tr>
-					<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-				</tr>
-
+					<tr>
+						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+					</tr>
 				</table>
 			</s:push>
 		</s:form>

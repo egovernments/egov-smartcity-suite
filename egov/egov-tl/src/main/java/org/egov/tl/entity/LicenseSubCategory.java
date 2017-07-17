@@ -54,24 +54,20 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-
 import java.util.ArrayList;
 import java.util.List;
 
 @Entity
 @Table(name = "EGTL_MSTR_SUB_CATEGORY")
 @SequenceGenerator(name = LicenseSubCategory.SEQUENCE, sequenceName = LicenseSubCategory.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"code","name"},enableDfltMsg = true)
-@NamedQuery(name = "LICENSE_SUBCATEGORY_BY_NAME", query = "select lsc FROM LicenseSubCategory lsc where name =:name")
+@Unique(fields = {"code", "name"}, enableDfltMsg = true)
 public class LicenseSubCategory extends AbstractAuditable {
 
     public static final String SEQUENCE = "SEQ_EGTL_MSTR_SUB_CATEGORY";
-    public static final String BY_NAME = "LICENSE_SUBCATEGORY_BY_NAME";
     private static final long serialVersionUID = 4137779539190266766L;
 
     @Id
@@ -106,12 +102,14 @@ public class LicenseSubCategory extends AbstractAuditable {
 
     @OneToMany(mappedBy = "subCategory", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Valid
-	private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
+    private List<LicenseSubCategoryDetails> licenseSubCategoryDetails = new ArrayList<>();
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }
@@ -175,15 +173,18 @@ public class LicenseSubCategory extends AbstractAuditable {
     public void setLicenseSubCategoryDetails(List<LicenseSubCategoryDetails> licenseSubCategoryDetails) {
         this.licenseSubCategoryDetails = licenseSubCategoryDetails;
     }
-   
+
     @Override
     public boolean equals(final Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         final LicenseSubCategory that = (LicenseSubCategory) o;
 
-        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null) return false;
+        if (getCode() != null ? !getCode().equals(that.getCode()) : that.getCode() != null)
+            return false;
         return getName() != null ? getName().equals(that.getName()) : that.getName() == null;
 
     }

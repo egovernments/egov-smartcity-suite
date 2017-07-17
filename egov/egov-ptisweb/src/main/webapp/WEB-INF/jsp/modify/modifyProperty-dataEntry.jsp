@@ -89,7 +89,6 @@
 
 	function loadOnStartUp() {
 		enableFieldsForPropType();
-		enableAppartnaumtLandDetails();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 		enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
 		toggleFloorDetails();

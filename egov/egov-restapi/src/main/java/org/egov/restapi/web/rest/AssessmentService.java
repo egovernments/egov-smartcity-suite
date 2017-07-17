@@ -59,6 +59,7 @@ import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.ptis.bean.AssessmentInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -71,7 +72,6 @@ import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
-import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AssessmentRequest;
@@ -86,6 +86,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 /**
@@ -136,9 +137,10 @@ public class AssessmentService {
                 AssessmentRequest.class);
         try {
             String assessmentNo = assessmentReq.getAssessmentNo();
+            String oldAssessmentNo = assessmentReq.getOldAssessmentNo();
             String category = assessmentReq.getCategory();
-            if (null != assessmentNo) {
-                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, category);
+            if (StringUtils.isNotBlank(assessmentNo) || StringUtils.isNotBlank(oldAssessmentNo)) {
+                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, oldAssessmentNo, category);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 propertyTaxDetails.setErrorDetails(errorDetails);
@@ -622,13 +624,12 @@ public class AssessmentService {
      * This method provides ward-wise property details
      * @throws IOException 
      */
-    @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String getWardWisePropertyDetails(@RequestBody String assessmentRequest) throws IOException {
-    	AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
-                AssessmentRequest.class);
-    	List<ViewPropertyDetails> propertyDetails = propertyExternalService.getPropertyDetailsForTheWard(assessmentReq.getUlbCode(), assessmentReq.getWardNum());
-    	return getJSONResponse(propertyDetails);
+    @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
+    public List<AssessmentInfo> getWardWisePropertyDetails(AssessmentRequest assessmentRequest) throws IOException {
+        return propertyExternalService.getPropertyDetailsForWard(assessmentRequest.getUlbCode(), assessmentRequest.getWardNum(),
+                assessmentRequest.getAssessmentNo(), assessmentRequest.getDoorNo());
     }
+    
     /**
      * This method is used to prepare jSON response.
      * 

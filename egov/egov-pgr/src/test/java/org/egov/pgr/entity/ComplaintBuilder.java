@@ -42,16 +42,14 @@ package org.egov.pgr.entity;
 import org.egov.builder.entities.BoundaryBuilder;
 import org.egov.eis.entity.PositionBuilder;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 
 import java.util.Set;
 
 public class ComplaintBuilder {
 
-    private final Complaint complaint;
-
     private static int count;
+    private final Complaint complaint;
 
     public ComplaintBuilder() {
         complaint = new Complaint();
@@ -145,7 +143,7 @@ public class ComplaintBuilder {
         withDetails("test-Description");
         withLandmarkDetails("test-LandDetails");
         if (null == complaint.getReceivingMode())
-            withReceivingMode(ReceivingMode.WEBSITE);
+            withReceivingMode(new ReceivingModeBuilder().withDefaults().build());
         withReceivingCenter(new ReceivingCenterBuilder().withDefaults().build());
         // withSupportDocs(supportDocs);
         withLng(2222L);
@@ -169,7 +167,7 @@ public class ComplaintBuilder {
         withDetails("test-Description");
         withLandmarkDetails("test-LandDetails");
         if (null == complaint.getReceivingMode())
-            withReceivingMode(ReceivingMode.WEBSITE);
+            withReceivingMode(new ReceivingModeBuilder().withDefaults().build());
         withReceivingCenter(new ReceivingCenterBuilder().withDefaults().build());
         // withSupportDocs(supportDocs);
         withLng(2222L);

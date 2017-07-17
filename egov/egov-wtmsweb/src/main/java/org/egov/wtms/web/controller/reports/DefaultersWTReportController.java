@@ -39,7 +39,7 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.toJSON;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -59,10 +59,12 @@ import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.DefaultersWTReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.reports.entity.DefaultersReportAdaptor;
 import org.egov.wtms.utils.DemandComparatorByInstallmentOrder;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,13 +106,15 @@ public class DefaultersWTReportController {
         return new DefaultersReport();
     }
 
-    public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
+    @ModelAttribute("revenueWards")
+    public List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE);
     }
 
-    public @ModelAttribute("topDefaultersList") List<Integer> defaultersList() {
-        final List<Integer> topdefaultersList = new ArrayList<Integer>();
+    @ModelAttribute("topDefaultersList")
+    public List<Integer> defaultersList() {
+        final List<Integer> topdefaultersList = new ArrayList<>();
         topdefaultersList.add(10);
         topdefaultersList.add(50);
         topdefaultersList.add(100);
@@ -120,50 +124,58 @@ public class DefaultersWTReportController {
     }
 
     @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ParseException {
+    @ResponseBody
+    public void searchResult(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException {
         String ward = "";
         String topDefaulters = "";
         String fromAmount = "";
         String toAmount = "";
-
-        if (null != request.getParameter("ward"))
-            ward = request.getParameter("ward");
-        if (null != request.getParameter("topDefaulters"))
-            topDefaulters = request.getParameter("topDefaulters");
-        if (null != request.getParameter("fromAmount"))
-            fromAmount = request.getParameter("fromAmount");
-        if (null != request.getParameter("toAmount"))
-            toAmount = request.getParameter("toAmount");
-        List<DefaultersReport> defaultersreportlist = new ArrayList<DefaultersReport>();
-        defaultersreportlist = defaultersWTReportService.getDefaultersReportDetails(fromAmount, toAmount, ward,
-                topDefaulters, Integer.valueOf(request.getParameter("start")),
-                Integer.valueOf(request.getParameter("length")));
-        long foundRows = 0;
-        if (null != request.getParameter("topDefaulters"))
-            foundRows = defaultersWTReportService.getTotalCountFromLimit(fromAmount, toAmount, ward, topDefaulters);
-        else
-            foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward);
-        String result = null;
-        for (final DefaultersReport dd : defaultersreportlist)
-            dd.setDuePeriodFrom(getDuePeriodFrom(dd.getDemandId()));
-        result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
-                .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
-                .append(toJSON(defaultersreportlist, DefaultersReport.class, DefaultersReportAdaptor.class)).append("}")
-                .toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
+        try {
+            if (null != request.getParameter("ward"))
+                ward = request.getParameter("ward");
+            if (null != request.getParameter("topDefaulters"))
+                topDefaulters = request.getParameter("topDefaulters");
+            if (null != request.getParameter("fromAmount"))
+                fromAmount = request.getParameter("fromAmount");
+            if (null != request.getParameter("toAmount"))
+                toAmount = request.getParameter("toAmount");
+            final List<DefaultersReport> defaultersreportlist = defaultersWTReportService.getDefaultersReportDetails(fromAmount,
+                    toAmount, ward,
+                    topDefaulters, Integer.valueOf(request.getParameter("start")),
+                    Integer.valueOf(request.getParameter("length")));
+            long foundRows;
+            if (null != request.getParameter("topDefaulters"))
+                foundRows = defaultersWTReportService.getTotalCountFromLimit(fromAmount, toAmount, ward, topDefaulters);
+            else
+                foundRows = defaultersWTReportService.getTotalCount(fromAmount, toAmount, ward);
+            String result;
+            int count = Integer.valueOf(request.getParameter("start"));
+            for (final DefaultersReport dd : defaultersreportlist) {
+                count = count + 1;
+                dd.setDuePeriodFrom(getDuePeriodFrom(dd.getDemandId()));
+                dd.setSlNo(count);
+            }
+            result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
+                    .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
+                    .append(toJSON(defaultersreportlist, DefaultersReport.class, DefaultersReportAdaptor.class)).append("}")
+                    .toString();
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            IOUtils.write(result, response.getWriter());
+        } catch (final ParseException e) {
+            throw new ApplicationRuntimeException("Exception while getting defaulters report list " + e);
+        }
     }
 
     public String getDuePeriodFrom(final BigInteger demandId) {
-        final List<EgDemandDetails> demandDetList = new ArrayList<EgDemandDetails>(
+        final List<EgDemandDetails> demandDetList = new ArrayList<>(
                 egDemandDao.findById(demandId.longValue(), false).getEgDemandDetails());
-        final List<EgDemandDetails> demandDetFinalList = new ArrayList<EgDemandDetails>();
-        
+        final List<EgDemandDetails> demandDetFinalList = new ArrayList<>();
+
         for (final EgDemandDetails egDemandTemp : demandDetList)
             if (!egDemandTemp.getAmount().equals(egDemandTemp.getAmtCollected()))
                 demandDetFinalList.addAll(egDemandTemp.getEgDemand().getEgDemandDetails());
-       
+
         if (demandDetFinalList.isEmpty())
             return "";
         else {

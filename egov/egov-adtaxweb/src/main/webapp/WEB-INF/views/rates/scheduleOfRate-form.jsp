@@ -44,9 +44,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-
 <div class="row">
 	<div class="col-md-12">
 		<form:form id="scheduleOfRateform" method="post" class="form-horizontal form-groups-bordered" modelAttribute="rate" commandName="rate">

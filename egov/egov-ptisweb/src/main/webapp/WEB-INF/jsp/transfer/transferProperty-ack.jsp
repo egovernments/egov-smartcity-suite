@@ -50,12 +50,16 @@
 			  var mutationId = document.getElementById("mutationId").value;
 			  window.location="printAck.action?mutationId="+mutationId;
 		  }
+          function payment() {
+		      window.location="collect-fee.action?applicationNo="+'<s:property value="%{applicationNo}"/>';
+          }
 		</script>
 	</head>
 	<body onload=" refreshParentInbox(); ">
 		<s:form name="transPropAckForm" theme="simple">
 			<s:push value="model">
 			<s:hidden name="mutationId" id="mutationId" value="%{id}"></s:hidden>
+			<s:hidden name="applicationSource" value="%{applicationSource}" />
 			<s:token/>
 				<div class="formmainbox">
 					<div class="headingbg">
@@ -71,15 +75,23 @@
 								</s:if>
 								<s:else>
 								<td colspan="5" style="font-size: 15px;" align="center">
+								<s:if test="%{initiatorIsActive}">
 							      <s:property value="%{ackMessage}" /><span class="bold"><s:property value="%{approverName}"/><s:property value="%{mutationInitiatedBy}"/></span><s:property value="%{assessmentNoMessage}"/><span class="bold"><s:property value="%{basicProperty.upicNo}" /></span></td> 
+								</s:if>
+								<s:else>
+								  <s:text name = "inactiveuserrejecterror"/><span class="bold"><s:property value="%{mutationInitiatedBy}"/></span>&nbsp;<s:text name = "inactiveusererror"/>
 								</s:else>
+								</s:else>	
 							</td>
 						</tr>
 					</table>
 					<div class="buttonbottom" align="center">
-					<s:if test="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(model.state.value)}">
+					<s:if test="%{showAckBtn}">
 						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
-						</s:if>
+                    </s:if>
+					<s:if test="%{showPayBtn}">
+						<input type="button" name="button2" id="button2" value="Pay Mutation Fee" class="buttonsubmit" onclick="payment()" />
+					</s:if>
 						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 					</div>
 				</div>

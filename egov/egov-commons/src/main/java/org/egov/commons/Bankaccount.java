@@ -39,8 +39,10 @@
  */
 package org.egov.commons;
 
-import org.egov.commons.utils.BankAccountType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
+
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,12 +59,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
-import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
+import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "BANKACCOUNT")
@@ -70,118 +69,103 @@ import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
 public class Bankaccount extends AbstractAuditable implements java.io.Serializable {
 
     public static final String SEQ_BANKACCOUNT = "SEQ_BANKACCOUNT";
+
     private static final long serialVersionUID = 1L;
+
     @Id
     @GeneratedValue(generator = SEQ_BANKACCOUNT, strategy = GenerationType.SEQUENCE)
     private Long id;
+
     @ManyToOne
     @JoinColumn(name = "branchid", nullable = true)
     private Bankbranch bankbranch;
+
     @ManyToOne
     @JoinColumn(name = "glcodeid")
     private CChartOfAccounts chartofaccounts;
+
     @ManyToOne
     @JoinColumn(name = "fundid")
     private Fund fund;
+
     @NotNull
     private String accountnumber;
+
     private String accounttype;
+
     private String narration;
+
     @NotNull
     private Boolean isactive;
+
     private String payTo;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "type")
     private BankAccountType type;
+
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "bankaccount")
-    private Set<EgSurrenderedCheques> egSurrenderedChequeses = new HashSet<EgSurrenderedCheques>(0);
+    private Set<EgSurrenderedCheques> egSurrenderedChequeses = new HashSet<>(0);
 
     @ManyToOne
     @JoinColumn(name = "chequeformatid")
     private ChequeFormat chequeformat;
 
-    public Bankaccount() {
-        // For hibernate to work
-    }
-
-    public Bankaccount(Bankbranch bankbranch, String accountnumber, String accounttype, Boolean isactive, Date created,
-                       BigDecimal modifiedby, Date lastmodified, BigDecimal currentbalance, String payTo, BankAccountType type) {
-        this.bankbranch = bankbranch;
-        this.accountnumber = accountnumber;
-        this.accounttype = accounttype;
-        this.isactive = isactive;
-        this.payTo = payTo;
-        this.type = type;
-    }
-
-    public Bankaccount(Bankbranch bankbranch, CChartOfAccounts chartofaccounts, Fund fund, String accountnumber,
-                       String accounttype, String narration, Boolean isactive, Date created, BigDecimal modifiedby, Date lastmodified,
-                       BigDecimal currentbalance,
-                       String payTo, Set<EgSurrenderedCheques> egSurrenderedChequeses) {
-        this.bankbranch = bankbranch;
-        this.chartofaccounts = chartofaccounts;
-        this.fund = fund;
-        this.accountnumber = accountnumber;
-        this.accounttype = accounttype;
-        this.narration = narration;
-        this.isactive = isactive;
-        this.payTo = payTo;
-        this.egSurrenderedChequeses = egSurrenderedChequeses;
-    }
-
+    @Override
     public Long getId() {
-        return this.id;
+        return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
     public Bankbranch getBankbranch() {
-        return this.bankbranch;
+        return bankbranch;
     }
 
-    public void setBankbranch(Bankbranch bankbranch) {
+    public void setBankbranch(final Bankbranch bankbranch) {
         this.bankbranch = bankbranch;
     }
 
     public CChartOfAccounts getChartofaccounts() {
-        return this.chartofaccounts;
+        return chartofaccounts;
     }
 
-    public void setChartofaccounts(CChartOfAccounts chartofaccounts) {
+    public void setChartofaccounts(final CChartOfAccounts chartofaccounts) {
         this.chartofaccounts = chartofaccounts;
     }
 
     public Fund getFund() {
-        return this.fund;
+        return fund;
     }
 
-    public void setFund(Fund fund) {
+    public void setFund(final Fund fund) {
         this.fund = fund;
     }
 
     public String getAccountnumber() {
-        return this.accountnumber;
+        return accountnumber;
     }
 
-    public void setAccountnumber(String accountnumber) {
+    public void setAccountnumber(final String accountnumber) {
         this.accountnumber = accountnumber;
     }
 
     public String getAccounttype() {
-        return this.accounttype;
+        return accounttype;
     }
 
-    public void setAccounttype(String accounttype) {
+    public void setAccounttype(final String accounttype) {
         this.accounttype = accounttype;
     }
 
     public String getNarration() {
-        return this.narration;
+        return narration;
     }
 
-    public void setNarration(String narration) {
+    public void setNarration(final String narration) {
         this.narration = narration;
     }
 
@@ -189,15 +173,15 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
         return type;
     }
 
-    public void setType(BankAccountType type) {
+    public void setType(final BankAccountType type) {
         this.type = type;
     }
 
     public Set<EgSurrenderedCheques> getEgSurrenderedChequeses() {
-        return this.egSurrenderedChequeses;
+        return egSurrenderedChequeses;
     }
 
-    public void setEgSurrenderedChequeses(Set<EgSurrenderedCheques> egSurrenderedChequeses) {
+    public void setEgSurrenderedChequeses(final Set<EgSurrenderedCheques> egSurrenderedChequeses) {
         this.egSurrenderedChequeses = egSurrenderedChequeses;
     }
 
@@ -205,7 +189,7 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
         return payTo;
     }
 
-    public void setPayTo(String payTo) {
+    public void setPayTo(final String payTo) {
         this.payTo = payTo;
     }
 
@@ -213,15 +197,15 @@ public class Bankaccount extends AbstractAuditable implements java.io.Serializab
         return isactive;
     }
 
-    public void setIsactive(Boolean isactive) {
+    public void setIsactive(final Boolean isactive) {
         this.isactive = isactive;
     }
 
     public ChequeFormat getChequeformat() {
-        return this.chequeformat;
+        return chequeformat;
     }
 
-    public void setChequeformat(ChequeFormat chequeformat) {
+    public void setChequeformat(final ChequeFormat chequeformat) {
         this.chequeformat = chequeformat;
     }
 

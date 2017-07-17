@@ -85,7 +85,7 @@ $(document).ready(function() {
 	var typeaheadobj = $('#positionEmpName').typeahead({
 		hint : false,
 		highlight : false,
-		minLength : 1
+		minLength : 3
 	}, {
 		displayKey : 'name',
 		source : assignPosition.ttAdapter()
@@ -169,6 +169,7 @@ function addEmployee()
 	        });
 	    });
 		$trLast.after($trNew);
+		$("#positionEmpName").val("") ;
 	}
 }
 function edit(hearingId){    

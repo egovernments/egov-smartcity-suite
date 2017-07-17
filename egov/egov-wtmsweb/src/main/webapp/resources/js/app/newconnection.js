@@ -40,11 +40,21 @@
 $(document).ready(function(){
 	
 	loadPropertyDetails();
+	
+	if($("#connectionType").val()=="METERED"){
+		$(".showfields").show();
+	}
+	
+	if($('#noJAORSAMessage') && $('#noJAORSAMessage').val())
+		bootbox.alert($('#noJAORSAMessage').val());
+
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
-	if((currentloggedInUser=='true' && mode=='' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false'))
-		{
+	var citizenPortal=$('#citizenPortalUser').val();
+	if((currentloggedInUser=='true' && mode=='' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
+	|| (citizenPortal=='true' && mode=='' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false'))
+        	{
 		$(".show-row").hide(); 
 		$('#approvalDepartment').removeAttr('required');
 		$('#approvalDesignation').removeAttr('required');
@@ -56,23 +66,8 @@ $(document).ready(function(){
 	
 	$('#cardHolderDiv').hide();
 	$('#bplCardHolderName').removeAttr('required');
-	
 	changecategory();
 	
-	$('#connectionType').change(function(){
-		if($('#legacy'))
-		{
-			if($('#connectionType').val()=='METERED')
-			{
-				$('#metereddetails').show();	
-			}
-			else
-			{
-				$('#metereddetails').hide();
-			}
-		}
-	});
-		
 	$('#connectionCategorie').change(function(){
 		changecategory();
 	});

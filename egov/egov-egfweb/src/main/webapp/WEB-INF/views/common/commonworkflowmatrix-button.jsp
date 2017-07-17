@@ -47,7 +47,7 @@
 			<td id="actionButtons">
 				<c:if test="${mode != 'readOnly' }">
 					<c:forEach items="${validActionList}" var="validButtons">
-						<input type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}"/>
+						<input type="submit" id="${validButtons}" class="btn btn-primary btn-wf-primary"  value="${validButtons}"/>
 					</c:forEach>
 				</c:if>
 				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />

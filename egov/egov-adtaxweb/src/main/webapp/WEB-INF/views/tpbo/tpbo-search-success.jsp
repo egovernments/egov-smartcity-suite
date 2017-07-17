@@ -47,7 +47,7 @@
 	<div class="col-md-12">
 		<form:form  id="revenueinspectorsearchsuccess" method ="post" class="form-horizontal form-groups-bordered" modelAttribute="revenueInspector" commandName="revenueInspector">
 	 		<c:if test="${not empty message}">
-                <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+                <div class="alert alert-info" role="alert"><spring:message code="${message}"/></div>
             </c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading ">

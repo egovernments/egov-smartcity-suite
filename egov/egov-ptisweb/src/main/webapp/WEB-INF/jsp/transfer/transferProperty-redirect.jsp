@@ -64,9 +64,12 @@ function submit(obj) {
   	var meesevaApplicationNumber = '<s:property value = "%{meesevaApplicationNumber}"/>';
   	var meesevaServiceCode = '<s:property value = "%{meesevaServiceCode}"/>';
   	var applicationType = '<s:property value = "%{applicationType}"/>';
+  	var applicationSource = '<s:property value = "%{applicationSource}"/>';
+  	var url ='/ptis/property/transfer/new.action';
+  	
 	jQuery('<form>.').attr({
 		method: 'post',
-		action: '/ptis/property/transfer/new.action',
+		action: url,
 		target: '_self'
 	}).append(jQuery('<input>').attr({
 	    type: 'hidden',
@@ -96,6 +99,12 @@ function submit(obj) {
 	    id: 'applicationType',
 	    name: 'applicationType',
 	    value: applicationType
+	}))
+	.append(jQuery('<input>').attr({
+	    type: 'hidden',
+	    id: 'applicationSource',
+	    name: 'applicationSource',
+	    value: applicationSource
 	}))
 	.appendTo( document.body ).submit();
 } 

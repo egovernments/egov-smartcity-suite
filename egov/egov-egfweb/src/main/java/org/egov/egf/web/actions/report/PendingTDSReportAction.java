@@ -57,9 +57,10 @@ import org.egov.deduction.model.EgRemittanceDetail;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.model.TDSEntry;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -253,6 +254,7 @@ public class PendingTDSReportAction extends BaseFormAction {
         return paramMap;
     }
 
+    @ReadOnly
     private void populateData() {
         validateFinYear();
         if (getFieldErrors().size() > 0)
@@ -386,6 +388,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     /**
      * show only pending TDSes
      */
+    @ReadOnly
     private void populateSummaryData() {
         recovery = (Recovery) persistenceService.find("from Recovery where id=?", recovery.getId());
         type = recovery.getType();
@@ -521,7 +524,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     public String exportXls() throws JRException, IOException {
         populateData();
         final ReportRequest reportInput = new ReportRequest(jasperpath, pendingTDS, getParamMap());
-        reportInput.setReportFormat(FileFormat.XLS);
+        reportInput.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
         return "XLS";
@@ -531,7 +534,7 @@ public class PendingTDSReportAction extends BaseFormAction {
     public String exportSummaryXls() throws JRException, IOException {
         populateSummaryData();
         final ReportRequest reportInput = new ReportRequest(summaryJasperpath, remittedTDS, getParamMap());
-        reportInput.setReportFormat(FileFormat.XLS);
+        reportInput.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         inputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
         return "summary-XLS";

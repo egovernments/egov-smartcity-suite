@@ -56,6 +56,8 @@
 	TYPE="text/css">
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
+	<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/javascript/voucherHelper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <title><s:text name="remit.recovery.create.title" /></title>
@@ -213,27 +215,48 @@ function onLoad(){
 	jQuery(fundsource).attr('disabled', 'disabled');
 	if(document.getElementById('approverDepartment'))
 		document.getElementById('approverDepartment').value = "-1";
+	if (jQuery("#bankBalanceCheck") == null || jQuery("#bankBalanceCheck").val() == "") {
+		disableForm();
+	}
 }
 function onSubmit()
 {
+	var balanceCheckMandatory='<s:text name="payment.mandatory"/>';
+	var balanceCheckWarning='<s:text name="payment.warning"/>';
+	var noBalanceCheck='<s:text name="payment.none"/>';
 	if(validate()){
 		 var myform = jQuery('#remittanceForm');
 		// re-disabled the set of inputs that you previously
 		var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
-		 if(!balanceCheck()){
-
-			 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
-			 if (msg == true) {
-				 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
-				return true;
-			 } else {
-			   	return false;
-			}
-		}else{
-			document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
-			return true;
-		}
 		
+		 if(jQuery("#bankBalanceCheck").val()==noBalanceCheck)
+		{
+			disableAll();
+			document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+		  return true;
+		}
+	else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckMandatory){
+			 bootbox.alert("Insufficient Bank Balance.....");
+			 return false;
+			}
+	else if(!balanceCheck() && jQuery("#bankBalanceCheck").val()==balanceCheckWarning){
+		 var msg = confirm("Insufficient Bank Balance. Do you want to process ?");
+		 if (msg == true) {
+			 disableAll();
+			 document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+			 document.remittanceForm.submit();
+			return true;
+		 } else {
+			 undoLoadingMask();
+		   	return false;
+			}
+		}
+	else{
+		disableAll();
+		document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-create.action';
+	 	document.remittanceForm.submit();
+	}
+			
 	}
 		return false;
 		
@@ -421,6 +444,7 @@ else{
 
 																			<jsp:include page="remitRecoveryPayment-form.jsp" />
 																			<s:hidden name="remittanceBean.recoveryId" />
+																			<s:hidden name="typeOfAccount" id="typeOfAccount" value="%{typeOfAccount}" />
 																			<div class="yui-skin-sam" align="center">
 																				<div id="recoveryDetailsTableNew"></div>
 																			</div>
@@ -457,7 +481,9 @@ else{
 					</table>
 
 				</div>
+				<s:hidden type="hidden" id="selectedRows" name="selectedRows" />
 				<s:hidden name="cutOffDate" id="cutOffDate" />
+				<s:hidden name="bankBalanceCheck" id="bankBalanceCheck" value="%{bankBalanceCheck}" />
 				<%@ include file='../payment/commonWorkflowMatrix.jsp'%>
 				<%@ include file='../workflow/commonWorkflowMatrix-button.jsp'%>
 			</div>

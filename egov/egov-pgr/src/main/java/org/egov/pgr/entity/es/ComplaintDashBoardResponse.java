@@ -69,12 +69,17 @@ public class ComplaintDashBoardResponse {
     private long AgeingGroup2;
     private long AgeingGroup3;
     private long AgeingGroup4;
+    private long ageingGroup5;
+    private long ageingGroup6;
+    private long ageingGroup7;
+    private long ageingGroup8;
+    private long reOpenedComplaintCount;
 
     public String getDistrictName() {
         return districtName;
     }
 
-    public void setDistrictName(String districtName) {
+    public void setDistrictName(final String districtName) {
         this.districtName = districtName;
     }
 
@@ -82,7 +87,7 @@ public class ComplaintDashBoardResponse {
         return ulbCode;
     }
 
-    public void setUlbCode(String ulbCode) {
+    public void setUlbCode(final String ulbCode) {
         this.ulbCode = ulbCode;
     }
 
@@ -90,7 +95,7 @@ public class ComplaintDashBoardResponse {
         return ulbName;
     }
 
-    public void setUlbName(String ulbName) {
+    public void setUlbName(final String ulbName) {
         this.ulbName = ulbName;
     }
 
@@ -98,7 +103,7 @@ public class ComplaintDashBoardResponse {
         return ulbGrade;
     }
 
-    public void setUlbGrade(String ulbGrade) {
+    public void setUlbGrade(final String ulbGrade) {
         this.ulbGrade = ulbGrade;
     }
 
@@ -106,7 +111,7 @@ public class ComplaintDashBoardResponse {
         return wardName;
     }
 
-    public void setWardName(String wardName) {
+    public void setWardName(final String wardName) {
         this.wardName = wardName;
     }
 
@@ -114,7 +119,7 @@ public class ComplaintDashBoardResponse {
         return domainURL;
     }
 
-    public void setDomainURL(String domainURL) {
+    public void setDomainURL(final String domainURL) {
         this.domainURL = domainURL;
     }
 
@@ -122,7 +127,7 @@ public class ComplaintDashBoardResponse {
         return functionaryName;
     }
 
-    public void setFunctionaryName(String functionaryName) {
+    public void setFunctionaryName(final String functionaryName) {
         this.functionaryName = functionaryName;
     }
 
@@ -130,7 +135,7 @@ public class ComplaintDashBoardResponse {
         return departmentName;
     }
 
-    public void setDepartmentName(String departmentName) {
+    public void setDepartmentName(final String departmentName) {
         this.departmentName = departmentName;
     }
 
@@ -138,7 +143,7 @@ public class ComplaintDashBoardResponse {
         return ComplaintTypeName;
     }
 
-    public void setComplaintTypeName(String complaintTypeName) {
+    public void setComplaintTypeName(final String complaintTypeName) {
         ComplaintTypeName = complaintTypeName;
     }
 
@@ -146,7 +151,7 @@ public class ComplaintDashBoardResponse {
         return TotalComplaintCount;
     }
 
-    public void setTotalComplaintCount(long totalComplaintCount) {
+    public void setTotalComplaintCount(final long totalComplaintCount) {
         TotalComplaintCount = totalComplaintCount;
     }
 
@@ -154,7 +159,7 @@ public class ComplaintDashBoardResponse {
         return OpenComplaintCount;
     }
 
-    public void setOpenComplaintCount(long openComplaintCount) {
+    public void setOpenComplaintCount(final long openComplaintCount) {
         OpenComplaintCount = openComplaintCount;
     }
 
@@ -162,7 +167,7 @@ public class ComplaintDashBoardResponse {
         return ClosedComplaintCount;
     }
 
-    public void setClosedComplaintCount(long closedComplaintCount) {
+    public void setClosedComplaintCount(final long closedComplaintCount) {
         ClosedComplaintCount = closedComplaintCount;
     }
 
@@ -170,7 +175,7 @@ public class ComplaintDashBoardResponse {
         return OpenWithinSLACount;
     }
 
-    public void setOpenWithinSLACount(long openWithinSLACount) {
+    public void setOpenWithinSLACount(final long openWithinSLACount) {
         OpenWithinSLACount = openWithinSLACount;
     }
 
@@ -178,7 +183,7 @@ public class ComplaintDashBoardResponse {
         return OpenOutSideSLACount;
     }
 
-    public void setOpenOutSideSLACount(long openOutSideSLACount) {
+    public void setOpenOutSideSLACount(final long openOutSideSLACount) {
         OpenOutSideSLACount = openOutSideSLACount;
     }
 
@@ -186,7 +191,7 @@ public class ComplaintDashBoardResponse {
         return ClosedWithinSLACount;
     }
 
-    public void setClosedWithinSLACount(long closedWithinSLACount) {
+    public void setClosedWithinSLACount(final long closedWithinSLACount) {
         ClosedWithinSLACount = closedWithinSLACount;
     }
 
@@ -194,7 +199,7 @@ public class ComplaintDashBoardResponse {
         return ClosedOutSideSLACount;
     }
 
-    public void setClosedOutSideSLACount(long closedOutSideSLACount) {
+    public void setClosedOutSideSLACount(final long closedOutSideSLACount) {
         ClosedOutSideSLACount = closedOutSideSLACount;
     }
 
@@ -202,7 +207,7 @@ public class ComplaintDashBoardResponse {
         return AvgSatisfactionIndex;
     }
 
-    public void setAvgSatisfactionIndex(double avgSatisfactionIndex) {
+    public void setAvgSatisfactionIndex(final double avgSatisfactionIndex) {
         AvgSatisfactionIndex = avgSatisfactionIndex;
     }
 
@@ -210,7 +215,7 @@ public class ComplaintDashBoardResponse {
         return AgeingGroup1;
     }
 
-    public void setAgeingGroup1(long ageingGroup1) {
+    public void setAgeingGroup1(final long ageingGroup1) {
         AgeingGroup1 = ageingGroup1;
     }
 
@@ -218,7 +223,7 @@ public class ComplaintDashBoardResponse {
         return AgeingGroup2;
     }
 
-    public void setAgeingGroup2(long ageingGroup2) {
+    public void setAgeingGroup2(final long ageingGroup2) {
         AgeingGroup2 = ageingGroup2;
     }
 
@@ -226,7 +231,7 @@ public class ComplaintDashBoardResponse {
         return AgeingGroup3;
     }
 
-    public void setAgeingGroup3(long ageingGroup3) {
+    public void setAgeingGroup3(final long ageingGroup3) {
         AgeingGroup3 = ageingGroup3;
     }
 
@@ -234,7 +239,7 @@ public class ComplaintDashBoardResponse {
         return AgeingGroup4;
     }
 
-    public void setAgeingGroup4(long ageingGroup4) {
+    public void setAgeingGroup4(final long ageingGroup4) {
         AgeingGroup4 = ageingGroup4;
     }
 
@@ -242,7 +247,7 @@ public class ComplaintDashBoardResponse {
         return localityName;
     }
 
-    public void setLocalityName(String localityName) {
+    public void setLocalityName(final String localityName) {
         this.localityName = localityName;
     }
 
@@ -250,7 +255,7 @@ public class ComplaintDashBoardResponse {
         return functionaryMobileNumber;
     }
 
-    public void setFunctionaryMobileNumber(String functionaryMobileNumber) {
+    public void setFunctionaryMobileNumber(final String functionaryMobileNumber) {
         this.functionaryMobileNumber = functionaryMobileNumber;
     }
 
@@ -258,7 +263,47 @@ public class ComplaintDashBoardResponse {
         return regionName;
     }
 
-    public void setRegionName(String regionName) {
+    public void setRegionName(final String regionName) {
         this.regionName = regionName;
+    }
+
+    public long getReOpenedComplaintCount() {
+        return reOpenedComplaintCount;
+    }
+
+    public void setReOpenedComplaintCount(final long reOpenedComplaintCount) {
+        this.reOpenedComplaintCount = reOpenedComplaintCount;
+    }
+
+    public long getAgeingGroup5() {
+        return ageingGroup5;
+    }
+
+    public void setAgeingGroup5(long ageingGroup5) {
+        this.ageingGroup5 = ageingGroup5;
+    }
+
+    public long getAgeingGroup6() {
+        return ageingGroup6;
+    }
+
+    public void setAgeingGroup6(long ageingGroup6) {
+        this.ageingGroup6 = ageingGroup6;
+    }
+
+    public long getAgeingGroup7() {
+        return ageingGroup7;
+    }
+
+    public void setAgeingGroup7(long ageingGroup7) {
+        this.ageingGroup7 = ageingGroup7;
+    }
+
+    public long getAgeingGroup8() {
+        return ageingGroup8;
+    }
+
+    public void setAgeingGroup8(long ageingGroup8) {
+        this.ageingGroup8 = ageingGroup8;
     }
 }

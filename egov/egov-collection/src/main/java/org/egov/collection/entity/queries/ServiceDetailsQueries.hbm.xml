@@ -175,5 +175,7 @@
         <query name="getAllRemittanceBankAccount">
     <![CDATA[select distinct(ba.bankAccountId) from BankAccountServiceMap ba]]></query>
     
+    <query name="getCOAByInstrumentTypeAndService">
+    <![CDATA[select c from CChartOfAccounts c,ServiceInstrumentAccounts sia,InstrumentType it where sia.chartOfAccounts.id=c.id and sia.instrumentType.id=it.id and it.type=? and sia.serviceDetails.id=?]]></query>
     
 </hibernate-mapping>

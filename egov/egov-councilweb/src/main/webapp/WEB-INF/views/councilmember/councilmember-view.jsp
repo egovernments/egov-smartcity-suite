@@ -51,6 +51,18 @@
 				</div>
 				<div class="panel-body custom">
 					<div class="row add-border">
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.name" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilMember.name}</div>
+					<div class="col-xs-3 add-margin">
+						<spring:message code="lbl.emailid" />
+					</div>
+					<div class="col-sm-3 add-margin view-content">
+						${councilMember.emailId}</div>
+					</div>
+					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.electionward" />
 						</div>
@@ -76,58 +88,31 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<spring:message code="lbl.partyaffiliation" />
+							<spring:message code="lbl.birthdate" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${councilMember.partyAffiliation.name}</div>
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${councilMember.birthDate}" />
+						</div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.gender" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${councilMember.gender}</div>
-					</div>
+						</div>
 				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.birthdate" />
-					</div>
-					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate pattern="dd/MM/yyyy"
-							value="${councilMember.birthDate}" />
-					</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.electiondate" />
-					</div>
-					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate pattern="dd/MM/yyyy"
-							value="${councilMember.electionDate}" />
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.oathdate" />
-					</div>
-					<div class="col-sm-3 add-margin view-content">
-						<fmt:formatDate pattern="dd/MM/yyyy"
-							value="${councilMember.oathDate}" />
-					</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.mobilenumber" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						${councilMember.mobileNumber}</div>
-				</div>
-				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.emailid" />
+						<spring:message code="lbl.status" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilMember.emailId}</div>
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.name" />
-					</div>
-					<div class="col-sm-3 add-margin view-content">
-						${councilMember.name}</div>
+						${councilMember.status}</div>
 				</div>
+				
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.residentialaddress" />
@@ -174,6 +159,53 @@
 						</div>
 					</div>
 				</div>
+				<c:if test="${councilMember.designation.name != 'Special Officer'}">
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.electiondate" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${councilMember.electionDate}" />
+						</div>
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.oathdate" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${councilMember.oathDate}" />
+						</div>
+					</div>
+					<c:if test="${councilMember.designation.name != 'Co-Option'}">
+						<div class="row add-border">
+							<div class="col-xs-3 add-margin">
+								<spring:message code="lbl.partyaffiliation" />
+							</div>
+							<div class="col-sm-3 add-margin view-content">
+								${councilMember.partyAffiliation.name}</div>
+						</div>
+					</c:if>
+					<c:if test="${councilMember.designation.name == 'Co-Option'}">
+						<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.category" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							${councilMember.category}</div>
+						</div>
+					</c:if>
+				</c:if>
+				<c:if test="${councilMember.designation.name == 'Special Officer'}">
+				<div class="row add-border">
+				<div class="col-xs-3 add-margin">
+							<spring:message code="lbl.date.of.joining" />
+						</div>
+						<div class="col-sm-3 add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${councilMember.dateOfJoining}" />
+						</div>
+				</div>
+				</c:if>
 			</div>
 		</div>
 	</div>

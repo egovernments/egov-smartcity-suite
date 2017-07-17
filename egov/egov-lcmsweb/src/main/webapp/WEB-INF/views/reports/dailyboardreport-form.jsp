@@ -47,7 +47,7 @@
 
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<form:form method="get" modelAttribute="dailyBoardReportResult"
+		<form:form method="get" modelAttribute="commonReportResult"
 			id="dailyboardreportForm"
 			class="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
@@ -56,7 +56,6 @@
 					<div class="panel-heading">
 						<div class="panel-title">Daily Board Report</div>
 					</div>
-
 					<div class="form-group">
 						<label class="col-sm-2 control-label"><spring:message
 								code="lbl.casecategory" />:</label>
@@ -67,17 +66,16 @@
 								<form:option value="">
 									<spring:message code="lbls.select" />
 								</form:option>
-								<form:options items="${caseTypeList}" itemValue="id"
+								<form:options items="${caseTypeList}" itemValue="caseType"
 									itemLabel="caseType" />
 							</form:select>
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.officerincharge" />:</label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control" maxlength="50"
-								id="officerIncharge" path="officerIncharge" />
-							<form:errors path="officerIncharge"
-								cssClass="add-margin error-msg" />
+							<input id="positionName" type="text"
+								class="form-control typeahead" placeholder="" autocomplete="off" />
+							<input type="hidden" name="officerIncharge" id="officerIncharge" />
 						</div>
 					</div>
 
@@ -86,71 +84,74 @@
 								code="lbl.fromDate" />:
 						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="fromDate"
+							<input type="text" name="caseFromDate"
 								class="form-control datepicker" data-date-end-date="0d"
-								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
+								id="caseFromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
 						</div>
 						<label class="col-sm-2 control-label text-right"> <spring:message
 								code="lbl.toDate" />:
 						</label>
 						<div class="col-sm-3 add-margin">
-							<input type="text" name="toDate"
+							<input type="text" name="caseToDate"
 								class="form-control datepicker today" data-date-end-date="0d"
-								id="toDate" data-inputmask="'mask': 'd/m/y'" />
-						</div>
-					</div>
-					</div>
-
-
-					<div class="row">
-						<div class="text-center">
-							<button type="button" id="dailyBoardReportSearch"
-								class="btn btn-primary">Search</button>
-							<a href="javascript:void(0)" class="btn btn-default"
-								onclick="self.close()"> Close</a>
+								id="caseToDate" data-inputmask="'mask': 'd/m/y'" />
 						</div>
 					</div>
 				</div>
+				<div class="row">
+					<div class="text-center">
+						<button type="button" id="dailyBoardReportSearch"
+							class="btn btn-primary">
+							<spring:message code="lbl.search" />
+						</button>
+						<a href="javascript:void(0)" class="btn btn-default"
+							onclick="self.close()"><spring:message code="lbl.close" /></a>
+					</div>
+				</div>
+			</div>
 		</form:form>
 		<div id="reportgeneration-header"
 			class="col-md-12 table-header text-left">
 			<fmt:formatDate value="${currentDate}" var="currDate"
 				pattern="dd-MM-yyyy" />
-			<spring:message code="lbl.reportgeneration" />:
+			<spring:message code="lbl.reportgeneration" />
+			:
 			<c:out value="${currDate}"></c:out>
 		</div>
 		<table class="table table-bordered table-hover multiheadertbl"
-			id="dailyBoardReportResult-table" width="200%">
+			id="dailyBoardReportResult-table">
 		</table>
-
-
 	</div>
 </div>
 
-
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<cdn:url value='/resources/js/app/dailyBoardReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>
-

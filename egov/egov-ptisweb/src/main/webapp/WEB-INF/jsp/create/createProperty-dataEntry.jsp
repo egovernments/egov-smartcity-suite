@@ -1,41 +1,41 @@
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~      accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~       Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~       The updated version of eGov suite of products as by eGovernments Foundation
+  ~       is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~       This program is free software: you can redistribute it and/or modify
+  ~       it under the terms of the GNU General Public License as published by
+  ~       the Free Software Foundation, either version 3 of the License, or
+  ~       any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~       This program is distributed in the hope that it will be useful,
+  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~       GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~       You should have received a copy of the GNU General Public License
+  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~       http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~       In addition to the terms of the GPL license to be adhered to in using this
+  ~       program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~           1) All versions of this program, verbatim or modified must carry this
+  ~              Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~           2) Any misrepresentation of the origin of the material is prohibited. It
+  ~              is required that all modified versions of this material be marked in
+  ~              reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~           3) This license does not grant any rights to any user of the program
+  ~              with regards to rights under trademark law for use of the trade names
+  ~              or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -125,7 +125,6 @@ jQuery(function ($) {
 
 
 		$('#Create').click(function(e){
-			console.log('called :)!');
 			return validateProperty();
 		}); 
 		
@@ -135,7 +134,11 @@ jQuery(function ($) {
 var isSubmit=false;
 
 function validateProperty() {
-	
+	var upicNo = jQuery('#upicNo').val();
+	if (upicNo == null || upicNo == "") {
+		bootbox.alert('Please enter assessment number');
+		return false;
+	}
 	if(isSubmit)
 	{
 		return onSubmit();
@@ -150,9 +153,8 @@ function validateProperty() {
 		cache: false,
 		dataType: "json",
 		success: function (response) {
-			console.log("success"+response);
 			if(response.exists) {
-				bootbox.alert("Entered old assessment number is not unique and is already present in the system. Please enter unique old assessment number")
+                bootbox.alert("Entered old assessment number is not unique and is already present in the system. Please enter unique old assessment number");
 				isSubmit = false;
 			} else {
 				isSubmit=true;
@@ -167,20 +169,13 @@ function validateProperty() {
 
 function loadOnStartUp() {
 	enableCorresAddr();
-	enableAppartnaumtLandDetails();
 	makeMandatory();
-	document.getElementById("appurtenantRow").style.display = "none";
 	enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 	enableOrDisableBPADetails(jQuery('input[name="propertyDetail.buildingPlanDetailsChecked"]'));
-	var appartunentLand = jQuery('input[name="propertyDetail.appurtenantLandChecked"]');
-	if (jQuery(appartunentLand).is(":checked")) {
-		enableAppartnaumtLandDetails();
-	}
 	var category = '<s:property value="%{propertyDetail.categoryType}"/>';
 	document.forms[0].propTypeCategoryId.options[document.forms[0].propTypeCategoryId.selectedIndex].value = category;
 	toggleFloorDetails();
      var aadhartextboxes = jQuery('.txtaadhar');
-     console.log(aadhartextboxes);
      aadhartextboxes.each(function() {
 	   	if(jQuery(this).val())
 	   	{
@@ -254,6 +249,23 @@ function showHideLengthBreadth(){
     }
 }
 
+function enableDisableFirmName(obj){ 
+	var selIndex = obj.selectedIndex;
+	if(selIndex != undefined){
+		var selText = obj.options[selIndex].text; 
+		var rIndex = getRow(obj).rowIndex;
+		var tbl = document.getElementById('floorDetails');
+		var firmval=getControlInBranch(tbl.rows[rIndex],'firmName'); 
+		if(selText!=null && selText=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@NATURE_OF_USAGE_RESIDENCE}"/>'){
+			if(firmval.value!=null && firmval.value!="") 
+				firmval.value="";
+			firmval.readOnly = true;      
+		} else{
+			firmval.readOnly = false; 
+		}
+	}
+}
+
 function onSubmit() { 
 	jQuery('#gender, #guardianRelation').removeAttr('disabled');
 	document.forms[0].action = 'createProperty-createDataEntry.action';
@@ -265,7 +277,7 @@ function onSubmit() {
 }
 
 </script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 </body>
 </html>

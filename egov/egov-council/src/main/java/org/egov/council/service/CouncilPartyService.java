@@ -63,14 +63,14 @@ public class CouncilPartyService {
     private final CouncilPartyRepository councilPartyRepository;
     @PersistenceContext
     private EntityManager entityManager;
-    
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-    
+
     @Autowired
     public CouncilPartyService(final CouncilPartyRepository councilPartyRepository) {
         this.councilPartyRepository = councilPartyRepository;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     @Transactional
@@ -94,20 +94,21 @@ public class CouncilPartyService {
     public CouncilParty findOne(Long id) {
         return councilPartyRepository.findOne(id);
     }
-    
-    public List<CouncilParty> getActiveParties(){
-    	return councilPartyRepository.findByisActive(true);
+
+    public List<CouncilParty> getActiveParties() {
+        return councilPartyRepository.findByisActive(true);
     }
-    
-	public List<CouncilParty> search(CouncilParty councilParty) {
-		final Criteria criteria = getCurrentSession().createCriteria(
-				CouncilParty.class);
-		if (null != councilParty.getName())
-			criteria.add(Restrictions.ilike("name", councilParty.getName(), MatchMode.ANYWHERE));
-		if (councilParty.getIsActive() != null
-				&& councilParty.getIsActive() == true)
-			criteria.add(Restrictions.eq("isActive", councilParty.getIsActive()));
-		return criteria.list();
-	}
+
+    @SuppressWarnings("unchecked")
+    public List<CouncilParty> search(CouncilParty councilParty) {
+        final Criteria criteria = getCurrentSession().createCriteria(
+                CouncilParty.class);
+        if (null != councilParty.getName())
+            criteria.add(Restrictions.ilike("name", councilParty.getName(), MatchMode.ANYWHERE));
+        if (councilParty.getIsActive() != null
+                && councilParty.getIsActive())
+            criteria.add(Restrictions.eq("isActive", councilParty.getIsActive()));
+        return criteria.list();
+    }
 
 }

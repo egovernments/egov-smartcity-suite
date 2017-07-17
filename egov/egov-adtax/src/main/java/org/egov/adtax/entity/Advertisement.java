@@ -156,7 +156,7 @@ public class Advertisement extends AbstractAuditable {
     private Set<AdvertisementPermitDetail> advertisementPermitDetail = new HashSet<AdvertisementPermitDetail>(0);
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "demandid", nullable = false)
+    @JoinColumn(name = "demandid")
     private EgDemand demandId;
 
     private double longitude;

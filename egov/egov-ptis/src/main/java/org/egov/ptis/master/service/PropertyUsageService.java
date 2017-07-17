@@ -39,17 +39,26 @@
  */
 package org.egov.ptis.master.service;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
+import org.egov.ptis.domain.repository.master.usage.PropertyUsageRepository;
+import org.egov.ptis.report.bean.PropertyUsageSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.List;
 
 /**
  * Service for PropertyUsage
@@ -63,6 +72,12 @@ public class PropertyUsageService {
 
     @Autowired
     private UserService userService;
+    
+    @PersistenceContext
+    private EntityManager entityManager;
+    
+    @Autowired
+    private PropertyUsageRepository propertyUsageRepository;
 
     @Autowired
     public PropertyUsageService(final PropertyUsageDAO propertyUsageHibernateDAO) {
@@ -82,11 +97,13 @@ public class PropertyUsageService {
 
         return propertyUsage;
     }
-
+    
+    @ReadOnly
     public List<PropertyUsage> getAllActivePropertyUsages() {
         return propertyUsageHibernateDAO.getAllActivePropertyUsage();
     }
-
+    
+    @ReadOnly
     public PropertyUsage findById(Long id) {
         return propertyUsageHibernateDAO.findById(id, false);
     }
@@ -100,5 +117,50 @@ public class PropertyUsageService {
             roleNameList.add(roleName);
         }
         return roleNameList.toString().toUpperCase();
+    }
+    
+    @ReadOnly
+    public List<PropertyUsageSearchResult> getPropertyUsageByTypeUsgAndfromDate(final PropertyUsage propertyUsage) {
+        StringBuffer queryString =  new StringBuffer(200);
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        List<PropertyUsageSearchResult> propertyUsageSearchList= new ArrayList<PropertyUsageSearchResult>();
+        queryString.append(" from PropertyUsage PU where PU.isEnabled = 1 and PU.isResidential = :isResidential ");
+        if(StringUtils.isNotBlank(propertyUsage.getUsageName())) {
+            queryString.append(" and upper(PU.usageName) like :usageName ");
+        }
+        if(propertyUsage.getFromDate() != null ) {
+            queryString.append(" and PU.fromDate >= :fromDate ");
+        }
+        queryString.append(" order by usageName ");
+        final Query qry = entityManager.createQuery(queryString.toString());
+        qry.setParameter("isResidential", propertyUsage.getIsResidential());
+        if(StringUtils.isNotBlank(propertyUsage.getUsageName())) {
+            qry.setParameter("usageName", "%"+propertyUsage.getUsageName().toUpperCase()+"%");
+        }
+        if(propertyUsage.getFromDate() != null ) {
+            qry.setParameter("fromDate",propertyUsage.getFromDate());
+        }
+        List<PropertyUsage> propertyUsageList = qry.getResultList();
+        
+        for(PropertyUsage propertyUsageObj : propertyUsageList) {
+            PropertyUsageSearchResult propertyUsageSearchObj = new PropertyUsageSearchResult();
+            propertyUsageSearchObj.setUsageName(propertyUsageObj.getUsageName());
+            propertyUsageSearchObj.setUsageType(propertyUsageObj.getIsResidential() ? "Residential" : "Non-Residential");
+            propertyUsageSearchObj.setFromDate(dateFormat.format(propertyUsageObj.getFromDate()));
+            propertyUsageSearchObj.setToDate(dateFormat.format(propertyUsageObj.getToDate()));
+            propertyUsageSearchList.add(propertyUsageSearchObj);
+        }
+        
+        return propertyUsageSearchList;
+    }
+    
+    @ReadOnly
+    public List<PropertyUsage> getResidentialPropertyUsages(){
+        return propertyUsageRepository.findByIsResidentialTrueAndIsActiveTrueOrderByUsageName();
+    }
+    
+    @ReadOnly
+    public List<PropertyUsage> getNonResidentialPropertyUsages(){
+        return propertyUsageRepository.findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
     }
 }

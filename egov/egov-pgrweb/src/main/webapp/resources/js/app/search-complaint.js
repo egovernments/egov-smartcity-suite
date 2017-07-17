@@ -37,7 +37,13 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
+ $(document).ready(
+		function() {
+			if ($('#isMore').val() == "true") {
+				$(".form-group.show-searchcomp-more.display-hide").removeClass("display-hide");
+			}
+		});
+ 
 var tableContainer;
 	
     $('#toggle-searchcomp').click(function () {

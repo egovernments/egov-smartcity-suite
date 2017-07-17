@@ -48,6 +48,7 @@ import org.egov.pgr.repository.EscalationRepository;
 import org.egov.pims.commons.Designation;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
 import static org.junit.Assert.assertEquals;
@@ -58,46 +59,41 @@ import static org.mockito.MockitoAnnotations.initMocks;
 
 /**
  * @author Vaibhav.K
- *
  */
-public class EscalationServiceTest {    
-   
-    private EscalationService escalationService;
-    
+public class EscalationServiceTest {
+
+    private Designation designation;
+    private ComplaintType compType;
+    private Escalation escalation;
+    @InjectMocks
+    private ComplaintEscalationService escalationService;
     @Mock
     private EscalationRepository escalationRepository;
-    
-    Designation designation;
-    ComplaintType compType;
-    Escalation escalation;
-    
+
     @Before
-    public void before()
-    {
+    public void before() {
         initMocks(this);
-       escalationService=new EscalationService(escalationRepository) ;
-       sampleEscalation();
+        sampleEscalation();
     }
-    
+
     private void sampleEscalation() {
         designation = new DesignationBuilder().withName("test-desig").withId(1l).build();
         compType = new ComplaintTypeBuilder().withDefaults().build();
         escalation = new EscalationBuilder().withDesignation(designation).withComplaintType(compType).withHrs(23).build();
         escalationService.create(escalation);
     }
-    
+
     @Test
     public void createEscalation() {
         assertNotNull(escalation);
     }
-    
+
     @Test
     public void getNoOfHrs() {
-        when(escalationRepository.findByDesignationAndComplaintType(designation.getId(),compType.getId())).thenReturn((escalation));
-    
-        Integer hrsToResolve = escalationService.getHrsToResolve(designation.getId(),compType.getId());
-        assertEquals(hrsToResolve, Integer.valueOf(23));
+        when(escalationRepository.findByDesignationAndComplaintType(designation.getId(), compType.getId())).thenReturn((escalation));
+        Integer hrsToResolve = escalationService.getHrsToResolve(designation.getId(), compType.getId());
+        assertEquals(Integer.valueOf(23), hrsToResolve);
     }
 
-    
+
 }

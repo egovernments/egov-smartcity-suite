@@ -46,8 +46,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SER
 import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ALLWARDS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -58,15 +61,22 @@ import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
+import org.egov.infra.admin.master.entity.es.CityIndex;
+import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollTableData;
+import org.egov.ptis.bean.dashboard.CollectionAnalysis;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
 import org.egov.ptis.bean.dashboard.CollectionStats;
 import org.egov.ptis.bean.dashboard.CollectionTrend;
+import org.egov.ptis.bean.dashboard.DCBDetails;
+import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
 import org.egov.ptis.bean.dashboard.ReceiptTableData;
 import org.egov.ptis.bean.dashboard.ReceiptsTrend;
@@ -74,15 +84,12 @@ import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
+import org.egov.ptis.bean.dashboard.DemandVariance;
+import org.egov.ptis.bean.dashboard.WeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.service.elasticsearch.CollectionIndexElasticSearchService;
-import org.egov.ptis.service.elasticsearch.PropertyTaxElasticSearchIndexService;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.hibernate.type.StandardBasicTypes;
-import org.joda.time.DateTime;
+import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
+import org.egov.ptis.service.es.PropertyTaxElasticSearchIndexService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -95,11 +102,16 @@ import org.springframework.stereotype.Service;
 @Service
 public class PropTaxDashboardService {
 
+    private static final String MILLISECS = " (millisecs) ";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(PropTaxDashboardService.class);
 
     @PersistenceContext
     private EntityManager entityManager;
     
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
+
     @Autowired
     private CollectionIndexElasticSearchService collectionIndexElasticSearchService;
 
@@ -108,28 +120,33 @@ public class PropTaxDashboardService {
 
     @Autowired
     private SimpleRestClient simpleRestClient;
-    
+
+    @Autowired
+    private CityIndexService cityIndexService;
+
     /**
      * Gives the State-City information across all ULBs
      * 
      * @return List
      */
     public List<StateCityInfo> getStateCityDetails() {
-        String query = "select regionname as region, districtname as district, city as city, grade as grade, citycode as ulbcode from public.statecityinfo order by city ";
-        SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(query);
-        sqlQuery.addScalar("region", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("district", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("city", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("grade", StandardBasicTypes.STRING);
-        sqlQuery.addScalar("ulbCode", StandardBasicTypes.STRING);
-        sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(StateCityInfo.class));
-        List<StateCityInfo> stateCityDetails = sqlQuery.list();
+        List<StateCityInfo> stateCityDetails = new ArrayList<>();
+        StateCityInfo cityInfo;
+        Iterable<CityIndex> cities = cityIndexService.findAll();
+        for (CityIndex city : cities) {
+            cityInfo = new StateCityInfo();
+            cityInfo.setRegion(city.getRegionname());
+            cityInfo.setDistrict(city.getDistrictname());
+            cityInfo.setCity(city.getName());
+            cityInfo.setGrade(city.getCitygrade());
+            cityInfo.setUlbCode(city.getCitycode());
+            stateCityDetails.add(cityInfo);
+        }
         return stateCityDetails;
     }
 
     /**
-     * Provides State-wise Collection Statistics for Property Tax, Water Charges
-     * and Others
+     * Provides State-wise Collection Statistics for Property Tax, Water Charges and Others
      * 
      * @return CollectionStats
      */
@@ -141,7 +158,10 @@ public class PropTaxDashboardService {
         Map<String, BigDecimal> consolidatedColl = collectionIndexElasticSearchService
                 .getFinYearsCollByService(COLLECION_BILLING_SERVICE_PT);
         Long timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + " (millisecs) ");
+        CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
+
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getFinYearsCollByService() for Property Tax is : " + timeTaken + MILLISECS);
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
@@ -149,16 +169,17 @@ public class PropTaxDashboardService {
         startTime = System.currentTimeMillis();
         BigDecimal totalDmd = propertyTaxElasticSearchIndexService.getTotalDemand();
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by Property Tax getTotalDemand() is : " + timeTaken + MILLISECS);
         int noOfMonths = DateUtils
-                .noOfMonths(new DateTime().withMonthOfYear(4).dayOfMonth().withMinimumValue().toDate(), new Date()) + 1;
+                .noOfMonthsBetween(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
         consolidatedData.setTotalDmd(totalDmd.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
                 .multiply(BigDecimal.valueOf(noOfMonths)));
-        consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
+        consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(
                 (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-                        .divide(consolidatedData.getCytdColl(), 1, BigDecimal.ROUND_HALF_UP));
+                        .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedCollectionDetails.setPropertyTax(consolidatedData);
 
         // For Water Tax collections
@@ -166,20 +187,25 @@ public class PropTaxDashboardService {
         startTime = System.currentTimeMillis();
         consolidatedColl = collectionIndexElasticSearchService.getFinYearsCollByService(COLLECION_BILLING_SERVICE_WTMS);
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by getFinYearsCollByService() for Water Tax is : " + timeTaken + " (millisecs) ");
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by getFinYearsCollByService() for Water Tax is : " + timeTaken + MILLISECS);
         if (!consolidatedColl.isEmpty()) {
             consolidatedData.setCytdColl(consolidatedColl.get("cytdColln"));
             consolidatedData.setLytdColl(consolidatedColl.get("lytdColln"));
         }
         startTime = System.currentTimeMillis();
-        consolidatedData.setTotalDmd(getWaterChargeTotalDemand(request));
+        BigDecimal totalDemandValue = getWaterChargeTotalDemand(request);
+        int numberOfMonths = DateUtils.noOfMonthsBetween(DateUtils.startOfDay(currFinYear.getStartingDate()), new Date()) + 1;
+        consolidatedData.setTotalDmd(totalDemandValue.divide(BigDecimal.valueOf(12), BigDecimal.ROUND_HALF_UP)
+                .multiply(BigDecimal.valueOf(numberOfMonths)));
         timeTaken = System.currentTimeMillis() - startTime;
-        LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + " (millisecs) ");
-        consolidatedData.setPerformance((consolidatedData.getCytdColl().multiply(BIGDECIMAL_100))
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Time taken by Water Tax getTotalDemand() is : " + timeTaken + MILLISECS);
+        consolidatedData.setPerformance(consolidatedData.getCytdColl().multiply(BIGDECIMAL_100)
                 .divide(consolidatedData.getTotalDmd(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedData.setLyVar(
                 (consolidatedData.getCytdColl().subtract(consolidatedData.getLytdColl()).multiply(BIGDECIMAL_100))
-                        .divide(consolidatedData.getCytdColl(), 1, BigDecimal.ROUND_HALF_UP));
+                        .divide(consolidatedData.getLytdColl(), 1, BigDecimal.ROUND_HALF_UP));
         consolidatedCollectionDetails.setWaterTax(consolidatedData);
 
         // Other collections - temporarily set to 0
@@ -196,38 +222,47 @@ public class PropTaxDashboardService {
 
     /**
      * Gives the total demand for Water Charges
+     * 
      * @param request
      * @return BigDecimal
      */
     public BigDecimal getWaterChargeTotalDemand(final HttpServletRequest request) {
-        final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL, WebUtils.extractRequestDomainURL(request, false));
+        final String wtmsRestURL = format(PropertyTaxConstants.WTMS_TOTALDEMAND_RESTURL,
+                WebUtils.extractRequestDomainURL(request, false));
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsRestURL);
-        return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO : new BigDecimal(
-                Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
+        return waterTaxInfo.get("currentDemand") == null ? BigDecimal.ZERO
+                : new BigDecimal(Double.valueOf((Double) waterTaxInfo.get("currentDemand")));
     }
-    
+
     /**
      * Gives the Collection Index details across all ULBs
      * 
      * @param collectionDetailsRequest
      * @return CollectionIndexDetails
      */
-    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest) {
+    public CollectionDetails getCollectionIndexDetails(CollectionDetailsRequest collectionDetailsRequest, boolean isForMISReports) {
         CollectionDetails collectionIndexDetails = new CollectionDetails();
         List<CollTableData> collIndexData;
-        collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,
-                collectionIndexDetails);
-        propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest,
-                collectionIndexDetails);
-        List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
-                .getMonthwiseCollectionDetails(collectionDetailsRequest);
-        if (StringUtils.isNotBlank(collectionDetailsRequest.getType())
-                && collectionDetailsRequest.getType().equals(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
+        if (!DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+            collectionIndexElasticSearchService.getCompleteCollectionIndexDetails(collectionDetailsRequest,
+                    collectionIndexDetails);
+            propertyTaxElasticSearchIndexService.getConsolidatedDemandInfo(collectionDetailsRequest,
+                    collectionIndexDetails);
+            List<CollectionTrend> collectionTrends = collectionIndexElasticSearchService
+                    .getMonthwiseCollectionDetails(collectionDetailsRequest);
+            collectionIndexDetails.setCollTrends(collectionTrends);
+        }
+        if (StringUtils.isNotBlank(collectionDetailsRequest.getType()) && collectionDetailsRequest.getType()
+                .equalsIgnoreCase(DASHBOARD_GROUPING_BILLCOLLECTORWISE))
             collIndexData = collectionIndexElasticSearchService
                     .getResponseTableDataForBillCollector(collectionDetailsRequest);
-        else
-            collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest);
-        collectionIndexDetails.setCollTrends(collectionTrends);
+        else if (DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(collectionDetailsRequest.getType())) {
+            Iterable<CityIndex> cities = cityIndexService.findAll();
+            collIndexData = collectionIndexElasticSearchService.getWardWiseTableDataAcrossCities(collectionDetailsRequest,
+                    cities);
+        } else
+            collIndexData = collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest, isForMISReports);
+
         collectionIndexDetails.setResponseDetails(collIndexData);
         ErrorDetails errorDetails = new ErrorDetails();
         errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
@@ -290,4 +325,62 @@ public class PropTaxDashboardService {
         return propertyTaxElasticSearchIndexService.getTopDefaulters(propertyTaxDefaultersRequest);
     }
 
+    /**
+     * Provides city wise DCB details
+     * @param collectionDetailsRequest
+     * @return
+     */
+    public List<DCBDetails> getDCBDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        return propertyTaxElasticSearchIndexService.getDCBDetails(collectionDetailsRequest);
+    }
+    
+    /**
+     * Provides city wise collection details
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return list
+     */
+    public CollectionAnalysis getCollectionAnalysisData(CollectionDetailsRequest collectionDetailsRequest,
+            String intervalType) {
+        return collectionIndexElasticSearchService.getCollectionsForInterval(collectionDetailsRequest, intervalType);
+    }
+
+    /**
+     * Provides week wise DCB details for all cities
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return list
+     */
+    public List<WeeklyDCB> getWeekwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
+            String intervalType) {
+        return collectionIndexElasticSearchService.getWeekwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
+    }
+    
+    /**
+     * Provides month wise DCB details for all cities
+     * @param collectionDetailsRequest
+     * @param intervalType
+     * @return
+     */
+    public List<MonthlyDCB> getMonthwiseDCBDetails(CollectionDetailsRequest collectionDetailsRequest,
+            String intervalType) {
+        return collectionIndexElasticSearchService.getMonthwiseDCBDetailsAcrossCities(collectionDetailsRequest, intervalType);
+    }
+    
+    /**
+     * API provides Daily Target information across all cities
+     * @param collectionDetailsRequest
+     * @return CollectionDetails
+     */
+    public CollectionDetails getDailyTarget(CollectionDetailsRequest collectionDetailsRequest) {
+        CollectionDetails collectionIndexDetails = new CollectionDetails();
+        collectionIndexDetails
+                .setResponseDetails(collectionIndexElasticSearchService.getResponseTableData(collectionDetailsRequest, true));
+        return collectionIndexDetails;
+    }
+    
+    public List<DemandVariance> getDemandVariationDetails(CollectionDetailsRequest collectionDetailsRequest) {
+        return propertyTaxElasticSearchIndexService.prepareDemandVariationDetails(collectionDetailsRequest);
+    }
+   
 }

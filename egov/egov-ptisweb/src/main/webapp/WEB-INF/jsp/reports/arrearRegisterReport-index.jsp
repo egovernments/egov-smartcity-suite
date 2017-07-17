@@ -70,9 +70,8 @@
 
 	jQuery(document).ready(function(){
 		 jQuery('#localityId').change(function() {
-			console.log("came jursidiction"+jQuery('#localityId').val());
 			jQuery.ajax({
-				url: "/egi/boundary/ajaxBoundary-blockByLocality.action",
+				url: "/egi/boundary/ajaxBoundary-blockByLocality",
 				type: "GET",
 				data: {
 					locality : jQuery('#localityId').val()
@@ -92,7 +91,6 @@
 					}, 1000); 
 				}, 
 				error: function (response) {
-					console.log("failed"); 
 					jQuery('#zoneId').val('-1');
 					jQuery('#wardId').val('-1');
 					jQuery('#areaId').val('-1');

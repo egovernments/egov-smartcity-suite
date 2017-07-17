@@ -39,7 +39,10 @@
  */
 package org.egov.ptis.service.DemandBill;
 
+import java.util.Map;
+
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 
 /**
  * 
@@ -48,11 +51,16 @@ import org.egov.infra.reporting.engine.ReportOutput;
  */
 public interface DemandBillService {
 
-    public ReportOutput generateDemandBill(String assessmentNo);
+    public ReportOutput generateDemandBill(String assessmentNo, String noticeType);
     
     public void printDemandBill(String assessmentNo);
     
     public void bulkBillGeneration(Integer modulo, Integer billsCount);
     
     public void makeDemandBillInactive(String assessmentNo);
+    
+    public boolean getDemandBillByAssessmentNumber(String assessmentNo);
+    
+    public Map<String, Object> getDemandBillDetails(BasicProperty basicProperty);
+    
 }

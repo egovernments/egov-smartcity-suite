@@ -247,7 +247,7 @@ public class WorksConstants {
     // public static final String NEWCONTRACTORBILLREGISTER = "NEWCONTRACTORBILLREGISTER";
 
     // User roles
-    public static final String ROLE_SUPERUSER = "Super User";
+    public static final String ROLE_SUPERUSER = "SYSTEM";
 
     public static final String LINEESTIMATE_CREATE = "create";
     public static final String LINEESTIMATE_UPDATE = "update";
@@ -333,5 +333,7 @@ public class WorksConstants {
 
     public final static String WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME = "lineestimatedetailid";
 
-    public static final String CBR_PROCESS_DEFINITION_KEY = "contractor_bill_workflow";
+    public final static String ACTIVE = "Active";
+
+    public static final String ALPHANUMERICWITHALLSPECIALCHAR = "[0-9a-zA-Z_@./#&+-/!(){}\",^$%*|=;:<>?`~ ]+";
 }

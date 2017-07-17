@@ -44,6 +44,7 @@ import java.text.ParseException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.wtms.application.entity.GenerateConnectionBill;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -59,10 +60,12 @@ import org.springframework.transaction.annotation.Transactional;
 public class GenerateConnectionBillService {
 
     @Qualifier("entityQueryService")
-    private @Autowired PersistenceService entityQueryService;
+    @Autowired
+    private PersistenceService entityQueryService;
 
     private static final Logger LOGGER = Logger.getLogger(GenerateConnectionBillService.class);
 
+    @ReadOnly
     public List<GenerateConnectionBill> getBillReportDetails(final String zone, final String ward,
             final String propertyType, final String applicationType, final String connectionType,
             final String consumerCode, final String houseNumber, final String assessmentNumber) throws ParseException {
@@ -70,11 +73,15 @@ public class GenerateConnectionBillService {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
                 "select distinct dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\",dcbinfo.propertyid as \"assessmentNo\",dcbinfo.demanddocumentnumber as \"fileStoreID\",");
-        queryStr.append("dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
-        queryStr.append( " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_bill_view dcbinfo");
-        queryStr.append( " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
-        queryStr.append( " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand");
-        queryStr.append( " INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
+        queryStr.append(
+                "dcbinfo.houseno as \"houseNumber\" , localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
+        queryStr.append(
+                " dcbinfo.connectiontype as  \"connectionType\" , bill.bill_no as \"billNo\" , bill.issue_date as \"billDate\" from egwtr_mv_bill_view dcbinfo");
+        queryStr.append(
+                " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+        queryStr.append(
+                " INNER JOIN eg_bill bill on dcbinfo.hscno = bill.consumer_id and dcbinfo.demand= bill.id_demand");
+        queryStr.append(" INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid = zoneboundary.id ");
         queryStr.append(" where dcbinfo.connectionstatus = '" + ConnectionStatus.ACTIVE.toString() + "' ");
         queryStr.append(" and bill.module_id = (select id from eg_module where name ='Water Tax Management')");
         queryStr.append(" and bill.id_bill_type = (select id from eg_bill_type  where code ='MANUAL')");

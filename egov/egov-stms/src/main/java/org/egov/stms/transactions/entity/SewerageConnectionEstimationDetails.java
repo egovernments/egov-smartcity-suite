@@ -81,28 +81,27 @@ public class SewerageConnectionEstimationDetails extends AbstractAuditable {
     @Length(max = 1024)
     private String itemDescription;
 
-    private double unitRate;
+    private Double unitRate;
 
     @NotNull
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "unitofmeasurement", nullable = false)
     private UOM unitOfMeasurement;
 
-    private double quantity;
-    
-    @NotNull
-    private BigDecimal amount; 
+    private Double quantity;
 
-    //TEMPORARY variable
+    @NotNull
+    private BigDecimal amount;
+
+    // TEMPORARY variable
     @Transient
     private String mode;
-    
-    
+
     public String getMode() {
         return mode;
     }
 
-    public void setMode(String mode) {
+    public void setMode(final String mode) {
         this.mode = mode;
     }
 
@@ -132,19 +131,19 @@ public class SewerageConnectionEstimationDetails extends AbstractAuditable {
         this.itemDescription = itemDescription;
     }
 
-    public double getUnitRate() {
+    public Double getUnitRate() {
         return unitRate;
     }
 
-    public void setUnitRate(final double unitRate) {
+    public void setUnitRate(final Double unitRate) {
         this.unitRate = unitRate;
     }
 
-    public double getQuantity() {
+    public Double getQuantity() {
         return quantity;
     }
 
-    public void setQuantity(final double quantity) {
+    public void setQuantity(final Double quantity) {
         this.quantity = quantity;
     }
 
@@ -152,7 +151,7 @@ public class SewerageConnectionEstimationDetails extends AbstractAuditable {
         return amount;
     }
 
-    public void setAmount(BigDecimal amount) {
+    public void setAmount(final BigDecimal amount) {
         this.amount = amount;
     }
 
@@ -160,7 +159,7 @@ public class SewerageConnectionEstimationDetails extends AbstractAuditable {
         return unitOfMeasurement;
     }
 
-    public void setUnitOfMeasurement(UOM unitOfMeasurement) {
+    public void setUnitOfMeasurement(final UOM unitOfMeasurement) {
         this.unitOfMeasurement = unitOfMeasurement;
     }
 

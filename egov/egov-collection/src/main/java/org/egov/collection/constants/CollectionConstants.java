@@ -39,6 +39,8 @@
  */
 package org.egov.collection.constants;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.TreeMap;
 
 import org.egov.services.instrument.InstrumentService;
@@ -150,12 +152,15 @@ public final class CollectionConstants {
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_FUNCTIONCODE = "COLLECTION_BANKREMITTANCE_FUNCTIONCODE";
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE = "COLLECTION_BANKREMITTANCE_SHOWCOLUMNSCARDONLINE";
     public static final String APPCONFIG_VALUE_COLLECTION_BANKREMITTANCE_SHOWREMITDATE = "COLLECTION_BANKREMITTANCE_SHOWREMITDATE";
-    public static final String APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE= "COLLECTIONDATAENTRYCUTOFFDATE";
+    public static final String APPCONFIG_VALUE_COLLECTIONDATAENTRYCUTOFFDATE = "COLLECTIONDATAENTRYCUTOFFDATE";
+    public static final String APPCONFIG_VALUE_COLLECTIONSOURCEDEBITACCOUNTHEAD = "COLLECTIONSOURCEDEBITACCOUNTHEAD";
+    public static final String APPCONFIG_VALUE_ROLES_CREATERECEIPT_APPROVEDSTATUS = "ROLES_CREATERECEIPT_APPROVEDSTATUS";
+    public static final String APPCONFIG_VALUE_COLLECTIONCREATORRECEIPTCANCELROLE = "COLLECTIONCREATORRECEIPTCANCELROLE";
 
     // named queries (collections)
     public static final String QUERY_RECEIPTS_FOR_VOUCHERS = "RECEIPTS_FOR_VOUCHERS";
     public static final String QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER = "QUERY_RECEIPTDETAIL_BY_RECEIPTNUMBER";
-    public static final String QUERY_RECEIPT_VOUCHER_BY_RECEIPTID="RECEIPT_VOUCHER_BY_RECEIPTID";
+    public static final String QUERY_RECEIPT_VOUCHER_BY_RECEIPTID = "RECEIPT_VOUCHER_BY_RECEIPTID";
 
     public static final String QUERY_RECEIPTS_FOR_BOUNCED_INSTRUMENTS = "RECEIPTS_FOR_BOUNCED_INSTRUMENTS";
     // public static final String QUERY_RECEIPTS_FOR_PAYEEDETAIL =
@@ -196,6 +201,7 @@ public final class CollectionConstants {
     public static final String QUERY_SERVICE_BY_CODE = "getServiceByCode";
     public static final String QUERY_INSTRUMENTTYPE_BY_TYPE = "getInstrumentTypeByType";
     public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE = "getChartofAccountByInstrumentType";
+    public static final String QUERY_CHARTOFACCOUNT_BY_INSTRTYPE_SERVICE = "getCOAByInstrumentTypeAndService";
     public static final String QUERY_ALLCOUNTERS = "getAllCounters";
     public static final String QUERY_ZONE_OF_RECEIPTS = "getAllReceiptBoundary";
     public static final String QUERY_SERVICE_BY_NAME = "getServicesByName";
@@ -221,6 +227,7 @@ public final class CollectionConstants {
     public static final String QUERY_GET_LOCATIONBYID = "getLocationById";
     public static final String QUERY_GET_CONTRAVOUCHERBYVOUCHERHEADERID = "getContraVoucherbyVoucherHeaderId";
     public static final String QUERY_GET_INSTRUMENTHEADER_BY_ID = "INSTRUMENTHEADERBYID";
+    public static final String QUERY_CREATEDBYUSERS_OF_PAYMENT_RECEIPTS = "CREATEDBYUSERS_OF_PAYMENT_RECEIPTS";
 
     // Workflow actions
     public static final String WF_ACTION_CREATE_RECEIPT = "Create Receipt";
@@ -274,13 +281,9 @@ public final class CollectionConstants {
     public static final String FINANCIAL_CONTRAVOUCHER_VOUCHERTYPE = FinancialConstants.STANDARD_VOUCHER_TYPE_CONTRA;
     public static final String FINANCIAL_CONTRATVOUCHER_VOUCHERNAME = FinancialConstants.CONTRAVOUCHER_NAME_PAYIN;
 
-    // Name of session variable that contains currently logged in user name
-    public static final String SESSION_VAR_LOGIN_USER_NAME = "com.egov.user.LoginUserName";
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
     public static final String SUPER_USER_NAME = "egovernments";
     public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
-
-    public static final String CITIZEN_USER_NAME = "9999999999";
 
     // Separators
     public static final String SEPARATOR_HYPHEN = "-";
@@ -324,7 +327,8 @@ public final class CollectionConstants {
     public static final String PURPOSE_NAME_CREDIT_CARD = "Credit Card";
     public static final String PURPOSE_NAME_ATM_ACCOUNTCODE = "ATM ACCOUNT CODE";
     public static final String PURPOSE_NAME_INTERUNITACCOUNT = "Inter-Unit Transfer Account";
-
+    public static final String PURPOSE_NAME_REBATE = "REBATE";
+    
     // Bank Remittance
     public static final String BANKREMITTANCE_SERVICETOTALCASHAMOUNT = "SERVICETOTALCASHAMOUNT";
     public static final String BANKREMITTANCE_SERVICETOTALCHEQUEAMOUNT = "SERVICETOTALCHEQUEAMOUNT";
@@ -358,6 +362,9 @@ public final class CollectionConstants {
     public static final String SERVICECODE_PROPERTYTAX = "PT";
     public static final String SERVICECODE_PROFESSIONALTAX = "PRFT";
     public static final String SERVICECODE_AXIS = "AXIS";
+    public static final String SERVICECODE_SBIMOPS = "SBIMOPS";
+    
+    public static final String SERVICECODE_LAMS = "LAMS";
 
     // Online Payment Statuses
     public static final String ONLINEPAYMENT_STATUS_CODE_PENDING = "ONLINE_STATUS_PENDING";
@@ -518,6 +525,21 @@ public final class CollectionConstants {
     public static final String AXIS_CHECK_DR_EXISTS = "vpc_DRExists";
     public static final String AXIS_ABORTED_AUTH_STATUS = "A";
 
+    // SBIMOPS payment gateway variables
+    public static final String SBIMOPS_DEPTCODE = "deptcode";
+    public static final String SBIMOPS_DDCODE = "ddocode";
+    public static final String SBIMOPS_HOA = "hoa";
+    public static final String SBIMOPS_DEPTTRANSID = "depttransid";
+    public static final String SBIMOPS_REMITTER_NAME = "remittersname";
+    public static final String SBIMOPS_TAMOUNT = "tamount";
+    public static final String SBIMOPS_MD = "MD";
+    public static final String SBIMOPS_DRU = "dru";
+    public static final String SBIMOPS_BANKSTATUS = "bankstatus";
+    public static final String SBIMOPS_BANK_DATE = "bankdate";
+    public static final String SBIMOPS_BANK_AMOUNT = "bankamount";
+    public static final String SBIMOPS_BANK_NAME = "bankname";
+    public static final String SBIMOPS_UAMOUNT = "uamount";
+
     // This is an array for creating hex chars
     public static final char[] AXIS_HEX_TABLE = new char[] { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'A',
             'B', 'C', 'D', 'E', 'F' };
@@ -571,7 +593,30 @@ public final class CollectionConstants {
         }
     };
 
-    public static final char[] REVENUEHEADS=new char[] {'I','A','L'};
+    public static final char[] REVENUEHEADS = new char[] { 'I', 'A', 'L' };
     public static final Integer DEFAULT_PAGE_SIZE = 30;
     public static final Integer QUARTZ_BULKBILL_JOBS = 2;
+
+    public static final String DATE_FORMAT_YYYYMMDD = "yyyy-MM-dd";
+    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat(DATE_FORMAT_YYYYMMDD);
+
+    public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
+    public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
+    public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
+    public static final String DASHBOARD_GROUPING_GRADEWISE = "grade";
+    public static final String DASHBOARD_GROUPING_WARDWISE = "ward";
+    public static final String DASHBOARD_GROUPING_CITYWISE = "city";
+    public static final String COLLECTION_INDEX_NAME = "receipts";
+    public static final BigDecimal BIGDECIMAL_100 = BigDecimal.valueOf(100);
+    public static final String DISTINCT_SERVICE_DETAILS = "DISTINCT_SERVICE_DETAILS";
+    public static final String DASHBOARD_OTHERS = "OTHERS";
+
+    public static final String BANK_COLLECTION_OPERATOR = "Bank Collection Operator";
+    public static final String BANK_COLLECTION_REMITTER = "BANK COLLECTION REMITTER";
+    public static final String QUERY_ACTIVE_BRANCHUSER_BY_USER = "QUERY_ACTIVE_BRANCHUSER_BY_USER";
+    public static final String QUERY_BRANCHUSER_BRANCH = "QUERY_BRANCHUSER_BRANCH";
+    public static final String QUERY_RECEIPT_BRANCH = "getAllReceiptBranch";
+    public static final String QUERY_ACTIVE_BRANCHUSER = "QUERY_ACTIVE_BRANCHUSER";
+    public static final String QUERY_ALL_BRANCHUSER = "QUERY_ALL_BRANCHUSER";
+
 }

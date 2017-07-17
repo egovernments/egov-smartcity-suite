@@ -1,41 +1,41 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *     accountability and the service delivery of the government  organizations.
+ * accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2016  eGovernments Foundation
  *
- *      The updated version of eGov suite of products as by eGovernments Foundation
- *      is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *      This program is free software: you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation, either version 3 of the License, or
- *      any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *      This program is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with this program. If not, see http://www.gnu.org/licenses/ or
- *      http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *      In addition to the terms of the GPL license to be adhered to in using this
- *      program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *          1) All versions of this program, verbatim or modified must carry this
- *             Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *          2) Any misrepresentation of the origin of the material is prohibited. It
- *             is required that all modified versions of this material be marked in
- *             reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *          3) This license does not grant any rights to any user of the program
- *             with regards to rights under trademark law for use of the trade names
- *             or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
- *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.infra.elasticsearch.entity;
@@ -58,6 +58,7 @@ import javax.validation.constraints.NotNull;
 import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.DateUtils;
 import org.hibernate.validator.constraints.Length;
 
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
@@ -91,12 +92,15 @@ public class ApplicationIndex extends AbstractAuditable {
     private String applicationType;
 
     @NotNull
-    @Length(max = 100)
+    @Length(max = 250)
     private String applicantName;
 
     @Length(max = 250)
     private String applicantAddress;
 
+    /*
+     * Actual Disposal Date which should be updated when application is closed
+     */
     private Date disposalDate;
 
     @NotNull
@@ -113,7 +117,7 @@ public class ApplicationIndex extends AbstractAuditable {
     @Length(min = 10, max = 50)
     private String mobileNumber;
 
-    private String ownername;
+    private String ownerName;
 
     @Length(min = 10, max = 50)
     private String aadharNumber;
@@ -148,6 +152,10 @@ public class ApplicationIndex extends AbstractAuditable {
     private String regionName;
 
     private Integer isClosed;
+
+    private Integer sla;
+
+    private Integer slaGap;
 
     public static Builder builder() {
         return new Builder();
@@ -217,6 +225,10 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public Date getDisposalDate() {
+        if (closed.name().equals(ClosureStatus.YES.toString()))
+            disposalDate = new Date();
+        else if (closed.name().equals(ClosureStatus.NO.toString()))
+            disposalDate = null;
         return disposalDate;
     }
 
@@ -274,12 +286,12 @@ public class ApplicationIndex extends AbstractAuditable {
         this.mobileNumber = mobileNumber;
     }
 
-    public String getOwnername() {
-        return ownername;
+    public String getOwnerName() {
+        return ownerName;
     }
 
-    public void setOwnername(final String ownername) {
-        this.ownername = ownername;
+    public void setOwnerName(final String ownerName) {
+        this.ownerName = ownerName;
     }
 
     public String getAadharNumber() {
@@ -291,6 +303,10 @@ public class ApplicationIndex extends AbstractAuditable {
     }
 
     public Integer getElapsedDays() {
+        if (closed.name().equals(ClosureStatus.YES.toString()))
+            elapsedDays = DateUtils.daysBetween(getCreatedDate(), disposalDate);
+        else if (closed.name().equals(ClosureStatus.NO.toString()))
+            elapsedDays = DateUtils.daysBetween(getCreatedDate(), new Date());
         return elapsedDays;
     }
 
@@ -305,9 +321,9 @@ public class ApplicationIndex extends AbstractAuditable {
     public void setClosed(final ClosureStatus closed) {
         this.closed = closed;
         if (this.closed.toString().equals(ClosureStatus.YES.toString()))
-            setIsClosed(0);
-        else
             setIsClosed(1);
+        else
+            setIsClosed(0);
     }
 
     public ApprovalStatus getApproved() {
@@ -359,6 +375,22 @@ public class ApplicationIndex extends AbstractAuditable {
         this.cityGrade = cityGrade;
     }
 
+    public Integer getSla() {
+        return sla;
+    }
+
+    public void setSla(final Integer sla) {
+        this.sla = sla;
+    }
+
+    public Integer getSlaGap() {
+        return slaGap;
+    }
+
+    public void setSlaGap(final Integer slaGap) {
+        this.slaGap = slaGap;
+    }
+
     public static final class Builder {
         private String moduleName;
         private String applicationNumber;
@@ -373,15 +405,11 @@ public class ApplicationIndex extends AbstractAuditable {
         private String mobileNumber;
         private String ownerName;
         private String aadharNumber;
-        private Integer elapsedDays;
+        private Integer elapsedDays = 0;
         private ClosureStatus closed;
         private ApprovalStatus approved;
         private String channel;
-        private String cityCode;
-        private String cityName;
-        private String cityGrade;
-        private String districtName;
-        private String regionName;
+        private Integer sla = 0;
 
         private Builder() {
         }
@@ -471,28 +499,8 @@ public class ApplicationIndex extends AbstractAuditable {
             return this;
         }
 
-        public Builder withCityCode(final String cityCode) {
-            this.cityCode = cityCode;
-            return this;
-        }
-
-        public Builder withCityName(final String cityName) {
-            this.cityName = cityName;
-            return this;
-        }
-
-        public Builder withCityGrade(final String cityGrade) {
-            this.cityGrade = cityGrade;
-            return this;
-        }
-
-        public Builder withDistrictName(final String districtName) {
-            this.districtName = districtName;
-            return this;
-        }
-
-        public Builder withRegionName(final String regionName) {
-            this.regionName = regionName;
+        public Builder withSla(final Integer sla) {
+            this.sla = sla;
             return this;
         }
 
@@ -509,18 +517,15 @@ public class ApplicationIndex extends AbstractAuditable {
             applicationIndex.setUrl(url);
             applicationIndex.setConsumerCode(consumerCode);
             applicationIndex.setMobileNumber(mobileNumber);
-            applicationIndex.setOwnername(ownerName);
+            applicationIndex.setOwnerName(ownerName);
             applicationIndex.setAadharNumber(aadharNumber);
             applicationIndex.setElapsedDays(elapsedDays);
             applicationIndex.setClosed(closed);
             applicationIndex.setApproved(approved);
             applicationIndex.setChannel(channel);
-            applicationIndex.setCityCode(cityCode);
-            applicationIndex.setCityName(cityName);
-            applicationIndex.setCityGrade(cityGrade);
-            applicationIndex.setDistrictName(districtName);
-            applicationIndex.setRegionName(regionName);
             applicationIndex.setClosed(closed);
+            applicationIndex.setSla(sla);
+            applicationIndex.setSlaGap(elapsedDays - sla);
             return applicationIndex;
         }
     }

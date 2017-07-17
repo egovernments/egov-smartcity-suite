@@ -50,31 +50,39 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
 
-@Service 
+
+@Service
 @Transactional(readOnly = true)
-public class NatureOfBusinessService  {
+public class NatureOfBusinessService {
 
-	private final NatureOfBusinessRepository natureOfBusinessRepository;
+    private final NatureOfBusinessRepository natureOfBusinessRepository;
 
-	@Autowired
-	public NatureOfBusinessService(final NatureOfBusinessRepository natureOfBusinessRepository) {
-		this.natureOfBusinessRepository = natureOfBusinessRepository;
-	}
+    @Autowired
+    public NatureOfBusinessService(final NatureOfBusinessRepository natureOfBusinessRepository) {
+        this.natureOfBusinessRepository = natureOfBusinessRepository;
+    }
 
-	@Transactional
-	public NatureOfBusiness create(final NatureOfBusiness natureOfBusiness) {
-		return natureOfBusinessRepository.save(natureOfBusiness);
-	} 
-	@Transactional
-	public NatureOfBusiness update(final NatureOfBusiness natureOfBusiness) {
-		return natureOfBusinessRepository.save(natureOfBusiness);
-	} 
-	public List<NatureOfBusiness> findAll() {
-		return natureOfBusinessRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
-	}
+    @Transactional
+    public NatureOfBusiness create(final NatureOfBusiness natureOfBusiness) {
+        return natureOfBusinessRepository.save(natureOfBusiness);
+    }
+
+    @Transactional
+    public NatureOfBusiness update(final NatureOfBusiness natureOfBusiness) {
+        return natureOfBusinessRepository.save(natureOfBusiness);
+    }
+
+    public List<NatureOfBusiness> getNatureOfBusinesses() {
+        return natureOfBusinessRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    }
 
     public NatureOfBusiness getNatureOfBusinessByName(String name) {
         return natureOfBusinessRepository.findByName(name);
+    }
+
+    public NatureOfBusiness getPermanentBusinessNature() {
+        return getNatureOfBusinessByName(PERMANENT_NATUREOFBUSINESS);
     }
 }

@@ -37,201 +37,96 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-function validatePan(panField) {
-	var panValue =panField.value;	  
-	var regex1=/^[A-Z]{5}\d{4}[A-Z]{1}$/;
-	
-	if(!regex1.test(panValue)) {
-		bootbox.alert('Please enter a valid PAN');
-	  panField.value = "";
-	  return false;
-	}
-}
-function numbersonly(myfield, e) {
-	var key;
-	var keychar;
 
-	if (window.event)
-		key = window.event.keyCode;
-	else if (e)
-		key = e.which;
-	else
-		return true;
-	keychar = String.fromCharCode(key);
-
-	// control keys
-	if ((key == null) || (key == 0) || (key == 8) || (key == 9) || (key == 13)
-			|| (key == 27))
-		return true;
-
-	// numbers
-	else if ((("0123456789").indexOf(keychar) > -1))
-		return true;
-	else
-		return false;
-}
-
-function setupAjaxDivision(elem) {
-	zone_id = elem.options[elem.selectedIndex].value;
-	populatedivision({
-		zoneId : zone_id
-	});
-}
-function setupAjaxArea(elem) {
-	// will be uncommented once area is loaded
-	// wardid=elem.options[elem.selectedIndex].value;
-	// populatearea({divisionId:wardid});
-}
-
-function setupLicenseeAjaxDivision(elem) {
-	zone_id = elem.options[elem.selectedIndex].value;
-	populatelicenseedivision({
-		zoneId : zone_id
-	});
-}
-function setupLicenseeAjaxArea(elem) {
-	// will be uncommented once area is loaded
-	// wardid=elem.options[elem.selectedIndex].value;
-	// populatearea({divisionId:wardid});
-}
-
-function waterMarkTextIn(styleId, value) {
-	var txt = document.getElementById(styleId).value;
-	if (txt == value) {
-		document.getElementById(styleId).value = '';
-		document.getElementById(styleId).style.color = '';
-	}
-}
-
-function waterMarkTextOut(styleId, value) {
-	var txt = document.getElementById(styleId).value;
-	if (txt == '') {
-		document.getElementById(styleId).value = value;
-		document.getElementById(styleId).style.color = 'DarkGray';
-	}
-}
-
-function waterMarkInitialize(styleId, value) {
-	if (document.getElementById(styleId).value == '') {
-		document.getElementById(styleId).value = value;
-		document.getElementById(styleId).style.color = 'DarkGray';
-	}
-}
-
-function chkNum(obj, checkAssessee) {
-	obj.value = obj.value.replace(/[^0-9]/g, '') // numbers only
-	if (checkAssessee) {
-		checkAssesseeExists();
-	}
-}
-function chkNum(obj) {
-	obj.value = obj.value.replace(/[^0-9]/g, '') // numbers only
-}
-function chkDecimal(obj) {
-	obj.value = obj.value.replace(/[^0-9.]/g, '') // numbers only
-	obj.value = obj.value.replace(/[.]+/g, '.')
-}
-
-function showDocumentManager() {
-	var docNum = document.getElementById("docNumber").value;
-	showDocumentManagerView(docNum);
-}
-
-function showDocumentManagerForDoc(docId) {
-	var docNum = document.getElementById(docId).value;
-	showDocumentManagerView(docNum);
-}
-
-function showDocumentManagerView(docNumber) {
-	var url;
-	if (docNumber == null || docNumber == '' || docNumber == 'To be assigned' || docNumber == 'null') {
-		url = "/egtradelicense/citizen/uploaddocument/uploadDocumentLicense.action?moduleName=egtradelicense";
-	} else {
-		url = "/egtradelicense/citizen/uploaddocument/uploadDocumentLicense-editDocument.action?docNumber="+ docNumber + "&moduleName=egtradelicense";
-	}
-	window.open(url, 'docupload', 'width=1000,height=400');
-}
-
-var currentDocId = null;
-function docNumberUpdater(docNumber) {
-	if (currentDocId != null) {
-		document.getElementById(currentDocId).value = docNumber;
-		currentDocId=null;
+function refreshInbox() {
+    if (opener && opener.top.document.getElementById('inboxframe')) {
+        opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
+    } else if (opener && opener.opener && opener.opener.top.document.getElementById('inboxframe')) {
+        opener.opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
     }
 }
 
-function updateCurrentDocId(docId) {
-	currentDocId = docId;
-}
+$(document).ready(function () {
 
-function refreshInbox() {		
-	if(opener && opener.top.document.getElementById('inboxframe')) {
-		opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-	} else if (opener && opener.opener && opener.opener.top.document.getElementById('inboxframe')) {
-		opener.opener.top.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
-	}
-}
+    $('form').validate({
+        ignore: [],
+        invalidHandler: function (e, validator) {
+            if (validator.errorList.length)
+                $('#settingstab a[href="#' +
+                    $(validator.errorList[0].element).closest(".tab-pane").attr('id') + '"]').tab('show');
+            validator.errorList[0].element.focus();
+        }
+    });
 
-function numbersforamount(myfield, e)
-{
-	var key;
-	var keychar;
+    $('#category').change(function () {
+        var val = $(this).val();
+        if (val !== '') {
+            var results = [];
+            $.ajax({
+                type: "GET",
+                url: '/tl/licensesubcategory/by-category',
+                data: {categoryId: val},
+                dataType: "json",
+                success: function (data) {
+                    $.each(data, function (i) {
+                        var obj = {};
+                        obj['id'] = data[i]['id']
+                        obj['text'] = data[i]['name'];
+                        results.push(obj);
+                    });
+                    select2initialize($("#subCategory"), results, false);
+                },
+                error: function () {
+                    bootbox.alert('something went wrong on server');
+                }
+            });
+        }
+    });
 
-	if (window.event)
-		key = window.event.keyCode;
-	else if (e)
-		key = e.which;
-	else
-		return true;
-	keychar = String.fromCharCode(key);
+    var patern = /[^a-zA-Z0-9 _./(),-]/g;
 
-	// control keys
-	if ((key==null) || (key==0) || (key==8) || 
-			(key==9) || (key==13) || (key==27) )
-		return true;
+    $('.newpatternvalidation').on("input", function () {
 
-	// numbers
-	else if (((".0123456789").indexOf(keychar) > -1))
-		return true;
-	else
-		return false;
-}
+        if ($(this).val().match(patern)) {
+            $(this).val($(this).val().replace(patern, ''));
+        }
 
-function lessThanOrEqualToCurrentDate(dt) {
-	if(dt.value == "") {
-		return;
-	}
-	var selectedDate = dt.value.split("/");
-	var currentDate = new Date();
-	var date = new Date(selectedDate[2],eval(selectedDate[1]-1),selectedDate[0],currentDate.getHours(),currentDate.getMinutes(),currentDate.getSeconds() ,currentDate.getMilliseconds())
-	if(date >  currentDate ) {
-		bootbox.alert("Application Date should be less than or equal to today!");
-		dt.value = "";
-		return false;
-	}
-}
-
-
-jQuery(document).ready(function () {
-    jQuery('#category').change(function () {
-        jQuery.ajax({
-            url: "/tl/licensesubcategory/subcategories-by-category",
-            type: "GET",
-            data: {
-                categoryId: jQuery('#category').val()
-            },
-            dataType: "json",
-            success: function (response) {
-                var subCategory = jQuery('#subCategory');
-                subCategory.find("option:gt(0)").remove();
-                jQuery.each(response, function (index, value) {
-                    subCategory.append(jQuery('<option>').text(value.name).attr('value', value.id));
-                });
-            },
-            error: function (response) {
-                console.log("failed");
-            }
-
-        });
     });
 });
+
+function downloadDigisignedLicenseCertificate(signedFileStoreId) {
+    var params = [
+        'height=' + screen.height,
+        'width=' + screen.width,
+        'fullscreen=yes'
+    ].join(',');
+    window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?signedFileStoreId=' + signedFileStoreId, "NoticeWindow", params);
+}
+
+function showMessage(id, msg) {
+    $('#' + id).show();
+    $('#' + id).text(msg);
+}
+function clearMessage(id) {
+    $('#' + id).hide();
+    $('#' + id).text('');
+}
+
+function isValidEmailAddress(emailAddress) {
+    var pattern = /^([a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+(\.[a-z\d!#$%&'*+\-\/=?^_`{|}~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]+)*|"((([ \t]*\r\n)?[ \t]+)?([\x01-\x08\x0b\x0c\x0e-\x1f\x7f\x21\x23-\x5b\x5d-\x7e\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|\\[\x01-\x09\x0b\x0c\x0d-\x7f\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]))*(([ \t]*\r\n)?[ \t]+)?")@(([a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\d\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.)+([a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]|[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF][a-z\d\-._~\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF]*[a-z\u00A0-\uD7FF\uF900-\uFDCF\uFDF0-\uFFEF])\.?$/i;
+    return pattern.test(emailAddress);
+};
+
+function toggleFields(flag, excludedFields) {
+    for (var i = 0; i < document.forms[0].length; i++) {
+        document.forms[0].elements[i].disabled = flag;
+    }
+    for (var j = 0; j < excludedFields.length; j++) {
+        if ($('#' + excludedFields[j])) {
+            //Since id can contains space and special character jquery can find by id
+            var element = document.getElementById(excludedFields[j]);
+            $(element).removeAttr("disabled");
+        }
+    }
+}
+

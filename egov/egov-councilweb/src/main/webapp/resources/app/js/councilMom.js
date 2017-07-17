@@ -44,13 +44,6 @@ jQuery('#btnsearch').click(function(e) {
 	});
 
 
-$('form').keypress(function (e) {
-    if (e.which == 13) {
-    	e.preventDefault();
-    	callAjaxSearch();
-    }
-}); 
-
 function getFormData($form){
     var unindexed_array = $form.serializeArray();
     var indexed_array = {};
@@ -71,7 +64,15 @@ function callAjaxSearch() {
 				ajax : {
 					url : "/council/councilmeeting/searchmeeting-tocreatemom",      
 					type: "POST",
-					"data":  getFormData(jQuery('form'))
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},
 				"bDestroy" : true,
 				"autoWidth": false,
@@ -90,12 +91,12 @@ function callAjaxSearch() {
 "data" : "meetingDate", "sClass" : "text-left"},{
 "data" : "meetingLocation", "sClass" : "text-left"},{
 "data" : "meetingTime", "sClass" : "text-left"}
-,{ "data" : null, "target":-1,
+,{ "data" : null, "sClass" : "text-center", "target":-1,
 	
     sortable: false,
     "render": function ( data, type, full, meta ) {
           	
-          	return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;Create MOM</button>';
+          	return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Create MOM</button>';
     }
 }
 ,{ "data": "id", "visible":false }
@@ -104,13 +105,10 @@ function callAjaxSearch() {
 			}
 
 
-
 $("#resultTable").on('click','tbody tr td  .view',function(event) {
 	var id = reportdatatable.fnGetData($(this).parent().parent(),6);
 	window.open('/council/councilmom/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
 });
-
-
 
 String.prototype.compose = (function (){
 	   var re = /\{{(.+?)\}}/g;
@@ -125,11 +123,11 @@ var tbody = $('#sumotoTable').children('tbody');
 var table = tbody.length ? tbody : $('#sumotoTable');
 
 var row = '<tr>'+
- '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required"> <option value="">Loading...</option></select></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
- '<td><input type="text" class="form-control" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].resolutionDetail"  value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
- '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control" required="required"><option value="">Loading...</option></select></td>'+
+ '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
+ '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
+ '<td><input type="text" class="form-control text-left patternvalidation" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
+ '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'+
+ '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meetingMOMs[{{idx}}].resolutionDetail" maxlength="5000" value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
 '</tr>';
 
 jQuery('#add-sumoto').click(function(){
@@ -137,8 +135,6 @@ jQuery('#add-sumoto').click(function(){
 	
 	var idx=$(tbody).data('existing-len')+$(tbody).find('tr').length;
 	var sno=idx+1;
-	
-	console.log('Row Idx', idx);
 	
 //Add row
 	var row={
@@ -154,15 +150,12 @@ jQuery('#add-sumoto').click(function(){
 //ajax call 
 function loadDepartmentlist(selectBoxName){
 
-console.log('selectboxName', selectBoxName);
-
  $.ajax({
 		url: "/council/councilmom/departmentlist",     
 		type: "GET",
 		async: false,
 		dataType: "json",
 		success: function (response) {
-		    console.log("success", response);
 			$('select[name="'+selectBoxName+'"]').empty();
 			$('select[name="'+selectBoxName+'"]').append($("<option value=''>Select </option>"));
 			$.each(response.departmentLists, function(index, departmentLists) {
@@ -170,11 +163,8 @@ console.log('selectboxName', selectBoxName);
 			});
 		}, 
 		error: function (response) {
-			console.log("failed");
 		}
 	});
- 
- 
 }
 
 function loadResolutionlist(selectBoxNameResolution){
@@ -185,7 +175,6 @@ function loadResolutionlist(selectBoxNameResolution){
 			async: false,
 			dataType: "json",
 			success: function (response) {
-			    console.log("success", response);
 				$('select[name="'+selectBoxNameResolution+'"]').empty();
 				$('select[name="'+selectBoxNameResolution+'"]').append($("<option value=''>Select </option>"));
 				$.each(response.resolutionLists, function(index, resolutionLists) {
@@ -193,11 +182,8 @@ function loadResolutionlist(selectBoxNameResolution){
 				});
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
-	 
-	 
 	}
 
 function loadWardnumberlist(selectBoxNameWard){
@@ -208,7 +194,6 @@ function loadWardnumberlist(selectBoxNameWard){
 			async: false,
 			dataType: "json",
 			success: function (response) {
-			    console.log("success", response);
 				$('select[name="'+selectBoxNameWard+'"]').empty();
 				$('select[name="'+selectBoxNameWard+'"]').append($("<option value=''>Select </option>"));
 				$.each(response.wardLists, function(index, wardLists) {
@@ -216,7 +201,6 @@ function loadWardnumberlist(selectBoxNameWard){
 				});
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
 	 
@@ -225,11 +209,8 @@ function loadWardnumberlist(selectBoxNameWard){
 
 function addRowFromObject(rowJsonObj)
 {
-	console.log("Row composed", row.compose(rowJsonObj));
 	table.append(row.compose(rowJsonObj));
 }
-
-
 
 $(document).ready(function() {
 	    
@@ -265,8 +246,12 @@ $(document).ready(function() {
 });
 
 $('#buttonFinalSubmit')
-.click(
-		function(e) {
+		.click(
+				function(e) {
+					var obj = $(this);
+					// When we updating mom details only few fields is mandatory but in case of
+					// generating final resolution pdf all fields are mandatory
+					$('.addorremoverequired').attr("required", "required");
 					if ($('form').valid()) {
 							bootbox
 							.confirm({
@@ -283,8 +268,14 @@ $('#buttonFinalSubmit')
 								},
 								callback : function(result) {
 									if (result) {
+										$('.loader-class').modal('show', {
+											backdrop : 'static'
+										});
+										// To disable MOM Resolution PDF button after submit form,
+										// to prevent multiple submission.
+										obj.attr('disabled','disabled');
 										 var action = '/council/councilmom/generateresolution';
-								 			$('#councilMomform').attr('method', 'get');
+								 			$('#councilMomform').attr('method', 'post');
 								 			$('#councilMomform').attr('action', action); 
 								 			document.forms["councilMomform"].submit();
 									} else {
@@ -299,3 +290,20 @@ $('#buttonFinalSubmit')
 			}
 });
 
+
+$('#buttonSubmit').click(function(e) {
+	// After adding sumoto resolution,when we click on update department and
+	// gistofpreamble value is mandatory remaining field values are optional,
+	// but by default all sumoto resolution fields are mandatory so that
+	// validations are added to validate.
+	$('.addorremoverequired').removeAttr("required", "required");
+	$('.addorremoverequired').removeClass('error');
+	if ($('form').valid()) {
+		$('.loader-class').modal('show', {
+			backdrop : 'static'
+		});
+		document.forms["councilMomform"].submit();
+	} else {
+		e.preventDefault();
+	}
+});

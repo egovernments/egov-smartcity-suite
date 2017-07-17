@@ -39,11 +39,15 @@
  */
 package org.egov.works.web.controller.lineestimate;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateSearchRequest;
 import org.egov.works.lineestimate.service.LineEstimateService;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -52,8 +56,6 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
 
 @Controller
 @RequestMapping(value = "/lineestimate")
@@ -69,32 +71,41 @@ public class CancelLineEstimateController {
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
-            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest,
-            final Model model) throws ApplicationException {
+            @ModelAttribute final LineEstimateSearchRequest lineEstimateSearchRequest, final Model model)
+            throws ApplicationException {
         model.addAttribute("departments", departmentService.getAllDepartments());
         model.addAttribute("lineEstimateSearchRequest", lineEstimateSearchRequest);
+        lineEstimateSearchRequest.setExecutingDepartment(worksUtils.getDefaultDepartmentId());
+
         return "searchlineestimate-cancel";
     }
 
     @RequestMapping(value = "/cancel", method = RequestMethod.POST)
-    public String cancelLineEstimate(final HttpServletRequest request,
-            final Model model) throws ApplicationException {
+    public String cancelLineEstimate(final HttpServletRequest request, final Model model) throws ApplicationException {
         final Long lineEstimateId = Long.parseLong(request.getParameter("id"));
         final String cancellationReason = request.getParameter("cancellationReason");
         final String cancellationRemarks = request.getParameter("cancellationRemarks");
         LineEstimate lineEstimate = lineEstimateService.getLineEstimateById(lineEstimateId);
         final String loaNumbers = lineEstimateService.checkIfLOAsCreated(lineEstimate.getId());
         if (!loaNumbers.equals("")) {
-            final String message = messageSource.getMessage("error.lineestimate.loa.created", new String[] { loaNumbers }, null);
+            final String message = messageSource.getMessage("error.lineestimate.loa.created",
+                    new String[] { loaNumbers }, null);
             model.addAttribute("errorMessage", message);
             return "letterofacceptance-success";
         }
 
         lineEstimate.setCancellationReason(cancellationReason);
         lineEstimate.setCancellationRemarks(cancellationRemarks);
-        lineEstimate = lineEstimateService.cancel(lineEstimate);
+        try {
+            lineEstimate = lineEstimateService.cancel(lineEstimate);
+        } catch (final ValidationException v) {
+            model.addAttribute("errorMessage", v.getErrors().get(0).getMessage());
+        }
         model.addAttribute("lineEstimate", lineEstimate);
         model.addAttribute("mode", "cancel");
         return "lineestimate-success";

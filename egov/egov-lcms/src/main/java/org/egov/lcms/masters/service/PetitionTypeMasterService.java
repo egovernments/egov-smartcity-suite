@@ -160,7 +160,7 @@ public class PetitionTypeMasterService {
     }
 
     public List<PetitionTypeMaster> getActivePetitionTypes() {
-        return petitionTypeMasterRepository.findByActiveTrueOrderByPetitionTypeAsc();
+        return petitionTypeMasterRepository.findByActiveTrueOrderByOrderNumberAsc();
     }
 
 }

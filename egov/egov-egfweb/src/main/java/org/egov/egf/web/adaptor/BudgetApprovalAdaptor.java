@@ -42,6 +42,8 @@ package org.egov.egf.web.adaptor;
 import java.lang.reflect.Type;
 
 import org.egov.model.budget.BudgetApproval;
+import org.egov.model.service.BudgetDefinitionService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
@@ -51,18 +53,24 @@ import com.google.gson.JsonSerializer;
 
 @Component
 public class BudgetApprovalAdaptor implements JsonSerializer<BudgetApproval> {
+    @Autowired
+    private BudgetDefinitionService budgetDefinitionService;
 
     @Override
     public JsonElement serialize(final BudgetApproval budgetApproval, final Type type,
             final JsonSerializationContext jsc) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("id",budgetApproval.getId());
+        final Long finYrId = budgetDefinitionService.getFinancialYearForBudget(budgetApproval.getId());
+        jsonObject.addProperty("id", budgetApproval.getId());
         jsonObject.addProperty("department", budgetApproval.getDepartment());
-        jsonObject.addProperty("parent", budgetApproval.getParent());
-        jsonObject.addProperty("referenceBudget", budgetApproval.getReferenceBudget());
+        jsonObject.addProperty("parent", budgetApproval.getReferenceBudget());
+        jsonObject.addProperty("referenceBudget", budgetApproval.getParent());
         jsonObject.addProperty("reAmount", budgetApproval.getReAmount());
         jsonObject.addProperty("beAmount", budgetApproval.getBeAmount());
         jsonObject.addProperty("count", budgetApproval.getCount());
+        jsonObject.addProperty("approvedBudget", budgetDefinitionService.getApproved(finYrId));
+        jsonObject.addProperty("verifiedBudget", budgetDefinitionService.getVerified(finYrId));
+        jsonObject.addProperty("notInitiated", budgetDefinitionService.getNotInitalized(finYrId));
         return jsonObject;
     }
 }

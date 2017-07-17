@@ -86,7 +86,7 @@
 					</c:when>
 					<c:otherwise>
 						<c:forEach items="${egBillregister.billPayeedetails}" var="billPayeeDeatils" varStatus="item">
-							<tr id="subledhgerrow" accountdetailsinvisible="true" hidden="true">
+							<tr id="subledhgerrow" accountdetailsinvisible="true">
 								<td>
 									<form:hidden path="billPayeedetails[${item.index }].id" id="subLedgerDetailsId_${item.index }" class ="subLedgerDetailsId" value="${billPayeeDeatils.id}"/>
 									<form:hidden path="billPayeedetails[${item.index }].egBilldetailsId.id" id="subLedgerBillDetailsId_${item.index }" class="subLedgerBillDetailsId"  value="${billPayeeDeatils.egBilldetailsId.id}"/>

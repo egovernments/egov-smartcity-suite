@@ -2308,7 +2308,7 @@ public class EgovCommon {
         if (billStatus.getDescription().equalsIgnoreCase("Cancelled"))
             throw new ApplicationException("Bill with id - " + billId
                     + " is cancelled.");
-        final String sqlQuery = "SELECT nvl(sum(misc.paidamount),0) FROM eg_billregister br, eg_billregistermis bmis, voucherheader bvh, "
+        final String sqlQuery = "SELECT COALESCE(sum(misc.paidamount),0) FROM eg_billregister br, eg_billregistermis bmis, voucherheader bvh, "
                 + " miscbilldetail misc, voucherheader pvh WHERE br.id="
                 + billRegister.getId()
                 + " and br.id=bmis.billid "

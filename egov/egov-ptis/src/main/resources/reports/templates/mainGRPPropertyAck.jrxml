@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-08T17:28:25 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainGRPPropertyAck" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" uuid="aab765aa-a460-4f4d-947e-99a0e4129b9f">
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="noOfDays" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="loggedInUsername" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="applicationNo" class="java.lang.String"/>
+	<parameter name="approvedDate" class="java.lang.String"/>
+	<parameter name="noticeDueDate" class="java.lang.String"/>
+	<parameter name="creationReason" class="java.lang.String"/>
+	<parameter name="ownerAddress" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="10" width="544" height="57" uuid="5dda209c-dbfd-41e7-9268-a984e017b49c"/>
+				<subreportParameter name="logoPath">
+					<subreportParameterExpression><![CDATA[$P{logoPath}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="loggedInUsername">
+					<subreportParameterExpression><![CDATA[$P{loggedInUsername}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ackType">
+					<subreportParameterExpression><![CDATA["Party's Copy"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerName">
+					<subreportParameterExpression><![CDATA[$P{ownerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationNo">
+					<subreportParameterExpression><![CDATA[$P{applicationNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="approvedDate">
+					<subreportParameterExpression><![CDATA[$P{approvedDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noticeDueDate">
+					<subreportParameterExpression><![CDATA[$P{noticeDueDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="creationReason">
+					<subreportParameterExpression><![CDATA[$P{creationReason}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerAddress">
+					<subreportParameterExpression><![CDATA[$P{ownerAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noOfDays">
+					<subreportParameterExpression><![CDATA[$P{noOfDays}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("GRP_Property_ack.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<summary>
+		<band height="88" splitType="Stretch">
+			<subreport>
+				<reportElement x="0" y="20" width="545" height="57" uuid="24dbd26a-ae21-4ddf-a339-a06f0f0c3cfe"/>
+				<subreportParameter name="logoPath">
+					<subreportParameterExpression><![CDATA[$P{logoPath}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="loggedInUsername">
+					<subreportParameterExpression><![CDATA[$P{loggedInUsername}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ackType">
+					<subreportParameterExpression><![CDATA["Office Copy"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerName">
+					<subreportParameterExpression><![CDATA[$P{ownerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationNo">
+					<subreportParameterExpression><![CDATA[$P{applicationNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="approvedDate">
+					<subreportParameterExpression><![CDATA[$P{approvedDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noticeDueDate">
+					<subreportParameterExpression><![CDATA[$P{noticeDueDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="creationReason">
+					<subreportParameterExpression><![CDATA[$P{creationReason}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerAddress">
+					<subreportParameterExpression><![CDATA[$P{ownerAddress}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noOfDays">
+					<subreportParameterExpression><![CDATA[$P{noOfDays}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.JREmptyDataSource()]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("GRP_Property_ack.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

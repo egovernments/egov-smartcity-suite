@@ -88,7 +88,7 @@
 				</div>
 			</td>
 			<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			url="/public/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 			<td class="blueborderfortd" style="padding: 2px 2px">
 				<div align="center">
 					<s:select headerKey="" headerValue="%{getText('default.select')}"
@@ -215,7 +215,7 @@
 			<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 			
 			  <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
+			        onclick="javascript:addFloor(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 			  </span>
 			  &nbsp;
@@ -265,7 +265,7 @@
 					</div>
 				</td>
 				<egov:ajaxdropdown id="floorUsage" fields="['Text','Value']" dropdownId="floorUsage"
-			          url="/public/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
+			          url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
 							<s:select headerKey=""
@@ -399,7 +399,7 @@
 			
 				<td class="blueborderfortd freeze-action-td" id="AddRemoveFloor">
 				  <span id="addF" alt="AddF" class="tblactionicon add" 
-			        onclick="javascript:addFloor(); showHideLengthBreadth(); return false;">
+			        onclick="javascript:addFloor(); return false;">
 			           <i class="fa fa-plus-circle"></i>
 				  </span>
 				  &nbsp;

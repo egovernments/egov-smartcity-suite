@@ -1,41 +1,41 @@
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~      accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~       Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~       The updated version of eGov suite of products as by eGovernments Foundation
+  ~       is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~       This program is free software: you can redistribute it and/or modify
+  ~       it under the terms of the GNU General Public License as published by
+  ~       the Free Software Foundation, either version 3 of the License, or
+  ~       any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~       This program is distributed in the hope that it will be useful,
+  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~       GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~       You should have received a copy of the GNU General Public License
+  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~       http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~       In addition to the terms of the GPL license to be adhered to in using this
+  ~       program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~           1) All versions of this program, verbatim or modified must carry this
+  ~              Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~           2) Any misrepresentation of the origin of the material is prohibited. It
+  ~              is required that all modified versions of this material be marked in
+  ~              reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~           3) This license does not grant any rights to any user of the program
+  ~              with regards to rights under trademark law for use of the trade names
+  ~              or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
@@ -55,9 +55,29 @@
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
-<title><s:text name="objectionView.title" /></title>
+<title>
+<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+<s:text name="objection.GRPView.title" />
+</s:if>
+<s:else>
+<s:text name="objectionView.title" />
+</s:else>
+</title>
 <script type="text/javascript">
+
+
 	jQuery.noConflict();
+	jQuery(document).ready(function()
+			{	
+		var designation = '<s:property value="%{currentDesignation}"/>';
+		var state =  '<s:property value="%{objection.egwStatus.code}"/>';
+		var value= '<s:property value="%{objection.currentState.nextAction}"/>'
+		if(designation == 'Commissioner' && state!='CREATED') {
+			jQuery('#Forward').hide();
+		}else if(value=='Print Endoresement'){
+			jQuery('#Forward').hide();
+		}
+					}); 
 	jQuery("#loadingMask").remove();
 	jQuery(function($) {
 		try {
@@ -76,26 +96,27 @@
 		propType = '<s:property value="%{objection.basicProperty.property.propertyDetail.propertyTypeMaster.type}"/>';
 		appurtenantLandChecked = '<s:property value="%{objection.basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
 		enableFieldsForPropTypeView(propType, appurtenantLandChecked);
-		enableAppartnaumtLandDetailsView();
 		enableOrDisableSiteOwnerDetails(jQuery('input[name="property.propertyDetail.structure"]'));
 		//toggleFloorDetailsView();
 		<s:if test="(objection.egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARING_COMPLETED))" >
 			showHideFirmName();
-			showHideLengthBreadth();
+			if (propType != 'Vacant Land') {
+				showHideLengthBreadth();
+			}
 		</s:if>
+		
 		loadDesignationFromMatrix();
+		
 	}
-	function enableAppartnaumtLandDetailsView() {
-		if (document.forms[0].appurtenantLandChecked != null && document.forms[0].appurtenantLandChecked.checked == true) {
-			jQuery('tr.vacantlanddetaills').show();
-			jQuery('#appurtenantRow').show();
-			jQuery('tr.floordetails').show();
-			jQuery('tr.extentSite').hide();
-		} else {
-			appurtenantLandChecked = '<s:property value="%{objection.basicProperty.property.propertyDetail.appurtenantLandChecked}"/>';
-			enableFieldsForPropTypeView(propType, appurtenantLandChecked);
-		}
-	}
+	function loadDesignationFromMatrix() {
+  		var e = dom.get('approverDepartment');
+  		var dept = e.options[e.selectedIndex].text;
+  			var currentState = dom.get('currentState').value;
+  			var amountRule="";
+  		var pendingAction=document.getElementById('pendingActions').value;
+  		loadDesignationByDeptAndType('RevisionPetition',dept,currentState,amountRule,"",pendingAction); 
+  	}
+
 	function toggleFloorDetailsView() {
 		var propType = '<s:property value="%{property.propertyDetail.propertyTypeMaster.type}"/>';
 		if (propType == "Vacant Land") {
@@ -109,8 +130,14 @@
 	}
 
 	function onSubmit() {
-
 		var actionName = document.getElementById('workFlowAction').value;
+		if(actionName == 'Reject Inspection') {
+			var comments = jQuery("#approverComments").val();
+			if(comments == null || comments == '') {
+				bootbox.alert("Please Enter Remarks ");
+				return false;
+			}
+	    }
 		var action = null;
 		var userDesg = '<s:property value="%{userDesgn}"/>';
 		var statusModuleType = '<s:property value="%{model.egwStatus.moduletype}"/>';
@@ -120,7 +147,7 @@
 		if (actionName == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_FORWARD}"/>') {
 
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED}"/>') {
-				if (state == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED}"/>') {
+				if (state != null && state.endsWith('<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW}"/>')) {
 					if (validateRecordObjections()) {
 						action = 'revPetition.action';
 					} else
@@ -152,7 +179,10 @@
 				/* } else
 					return false;
  				*/
+			}else if(statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED}"/>'){
+				action = 'revPetition-recordObjectionOutcome.action';				
 			}
+			
 		} else if (actionName == 'Print HearingNotice') {
 			url = "/ptis/revPetition/revPetition-printHearingNotice.action?objectionId="
 					+ document.getElementById("model.id").value;
@@ -191,11 +221,11 @@
 			action = 'revPetition-rejectInspectionDetails.action';
 		} else if (actionName == 'Reject') {
 			action = 'revPetition-reject.action';
-		} else if (actionName == 'Approve') {
+		} else if (actionName == 'Approve' || actionName == 'Forward') {
 			if (statusCode == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY}"/>') {
 				//if (validateObjectionOutcome()) {
 					/*  if(document.getElementById('approverPositionId').value=="-1") {
-					        bootbox.alert("Please Select the Approver ");
+					        bootbox.alert("Please Select the Employee ");
 							return false;
 					    } */
 					action = 'revPetition-recordObjectionOutcome.action?objectionId='
@@ -208,8 +238,6 @@
 
 		document.forms[0].action = action;
 		document.forms[0].submit;
-		return true;
-
 		return true;
 	}
 
@@ -321,14 +349,14 @@
 		
 </script>
 <script
-	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 	<script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 <link href="<cdn:url value='/resources/css/headertab.css'/>"
 	rel="stylesheet" type="text/css" />
 </head>
 <body onload="loadOnStartUp();">
 	<s:form action="revPetition-view" method="post"
-		name="objectionViewForm" theme="simple">
+		name="objectionViewForm" theme="simple" enctype="multipart/form-data">
 		<s:push value="model">
 			<s:if test="%{hasActionMessages()}">
 				<div class="messagestyle">
@@ -346,8 +374,15 @@
 									id="header_1" href="#" onclick="showPropertyHeaderTab();"><s:text
 											name="propDet"></s:text></a></li>
 								<li id="objectionDetailTab" class=""><a id="header_2"
-									href="#" onclick="showObjectionHeaderTab();"><s:text
-											name="objection.details.heading"></s:text></a></li>
+									href="#" onclick="showObjectionHeaderTab();">
+									<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+									<s:text	name="objection.grp.details.heading"></s:text>
+											</s:if>
+											<s:else>
+									<s:text
+											name="objection.details.heading"></s:text>
+											</s:else>
+											</a></li>
 								<%-- 				<li id="approvalTab" class="Last"><a id="header_3" href="#" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
  --%>
 							</ul>
@@ -388,7 +423,7 @@
 
 							<s:if
 								test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED) &&
-        		state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED)">
+        		state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)">
 								<jsp:include page="recordRevisionPetition.jsp" />
         		</s:if>
 							<s:elseif
@@ -420,14 +455,21 @@
 							">
 
 							</s:elseif>
+							<s:if test="%{!documentTypes.isEmpty() && allowEditDocument}">
+								<%@ include file="../common/DocumentUploadForm.jsp"%>
+							</s:if>
+							<s:elseif test="%{!documentTypes.isEmpty()}">
 
+								<%@ include file="../common/DocumentUploadView.jsp"%>
+
+							</s:elseif>
 						</div>
 					</td>
 				</tr>
 				<s:if test="%{state != null}">
 					<tr>
 						<%@ include file="../common/workflowHistoryView.jsp"%>
-					<tr>
+					</tr>
 				</s:if>
 				<tr>
 					<td>
@@ -450,9 +492,21 @@
 								</s:elseif>
 								<s:elseif
 									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_CREATED)
-							&& state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@REVISIONPETITION_CREATED)">
+							&& state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)">
 									<%-- <jsp:include page="../workflow/revisionPetition-workflow.jsp"/> --%>
 									<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+								</s:elseif>
+								<s:elseif test="%{egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_INSPECTION_VERIFY) && currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())}">
+					   <jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+					   </s:elseif>
+								<s:elseif
+									test="egwStatus.code.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_ACCEPTED) && currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())">
+									<s:if
+										test="objection.currentState.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_PRINT_ENDORSEMENT) || objection.currentState.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_STEP_PRINT_NOTICE)">
+									</s:if>
+									<s:else>
+										<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+									</s:else>
 								</s:elseif>
 								<s:else>
 									<div align="center">
@@ -466,8 +520,26 @@
 					</tr>	
        			 		
        			 		<s:hidden name="workflowBean.actionName" id="workflowBean.actionName"/>
-       			 		</table>
+       			 		</table>        
        			 --%>
+       			                    <%-- <jsp:include page="../workflow/commonWorkflowMatrix.jsp" /> --%>
+       			                    
+       			                    	<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
+					<div id="workflowCommentsDiv" align="center">
+						<table width="100%">
+							<tr>
+								 <td width="25%" class="${approverEvenCSS}">&nbsp;</td> 
+								<td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>:</td>
+								<td class="${approverEvenTextCSS}"><textarea
+										id="approverComments" name="approverComments" rows="2"
+										value="#approverComments" cols="35"></textarea></td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+								<td class="${approverEvenCSS}">&nbsp;</td>
+							</tr>
+						</table>
+					</div>
+				</s:if>
 									</div>
 								</s:else>
 							</div>
@@ -486,7 +558,7 @@
 				value="%{egwStatus.code}" />
 			<%-- 	<s:hidden name="model.property" id="model.property"/>
 		 --%>
-		</s:push>
+		 <s:hidden name="wfType" id="wfType" value="%{wfType}" />		</s:push>
 	</s:form>
 
 </body>

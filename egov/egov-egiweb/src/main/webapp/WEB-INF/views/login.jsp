@@ -1,42 +1,42 @@
 
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~ accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~  Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~  The updated version of eGov suite of products as by eGovernments Foundation
+  ~  is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~  http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~  In addition to the terms of the GPL license to be adhered to in using this
+  ~  program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~      1) All versions of this program, verbatim or modified must carry this
+  ~         Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~      2) Any misrepresentation of the origin of the material is prohibited. It
+  ~         is required that all modified versions of this material be marked in
+  ~         reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~      3) This license does not grant any rights to any user of the program
+  ~         with regards to rights under trademark law for use of the trade names
+  ~         or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@page import="org.apache.commons.lang3.StringUtils"%>
@@ -62,12 +62,11 @@
 		<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 		<meta name="description" content="eGov Urban Portal" />
 		<meta name="author" content="eGovernments Foundation" />
-        <spring:eval expression="@environment.getProperty('app.core.build.no')" scope="application" var="buildno"/>
 		<title>eGov Urban Portal Login</title>
 		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png'/>" sizes="32x32">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css'/>">
 		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${applicationScope.buildno}'/>">
+        <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}'/>">
 		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js'/>" type="text/javascript"></script>
 
 		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
@@ -128,10 +127,11 @@
 							</a>
 						</div>
 						<div class="col-md-12 community-card">
-							<div class="rounded-circle">
-								<i class="fa fa-search c"></i>
+						  <a href="/pgr/complaint/citizen/anonymous/search?isMore=true" target="_blank">
+							<div class="rounded-circle"><i class="fa fa-search c"></i>
 							</div>
 							&nbsp;
+						  </a>
 							<div class="label-font" style="vertical-align: sub">
 								<spring:message code="lbl.check.comp.status"/>&nbsp;<br>
 								<input type="text" placeholder="Grievance number" id="compsearchtxt"
@@ -171,9 +171,10 @@
 											name="j_username" id="j_username"
 											placeholder="Mobile Number / Login ID" autocomplete="off"
 											required="required" autofocus="autofocus"/>
+										<label id="j_username-error" class="error pull-right" for="j_username"></label>
 									</div>
 								</div>
-								<div class="form-group">
+								<div class="form-group overflow">
 									<div class="input-group">
 										<div class="input-group-addon style-label">
 											<i class="fa fa-key theme-color style-color"></i>
@@ -186,6 +187,7 @@
 											Forgot?
 										</div>
 									</div>
+									<label id="j_password-error" class="error align-top pull-right" for="j_password"></label>
 								</div>
 								<div class="form-group display-hide" id="counter-section">
 									<div class="input-group">
@@ -193,16 +195,17 @@
 											<i class="fa fa-map-marker theme-color style-color"></i>
 										</div>
 										<select class="form-control style-form" name="locationId" id="locationId"></select>
+										<label id="locationId-error" class="error pull-right" for="locationId"></label>
 									</div>
 								</div>
 								<c:if test="${param.error}">
 									<div class="text-center error-msg add-margin">
                                         <c:set var="security_message" value="${sessionScope.SPRING_SECURITY_LAST_EXCEPTION.message}" />
 										<c:choose>
-										<c:when test="${security_message == 'Maximum sessions of {0} for this principal exceeded'}">
+										<c:when test="${security_message.contains('Maximum sessions')}">
 											<spring:message code="msg.multiple.login"/>
 										</c:when>
-										<c:when test="${security_message == 'User account has expired'}">
+										<c:when test="${security_message.contains('expired')}">
 											<spring:message code="msg.cred.exprd1"/>
 											<a href="javascript:void(0);" data-toggle="modal"
 											   data-target="#fpassword" data-backdrop="static">
@@ -401,8 +404,10 @@
 		</c:if>
 		
 		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js'/>" type="text/javascript"></script>
-		<script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
+        <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}'/>"
+                type="text/javascript"></script>
 		<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js'/>"></script>
-		<script src="<cdn:url value='/resources/js/app/login.js?rnd=${applicationScope.buildno}'/>" type="text/javascript"></script>
+        <script src="<cdn:url value='/resources/js/app/login.js?rnd=${app_release_no}'/>"
+                type="text/javascript"></script>
 	</body>
 </html>

@@ -53,19 +53,21 @@
 			<div class="row">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Report on Judgement Implimentation Due</div>
+						<div class="panel-title">Report on Judgment Implementation
+							Due</div>
 					</div>
+
+					<jsp:include page="dueReportdetails.jsp"></jsp:include>
 				</div>
-				<jsp:include page="dueReportdetails.jsp"></jsp:include>
 			</div>
-
-
 			<div class="row">
 				<div class="text-center">
-					<button type="button" id="judgemntDueReportSearch" value="judgemntDueReportSearch"
-						class="btn btn-primary">Search</button>
+					<button type="button" id="judgemntDueReportSearch"
+						value="judgemntDueReportSearch" class="btn btn-primary">
+						<spring:message code="lbl.search" />
+					</button>
 					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"> Close</a>
+						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>
 			</div>
 	</div>
@@ -74,33 +76,43 @@
 		class="col-md-12 table-header text-left">
 		<fmt:formatDate value="${currentDate}" var="currDate"
 			pattern="dd-MM-yyyy" />
-		<spring:message code="lbl.reportgeneration" />
-		:
+		<spring:message code="lbl.reportgeneration" />:
 		<c:out value="${currDate}"></c:out>
 	</div>
 	<table class="table table-bordered table-hover multiheadertbl"
-		id="judgemntDueReport-table" >
+		id="judgemntDueReport-table">
 	</table>
-
-
-</div>
 </div>
 
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<cdn:url value='/resources/js/app/commonDueReport.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

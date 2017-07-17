@@ -42,8 +42,15 @@ package org.egov.pgr.entity.enums;
 
 import org.apache.commons.lang3.StringUtils;
 
+import static org.egov.infra.utils.ApplicationConstant.NA;
+
 public enum CitizenFeedback {
     UNSPECIFIED, ONE, TWO, THREE, FOUR, FIVE;
+
+    public static String value(Integer ordinal) {
+        return ordinal == null ? NA : values()[ordinal].toString();
+    }
+
     @Override
     public String toString() {
         return StringUtils.capitalize(name());

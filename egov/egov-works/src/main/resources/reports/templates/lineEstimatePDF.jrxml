@@ -38,8 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2016-08-24T12:21:07 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-01-17T18:44:09 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="lineEstimatePDF" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="e48ceff3-3e96-4152-8bcd-78fa1c9fed2b">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -236,7 +236,7 @@
 				<textElement textAlignment="Left">
 					<font size="10"/>
 				</textElement>
-				<textFieldExpression><![CDATA["Mode Of Entrustment : "+$P{modeOfAllotment}]]></textFieldExpression>
+				<textFieldExpression><![CDATA["Recommended mode of entrustment : "+$P{modeOfAllotment}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="230" y="320" width="100" height="20" uuid="b83ae8d6-0ace-4e6a-bbb9-b9e25aeeca8b"/>

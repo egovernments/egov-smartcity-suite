@@ -76,14 +76,12 @@ public class CaseTypeMasterService {
         return casetypeMasterRepository.save(casetypeMaster);
     }
 
-    public List<CaseTypeMaster> getCaseTypeList()
-    {
+    public List<CaseTypeMaster> getCaseTypeList() {
         return casetypeMasterRepository.findAll();
     }
 
-    public List<CaseTypeMaster> getActiveCaseTypeList()
-    {
-        return casetypeMasterRepository.findByActiveTrueOrderByCaseTypeAsc();
+    public List<CaseTypeMaster> getActiveCaseTypeList() {
+        return casetypeMasterRepository.findByActiveTrueOrderByOrdernumberAsc();
     }
 
     @Transactional
@@ -124,7 +122,7 @@ public class CaseTypeMasterService {
                 predicates.add(cb.like(
                         cb.lower(
                                 casetypemasters.get(CasetypeMaster.getDeclaredSingularAttribute("code", String.class))),
-                                code));
+                        code));
             }
             if (casetypeMaster.getCaseType() != null) {
                 final String caseType = "%" + casetypeMaster.getCaseType().toLowerCase() + "%";
@@ -132,7 +130,7 @@ public class CaseTypeMasterService {
                 predicates.add(cb.like(
                         cb.lower(casetypemasters
                                 .get(CasetypeMaster.getDeclaredSingularAttribute("caseType", String.class))),
-                                caseType));
+                        caseType));
             }
             if (casetypeMaster.getActive() != null)
                 if (casetypeMaster.getActive())

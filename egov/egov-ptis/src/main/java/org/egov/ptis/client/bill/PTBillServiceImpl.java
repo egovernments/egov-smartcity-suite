@@ -141,9 +141,9 @@ public class PTBillServiceImpl extends BillServiceInterface {
      */
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetails = new ArrayList();
         LOGGER.debug("Entered method getBilldetails : " + billObj);
-        EgBillDetails billdetail = null;
+        EgBillDetails billdetail;
         final PropertyTaxBillable billable = (PropertyTaxBillable) billObj;
 
         if (billable.isMutationFeePayment()) {
@@ -165,20 +165,19 @@ public class PTBillServiceImpl extends BillServiceInterface {
             return billDetails;
         }
 
-        String key = "";
-        BigDecimal balance = BigDecimal.ZERO;
+        String key;
+        BigDecimal balance;
         BigDecimal earlyPayRebate = BigDecimal.ZERO;
-        DateTime installmentDate = null;
-        BillDetailBean billDetailBean = null;
-        EgDemandReason reason = null;
-        Installment installment = null;
-        String reasonMasterCode = null;
+        DateTime installmentDate;
+        BillDetailBean billDetailBean;
+        EgDemandReason reason;
+        Installment installment;
+        String reasonMasterCode;
         final BasicProperty basicProperty = billable.getBasicProperty();
         final Property activeProperty = basicProperty.getProperty();
-        Map<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = new TreeMap<Installment, PenaltyAndRebate>();
+        TreeMap<Installment, PenaltyAndRebate> installmentPenaltyAndRebate = (TreeMap<Installment, PenaltyAndRebate>) billable.getCalculatedPenalty();
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
-        installmentPenaltyAndRebate = billable.getCalculatedPenalty();
         Date advanceStartDate = DateUtils.addYears(currInstallments.get(CURRENTYEAR_FIRST_HALF).getFromDate(), 1);
         List<Installment> advanceInstallments = propertyTaxCommonUtils.getAdvanceInstallmentsList(advanceStartDate);
 
@@ -198,8 +197,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             if (balance.compareTo(BigDecimal.ZERO) == 1) {
                 installmentDate = new DateTime(installment.getInstallmentYear().getTime());
 
-                if (!reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES)
-                        && !reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
+                if (isNotPenalty(reasonMasterCode)) {
                     key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + reasonMasterCode;
                     billDetailBean = new BillDetailBean(installment, orderMap.get(key), key,
                             demandDetail.getAmount().subtract(demandDetail.getAmtCollected()),
@@ -209,53 +207,67 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
                     billDetails.add(createBillDet(billDetailBean));
                 }
-
             }
-            if (reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
-                key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + reasonMasterCode;
-                billDetailBean = new BillDetailBean(installment, orderMap.get(key), key,
-                        demandDetail.getAmount().subtract(demandDetail.getAmtCollected()),
-                        demandDetail.getEgDemandReason().getGlcodeId().getGlcode(),
-                        reason.getEgDemandReasonMaster().getReasonMaster(), Integer.valueOf(1),
-                        PURPOSE.CHEQUE_BOUNCE_PENALTY.toString());
-
-                billDetails.add(createBillDet(billDetailBean));
-            }
-
         }
-        if (earlyPayRebate.compareTo(BigDecimal.ZERO) > 0) {
-            installmentDate = new DateTime(currInstallments.get(CURRENTYEAR_FIRST_HALF).getInstallmentYear().getTime());
-            key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
-            billDetailBean = new BillDetailBean(currInstallments.get(CURRENTYEAR_FIRST_HALF), orderMap.get(key), key,
-                    earlyPayRebate, PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE,
-                    Integer.valueOf(0), PURPOSE.REBATE.toString());
-            billDetails.add(createBillDet(billDetailBean));
-        }
+        addBillDetailsForRebate(billDetails, earlyPayRebate, currInstallments, orderMap);
 
-        EgDemandDetails penaltyDemandDetail = null;
-        for (final Map.Entry<Installment, PenaltyAndRebate> penaltyAndRebate : installmentPenaltyAndRebate.entrySet()) {
-            penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, orderMap,
-                    penaltyAndRebate.getValue().getPenalty(), penaltyAndRebate.getKey());
-            if (penaltyDemandDetail != null)
-                ptDemand.getEgDemandDetails().add(penaltyDemandDetail);
-        }
+        getPenaltyAndRebateDmd(billDetails, billable, installmentPenaltyAndRebate, ptDemand, orderMap);
 
         // Get the demand for current year second half and use it in advance
         // collection
         BigDecimal currentInstDemand = BigDecimal.ZERO;
         for (EgDemandDetails dmdDet : ptDemand.getEgDemandDetails()) {
-            if (dmdDet.getInstallmentStartDate().equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getFromDate())) {
+            if (isDmdForCurrYrSecHalf(currInstallments, dmdDet)) {
                 currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
             }
         }
         // Advance Bill details only if current tax is greater than zero.
-        if (currentInstDemand.compareTo(BigDecimal.ZERO) > 0) {
+        if (isCurrTaxGrtZero(currentInstDemand)) {
             createAdvanceBillDetails(billDetails, currentInstDemand, orderMap, ptDemand, billable, advanceInstallments,
                     currInstallments.get(CURRENTYEAR_SECOND_HALF));
         }
 
         LOGGER.debug("Exiting method getBilldetails : " + billDetails);
         return billDetails;
+    }
+
+    private void getPenaltyAndRebateDmd(final List<EgBillDetails> billDetails, final PropertyTaxBillable billable,
+            TreeMap<Installment, PenaltyAndRebate> installmentPenaltyAndRebate, final Ptdemand ptDemand,
+            final HashMap<String, Integer> orderMap) {
+        EgDemandDetails penaltyDemandDetail;
+        for (final Map.Entry<Installment, PenaltyAndRebate> penaltyAndRebate : installmentPenaltyAndRebate.entrySet()) {
+            penaltyDemandDetail = insertPenaltyAndBillDetails(billDetails, billable, orderMap,
+                    penaltyAndRebate.getValue().getPenalty(), penaltyAndRebate.getKey());
+            if (penaltyDemandDetail != null)
+                ptDemand.getEgDemandDetails().add(penaltyDemandDetail);
+        }
+    }
+
+    private void addBillDetailsForRebate(final List<EgBillDetails> billDetails, BigDecimal earlyPayRebate,
+            Map<String, Installment> currInstallments, final HashMap<String, Integer> orderMap) {
+        String key;
+        DateTime installmentDate;
+        BillDetailBean billDetailBean;
+        if (isCurrTaxGrtZero(earlyPayRebate)) {
+            installmentDate = new DateTime(currInstallments.get(CURRENTYEAR_FIRST_HALF).getInstallmentYear().getTime());
+            key = installmentDate.getMonthOfYear() + "/" + installmentDate.getYear() + "-" + DEMANDRSN_CODE_REBATE;
+            billDetailBean = new BillDetailBean(currInstallments.get(CURRENTYEAR_FIRST_HALF), orderMap.get(key), key,
+                    earlyPayRebate, PropertyTaxConstants.GLCODE_FOR_TAXREBATE, DEMANDRSN_CODE_REBATE,
+                    Integer.valueOf(1), PURPOSE.REBATE.toString());
+            billDetails.add(createBillDet(billDetailBean));
+        }
+    }
+
+    private boolean isDmdForCurrYrSecHalf(Map<String, Installment> currInstallments, EgDemandDetails dmdDet) {
+        return dmdDet.getInstallmentStartDate().equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getFromDate());
+    }
+
+    private boolean isCurrTaxGrtZero(BigDecimal currentInstDemand) {
+        return currentInstDemand.compareTo(BigDecimal.ZERO) > 0;
+    }
+
+    private boolean isNotPenalty(String reasonMasterCode) {
+        return !reasonMasterCode.equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES);
     }
 
     /**
@@ -393,7 +405,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
         EgDemandDetails demandDetail = null;
         Module ptModule = null;
 
-        if (amount != null && amount.compareTo(BigDecimal.ZERO) > 0) {
+        if (amount != null && isCurrTaxGrtZero(amount)) {
 
             ptModule = module();
             final EgDemandReasonMaster egDemandReasonMaster = demandGenericDAO.getDemandReasonMasterByCode(demandReason,
@@ -472,6 +484,7 @@ public class PTBillServiceImpl extends BillServiceInterface {
             throw new ApplicationRuntimeException("No bill found with bill reference no :" + billId);
         bill.getEgBillDetails().clear();
         final PropertyTaxBillable propertyTaxBillable = (PropertyTaxBillable) context.getBean("propertyTaxBillable");
+        propertyTaxBillable.setReceiptDate(bill.getCreateDate());
         propertyTaxBillable.setLevyPenalty(true);
         propertyTaxBillable
                 .setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(bill.getConsumerId().trim()));
@@ -500,6 +513,9 @@ public class PTBillServiceImpl extends BillServiceInterface {
 
     public String definePurpose(EgDemandDetails demandDetail) {
         String purpose = PURPOSE.OTHERS.toString();
+       if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode().equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY)) {
+            return PURPOSE.CHEQUE_BOUNCE_PENALTY.toString();
+        }
         Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         Date instStartDate = demandDetail.getInstallmentStartDate();
         if (instStartDate.equals(currInstallments.get(CURRENTYEAR_FIRST_HALF).getFromDate())

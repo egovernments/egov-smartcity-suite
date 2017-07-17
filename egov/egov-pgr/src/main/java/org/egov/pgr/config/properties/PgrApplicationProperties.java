@@ -47,8 +47,8 @@ import org.springframework.core.env.Environment;
 
 @Configuration
 @PropertySource(value = {
-    "classpath:config/pgr-application-config.properties",
-    "classpath:dashboard/pgr-dashboard-sql.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/pgr-application-config.properties",
+        "classpath:dashboard/pgr-dashboard-sql.properties"}, ignoreResourceNotFound = true)
 public class PgrApplicationProperties {
 
     @Autowired
@@ -60,5 +60,13 @@ public class PgrApplicationProperties {
 
     public String getValue(String key) {
         return environment.getProperty(key);
+    }
+
+    public String defaultComplaintPriority() {
+        return environment.getProperty("complaint.default.priority");
+    }
+
+    public boolean complaintTypeAutoComplete() {
+        return environment.getProperty("complainttype.autocomplete", Boolean.class);
     }
 }

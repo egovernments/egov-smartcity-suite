@@ -49,6 +49,18 @@ public class WorksMilestoneIndexResponse {
 
     private String name;
 
+    private String typeofwork;
+
+    private String ulbname;
+
+    private String ulbcode;
+
+    private String districtname;
+
+    private String ismilestonecreated;
+
+    private String latestupdatedtimestamp;
+
     private Long totalnoofworks;
 
     private Double totalestimatedcostinlakhs;
@@ -250,8 +262,8 @@ public class WorksMilestoneIndexResponse {
     }
 
     public Double getJan01to15variance() {
-        if (jan01to15actual != null && !jan01to15actual.isNaN() && jan01to15actual != null && !jan01to15actual.isNaN())
-            return jan01to15actual - jan01to15actual;
+        if (jan01to15actual != null && !jan01to15actual.isNaN() && jan01to15target != null && !jan01to15target.isNaN())
+            return jan01to15actual - jan01to15target;
         else
             return null;
     }
@@ -905,6 +917,54 @@ public class WorksMilestoneIndexResponse {
 
     public void setLineestimatedetailid(final Integer lineestimatedetailid) {
         this.lineestimatedetailid = lineestimatedetailid;
+    }
+
+    public String getUlbname() {
+        return ulbname;
+    }
+
+    public void setUlbname(final String ulbname) {
+        this.ulbname = ulbname;
+    }
+
+    public String getDistrictname() {
+        return districtname;
+    }
+
+    public void setDistrictname(final String districtname) {
+        this.districtname = districtname;
+    }
+
+    public String getIsmilestonecreated() {
+        return ismilestonecreated;
+    }
+
+    public void setIsmilestonecreated(final String ismilestonecreated) {
+        this.ismilestonecreated = ismilestonecreated;
+    }
+
+    public String getLatestupdatedtimestamp() {
+        return latestupdatedtimestamp;
+    }
+
+    public void setLatestupdatedtimestamp(final String latestupdatedtimestamp) {
+        this.latestupdatedtimestamp = latestupdatedtimestamp;
+    }
+
+    public String getTypeofwork() {
+        return typeofwork;
+    }
+
+    public void setTypeofwork(final String typeofwork) {
+        this.typeofwork = typeofwork;
+    }
+
+    public String getUlbcode() {
+        return ulbcode;
+    }
+
+    public void setUlbcode(final String ulbcode) {
+        this.ulbcode = ulbcode;
     }
 
     public Double getFinancialprogress() {

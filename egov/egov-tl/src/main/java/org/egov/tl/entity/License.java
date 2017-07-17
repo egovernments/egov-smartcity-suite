@@ -42,10 +42,10 @@ package org.egov.tl.entity;
 
 import com.google.gson.annotations.Expose;
 import org.egov.commons.EgwStatus;
+import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
@@ -57,20 +57,30 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
+
+import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.STATUS_ACKNOLEDGED;
+import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
+import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
+import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = License.SEQUENCE, sequenceName = License.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"licenseNumber", "applicationNumber"}, enableDfltMsg = true, isSuperclass = true)
-@NamedQuery(name = "LICENSE_BY_APPLICATION_NO",
-        query = "select license FROM License license WHERE applicationNumber=:applicationNumber")
+@Unique(fields = {"licenseNumber", "applicationNumber", "oldLicenseNumber"}, enableDfltMsg = true, isSuperclass = true)
 public class License extends StateAware {
 
     public static final String SEQUENCE = "SEQ_EGTL_LICENSE";
-    public static final String BY_APPLICATION_NO = "LICENSE_BY_APPLICATION_NO";
     private static final long serialVersionUID = -4621190785979222546L;
     @Id
     @GeneratedValue(generator = SEQUENCE, strategy = GenerationType.SEQUENCE)
@@ -221,11 +231,11 @@ public class License extends StateAware {
 
     @Override
     public Long getId() {
-        return this.id;
+        return id;
     }
 
     @Override
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -373,15 +383,15 @@ public class License extends StateAware {
         return tradeArea_weight;
     }
 
-    public void setTradeArea_weight(final BigDecimal tradeArea_weight) {
-        this.tradeArea_weight = tradeArea_weight;
+    public void setTradeArea_weight(final BigDecimal tradeAreaweight) {
+        tradeArea_weight = tradeAreaweight;
     }
 
     public NatureOfBusiness getNatureOfBusiness() {
         return natureOfBusiness;
     }
 
-    public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
+    public void setNatureOfBusiness(final NatureOfBusiness natureOfBusiness) {
         this.natureOfBusiness = natureOfBusiness;
     }
 
@@ -442,40 +452,18 @@ public class License extends StateAware {
     }
 
     public String getDigiSignedCertFileStoreId() {
-        return this.digiSignedCertFileStoreId;
+        return digiSignedCertFileStoreId;
     }
 
-    public void setDigiSignedCertFileStoreId(String digiSignedCertFileStoreId) {
+    public void setDigiSignedCertFileStoreId(final String digiSignedCertFileStoreId) {
         this.digiSignedCertFileStoreId = digiSignedCertFileStoreId;
-    }
-
-    public LicenseDemand getCurrentDemand() {
-        return getLicenseDemand();
-    }
-
-    public BigDecimal getCurrentLicenseFee() {
-        return getCurrentDemand().getEgDemandDetails().stream()
-                .filter(dd -> dd.getEgDemandReason().getEgInstallmentMaster().equals(getCurrentDemand().getEgInstallmentMaster()))
-                .findAny().get().getAmount();
-    }
-
-    public boolean isPaid() {
-        return getTotalBalance().compareTo(BigDecimal.ZERO) == 0;
-    }
-
-    public BigDecimal getTotalBalance() {
-        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
-    }
-
-    public boolean isStateRejected() {
-        return getState() != null && getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED);
     }
 
     public String getAssessmentNo() {
         return assessmentNo;
     }
 
-    public void setAssessmentNo(String assessmentNo) {
+    public void setAssessmentNo(final String assessmentNo) {
         this.assessmentNo = assessmentNo;
     }
 
@@ -490,5 +478,83 @@ public class License extends StateAware {
     @Override
     public String getStateDetails() {
         return "";
+    }
+
+    public LicenseDemand getCurrentDemand() {
+        return getLicenseDemand();
+    }
+
+    public boolean isPaid() {
+        return getTotalBalance().compareTo(BigDecimal.ZERO) == 0;
+    }
+
+    public BigDecimal getTotalBalance() {
+        return licenseDemand.getBaseDemand().subtract(licenseDemand.getAmtCollected());
+    }
+
+    public boolean isRejected() {
+        return hasState() && getState().getValue().contains(WORKFLOW_STATE_REJECTED);
+    }
+
+    public boolean isApproved() {
+        return hasState() && WF_STATE_COMMISSIONER_APPROVED_STR.equals(getState().getValue());
+    }
+
+    public boolean isAcknowledged() {
+        return getStatus() != null && STATUS_ACKNOLEDGED.equals(getStatus().getStatusCode());
+    }
+
+    public boolean canCollectFee() {
+        return !isPaid() && !isRejected() && (isAcknowledged() || isApproved());
+    }
+
+    public boolean isStatusActive() {
+        return getStatus() != null && STATUS_ACTIVE.equals(getStatus().getStatusCode());
+    }
+
+    public boolean isNewApplication() {
+        return getLicenseAppType() != null && NEW_LIC_APPTYPE.equals(getLicenseAppType().getName());
+    }
+
+    public boolean isNewPermanentApplication() {
+        return isNewApplication() && isPermanent();
+    }
+
+    public boolean isReNewApplication() {
+        return getLicenseAppType() != null && RENEWAL_LIC_APPTYPE.equals(getLicenseAppType().getName());
+    }
+
+    public boolean isPermanent() {
+        return PERMANENT_NATUREOFBUSINESS.equals(getNatureOfBusiness().getName());
+    }
+
+    public boolean isTemporary() {
+        return TEMP_NATUREOFBUSINESS.equals(getNatureOfBusiness().getName());
+    }
+
+    public boolean isReadyForRenewal() {
+        return isActiveAndPermanent() && !isPaid() && (transitionCompleted() || isLegacyWithNoState());
+    }
+
+    public boolean isActiveAndPermanent() {
+        return isPermanent() && isActive;
+    }
+
+    public boolean isClosureApplicable() {
+        return isStatusActive() || (getIsActive() && LICENSE_STATUS_CANCELLED.equals(getStatus().getName()));
+    }
+
+    public BigDecimal getLatestAmountPaid() {
+        Optional<EgDemandDetails> demandDetails = this.getCurrentDemand().getEgDemandDetails().stream()
+                .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
+                .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
+                .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
+                        .doubleValue() <= 0)
+                .findFirst();
+        return demandDetails.isPresent() ? demandDetails.get().getAmtCollected() : BigDecimal.ZERO;
+    }
+
+    public boolean isLegacyWithNoState() {
+        return isLegacy() && !hasState();
     }
 }

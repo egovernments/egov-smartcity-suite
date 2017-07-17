@@ -45,6 +45,9 @@ $(document).ready(function() {
 			$(this).remove();
 	});
 	
+	$( "#donationMasterTable tr .delete-button").hide();
+	$( "#donationMasterTable tr:last .delete-button").show();
+	
 	var isSubmitForm=false;
 
 	$("#submitformvalue").click(function() {
@@ -77,36 +80,38 @@ $(document).ready(function() {
 		var isValidation=true;
 		
 		$('.donationRatesNoOfClosets').each(function(i,obj){
-			if($(this).val()==0){
-				var textbox=$(this);
-				bootbox.alert('Number of closets should be more than 0',function(){
-				setTimeout(function(){ textbox.focus(); }, 400);
-				});
-				isValidation=false;
-				return false;
-			}
-			else{
-			
-					if(i==0){
-						donationCollection.push($(this).val());
-					}
-					else
-					{
-						if(donationCollection.indexOf($(this).val())==-1)
-						{
+			if($(this).val() != ""){
+				if($(this).val()==="0" ){
+					var textbox=$(this);
+					bootbox.alert('Number of closets should be more than 0',function(){
+					setTimeout(function(){ textbox.focus(); }, 400);
+					});
+					isValidation=false;
+					return false;
+				}
+				else{
+				
+						if(i==0){
 							donationCollection.push($(this).val());
 						}
 						else
 						{
-							isValidation=false;
-							var textbox=$(this);
-							bootbox.alert('Entered Number Of Closets '+$(this).val()+' is a duplicate value. Please enter different value.', function(){
-								
-								setTimeout(function(){ textbox.focus(); }, 400);
-							});
-							return false;
+							if(donationCollection.indexOf($(this).val())===-1)
+							{
+								donationCollection.push($(this).val());
+							}
+							else
+							{
+								isValidation=false;
+								var textfield=$(this);
+								bootbox.alert('Entered Number Of Closets '+$(this).val()+' is a duplicate value. Please enter different value.', function(){
+									
+									setTimeout(function(){ textfield.focus(); }, 400);
+								});
+								return false;
+							}
 						}
-					}
+				}
 			}
 		});
 		return isValidation;

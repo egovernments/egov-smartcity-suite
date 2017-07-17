@@ -65,9 +65,13 @@
 		<td class="greybox apartmentRow" width="20%"><span class="bold"><s:property
 					value="%{propertyDetail.apartment.name}" default="N/A" /></span>
 		</td>
-		<td class="greybox" width="20%"><s:text name="exemptioncategory"></s:text>:</td>
+	</tr>
+	
+	<tr>
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="20%"><s:text name="label.property.department"></s:text>:</td>
 		<td class="greybox" width="20%"><span class="bold">
-		    <s:property value="%{taxExemptedReason.name}" default="N/A" /></span>
+		    <s:property value="%{propertyDetail.propertyDepartment.name}" default="N/A" /></span>
 		</td>
 	</tr>
 
@@ -132,17 +136,6 @@
 		<td class="greybox" width="20%">
 		   <span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
 		</td>
-	</tr>
-	<tr>
-	<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="20%"><s:text name="isextent.appurtntland"/> :</td>
-		<td class="greybox" width="20%">
-		<s:if test="propertyDetail.appurtenantLandChecked == true">
-				<span class="bold">Yes</span>
-			</s:if> <s:else>
-				<span class="bold">No</span>
-			</s:else>
-		</td>
 		<td class="greybox" width="20%"><s:text name="certificationNumber"/>:</td>
 		<td class="greybox" width="20%">
 			<span class="bold">
@@ -150,14 +143,6 @@
 				<s:else><s:property value="%{propertyDetail.occupancyCertificationNo}" default="N/A"/></s:else>
 			</span>
 		</td>
-		</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="20%"><s:text name="extent.appurtntland"/> :</td>
-		<td class="greybox" width="20%">
-			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
-		</td>
-		
 	</tr>
 	<%-- <tr class="superStructureRow">
 	<td class="greybox" width="5%">&nbsp;</td>
@@ -173,18 +158,20 @@
 		<td class="greybox siteowner"><span class="bold"><s:property default="N/A" value="%{propertyDetail.siteOwner}" /> </span></td>
 	</tr> --%>
 	
-	<tr>
-		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
-		<td class="greybox" width="">
-			<span class="bold"><s:property value="%{basicProperty.regdDocNo}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
-		<td class="greybox">
-		<s:date name="%{basicProperty.regdDocDate}" var="regdDocDate" format="dd/MM/yyyy" />
-			<span class="bold"><s:property value="%{#regdDocDate}" default="N/A"/></span>
-		</td>
-	</tr>
+	<s:if test="%{!basicProperty.regdDocNo.isEmpty()}">
+		<tr>
+			<td class="greybox" width="5%">&nbsp;</td>
+			<td class="greybox" width="25%"><s:text name="reg.docno"/> :</td>
+			<td class="greybox" width="">
+				<span class="bold"><s:property value="%{basicProperty.regdDocNo}" default="N/A"/></span>
+			</td>
+			<td class="greybox" width="25%"><s:text name="reg.docdate"/> :</td>
+			<td class="greybox">
+			<s:date name="%{basicProperty.regdDocDate}" var="regdDocDate" format="dd/MM/yyyy" />
+				<span class="bold"><s:property value="%{#regdDocDate}" default="N/A"/></span>
+			</td>
+		</tr>
+	</s:if>
 	
 	
 	<tr class="amenities">
@@ -265,6 +252,5 @@
 			</div>
 		</td>
 	</tr>
-
 
 </table>

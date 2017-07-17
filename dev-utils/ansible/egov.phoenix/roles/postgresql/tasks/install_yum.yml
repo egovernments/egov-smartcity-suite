@@ -1,0 +1,22 @@
+---
+- name: Install PostgreSQL
+  become: yes
+  yum:
+    name: "postgresql-server"
+    state: present
+  tags:
+    - postgresql
+    - db
+    - deps
+
+- name: Install dependencies for the Ansible module
+  become: yes
+  yum:
+    name: "{{item}}"
+    state: latest
+  with_items:
+    - python-psycopg2
+  tags:
+    - postgresql
+    - db
+    - deps

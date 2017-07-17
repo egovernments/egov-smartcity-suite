@@ -70,7 +70,9 @@
 			<property name="startDate" type="date" />
 			<property name="endDate" type="date" />
 		</component>
-		
+		<property name="category" type="string" >
+			<column name="CATEGORY" length="100" />
+		</property>
 		<many-to-one name="createdBy" class="org.egov.infra.admin.master.entity.User" column="CREATEDBY" fetch="select" not-null="true" />
 		<many-to-one name="modifiedBy" class="org.egov.infra.admin.master.entity.User" column="MODIFIEDBY" fetch="select"/>
 		<property name="createdDate" column="CREATEDDATE" type="timestamp" not-null="true" />

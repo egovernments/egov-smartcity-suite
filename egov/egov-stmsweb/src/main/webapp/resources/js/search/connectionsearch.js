@@ -170,16 +170,40 @@ function submitButton() {
 		prevdatatable.fnClearTable();
 		$('#aplicationSearchResults thead tr').remove();
 	}
-	$.post("/stms/existing/sewerage/",$('#sewerageSearchRequestForm').serialize())
+	/*$.post("/stms/existing/sewerage/",$('#sewerageSearchRequestForm').serialize())
 	.done(function(searchResult) {
-		console.log(searchResult);
+		console.log(searchResult);*/
 	prevdatatable = oTable.dataTable({
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-		"autoWidth": false,
-		"bDestroy": true,
-		"type" : 'POST',
-		data : searchResult,
+		dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+		processing: true,
+        serverSide: true,
+        sort: true,
+        filter: true,
+        "searching": false,
+        "order": [[0, 'asc']],
+        "autoWidth": false,
+        "bDestroy": true,
+        
+        
+
+        ajax : {
+
+		url : "/stms/existing/sewerage/",
+		type : 'POST',
+		data : function(args) {
+			return {
+				"args" : JSON.stringify(args),
+				"consumerNumber":$('#consumerNumber').val(), 
+				"shscNumber" : $('#shscNumber').val(),
+				"applicantName" : $('#applicantName').val(),
+				"mobileNumber":$('#mobileNumber').val(),
+			 	"revenueWard": $('#app-mobno').val(),
+			 	"doorNumber" : $('#app-appcodo').val()
+				
+				
+			};
+		},
+	},	
 		columns : [
 					  { title : "Application Number", data:"applicationNumber"},
 					  { title : "pt assesmentno", data: "assessmentNumber", visible: false},
@@ -207,7 +231,7 @@ function submitButton() {
 					  ],
 					  "aaSorting": [[4, 'asc']] 
 				});
-	});
+	
 }
 
 $("#viewDCB").click(function(){

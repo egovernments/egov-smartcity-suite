@@ -2,7 +2,7 @@
 	eGov suite of products aim to improve the internal efficiency,transparency, 
     accountability and the service delivery of the government  organizations.
  
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
  
 	The updated version of eGov suite of products as by eGovernments Foundation 
     is available at http://www.egovernments.org
@@ -56,6 +56,7 @@
 					<div class="col-sm-3 control-label text-right"><spring:message code="lbl.executiondate" /><span class="mandatory"></span></div>
 					<div class="col-sm-3 add-margin">
 						<form:input id="executionDate" path="connection.executionDate" class="form-control datepicker today" data-date-end-date="0d" required="required" />
+						<form:errors path="connection.executionDate" class="add-margin error-msg"/>
 					</div>
 				</div>	
 			</div>	

@@ -42,43 +42,50 @@ package org.egov.commons;
 import java.math.BigDecimal;
 
 public class CGeneralLedgerDetail {
-	private Long id;
-	private CGeneralLedger generalLedgerId;
-        private Integer detailKeyId;
-        private Accountdetailtype detailTypeId;
-        private BigDecimal amount;
-	public Long getId() {
-		return id;
-	}
-	public void setId(Long id) {
-		this.id = id;
-	}
-	
-	public CGeneralLedger getGeneralLedgerId() {
+    private Long id;
+    private CGeneralLedger generalLedgerId;
+    private Integer detailKeyId;
+    private Accountdetailtype detailTypeId;
+    private BigDecimal amount;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
+    public CGeneralLedger getGeneralLedgerId() {
         return generalLedgerId;
     }
-    public void setGeneralLedgerId(CGeneralLedger generalLedgerId) {
+
+    public void setGeneralLedgerId(final CGeneralLedger generalLedgerId) {
         this.generalLedgerId = generalLedgerId;
     }
+
     public Accountdetailtype getDetailTypeId() {
         return detailTypeId;
     }
-    public void setDetailTypeId(Accountdetailtype detailTypeId) {
+
+    public void setDetailTypeId(final Accountdetailtype detailTypeId) {
         this.detailTypeId = detailTypeId;
     }
+
     public Integer getDetailKeyId() {
-		return detailKeyId;
-	}
-	public void setDetailKeyId(Integer detailKeyId) {
-		this.detailKeyId = detailKeyId;
-	}
-	
-	public BigDecimal getAmount() {
-		return amount;
-	}
-	public void setAmount(BigDecimal amount) {
-		this.amount = amount;
-	}
-	
-	
+        return detailKeyId;
+    }
+
+    public void setDetailKeyId(final Integer detailKeyId) {
+        this.detailKeyId = detailKeyId;
+    }
+
+    public BigDecimal getAmount() {
+        return amount;
+    }
+
+    public void setAmount(final BigDecimal amount) {
+        this.amount = amount;
+    }
+
 }

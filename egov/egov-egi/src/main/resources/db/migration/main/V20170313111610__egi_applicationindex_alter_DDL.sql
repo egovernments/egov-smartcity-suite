@@ -1,0 +1,1 @@
+ALTER TABLE eg_applicationindex ALTER COLUMN applicantname TYPE character varying(250);

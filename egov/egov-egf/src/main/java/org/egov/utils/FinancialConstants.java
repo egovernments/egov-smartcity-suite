@@ -39,15 +39,14 @@
  */
 package org.egov.utils;
 
+import org.egov.infstr.utils.EGovConfig;
+
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.GregorianCalendar;
 
-import org.egov.infstr.utils.EGovConfig;
-
 /**
- *
  * @author Manikanta will have all statuses of bill
- *
  */
 public interface FinancialConstants {
 
@@ -61,6 +60,8 @@ public interface FinancialConstants {
     public static final String SUPPLIERBILL = "PURCHBILL";
     public static final String CONTRACTORBILL = "WORKSBILL";
     public static final String PENSIONBILL = "PENSIONBILL";
+    public static final String SBILL = "SBILL";
+    public static final String CONTRACTOR_BILL = "CONTRACTORBILL";
 
     // Standard Bill Types or Expernditure type
 
@@ -97,7 +98,7 @@ public interface FinancialConstants {
     // Status for Contrator Bills
     public static final String CONTRACTORBILL_CREATED_STATUS = "Pending";
     public static final String CONTRACTORBILL_CANCELLED_STATUS = "Cancelled";
-    // public static final String CONTRACTORBILL_APPROVED_STATUS="Approved";
+    public static final String CONTRACTORBILL_APPROVED_STATUS = "APPROVED";
     public static final String CONTRACTORBILL_PASSED_STATUS = "Passed";
     public static final String CONTRACTORBILL_PAID_STATUS = "Paid";
 
@@ -238,7 +239,7 @@ public interface FinancialConstants {
     public static final String KEY_DEFAULTTXNMISATTRRIBUTES = "DEFAULTTXNMISATTRRIBUTES";
     public static final String KEY_CONTINGENCYBILLPURPOSEIDS = "contingencyBillPurposeIds";
     public static final String KEY_CONTINGENCYBILLDEFAULTPURPOSEID = "contingencyBillDefaultPurposeId";
-    
+
     public static final String TYPEOFACCOUNT_PAYMENTS = "PAYMENTS";
     public static final String TYPEOFACCOUNT_RECEIPTS = "RECEIPTS";
     public static final String TYPEOFACCOUNT_RECEIPTS_PAYMENTS = "RECEIPTS_PAYMENTS";
@@ -248,7 +249,10 @@ public interface FinancialConstants {
     public static final String APPCONFIG_COA_MAJORCODE_CAPITAL_EXP_FIE_REPORT = "coa_major_capital_exp_fie_report";
     public static final String APPCONFIG_BUDGETGROUP_RANGE = "budgetgroup_range_minor_or_detailed";
     public static final String APPCONFIG_EXCLUDE_STATUS = "exclude_status_forbudget_actual";
+    public static final String APPCONFIG_AUTO_BANKACCOUNT_GLCODE = "auto_bankaccount_glcode";
     public static final String DELIMITER_FOR_VOUCHER_STATUS_TO_CHECK_BANK_BALANCE = ",";
+    public static final String APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS = "allow_billsaccounting_across_years";
+    public static final String APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS_ENDDATE = "billsaccounting_accrossyears_enddate";
 
     public static final String BANKACCOUNT_WALKIN_PAYMENT_DESCRIPTION = "Walkin payment account";
 
@@ -329,6 +333,8 @@ public interface FinancialConstants {
     public static final String WORKFLOW_STATE_CANCELLED = "Cancelled";
     public static final String WORKFLOW_STATE_CREATED = "Created";
 
+
+    public static final String WF_STATE_FINAL_APPROVAL_PENDING = "Final Approval Pending";
     public static final String WF_STATE_EOA_Approval_Pending = "EOA Approval Pending";
     public static final String WF_STATE_COMM_Approval_Pending = "Commissioner Approval Pending";
 
@@ -337,11 +343,71 @@ public interface FinancialConstants {
 
     public static final String BUDGET = "BUDGET";
     public static final String BUDGETDETAIL = "BUDGETDETAIL";
-    public static final String BUDGETDETAIL_CREATED_STATUS = "CREATED";
+    public static final String BUDGETDETAIL_CREATED_STATUS = "Created";
     public static final String BUDGETDETAIL_VERIFIED_STATUS = "VERIFIED";
     public static final String WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME = "Expense Bill";
+    public static final String WORKFLOWTYPE_VOUCHER_DISPLAYNAME = "Voucher";
 
     public static final String WORKFLOW_STATUS_CODE_REJECTED = "REJECTED";
     public static final String KEY_DATAENTRYCUTOFFDATE = "DataEntryCutOffDate";
     public static final String NA = "na";
+    public static final String MANUAL = "Manual";
+    public static final String AUTO = "Auto";
+    public static final String GENERAL = "General";
+    public static final String STANDARD_SUBTYPE_FIXED_ASSET = "Fixed Asset";
+    public static final String BILL_EDIT_DESIGNATIONS = "BILL_EDIT_DESIGNATIONS";
+
+    public static final String VOUCHER_TYPE_JOURNAL = "Journal";
+    public static final String VOUCHER_TYPE_WORKS = "worksjv";
+    public static final String VOUCHER_TYPE_PURCHASE = "purchasejv";
+    public static final String VOUCHER_TYPE_SALARY = "salaryjv";
+    public static final String VOUCHER_TYPE_CONTINGENT = "contingentjv";
+    public static final String VOUCHER_TYPE_FIXEDASSET = "fixedassetjv";
+    public static final String VOUCHER_TYPE_PENSION = "pensionjv";
+    public static final String BALANCE_CHECK_CONTROL_TYPE = "Balance Check Control Type";
+    public static final String MANDATORY = "mandatory";
+    public static final String WARNING = "warning";
+    public static final String NONE = "none";
+    public static final String MODE_OF_PAYMENT = "Mode of Payment";
+
+    public static final String FINANCIAL_VOUCHER_INDEX_NAME = "financialsvoucherdata";
+    public static final String FINANCIAL_OPENINGBALANCE_INDEX_NAME = "financialsobdata";
+    public static final String FINANCIAL_BUDGET_INDEX_DATA = "financialsbudgetdata";
+    public static final SimpleDateFormat DATEFORMATTER_YYYY_MM_DD = new SimpleDateFormat("yyyy-MM-dd");
+
+    public static final String FUND_NAME = "fundName";
+    public static final String DEPARTMENT_NAME = "departmentName";
+    public static final String FUNCTION_NAME = "functionName";
+    public static final String SCHEME_NAME = "schemeName";
+    public static final String SUBSCHEME_NAME = "subSchemeName";
+
+    public static final String BUDGETAPPROVEDAMOUNT = "budgetapprovedamount";
+    public static final String REAPPROPRIATIONAMOUNT = "reappropriationamount";
+    public static final String TOTALBUDGET = "totalbudget";
+    public static final String ACTUALAMOUNT = "actualamount";
+    public static final String PREVIOUYEARACTUALAMOUNT = "previouyearactualamount";
+    public static final String COMMITTEDEXPENDITURE = "committedexpenditure";
+    public static final String BUDGETVARIANCE = "budgetvariance";
+    public static final String BUDGETDETAILCREATEDDATE = "budgetdetailcreateddate";
+
+    public static final String DISTNAME = "distname";
+    public static final String ULBNAME = "ulbname";
+    public static final String ULBGRADE = "ulbgrade";
+    public static final String REGNAME = "regname";
+    public static final String MAJORCODEDESCRIPTION = "majorCodeDescription";
+    public static final String MINORCODEDESCRIPTION = "minorCodeDescription";
+    public static final String DETAILEDCODEDESCRIPTION = "glcodeDescription";
+
+    public static final String VOUCHERFUNDNAME = "voucherfundname";
+    public static final String VOUCHERMISDEPARTMENTNAME = "vouchermisdepartmentname";
+    public static final String VOUCHERMISSCHEMENAME = "vouchermisschemename";
+    public static final String VOUCHERMISSUBSCHEMENAME = "vouchermissubschemename";
+    public static final String VOUCHERMISFUNCTIONNAME = "vouchermisfunctionname";
+
+    public static final String FUND_CODE = "fundCode";
+    public static final String DEPARTMENT_CODE = "departmentCode";
+    public static final String FUNCTION_CODE = "functionCode";
+    public static final String SCHEME_CODE = "schemeCode";
+    public static final String SUBSCHEME_CODE = "subSchemeCode";
+
 }

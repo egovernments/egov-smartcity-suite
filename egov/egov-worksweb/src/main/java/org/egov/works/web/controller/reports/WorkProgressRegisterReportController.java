@@ -42,6 +42,7 @@ package org.egov.works.web.controller.reports;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.reports.entity.WorkProgressRegisterSearchRequest;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -56,12 +57,16 @@ public class WorkProgressRegisterReportController {
     @Autowired
     private DepartmentService departmentService;
 
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showSearchLineEstimateForm(
             @ModelAttribute final WorkProgressRegisterSearchRequest workProgressRegisterSearchRequest,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("workProgressRegisterSearchRequest", workProgressRegisterSearchRequest);
+        workProgressRegisterSearchRequest.setDepartment(worksUtils.getDefaultDepartmentId());
         return "workProgressRegister-search";
     }
 

@@ -56,7 +56,7 @@ public class TimeSeriesReportJsonAdaptor implements JsonSerializer<TimeSeriesRep
         final JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("count", timeSeriesresult.getCount().toString());
         jsonObject.addProperty("aggregatedBy", timeSeriesresult.getAggregatedBy());
-        jsonObject.addProperty("year", timeSeriesresult.getYear().toString()== null ? "": timeSeriesresult.getYear().toString());
+        jsonObject.addProperty("year", timeSeriesresult.getYear()== null ? "": timeSeriesresult.getYear());
         jsonObject.addProperty("month", timeSeriesresult.getMonth() == null ? "":timeSeriesresult.getMonth());
         return jsonObject;
     }

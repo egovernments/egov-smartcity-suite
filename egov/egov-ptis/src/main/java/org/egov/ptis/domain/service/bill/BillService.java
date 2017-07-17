@@ -239,7 +239,6 @@ public class BillService {
         LOGGER.debug("Entered into saveEgBill");
         LOGGER.debug("saveEgBill : BasicProperty: " + basicProperty);
         propertyTaxBillable.setBasicProperty(basicProperty);
-        propertyTaxBillable.setUserId(userId.longValue());
         propertyTaxBillable.setReferenceNumber(getBillNo());
         propertyTaxBillable.setBillType(propertyTaxUtil.getBillTypeByCode(BILLTYPE_MANUAL));
         propertyTaxBillable.setLevyPenalty(Boolean.TRUE);

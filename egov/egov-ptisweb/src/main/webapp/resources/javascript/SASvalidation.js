@@ -170,12 +170,18 @@ function checkZero(obj,msg)
 		{
 			val=eval(obj.value);			
 			//bootbox.alert("val="+val);
-			if(val==0)
+			if(val<=0)
 			{
+				if(val < 0){
+					bootbox.alert("Value should be greater than Zero");
+				}
+				else{
 				bootbox.alert("Series of Zeroes is Not a Valid "+msg);
+				}
 				obj.value="";
 				obj.focus();
 				return false;
+				
 			}
 		}
 	}
@@ -961,8 +967,6 @@ function addOwner() {
 								}
 							}
 							
-							console.log('data index -> '+jQuery(this).html());
-							
 							jQuery(this).attr('readonly', false);
 							jQuery(this).removeAttr('disabled');
 							jQuery(this).prop('checked', false);
@@ -1265,6 +1269,10 @@ function deleteMutationOwner(obj)
 
 function addFloor()
 {		
+	if (jQuery('#floorDetailsEntered').prop('checked')) {
+		bootbox.alert('Uncheck floor details entered check box to proceed');
+		return false;
+	}
 	var tbl = document.getElementById('floorDetails');
     var rowO=tbl.rows.length;
      // bootbox.alert("rowO="+rowO);
@@ -1284,7 +1292,6 @@ function addFloor()
 	    			if((jQuery(this).data('optional') === 0) && (!jQuery(this).val()))
 	    			{
 	    				jQuery(this).focus();
-	    				console.log('called =>' + jQuery(this).attr('id'));
 	    				bootbox.alert(jQuery(this).data('errormsg'));
 	    				isValid=0;//set validation failure
 	    				return false;
@@ -1335,6 +1342,7 @@ function addFloor()
 				});
 		}
 	}
+    showHideLengthBreadth();
 }
 function delFloor(obj)
 {
@@ -1365,7 +1373,7 @@ function delFloor(obj)
 			       },
 			      'name': function(_, name) {
 			    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
-			      },
+			      }
 			   });
 			   
 			   if(jQuery(this).data('calculate'))
@@ -1403,8 +1411,6 @@ function delFloor(obj)
 
 //calculate area in floor details table
 function calculateArea(obj) {
-	console.log(jQuery(obj)[0].attributes['data-result'].nodeValue);
-	//
 	var field1 = jQuery(obj).val();
 	var field2 = jQuery('input[name="'+ jQuery(obj)[0].attributes['data-calculate'].nodeValue +'"]').val();
 	jQuery('input[name="'+ jQuery(obj)[0].attributes['data-result'].nodeValue +'"]').val((field1*field2));

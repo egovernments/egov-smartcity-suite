@@ -1,0 +1,344 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-03T17:29:16 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="connectionWorkOrder_subreport" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="468"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Sample DB"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="municipality" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="doorno" class="java.lang.String"/>
+	<parameter name="consumerNumber" class="java.lang.String"/>
+	<parameter name="address" class="java.lang.String"/>
+	<parameter name="donationCharges" class="java.lang.Double"/>
+	<parameter name="roadCuttingCharges" class="java.lang.Double"/>
+	<parameter name="superVisionCharges" class="java.lang.Double"/>
+	<parameter name="securityDeposit" class="java.lang.Double"/>
+	<parameter name="total" class="java.lang.Double"/>
+	<parameter name="workOrderNo" class="java.lang.String"/>
+	<parameter name="workOrderDate" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="designation" class="java.lang.String"/>
+	<group name="connection_group">
+		<groupHeader>
+			<band height="549">
+				<textField isStretchWithOverflow="true">
+					<reportElement x="95" y="29" width="386" height="31" uuid="c8771a71-cb49-4078-94ff-145179eb1dd6"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font size="8" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Tap Connection   Municipality-Sanction of tap connection to the house bearing"+" "+
+"D.No "+ $P{doorno}  + " "+ "Locality" +" "+ $P{locality} +" "  +"Orders issued."]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="54" y="33" width="42" height="15" uuid="5b913242-3c3c-4ba9-bd21-8514e7c34f8c"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Sub:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="28" y="129" width="42" height="15" uuid="c831ebc4-3872-45fd-b6b9-36780dd7423e"/>
+					<textElement verticalAlignment="Middle">
+						<font size="10" isBold="true" isUnderline="true"/>
+					</textElement>
+					<text><![CDATA[Order:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="60" y="187" width="146" height="15" uuid="735b2eff-fd36-4620-9a36-8bcd75a5ebaa"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[1.Donation]]></text>
+				</staticText>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="54" y="145" width="426" height="40" uuid="d23e25c6-dece-4af5-a8b4-82e5efa9565b"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["In the reference 1st cited,Sri/Smt "+		$P{applicantName}		 +" "+
+"has submitted an application seeking tap connection to the house bearing "+
+"D.No"+" "+$P{doorno} 	+" "+"locality "+$P{locality}+" and paid the following amounts towards donation and other changes."]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="29" y="3" width="66" height="15" uuid="f33dbd89-d45d-4afd-a014-20038ecf3b07"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom" markup="styled">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["ROC.No:"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="348" y="4" width="40" height="15" uuid="6d440c50-1dd4-4031-b154-4a33fb593bd2"/>
+					<textElement textAlignment="Left" verticalAlignment="Bottom" markup="styled">
+						<font size="10" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Dt."]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="95" y="68" width="386" height="23" uuid="b64c258f-7974-4b30-9258-7dbf882efa4d"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font size="8" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["1.Application of Sri/Smt "+ $P{applicantName} +" "+ "D.No "+$P{doorno}  +" " +"Locality " +$P{locality}	 + " "+"Dated"+" "+$P{applicationDate}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="54" y="68" width="42" height="15" uuid="d0af5b8a-82d8-4463-8be3-d02292357def"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Ref:]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="224" y="104" width="76" height="17" uuid="70881e22-1368-40a0-b2b6-8d020ab73f70"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[***********]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="60" y="202" width="146" height="15" uuid="3dddc566-6a7b-46bf-8c54-51c80ca82a63"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[2.Security Deposit]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="60" y="217" width="146" height="15" uuid="2b2b6ee7-e7a2-4c78-8a50-2c1b2136cec3"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[3.Road Cutting Charges]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="60" y="232" width="146" height="15" uuid="26628d0b-fc2b-4bfc-a5b3-de566c59d3b6"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[4.15% Supervision Charges]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="206" y="187" width="58" height="15" uuid="28ce82f8-3913-41c1-8b77-60f66afc1b5b"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[:        Rs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="206" y="202" width="58" height="15" uuid="04447327-6fcb-4165-bebb-cb56e8394b63"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[:        Rs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="206" y="217" width="58" height="15" uuid="5dbc5ac8-98c8-4c9f-9099-0da902dbda49"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[:        Rs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="206" y="232" width="58" height="15" uuid="967ce92b-e280-4411-b8a7-861aa28715ce"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[:        Rs.]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="60" y="247" width="146" height="15" uuid="7184df96-688d-43bb-9b7b-1647d6d0dead"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="206" y="247" width="58" height="15" uuid="c5a2f722-75f2-4985-9adb-c92c8a456e9e"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="false"/>
+					</textElement>
+					<text><![CDATA[:        Rs.]]></text>
+				</staticText>
+				<textField isBlankWhenNull="true">
+					<reportElement x="343" y="372" width="193" height="15" uuid="264dd04c-fcde-4ee9-9973-231bccbdd4e1"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{designation}.equals("Commissioner")?"Commissioner":"For Commissioner"]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="334" y="392" width="201" height="15" uuid="aa117596-c0be-4f17-a7b1-e19446febf7a"/>
+					<textElement textAlignment="Center" verticalAlignment="Middle">
+						<font size="8" isBold="true" pdfFontName="Helvetica-Bold"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="53" y="406" width="42" height="12" uuid="039563b9-b598-48f7-b6ec-5e7c28761cb0"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["To,"]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="53" y="418" width="42" height="12" uuid="3953e8ba-f959-47e9-9be4-c0e61a7cac1d"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Sri,Smt"]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="53" y="430" width="42" height="12" uuid="7741facb-4f73-4f85-85ca-b912d0d96d36"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["D.No"]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="53" y="443" width="210" height="12" uuid="dcc8c6c3-3a68-4be8-9659-8dadfb36c980"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8" isBold="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["CONSUMER NO: "+$P{consumerNumber}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="53" y="463" width="426" height="34" uuid="27a53af9-db70-470c-8b54-70300273551c"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Copy to Asst Engineer Water Supply with a direction to issue tap connection to the "
++"above premises and initiate the date of connection."]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="53" y="498" width="426" height="34" uuid="0a51bc1a-e761-4e77-a1f3-e155e1566255"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["Copy to Asst Engineer Water Supply with a direction to get the road cutting portion "+
+"repaired within a week and report compliance."]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="95" y="418" width="168" height="12" uuid="c8fa7a0a-dc73-424e-96f8-0702c9397fb9"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="95" y="430" width="168" height="12" uuid="8dee361c-36ad-4208-962f-9f32a74746b0"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{doorno}]]></textFieldExpression>
+				</textField>
+				<textField pattern="dd/MM/yyyy">
+					<reportElement x="55" y="262" width="426" height="34" uuid="18fc3dd3-bb69-4edd-98ae-1fe21c6f5795"/>
+					<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA["2.Therefore sanction is hereby accorded for execution of 1/2,3/4  new tap " + 
+"connection on tap rate /Meter rate to the above premises with <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">consumer no: "+$P{consumerNumber}+"</style>"]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="187" width="158" height="15" uuid="948285da-82c6-4a51-b3ab-5bda822cc6d6"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{donationCharges}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="217" width="158" height="15" uuid="6912f80d-4f1c-45c3-bd99-a17041e1b33c"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{roadCuttingCharges}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="232" width="158" height="15" uuid="02707ad6-53f3-4bfb-9ea6-f84c137925d3"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{superVisionCharges}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="202" width="158" height="15" uuid="c9d20685-4bb3-49c6-a11f-e5bcc3b85efd"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{securityDeposit}]]></textFieldExpression>
+				</textField>
+				<textField>
+					<reportElement x="264" y="247" width="158" height="15" uuid="64a48b66-537f-4e03-9178-34083d063df5"/>
+					<textElement verticalAlignment="Middle">
+						<font size="8"/>
+					</textElement>
+					<textFieldExpression><![CDATA[$P{total}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="82" y="3" width="158" height="15" uuid="eb635a14-06a1-43a9-8327-7f30a1a4ead9"/>
+					<textElement verticalAlignment="Bottom"/>
+					<textFieldExpression><![CDATA[$P{workOrderNo}]]></textFieldExpression>
+				</textField>
+				<textField isBlankWhenNull="true">
+					<reportElement x="374" y="4" width="96" height="15" uuid="b9dc197b-b9d5-4dbb-8a99-c857c69f091a"/>
+					<textElement verticalAlignment="Bottom"/>
+					<textFieldExpression><![CDATA[$P{workOrderDate}]]></textFieldExpression>
+				</textField>
+				<textField isStretchWithOverflow="true">
+					<reportElement x="95" y="90" width="386" height="12" uuid="f94b5f2c-2788-437a-9176-e98b59d706e4"/>
+					<textElement verticalAlignment="Middle" markup="styled">
+						<font size="8" isPdfEmbedded="true"/>
+					</textElement>
+					<textFieldExpression><![CDATA["2.Remarks of the Municipal Engineer,Dated "]]></textFieldExpression>
+				</textField>
+				<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+					<reportElement x="343" y="321" width="193" height="50" uuid="d4988911-f4fc-4b46-918a-07bc7725e717"/>
+					<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
+				</image>
+			</band>
+		</groupHeader>
+	</group>
+</jasperReport>

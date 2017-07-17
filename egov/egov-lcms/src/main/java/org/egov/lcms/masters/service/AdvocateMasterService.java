@@ -55,6 +55,9 @@ import org.egov.commons.Accountdetailkey;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.service.EntityTypeService;
+import org.egov.commons.utils.EntityType;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.repository.AdvocateMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,7 +67,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class AdvocateMasterService {
+public class AdvocateMasterService implements EntityTypeService {
 
     private final AdvocateMasterRepository advocateMasterRepository;
     @PersistenceContext
@@ -83,18 +86,22 @@ public class AdvocateMasterService {
     @Transactional
     public AdvocateMaster persist(final AdvocateMaster advocateMaster) {
         return advocateMasterRepository.save(advocateMaster);
-
     }
 
     public List<AdvocateMaster> findAll() {
         return advocateMasterRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
+    public List<AdvocateMaster> getActiveAdvocateMaster() {
+        return advocateMasterRepository.findByIsActiveTrueOrderByNameAsc();
+    }
+
     public AdvocateMaster findByName(final String name) {
         return advocateMasterRepository.findByName(name);
     }
 
-    public List<AdvocateMaster> getAllAdvocatesByNameLikeAndIsSeniorAdvocate(final String name, final Boolean isSeniorAdvocate) {
+    public List<AdvocateMaster> getAllAdvocatesByNameLikeAndIsSeniorAdvocate(final String name,
+            final Boolean isSeniorAdvocate) {
         return advocateMasterRepository.findByNameContainingIgnoreCaseAndIsSeniorAdvocate(name, isSeniorAdvocate);
     }
 
@@ -132,9 +139,9 @@ public class AdvocateMasterService {
                 final String name = "%" + advocateMaster.getName().toLowerCase() + "%";
                 predicates.add(cb.isNotNull(advocateMasterObj.get("name")));
                 predicates
-                .add(cb.like(
-                        cb.lower(advocateMasterObj
-                                .get(AdvocateMaster.getDeclaredSingularAttribute("name", String.class))),
+                        .add(cb.like(
+                                cb.lower(advocateMasterObj
+                                        .get(AdvocateMaster.getDeclaredSingularAttribute("name", String.class))),
                                 name));
             }
             if (advocateMaster.getMobileNumber() != null) {
@@ -143,15 +150,15 @@ public class AdvocateMasterService {
                 predicates.add(cb.like(
                         cb.lower(advocateMasterObj
                                 .get(AdvocateMaster.getDeclaredSingularAttribute("mobileNumber", String.class))),
-                                mobileNumber));
+                        mobileNumber));
             }
             if (advocateMaster.getEmail() != null) {
                 final String email = "%" + advocateMaster.getEmail() + "%";
                 predicates.add(cb.isNotNull(advocateMasterObj.get("email")));
                 predicates
-                .add(cb.like(
-                        cb.lower(advocateMasterObj
-                                .get(AdvocateMaster.getDeclaredSingularAttribute("email", String.class))),
+                        .add(cb.like(
+                                cb.lower(advocateMasterObj
+                                        .get(AdvocateMaster.getDeclaredSingularAttribute("email", String.class))),
                                 email));
             }
 
@@ -161,6 +168,38 @@ public class AdvocateMasterService {
             resultList = query.getResultList();
         }
         return resultList;
+    }
+
+    @Override
+    public List<EntityType> getAllActiveEntities(final Integer advocateId) {
+        final List<EntityType> entities = new ArrayList<>();
+        final List<AdvocateMaster> advocateNames = getActiveAdvocateMaster();
+        entities.addAll(advocateNames);
+        return entities;
+    }
+
+    @Override
+    public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
+            final Integer accountDetailTypeId) {
+        return advocateMasterRepository.findByNameLike(filterKey + "%");
+    }
+
+    @Override
+    public List getAssetCodesForProjectCode(final Integer accountdetailkey)
+            throws ValidationException {
+        return null;
+    }
+
+    @Override
+    public List<AdvocateMaster> validateEntityForRTGS(final List<Long> idsList) throws ValidationException {
+        return null;
+
+    }
+
+    @Override
+    public List<AdvocateMaster> getEntitiesById(final List<Long> idsList) throws ValidationException {
+        return null;
+
     }
 
 }

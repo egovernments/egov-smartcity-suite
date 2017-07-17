@@ -163,7 +163,7 @@ public class Validity extends AbstractAuditable {
     }
 
     public boolean hasValidValues() {
-        return isBasedOnFinancialYear() || day != null && day != 0 || week != null && week != 0 || month != null && month != 0
-                || year != null && year != 0;
+        return isBasedOnFinancialYear() || day != null && day > 0 || week != null && week > 0 || month != null && month > 0
+                || year != null && year > 0;
     }
 }

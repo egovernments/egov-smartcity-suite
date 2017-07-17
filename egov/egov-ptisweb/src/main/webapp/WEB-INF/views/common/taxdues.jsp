@@ -43,8 +43,9 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<div class="row">
+<div class="row printable">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
@@ -54,63 +55,60 @@
 				</div>
 			</div>
 			<div class="panel-body">
-				<div class="row">
-					<div class="col-sm-3 add-margin">
-						&nbsp;
+				<div class="row add-border">
+					<div class="col-md-3 col-xs-3 add-margin">
+						<spring:message code="lbl.assmtno" />
 					</div>
-					<div class="col-sm-3 add-margin">
+					<div class="col-md-3 col-xs-3 add-margin view-content">
+						<c:out value="${assessementNo}"/>
+					</div>
+				</div>	
+				<div class="row add-border">	
+					<div class="col-md-3 col-xs-3 add-margin">
+						<spring:message code="lbl.OwnerName" />
+					</div>
+					<div class="col-md-3 col-xs-3 add-margin view-content">
+						<strong><c:out value="${ownerName}"/></strong>
+					</div>				
+					<div class="col-md-3 col-xs-3 add-margin">
+						<spring:message code="lbl.doorNumber" />
+					</div>
+					<div class="col-md-3 col-xs-3 add-margin view-content">
+						<strong><c:out value="${doorNo}"/></strong>
+					</div>
+				</div>	
+				<div class="row add-border">	
+					<div class="col-md-3 col-xs-3 add-margin">
 						<spring:message code="lbl.currenttax" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">
+					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<spring:message code="lbl.rs"/>
 						<fmt:formatNumber value="${currentPropertyTax}" pattern="#,##0.00" />
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-3 add-margin">
-						&nbsp;
-					</div>
-					<div class="col-sm-3 add-margin">
+					<div class="col-md-3 col-xs-3 add-margin">
 						<spring:message code="lbl.currenttax.due" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">
+					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<spring:message code="lbl.rs"/>
 						<fmt:formatNumber value="${currentPropertyTaxDue}"
 							pattern="#,##0.00" />
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-3 add-margin">
-						&nbsp;
-					</div>
-					<div class="col-sm-3 add-margin">
+				</div>	
+				<div class="row add-border">	
+					<div class="col-md-3 col-xs-3 add-margin">
 						<spring:message code="lbl.watertax.due" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">
+					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<spring:message code="lbl.rs"/>
 						<fmt:formatNumber value="${currentWaterTaxDue}" pattern="#,##0.00" />
 					</div>
-				</div>
-				<div class="row">
-					<div class="col-sm-3 add-margin">
-						&nbsp;
-					</div>
-					<div class="col-sm-3 add-margin">
+					<div class="col-md-3 col-xs-3 add-margin">
 						<spring:message code="lbl.totalarrears.due" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">
+					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<spring:message code="lbl.rs"/>
 						<fmt:formatNumber value="${arrearPropertyTaxDue}"
 							pattern="#,##0.00" />
-					</div>
-				</div>
-				<div class="row">&nbsp;</div>	
-				<div class="row">
-					<div class="text-center">
-						<button type="button" class="btn btn-default" data-dismiss="modal"
-							onclick="window.close();">
-							<spring:message code="lbl.close" />
-						</button>
 					</div>
 				</div>
 				<div class="mandatory">
@@ -120,3 +118,9 @@
 		</div>
 	</div>
 </div>
+<div colspan="3" align="center">
+				<input type="button" id="print" class="button printbtn" value="Print" class="print" />
+				&nbsp;&nbsp;
+				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
+</div>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>

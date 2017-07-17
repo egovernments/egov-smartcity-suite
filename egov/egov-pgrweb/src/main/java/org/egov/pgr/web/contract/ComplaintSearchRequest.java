@@ -40,15 +40,16 @@
 
 package org.egov.pgr.web.contract;
 
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.joda.time.DateTime;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.egov.infra.utils.DateUtils.TO_DEFAULT_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import static org.egov.infra.utils.DateUtils.toDateTimeUsingDefaultPattern;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.elasticsearch.index.query.QueryBuilders.rangeQuery;
 
@@ -92,9 +93,9 @@ public class ComplaintSearchRequest {
             searchQueryBuilder.filter(matchQuery("complainantEmail", email));
     }
 
-    public void setReceivingCenter(final String receivingCenter) {
-        if (isNotBlank(receivingCenter))
-            searchQueryBuilder.filter(matchQuery("receivingMode", receivingCenter));
+    public void setReceivingMode(final String receivingMode) {
+        if (isNotBlank(receivingMode))
+            searchQueryBuilder.filter(matchQuery("receivingMode", receivingMode));
     }
 
     public void setComplaintType(final String complaintType) {
@@ -104,12 +105,12 @@ public class ComplaintSearchRequest {
 
     public void setFromDate(final String fromDate) {
         if (fromDate != null)
-            this.fromDate = startOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(fromDate)).toString(ES_DATE_FORMAT);
+            this.fromDate = startOfGivenDate(toDateTimeUsingDefaultPattern(fromDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setToDate(final String toDate) {
         if (toDate != null)
-            this.toDate = endOfGivenDate(TO_DEFAULT_DATE_FORMAT.parseDateTime(toDate)).toString(ES_DATE_FORMAT);
+            this.toDate = endOfGivenDate(toDateTimeUsingDefaultPattern(toDate)).toString(ES_DATE_FORMAT);
     }
 
     public void setComplaintDepartment(final String complaintDepartment) {
@@ -138,6 +139,7 @@ public class ComplaintSearchRequest {
     }
 
     public BoolQueryBuilder query() {
+        searchQueryBuilder.filter(matchQuery("cityCode", ApplicationThreadLocals.getCityCode()));
         if (isNotBlank(this.fromDate) || isNotBlank(this.toDate))
             searchQueryBuilder.must(rangeQuery("createdDate")
                     .from(this.fromDate).to(this.toDate));

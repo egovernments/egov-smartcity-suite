@@ -198,38 +198,29 @@ public class JournalVoucherActionHelper {
     public CVoucherHeader transitionWorkFlow(final CVoucherHeader voucherHeader, WorkflowBean workflowBean) {
         final DateTime currentDate = new DateTime();
         final User user = securityUtils.getCurrentUser();
-        final Assignment userAssignment = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date()).get(0);
         Position pos = null;
         Assignment wfInitiator = null;
         if (null != voucherHeader.getId())
             wfInitiator = getWorkflowInitiator(voucherHeader);
 
         if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (wfInitiator.equals(userAssignment)) {
-                voucherHeader.transition(true).end().withSenderName(user.getName())
-                        .withComments(workflowBean.getApproverComments())
-                        .withDateInfo(currentDate.toDate());
-            } else {
                 final String stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
-                voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withOwner(wfInitiator.getPosition()).withNextAction(FinancialConstants.WF_STATE_EOA_Approval_Pending);
-            }
 
         } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                     null, null, voucherHeader.getCurrentState().getValue(), null);
-            voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+            voucherHeader.transition().end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withStateValue(wfmatrix.getCurrentDesignation() + " Approved").withDateInfo(currentDate.toDate())
                     .withOwner(pos)
                     .withNextAction(wfmatrix.getNextAction());
 
             voucherHeader.setStatus(FinancialConstants.CREATEDVOUCHERSTATUS);
-            voucherHeader.transition(true).end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                    .withDateInfo(currentDate.toDate());
         } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             voucherHeader.setStatus(FinancialConstants.CANCELLEDVOUCHERSTATUS);
-            voucherHeader.transition(true).end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
+            voucherHeader.transition().end().withStateValue(FinancialConstants.WORKFLOW_STATE_CANCELLED)
                     .withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
         } else {
@@ -243,13 +234,16 @@ public class JournalVoucherActionHelper {
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             } else if (voucherHeader.getCurrentState().getNextAction().equalsIgnoreCase("END"))
-                voucherHeader.transition(true).end().withSenderName(user.getName())
+                voucherHeader.transition().end().withSenderName(user.getName())
                         .withComments(workflowBean.getApproverComments())
                         .withDateInfo(currentDate.toDate());
             else {
+                if (!voucherHeader.getCurrentState().getValue().equalsIgnoreCase(workflowBean.getCurrentState())) {
+                    return voucherHeader;
+                }
                 final WorkFlowMatrix wfmatrix = voucherHeaderWorkflowService.getWfMatrix(voucherHeader.getStateType(), null,
                         null, null, voucherHeader.getCurrentState().getValue(), null);
-                voucherHeader.transition(true).withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
+                voucherHeader.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             }

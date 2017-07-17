@@ -67,6 +67,9 @@ import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.handler.BillCollectXmlHandler;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillInfoImpl;
+import org.egov.collection.integration.pgi.PaymentRequest;
+import org.egov.collection.integration.services.DebitAccountHeadDetailsService;
+import org.egov.collection.service.CollectionService;
 import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.utils.CollectionCommon;
 import org.egov.collection.utils.CollectionsUtil;
@@ -89,7 +92,6 @@ import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FunctionaryHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
@@ -99,6 +101,7 @@ import org.egov.commons.dao.SubSchemeHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.NumberUtil;
@@ -112,44 +115,44 @@ import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.instrument.InstrumentHeader;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ReceiptAction.NEW, location = "receipt-new.jsp"),
-    @Result(name = ReceiptAction.INDEX, location = "receipt-index.jsp"),
-    @Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
+        @Result(name = ReceiptAction.INDEX, location = "receipt-index.jsp"),
+        @Result(name = ReceiptAction.REDIRECT, location = "receipt-redirect.jsp"),
+        @Result(name = CollectionConstants.REPORT, location = "receipt-report.jsp") })
 public class ReceiptAction extends BaseFormAction {
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
+    private static final String BANK_BRANCH_LIST = "bankBranchList";
     private static final Logger LOGGER = Logger.getLogger(ReceiptAction.class);
-    private BillInfoImpl collDetails = new BillInfoImpl();
     private static final long serialVersionUID = 1L;
     private static final String CANCEL = "cancel";
+    protected static final String REDIRECT = "redirect";
     private String reportId;
 
     /**
-     * A <code>String</code> representing the input xml coming from the billing
-     * system
+     * A <code>String</code> representing the input xml coming from the billing system
      */
     private String collectXML;
     private BillCollectXmlHandler xmlHandler;
     private FinancialsUtil financialsUtil;
 
     /**
-     * A <code>Long</code> array of receipt header ids , which have to be
-     * displayed for view/print/cancel purposes
+     * A <code>Long</code> array of receipt header ids , which have to be displayed for view/print/cancel purposes
      */
     private Long[] selectedReceipts;
 
     /**
-     * An array of <code>ReceiptHeader</code> instances which have to be
-     * displayed for view/print/cancel purposes
+     * An array of <code>ReceiptHeader</code> instances which have to be displayed for view/print/cancel purposes
      */
     private ReceiptHeader[] receipts;
 
     private ReceiptHeaderService receiptHeaderService;
-
+    private CollectionService collectionService;
     private CollectionsUtil collectionsUtil;
 
-    private List<ReceiptHeader> receiptHeaderValues = new ArrayList<ReceiptHeader>(0);
+    private List<ReceiptHeader> receiptHeaderValues = new ArrayList<>(0);
 
     // Instrument information derived from UI
     private List<InstrumentHeader> instrumentProxyList;
@@ -164,11 +167,10 @@ public class ReceiptAction extends BaseFormAction {
     private ReceiptHeader receiptHeader = new ReceiptHeader();
 
     /**
-     * A <code>Long</code> value representing the receipt header id captured
-     * from the front end, which has to be cancelled.
+     * A <code>Long</code> value representing the receipt header id captured from the front end, which has to be cancelled.
      */
     private Long oldReceiptId;
-
+    private String fundName;
     private Boolean overrideAccountHeads = Boolean.FALSE;
     private Boolean partPaymentAllowed;
     private Boolean callbackForApportioning = Boolean.FALSE;
@@ -179,24 +181,32 @@ public class ReceiptAction extends BaseFormAction {
     private Boolean chequeAllowed = Boolean.TRUE;
     private Boolean ddAllowed = Boolean.TRUE;
     private Boolean bankAllowed = Boolean.TRUE;
+    private Boolean onlineAllowed = Boolean.TRUE;
+    private Boolean isReceiptCancelEnable = Boolean.TRUE;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the cash
-     * instrument details entered by the user during receipt creation
+     * An instance of <code>InstrumentHeader</code> representing the cash instrument details entered by the user during receipt
+     * creation
      */
     private InstrumentHeader instrHeaderCash;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the card
-     * instrument details entered by the user during receipt creation
+     * An instance of <code>InstrumentHeader</code> representing the card instrument details entered by the user during receipt
+     * creation
      */
     private InstrumentHeader instrHeaderCard;
 
     /**
-     * An instance of <code>InstrumentHeader</code> representing the 'bank'
-     * instrument details entered by the user during receipt creation
+     * An instance of <code>InstrumentHeader</code> representing the 'bank' instrument details entered by the user during receipt
+     * creation
      */
     private InstrumentHeader instrHeaderBank;
+
+    /**
+     * An instance of <code>InstrumentHeader</code> representing the online instrument details entered by the user during receipt
+     * creation
+     */
+    private InstrumentHeader instrHeaderOnline;
 
     private Date voucherDate;
     private String voucherNum;
@@ -215,24 +225,21 @@ public class ReceiptAction extends BaseFormAction {
     private String serviceName;
 
     /**
-     * A <code>List</code> of <code>String</code> informations sent by the
-     * billing system indicating which are the modes of payment that are not
-     * allowed during receipt creation
+     * A <code>List</code> of <code>String</code> informations sent by the billing system indicating which are the modes of
+     * payment that are not allowed during receipt creation
      */
-    private List<String> collectionModesNotAllowed = new ArrayList<String>(0);
+    private List<String> collectionModesNotAllowed = new ArrayList<>(0);
 
     /**
-     * The <code>User</code> representing the counter operator who has created
-     * the receipt
+     * The <code>User</code> representing the counter operator who has created the receipt
      */
     private User receiptCreatedByCounterOperator;
 
     /**
-     * A <code>List</code> of <code>ReceiptPayeeDetails</code> representing the
-     * model for the action.
+     * A <code>List</code> of <code>ReceiptPayeeDetails</code> representing the model for the action.
      */
 
-    private List<ReceiptDetail> receiptDetailList = new ArrayList<ReceiptDetail>(0);
+    private List<ReceiptDetail> receiptDetailList = new ArrayList<>(0);
 
     private String instrumentTypeCashOrCard;
 
@@ -294,19 +301,20 @@ public class ReceiptAction extends BaseFormAction {
     private List<CChartOfAccounts> bankCOAList;
     private Long functionId;
 
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
-
-    private Date financialYearDate;
-
     private String instrumentType;
+
+    private PaymentRequest paymentRequest;
+
+    @Autowired
+    private ApplicationContext beanProvider;
 
     @Override
     public void prepare() {
         super.prepare();
+        BillInfoImpl collDetails;
         setReceiptCreatedByCounterOperator(collectionsUtil.getLoggedInUser());
         // populates model when request is from the billing system
-        if (getCollectXML() != null && !getCollectXML().equals("")) {
+        if (getCollectXML() != null && !getCollectXML().isEmpty()) {
             final String decodedCollectXML = decodeBillXML();
             try {
                 collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXML);
@@ -343,23 +351,21 @@ public class ReceiptAction extends BaseFormAction {
                 if (totalAmntToBeCollected.compareTo(BigDecimal.ZERO) == -1) {
                     addActionError(getText("billreceipt.totalamountlessthanzero.error"));
                     LOGGER.info(getText("billreceipt.totalamountlessthanzero.error"));
-                } else {
+                } else
                     setTotalAmntToBeCollected(totalAmntToBeCollected.setScale(
                             CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
-                }
             } catch (final Exception e) {
-                LOGGER.error(getText("billreceipt.error.improperbilldata") + e.getMessage());
+                LOGGER.error(getText("billreceipt.error.improperbilldata"), e);
                 addActionError(getText("billreceipt.error.improperbilldata"));
             }
         }
         addDropdownData("serviceCategoryList",
                 serviceCategoryService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICE_CATEGORY));
-        addDropdownData("serviceList", Collections.EMPTY_LIST);
+        addDropdownData("serviceList", Collections.emptyList());
         if (instrumentProxyList == null)
             instrumentCount = 0;
         else
             instrumentCount = instrumentProxyList.size();
-        financialYearDate = financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate();
     }
 
     private String decodeBillXML() {
@@ -367,7 +373,8 @@ public class ReceiptAction extends BaseFormAction {
         try {
             decodedBillXml = java.net.URLDecoder.decode(getCollectXML(), "UTF-8");
         } catch (final UnsupportedEncodingException e) {
-            throw new RuntimeException(e.getMessage());
+            LOGGER.error(getText("billreceipt.error.improperbilldata") + e);
+            throw new ApplicationRuntimeException(e.getMessage());
         }
         return decodedBillXml;
     }
@@ -383,56 +390,51 @@ public class ReceiptAction extends BaseFormAction {
         if (populate) {
             ajaxBankRemittanceAction.setFundName(getFundName());
             ajaxBankRemittanceAction.bankBranchList();
-            addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
-            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.EMPTY_LIST);
+            addDropdownData(BANK_BRANCH_LIST, ajaxBankRemittanceAction.getBankBranchArrayList());
+            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
         } else // to load branch list and account list while returning after an
-            // error
-            if (getServiceName() != null && receiptMisc.getFund() != null) {
-                final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(), false);
-                ajaxBankRemittanceAction.setFundName(fund.getName());
-                ajaxBankRemittanceAction.bankBranchList();
-                addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
+               // error
+        if (getServiceName() != null && receiptMisc.getFund() != null) {
+            final Fund fund = fundDAO.fundById(receiptMisc.getFund().getId(), false);
+            ajaxBankRemittanceAction.setFundName(fund.getName());
+            ajaxBankRemittanceAction.bankBranchList();
+            addDropdownData(BANK_BRANCH_LIST, ajaxBankRemittanceAction.getBankBranchArrayList());
 
-                // account list should be populated only if bank branch had been
-                // chosen
-                if (bankBranchId != null && bankBranchId != 0) {
-                    final Bankbranch branch = bankBranchDAO.findById(bankBranchId, false);
+            // account list should be populated only if bank branch had been
+            // chosen
+            if (bankBranchId != null && bankBranchId != 0) {
+                final Bankbranch branch = bankBranchDAO.findById(bankBranchId, false);
 
-                    ajaxBankRemittanceAction.setBranchId(branch.getId());
-                    ajaxBankRemittanceAction.accountList();
-                    addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
-                } else
-                    addDropdownData(ACCOUNT_NUMBER_LIST, Collections.EMPTY_LIST);
-            } else {
-                addDropdownData("bankBranchList", Collections.EMPTY_LIST);
-                addDropdownData(ACCOUNT_NUMBER_LIST, Collections.EMPTY_LIST);
-            }
+                ajaxBankRemittanceAction.setBranchId(branch.getId());
+                ajaxBankRemittanceAction.accountList();
+                addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
+            } else
+                addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
+        } else {
+            addDropdownData(BANK_BRANCH_LIST, Collections.emptyList());
+            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
+        }
     }
 
     /**
      * This method checks for the modes of payment allowed
      */
     private void setCollModesNotAllowedForRemitReceipt(final String collModesNotAllowed) {
-        final List collectionModesNotAllowed = Arrays.asList(collModesNotAllowed == null ? Collections.EMPTY_LIST
+        final List modesNotAllowed = Arrays.asList(collModesNotAllowed == null ? Collections.emptyList()
                 : collModesNotAllowed.split(","));
 
-        if (collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH))
+        if (modesNotAllowed != null && modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH))
             setCashAllowed(Boolean.FALSE);
 
-        if (collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CARD))
+        if (modesNotAllowed != null && modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CARD))
             setCardAllowed(Boolean.FALSE);
-        if (collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
+        if (modesNotAllowed != null && modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
             setChequeAllowed(Boolean.FALSE);
 
-        if (collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
+        if (modesNotAllowed != null && modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
             setDdAllowed(Boolean.FALSE);
 
-        if (collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
+        if (modesNotAllowed != null && modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
             setBankAllowed(Boolean.FALSE);
     }
 
@@ -444,26 +446,31 @@ public class ReceiptAction extends BaseFormAction {
         final List<String> modesNotAllowed = collectionsUtil
                 .getCollectionModesNotAllowed(getReceiptCreatedByCounterOperator());
 
-        final List<String> collectionModesNotAllowed = getCollectionModesNotAllowed();
+        final List<String> collModesNotAllowed = getCollectionModesNotAllowed();
 
-        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH) || collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH))
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH) || collModesNotAllowed != null
+                && collModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CASH))
             setCashAllowed(Boolean.FALSE);
 
-        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CARD) || collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CARD))
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CARD) || collModesNotAllowed != null
+                && collModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CARD))
             setCardAllowed(Boolean.FALSE);
-        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE) || collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE) || collModesNotAllowed != null
+                && collModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_CHEQUE))
             setChequeAllowed(Boolean.FALSE);
 
-        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD) || collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD) || collModesNotAllowed != null
+                && collModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_DD))
             setDdAllowed(Boolean.FALSE);
 
-        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK) || collectionModesNotAllowed != null
-                && collectionModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK) || collModesNotAllowed != null
+                && collModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_BANK))
             setBankAllowed(Boolean.FALSE);
+
+        if (modesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_ONLINE) || isBillSourcemisc()
+                || collModesNotAllowed != null
+                        && collModesNotAllowed.contains(CollectionConstants.INSTRUMENTTYPE_ONLINE))
+            setOnlineAllowed(Boolean.FALSE);
     }
 
     /**
@@ -500,11 +507,8 @@ public class ReceiptAction extends BaseFormAction {
             fundSource = fundSourceDAO.fundsourceById(receiptMisc.getFundsource().getId().intValue());
         final Department dept = (Department) getPersistenceService().findByNamedQuery(
                 CollectionConstants.QUERY_DEPARTMENT_BY_ID, Long.valueOf(deptId));
-
-        final ReceiptMisc receiptMisc = new ReceiptMisc(null, fund, functionary, fundSource, dept, receiptHeader,
-                scheme, subscheme, null);
-        receiptHeader.setReceiptMisc(receiptMisc);
-
+        receiptHeader.setReceiptMisc(new ReceiptMisc(null, fund, functionary, fundSource, dept, receiptHeader, scheme,
+                subscheme, null));
         totalAmntToBeCollected = BigDecimal.ZERO;
         int m = 0;
         BigDecimal debitamount = BigDecimal.ZERO;
@@ -543,7 +547,7 @@ public class ReceiptAction extends BaseFormAction {
         if (validateRebateData(billRebateDetailslist, subLedgerlist)) {
             for (final ReceiptDetailInfo voucherDetails : billRebateDetailslist)
                 if (voucherDetails.getGlcodeDetail() != null
-                && org.apache.commons.lang.StringUtils.isNotBlank(voucherDetails.getGlcodeDetail())) {
+                        && org.apache.commons.lang.StringUtils.isNotBlank(voucherDetails.getGlcodeDetail())) {
                     final CChartOfAccounts account = chartOfAccountsDAO.getCChartOfAccountsByGlCode(voucherDetails
                             .getGlcodeDetail());
                     CFunction function = null;
@@ -578,7 +582,7 @@ public class ReceiptAction extends BaseFormAction {
             final ReceiptDetail receiptDetail) {
         for (final ReceiptDetailInfo subvoucherDetails : subLedgerlist)
             if (subvoucherDetails.getGlcode() != null && subvoucherDetails.getGlcode().getId() != 0
-            && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
+                    && subvoucherDetails.getGlcode().getId().equals(receiptDetail.getAccounthead().getId())) {
 
                 final Accountdetailtype accdetailtype = (Accountdetailtype) getPersistenceService().findByNamedQuery(
                         CollectionConstants.QUERY_ACCOUNTDETAILTYPE_BY_ID, subvoucherDetails.getDetailType().getId());
@@ -604,7 +608,7 @@ public class ReceiptAction extends BaseFormAction {
             setManualReceiptNumberAndDateReq(Boolean.TRUE);
 
         final String[] receiptType = parameters.get("Receipt");
-        if (receiptType != null && receiptType[0].equalsIgnoreCase("Misc"))
+        if (receiptType != null && "Misc".equalsIgnoreCase(receiptType[0]))
             createMisc();
         // set collection modes allowed rule through script
 
@@ -620,203 +624,221 @@ public class ReceiptAction extends BaseFormAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/receipts/receipt-save")
     public String save() {
-        // try {
-        List<InstrumentHeader> receiptInstrList = new ArrayList<InstrumentHeader>(0);
-        LOGGER.info("Receipt creation process is started !!!!!!");
-        ReceiptHeader rhForValidation = null;
-        String returnValue = "";
-        final long startTimeMillis = System.currentTimeMillis();
-        if (manualReceiptNumber != null && manualReceiptDate != null) {
-            final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(manualReceiptDate);
-            rhForValidation = receiptHeaderService.findByNamedQuery(
-                    CollectionConstants.QUERY_RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE, manualReceiptNumber,
-                    receiptHeader.getService().getCode(), financialYear.getStartingDate(),
-                    financialYear.getEndingDate(), CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
-        }
-
-        if (rhForValidation == null) {
-            // For interday cancellation
-            if (oldReceiptId != null) {
-                final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
-
-                receiptHeaderToBeCancelled.setStatus(statusDAO.getStatusByModuleAndCode(
-                        CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                        CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED));
-                receiptHeaderToBeCancelled.setReasonForCancellation(reasonForCancellation);
-                // set isReconciled to false before calling update to
-                // billing system for
-                // cancel receipt
-                receiptHeaderToBeCancelled.setIsReconciled(false);
-                receiptHeader.setLocation(receiptHeaderToBeCancelled.getLocation());
-                receiptHeaderService.persist(receiptHeaderToBeCancelled);
-                if (receiptHeaderToBeCancelled.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
-                    populateReceiptModelWithExistingReceiptInfo(receiptHeaderToBeCancelled);
-                    LOGGER.info("Receipt Cancelled with Receipt Number(recreateNewReceiptOnCancellation): "
-                            + receiptHeaderToBeCancelled.getReceiptnumber() + "; Consumer Code: "
-                            + receiptHeaderToBeCancelled.getConsumerCode());
-                }
-            }
-
-            if (billSource.equalsIgnoreCase("misc")) {
-                createMisc();
-                if (!setMiscReceiptDetails())
-                    returnValue = NEW;
-            } else {
-                if (callbackForApportioning && !overrideAccountHeads)
-                    apportionBillAmount();
-                if (receiptDetailList == null || receiptDetailList.isEmpty() || receiptDetailList.size() == 0)
-                    throw new ApplicationRuntimeException(
-                            "Receipt could not be created as the apportioned receipt detail list is empty");
-                else {
-                    BigDecimal totalCreditAmount = BigDecimal.ZERO;
-                    for (final ReceiptDetail receiptDetail : receiptDetailList)
-                        totalCreditAmount = totalCreditAmount.add(receiptDetail.getCramount());
-                    if (totalCreditAmount.intValue() == 0)
-                        throw new ApplicationRuntimeException("Apportioning Failed at the Billing System: "
-                                + receiptHeader.getService().getCode() + ", for bill number: "
-                                + receiptHeader.getReferencenumber());
-                    else
-                        receiptHeader.setReceiptDetails(new HashSet(receiptDetailList));
-                }
-            }
-            int noOfNewlyCreatedReceipts = 0;
-            boolean setInstrument = true;
-
-            // only newly created receipts need to be initialised with the
-            // data.
-            // The cancelled receipt can be excluded from this processing.
-            if (receiptHeader.getStatus() == null) {
-                noOfNewlyCreatedReceipts++;
-                // Set created by Date as this required to generate receipt
-                // number before persist
-                if (manualReceiptDate == null)
-                    receiptHeader.setReceiptdate(new Date());
-                else {
-                    // If the receipt has been manually created, the receipt
-                    // date is same as the date of manual creation.
-                    // set Createdby, in MySavelistner if createdBy is null
-                    // it set both createdBy and createdDate with
-                    // currentDate.
-                    // Thus overridding the manualReceiptDate set above
-                    // receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
-                    receiptHeader.setManualreceiptdate(manualReceiptDate);
-                    receiptHeader.setReceiptdate(manualReceiptDate);
-                    receiptHeader.setVoucherDate(manualReceiptDate);
-                }
-                if (manualReceiptNumber != null)
-                    receiptHeader.setManualreceiptnumber(manualReceiptNumber);
-                if (isBillSourcemisc()) {
-                    receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
-                    receiptHeader.setVoucherDate(voucherDate);
-                    receiptHeader.setReceiptdate(voucherDate);
-                    receiptHeader.setVoucherNum(voucherNum);
-                    receiptHeader.setIsReconciled(Boolean.TRUE);
-                    receiptHeader.setManualreceiptdate(manualReceiptDate);
-                    receiptHeader.setPayeeName(StringEscapeUtils.unescapeHtml(paidBy));
-
-                } else {
-                    receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
-                    receiptHeader.setIsModifiable(Boolean.TRUE);
-                    receiptHeader.setIsReconciled(Boolean.FALSE);
-                }
-                // serviceType =
-                // receiptHeader.getService().getServiceType();
-                receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
-                if (receiptHeader.getLocation() == null)
-                    receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
-                receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
-                        CollectionConstants.MODULE_NAME_RECEIPTHEADER,
-                        CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
-                receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
-                receiptHeader.setSource(Source.SYSTEM.toString());
-
-                // If this is a new receipt in lieu of cancelling old
-                // receipt, update
-                // old receipt id to the reference collection header id
-                // field of this new receipt.
-                if (getOldReceiptId() != null)
-                    receiptHeader.setReceiptHeader(receiptHeaderService.findById(getOldReceiptId(), false));
-                if (setInstrument) {
-                    receiptInstrList = populateInstrumentDetails();
-                    setInstrument = false;
-                }
-
-                receiptHeader.setReceiptInstrument(new HashSet(receiptInstrList));
-
-                BigDecimal debitAmount = BigDecimal.ZERO;
-
-                for (final ReceiptDetail creditChangeReceiptDetail : receiptDetailList)
-                    for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
-                        if (creditChangeReceiptDetail.getReceiptHeader().getReferencenumber()
-                                .equals(receiptDetail.getReceiptHeader().getReferencenumber())
-                                && receiptDetail.getOrdernumber().equals(creditChangeReceiptDetail.getOrdernumber())) {
-
-                            receiptDetail.setCramount(creditChangeReceiptDetail.getCramount());
-                            receiptDetail.setDramount(creditChangeReceiptDetail.getDramount());
-                            // calculate sum of creditamounts as a debit
-                            // value to create a
-                            // debit account head and add to receipt details
-                            debitAmount = debitAmount.add(creditChangeReceiptDetail.getCramount());
-                            debitAmount = debitAmount.subtract(creditChangeReceiptDetail.getDramount());
-                        }
-
-                if (chequeInstrumenttotal != null && chequeInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
-                    receiptHeader.setTotalAmount(chequeInstrumenttotal);
-
-                if (cashOrCardInstrumenttotal != null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
-                    receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
-                if (isBillSourcemisc())
-                    receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(totalDebitAmount,
-                            receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal, instrumentTypeCashOrCard));
-                else
-                    receiptHeader.addReceiptDetail(collectionCommon.addDebitAccountHeadDetails(debitAmount,
-                            receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal, instrumentTypeCashOrCard));
-
-            }
-            // }// end of looping through receipt headers
-            // }// end of looping through model receipt payee list
-
-            LOGGER.info("Call back for apportioning is completed");
-            // billing system
-            receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
-
-            // populate all receipt header ids except the cancelled receipt
-            // (in effect the newly created receipts)
-            selectedReceipts = new Long[noOfNewlyCreatedReceipts];
-            int i = 0;
-            if (!receiptHeader.getId().equals(oldReceiptId)) {
-                selectedReceipts[i] = receiptHeader.getId();
-                i++;
-            }
-
-            // ReceiptHeader rh = null
-            // ;//modelPayeeList.get(0).getReceiptHeaders().iterator().next();
-            final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
-            LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: "
-                    + receiptHeader.getReceiptnumber()
-                    + (receiptHeader.getConsumerCode() != null ? " and consumer code: "
-                            + receiptHeader.getConsumerCode() : "") + "; Time taken(ms) = " + elapsedTimeMillis);
-            // Do not invoke print receipt in case of bulk upload.
-            if (!receiptBulkUpload)
-                returnValue = printReceipts();
-            else
-                returnValue = SUCCESS;
+        String returnValue;
+        if (instrumentTypeCashOrCard != null
+                && instrumentTypeCashOrCard.equals(CollectionConstants.INSTRUMENTTYPE_ONLINE)) {
+            if (callbackForApportioning && !overrideAccountHeads)
+                apportionBillAmount();
+            ServiceDetails paymentService;
+            paymentService = (ServiceDetails) getPersistenceService().findByNamedQuery(
+                    CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_SBIMOPS);
+            if (null != paymentService)
+                setPaymentRequest(collectionService.populateAndPersistReceipts(paymentService, receiptHeader,
+                        receiptDetailList, instrHeaderOnline.getInstrumentAmount(),
+                        CollectionConstants.COLLECTION_TYPE_COUNTER));
+            return REDIRECT;
         } else {
-            if (rhForValidation.getService().getCode().equals(CollectionConstants.SERVICECODE_PROPERTYTAX))
-                addActionError("Entered Manual receipt number already exists for the index number"
-                        + rhForValidation.getConsumerCode()
-                        + ".Please enter a valid manual receipt number and create the receipt.");
-            else
-                addActionError("Receipt already exists for the service ");
-            returnValue = NEW;
-        }
+            List<InstrumentHeader> receiptInstrList = new ArrayList<>(0);
+            LOGGER.info("Receipt creation process is started !!!!!!");
+            ReceiptHeader rhForValidation = null;
+            final long startTimeMillis = System.currentTimeMillis();
+            if (manualReceiptNumber != null && manualReceiptDate != null) {
+                final CFinancialYear financialYear = collectionsUtil.getFinancialYearforDate(manualReceiptDate);
+                rhForValidation = receiptHeaderService.findByNamedQuery(
+                        CollectionConstants.QUERY_RECEIPT_BY_SERVICE_MANUALRECEIPTNO_AND_DATE, manualReceiptNumber,
+                        receiptHeader.getService().getCode(), financialYear.getStartingDate(),
+                        financialYear.getEndingDate(), CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED);
+            }
 
+            if (rhForValidation == null) {
+                // For interday cancellation
+                if (oldReceiptId != null) {
+                    final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
+
+                    receiptHeaderToBeCancelled.setStatus(statusDAO.getStatusByModuleAndCode(
+                            CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                            CollectionConstants.RECEIPT_STATUS_CODE_CANCELLED));
+                    receiptHeaderToBeCancelled.setReasonForCancellation(reasonForCancellation);
+                    // set isReconciled to false before calling update to
+                    // billing system for
+                    // cancel receipt
+                    receiptHeaderToBeCancelled.setIsReconciled(false);
+                    receiptHeader.setLocation(receiptHeaderToBeCancelled.getLocation());
+                    receiptHeaderService.persist(receiptHeaderToBeCancelled);
+                    if (receiptHeaderToBeCancelled.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL) {
+                        populateReceiptModelWithExistingReceiptInfo(receiptHeaderToBeCancelled);
+                        LOGGER.info("Receipt Cancelled with Receipt Number(recreateNewReceiptOnCancellation): "
+                                + receiptHeaderToBeCancelled.getReceiptnumber() + "; Consumer Code: "
+                                + receiptHeaderToBeCancelled.getConsumerCode());
+                    }
+                }
+
+                if ("misc".equalsIgnoreCase(billSource)) {
+                    createMisc();
+                    if (!setMiscReceiptDetails())
+                        returnValue = NEW;
+                } else {
+                    if (callbackForApportioning && !overrideAccountHeads)
+                        apportionBillAmount();
+                    if (receiptDetailList == null || receiptDetailList.isEmpty())
+                        throw new ApplicationRuntimeException(
+                                "Receipt could not be created as the apportioned receipt detail list is empty");
+                    else {
+                        BigDecimal totalCreditAmount = BigDecimal.ZERO;
+                        for (final ReceiptDetail receiptDetail : receiptDetailList)
+                            totalCreditAmount = totalCreditAmount.add(receiptDetail.getCramount());
+                        if (totalCreditAmount.intValue() == 0)
+                            throw new ApplicationRuntimeException("Apportioning Failed at the Billing System: "
+                                    + receiptHeader.getService().getCode() + ", for bill number: "
+                                    + receiptHeader.getReferencenumber());
+                        else
+                            receiptHeader.setReceiptDetails(new HashSet(receiptDetailList));
+                    }
+                }
+                int noOfNewlyCreatedReceipts = 0;
+                boolean setInstrument = true;
+
+                // only newly created receipts need to be initialised with the
+                // data.
+                // The cancelled receipt can be excluded from this processing.
+                if (receiptHeader.getStatus() == null) {
+                    noOfNewlyCreatedReceipts++;
+                    // Set created by Date as this required to generate receipt
+                    // number before persist
+                    if (manualReceiptDate == null)
+                        receiptHeader.setReceiptdate(new Date());
+                    else {
+                        // If the receipt has been manually created, the receipt
+                        // date is same as the date of manual creation.
+                        // set Createdby, in MySavelistner if createdBy is null
+                        // it set both createdBy and createdDate with
+                        // currentDate.
+                        // Thus overridding the manualReceiptDate set above
+                        // receiptHeader.setCreatedBy(collectionsUtil.getLoggedInUser());
+                        receiptHeader.setManualreceiptdate(manualReceiptDate);
+                        receiptHeader.setReceiptdate(manualReceiptDate);
+                        receiptHeader.setVoucherDate(manualReceiptDate);
+                    }
+                    if (manualReceiptNumber != null)
+                        receiptHeader.setManualreceiptnumber(manualReceiptNumber);
+                    if (isBillSourcemisc()) {
+                        receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_ADHOC);
+                        receiptHeader.setVoucherDate(voucherDate);
+                        receiptHeader.setReceiptdate(voucherDate);
+                        receiptHeader.setVoucherNum(voucherNum);
+                        receiptHeader.setIsReconciled(Boolean.TRUE);
+                        receiptHeader.setManualreceiptdate(manualReceiptDate);
+                        receiptHeader.setPayeeName(StringEscapeUtils.unescapeHtml(paidBy));
+
+                    } else {
+                        receiptHeader.setReceipttype(CollectionConstants.RECEIPT_TYPE_BILL);
+                        receiptHeader.setIsModifiable(Boolean.TRUE);
+                        receiptHeader.setIsReconciled(Boolean.FALSE);
+                    }
+                    // serviceType =
+                    // receiptHeader.getService().getServiceType();
+                    receiptHeader.setCollectiontype(CollectionConstants.COLLECTION_TYPE_COUNTER);
+                    // Bank Collection Operator location is not captured.
+                    if (!collectionsUtil.isBankCollectionOperator(receiptCreatedByCounterOperator)
+                            && receiptHeader.getLocation() == null)
+                        receiptHeader.setLocation(collectionsUtil.getLocationOfUser(getSession()));
+                    receiptHeader.setStatus(collectionsUtil.getStatusForModuleAndCode(
+                            CollectionConstants.MODULE_NAME_RECEIPTHEADER,
+                            CollectionConstants.RECEIPT_STATUS_CODE_TO_BE_SUBMITTED));
+                    receiptHeader.setPaidBy(StringEscapeUtils.unescapeHtml(paidBy));
+                    receiptHeader.setSource(Source.SYSTEM.toString());
+
+                    // If this is a new receipt in lieu of cancelling old
+                    // receipt, update
+                    // old receipt id to the reference collection header id
+                    // field of this new receipt.
+                    if (getOldReceiptId() != null)
+                        receiptHeader.setReceiptHeader(receiptHeaderService.findById(getOldReceiptId(), false));
+                    if (setInstrument) {
+                        receiptInstrList = populateInstrumentDetails();
+                        setInstrument = false;
+                    }
+
+                    receiptHeader.setReceiptInstrument(new HashSet(receiptInstrList));
+
+                    BigDecimal debitAmount = BigDecimal.ZERO;
+
+                    for (final ReceiptDetail creditChangeReceiptDetail : receiptDetailList)
+                        for (final ReceiptDetail receiptDetail : receiptHeader.getReceiptDetails())
+                            if (creditChangeReceiptDetail.getReceiptHeader().getReferencenumber()
+                                    .equals(receiptDetail.getReceiptHeader().getReferencenumber())
+                                    && receiptDetail.getOrdernumber()
+                                            .equals(creditChangeReceiptDetail.getOrdernumber())) {
+
+                                receiptDetail.setCramount(creditChangeReceiptDetail.getCramount());
+                                receiptDetail.setDramount(creditChangeReceiptDetail.getDramount());
+                                // calculate sum of creditamounts as a debit
+                                // value to create a
+                                // debit account head and add to receipt details
+                                debitAmount = debitAmount.add(creditChangeReceiptDetail.getCramount());
+                                debitAmount = debitAmount.subtract(creditChangeReceiptDetail.getDramount());
+                            }
+
+                    if (chequeInstrumenttotal != null && chequeInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
+                        receiptHeader.setTotalAmount(chequeInstrumenttotal);
+
+                    if (cashOrCardInstrumenttotal != null && cashOrCardInstrumenttotal.compareTo(BigDecimal.ZERO) != 0)
+                        receiptHeader.setTotalAmount(cashOrCardInstrumenttotal);
+                    DebitAccountHeadDetailsService debitAccountHeadService = (DebitAccountHeadDetailsService) beanProvider
+                            .getBean(collectionsUtil.getBeanNameForDebitAccountHead());
+                    if (isBillSourcemisc())
+                        receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(
+                                totalDebitAmount, receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal,
+                                instrumentTypeCashOrCard));
+                    else
+                        receiptHeader.addReceiptDetail(debitAccountHeadService.addDebitAccountHeadDetails(debitAmount,
+                                receiptHeader, chequeInstrumenttotal, cashOrCardInstrumenttotal,
+                                instrumentTypeCashOrCard));
+
+                }
+                // }// end of looping through receipt headers
+                // }// end of looping through model receipt payee list
+
+                LOGGER.info("Call back for apportioning is completed");
+                // billing system
+                receiptHeaderService.populateAndPersistReceipts(receiptHeader, receiptInstrList);
+
+                // populate all receipt header ids except the cancelled receipt
+                // (in effect the newly created receipts)
+                selectedReceipts = new Long[noOfNewlyCreatedReceipts];
+                int i = 0;
+                if (!receiptHeader.getId().equals(oldReceiptId)) {
+                    selectedReceipts[i] = receiptHeader.getId();
+                    i++;
+                }
+
+                final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+                LOGGER.info("$$$$$$ Receipt Persisted with Receipt Number: "
+                        + receiptHeader.getReceiptnumber()
+                        + (receiptHeader.getConsumerCode() != null ? " and consumer code: "
+                                + receiptHeader.getConsumerCode() : "")
+                        + "; Time taken(ms) = " + elapsedTimeMillis);
+                // Do not invoke print receipt in case of bulk upload.
+                if (!receiptBulkUpload)
+                    returnValue = printReceipts();
+                else
+                    returnValue = SUCCESS;
+            } else {
+                if (rhForValidation.getService().getCode().equals(CollectionConstants.SERVICECODE_PROPERTYTAX))
+                    addActionError("Entered Manual receipt number already exists for the index number"
+                            + rhForValidation.getConsumerCode()
+                            + ".Please enter a valid manual receipt number and create the receipt.");
+                else
+                    addActionError("Receipt already exists for the service ");
+                returnValue = NEW;
+            }
+        }
         return returnValue;
     }
 
     public void createMisc() {
-        headerFields = new ArrayList<String>(0);
-        mandatoryFields = new ArrayList<String>(0);
+        headerFields = new ArrayList<>(0);
+        mandatoryFields = new ArrayList<>(0);
         getHeaderMandateFields();
         setupDropdownDataExcluding();
 
@@ -840,21 +862,21 @@ public class ReceiptAction extends BaseFormAction {
                     persistenceService.findAllByNamedQuery(CollectionConstants.QUERY_ALL_FUNDSOURCE));
         if (headerFields.contains(CollectionConstants.SCHEME))
             if (receiptMisc.getFund() == null || receiptMisc.getFund().getId() == null)
-                addDropdownData("schemeList", Collections.EMPTY_LIST);
+                addDropdownData("schemeList", Collections.emptyList());
             else
                 addDropdownData("schemeList", persistenceService.findAllByNamedQuery(
                         CollectionConstants.QUERY_SCHEME_BY_FUNDID, receiptMisc.getFund().getId()));
         if (headerFields.contains(CollectionConstants.SUBSCHEME))
             if (receiptMisc.getScheme() == null || receiptMisc.getScheme().getId() == null)
-                addDropdownData("subschemeList", Collections.EMPTY_LIST);
+                addDropdownData("subschemeList", Collections.emptyList());
             else
                 addDropdownData("subschemeList", persistenceService.findAllByNamedQuery(
                         CollectionConstants.QUERY_SUBSCHEME_BY_SCHEMEID, receiptMisc.getScheme().getId()));
 
         if (billCreditDetailslist == null) {
-            billCreditDetailslist = new ArrayList<ReceiptDetailInfo>(0);
-            billRebateDetailslist = new ArrayList<ReceiptDetailInfo>(0);
-            subLedgerlist = new ArrayList<ReceiptDetailInfo>(0);
+            billCreditDetailslist = new ArrayList<>(0);
+            billRebateDetailslist = new ArrayList<>(0);
+            subLedgerlist = new ArrayList<>(0);
             billRebateDetailslist.add(new ReceiptDetailInfo());
             billCreditDetailslist.add(new ReceiptDetailInfo());
             subLedgerlist.add(new ReceiptDetailInfo());
@@ -863,16 +885,6 @@ public class ReceiptAction extends BaseFormAction {
         receiptHeader.setPartPaymentAllowed(false);
         setHeaderFields(headerFields);
         setMandatoryFields(mandatoryFields);
-        // this.paidBy = payeename;
-        /*
-         * if (null != service && null != service.getId() && service.getId() !=
-         * -1) setServiceName(serviceDetailsService.findById(service.getId(),
-         * false).getName()); else { final ServiceDetails service =
-         * (ServiceDetails) getPersistenceService().findByNamedQuery(
-         * CollectionConstants.QUERY_SERVICE_BY_CODE,
-         * CollectionConstants.SERVICE_CODE_COLLECTIONS);
-         * setServiceName(service.getName()); }
-         */
         final Department dept = collectionsUtil.getDepartmentOfLoggedInUser();
         if (dept == null)
             throw new ValidationException(Arrays.asList(new ValidationError("Department does not exists",
@@ -884,7 +896,7 @@ public class ReceiptAction extends BaseFormAction {
 
     public boolean isBillSourcemisc() {
         boolean flag = false;
-        if (getBillSource().equalsIgnoreCase("misc"))
+        if ("misc".equalsIgnoreCase(getBillSource()))
             flag = true;
         return flag;
     }
@@ -906,20 +918,18 @@ public class ReceiptAction extends BaseFormAction {
             final String header = value.substring(0, value.indexOf('|'));
             headerFields.add(header);
             final String mandate = value.substring(value.indexOf('|') + 1);
-            if (mandate.equalsIgnoreCase("M"))
+            if ("M".equalsIgnoreCase(mandate))
                 mandatoryFields.add(header);
         }
         /*
-         * if (!"Auto".equalsIgnoreCase(new
-         * VoucherTypeForULB().readVoucherTypes("Receipt"))) {
-         * headerFields.add("vouchernumber");
+         * if (!"Auto".equalsIgnoreCase(new VoucherTypeForULB().readVoucherTypes("Receipt"))) { headerFields.add("vouchernumber");
          * mandatoryFields.add("vouchernumber"); }
          */
         mandatoryFields.add("voucherdate");
     }
 
     private List<InstrumentHeader> populateInstrumentDetails() {
-        List<InstrumentHeader> instrumentHeaderList = new ArrayList<InstrumentHeader>(0);
+        List<InstrumentHeader> instrumentHeaderList = new ArrayList<>(0);
 
         if (CollectionConstants.INSTRUMENTTYPE_CASH.equals(instrumentTypeCashOrCard)) {
             instrHeaderCash.setInstrumentType(financialsUtil
@@ -954,7 +964,7 @@ public class ReceiptAction extends BaseFormAction {
                 instrHeaderBank.setTransactionDate(new Date());
             instrHeaderBank.setIsPayCheque(CollectionConstants.ZERO_INT);
 
-            final Bankaccount account = (Bankaccount) bankAccountDAO.findById(bankAccountId, false);
+            final Bankaccount account = bankAccountDAO.findById(bankAccountId, false);
 
             instrHeaderBank.setBankAccountId(account);
             instrHeaderBank.setBankBranchName(account.getBankbranch().getBranchname());
@@ -964,6 +974,18 @@ public class ReceiptAction extends BaseFormAction {
             cashOrCardInstrumenttotal = cashOrCardInstrumenttotal.add(instrHeaderBank.getInstrumentAmount());
 
             instrumentHeaderList.add(instrHeaderBank);
+        }
+        if (CollectionConstants.INSTRUMENTTYPE_ONLINE.equals(instrumentTypeCashOrCard)) {
+            instrHeaderOnline.setInstrumentType(financialsUtil
+                    .getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_ONLINE));
+
+            instrHeaderOnline.setIsPayCheque(CollectionConstants.ZERO_INT);
+            // the cash amount is set into the object through binding
+            // this total is needed for creating debit account head
+
+            cashOrCardInstrumenttotal = cashOrCardInstrumenttotal.add(instrHeaderOnline.getInstrumentAmount());
+
+            instrumentHeaderList.add(instrHeaderOnline);
         }
 
         // cheque/DD types
@@ -978,15 +1000,11 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This instrument creates instrument header instances for the receipt, when
-     * the instrument type is Cheque or DD. The created
+     * This instrument creates instrument header instances for the receipt, when the instrument type is Cheque or DD. The created
      * <code>InstrumentHeader</code> instance is persisted
      *
-     * @param k
-     *            an int value representing the index of the instrument type as
-     *            chosen from the front end
-     * @return an <code>InstrumentHeader</code> instance populated with the
-     *         instrument details
+     * @param k an int value representing the index of the instrument type as chosen from the front end
+     * @return an <code>InstrumentHeader</code> instance populated with the instrument details
      */
     private List<InstrumentHeader> populateInstrumentHeaderForChequeDD(
             final List<InstrumentHeader> instrumentHeaderList, final List<InstrumentHeader> instrumentProxyList) {
@@ -1013,14 +1031,10 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This method create a new receipt header object with details contained in
-     * given receipt header object. Both the receipt header objects are added to
-     * the same parent <code>ReceiptPayeeDetail</code> object which in turn is
-     * added to the model.
+     * This method create a new receipt header object with details contained in given receipt header object. Both the receipt
+     * header objects are added to the same parent <code>ReceiptPayeeDetail</code> object which in turn is added to the model.
      *
-     * @param oldReceiptHeader
-     *            the instance of <code>ReceiptHeader</code> whose data is to be
-     *            copied
+     * @param oldReceiptHeader the instance of <code>ReceiptHeader</code> whose data is to be copied
      */
     private void populateReceiptModelWithExistingReceiptInfo(final ReceiptHeader oldReceiptHeader) {
         totalAmntToBeCollected = BigDecimal.ZERO;
@@ -1031,26 +1045,26 @@ public class ReceiptAction extends BaseFormAction {
                 oldReceiptHeader.getPartPaymentAllowed(), oldReceiptHeader.getOverrideAccountHeads(),
                 oldReceiptHeader.getCallbackForApportioning(), oldReceiptHeader.getDisplayMsg(),
                 oldReceiptHeader.getService(), oldReceiptHeader.getCollModesNotAllwd(),
-                oldReceiptHeader.getPayeeName(), oldReceiptHeader.getPayeeAddress(), oldReceiptHeader.getPayeeEmail());
+                oldReceiptHeader.getPayeeName(), oldReceiptHeader.getPayeeAddress(), oldReceiptHeader.getPayeeEmail(),
+                oldReceiptHeader.getConsumerType());
         if (oldReceiptHeader.getCollModesNotAllwd() != null)
             setCollectionModesNotAllowed(Arrays.asList(oldReceiptHeader.getCollModesNotAllwd().split(",")));
         setOverrideAccountHeads(oldReceiptHeader.getOverrideAccountHeads());
         setPartPaymentAllowed(oldReceiptHeader.getPartPaymentAllowed());
         setServiceName(oldReceiptHeader.getService().getName());
 
-        final ReceiptMisc receiptMisc = new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(),
-                oldReceiptHeader.getReceiptMisc().getFund(), oldReceiptHeader.getReceiptMisc().getIdFunctionary(),
-                oldReceiptHeader.getReceiptMisc().getFundsource(), oldReceiptHeader.getReceiptMisc().getDepartment(),
-                receiptHeader, oldReceiptHeader.getReceiptMisc().getScheme(), oldReceiptHeader.getReceiptMisc()
-                .getSubscheme(), null);
-        receiptHeader.setReceiptMisc(receiptMisc);
+        receiptHeader.setReceiptMisc(new ReceiptMisc(oldReceiptHeader.getReceiptMisc().getBoundary(), oldReceiptHeader
+                .getReceiptMisc().getFund(), oldReceiptHeader.getReceiptMisc().getIdFunctionary(), oldReceiptHeader
+                        .getReceiptMisc().getFundsource(),
+                oldReceiptHeader.getReceiptMisc().getDepartment(), receiptHeader,
+                oldReceiptHeader.getReceiptMisc().getScheme(), oldReceiptHeader.getReceiptMisc().getSubscheme(), null));
         receiptHeader.setLocation(oldReceiptHeader.getLocation());
         bankCOAList = chartOfAccountsDAO.getBankChartofAccountCodeList();
         for (final ReceiptDetail oldDetail : oldReceiptHeader.getReceiptDetails())
             // debit account heads for revenue accounts should not be considered
             if (oldDetail.getOrdernumber() != null
-            && !FinancialsUtil
-            .isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
+                    && !FinancialsUtil
+                            .isRevenueAccountHead(oldDetail.getAccounthead(), bankCOAList, persistenceService)) {
                 final ReceiptDetail receiptDetail = new ReceiptDetail(oldDetail.getAccounthead(),
                         oldDetail.getFunction(), oldDetail.getCramount(), oldDetail.getDramount(),
                         oldDetail.getCramount(), oldDetail.getOrdernumber(), oldDetail.getDescription(),
@@ -1068,8 +1082,8 @@ public class ReceiptAction extends BaseFormAction {
 
                 if (oldDetail.getIsActualDemand())
                     totalAmntToBeCollected = totalAmntToBeCollected.add(oldDetail.getCramountToBePaid())
-                    .subtract(oldDetail.getDramount())
-                    .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
+                            .subtract(oldDetail.getDramount())
+                            .setScale(CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP);
                 setTotalAmntToBeCollected(totalAmntToBeCollected);
                 receiptHeader.addReceiptDetail(receiptDetail);
             }
@@ -1094,12 +1108,10 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * Same method handles both view and print modes. If print receipts flag is
-     * passed as true, the PDF receipt will be generated in such a way that it
-     * will show the print dialog box whenever it is opened.
+     * Same method handles both view and print modes. If print receipts flag is passed as true, the PDF receipt will be generated
+     * in such a way that it will show the print dialog box whenever it is opened.
      *
-     * @param printReceipts
-     *            Flag indicating whether the receipts are to be printed
+     * @param printReceipts Flag indicating whether the receipts are to be printed
      * @return Result page ("view")
      */
     private String viewReceipts(final boolean printReceipts) {
@@ -1138,11 +1150,27 @@ public class ReceiptAction extends BaseFormAction {
     @ValidationErrorPage(value = "error")
     @Action(value = "/receipts/receipt-cancel")
     public String cancel() {
+        final List<AppConfigValues> appConfigValuesList = collectionsUtil.getAppConfigValues(
+                CollectionConstants.MODULE_NAME_COLLECTIONS_CONFIG,
+                CollectionConstants.APPCONFIG_VALUE_COLLECTIONCREATORRECEIPTCANCELROLE);
+        String value;
+        Boolean isRoleToCheckCreator = Boolean.FALSE;
+        User user = collectionsUtil.getLoggedInUser();
+        for (final AppConfigValues appConfigVal : appConfigValuesList) {
+            value = appConfigVal.getValue();
+            for (final Role role : user.getRoles())
+                if (role != null && role.getName().equals(value))
+                    isRoleToCheckCreator = true;
+        }
+
         if (getSelectedReceipts() != null && getSelectedReceipts().length > 0) {
             receipts = new ReceiptHeader[selectedReceipts.length];
-            for (int i = 0; i < selectedReceipts.length; i++)
+            for (int i = 0; i < selectedReceipts.length; i++) {
                 receipts[i] = (ReceiptHeader) getPersistenceService().findByNamedQuery("getReceiptHeaderById",
                         Long.valueOf(selectedReceipts[i]));
+                if (isRoleToCheckCreator)
+                    isReceiptCancelEnable = (receipts[i].getCreatedBy().getId().compareTo(user.getId()) == 0) ? true : false;
+            }
         }
         return CANCEL;
     }
@@ -1154,7 +1182,6 @@ public class ReceiptAction extends BaseFormAction {
      */
     @Action(value = "/receipts/receipt-saveOnCancel")
     public String saveOnCancel() {
-        String instrumentType = "";
         boolean isInstrumentDeposited = false;
 
         final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
@@ -1186,7 +1213,8 @@ public class ReceiptAction extends BaseFormAction {
                     "serviceList",
                     receiptHeaderToBeCancelled.getService() != null ? getPersistenceService().findAllByNamedQuery(
                             CollectionConstants.QUERY_SERVICE_DETAIL_BY_CATEGORY,
-                            receiptHeaderToBeCancelled.getService().getServiceCategory().getId(), Boolean.TRUE) : Collections.EMPTY_LIST);
+                            receiptHeaderToBeCancelled.getService().getServiceCategory().getId(), Boolean.TRUE)
+                            : Collections.emptyList());
             populateBankBranchList(true);
             return NEW;
         } else {
@@ -1198,15 +1226,12 @@ public class ReceiptAction extends BaseFormAction {
             receiptHeaderToBeCancelled.setIsReconciled(false);
             receiptHeaderToBeCancelled.setReasonForCancellation(reasonForCancellation);
 
-            for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument()) {
+            for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())
                 instrumentHeader.setStatusId(statusDAO.getStatusByModuleAndCode(
                         CollectionConstants.MODULE_NAME_INSTRUMENTHEADER,
                         CollectionConstants.INSTRUMENTHEADER_STATUS_CANCELLED));
-                instrumentType = instrumentHeader.getInstrumentType().getType();
-
-            }
             for (final ReceiptVoucher receiptVoucher : receiptHeaderToBeCancelled.getReceiptVoucher())
-                receiptHeaderService.createReversalVoucher(receiptVoucher, instrumentType);
+                receiptHeaderService.createReversalVoucher(receiptVoucher);
 
             receiptHeaderService.persist(receiptHeaderToBeCancelled);
 
@@ -1232,8 +1257,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptHeaderValues
-     *            the receiptHeaderValues to set
+     * @param receiptHeaderValues the receiptHeaderValues to set
      */
     public void setReceiptHeaderValues(final List<ReceiptHeader> receiptHeaderValues) {
         this.receiptHeaderValues = receiptHeaderValues;
@@ -1262,8 +1286,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param paidBy
-     *            the paidBy to set
+     * @param paidBy the paidBy to set
      */
     public void setPaidBy(final String paidBy) {
         this.paidBy = paidBy;
@@ -1277,8 +1300,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param oldReceiptId
-     *            the oldReceiptId to set
+     * @param oldReceiptId the oldReceiptId to set
      */
     public void setOldReceiptId(final Long oldReceiptId) {
         this.oldReceiptId = oldReceiptId;
@@ -1324,6 +1346,14 @@ public class ReceiptAction extends BaseFormAction {
         this.instrHeaderBank = instrHeaderBank;
     }
 
+    public InstrumentHeader getInstrHeaderOnline() {
+        return instrHeaderOnline;
+    }
+
+    public void setInstrHeaderOnline(final InstrumentHeader instrHeaderOnline) {
+        this.instrHeaderOnline = instrHeaderOnline;
+    }
+
     public List<String> getCollectionModesNotAllowed() {
         return collectionModesNotAllowed;
     }
@@ -1357,9 +1387,8 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This getter will be invoked by framework from UI. It returns the total
-     * number of bill accounts that are present in the XML arriving from the
-     * billing system
+     * This getter will be invoked by framework from UI. It returns the total number of bill accounts that are present in the XML
+     * arriving from the billing system
      *
      * @return
      */
@@ -1370,8 +1399,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This getter will be invoked by framework from UI. This value will be used
-     * during bill apportioning.
+     * This getter will be invoked by framework from UI. This value will be used during bill apportioning.
      *
      * @return
      */
@@ -1471,8 +1499,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param voucherDate
-     *            the voucherDate to set
+     * @param voucherDate the voucherDate to set
      */
     public void setVoucherDate(final Date voucherDate) {
         this.voucherDate = voucherDate;
@@ -1486,16 +1513,14 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param voucherNumber
-     *            the voucherNumber to set
+     * @param voucherNumber the voucherNumber to set
      */
     public void setVoucherNum(final String voucherNum) {
         this.voucherNum = voucherNum;
     }
 
     /**
-     * This getter will be invoked by framework from UI. This value will be used
-     * during misc receipts for account details
+     * This getter will be invoked by framework from UI. This value will be used during misc receipts for account details
      *
      * @return
      */
@@ -1569,7 +1594,7 @@ public class ReceiptAction extends BaseFormAction {
             final List<ReceiptDetailInfo> subLedgerList) {
         BigDecimal totalDrAmt = BigDecimal.ZERO;
         BigDecimal totalCrAmt = BigDecimal.ZERO;
-        int index = 0;
+        Integer index = 0;
         boolean isDataValid = true;
         for (final ReceiptDetailInfo rDetails : billDetailslistd) {
             index = index + 1;
@@ -1579,7 +1604,7 @@ public class ReceiptAction extends BaseFormAction {
                     && rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0
                     && rDetails.getGlcodeDetail().trim().length() == 0) {
 
-                addActionError(getText("miscreceipt.accdetail.emptyaccrow", new String[] { "" + index }));
+                addActionError(getText("miscreceipt.accdetail.emptyaccrow", new String[] { index.toString() }));
                 isDataValid = false;
             } else if (rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0
                     && rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0
@@ -1593,7 +1618,7 @@ public class ReceiptAction extends BaseFormAction {
             } else if ((rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0 || rDetails
                     .getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
                     && rDetails.getGlcodeDetail().trim().length() == 0) {
-                addActionError(getText("miscreceipt.accdetail.accmissing", new String[] { "" + index }));
+                addActionError(getText("miscreceipt.accdetail.accmissing", new String[] { index.toString() }));
                 isDataValid = false;
             }
 
@@ -1605,7 +1630,7 @@ public class ReceiptAction extends BaseFormAction {
 
     protected boolean validateRebateData(final List<ReceiptDetailInfo> billDetailslistd,
             final List<ReceiptDetailInfo> subLedgerList) {
-        int index = 0;
+        Integer index = 0;
         boolean isDataValid = true;
         for (final ReceiptDetailInfo rDetails : billDetailslistd) {
             index = index + 1;
@@ -1615,7 +1640,7 @@ public class ReceiptAction extends BaseFormAction {
                 isDataValid = false;
             } else if (rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0
                     && rDetails.getGlcodeDetail().trim().length() == 0) {
-                addActionError(getText("miscreceipt.accdetail.accmissing", new String[] { "" + index }));
+                addActionError(getText("miscreceipt.accdetail.accmissing", new String[] { index.toString() }));
                 isDataValid = false;
             }
 
@@ -1628,7 +1653,7 @@ public class ReceiptAction extends BaseFormAction {
     protected boolean validateSubledgerDetails(final List<ReceiptDetailInfo> billRebateDetailslist,
             final List<ReceiptDetailInfo> subLedgerlist) {
         Map<String, Object> accountDetailMap;
-        final Map<String, BigDecimal> subledAmtmap = new HashMap<String, BigDecimal>(0);
+        final Map<String, BigDecimal> subledAmtmap = new HashMap<>(0);
         List<Map<String, Object>> subLegAccMap = null; // this list will contain
         // the details about the
         // account coe those are
@@ -1638,7 +1663,7 @@ public class ReceiptAction extends BaseFormAction {
                     " from CChartOfAccountDetail" + " where glCodeId=(select id from CChartOfAccounts where glcode=?)",
                     rDetails.getGlcodeDetail());
             if (null != chartOfAccountDetail) {
-                accountDetailMap = new HashMap<String, Object>();
+                accountDetailMap = new HashMap<>();
                 accountDetailMap.put("glcodeId", rDetails.getGlcodeIdDetail());
                 accountDetailMap.put("glcode", rDetails.getGlcodeDetail());
                 if (rDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0)
@@ -1646,7 +1671,7 @@ public class ReceiptAction extends BaseFormAction {
                 else if (rDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0)
                     accountDetailMap.put("amount", rDetails.getDebitAmountDetail());
                 if (null == subLegAccMap) {
-                    subLegAccMap = new ArrayList<Map<String, Object>>();
+                    subLegAccMap = new ArrayList<>();
                     subLegAccMap.add(accountDetailMap);
                 } else
                     subLegAccMap.add(accountDetailMap);
@@ -1654,7 +1679,7 @@ public class ReceiptAction extends BaseFormAction {
             }
         }
         if (null != subLegAccMap) {
-            final Map<String, String> subLedgerMap = new HashMap<String, String>();
+            final Map<String, String> subLedgerMap = new HashMap<>();
             for (final ReceiptDetailInfo rDetails : subLedgerlist)
                 if (rDetails.getGlcode().getId() != 0) {
                     if (null == subledAmtmap.get(rDetails.getGlcode().getId().toString()))
@@ -1664,10 +1689,10 @@ public class ReceiptAction extends BaseFormAction {
                                 .add(rDetails.getAmount());
                         subledAmtmap.put(rDetails.getGlcode().getId().toString(), debitTotalAmount);
                     }
-                    final StringBuffer subledgerDetailRow = new StringBuffer();
+                    final StringBuilder subledgerDetailRow = new StringBuilder();
                     subledgerDetailRow.append(rDetails.getGlcode().getId().toString())
-                    .append(rDetails.getDetailType().getId().toString())
-                    .append(rDetails.getDetailKeyId().toString());
+                            .append(rDetails.getDetailType().getId().toString())
+                            .append(rDetails.getDetailKeyId().toString());
                     if (null == subLedgerMap.get(subledgerDetailRow.toString()))
                         subLedgerMap.put(subledgerDetailRow.toString(), subledgerDetailRow.toString());
                     else {
@@ -1737,8 +1762,6 @@ public class ReceiptAction extends BaseFormAction {
         this.bankBranchId = bankBranchId;
     }
 
-    private String fundName;
-
     public String getFundName() {
         return fundName;
     }
@@ -1748,16 +1771,14 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param collectionCommon
-     *            the collectionCommon to set
+     * @param collectionCommon the collectionCommon to set
      */
     public void setCollectionCommon(final CollectionCommon collectionCommon) {
         this.collectionCommon = collectionCommon;
     }
 
     /**
-     * @param receiptHeaderService
-     *            The receipt header service to set
+     * @param receiptHeaderService The receipt header service to set
      */
     public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
         this.receiptHeaderService = receiptHeaderService;
@@ -1852,8 +1873,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param manualReceiptNumber
-     *            the manualReceiptNumber to set
+     * @param manualReceiptNumber the manualReceiptNumber to set
      */
     public void setManualReceiptNumber(final String manualReceiptNumber) {
         this.manualReceiptNumber = manualReceiptNumber;
@@ -1867,8 +1887,7 @@ public class ReceiptAction extends BaseFormAction {
     }
 
     /**
-     * @param manualReceiptNumberAndDateReq
-     *            the manualReceiptNumberAndDateReq to set
+     * @param manualReceiptNumberAndDateReq the manualReceiptNumberAndDateReq to set
      */
     public void setManualReceiptNumberAndDateReq(final Boolean manualReceiptNumberAndDateReq) {
         this.manualReceiptNumberAndDateReq = manualReceiptNumberAndDateReq;
@@ -1902,20 +1921,44 @@ public class ReceiptAction extends BaseFormAction {
         this.serviceId = serviceId;
     }
 
-    public Date getFinancialYearDate() {
-        return financialYearDate;
-    }
-
-    public void setFinancialYearDate(final Date financialYearDate) {
-        this.financialYearDate = financialYearDate;
-    }
-
     public String getInstrumentType() {
         return instrumentType;
     }
 
     public void setInstrumentType(final String instrumentType) {
         this.instrumentType = instrumentType;
+    }
+
+    public Boolean getOnlineAllowed() {
+        return onlineAllowed;
+    }
+
+    public void setOnlineAllowed(final Boolean onlineAllowed) {
+        this.onlineAllowed = onlineAllowed;
+    }
+
+    public CollectionService getCollectionService() {
+        return collectionService;
+    }
+
+    public void setCollectionService(final CollectionService collectionService) {
+        this.collectionService = collectionService;
+    }
+
+    public PaymentRequest getPaymentRequest() {
+        return paymentRequest;
+    }
+
+    public void setPaymentRequest(final PaymentRequest paymentRequest) {
+        this.paymentRequest = paymentRequest;
+    }
+
+    public Boolean getIsReceiptCancelEnable() {
+        return isReceiptCancelEnable;
+    }
+
+    public void setIsReceiptCancelEnable(Boolean isReceiptCancelEnable) {
+        this.isReceiptCancelEnable = isReceiptCancelEnable;
     }
 
 }

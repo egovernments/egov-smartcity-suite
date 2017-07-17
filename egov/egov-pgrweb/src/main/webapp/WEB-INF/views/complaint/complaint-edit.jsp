@@ -65,6 +65,7 @@
 					</form:select>
 					<form:errors path="status" cssClass="error-msg" />
 					<form:hidden path="latlngAddress" id="latlngaddress"/>
+					<form:hidden path="currentOwner" id="currentOwner"/>
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin">
 					<spring:message code="lbl.change.complaint.type" />
@@ -192,5 +193,9 @@
 		</form:form>
 	</div>
 </div>
+<script>
+	var currentOwner = '${complaint.currentOwner.id}';
+</script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

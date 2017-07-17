@@ -42,6 +42,8 @@ package org.egov.tl.entity;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.CompareDates;
+import org.egov.infra.persistence.validator.annotation.UniqueDateOverlap;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -55,15 +57,22 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 @Table(name = "egtl_feematrix")
 @SequenceGenerator(name = FeeMatrix.SEQ, sequenceName = FeeMatrix.SEQ, allocationSize = 1)
+@CompareDates(fromDate = "effectiveFrom", toDate = "effectiveTo", message = "{feematrix.effective.date.range}")
+@UniqueDateOverlap(fromField = "effectiveFrom", toField = "effectiveTo", uniqueFields =
+        {"natureOfBusiness", "licenseCategory", "subCategory", "licenseAppType", "feeType"},
+        message = "{feematrix.exist}")
 public class FeeMatrix extends AbstractAuditable {
     public static final String SEQ = "seq_egtl_feematrix";
     private static final long serialVersionUID = 3119126267277124321L;
@@ -103,64 +112,18 @@ public class FeeMatrix extends AbstractAuditable {
     private CFinancialYear financialYear;
 
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "unitOfMeasurement")
-    private UnitOfMeasurement unitOfMeasurement;
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date effectiveFrom;
 
-    private String uniqueNo;
+    @NotNull
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date effectiveTo;
 
     @Valid
     @OrderBy("uomFrom")
-    @OneToMany(mappedBy = "feeMatrix", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<FeeMatrixDetail>(0);
-
-    public FeeType getFeeType() {
-        return feeType;
-    }
-
-    public void setFeeType(final FeeType feeType) {
-        this.feeType = feeType;
-    }
-
-    public NatureOfBusiness getNatureOfBusiness() {
-        return natureOfBusiness;
-    }
-
-    public void setNatureOfBusiness(final NatureOfBusiness natureOfBusiness) {
-        this.natureOfBusiness = natureOfBusiness;
-    }
-
-    public LicenseCategory getLicenseCategory() {
-        return licenseCategory;
-    }
-
-    public void setLicenseCategory(final LicenseCategory licenseCategory) {
-        this.licenseCategory = licenseCategory;
-    }
-
-    public LicenseSubCategory getSubCategory() {
-        return subCategory;
-    }
-
-    public void setSubCategory(final LicenseSubCategory subCategory) {
-        this.subCategory = subCategory;
-    }
-
-    public LicenseAppType getLicenseAppType() {
-        return licenseAppType;
-    }
-
-    public void setLicenseAppType(final LicenseAppType licenseAppType) {
-        this.licenseAppType = licenseAppType;
-    }
-
-    public UnitOfMeasurement getUnitOfMeasurement() {
-        return unitOfMeasurement;
-    }
-
-    public void setUnitOfMeasurement(final UnitOfMeasurement unitOfMeasurement) {
-        this.unitOfMeasurement = unitOfMeasurement;
-    }
+    @OneToMany(mappedBy = "feeMatrix", cascade = {CascadeType.PERSIST, CascadeType.MERGE, CascadeType.REMOVE},
+            fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<FeeMatrixDetail> feeMatrixDetail = new ArrayList<>();
 
     @Override
     public Long getId() {
@@ -168,55 +131,100 @@ public class FeeMatrix extends AbstractAuditable {
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
-    public BigDecimal getAmount() {
-        return null;
+    public FeeType getFeeType() {
+        return feeType;
+    }
+
+    public void setFeeType(FeeType feeType) {
+        this.feeType = feeType;
+    }
+
+    public NatureOfBusiness getNatureOfBusiness() {
+        return natureOfBusiness;
+    }
+
+    public void setNatureOfBusiness(NatureOfBusiness natureOfBusiness) {
+        this.natureOfBusiness = natureOfBusiness;
+    }
+
+    public LicenseCategory getLicenseCategory() {
+        return licenseCategory;
+    }
+
+    public void setLicenseCategory(LicenseCategory licenseCategory) {
+        this.licenseCategory = licenseCategory;
+    }
+
+    public LicenseSubCategory getSubCategory() {
+        return subCategory;
+    }
+
+    public void setSubCategory(LicenseSubCategory subCategory) {
+        this.subCategory = subCategory;
+    }
+
+    public LicenseAppType getLicenseAppType() {
+        return licenseAppType;
+    }
+
+    public void setLicenseAppType(LicenseAppType licenseAppType) {
+        this.licenseAppType = licenseAppType;
     }
 
     public List<FeeMatrixDetail> getFeeMatrixDetail() {
         return feeMatrixDetail;
     }
 
-    public void setFeeMatrixDetail(final List<FeeMatrixDetail> feeMatrixDetail) {
+    public void setFeeMatrixDetail(List<FeeMatrixDetail> feeMatrixDetail) {
         this.feeMatrixDetail = feeMatrixDetail;
-    }
-
-    public String getUniqueNo() {
-        return uniqueNo;
-    }
-
-    public void setUniqueNo(final String uniqueNo) {
-        this.uniqueNo = uniqueNo;
     }
 
     public CFinancialYear getFinancialYear() {
         return financialYear;
     }
 
-    public void setFinancialYear(final CFinancialYear financialYear) {
+    public void setFinancialYear(CFinancialYear financialYear) {
         this.financialYear = financialYear;
     }
 
-    public String genUniqueNo() {
-        final StringBuilder sb = new StringBuilder();
-        if (natureOfBusiness != null)
-            sb.append(natureOfBusiness.getId());
-        if (licenseAppType != null)
-            sb.append("-" + licenseAppType.getId());
-        if (licenseCategory != null)
-            sb.append("-" + licenseCategory.getId());
-        if (subCategory != null)
-            sb.append("-" + subCategory.getId());
-        if (feeType != null)
-            sb.append("-" + feeType.getId());
-        if (unitOfMeasurement != null)
-            sb.append("-" + unitOfMeasurement.getId());
-        if (financialYear != null)
-            sb.append("-" + financialYear.getId());
-        return sb.toString();
+    public Date getEffectiveFrom() {
+        return this.effectiveFrom;
+    }
 
+    public void setEffectiveFrom(Date effectiveFrom) {
+        this.effectiveFrom = effectiveFrom;
+    }
+
+    public Date getEffectiveTo() {
+        return effectiveTo;
+    }
+
+    public void setEffectiveTo(Date effectiveTo) {
+        this.effectiveTo = effectiveTo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof FeeMatrix))
+            return false;
+        FeeMatrix feeMatrix = (FeeMatrix) o;
+        return Objects.equals(natureOfBusiness.getId(), feeMatrix.natureOfBusiness.getId()) &&
+                Objects.equals(licenseCategory.getId(), feeMatrix.licenseCategory.getId()) &&
+                Objects.equals(subCategory.getId(), feeMatrix.subCategory.getId()) &&
+                Objects.equals(licenseAppType.getId(), feeMatrix.licenseAppType.getId()) &&
+                Objects.equals(feeType.getId(), feeMatrix.feeType.getId()) &&
+                Objects.equals(financialYear.getId(), feeMatrix.financialYear.getId());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(natureOfBusiness.getId(), licenseCategory.getId(), subCategory.getId(),
+                licenseAppType.getId(), feeType.getId(), financialYear.getId());
     }
 }

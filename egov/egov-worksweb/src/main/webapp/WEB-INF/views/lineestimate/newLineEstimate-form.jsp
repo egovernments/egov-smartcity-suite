@@ -52,6 +52,7 @@
 		
 		<form:form name="lineEstimateForm" role="form" action="create" modelAttribute="lineEstimate" id="lineEstimate" class="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 			<form:hidden id="mode" path=""  value="${mode}"/>
+			<form:hidden id="hiddenfields" path="" value="${hiddenfields}" />
 			<div class="row">
 				<div class="col-md-12">
 					<jsp:include page="lineEstimateHeader.jsp"/>

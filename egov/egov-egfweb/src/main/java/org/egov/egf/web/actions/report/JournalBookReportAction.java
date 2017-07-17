@@ -54,6 +54,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CFunction;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
@@ -132,6 +133,7 @@ public class JournalBookReportAction extends BaseFormAction {
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @SkipValidation
     @Action(value = "/report/journalBookReport-ajaxSearch")
+    @ReadOnly
     public String ajaxSearch() throws TaskFailedException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("JournalBookAction | Search | start");

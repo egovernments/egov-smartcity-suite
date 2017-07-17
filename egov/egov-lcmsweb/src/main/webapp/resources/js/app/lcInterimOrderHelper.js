@@ -40,6 +40,46 @@
 
 $(document).ready(function(){
 	
+	var mode = $('#mode').val();
+	if(mode == 'edit')  {
+		$('#employeeInput').val($("#employeeName").val());
+	}
+
+	var employee = new Bloodhound({
+		datumTokenizer : function(datum) {
+			return Bloodhound.tokenizers
+					.whitespace(datum.value);
+		},
+		queryTokenizer : Bloodhound.tokenizers.whitespace,
+		remote : {
+			url : '/lcms/ajax/getemployeeNames',
+			replace : function(url, uriEncodedQuery) {
+				return url + '?employeeName=' + uriEncodedQuery;
+
+			},
+			filter : function(data) {
+				return $.map(data, function(index,em) {
+					return {
+						name: index,
+						value: em
+
+					};
+				});
+			}
+		}
+	});
+	
+	employee.initialize();
+	var employee_typeahead = $('#employeeInput').typeahead({
+		hint : false,
+		highlight : false,
+		minLength : 2
+	}, {
+		displayKey : 'name',
+		source : employee.ttAdapter()
+	});
+	typeaheadWithEventsHandling(employee_typeahead , '#employee'); 
+	
 	
 	loadDateFields();
 	$('#interimOrder').change(function(){
@@ -55,13 +95,13 @@ $(document).ready(function(){
 		$("#staydetails").hide();
 	}
 	
-	if($('#interimOrder :selected').text().localeCompare("Report file") == 0) {  
+	/*if($('#interimOrder :selected').text().localeCompare("Report File") == 0) {  
 		$("#reportdetails1").show();
     	$("#reportdetails2").show();
 	}else{
 		$("#reportdetails1").hide();
     	$("#reportdetails2").hide();
-	}
+	}*/
 }
 	$('#lcInterimOrderTbl').dataTable({
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 hidden col-xs-12'i><'col-md-3 hidden col-xs-6'l><'col-md-3 hidden col-xs-6 text-right'p>>",

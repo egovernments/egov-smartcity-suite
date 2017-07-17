@@ -168,7 +168,7 @@
 					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
 				</box>
-				<text><![CDATA[Estimate Date]]></text>
+				<text><![CDATA[Date of proposal]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="617" y="14" width="62" height="35" uuid="19ad7de9-2a44-4206-b746-6c83d784fc12">

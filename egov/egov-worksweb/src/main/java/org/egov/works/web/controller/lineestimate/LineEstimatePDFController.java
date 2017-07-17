@@ -61,7 +61,7 @@ import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
-import org.egov.works.utils.WorksUtils;
+import org.egov.works.utils.WorksConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -81,12 +81,10 @@ public class LineEstimatePDFController {
     private ReportService reportService;
 
     @Autowired
-    private WorksUtils worksUtils;
-
-    @Autowired
     private LineEstimateService lineEstimateService;
 
     public static final String LINEESTIMATEPDF = "lineEstimatePDF";
+    public static final String LINEESTIMATE_SUBJECT = "Request for Administrative Sanction";
 
     @RequestMapping(value = "/lineEstimatePDF/{lineEstimateId}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
@@ -110,21 +108,21 @@ public class LineEstimatePDFController {
 
             reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
             reportParams.put("proNo", lineEstimate.getAdminSanctionNumber() != null ? lineEstimate.getAdminSanctionNumber() : "");
-            reportParams.put("sub", lineEstimate.getSubject());
+            reportParams.put("sub", lineEstimate.getSubject() != null ? lineEstimate.getSubject() : LINEESTIMATE_SUBJECT);
             reportParams.put("ref", lineEstimate.getReference());
             reportParams.put("dated",
-                    lineEstimate.getAdminSanctionDate() != null ? DateUtils.getFormattedDate(lineEstimate.getAdminSanctionDate(),"dd/MM/yyyy") : "");
+                    lineEstimate.getAdminSanctionDate() != null
+                            ? DateUtils.getFormattedDate(lineEstimate.getAdminSanctionDate(), "dd/MM/yyyy") : "");
             reportParams.put("scheme", lineEstimate.getScheme() != null ? lineEstimate.getScheme().getName() : "");
             reportParams.put("function", lineEstimate.getFunction() != null ? lineEstimate.getFunction().getName() : "");
             reportParams.put("account", lineEstimate.getBudgetHead() != null ? lineEstimate.getBudgetHead().getName() : "");
-            // reportParams.put("lineEstimateDetails",lineEstimate.getLineEstimateDetails() );
             reportParams.put("modeOfAllotment", lineEstimate.getModeOfAllotment());
-            reportParams.put("workCategory",lineEstimate.getWorkCategory().toString().replace("_", " ") + " - " + lineEstimate.getBeneficiary().toString().replaceAll("_C", "/C").replace("_", " "));
+            reportParams.put("workCategory", lineEstimate.getWorkCategory().toString().replace("_", " ") + " - "
+                    + lineEstimate.getBeneficiary().toString().replaceAll("_C", "/C").replace("_", " "));
             reportParams.put("present",
-                    lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy().getName() : "");
-            final String zonalCommissioner = worksUtils.getUserDesignation(lineEstimate.getAdminSanctionBy());
-            reportParams.put("zonalCommissioner", zonalCommissioner);
-            reportParams.put("zonalCommissionerCapital", zonalCommissioner != null ? zonalCommissioner.toUpperCase() : "");
+                    lineEstimate.getAdminSanctionBy() != null ? lineEstimate.getAdminSanctionBy() : "");
+            reportParams.put("zonalCommissioner", WorksConstants.DESIGNATION_COMMISSIONER);
+            reportParams.put("zonalCommissionerCapital", WorksConstants.DESIGNATION_COMMISSIONER.toUpperCase());
             reportParams.put("beneficiary",
                     lineEstimate.getBeneficiary() != null ? lineEstimate.getBeneficiary().toString() : "");
 

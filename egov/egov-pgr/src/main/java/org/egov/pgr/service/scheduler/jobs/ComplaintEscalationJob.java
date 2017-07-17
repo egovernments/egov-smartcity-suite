@@ -41,20 +41,17 @@
 package org.egov.pgr.service.scheduler.jobs;
 
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
-import org.egov.pgr.service.EscalationService;
+import org.egov.pgr.service.ComplaintEscalationService;
+import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-/**
- * @author Vaibhav.K
- */
-@Transactional
+@DisallowConcurrentExecution
 public class ComplaintEscalationJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = -5428952585539260293L;
 
     @Autowired
-    private EscalationService escalationService;
+    private ComplaintEscalationService escalationService;
 
     @Override
     public void executeJob() {

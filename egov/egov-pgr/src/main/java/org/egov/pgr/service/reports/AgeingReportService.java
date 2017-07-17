@@ -40,157 +40,36 @@
 
 package org.egov.pgr.service.reports;
 
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
+import java.util.List;
+
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infstr.services.Page;
+import org.egov.pgr.entity.dto.AgeingReportForm;
+import org.egov.pgr.entity.dto.AgeingReportRequest;
+import org.egov.pgr.repository.AgeingReportRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)
 public class AgeingReportService {
 
-    private static final String COMPLAINTSTATUS_COMPLETED = "Completed";
-    private static final String COMPLAINTSTATUS_REJECTED = "Rejected";
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private AgeingReportRepository ageingReportRepository;
 
-    public SQLQuery getageingReportQuery(final DateTime fromDate, final DateTime toDate, final String typeofReport,
-            final String complaintDateType, final String groupBy) {
-
-        final StringBuilder query = new StringBuilder();
-
-        if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("SELECT bndry.name as name, ");// TODO CHECK
-        // DEPARTMENTWISE
-        // OR ZONE WISE
-        else
-            query.append("SELECT dept.name as name, ");
-
-        if (typeofReport != null && !"".equals(typeofReport)
-                && (typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED) || typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED))) {
-            query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) > :grtthn90 THEN 1 END) grtthn90, ");
-            query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn45 AND :lsthn90 THEN 1 END) btw45to90, ");
-            query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :grtthn15 AND :lsthn45 THEN 1 END) btw15to45, ");
-            query.append(
-                    " COUNT(CASE WHEN date_part('day',(cd.createddate - state.createddate)) BETWEEN :zero AND :lsthn15 THEN 1 END) lsthn15 ");
-            query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype, eg_wf_states state, egpgr_complaint cd  ");
-        } else {
-            query.append(" COUNT(CASE WHEN cd.createddate < :grtthn90 THEN 1 END) grtthn90, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn90 AND :grtthn45 THEN 1 END) btw45to90, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn45 AND  :grtthn15 THEN 1 END) btw15to45, ");
-            query.append(" COUNT(CASE WHEN cd.createddate BETWEEN :lsthn15 AND :currdate THEN 1 END) lsthn15 ");
-            query.append(" FROM egpgr_complaintstatus cs  ,egpgr_complainttype ctype ,egpgr_complaint cd  ");
-        }
-
-        if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("  left JOIN eg_boundary bndry on cd.location =bndry.id ");
-        else
-            query.append("  left JOIN eg_department dept on cd.department =dept.id ");
-
-        buildWhereClause(fromDate, toDate, typeofReport, complaintDateType, query);
-
-        if (groupBy != null && !"".equals(groupBy) && groupBy.equalsIgnoreCase("ByBoundary"))
-            query.append("  group by bndry.name ");
-        else
-            query.append("  group by dept.name ");
-
-        return setParameterForAgeingReport(query.toString(), typeofReport, fromDate, toDate, complaintDateType);
+    @ReadOnly
+    public Page<AgeingReportForm> pagedAgeingRecords(final AgeingReportRequest request) {
+        return ageingReportRepository.findByAgeingReportResult(request);
     }
 
-    private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String typeofReport,
-            final String complaintDateType, final StringBuilder query) {
-
-        if (typeofReport != null && !"".equals(typeofReport)
-                && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED)) {
-            query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
-            query.append(" AND cs.name IN ('COMPLETED', 'WITHDRAWN','CLOSED') ");
-        }  else if(typeofReport != null && !"".equals(typeofReport) && typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED)){
-            query.append(" WHERE  cd.state_id=state.id and  cd.status  = cs.id and cd.complainttype= ctype.id  ");
-            query.append(" AND cs.name IN ('REJECTED') ");
-        }else {
-            query.append(" WHERE cd.status  = cs.id and cd.complainttype= ctype.id  ");
-            query.append(" AND cs.name IN ('REGISTERED','FORWARDED', 'PROCESSING','REOPENED') ");
-        }
-
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (fromDate != null && toDate != null)
-            query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
-        else if (fromDate != null)
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (toDate != null)
-            query.append(" and cd.createddate <=  :toDates ");
+    @ReadOnly
+    public Object[] ageingReportGrandTotal(final AgeingReportRequest request) {
+        return ageingReportRepository.getGrandTotal(request);
     }
 
-    private SQLQuery setParameterForAgeingReport(final String querykey, final String typeofReport, final DateTime fromDate,
-            final DateTime toDate, final String complaintDateType) {
-        final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
-
-        if (typeofReport != null && !"".equals(typeofReport)
-                && (typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_COMPLETED) || typeofReport.equalsIgnoreCase(COMPLAINTSTATUS_REJECTED))) {
-            qry.setParameter("grtthn90", 90);
-            qry.setParameter("lsthn90", 90);
-            qry.setParameter("grtthn45", 45.0001);
-            qry.setParameter("grtthn15", 15.0001);
-            qry.setParameter("lsthn45", 45);
-            qry.setParameter("lsthn15", 15);
-            qry.setParameter("zero", 0);
-
-        } else {
-
-            qry.setParameter("grtthn90", getCurrentDateWithOutTime().minusDays(90).toDate());
-            qry.setParameter("grtthn45", getCurrentDateWithOutTime().minusDays(46).toDate());
-            qry.setParameter("lsthn90", getCurrentDateWithEndOfDayTime().minusDays(90).toDate());
-            qry.setParameter("grtthn15", getCurrentDateWithOutTime().minusDays(16).toDate());
-            qry.setParameter("lsthn45", getCurrentDateWithEndOfDayTime().minusDays(45).toDate());
-            qry.setParameter("lsthn15", getCurrentDateWithOutTime().minusDays(15).toDate());
-            qry.setParameter("currdate", getCurrentDateWithEndOfDayTime().toDate());
-        }
-
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(30).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(90).toDate());
-        else if (fromDate != null && toDate != null) {
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-
-        } else if (fromDate != null)
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
-        else if (toDate != null)
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-        return qry;
+    @ReadOnly
+    public List<AgeingReportForm> getAllAgeingReportRecords(final AgeingReportRequest request) {
+        return ageingReportRepository.getAgeingReportRecords(request);
     }
-
-    private Date getEndOfDayByDate(final DateTime fromDate) {
-        return fromDate.withTime(23, 59, 59, 999).toDate();
-    }
-
-    private Date resetTimeByPassingDate(final DateTime fromDate) {
-        return fromDate.withTime(0, 0, 0, 0).toDate();
-    }
-
-    private DateTime getCurrentDateWithOutTime() {
-        return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
-    }
-
-    private DateTime getCurrentDateWithEndOfDayTime() {
-        return new LocalDateTime().withTime(23, 59, 59, 999).toDateTime();
-    }
-
 }

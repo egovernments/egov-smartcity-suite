@@ -40,47 +40,125 @@
 jQuery(document).ready(function($) {
 	$('#genericSubReportResult-header').hide();
 	$('#reportgeneration-header').hide();
-
-	jQuery('#genericSubReportSearch').click(function(e) {
-		submitForm();
-
+	
+	loadsubreportstatus();
+	$('#caseStatus').change(function(){
+		loadsubreportstatus();
 	});
+
+	jQuery('#searchid').click(function(e) {
+		var aggregated = $('#aggregatedBy').val();
+		if(validategenericsubreport())
+			if(aggregated !='') {
+				submitForm();
+			
+		}else
+			submitSubReportStatusForm();
+			
+			
+	});
+	
+	  var assignPosition = new Bloodhound({
+			datumTokenizer : function(datum) {
+				return Bloodhound.tokenizers
+						.whitespace(datum.value);
+			},
+			queryTokenizer : Bloodhound.tokenizers.whitespace,
+			remote : {
+				url : '/lcms/ajax/getposition', 
+				replace : function(url, uriEncodedQuery) {
+					return url + '?positionName=' + uriEncodedQuery;
+
+				},
+				filter : function(data) {
+			
+					return $.map(data, function(value) {
+						
+						return {
+							name : value,
+							value : value
+						};
+						
+					});
+				}
+			}
+		});
+		
+		assignPosition.initialize();
+		var typeaheadobj = $('#positionName').typeahead({
+			hint: false,
+			highlight: false,
+			minLength: 1
+		},  {
+			displayKey : 'name',
+			source : assignPosition.ttAdapter()
+		});
+		
+		typeaheadWithEventsHandling(typeaheadobj, '#positionId'); 
 });
 
+var oTable = $('#genericSubReport-table');
+var oDataTable;
+
+function validategenericsubreport()
+{
+	var isFilled=false;
+	$('input[type=text], select').each(function(){
+	    if($(this).val())
+	    {
+	    	console.log('value is ->'+$(this).val());
+	    	isFilled=true;
+	    }
+	});
+	
+	if(!isFilled)
+	{
+		
+		bootbox.alert('Please select Aggregated By or Reports Criteria');
+		return false;
+	}
+	
+	return true;
+
+}
 function submitForm() {
 	if ($('form').valid()) {
 
 		var today = getdate();
-
-		oTable = $('#genericSubReport-table');
 		$('#genericSubReport-header').show();
 		$('#reportgeneration-header').show();
-		var oDataTable=oTable.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
+		oDataTable=oTable.DataTable({
+			dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
 			"autoWidth": false,
 			"bDestroy": true,
 			"processing": true,
-			"oTableTools" : {
-				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-				"aButtons" : [ 
-					               {
-							             "sExtends": "pdf",
-							            "sPdfMessage": "Report generated on "+today+"",
-		                                 "sTitle": "LegalCase Generic Sub Report",
-		                                 "sPdfOrientation": "landscape"
-						                },
-						                {
-								             "sExtends": "xls",
-			                                 "sPdfMessage": " Generic Sub Report",
-			                                 "sTitle": "LegalCase Generic Sub Report"
-							             },
-							             {
-								             "sExtends": "print",
-			                                 "sPdfMessage": "Generic Sub Report",
-			                                 "sTitle": "LegalCase Generic Sub Report"
-							             }],
-				},
+			buttons: [
+						{
+						    extend: 'excel',
+						    filename: 'LegalCase Generic SubReport',
+						    exportOptions: {
+						        columns: ':visible'
+						    }
+						},
+					  {
+					    extend: 'pdf',
+					    message: "Report generated on "+today+"",
+					    title: 'LegalCase Generic SubReport',
+					    filename: 'Generic SubReport',
+					    exportOptions: {
+					        columns: ':visible'
+					    }
+					},
+					{
+					    extend: 'print',
+					    title: 'LegalCase Generic SubReport',
+					    filename: 'Generic SubReport',
+					    exportOptions: {
+					        columns: ':visible'
+					    }
+					}
+					],
+
 					ajax : {
 
 						url : "/lcms/reports/genericSubResult?"+$('#genericSubregisterform').serialize(),
@@ -93,17 +171,31 @@ function submitForm() {
 						"title" : "Aggregated By",
 						"sClass" : "text-center"
 					}, {
-						"data" : "noOfCase",
+						"data" : "count",
 						"title" : "Number Of Cases",
 						"sClass" : "text-center"
 					}
-
 					],
 					"fnRowCallback" : function(row, data, index) {
-						$('td:eq(0)', row).html(index + 1);
-						return row;
-					},
-				});
+
+							$('td:eq(2)', row).html(
+									'<a href="javascript:void(0);" onclick="setHiddenValueByLink(\''
+											+ data.aggregatedBy + '\')">'
+											+ data.count + '</a>');
+							return row;
+					  
+					}
+					});
+		
+		 //s.no auto generation(will work in exported documents too..)
+		oDataTable.on( 'order.dt search.dt', function () {
+			oDataTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                cell.innerHTML = i+1;
+                oDataTable.cell(cell).invalidate('dom'); 
+            } );
+        } ).draw();
+		
+
 	}
 }
 
@@ -122,3 +214,254 @@ function getdate() {
 	var today = dd + '/' + mm + '/' + yyyy;
 	return today;
 }
+
+
+function callAjaxBydrillDownReport(aggregatedByValues) {
+	
+	var aggregatedBy = $('#aggregatedBy').val();
+	var today = getdate();
+	
+	oDataTable.clear().draw();
+	oDataTable.destroy();
+	oTable.remove();
+	$('#tabledata').append('<table class="table table-bordered table-hover multiheadertbl" id="genericSubReport-table"> </table>')
+	oTable = $('#genericSubReport-table');
+	
+	$('#genericSubReport-header').show();
+	$('#reportgeneration-header').show();
+	$.ajax({
+		type: "GET",
+		url: "/lcms/reports/genericdrilldownreportresults",
+		cache: true,
+		dataType: "json",
+		data:{'aggregatedBy' :aggregatedBy,
+			'aggregatedByValue': aggregatedByValues}
+	}).done(function(searchResult) {
+	console.log(JSON.stringify(searchResult));
+	oDataTable=oTable.DataTable({
+		dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+		"autoWidth": false,
+		"bDestroy": true,
+		"processing": true,
+		buttons: [
+					{
+					    extend: 'excel',
+					    filename: 'LegalCase Drill Down Report',
+					    exportOptions: {
+					        columns: ':visible'
+					    }
+					},
+				  {
+				    extend: 'pdf',
+				    message: "Report generated on "+today+"",
+				    title: 'LegalCase Drill Down Report',
+				    filename: 'Drill Down Report',
+				    exportOptions: {
+				        columns: ':visible'
+				    }
+				},
+				{
+				    extend: 'print',
+				    title: 'LegalCase Drill Down Report',
+				    filename: 'Generic SubReport',
+				    exportOptions: {
+				    	columns: ':visible'
+				    }
+				}],
+
+				searchable : true,
+				data : searchResult,
+				columns : [
+				           {"title" : "S.no","sClass" : "text-left"}, 
+						{
+							"data" : "lcNumber",
+							"sTitle" : "Legal Case Number",
+							"className" : "text-left",
+							"render" : function(data, type, full, meta) {
+								return '<a href="/lcms/application/view/?lcNumber='
+										+ data + '">' + data + '</div>';
+							}
+						},
+						{
+							"data" : "caseNumber",
+							"sTitle" : "Case Number",
+							"className" : "text-left"
+						},
+
+						{
+							"data" : "caseTitle",
+							"sTitle" : "Case Title",
+							"className" : "text-left"
+						},
+						{
+							"data" : "courtName",
+							"sTitle" : "Court Name",
+							"className" : "text-left"
+						},
+						{
+							"data" : "standingCounsel",
+							"sTitle" : "Standing Counsel",
+							"className" : "text-left"
+						},
+						{
+							"data" : "caseStatus",
+							"sTitle" : "Case Status",
+							"className" : "text-left"
+						},
+						{
+							"data" : "petitionerName",
+							"sTitle" : "Petitioners",
+							"className" : "text-left"
+						},
+						{
+							"data" : "respondantName",
+							"sTitle" : "Respondents",
+							"className" : "text-left"
+						}
+						]
+	});
+		
+		 //s.no auto generation(will work in exported documents too..)
+		oDataTable.on( 'order.dt search.dt', function () {
+			oDataTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                cell.innerHTML = i+1;
+                oDataTable.cell(cell).invalidate('dom'); 
+            } );
+        } ).draw();
+		
+		
+	})
+
+	
+		
+}
+
+	
+
+function openLegalCase(lcNumber) {
+	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}
+
+
+function setHiddenValueByLink(aggregatedByValue) {
+	callAjaxBydrillDownReport(aggregatedByValue);
+	
+}
+
+function loadsubreportstatus(){
+	if ($('#caseStatus :selected').text().localeCompare("Created") == 0 ) { 
+		$("#reportstatus").show();
+		}
+	else
+		$("#reportstatus").hide();
+}
+
+
+function submitSubReportStatusForm() {
+	if ($('form').valid()) {
+
+		var today = getdate();
+		var caseNumber = $("#caseNumber").val();
+		var lcNumber = $("#lcNumber").val();
+		var isMonthColVisibile = false;
+		$('#genericSubReport-header').show();
+		$('#reportgeneration-header').show();
+		oDataTable=oTable.DataTable({
+			dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+			"autoWidth": false,
+			"bDestroy": true,
+			"processing": true,
+			buttons: [
+						{
+						    extend: 'excel',
+						    filename: 'LegalCase Generic SubReport Status',
+						    exportOptions: {
+						        columns: ':visible'
+						    }
+						},
+					  {
+					    extend: 'pdf',
+					    message: "Report generated on "+today+"",
+					    title: 'LegalCase Generic SubReport Status',
+					    filename: 'Generic SubReport Status',
+					    exportOptions: {
+					        columns: ':visible'
+					    }
+					},
+					{
+					    extend: 'print',
+					    title: 'LegalCase Generic SubReport Status',
+					    filename: 'Generic SubReport Status',
+					    exportOptions: {
+					        columns: ':visible'
+					    }
+					}
+					],
+					ajax : {
+
+						url : "/lcms/reports/genericSubResult?"+$('#genericSubregisterform').serialize(),
+					},
+					columns : [
+					           {"title" : "S.no","sClass" : "text-left"}, 
+							{
+								"data" : "lcNumber",
+								"sTitle" : "Legal Case Number",
+								"className" : "text-left",
+								"render" : function(data, type, full, meta) {
+									return '<a href="/lcms/application/view/?lcNumber='
+											+ data + '">' + data + '</div>';
+								}
+							},
+							{
+								"data" : "caseNumber",
+								"sTitle" : "Case Number",
+								"className" : "text-left"
+							},
+
+							{
+								"data" : "caseTitle",
+								"sTitle" : "Case Title",
+								"className" : "text-left"
+							},
+							{
+								"data" : "courtName",
+								"sTitle" : "Court Name",
+								"className" : "text-left"
+							},
+							{
+								"data" : "standingCounsel",
+								"sTitle" : "Standing Counsel",
+								"className" : "text-left"
+							},
+							{
+								"data" : "statusDesc",
+								"sTitle" : "Case Status",
+								"className" : "text-left",
+								
+							},
+							{
+								"data" : "petitionerName",
+								"sTitle" : "Petitioners",
+								"className" : "text-left"
+							},
+							{
+								"data" : "respondantName",
+								"sTitle" : "Respondents",
+								"className" : "text-left"
+							}
+		],
+		});	
+					
+		 //s.no auto generation(will work in exported documents too..)
+		oDataTable.on( 'order.dt search.dt', function () {
+			oDataTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+                cell.innerHTML = i+1;
+                oDataTable.cell(cell).invalidate('dom'); 
+            } );
+        } ).draw();
+		
+
+	}
+		
+
+	}

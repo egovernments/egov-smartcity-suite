@@ -39,14 +39,19 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.works.letterofacceptance.entity.SearchRequestLetterOfAcceptance;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -56,12 +61,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import java.util.List;
-
 @Controller
 @RequestMapping(value = "/letterofacceptance")
-public class CancelLetterOfAcceptanceController extends GenericWorkFlowController {
+public class CancelLetterOfAcceptanceController {
     @Autowired
     private LineEstimateService lineEstimateService;
 
@@ -75,6 +77,12 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
     @Qualifier("messageSource")
     private MessageSource messageSource;
 
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/cancel/search", method = RequestMethod.GET)
     public String showSearchLetterOfAcceptanceForm(
             @ModelAttribute final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
@@ -84,6 +92,8 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         if (departments != null && !departments.isEmpty())
             searchRequestLetterOfAcceptance.setDepartmentName(departments.get(0).getId());
         model.addAttribute("searchRequestContractorBill", searchRequestLetterOfAcceptance);
+        searchRequestLetterOfAcceptance.setDepartmentName(worksUtils.getDefaultDepartmentId());
+
         return "searchloa-cancel";
     }
 
@@ -96,12 +106,12 @@ public class CancelLetterOfAcceptanceController extends GenericWorkFlowControlle
         WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(letterOfAcceptanceId);
         final String billNumbers = letterOfAcceptanceService.checkIfBillsCreated(workOrder.getId());
         if (!billNumbers.equals("")) {
-            String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
+            final String message = messageSource.getMessage("error.loa.bills.created", new String[] { billNumbers }, null);
             model.addAttribute("errorMessage", message);
             return "letterofacceptance-success";
         }
-        
-        if(letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
+
+        if (letterOfAcceptanceService.checkIfMileStonesCreated(workOrder)) {
             model.addAttribute("errorMessage", messageSource.getMessage("error.loa.milestone.created",
                     new String[] {}, null));
             return "letterofacceptance-success";

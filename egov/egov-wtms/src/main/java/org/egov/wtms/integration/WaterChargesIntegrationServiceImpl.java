@@ -56,7 +56,7 @@ import org.egov.ptis.wtms.WaterChargesIntegrationService;
 import org.egov.wtms.application.entity.NonMeteredConnBillDetails;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
-import org.egov.wtms.application.service.ConnectionDemandService;
+import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -72,7 +72,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
     @Autowired
     private WaterConnectionService waterConnectionService;
     @Autowired
-    private ConnectionDemandService connectionDemandService;
+    private ConnectionDetailService connectionDetailService;
     @Autowired
     private InstallmentHibDao installmentDao;
 
@@ -83,7 +83,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
         BigDecimal currentTotal = BigDecimal.ZERO;
         BigDecimal arrearTotal = BigDecimal.ZERO;
         Installment arrInstal = null;
-        final Installment currentInstallment = connectionDemandService
+        final Installment currentInstallment = connectionDetailService
                 .getCurrentInstallment(WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null, new Date());
         final List<WaterConnection> waterConnections = waterConnectionService.findByPropertyIdentifier(propertyId);
         final List<ConsumerConsumption> consumerConsumptions = new ArrayList<ConsumerConsumption>();
@@ -94,7 +94,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
                 if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
                     final ConsumerConsumption consumerConsumption = new ConsumerConsumption();
                     consumerConsumption.setHscno(waterConnectionDetails.getConnection().getConsumerCode());
-                    final Map<String, BigDecimal> resultmap = connectionDemandService
+                    final Map<String, BigDecimal> resultmap = connectionDetailService
                             .getDemandCollMapForPtisIntegration(waterConnectionDetails,
                                     WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
                     if (null != resultmap && !resultmap.isEmpty()) {
@@ -134,7 +134,7 @@ public class WaterChargesIntegrationServiceImpl implements WaterChargesIntegrati
             final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                     .getActiveNonHistoryConnectionDetailsByConnection(waterConnection);
             if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())) {
-                final Map<String, BigDecimal> resultmap = connectionDemandService.getDemandCollMapForBill(
+                final Map<String, BigDecimal> resultmap = connectionDetailService.getDemandCollMapForBill(
                         waterConnectionDetails, WaterTaxConstants.WATER_RATES_NONMETERED_PTMODULE, null);
                 if (null != resultmap && !resultmap.isEmpty()) {
                     nonMeteredConnBillDetails = new HashSet<NonMeteredConnBillDetails>();

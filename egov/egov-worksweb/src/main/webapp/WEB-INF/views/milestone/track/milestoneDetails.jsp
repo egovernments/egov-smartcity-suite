@@ -125,7 +125,7 @@
 							id="reasonForDelay_0" value=""
 							data-errormsg="Reason For Delay is mandatory!" data-idx="0"
 							data-optional="" maxlength="256" readonly="true"
-							class="form-control table-input text-right reasonForDelay" />
+							class="form-control table-input text-left reasonForDelay" />
 					</td>
 				</tr>
 			</tbody>

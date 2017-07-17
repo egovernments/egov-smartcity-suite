@@ -46,6 +46,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+
 @Service
 @Transactional(readOnly = true)
 public class LicenseAppTypeService {
@@ -55,5 +59,17 @@ public class LicenseAppTypeService {
 
     public LicenseAppType getLicenseAppTypeByName(String name) {
         return licenseAppTypeRepository.findByName(name);
+    }
+
+    public List<LicenseAppType> findAllLicenseAppType() {
+        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
+    }
+
+    public LicenseAppType getNewLicenseAppType() {
+        return getLicenseAppTypeByName(NEW_LIC_APPTYPE);
+    }
+
+    public List<LicenseAppType> findByDisplayTrue() {
+        return licenseAppTypeRepository.findByDisplayTrueOrderByNameAsc();
     }
 }

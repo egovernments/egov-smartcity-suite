@@ -86,7 +86,7 @@
 					code="lbl.contractor" /></label>
 			<div class="col-sm-3 add-margin">
 				<form:input path="name" id="contractorSearch" class="form-control"
-					placeholder="Type first 3 letters of Contractor Name Or Code" />
+					placeholder="Type first 3 letters of Contractor Name or Code" />
 				<form:errors path="name" cssClass="add-margin error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message
@@ -96,7 +96,6 @@
 					<%-- <form:option value=""><spring:message code="lbl.select" /></form:option> --%>
 					<form:options items="${departments}" itemValue="id" itemLabel="name" />
 				</form:select>
-				<form:errors path="departmentName" cssClass="add-margin error-msg" />
 				<form:errors path="departmentName" cssClass="add-margin error-msg" />
 			</div>
 		</div>

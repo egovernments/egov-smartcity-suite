@@ -39,13 +39,17 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.apache.log4j.Logger;
-import org.egov.commons.Area;
-import org.egov.exceptions.InvalidPropertyException;
+import static java.lang.Boolean.FALSE;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.egov.commons.Area;
+import org.egov.exceptions.InvalidPropertyException;
+import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
+import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 
 /**
  * The Implementation Class for the BuildUpProperty
@@ -56,31 +60,31 @@ import java.util.List;
 public class BuiltUpProperty extends AbstractProperty {
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BuiltUpProperty.class);
-    private Area sitalArea;
-    private Area totalBuiltupArea;
-    private Area commBuiltUpArea;
-    private Area plinthArea;
-    private Area commVacantLand;
-    private Area nonResPlotArea;
+    private transient Area sitalArea;
+    private transient Area totalBuiltupArea;
+    private transient Area commBuiltUpArea;
+    private transient Area plinthArea;
+    private transient Area commVacantLand;
+    private transient Area nonResPlotArea;
     private Boolean irregular;
     private String surveyNumber;
     private Character fieldVerified;
     private Date fieldVerificationDate;
-    private List<Floor> floorDetails = new ArrayList<Floor>();
-    private List<Floor> floorDetailsProxy = new ArrayList<Floor>();
+    private List<Floor> floorDetails = new ArrayList<>();
+    private List<Floor> floorDetailsProxy = new ArrayList<>();
     private Integer propertyDetailsID;
     private String water_Meter_Num;
     private String elec_Meter_Num;
     private Integer noofFloors;
     private char fieldIrregular = 'N';
-    private Property property;
+    private transient Property property;
     private Date updatedTime;
     private PropertyUsage propertyUsage;
     private Date dateOfCompletion;
     private PropertyCreationReason creationReason;
     private PropertyTypeMaster propertyTypeMaster;
     private String propertyType;
-    private PropertyMutationMaster propertyMutationMaster;
+    private transient PropertyMutationMaster propertyMutationMaster;
     private Character comZone = 'N';
     private Character cornerPlot = 'N';
     private PropertyOccupation propertyOccupation;
@@ -105,8 +109,14 @@ public class BuiltUpProperty extends AbstractProperty {
     private Double marketValue;
     private String categoryType;
     private String occupancyCertificationNo;
-    private Boolean appurtenantLandChecked;
+    private transient Boolean appurtenantLandChecked = FALSE;
     private Boolean corrAddressDiff;
+    private PropertyDepartment propertyDepartment;
+    private VacantLandPlotArea vacantLandPlotArea;
+    private LayoutApprovalAuthority layoutApprovalAuthority;
+    private String layoutPermitNo;
+    private Date layoutPermitDate;
+    private String exemptionDetails;
 
     public BuiltUpProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
@@ -115,12 +125,13 @@ public class BuiltUpProperty extends AbstractProperty {
             PropertyUsage propertyUsage, Date dateOfCompletion, PropertyCreationReason creationReason,
             PropertyTypeMaster propertyTypeMaster, String propertyType, PropertyMutationMaster propertyMutationMaster,
             Character comZone, Character cornerPlot, PropertyOccupation propertyOccupation, Double extentSite,
-            Double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType,
-            WoodType woodType, boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
+            Double extentAppartenauntLand, FloorType floorType, RoofType roofType, WallType wallType, WoodType woodType,
+            boolean lift, boolean toilets, boolean waterTap, boolean structure, boolean electricity,
             boolean attachedBathRoom, boolean waterHarvesting, boolean cable, String siteOwner, Apartment apartment,
             String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
-            String occupancyCertificationNo, Boolean appurtenantLandChecked,
-            Boolean corrAddressDiff) {
+            String occupancyCertificationNo, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
+            PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
+            LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
         super();
         this.sitalArea = sitalArea;
         this.totalBuiltupArea = totalBuiltupArea;
@@ -172,6 +183,11 @@ public class BuiltUpProperty extends AbstractProperty {
         this.occupancyCertificationNo = occupancyCertificationNo;
         this.appurtenantLandChecked = appurtenantLandChecked;
         this.corrAddressDiff = corrAddressDiff;
+        this.propertyDepartment = propertyDepartment;
+        this.vacantLandPlotArea = vacantLandPlotArea;
+        this.layoutApprovalAuthority = layoutApprovalAuthority;
+        this.layoutPermitNo = layoutPermitNo;
+        this.layoutPermitDate = layoutPermitDate;
     }
 
     public BuiltUpProperty() {
@@ -181,6 +197,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the dateOfCompletion.
      */
+    @Override
     public Date getDateOfCompletion() {
         return dateOfCompletion;
     }
@@ -189,6 +206,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param dateOfCompletion
      *            The dateOfCompletion to set.
      */
+    @Override
     public void setDateOfCompletion(Date dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
@@ -196,6 +214,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the propertyTypeMaster.
      */
+    @Override
     public PropertyTypeMaster getPropertyTypeMaster() {
         return propertyTypeMaster;
     }
@@ -204,6 +223,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param propertyTypeMaster
      *            The propertyTypeMaster to set.
      */
+    @Override
     public void setPropertyTypeMaster(PropertyTypeMaster propertyTypeMaster) {
         this.propertyTypeMaster = propertyTypeMaster;
     }
@@ -226,6 +246,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the fieldVerified.
      */
+    @Override
     public Character getFieldVerified() {
         return fieldVerified;
     }
@@ -240,6 +261,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the fieldIrregular.
      */
+    @Override
     public char getFieldIrregular() {
         return fieldIrregular;
     }
@@ -248,6 +270,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param fieldIrregular
      *            The fieldIrregular to set.
      */
+    @Override
     public void setFieldIrregular(char fieldIrregular) {
         this.fieldIrregular = fieldIrregular;
     }
@@ -255,6 +278,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the no_of_floors.
      */
+    @Override
     public Integer getNoofFloors() {
         return noofFloors;
     }
@@ -263,6 +287,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param no_of_floors
      *            The no_of_floors to set.
      */
+    @Override
     public void setNoofFloors(Integer noofFloors) {
         this.noofFloors = noofFloors;
     }
@@ -270,6 +295,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Water_Meter_Num
      */
+    @Override
     public String getWater_Meter_Num() {
         return water_Meter_Num;
     }
@@ -278,6 +304,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param Water_Meter_Num
      *            The Water_Meter_Num to set.
      */
+    @Override
     public void setWater_Meter_Num(String water_Meter_Num) {
         this.water_Meter_Num = water_Meter_Num;
     }
@@ -285,6 +312,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Elec_Meter_Num
      */
+    @Override
     public String getElec_Meter_Num() {
         return elec_Meter_Num;
     }
@@ -293,6 +321,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param Water_Meter_Num
      *            The Water_Meter_Num to set.
      */
+    @Override
     public void setElec_Meter_Num(String elec_Meter_Num) {
         this.elec_Meter_Num = elec_Meter_Num;
     }
@@ -300,6 +329,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the PropertyDetailsID
      */
+    @Override
     public Integer getPropertyDetailsID() {
         return propertyDetailsID;
     }
@@ -308,6 +338,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param propertyDetailsID
      *            The propertyDetailsID to set.
      */
+    @Override
     public void setPropertyDetailsID(Integer propertyDetailsID) {
         this.propertyDetailsID = propertyDetailsID;
     }
@@ -315,6 +346,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Property
      */
+    @Override
     public Property getProperty() {
         return property;
     }
@@ -324,6 +356,7 @@ public class BuiltUpProperty extends AbstractProperty {
      *            The Property
      */
 
+    @Override
     public void setProperty(Property property) {
         this.property = property;
     }
@@ -331,6 +364,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Set view for the FloorDetails.
      */
+    @Override
     public List<Floor> getFloorDetails() {
         return floorDetails;
     }
@@ -339,6 +373,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param Set
      *            The Set view of floorDetails.
      */
+    @Override
     public void setFloorDetails(List<Floor> floorDetails) {
         this.floorDetails = floorDetails;
     }
@@ -346,6 +381,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Sital area .
      */
+    @Override
     public Area getSitalArea() {
         return sitalArea;
     }
@@ -354,6 +390,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param sitalArea
      *            The sitalArea to set .
      */
+    @Override
     public void setSitalArea(Area sitalArea) {
         this.sitalArea = sitalArea;
     }
@@ -364,6 +401,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param floor
      *            The floor to set .
      */
+    @Override
     public void addFloor(Floor floor) {
         LOGGER.debug("BuildUpFloor.addFloor");
         if (floor != null) {
@@ -378,6 +416,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param floor
      *            The floor to set .
      */
+    @Override
     public void removeFloor(Floor floor) {
         LOGGER.debug("BuildUpFloor.removeFloor");
         getFloorDetails().remove(floor);
@@ -388,6 +427,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param plinthArea
      *            The plinthArea to set .
      */
+    @Override
     public void setPlinthArea(Area area) {
         this.plinthArea = area;
     }
@@ -395,6 +435,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Plinth Area.
      */
+    @Override
     public Area getPlinthArea() {
         return plinthArea;
     }
@@ -402,6 +443,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Total Built Up Area.
      */
+    @Override
     public Area getTotalBuiltupArea() {
         return totalBuiltupArea;
     }
@@ -410,6 +452,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param totalBuiltupArea
      *            The totalBuiltupArea to set .
      */
+    @Override
     public void setTotalBuiltupArea(Area area) {
         this.totalBuiltupArea = area;
     }
@@ -417,6 +460,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Common Built Up Area.
      */
+    @Override
     public Area getCommBuiltUpArea() {
         return commBuiltUpArea;
     }
@@ -425,6 +469,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param commBuiltUpArea
      *            The commBuiltUpArea to set .
      */
+    @Override
     public void setCommBuiltUpArea(Area area) {
         this.commBuiltUpArea = area;
     }
@@ -432,6 +477,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Common Vacant Land Area.
      */
+    @Override
     public Area getCommVacantLand() {
         return commVacantLand;
     }
@@ -440,6 +486,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param commVacantLand
      *            The commVacantLand to set .
      */
+    @Override
     public void setCommVacantLand(Area area) {
         this.commVacantLand = area;
     }
@@ -462,6 +509,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the Survey Number.
      */
+    @Override
     public String getSurveyNumber() {
         return surveyNumber;
     }
@@ -470,6 +518,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param surveyNumber
      *            The surveyNumber to set .
      */
+    @Override
     public void setSurveyNumber(String surveyNumber) {
         this.surveyNumber = surveyNumber;
     }
@@ -478,6 +527,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param fieldVerified
      *            The fieldVerified to set .
      */
+    @Override
     public void setFieldVerified(Character fieldVerified) {
         this.fieldVerified = fieldVerified;
     }
@@ -485,6 +535,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the fieldVerificationDate.
      */
+    @Override
     public java.util.Date getFieldVerificationDate() {
         return fieldVerificationDate;
     }
@@ -493,6 +544,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param fieldVerificationDate
      *            The fieldVerificationDate to set .
      */
+    @Override
     public void setFieldVerificationDate(java.util.Date fieldVerificationDate) {
         this.fieldVerificationDate = fieldVerificationDate;
     }
@@ -500,6 +552,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns PropertyUsage
      */
+    @Override
     public PropertyUsage getPropertyUsage() {
         return propertyUsage;
     }
@@ -508,6 +561,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param Boolean
      *            propertyUsage The propertyUsage to set.
      */
+    @Override
     public void setPropertyUsage(PropertyUsage propertyUsage) {
         this.propertyUsage = propertyUsage;
     }
@@ -515,6 +569,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the updatedTime.
      */
+    @Override
     public Date getUpdatedTime() {
         return updatedTime;
     }
@@ -523,6 +578,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param updatedTime
      *            The updatedTime to set.
      */
+    @Override
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
     }
@@ -530,6 +586,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns if the given Object is equal to PropertyImpl
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null)
             return false;
@@ -559,6 +616,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the hashCode
      */
+    @Override
     public int hashCode() {
         int hashCode = 0;
         if (getId() != null) {
@@ -601,7 +659,8 @@ public class BuiltUpProperty extends AbstractProperty {
         if (getProperty() == null)
             throw new InvalidPropertyException("BuiltUpProperty.validate : Property is NULL, Please Check !!");
         else if (getProperty().validateProperty() == false)
-            throw new InvalidPropertyException("BuiltUpProperty.validate : Property Validate() failed, Please Check !!");
+            throw new InvalidPropertyException(
+                    "BuiltUpProperty.validate : Property Validate() failed, Please Check !!");
 
         // can't use validate, not implemented
         /*
@@ -634,6 +693,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the propertyType.
      */
+    @Override
     public String getPropertyType() {
         return propertyType;
     }
@@ -642,6 +702,7 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param propertyType
      *            The propertyType to set.
      */
+    @Override
     public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
     }
@@ -649,6 +710,7 @@ public class BuiltUpProperty extends AbstractProperty {
     /**
      * @return Returns the propertyMutationMaster.
      */
+    @Override
     public PropertyMutationMaster getPropertyMutationMaster() {
         return propertyMutationMaster;
     }
@@ -657,30 +719,37 @@ public class BuiltUpProperty extends AbstractProperty {
      * @param propertyMutationMaster
      *            The propertyMutationMaster to set.
      */
+    @Override
     public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster) {
         this.propertyMutationMaster = propertyMutationMaster;
     }
 
+    @Override
     public Character getComZone() {
         return comZone;
     }
 
+    @Override
     public void setComZone(Character comZone) {
         this.comZone = comZone;
     }
 
+    @Override
     public Character getCornerPlot() {
         return cornerPlot;
     }
 
+    @Override
     public void setCornerPlot(Character cornerPlot) {
         this.cornerPlot = cornerPlot;
     }
 
+    @Override
     public PropertyOccupation getPropertyOccupation() {
         return propertyOccupation;
     }
 
+    @Override
     public void setPropertyOccupation(PropertyOccupation propertyOccupation) {
         this.propertyOccupation = propertyOccupation;
     }
@@ -690,8 +759,8 @@ public class BuiltUpProperty extends AbstractProperty {
         StringBuilder objStr = new StringBuilder();
 
         objStr.append("Id: ").append(getId()).append("|").append("Sital Area: ");
-        objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea()) : objStr.append("NULL")
-                .append("|NoOfFloors: ").append(getNoofFloors());
+        objStr = (getSitalArea() != null) ? objStr.append(getSitalArea().getArea())
+                : objStr.append("NULL").append("|NoOfFloors: ").append(getNoofFloors());
 
         return objStr.toString();
     }
@@ -944,6 +1013,64 @@ public class BuiltUpProperty extends AbstractProperty {
     @Override
     public void setCorrAddressDiff(Boolean corrAddressDiff) {
         this.corrAddressDiff = corrAddressDiff;
+    }
+
+    @Override
+    public PropertyDepartment getPropertyDepartment() {
+        return propertyDepartment;
+    }
+
+    @Override
+    public void setPropertyDepartment(PropertyDepartment propertyDepartment) {
+        this.propertyDepartment = propertyDepartment;
+    }
+
+    @Override
+    public VacantLandPlotArea getVacantLandPlotArea() {
+        return vacantLandPlotArea;
+    }
+
+    @Override
+    public void setVacantLandPlotArea(VacantLandPlotArea vacantLandPlotArea) {
+        this.vacantLandPlotArea = vacantLandPlotArea;
+    }
+
+    @Override
+    public LayoutApprovalAuthority getLayoutApprovalAuthority() {
+        return layoutApprovalAuthority;
+    }
+
+    @Override
+    public void setLayoutApprovalAuthority(LayoutApprovalAuthority layoutApprovalAuthority) {
+        this.layoutApprovalAuthority = layoutApprovalAuthority;
+    }
+
+    @Override
+    public String getLayoutPermitNo() {
+        return layoutPermitNo;
+    }
+
+    @Override
+    public void setLayoutPermitNo(String layoutPermitNo) {
+        this.layoutPermitNo = layoutPermitNo;
+    }
+
+    @Override
+    public Date getLayoutPermitDate() {
+        return layoutPermitDate;
+    }
+
+    @Override
+    public void setLayoutPermitDate(Date layoutPermitDate) {
+        this.layoutPermitDate = layoutPermitDate;
+    }
+
+    public String getExemptionDetails() {
+        return exemptionDetails;
+    }
+
+    public void setExemptionDetails(String exemptionDetails) {
+        this.exemptionDetails = exemptionDetails;
     }
 
 }

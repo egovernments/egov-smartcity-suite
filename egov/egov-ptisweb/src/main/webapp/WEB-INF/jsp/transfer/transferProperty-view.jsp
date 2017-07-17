@@ -1,41 +1,41 @@
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~      accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~       Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~       The updated version of eGov suite of products as by eGovernments Foundation
+  ~       is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~       This program is free software: you can redistribute it and/or modify
+  ~       it under the terms of the GNU General Public License as published by
+  ~       the Free Software Foundation, either version 3 of the License, or
+  ~       any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~       This program is distributed in the hope that it will be useful,
+  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~       GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~       You should have received a copy of the GNU General Public License
+  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~       http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~       In addition to the terms of the GPL license to be adhered to in using this
+  ~       program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~           1) All versions of this program, verbatim or modified must carry this
+  ~              Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~           2) Any misrepresentation of the origin of the material is prohibited. It
+  ~              is required that all modified versions of this material be marked in
+  ~              reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~           3) This license does not grant any rights to any user of the program
+  ~              with regards to rights under trademark law for use of the trade names
+  ~              or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -78,16 +78,20 @@
 	
 	function loadOnStartUp() {
 		var state='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVAL_PENDING}" />';
-		if(<s:property value="%{!mutationFeePaid}"/> && state == '<s:property value="%{model.state.nextAction}"/>'){
+		 if(<s:property value="%{!mutationFeePaid}"/> && state == '<s:property value="%{model.state.nextAction}"/>'){
 			document.getElementById('Forward').style.visibility = 'hidden';
-		}
+		} 
 		if('<s:property value="%{type}" />' == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER}" />'){
 			document.getElementById('Reject').value="Cancel";
 		}
-	}
+		var userDesign = '<s:property value="%{currentDesignation}"/>';
+		if(userDesign == 'Commissioner') {
+			jQuery('#Forward').hide();
+		} 
+    };
 </script>
 <script
-	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+        src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </head>
 <body onload="loadOnStartUp();">
 	<div class="formmainbox">
@@ -404,13 +408,41 @@
 							</tr>
 							<tr>
 								<td class="bluebox2">&nbsp;</td>
+								<td class="bluebox"><s:text name="decreeNum" />:</td>
+								<td class="bluebox"><span class="bold"> <s:if
+											test="%{decreeNumber == ''}">N/A</s:if> <s:else>
+											<s:property value="%{decreeNumber}" default="N/A" />
+										</s:else>
+								</span></td>
+								<td class="bluebox"><s:text name="decreeDate" />:</td>
+								<td class="bluebox"><span class="bold"><s:if
+											test="%{decreeDate == ''}">N/A</s:if> <s:else>
+											<s:date name="decreeDate"
+										var="decreeDate" format="dd/MM/yyyy"/> <s:property value="%{#decreeDate}" default="N/A" />
+										</s:else> </span></td> 
+							</tr>
+							<tr>
+								<td class="bluebox2">&nbsp;</td>
+								<td class="greybox"><s:text name="courtName" /> :</td>
+								<td class="bluebox"><span class="bold"> <s:if
+											test="%{courtName == ''}">N/A</s:if> <s:else>
+											<s:property value="%{courtName}" default="N/A" />
+										</s:else>
+								</span></td>
 								<td class="bluebox"><s:text name="docNum" />:</td>
-								<td class="bluebox"><span class="bold"><s:property
-											value="%{deedNo}" /></span></td>
+								<td class="bluebox"><span class="bold"><s:if
+											test="%{deedNo == ''}">N/A</s:if> <s:else>
+											<s:property value="%{deedNo}" default="N/A" />
+										</s:else> </span></td>
+							</tr>
+							<tr>
+								<td class="bluebox2">&nbsp;</td>
 								<td class="bluebox"><s:text name="docDate" />:</td>
-								<td class="bluebox"><s:date name="deedDate" var="docDate"
-										format="dd/MM/yyyy" /> <span class="bold"><s:property
-											value="%{#docDate}" /></span></td>
+								<td class="bluebox"><span class="bold"><s:if
+											test="%{deedDate == ''}">N/A</s:if> <s:else>
+											<s:date name="deedDate" var="docDate" format="dd/MM/yyyy" />
+											<s:property value="%{#docDate}" default="N/A" />
+										</s:else></span></td>
 							</tr>
 						</s:if>
 						<tr>
@@ -443,7 +475,7 @@
 								<td class="greybox"><s:if
 										test="%{mutationRegistrationDetails.documentLink != null}">
 										<input type="button" value="Download" class="buttonsubmit"
-											onclick="javascript:window.open('<s:property value="%{mutationRegistrationDetails.documentLink}"/>','window','scrollbars=yes,resizable=no,height=400,width=400,status=yes');" />
+                                               onclick="window.open('<s:property value="%{mutationRegistrationDetails.documentLink}"/>','window','scrollbars=yes,resizable=no,height=400,width=400,status=yes');"/>
 									</s:if> <s:else>
 										<span class="bold"><s:property
 												value="%{mutationRegistrationDetails.documentLink}"
@@ -465,11 +497,7 @@
 					<tr>
 				</s:if>
 				<br />
-				<s:if
-					test="%{!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) && 
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) &&
-				!model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED)  &&
-				!model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
+				<s:if test="%{currentDesignation != null && !currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 					<div>
 						<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 					</div>
@@ -477,11 +505,7 @@
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</div>
 				</s:if>
-				<s:elseif
-					test="%{model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REVENUE_OFFICER_APPROVED) ||
-					model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REGISTRATION_COMPLETED) ||
-					model.state.value.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
-					model.state.nextAction.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)}">
+					<s:elseif test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%" border="0" cellspacing="0" cellpadding="0">
 							<tr>
@@ -501,26 +525,6 @@
 						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
 					</tr>
 				</s:elseif>
-				<%-- 		<s:else>
-					<div id="workflowCommentsDiv" align="center">
-						<table width="100%" border="0" cellspacing="0" cellpadding="0">
-							<tr>
-								<td width="25%" class="${approverEvenCSS}">&nbsp;</td>
-								<td class="${approverEvenCSS}" width="13%">Approver
-									Remarks:</td>
-								<td class="${approverEvenTextCSS}"><textarea
-										id="approverComments" name="approverComments" rows="2"
-										value="#approverComments" cols="35"></textarea></td>
-								<td class="${approverEvenCSS}">&nbsp;</td>
-								<td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-								<td class="${approverEvenCSS}">&nbsp;</td>
-							</tr>
-							</table>
-					</div>
-					<tr>
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
-				</s:else> --%>
 				</table>
 			</s:push>
 		</s:form>

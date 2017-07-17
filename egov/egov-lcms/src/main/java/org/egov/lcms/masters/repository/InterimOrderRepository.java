@@ -50,8 +50,6 @@ public interface InterimOrderRepository extends JpaRepository<InterimOrder, java
 
     InterimOrder findByCode(String code);
 
-    List<InterimOrder> findByActiveTrueOrderByInterimOrderTypeAsc();
-
-   
+    List<InterimOrder> findByActiveTrueOrderByOrderNumberAsc();
 
 }

@@ -93,15 +93,12 @@ public class LineEstimateDetails extends AbstractAuditable {
     @Length(max = 50)
     private String estimateNumber;
 
-    @NotNull
     @Length(max = 50)
     private double quantity;
 
-    @NotNull
     @Length(max = 50)
     private String uom;
 
-    @NotNull
     @Length(max = 50)
     private String beneficiary;
 

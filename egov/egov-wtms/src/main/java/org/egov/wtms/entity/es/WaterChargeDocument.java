@@ -39,8 +39,6 @@
  */
 package org.egov.wtms.entity.es;
 
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-
 import java.util.Date;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -58,8 +56,8 @@ import com.fasterxml.jackson.annotation.JsonFormat;
 @Document(indexName = "waterchargeconsumer", type = "waterchargeconsumer")
 public class WaterChargeDocument {
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
-    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = "yyyy-MM-dd")
     private Date createdDate;
 
     @Field(index = FieldIndex.not_analyzed)
@@ -80,7 +78,7 @@ public class WaterChargeDocument {
     private String waterSource;
 
     @Field(type = FieldType.Boolean)
-    private boolean isLegacy;
+    private boolean legacy;
 
     @Field(type = FieldType.Long)
     private Long sumpCapacity;
@@ -101,13 +99,10 @@ public class WaterChargeDocument {
     private String propertyType;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ulbName;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String consumerCode;
-
+    
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String ward;
+    private String oldConsumerCode;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String applicationCode;
@@ -116,13 +111,19 @@ public class WaterChargeDocument {
     private String districtName;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String cityGrade;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String cityName;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String cityCode;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String zone;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String adminWard;
-
-    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
-    private String grade;
 
     @Field(type = FieldType.String)
     private String bpaid;
@@ -175,6 +176,21 @@ public class WaterChargeDocument {
     @Field(type = FieldType.Long)
     private Long currentDemand;
 
+    @Field(type = FieldType.Long)
+    private Long totalCollection;
+
+    @Field(type = FieldType.Long)
+    private Long totalDemand;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String revenueWard;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String duePeriod;
+
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String billCollector;
+
     public static Builder builder() {
         return new Builder();
     }
@@ -201,14 +217,6 @@ public class WaterChargeDocument {
 
     public void setZone(final String zone) {
         this.zone = zone;
-    }
-
-    public String getGrade() {
-        return grade;
-    }
-
-    public void setGrade(final String grade) {
-        this.grade = grade;
     }
 
     public String getDoorNo() {
@@ -263,6 +271,30 @@ public class WaterChargeDocument {
         return arrearsDue;
     }
 
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(final String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
+
+    public Long getTotalCollection() {
+        return totalCollection;
+    }
+
+    public void setTotalCollection(final Long totalCollection) {
+        this.totalCollection = totalCollection;
+    }
+
+    public Long getTotalDemand() {
+        return totalDemand;
+    }
+
+    public void setTotalDemand(final Long totalDemand) {
+        this.totalDemand = totalDemand;
+    }
+
     public void setArrearsDue(final Long arrearsDue) {
         this.arrearsDue = arrearsDue;
     }
@@ -292,11 +324,12 @@ public class WaterChargeDocument {
     }
 
     public String getId() {
-        return ApplicationThreadLocals.getCityCode() + "-" + consumerCode;
+        return id;
     }
 
-    public String setId() {
-        return id;
+    public void setId() {
+    	if(consumerCode!=null)
+        id = ApplicationThreadLocals.getCityCode().concat("-").concat(consumerCode);
     }
 
     public String getClosureType() {
@@ -313,14 +346,6 @@ public class WaterChargeDocument {
 
     public void setWaterSource(final String waterSource) {
         this.waterSource = waterSource;
-    }
-
-    public boolean isLegacy() {
-        return isLegacy;
-    }
-
-    public void setIsLegacy(final boolean isLegacy) {
-        this.isLegacy = isLegacy;
     }
 
     public Long getSumpCapacity() {
@@ -371,28 +396,12 @@ public class WaterChargeDocument {
         this.propertyType = propertyType;
     }
 
-    public String getUlbName() {
-        return ulbName;
-    }
-
-    public void setUlbName(final String ulbName) {
-        this.ulbName = ulbName;
-    }
-
     public String getConsumerCode() {
         return consumerCode;
     }
 
     public void setConsumerCode(final String consumerCode) {
         this.consumerCode = consumerCode;
-    }
-
-    public String getWard() {
-        return ward;
-    }
-
-    public void setWard(final String ward) {
-        this.ward = ward;
     }
 
     public String getApplicationCode() {
@@ -483,6 +492,62 @@ public class WaterChargeDocument {
         this.propertylocation = propertylocation;
     }
 
+    public String getCityGrade() {
+        return cityGrade;
+    }
+
+    public void setCityGrade(final String cityGrade) {
+        this.cityGrade = cityGrade;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(final String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(final String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public Boolean getLegacy() {
+        return legacy;
+    }
+
+    public void setLegacy(final Boolean legacy) {
+        this.legacy = legacy;
+    }
+
+    public String getDuePeriod() {
+        return duePeriod;
+    }
+
+    public void setDuePeriod(final String duePeriod) {
+        this.duePeriod = duePeriod;
+    }
+
+    public String getBillCollector() {
+        return billCollector;
+    }
+
+    public void setBillCollector(final String billCollector) {
+        this.billCollector = billCollector;
+    }
+
+    public String getOldConsumerCode() {
+        return oldConsumerCode;
+    }
+
+    public void setOldConsumerCode(String oldConsumerCode) {
+        this.oldConsumerCode = oldConsumerCode;
+    }
+
     public static final class Builder {
         private String aadhaarNumber;
         private String adminWard;
@@ -490,21 +555,24 @@ public class WaterChargeDocument {
         private Long arrearsDemand;
         private Long arrearsDue;
         private Long waterTaxDue;
+        private Long totalDemand;
+        private Long totalCollection;
         private Long totalDue;
         private String status;
         private String category;
         private String closureType;
         private String connectionType;
         private String consumerCode;
+        private String oldConsumerCode;
         private String consumerName;
         private Date createdDate;
         private Long currentDemand;
         private Long currentDue;
         private String doorNo;
         private String districtName;
-        private String ulbName;
-        private String grade;
-        private Boolean isLegacy;
+        private String cityName;
+        private String cityGrade;
+        private Boolean legacy;
         private Long sumpCapacity;
         private Long numberOfPerson;
         private String zone;
@@ -516,12 +584,25 @@ public class WaterChargeDocument {
         private String locality;
         private String propertyType;
         private String waterSource;
-        private String ward;
+        private String revenueWard;
         private String usage;
+        private String cityCode;
         private GeoPoint wardLocation;
         private GeoPoint propertyLocation;
+        private String duePeriod;
+        private String billCollector;
 
         private Builder() {
+        }
+
+        public Builder withDuePeriod(final String duePeriod) {
+            this.duePeriod = duePeriod;
+            return this;
+        }
+
+        public Builder withBillCollector(final String billCollector) {
+            this.billCollector = billCollector;
+            return this;
         }
 
         public Builder withWardlocation(final GeoPoint wardlocation) {
@@ -549,11 +630,6 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder with(final String aapplicationcode) {
-            applicationCode = aapplicationcode;
-            return this;
-        }
-
         public Builder withApplicationcode(final String aapplicationcode) {
             applicationCode = aapplicationcode;
             return this;
@@ -576,6 +652,16 @@ public class WaterChargeDocument {
 
         public Builder withWaterTaxDue(final Long waterTaxDue) {
             this.waterTaxDue = waterTaxDue;
+            return this;
+        }
+
+        public Builder withTotalDemand(final Long totalDemand) {
+            this.totalDemand = totalDemand;
+            return this;
+        }
+
+        public Builder withTotalCollection(final Long totalCollection) {
+            this.totalCollection = totalCollection;
             return this;
         }
 
@@ -606,6 +692,11 @@ public class WaterChargeDocument {
 
         public Builder withConsumerCode(final String consumerCode) {
             this.consumerCode = consumerCode;
+            return this;
+        }
+        
+        public Builder withOldConsumerCode(final String oldConsumerCode) {
+            this.oldConsumerCode = oldConsumerCode;
             return this;
         }
 
@@ -639,8 +730,8 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withGrade(final String grade) {
-            this.grade = grade;
+        public Builder withCityGrade(final String cityGrade) {
+            this.cityGrade = cityGrade;
             return this;
         }
 
@@ -664,8 +755,8 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withIslegacy(final Boolean islegacy) {
-            isLegacy = islegacy;
+        public Builder withLegacy(final Boolean legacy) {
+            this.legacy = legacy;
             return this;
         }
 
@@ -689,8 +780,13 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withUlbname(final String ulbname) {
-            ulbName = ulbname;
+        public Builder withCityName(final String cityname) {
+            cityName = cityname;
+            return this;
+        }
+
+        public Builder withCityCode(final String citycode) {
+            cityCode = citycode;
             return this;
         }
 
@@ -704,8 +800,8 @@ public class WaterChargeDocument {
             return this;
         }
 
-        public Builder withWard(final String ward) {
-            this.ward = ward;
+        public Builder withRevenueWard(final String revenueWard) {
+            this.revenueWard = revenueWard;
             return this;
         }
 
@@ -717,19 +813,25 @@ public class WaterChargeDocument {
         public WaterChargeDocument build() {
             final WaterChargeDocument waterChargeIndex = new WaterChargeDocument();
             waterChargeIndex.setWardlocation(wardLocation);
+            waterChargeIndex.setConsumerCode(consumerCode);
+            waterChargeIndex.setOldConsumerCode(oldConsumerCode);
+            waterChargeIndex.setId();
             waterChargeIndex.setPropertylocation(propertyLocation);
             waterChargeIndex.setAadhaarNumber(aadhaarNumber);
             waterChargeIndex.setAdminWard(adminWard);
             waterChargeIndex.setApplicationCode(applicationCode);
             waterChargeIndex.setArrearsDemand(arrearsDemand);
+            waterChargeIndex.setDuePeriod(duePeriod);
+            waterChargeIndex.setBillCollector(billCollector);
             waterChargeIndex.setArrearsDue(arrearsDue);
             waterChargeIndex.setWaterTaxDue(waterTaxDue);
+            waterChargeIndex.setTotalDemand(totalDemand);
+            waterChargeIndex.setTotalCollection(totalCollection);
             waterChargeIndex.setTotalDue(totalDue);
             waterChargeIndex.setStatus(status);
             waterChargeIndex.setCategory(category);
             waterChargeIndex.setClosureType(closureType);
             waterChargeIndex.setConnectionType(connectionType);
-            waterChargeIndex.setConsumerCode(consumerCode);
             waterChargeIndex.setConsumerName(consumerName);
             waterChargeIndex.setCreatedDate(createdDate);
             waterChargeIndex.setCurrentDemand(currentDemand);
@@ -739,10 +841,11 @@ public class WaterChargeDocument {
             waterChargeIndex.setPipeSize(pipeSize);
             waterChargeIndex.setNumberOfPerson(numberOfPerson);
             waterChargeIndex.setCreatedDate(createdDate);
-            waterChargeIndex.setUlbName(ulbName);
-            waterChargeIndex.setGrade(grade);
+            waterChargeIndex.setCityName(cityName);
+            waterChargeIndex.setCityGrade(cityGrade);
+            waterChargeIndex.setCityCode(cityCode);
             waterChargeIndex.setUsage(usage);
-            waterChargeIndex.setIsLegacy(isLegacy);
+            waterChargeIndex.setLegacy(legacy);
             waterChargeIndex.setLocality(locality);
             waterChargeIndex.setPropertyId(propertyId);
             waterChargeIndex.setPropertyType(propertyType);
@@ -751,10 +854,11 @@ public class WaterChargeDocument {
             waterChargeIndex.setMonthlyRate(monthlyRate);
             waterChargeIndex.setSumpCapacity(sumpCapacity);
             waterChargeIndex.setWaterSource(waterSource);
-            waterChargeIndex.setWard(ward);
+            waterChargeIndex.setRevenueWard(revenueWard);
             waterChargeIndex.setZone(zone);
             return waterChargeIndex;
         }
+
     }
 
 }

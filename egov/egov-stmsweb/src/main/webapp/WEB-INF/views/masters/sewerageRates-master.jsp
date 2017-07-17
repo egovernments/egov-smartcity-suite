@@ -2,7 +2,7 @@
 	eGov suite of products aim to improve the internal efficiency,transparency, 
     accountability and the service delivery of the government  organizations.
  
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2016>  eGovernments Foundation
  
 	The updated version of eGov suite of products as by eGovernments Foundation 
     is available at http://www.egovernments.org
@@ -92,7 +92,8 @@
 				<div class="col-sm-3 add-margin">
 					<input type="text" class="form-control patternvalidation"
 						data-pattern="decimalvalue" maxlength="8" name="monthlyRate" autocomplete="off"
-						id="monthlyRate" style="text-align: right" required="required" />
+						id="monthlyRate" style="text-align: right" value="${monthlyRate}" required="required" />
+					<form:errors path="monthlyRate" cssClass="add-margin error-msg"/>
 				</div>
 				<fmt:formatDate var="formattedEndDate" pattern="dd-MM-yyyy" value="${endDate}" />
 				<input type="hidden" id="effectiveEndDate" value="${formattedEndDate}" />
@@ -100,8 +101,8 @@
 						code="lbl.effective.fromdate" /><span class="mandatory"></span></label>
 				<div class="col-sm-3 add-margin">
 					<form:input path="fromDate" id="fromDate"
-						class="form-control datepicker" data-inputmask="'mask': 'd/m/y'"
-						required="required" />
+						class="form-control datepicker" data-inputmask="'mask': 'd/m/y'" required="required"/>
+					<form:errors path="fromDate" cssClass="add-margin error-msg"/>
 				</div>
 			</div>
 		</div>
@@ -119,4 +120,4 @@
 	type="text/javascript"></script>
 <script
 	src="<cdn:url  value='/resources/js/masters/sewerageRates.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"></script>

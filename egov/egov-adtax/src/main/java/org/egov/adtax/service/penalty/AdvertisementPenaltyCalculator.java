@@ -52,4 +52,6 @@ public interface AdvertisementPenaltyCalculator {
     BigDecimal calculatePenalty(AdvertisementPermitDetail advPermitDetail) throws ApplicationRuntimeException;
 
     Map<Installment, BigDecimal> getPenaltyByInstallment(AdvertisementPermitDetail advPermitDetail);
+
+    Map<Installment, BigDecimal> getPenaltyOnAdditionalTaxByInstallment(AdvertisementPermitDetail advPermitDetail);
 }

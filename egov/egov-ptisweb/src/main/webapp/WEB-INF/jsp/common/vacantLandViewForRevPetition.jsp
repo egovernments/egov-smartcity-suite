@@ -48,6 +48,10 @@
 		<th class="bluebgheadtd"><s:text name="MarketValue" /></th>
 		<th class="bluebgheadtd"><s:text name="currentCapitalValue"/></th>
 		<th class="bluebgheadtd"><s:text name="constCompl.date"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.vl.plotarea"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.authority"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.permitno"/></th>
+		<th class="bluebgheadtd"><s:text name="lbl.layout.permitdate"/></th>
     </tr>
 	
 	<tr id="vacantLandRow">
@@ -70,15 +74,28 @@
         <s:date name="%{property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
         	<span class="bold"><s:property value="%{#occupationDate}" default="N/A"/></span>
         </td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{property.propertyDetail.vacantLandPlotArea.name}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{property.propertyDetail.layoutApprovalAuthority.name}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        	<span class="bold"><s:property value="%{property.propertyDetail.layoutPermitNo}" default="N/A"/></span>
+        </td>
+        <td class="blueborderfortd" align="center">
+        <s:date name="%{property.propertyDetail.layoutPermitDate}" var="layoutPermitDate" format="dd/MM/yyyy" />
+        	<span class="bold"><s:property value="%{#layoutPermitDate}" default="N/A"/></span>
+        </td>
     </tr>
     
    <tr>
-   <td colspan="6">
+   <td colspan="12">
      <br/>
       <table class="tablebottom" style="width: 100%;">
          <tbody>
            <tr>
-				  <td colspan="4">
+				  <td colspan="10">
 				      <div class="headingsmallbg">
 				         <span class="bold"><s:text name="boundaries" /></span> 
 			          </div>

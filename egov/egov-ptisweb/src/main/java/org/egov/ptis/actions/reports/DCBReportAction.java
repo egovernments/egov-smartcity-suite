@@ -92,7 +92,7 @@ public class DCBReportAction extends BaseFormAction {
     @Override
     public void prepare() {
         wardList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
-        final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findAllExcludeEWSHS();
+        final List<PropertyTypeMaster> propTypeList = propertyTypeMasterDAO.findBuiltUpOwnerShipTypes();
         addDropdownData("PropTypeMaster", propTypeList);
         setWardBndryMap(CommonServices.getFormattedBndryMap(wardList));
         wardBndryMap.put(0l, "All");

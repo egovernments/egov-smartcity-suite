@@ -197,9 +197,7 @@ function calculateCreditTotal(){
 
 function validate()
 {
-	
 	callpopulateapportioningamountforbills();	
-
 	if (document.getElementById("bankChallanDate").value=='DD/MM/YYYY')	{
 		document.getElementById("bankChallanDate").value="";
 	}
@@ -209,8 +207,7 @@ function validate()
 	document.getElementById("invaliddateformat").style.display="none";
 	document.getElementById("receipt_dateerror_area").style.display="none";
 	var validation = true;
-	
-		<s:if test="%{!isBillSourcemisc()}"> 
+		<s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}"> 
 		if(document.getElementById('manualreceiptinfo').checked==true){
 				if(document.getElementById("manualReceiptDate").value=="" ){
 							document.getElementById("receipt_error_area").innerHTML+=
@@ -267,6 +264,7 @@ function validate()
 	var instrTypeDD = document.getElementById("ddradiobutton").checked;
 	var instrTypeCard = document.getElementById("cardradiobutton").checked;
 	var instrTypeBank = document.getElementById("bankradiobutton").checked;
+	var instrTypeOnline = document.getElementById("onlineradiobutton").checked;
 	var chequetable=document.getElementById('chequegrid')
 	var chequetablelen1 =chequetable.rows.length;
 
@@ -275,7 +273,8 @@ function validate()
 		if(document.getElementById("instrHeaderCash.instrumentAmount")!=null)
 		{
 			cashamount=document.getElementById("instrHeaderCash.instrumentAmount").value;
-			if(cashamount==null || cashamount=="" || isNaN(cashamount) || cashamount<0 || cashamount.startsWith('+')){
+			//|| cashamount.startsWith('+')
+			if(cashamount==null || cashamount=="" || isNaN(cashamount) || cashamount<0){
 				document.getElementById("receipt_error_area").innerHTML+=
 				'<s:text name="billreceipt.invalidcashamount.errormessage" />'+ '<br>';
 				validation = false;
@@ -302,6 +301,16 @@ function validate()
 		    	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingcardtransactionno.errormessage" /> ' + '<br>';
 		    	validation=false;
 		    }
+		}
+		if(document.getElementById("confirmtransactionNumber")!=null){
+
+	    	var confirmtransNo=document.getElementById("confirmtransactionNumber").value;
+		    if(confirmtransNo==null || confirmtransNo==""){
+		    	document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingcard.confirmtransactionno.errormessage" /> ' + '<br>';
+		    	validation=false;
+		    }
+		    else
+		    	validateTransactionNumber();
 		}
 		if(document.getElementById("instrHeaderCard.instrumentNumber")!=null){
 		    var cardNo=document.getElementById("instrHeaderCard.instrumentNumber").value;
@@ -351,10 +360,16 @@ function validate()
 			else {
 				var receiptDate;
 				 <s:if test="%{!isBillSourcemisc()}">
-				 receiptDate = document.getElementById("manualReceiptDate").value;
+				 	if(document.getElementById("manualReceiptDate"))
+				 		receiptDate = document.getElementById("manualReceiptDate").value;
+				 	else
+				 		receiptDate = "${currDate}";
 				</s:if>
 				<s:else>
-				receiptDate = document.getElementById("voucherDate").value;
+					if(document.getElementById("voucherDate"))
+						receiptDate = document.getElementById("voucherDate").value;
+					else
+						receiptDate = "${currDate}";
 				</s:else>
 				if(receiptDate!=null && process(bankChallanDate) > process(receiptDate)){
  	 	    		document.getElementById("receipt_error_area").innerHTML+=
@@ -419,6 +434,29 @@ function validate()
 		}//end of else
 		document.getElementById('instrumentTypeCashOrCard').value="";
 	}
+	//if mode of payment is online
+	if(instrTypeOnline){
+		if(document.getElementById("instrHeaderOnline.instrumentAmount")!=null)
+		{
+			onlineamount=document.getElementById("instrHeaderOnline.instrumentAmount").value;
+			if(onlineamount==null || onlineamount=="" || isNaN(onlineamount) || onlineamount<0){
+				document.getElementById("receipt_error_area").innerHTML+=
+				'<s:text name="billreceipt.invalidcreditamount.errormessage" />'+ '<br>';
+				validation = false;
+			}
+			else
+			{
+			    onlineamount=eval(onlineamount);
+				if(onlineamount==0){
+					document.getElementById("receipt_error_area").innerHTML+=
+					'<s:text name="billreceipt.invalidcreditamount.errormessage" />'+ '<br>';
+					validation = false;
+				}
+				collectiontotal=collectiontotal+onlineamount;
+			}
+			document.getElementById('instrumentTypeCashOrCard').value="online";
+		}
+	}
 	document.getElementById("instrumenttotal").value=collectiontotal;
 	var credittotal=calculateCreditTotal();
 	var checkoverridevalue=document.getElementById("overrideAccountHeads").value;
@@ -471,7 +509,7 @@ function validate()
    		document.getElementById("receipt_error_area").innerHTML+='<s:text name="billreceipt.missingpayeename.errormessage" /> ' + '<br>';
 		validation = false;
    	}
-
+	
    	<s:if test="%{!isBillSourcemisc()}"> 
 	 if(eval(document.getElementById("totalamountdisplay").value)>eval(document.getElementById("totalamounttobepaid").value)){
 		 var r = confirm('Collected amount is more than the amount to be paid. Do you want to collect advance amount?');
@@ -490,7 +528,6 @@ function validate()
 	    	document.getElementById('instrumentDate').value="";
 	    }
 	}
-	
 	if(validation==false){
 		return false;
 	}
@@ -556,7 +593,7 @@ function verifyChequeDetails(table,len1)
 	    //validate if valid date has been entered
 	    if(getControlInBranch(table.rows[j],'instrumentDate')!=null){
 	    var instrDate=getControlInBranch(table.rows[j],'instrumentDate');
-	    <s:if test="%{!isBillSourcemisc()}">
+	    <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 	    	if(instrDate.value==null || instrDate.value=="" || instrDate.value=="DD/MM/YYYY"){
 	    		if(instrDateErrMsg==""){
 	    		    instrDateErrMsg='<s:text name="billreceipt.missingchequedate.errormessage" />' + '<br>';
@@ -587,7 +624,12 @@ function verifyChequeDetails(table,len1)
 	    		}
 	    		check=false;
 	    	 } else {
-	 	    		var receiptDate = document.getElementById("voucherDate").value;
+	 	    		var receiptDate;
+	    		 	if(document.getElementById("voucherDate"))
+	 					receiptDate = document.getElementById("voucherDate").value;
+	 				else
+	 					receiptDate ="${currDate}"; 
+	 				
 	 	 	    	if(instrDate.value != null && instrDate.value!= '' && check==true && process(instrDate.value) > process(receiptDate)){
 	 	 	    		document.getElementById("receipt_error_area").innerHTML+=
 	 	 					'<s:text name="miscreceipt.error.instrumentdate.greaterthan.receiptdate" />'+ '<br>';   	
@@ -892,7 +934,7 @@ function checkForCurrentDate(obj)
 	var receiptDate;
 	   document.getElementById("receipt_dateerror_area").style.display="none";
 		document.getElementById("receipt_dateerror_area").innerHTML="";
-	   <s:if test="%{!isBillSourcemisc()}">
+	   <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 		   if (  document.getElementById('manualreceiptinfo').checked==true){
 			   if(document.getElementById("manualReceiptDate").value != null  && document.getElementById("manualReceiptDate").value != ''){
 			   receiptDate = document.getElementById("manualReceiptDate").value;
@@ -906,7 +948,10 @@ function checkForCurrentDate(obj)
 		</s:if>
 		<s:else>
 		{
-		receiptDate = document.getElementById("voucherDate").value; 
+			if(document.getElementById("voucherDate"))
+				receiptDate = document.getElementById("voucherDate").value;
+			else
+				receiptDate ="${currDate}";
 		}
 		</s:else>
 	   var finDate = new Date('2012-04-01');
@@ -917,7 +962,7 @@ function checkForCurrentDate(obj)
 
 	   if(obj.value != null && obj.value != "") {
 	   if(!validatedays(obj.value,receiptDate)){
-		   <s:if test="%{!isBillSourcemisc()}">
+		   <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 		   if (document.getElementById("manualReceiptDate").value != null && document.getElementById("manualReceiptDate").value != '') {
 			if(receiptDateFormat<finDate) {
 				 document.getElementById("receipt_dateerror_area").style.display="block";
@@ -1074,6 +1119,7 @@ function showHideMandataryMark(obj){
 		<s:hidden label="chequeAllowed" id="chequeAllowed" value="%{chequeAllowed}" name="chequeAllowed"/>
 		<s:hidden label="bankAllowed" id="bankAllowed" value="%{bankAllowed}" name="bankAllowed"/>
 		<s:hidden label="ddAllowed" id="ddAllowed" value="%{ddAllowed}" name="ddAllowed"/>
+		<s:hidden label="onlineAllowed" id="onlineAllowed" value="%{onlineAllowed}" name="onlineAllowed"/>
 		<s:hidden label="billSource" id="billSource" value="%{billSource}" name="billSource"/>
 		<s:hidden label="serviceName" id="serviceName" value="%{serviceName}" name="serviceName"/>
 		<s:hidden label="fundName" id="fundName" value="%{fundName}" name="fundName"/>
@@ -1128,8 +1174,8 @@ function showHideMandataryMark(obj){
 		   <td class="bluebox"><s:textfield label="paidBy" id="paidBy" maxlength="150" name="paidBy" value="%{payeeName}" /></td>
 	    </tr>
 	    </s:if>
-		<table id="manualreceipt" style="display:none">
-		<s:if test="%{!isBillSourcemisc()}">
+		<table id="manualreceipt" >
+		<s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 					<tr>
 					<td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceiptinfo"/><span id="asteriskId"  class="mandatory1">*</span></td>
@@ -1137,7 +1183,7 @@ function showHideMandataryMark(obj){
 					</tr>
 		 </s:if>
 		 
-		 <s:if test="%{!isBillSourcemisc()}">
+		 <s:if test="%{!isBillSourcemisc() && manualReceiptNumberAndDateReq}">
 				<tr>
 				    <td class="bluebox" width="3%" ></td>
 					<td class="bluebox"><s:text name="billreceipt.manualreceipt.receiptnumber"/></td>

@@ -102,7 +102,6 @@ public class LineEstimate extends StateAware {
     @Column(unique = true)
     private String lineEstimateNumber;
 
-    @NotNull
     @SafeHtml
     @Length(max = 256)
     private String subject;
@@ -120,7 +119,6 @@ public class LineEstimate extends StateAware {
     @JoinColumn(name = "function", nullable = false)
     private CFunction function;
 
-    @NotNull
     @SafeHtml
     @Length(max = 1024)
     private String description;
@@ -152,9 +150,7 @@ public class LineEstimate extends StateAware {
     @Temporal(TemporalType.DATE)
     private Date adminSanctionDate;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "adminSanctionBy")
-    private User adminSanctionBy;
+    private String adminSanctionBy;
 
     @OrderBy("id")
     @OneToMany(mappedBy = "lineEstimate", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = LineEstimateDetails.class)
@@ -230,6 +226,9 @@ public class LineEstimate extends StateAware {
     private String cancellationReason;
 
     private String cancellationRemarks;
+
+    @Transient
+    private List<LineEstimateDetails> tempLineEstimateDetails = new ArrayList<LineEstimateDetails>(0);
 
     @Override
     public Long getId() {
@@ -376,14 +375,6 @@ public class LineEstimate extends StateAware {
 
     public void setAdminSanctionDate(final Date adminSanctionDate) {
         this.adminSanctionDate = adminSanctionDate;
-    }
-
-    public User getAdminSanctionBy() {
-        return adminSanctionBy;
-    }
-
-    public void setAdminSanctionBy(final User adminSanctionBy) {
-        this.adminSanctionBy = adminSanctionBy;
     }
 
     public Beneficiary getBeneficiary() {
@@ -544,5 +535,21 @@ public class LineEstimate extends StateAware {
 
     public void setCancellationRemarks(final String cancellationRemarks) {
         this.cancellationRemarks = cancellationRemarks;
+    }
+
+    public List<LineEstimateDetails> getTempLineEstimateDetails() {
+        return tempLineEstimateDetails;
+    }
+
+    public void setTempLineEstimateDetails(final List<LineEstimateDetails> tempLineEstimateDetails) {
+        this.tempLineEstimateDetails = tempLineEstimateDetails;
+    }
+
+    public String getAdminSanctionBy() {
+        return adminSanctionBy;
+    }
+
+    public void setAdminSanctionBy(final String adminSanctionBy) {
+        this.adminSanctionBy = adminSanctionBy;
     }
 }

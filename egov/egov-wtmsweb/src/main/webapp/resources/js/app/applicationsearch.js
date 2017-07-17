@@ -56,7 +56,10 @@ jQuery(document).ready(function ($) {
 		}
 		 }*/
 	    $('#searchapplication').click(function () {
-	    	submitForm();
+	    	if($('#applicationSearchRequestForm').valid())
+	    		submitForm();
+	    	else
+	    		return false;
 	    });
 		
 	
@@ -179,18 +182,9 @@ function submitForm(){
 			{title: 'Application Type', data: 'applicationType'},
 			{title: 'url' ,data: 'url',"bVisible": false},
 			{title: 'Application Number', data: 'applicationNumber'},
-		/*{title: 'Application Date',
-				render: function (data, type, full) {
-					if(full!=null && full!=undefined &&  full.applicationdate != undefined) {
-						var regDateSplit = full.applicationdate.split("T")[0].split("-");		
-						return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-					}
-					else return "";
-		    	}
-			},*/
+			{title: 'Application Date', data :"applicationCreatedDate"},
 			{title: 'Applicant Name', data: 'applicantName'},
 			{title: 'Channel', data: 'source'},
-			
 			{title: 'Applicant Address', data: 'applicationAddress'},
 			{title: 'Status', data: 'applicationStatus'},
 			{title: 'Current Owner', data: 'ownername'}

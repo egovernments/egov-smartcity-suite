@@ -47,9 +47,8 @@
 });
 
 function populateBoundaries() {
-	console.log("came jursidiction"+jQuery('#locality').val());
 	jQuery.ajax({
-		url: "/egi/public/boundary/ajaxBoundary-blockByLocality.action",
+		url: "/egi/public/boundary/ajaxBoundary-blockByLocality",
 		type: "GET",
 		data: {
 			locality : jQuery('#locality').val()
@@ -80,7 +79,6 @@ function populateBoundaries() {
 			</s:if>
 		}, 
 		error: function (response) {
-			console.log("failed");
 			jQuery('#wardId').html("");
 			jQuery('#blockId').html("");
 			jQuery('#streetId').html("");
@@ -109,7 +107,6 @@ function populateBlock() {
 			</s:if>
 		}, 
 		error: function (response) {
-			console.log("failed");
 			jQuery('#blockId').html("");
 			bootbox.alert("No block details mapped for ward")
 		}
@@ -166,7 +163,7 @@ function populateBlock() {
 	    <td class="bluebox"><s:select name="electionWardId" id="electionWardId" list="dropdownData.electionWardList"
 			listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{electionWardId}"/></td>
 	    <td class="bluebox"><s:text name="doorno"></s:text><s:if test="%{userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_INSPECTOR_DESGN.toUpperCase())}"><span class="mandatory1" id="houseNoSpan">*</span></s:if> :</td>
-	    <td class="bluebox"><s:textfield name="houseNumber" value="%{houseNumber}" maxlength="32" onblur="return checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');"/></td> 
+	    <td class="bluebox"><s:textfield name="houseNumber" value="%{houseNumber}" maxlength="32" onblur="checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');"/></td> 
 	</tr>
  
 	<tr>

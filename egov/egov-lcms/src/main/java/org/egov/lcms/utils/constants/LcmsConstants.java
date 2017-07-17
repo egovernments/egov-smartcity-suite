@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.utils.constants;
 
+import java.text.SimpleDateFormat;
+
 public class LcmsConstants {
 	public static final String MODULE_TYPE_LEGALCASE = "Legal Case";
 	public static final String FILESTORE_MODULECODE = "LCMS";
@@ -127,7 +129,8 @@ public class LcmsConstants {
 	public static final String LEGALCASE_STATUS_ORDER_REPLYTOTI = "ORDER_REPLY_TO_TI";
 	public static final String ADVOCATEBILL_REJECTED_STATUS = "PROSECUTOR_REJECTED";
 	public static final String ADVOCATEBILL_EDITED_STATUS = "BILL_EDITTED";
-	public static final String LEGALCASE_STATUS_IN_PROGRESS = "IN_PROGRESS";
+	public static final String LEGALCASE_HEARING_STATUS = "HEARING";
+	public static final String LEGALCASE_INTERIMSTAY_STATUS = "INTERIM_STAY";
 	/**
 	 * Time series report action constants
 	 */
@@ -205,11 +208,30 @@ public class LcmsConstants {
 	public static final String OFFICERINCHRGE = "In charge officer";
 	public static final String CASESTATUS = "Case Status";
 	public static final String STANDINGCOUNSEL = "Standing Counsel";
-	public static final String JUDGEMENTOUTCOME = "Judgement outcome";
+	public static final String JUDGEMENTOUTCOME = "Judgment outcome";
 	public static final String DUEPWRREPORT = "PWR due date";
 	public static final String DUECAREPORT = "CA Due date";
 	public static final String DUEJUDGEMENTIMPLPREPORT = "Judgement Implementation";
 	public static final String DUEEMPLOYEEHEARINGREPORT = "Employee Hearings";
 	public static final String LEGALCASE_DOCUMENTNAME = "LegalCase";
-
+	public static final String JUDGMENT_DOCUMENTNAME = "Judgment";
+	public static final String LCINTERIOMORDER_DOCUMENTNAME ="LcInterimOrder";
+	public static final String PWR_DOCUMENTNAME ="Pwr";
+	public static final String APPEAL_DOCUMENTNAME ="Appeal";
+	
+	public static final String CODE_REPORTSTATUS_COUNTERFILED = "COUNTER_FILED";
+        public static final String CODE_REPORTSTATUS_PWRPENDING = "PWR_PENDING";
+        public static final String CODE_REPORTSTATUS_DCAPENDING = "DCA_PENDING";
+        
+        public static final String DATE_FORMAT_DDMMYYYY = "dd-MM-yyyy";
+        public static final SimpleDateFormat DATEFORMATTER_DD_MM_YYYY = new SimpleDateFormat(DATE_FORMAT_DDMMYYYY );
+        
+        public static final String LEGALCASE_INDEX_NAME = "legalcasedocument";
+        public static final String HEARINGS_INDEX_NAME = "hearingsdocument";
+        
+        public static final String LEGALCASE_STATUS_JUDGMENT_IMPLIMENTED_DESC = "Judgment Implemented";
+        public static final String LEGALCASE_STATUS_CLOSED_DESC = "Closed";
+        public static final String LEGALCASE_STATUS_HEARING_DESC = "Hearing In Progress";
+        public static final String LEGALCASE_INTERIMSTAY_STATUS_DESC = "Interim Stay";
+        public static final String LEGALCASE_STATUS_CREATED_DESC = "Created";
 }

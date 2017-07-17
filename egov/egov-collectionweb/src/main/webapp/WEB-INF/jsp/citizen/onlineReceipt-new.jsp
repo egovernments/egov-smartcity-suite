@@ -627,9 +627,12 @@ function onLoad(){
 									<s:text name="onlineReceipts.paythrough" />
 								</div>
 
-								<table class="table-payment">
-
-
+								<table class="table-payment">									
+		                             <tr>
+		                               	<td class="blueborderfortd">
+		                                   <s:text name ='onlineReceipts.payusing'/>
+		                                </td>
+		                             </tr>
 
 									<s:set var="listSize" value="%{serviceDetailsList.size()}" />
 									<s:iterator var="p" value="%{serviceDetailsList}" status="s">

@@ -41,7 +41,12 @@ var tableContainer;
 var reportdatatable;
 jQuery(document).ready(
 		function($) {
-
+			
+			loadsubreportstatus();
+			$('#statusId').change(function(){
+				loadsubreportstatus();
+			});
+			
 			tableContainer = $('#legalCaseResults');
 			var judgment = $('#judgment').val();
 			document.onkeydown = function(evt) {
@@ -54,7 +59,7 @@ jQuery(document).ready(
 			$('#legalcaseReportSearch').click(function() {
 				submitForm();
 			});
-
+			
 		});
 $('#searchapp').keyup(function(){
 	tableContainer.fnFilter(this.value);
@@ -74,31 +79,13 @@ function submitForm() {
 					url : "/lcms/search/legalsearchResult?"+$('#searchlegalcaseForm').serialize(),
 					
 				},
+				destroy : true,
+				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+				"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
 				"autoWidth" : false,
-				"bDestroy" : true,
-				"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-				"aLengthMenu" : [ [ 10, 25, 50, -1 ], [ 10, 25, 50, "All" ] ],
 				"oTableTools" : {
 					"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-					"aButtons" : [{
-			             "sExtends": "pdf",
-			             "mColumns": [0, 1, 2, 3, 4,5,6,7],
-			             "sPdfMessage": "",
-                         "sTitle": "Search LegalCase Report",
-                         "sPdfOrientation": "landscape"
-		                },
-		                {
-				             "sExtends": "xls",
-				             "mColumns": [ 0,1,2,3,4,5,6,7],
-                             "sPdfMessage": "Search LegalCase Report",
-                             "sTitle": "Search LegalCase Report"
-			             },
-			             {
-				             "sExtends": "print",
-				             "mColumns": [ 0,1,2,3,4,5,6,7],
-                             "sPdfMessage": "Search LegalCase Report",
-                             "sTitle": "Search LegalCase Report"
-			             }],
+					"aButtons" : []
 				},
 				columns : [
 						{
@@ -136,11 +123,6 @@ function submitForm() {
 							"sTitle" : "Case Status",
 							"className" : "text-right"
 						},
-						/*{
-							"data" : "casestatus",
-							"sTitle" : "Case Status1",
-							"bVisible" : false
-						},*/
 						{
 							"data" : "petitioners",
 							"sTitle" : "Petitioners",
@@ -157,7 +139,7 @@ function submitForm() {
 							render : function(data, type, full) {
 
 								if (full.casestatus == 'LCCREATED'
-										|| full.casestatus == 'IN_PROGRESS') {
+										|| full.casestatus == 'HEARING' || full.casestatus == 'INTERIM_STAY' ) {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="1">Judgment</option><option value="2">Add/Edit Standing Counsel</option><option value="10">Add/Edit Counter Affidavit Details</option><option value="3">Edit legalCase</option><option value="4">View legalCase</option><option value="6">Hearings</option><option value="7">Interim Order</option><option value="8">Close Case</option></select>');
 								} else if (full.casestatus == 'JUDGMENT') {
 									return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="4">View legalCase</option><option value="5">Edit Judgment</option><option value="8">Close Case</option><option value="11">Judgment Implementation</option></select>');
@@ -288,3 +270,12 @@ $("#legalCaseResults").on('change', 'tbody tr td .dropchange', function() {
 
 	}
 });
+
+function loadsubreportstatus(){
+	if ($('#statusId :selected').text().localeCompare("Created") == 0 ) { 
+		$("#reportstatus").show();
+		}
+	else
+		$("#reportstatus").hide();
+}
+		

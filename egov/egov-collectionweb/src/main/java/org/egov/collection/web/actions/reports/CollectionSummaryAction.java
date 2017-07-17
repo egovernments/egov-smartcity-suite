@@ -57,8 +57,8 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -105,6 +105,8 @@ public class CollectionSummaryAction extends ReportFormAction {
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD,
                 CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_BANK, CollectionConstants.INSTRUMENTTYPE_BANK);
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);
         return paymentModesMap;
     }
 
@@ -123,7 +125,7 @@ public class CollectionSummaryAction extends ReportFormAction {
      */
     @Override
     public void prepare() {
-        setReportFormat(FileFormat.PDF);
+        setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.JAVABEAN);
     }
 

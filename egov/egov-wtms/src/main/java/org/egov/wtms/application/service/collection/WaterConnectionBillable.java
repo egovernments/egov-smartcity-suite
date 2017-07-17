@@ -39,15 +39,26 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPTCODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTSERVICECODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNCTIONARYCODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDCODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDSOURCEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SERVEICECODEGENBILL;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgBillDao;
-import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
@@ -64,10 +75,8 @@ import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ConnectionDemandService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
@@ -85,7 +94,6 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     private AssessmentDetails assessmentDetails;
     private Long userId;
     private EgBillType billType;
-    private Boolean isCallbackForApportion = Boolean.FALSE;
     private String referenceNumber;
     private String transanctionReferenceNumber;
 
@@ -94,19 +102,14 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Autowired
     private EgBillDao egBillDAO;
     @Autowired
-    private EgDemandDao egDemandDAO;
-
-    @Autowired
     private ModuleService moduleService;
     @Autowired
     private ConnectionDemandService connectionDemandService;
-    
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-    
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+
     @Override
     public String getBillPayee() {
         return buildOwnerFullName(getAssessmentDetails().getOwnerNames());
@@ -115,7 +118,8 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     @Override
     public String getBillAddress() {
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                getWaterConnectionDetails().getConnection().getPropertyIdentifier(), PropertyExternalService.FLAG_FULL_DETAILS,BasicPropertyStatus.ACTIVE);
+                getWaterConnectionDetails().getConnection().getPropertyIdentifier(),
+                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
         return buildAddressDetails(assessmentDetails);
     }
 
@@ -123,25 +127,24 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     public EgDemand getCurrentDemand() {
         return waterTaxUtils.getCurrentDemand(getWaterConnectionDetails()).getDemand();
     }
-    
+
     @Override
     public String getEmailId() {
-        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                getWaterConnectionDetails().getConnection().getPropertyIdentifier(), PropertyExternalService.FLAG_MOBILE_EMAIL,BasicPropertyStatus.ACTIVE);
-        return assessmentDetails.getPrimaryEmail();
+        return propertyExtnUtils
+                .getAssessmentDetailsForFlag(getWaterConnectionDetails().getConnection().getPropertyIdentifier(),
+                        PropertyExternalService.FLAG_MOBILE_EMAIL, BasicPropertyStatus.ACTIVE)
+                .getPrimaryEmail();
     }
 
     @Override
     public List<EgDemand> getAllDemands() {
-        List<EgDemand> demands = waterTaxUtils.getAllDemand(getWaterConnectionDetails());
-        return demands;
+        return waterTaxUtils.getAllDemand(getWaterConnectionDetails());
     }
 
     @Override
     public EgBillType getBillType() {
         if (billType == null)
-            billType = egBillDAO.getBillTypeByCode(WaterTaxConstants.BILLTYPE_AUTO);
-           
+            billType = egBillDAO.getBillTypeByCode(BILLTYPE_AUTO);
         return billType;
     }
 
@@ -152,7 +155,11 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Long getBoundaryNum() {
-        return getAssessmentDetails().getBoundaryDetails().getWardNumber();
+        if(getAssessmentDetails()!=null && getAssessmentDetails().getBoundaryDetails()!=null)
+        return getAssessmentDetails().getBoundaryDetails().getAdminWardNumber();
+        else
+        throw new ApplicationRuntimeException("Property BoundaryDetails are null...");
+            
     }
 
     @Override
@@ -162,30 +169,32 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getDepartmentCode() {
-    	 final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.DEPTCODEGENBILL).get(0);
-        return (appConfigValue!=null?appConfigValue.getValue().trim():null);
+        final AppConfigValues appConfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(MODULE_NAME, DEPTCODEGENBILL).get(0);
+        return appConfigValue != null ? appConfigValue.getValue().trim() : null;
     }
 
     @Override
     public BigDecimal getFunctionaryCode() {
-    	final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNCTIONARYCODEGENBILL).get(0);
-        return new BigDecimal((appConfigValue!=null?appConfigValue.getValue():"0"));
+        final AppConfigValues appConfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(MODULE_NAME, FUNCTIONARYCODEGENBILL)
+                .get(0);
+        return new BigDecimal(appConfigValue != null ? appConfigValue.getValue() : "0");
     }
 
     @Override
     public String getFundCode() {
-         final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNDCODEGENBILL).get(0);
-        return (appConfigValue!=null?appConfigValue.getValue():null);
+        final AppConfigValues appConfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(MODULE_NAME, FUNDCODEGENBILL).get(0);
+        return appConfigValue != null ? appConfigValue.getValue() : null;
     }
 
     @Override
     public String getFundSourceCode() {
-    	 final AppConfigValues appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
-                 WaterTaxConstants.MODULE_NAME, WaterTaxConstants.FUNDSOURCEGENBILL).get(0);
-        return (appConfigValue!=null?appConfigValue.getValue():null);
+        final AppConfigValues appConfigValue = appConfigValuesService
+                .getConfigValuesByModuleAndKey(MODULE_NAME, FUNDSOURCEGENBILL)
+                .get(0);
+        return appConfigValue != null ? appConfigValue.getValue() : null;
     }
 
     @Override
@@ -200,7 +209,7 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Module getModule() {
-        return moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME);
+        return moduleService.getModuleByName(EGMODULE_NAME);
     }
 
     @Override
@@ -210,24 +219,26 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public Boolean getPartPaymentAllowed() {
-    	if(getWaterConnectionDetails().getConnectionStatus() !=null && getWaterConnectionDetails().getConnectionStatus().equals(ConnectionStatus.ACTIVE)) 
-    	{
-    		return true;
-    	}
-    	else
-    		return false;
+        if (getWaterConnectionDetails().getConnectionStatus() != null
+                && (ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus())
+                || INPROGRESS.equals(getWaterConnectionDetails().getConnectionStatus())))
+            return true;
+        else
+            return false;
     }
 
     @Override
     public String getServiceCode() {
-        if (getWaterConnectionDetails().getStatus().getCode().equalsIgnoreCase(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
-        	return appConfigValuesService.getConfigValuesByModuleAndKey(
-                     WaterTaxConstants.MODULE_NAME, WaterTaxConstants.ESTSERVICECODEGENBILL).get(0).getValue();
-           
+        if (getWaterConnectionDetails().getStatus().getCode()
+                .equalsIgnoreCase(APPLICATION_STATUS_ESTIMATENOTICEGEN))
+            return appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                    ESTSERVICECODEGENBILL).get(0).getValue();
+
         else
-        return  appConfigValuesService.getConfigValuesByModuleAndKey(
-                    WaterTaxConstants.MODULE_NAME, WaterTaxConstants.SERVEICECODEGENBILL).get(0).getValue();
-       
+            return appConfigValuesService
+                    .getConfigValuesByModuleAndKey(MODULE_NAME, SERVEICECODEGENBILL)
+                    .get(0).getValue();
+
     }
 
     @Override
@@ -267,34 +278,32 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
 
     @Override
     public String getCollModesNotAllowed() {
-            
-            StringBuilder collectionModesNotAllowed = new StringBuilder();
-            collectionModesNotAllowed.append(CollectionConstants.INSTRUMENTTYPE_BANK);
-            return collectionModesNotAllowed.toString();
+        return "";
     }
 
     @Override
     public String getConsumerId() {
-        if (getWaterConnectionDetails().getConnection().getConsumerCode()!= null)
-            return getWaterConnectionDetails().getConnection().getConsumerCode();
-        else
-            return getWaterConnectionDetails().getApplicationNumber();
+        return getWaterConnectionDetails().getConnection().getConsumerCode() != null
+                ? getWaterConnectionDetails().getConnection().getConsumerCode()
+                : getWaterConnectionDetails().getApplicationNumber();
+
+    }
+
+    @Override
+    public String getConsumerType() {
+        return getWaterConnectionDetails().getUsageType() != null ? getWaterConnectionDetails().getUsageType().getName()
+                : "";
     }
 
     @Override
     public Boolean isCallbackForApportion() {
-        if(getWaterConnectionDetails().getConnectionStatus() !=null && getWaterConnectionDetails().getConnectionStatus().equals(ConnectionStatus.ACTIVE)) 
-        {
-          return isCallbackForApportion=Boolean.TRUE;
-        }else
-        {
-            return isCallbackForApportion=Boolean.FALSE; 
-        }
+        return getWaterConnectionDetails().getConnectionStatus() != null
+                && ACTIVE.equals(getWaterConnectionDetails().getConnectionStatus()) ? Boolean.TRUE
+                        : Boolean.FALSE;
     }
 
     @Override
     public void setCallbackForApportion(final Boolean b) {
-       this.isCallbackForApportion=b;
     }
 
     public WaterConnectionDetails getWaterConnectionDetails() {
@@ -316,39 +325,36 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     public String buildOwnerFullName(final Set<OwnerName> ownerSet) {
         if (ownerSet == null)
             throw new ApplicationRuntimeException("Property Owner set is null...");
-        String ownerFullName = "";
+        final StringBuilder ownerFullName = new StringBuilder();
         final Set<String> ownerNameSet = new HashSet<String>();
         for (final OwnerName propOwnerInfo : ownerSet)
-            // User propOwner = propOwnerInfo.getOwner();
             if (propOwnerInfo.getOwnerName() != null && !propOwnerInfo.getOwnerName().trim().equals(""))
                 if (!ownerNameSet.contains(propOwnerInfo.getOwnerName().trim())) {
-                    if (!ownerFullName.trim().equals(""))
-                        if (!ownerFullName.equals(""))
-                            ownerFullName += ", ";
+                    if (!ownerFullName.toString().trim().equals(""))
+                        ownerFullName.append(", ");
                     ownerNameSet.add(propOwnerInfo.getOwnerName().trim());
-                    ownerFullName = propOwnerInfo.getOwnerName() == null ? "" : propOwnerInfo.getOwnerName();
+                    ownerFullName.append(propOwnerInfo.getOwnerName() != null ? propOwnerInfo.getOwnerName() : "");
                 }
-        return ownerFullName;
+        return ownerFullName.toString();
     }
 
     public String buildAddressDetails(final AssessmentDetails assessmentDetails) {
-    	
+
         final BoundaryDetails boundaryDetails = assessmentDetails.getBoundaryDetails();
         final StringBuilder address = new StringBuilder();
-        if(assessmentDetails.getPropertyAddress() !=null && !"".equals(assessmentDetails.getPropertyAddress())){
-        address.append( assessmentDetails.getPropertyAddress() );
-        }
-        else{
-        if (boundaryDetails.getZoneName() != null)
-            address.append(boundaryDetails.getZoneName());
-        if (boundaryDetails.getWardName() != null)
-            address.append(", ").append(boundaryDetails.getWardName());
-        if (boundaryDetails.getLocalityName() != null)
-            address.append(", ").append(boundaryDetails.getLocalityName());
-        if (boundaryDetails.getBlockName() != null)
-            address.append(", ").append(boundaryDetails.getBlockName());
-        if (boundaryDetails.getStreetName() != null)
-            address.append(", ").append(boundaryDetails.getStreetName());
+        if (assessmentDetails.getPropertyAddress() != null && !"".equals(assessmentDetails.getPropertyAddress()))
+            address.append(assessmentDetails.getPropertyAddress());
+        else {
+            if (boundaryDetails.getZoneName() != null)
+                address.append(boundaryDetails.getZoneName());
+            if (boundaryDetails.getWardName() != null)
+                address.append(", ").append(boundaryDetails.getWardName());
+            if (boundaryDetails.getLocalityName() != null)
+                address.append(", ").append(boundaryDetails.getLocalityName());
+            if (boundaryDetails.getBlockName() != null)
+                address.append(", ").append(boundaryDetails.getBlockName());
+            if (boundaryDetails.getStreetName() != null)
+                address.append(", ").append(boundaryDetails.getStreetName());
         }
         return address.toString();
     }
@@ -369,12 +375,13 @@ public class WaterConnectionBillable extends AbstractBillable implements Billabl
     public void setReferenceNumber(final String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
+
     @Override
     public String getTransanctionReferenceNumber() {
         return transanctionReferenceNumber;
     }
 
-    public void setTransanctionReferenceNumber(String transanctionReferenceNumber) {
+    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
         this.transanctionReferenceNumber = transanctionReferenceNumber;
     }
 }

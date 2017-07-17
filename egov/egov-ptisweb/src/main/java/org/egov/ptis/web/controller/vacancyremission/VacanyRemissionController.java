@@ -39,22 +39,58 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.Installment;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -63,53 +99,40 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_VALIDATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_TAX_DUES;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-
 @Controller
-@RequestMapping(value = "/vacancyremission")
+@RequestMapping(value = { "/vacancyremission" })
 public class VacanyRemissionController extends GenericWorkFlowController {
 
+    private static final String STATE_TYPE = "stateType";
+    private static final String VACANCY_REMISSION = "VACANCY_REMISSION";
     private static final String VACANCYREMISSION_FORM = "vacancyRemission-form";
     private static final String VACANCYREMISSION_SUCCESS = "vacancyRemission-success";
-
+    private static final String ERROR_MSG = "errorMsg";
+    private static final String APPLICATION_SOURCE = "applicationSource";
+    private boolean citizenPortalUser;
+    
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
 
     private final PropertyTaxUtil propertyTaxUtil;
-
-    private BasicProperty basicProperty;
-
-    private VacancyRemission vacancyRemission;
 
     private final VacancyRemissionService vacancyRemissionService;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
    
     @Autowired
     private PropertyService propertyService;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Autowired
     public VacanyRemissionController(final VacancyRemissionService vacancyRemissionService,
@@ -120,38 +143,63 @@ public class VacanyRemissionController extends GenericWorkFlowController {
 
     @ModelAttribute
     public VacancyRemission vacancyRemissionModel(@PathVariable final String assessmentNo) {
-        vacancyRemission = new VacancyRemission();
-        basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        VacancyRemission vacancyRemission = new VacancyRemission();
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
         if (basicProperty != null)
             vacancyRemission.setBasicProperty((BasicPropertyImpl) basicProperty);
         return vacancyRemission;
     }
 
+    @ModelAttribute("documentsList")
+    public List<DocumentType> documentsList(@ModelAttribute final VacancyRemission vacancyRemission) {
+        return vacancyRemissionService.getDocuments(TransactionType.VACANCYREMISSION);
+    }
     @RequestMapping(value = "/create/{assessmentNo},{mode}", method = RequestMethod.GET)
-    public String newForm(final Model model, @PathVariable final String assessmentNo, @PathVariable final String mode,
-            @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request) {
+    public String newForm(final Model model,@ModelAttribute VacancyRemission vacancyRemission, @PathVariable final String assessmentNo, @PathVariable final String mode,
+            @RequestParam(required = false) final String meesevaApplicationNumber, final HttpServletRequest request,
+            @RequestParam(required = false) final String applicationSource) {
+        BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         if (basicProperty != null) {
             final Property property = basicProperty.getActiveProperty();
+            List<DocumentType> documentTypes;
+            User loggedInUser = securityUtils.getCurrentUser();
+            documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VACANCYREMISSION);
+            citizenPortalUser = propertyService.isCitizenPortalUser(loggedInUser);
+            model.addAttribute("citizenPortalUser", citizenPortalUser);
+            if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
+                        && propertyService.isEmployee(loggedInUser)
+                        && !propertyTaxCommonUtils.isEligibleInitiator(loggedInUser.getId())
+                        && !citizenPortalUser) {
+                model.addAttribute(ERROR_MSG, "msg.initiator.noteligible");
+                return PROPERTY_VALIDATION;
+            }
+            if (basicProperty.getActiveProperty().getPropertyDetail().isStructure()) {
+                model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
+                return PROPERTY_VALIDATION;
+            }
+            if (vacancyRemissionService.isUnderWtmsWF(basicProperty.getUpicNo(), request)) {
+                model.addAttribute(ERROR_MSG, "msg.under.wtms.wf.vr");
+                return PROPERTY_VALIDATION;
+            }
             if (property != null)
                 // When called from common search
-                if (mode.equalsIgnoreCase("commonSearch")) {
+                if ("commonSearch".equalsIgnoreCase(mode)) {
                     Boolean enableVacancyRemission = Boolean.FALSE;
                     if (property.getPropertyDetail().getPropertyTypeMaster().getCode()
                             .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-                        model.addAttribute("errorMsg", "Vacancy Remission cannot be done for Vacant Land ");
+                        model.addAttribute(ERROR_MSG, "msg.vlt.error");
                         return PROPERTY_VALIDATION;
                     } else if (property.getIsExemptedFromTax()) {
-                        model.addAttribute("errorMsg", "This property is exempted from taxes");
+                        model.addAttribute(ERROR_MSG, "msg.property.exempted");
                         return PROPERTY_VALIDATION;
                     } else if (basicProperty.isUnderWorkflow()) {
-                        model.addAttribute("errorMsg",
-                                "Could not do Vacancy Remission now, as this property is undergoing some work flow.");
+                        model.addAttribute(ERROR_MSG,"msg.under.workflow");
                         return PROPERTY_VALIDATION;
                     } else {
                         final List<VacancyRemission> remissionList = vacancyRemissionService
                                 .getAllVacancyRemissionByUpicNo(basicProperty.getUpicNo());
                         if (!remissionList.isEmpty()) {
-                            final VacancyRemission vacancyRemission = remissionList.get(remissionList.size() - 1);
+                            vacancyRemission = remissionList.get(remissionList.size() - 1);
                             if (vacancyRemission != null)
                                 if (vacancyRemission.getStatus().equalsIgnoreCase(
                                         PropertyTaxConstants.VR_STATUS_APPROVED)) {
@@ -165,16 +213,16 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                                     enableVacancyRemission = true;
                                 else if (vacancyRemission.getStatus().equalsIgnoreCase(
                                         PropertyTaxConstants.VR_STATUS_WORKFLOW)) {
-                                    model.addAttribute("errorMsg", "This property is under workflow");
+                                    model.addAttribute(ERROR_MSG, "msg.under.workflow");
                                     return PROPERTY_VALIDATION;
                                 }
                         }
                         if (remissionList.isEmpty() || enableVacancyRemission) {
                             final Map<String, BigDecimal> propertyTaxDetails = propertyService
                                     .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
-                            BigDecimal currentPropertyTax = BigDecimal.ZERO;
-                            BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
-                            BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+                            BigDecimal currentPropertyTax;
+                            BigDecimal currentPropertyTaxDue;
+                            BigDecimal arrearPropertyTaxDue;
                             Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                             Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
                             if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
@@ -188,8 +236,12 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                             }
                             arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                                     propertyTaxDetails.get(ARR_COLL_STR));
-                            final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(
+                            final BigDecimal currentWaterTaxDue = vacancyRemissionService.getWaterTaxDues(
                                     basicProperty.getUpicNo(), request);
+                            
+                            model.addAttribute("assessementNo", basicProperty.getUpicNo());
+                            model.addAttribute("ownerName", basicProperty.getFullOwnerName());
+                            model.addAttribute("doorNo", basicProperty.getAddress().getHouseNoBldgApt());
                             model.addAttribute("currentPropertyTax", currentPropertyTax);
                             model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
                             model.addAttribute("arrearPropertyTaxDue", arrearPropertyTaxDue);
@@ -201,7 +253,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                             }
 
                             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-                            model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+                            model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
+                            model.addAttribute("documentTypes", documentTypes);
+                            model.addAttribute(APPLICATION_SOURCE, applicationSource);
                             vacancyRemissionService.addModelAttributes(model, basicProperty);
                         }
                         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService
@@ -216,14 +270,14 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 } else {
                 	boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
                     if(hasChildPropertyUnderWorkflow){
-                    	model.addAttribute("errorMsg", "Cannot proceed as this property is used in Bifurcation, which is under workflow");
+                    	model.addAttribute(ERROR_MSG, "Cannot proceed as this property is used in Bifurcation, which is under workflow");
                         return PROPERTY_VALIDATION;
                     }
                     final Map<String, BigDecimal> propertyTaxDetails = propertyService
                             .getCurrentPropertyTaxDetails(basicProperty.getActiveProperty());
-                    BigDecimal currentPropertyTax = BigDecimal.ZERO;
-                    BigDecimal currentPropertyTaxDue = BigDecimal.ZERO;
-                    BigDecimal arrearPropertyTaxDue = BigDecimal.ZERO;
+                    BigDecimal currentPropertyTax;
+                    BigDecimal currentPropertyTaxDue;
+                    BigDecimal arrearPropertyTaxDue;
                     Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
                     Installment installmentFirstHalf = installmentMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
                     if(DateUtils.between(new Date(), installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate())){
@@ -237,7 +291,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     }
                     arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR).subtract(
                             propertyTaxDetails.get(ARR_COLL_STR));
-                    final BigDecimal currentWaterTaxDue = propertyService.getWaterTaxDues(basicProperty.getUpicNo(),
+                    final BigDecimal currentWaterTaxDue = vacancyRemissionService.getWaterTaxDues(basicProperty.getUpicNo(),
                             request);
                     model.addAttribute("currentPropertyTax", currentPropertyTax);
                     model.addAttribute("currentPropertyTaxDue", currentPropertyTaxDue);
@@ -248,9 +302,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                                 "Please clear property tax due for availing vacancy remission for your property ");
                         return TARGET_TAX_DUES;
                     }
-
+                    model.addAttribute("documentTypes", documentTypes);
                     prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-                    model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+                    model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                     vacancyRemissionService.addModelAttributes(model, basicProperty);
                 }
         }
@@ -263,20 +317,26 @@ public class VacanyRemissionController extends GenericWorkFlowController {
             final HttpServletRequest request, @RequestParam String workFlowAction) {
 
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
+        BasicProperty basicProperty=vacancyRemission.getBasicProperty();
+        List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
         validateDates(vacancyRemission, resultBinder, request);
+        vacancyRemissionSource(vacancyRemission, request);
+        final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
+                ? propertyService.getAssignmentByDeptDesigElecWard(basicProperty)
+                : null;
         if (resultBinder.hasErrors()) {
             if (basicProperty != null) {
                 prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-                model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
+                model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
             return VACANCYREMISSION_FORM;
-        } else if ((!propertyByEmployee || loggedUserIsMeesevaUser) && null != basicProperty
-                && null == propertyService.getUserPositionByZone(basicProperty, false)) {
+        } else if ((!propertyByEmployee || loggedUserIsMeesevaUser) && assignment == null
+                && propertyService.getUserPositionByZone(basicProperty, false) == null) {
             prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
-            model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
-            model.addAttribute("errorMsg", "No Senior or Junior assistants exists,Please check");
+            model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
+            model.addAttribute(ERROR_MSG, "No Senior or Junior assistants exists,Please check");
             vacancyRemissionService.addModelAttributes(model, basicProperty);
             return VACANCYREMISSION_FORM;
         } else {
@@ -289,33 +349,54 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            
+            if(!vacancyRemission.getDocuments().isEmpty()){
+                documents.addAll(vacancyRemission.getDocuments());
+                vacancyRemission.getDocuments().clear();
+                vacancyRemission.getDocuments().addAll(documents);
+                processAndStoreApplicationDocuments(vacancyRemission);
+            }
 
             if (loggedUserIsMeesevaUser) {
-                final HashMap<String, String> meesevaParams = new HashMap<String, String>();
+                final HashMap<String, String> meesevaParams = new HashMap<>();
                 meesevaParams.put("APPLICATIONNUMBER", vacancyRemission.getMeesevaApplicationNumber());
 
                 if (StringUtils.isBlank(vacancyRemission.getApplicationNumber())){
                     vacancyRemission.setApplicationNumber(vacancyRemission.getMeesevaApplicationNumber());
-                    vacancyRemission.setSource(PropertyTaxConstants.SOURCEOFDATA_MEESEWA);
                 }
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, "",
                         workFlowAction, propertyByEmployee, meesevaParams);
             } else
                 vacancyRemissionService.saveVacancyRemission(vacancyRemission, approvalPosition, approvalComent, null,
                         workFlowAction, propertyByEmployee);
+            if (propertyService.isCitizenPortalUser(securityUtils.getCurrentUser()))
+                propertyService.pushVacancyRemissionPortalMessage(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
 
             final String successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                     + propertyTaxUtil.getApproverUserName(vacancyRemission.getState().getOwnerPosition().getId())
                     + " with application number : " + vacancyRemission.getApplicationNumber();
             model.addAttribute("successMessage", successMsg);
         }
-
+        model.addAttribute("showAckBtn", Boolean.TRUE);
+        model.addAttribute("isOnlineApplication", ANONYMOUS_USER.equalsIgnoreCase(vacancyRemissionService.getLoggedInUser().getName()));
+        model.addAttribute("propertyId", basicProperty.getUpicNo());
         if (loggedUserIsMeesevaUser)
             return "redirect:/vacancyremission/generate-meesevareceipt/"
                     + vacancyRemission.getBasicProperty().getUpicNo() + "?transactionServiceNumber="
                     + vacancyRemission.getApplicationNumber();
         else
             return VACANCYREMISSION_SUCCESS;
+    }
+    
+    private void vacancyRemissionSource(final VacancyRemission vacancyRemission, final HttpServletRequest request) {
+        User loggedInUser = securityUtils.getCurrentUser();
+        if (StringUtils.isNotBlank(request.getParameter(APPLICATION_SOURCE))
+                && SOURCE_ONLINE.equalsIgnoreCase(request.getParameter(APPLICATION_SOURCE))
+                && ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())) {
+            vacancyRemission.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.TRUE));
+        } else {
+            vacancyRemission.setSource(propertyTaxCommonUtils.setSourceOfProperty(loggedInUser, Boolean.FALSE));
+        }
     }
 
     @RequestMapping(value = "/generate-meesevareceipt/{assessmentNo}", method = RequestMethod.GET)
@@ -332,10 +413,39 @@ public class VacanyRemissionController extends GenericWorkFlowController {
     private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors,
             final HttpServletRequest request) {
 
-        final int noOfMonths = DateUtils.noOfMonths(vacancyRemission.getVacancyFromDate(),
+        final int noOfMonths = DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(),
                 vacancyRemission.getVacancyToDate());
         if (noOfMonths < 6)
             errors.rejectValue("vacancyToDate", "vacancyToDate.incorrect");
+    }
+    
+    protected void processAndStoreApplicationDocuments(final VacancyRemission vacancyRemission) {
+        if (!vacancyRemission.getDocuments().isEmpty())
+            for (final Document applicationDocument : vacancyRemission.getDocuments()) {
+                if(applicationDocument.getFile() != null) {
+                    applicationDocument.setType(vacancyRemissionService.getDocType(applicationDocument.getType().getName()));
+                    applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
+                }
+            }
+    }
+    
+    @ResponseBody
+    @RequestMapping(value = "/printAck/{assessmentNo}", method = RequestMethod.GET)
+    public ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
+            @PathVariable("assessmentNo") final String assessmentNo) {
+        ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo , VACANCY_REMISSION , NATURE_VACANCY_REMISSION);
+        final HttpHeaders headers = new HttpHeaders();
+        headers.setContentType(MediaType.parseMediaType("application/pdf"));
+        headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+    }
+
+    public boolean isCitizenPortalUser() {
+        return citizenPortalUser;
+    }
+
+    public void setCitizenPortalUser(boolean citizenPortalUser) {
+        this.citizenPortalUser = citizenPortalUser;
     }
 
 }

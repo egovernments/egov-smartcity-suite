@@ -37,50 +37,47 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-
-$('#btnusagesearch').click( function () {
-	 $('#usages_table').dataTable({		 		        
-	        "ajax": {
-	        	url : "/ptis/usage/list",
-	        	dataSrc : function (json) {
-	        		for (var i = 0; i < json.data.length; i++) {
-	        			if (json.data[i].toDate == null) {
-	        				json.data[i].toDate = "N/A";
-	        			}
-	        			
-	        			if (json.data[i].isResidential == true) {
-		 					json.data[i].usageCode = 'Residential';
-	 					} else {
-	 						json.data[i].usageCode = 'Non Residential';
-	 					}
-	        		}
-	        		return json.data;
-	        	}
-	        },
-	        "columns": [ {
-				"mData" : "usageName",
-				"sTitle" : "Nature of usage",
-			}, {
-				"mData" : "usageCode", 
-				"sTitle" : "Residential/Non Residential"
-			},  {
-				"mData" : "fromDate", 
-				"sTitle" : "Effective From"
-			},{
-				"mData" : "toDate",
-				"sTitle" : "Effective To"
-			}],
-			drawCallback: function () {
-				$('#table_container').show();
-				$('#usageRow').show();
-				$('#usages_table_length').remove();				
-				$('#usages_table_filter').addClass('text-right');				
-			}
-	    }); 
-});
-
 $(document).ready(function(){
-    $('#table_search').keyup(function(){
-    	$('#usages_table').fnFilter(this.value);
-    });
+	
+	$('#btnusagesearch').click( function () {
+		 $('#usages_table').dataTable({		 
+			 	destroy : true,
+			 	dom: "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+		        "ajax": {
+		        	url : "/ptis/usage/list",
+		        	"data":  getFormData(jQuery('form'))
+		        },
+		        "columns": [ {
+					"mData" : "usageName",
+					"sTitle" : "Nature of usage",
+				}, {
+					"mData" : "usageType", 
+					"sTitle" : "Residential/Non Residential",
+				},  {
+					"mData"  : "fromDate", 
+					"sTitle" : "Effective From",
+				},{
+					"mData" : "toDate",
+					"sTitle" : "Effective To"
+				}],
+				drawCallback: function () {
+					$('#table_container').show();
+					$('#usageRow').show();
+					$('#usages_table_length').remove();				
+					$('#usages_table_filter').addClass('text-right');				
+				}
+		    }); 
+	});
+    
 });
+
+function getFormData($form){
+    var unindexed_array = $form.serializeArray();
+    var indexed_array = {};
+
+    $.map(unindexed_array, function(n, i){
+        indexed_array[n['name']] = n['value'];
+    });
+
+    return indexed_array;
+}

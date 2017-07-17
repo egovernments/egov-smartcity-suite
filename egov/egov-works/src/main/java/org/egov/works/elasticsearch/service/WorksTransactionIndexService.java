@@ -47,8 +47,12 @@ import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_LOASTATUS_COLUM
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_TYPEOFWORKNAME_COLUMN_NAME;
 import static org.egov.works.utils.WorksConstants.WORKSMILESTONE_ULBNAME_COLUMN_NAME;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.works.elasticsearch.model.WorksIndexsRequest;
@@ -80,6 +84,10 @@ import org.springframework.stereotype.Service;
 @Service
 public class WorksTransactionIndexService {
 
+    public static final String DFT_DATE_FORMAT = "dd/MM/yyyy HH.mm.ss";
+
+    private static final String BY_AGGREGATION_FIELD = "by_aggregationField";
+
     private static final Logger LOGGER = LoggerFactory.getLogger(WorksTransactionIndexService.class);
 
     public static final String WORKSTRANSACTION_INDEX_NAME = "workstransaction";
@@ -90,22 +98,34 @@ public class WorksTransactionIndexService {
     public List<WorksMilestoneIndexResponse> getWorksTransactionDetails(
             final WorksIndexsRequest worksIndexsRequest) {
 
-        Long startTime, timeTaken;
+        Long startTime;
+        Long timeTaken;
         final BoolQueryBuilder boolQuery = prepareWhereClause(worksIndexsRequest);
-        final SearchQuery searchQuery;
+        SearchQuery searchQuery;
         final List<WorksTransactionIndex> worksTransactionIndexs;
-        final List<WorksMilestoneIndexResponse> resultList = new ArrayList<WorksMilestoneIndexResponse>();
+        final List<WorksMilestoneIndexResponse> resultList = new ArrayList<>();
         WorksMilestoneIndexResponse wmIndexResponse;
         startTime = System.currentTimeMillis();
+
         searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSTRANSACTION_INDEX_NAME)
-                .withPageable(new PageRequest(0, 1000))
                 .withQuery(boolQuery)
                 .build();
+        final Long count = elasticsearchTemplate.count(searchQuery);
+
+        searchQuery = new NativeSearchQueryBuilder().withIndices(WORKSTRANSACTION_INDEX_NAME)
+                .withPageable(new PageRequest(0, count.intValue()))
+                .withQuery(boolQuery)
+                .build();
+
         worksTransactionIndexs = elasticsearchTemplate.queryForList(searchQuery, WorksTransactionIndex.class);
 
         for (final WorksTransactionIndex response : worksTransactionIndexs) {
             wmIndexResponse = new WorksMilestoneIndexResponse();
             wmIndexResponse.setLineestimatedetailid(response.getLineestimatedetailid());
+            wmIndexResponse.setTypeofwork(response.getLineestimatetypeofworkname());
+            wmIndexResponse.setUlbname(response.getUlbname());
+            wmIndexResponse.setUlbcode(response.getUlbcode());
+            wmIndexResponse.setDistrictname(response.getDistname());
             wmIndexResponse.setFund(response.getLineestimatefund());
             wmIndexResponse.setScheme(response.getLineestimatescheme());
             wmIndexResponse.setSubscheme(response.getLineestimatesubscheme());
@@ -113,11 +133,17 @@ public class WorksTransactionIndexService {
             wmIndexResponse.setEstimatenumber(response.getEstimatenumber());
             wmIndexResponse.setWin(response.getEstimatewin());
             wmIndexResponse.setNameofthework(response.getNameofthework());
-            wmIndexResponse.setContractornamecode(response.getLoanameofagency() + "/" + response.getLoacontractorcode());
+            wmIndexResponse.setContractornamecode(response.getLoanameofagency() + "/" + response.getLoacontractor());
             wmIndexResponse.setAgreementnumber(response.getLoanumber());
             wmIndexResponse.setAgreementdate(response.getAgreementdate());
             wmIndexResponse.setWorkstatus(response.getWorkstatus());
             wmIndexResponse.setContractperiod(response.getLoacontractperiod());
+            wmIndexResponse.setLatestupdatedtimestamp(
+                    new SimpleDateFormat(DFT_DATE_FORMAT, Locale.getDefault()).format(response.getCreateddate()));
+            wmIndexResponse.setTotalestimatedcostinlakhs(response.getEstimatevalue());
+            wmIndexResponse.setTotalworkordervalueinlakhs(response.getLoaamount());
+            wmIndexResponse.setTotalbillamountinlakhs(response.getLoatotalbillamt());
+            wmIndexResponse.setTotalpaidamountinlakhs(response.getLoatotalpaidamt());
             resultList.add(wmIndexResponse);
         }
 
@@ -129,11 +155,11 @@ public class WorksTransactionIndexService {
         return resultList;
     }
 
-    public void getAggregationResults(final WorksIndexsRequest worksIndexsRequest,
-            final WorksMilestoneIndexResponse wfmileresponse,
-            final String orderingAggregationName) {
+    public List<WorksMilestoneIndexResponse> getAggregationResults(final WorksIndexsRequest worksIndexsRequest,
+            List<WorksMilestoneIndexResponse> resultList, final String orderingAggregationName) {
 
-        Long startTime, timeTaken;
+        Long startTime;
+        Long timeTaken;
         AggregationBuilder aggregation;
         BoolQueryBuilder boolQuery;
         SearchQuery searchQuery;
@@ -141,12 +167,13 @@ public class WorksTransactionIndexService {
         List<Terms.Bucket> resultBuckets;
         StringTerms saggr;
         LongTerms laggr;
-
-        /* orderingAggregationName is the aggregation name by which we have to order the results */
+        final Map<Integer, WorksMilestoneIndexResponse> resultMap = new HashMap<>();
+        for (final WorksMilestoneIndexResponse response : resultList)
+            resultMap.put(response.getLineestimatedetailid(), response);
 
         startTime = System.currentTimeMillis();
         boolQuery = prepareWhereClause(worksIndexsRequest);
-        aggregation = AggregationBuilders.terms("by_aggregationField").field(orderingAggregationName).size(1000)
+        aggregation = AggregationBuilders.terms(BY_AGGREGATION_FIELD).field(orderingAggregationName).size(1000)
                 .subAggregation(AggregationBuilders.sum("totalestimatedcostinlakhs").field("estimatevalue"))
                 .subAggregation(AggregationBuilders.sum("totalworkordervalueinlakhs").field("loaamount"))
                 .subAggregation(AggregationBuilders.sum("totalbillamountinlakhs").field("loatotalbillamt"))
@@ -160,34 +187,38 @@ public class WorksTransactionIndexService {
         worksAggr = elasticsearchTemplate.query(searchQuery, response -> response.getAggregations());
 
         if (!orderingAggregationName.equals(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME)) {
-            saggr = worksAggr.get("by_aggregationField");
+            saggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = saggr.getBuckets();
         } else {
-            laggr = worksAggr.get("by_aggregationField");
+            laggr = worksAggr.get(BY_AGGREGATION_FIELD);
             resultBuckets = laggr.getBuckets();
         }
 
         for (final Terms.Bucket entry : resultBuckets) {
-            wfmileresponse.setReporttype(worksIndexsRequest.getReportType());
             final String fieldName = String.valueOf(entry.getKey());
-            wfmileresponse.setName(fieldName);
+            resultMap.get(Integer.valueOf(fieldName)).setReporttype(worksIndexsRequest.getReportType());
+            resultMap.get(Integer.valueOf(fieldName)).setName(fieldName);
             final Sum totalEstimatedCostInLakhsAggregation = entry.getAggregations().get("totalestimatedcostinlakhs");
             final Sum totalWorkorderValueInLakhsAggregation = entry.getAggregations().get("totalworkordervalueinlakhs");
             final Sum totalBillAmountInLakhsAggregation = entry.getAggregations().get("totalbillamountinlakhs");
             final Sum totalPaidAmountInLakhsAggregation = entry.getAggregations().get("totalpaidamountinlakhs");
-            wfmileresponse.setTotalnoofworks(entry.getDocCount());
-            wfmileresponse.setTotalestimatedcostinlakhs(totalEstimatedCostInLakhsAggregation.getValue());
-            wfmileresponse.setTotalworkordervalueinlakhs(totalWorkorderValueInLakhsAggregation.getValue());
-            wfmileresponse.setTotalbillamountinlakhs(totalBillAmountInLakhsAggregation.getValue());
-            wfmileresponse.setTotalpaidamountinlakhs(totalPaidAmountInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName)).setTotalnoofworks(entry.getDocCount());
+            resultMap.get(Integer.valueOf(fieldName))
+                    .setTotalestimatedcostinlakhs(totalEstimatedCostInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName))
+                    .setTotalworkordervalueinlakhs(totalWorkorderValueInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName)).setTotalbillamountinlakhs(totalBillAmountInLakhsAggregation.getValue());
+            resultMap.get(Integer.valueOf(fieldName)).setTotalpaidamountinlakhs(totalPaidAmountInLakhsAggregation.getValue());
         }
-
+        resultList = new ArrayList<>();
+        for (final Integer key : resultMap.keySet())
+            resultList.add(resultMap.get(key));
         timeTaken = System.currentTimeMillis() - startTime;
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken for setting values in getAggregationResults() is : " + timeTaken
                     + " (millisecs) ");
-
+        return resultList;
     }
 
     private BoolQueryBuilder prepareWhereClause(final WorksIndexsRequest worksIndexsRequest) {
@@ -210,6 +241,11 @@ public class WorksTransactionIndexService {
             boolQuery.filter(
                     QueryBuilders.matchQuery(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME,
                             worksIndexsRequest.getLineestimatedetailid()));
+
+        if (worksIndexsRequest.getLineestimatedetailids() != null && !worksIndexsRequest.getLineestimatedetailids().isEmpty())
+            boolQuery.filter(
+                    QueryBuilders.termsQuery(WORKSMILESTONE_ESTIMATEDETAILID_COLUMN_NAME,
+                            worksIndexsRequest.getLineestimatedetailids()));
 
         boolQuery.filter(QueryBuilders.matchQuery(WORKSMILESTONE_LOASTATUS_COLUMN_NAME, APPROVED));
 

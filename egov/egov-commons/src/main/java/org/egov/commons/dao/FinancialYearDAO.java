@@ -86,4 +86,6 @@ public interface FinancialYearDAO {
     void delete(CFinancialYear entity);
     
     public List<CFinancialYear> getAllPriorFinancialYears(Date date);
+    
+    public List<CFinancialYear> getAllActivePostingAndNotClosedFinancialYears();
 }

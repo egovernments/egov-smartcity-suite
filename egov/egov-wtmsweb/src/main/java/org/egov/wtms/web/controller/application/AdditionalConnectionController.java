@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -67,6 +68,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -128,12 +131,23 @@ public class AdditionalConnectionController extends GenericConnectionController 
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("typeOfConnection", WaterTaxConstants.ADDNLCONNECTION);
+        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
     }
 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails addConnection,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
             @RequestParam String workFlowAction, final HttpServletRequest request, final BindingResult errors) {
+        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
+        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        if (!isCSCOperator  && !citizenPortalUser) {
+            final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
+                    .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
+            if (!isJuniorAsstOrSeniorAsst)
+                throw new ValidationException("err.creator.application");
+        }
+
         String sourceChannel = request.getParameter("Source");
         final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
                 .getConnection().getParentConnection());
@@ -157,7 +171,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-        waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection, resultBinder);
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(addConnection);
         if (addConnection.getState() == null)
             addConnection.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                     WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
@@ -196,10 +210,12 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
-        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection.getConnection()
                     .getPropertyIdentifier());
-            if (userPosition == null) {
+            if (userPosition != null) {
+                approvalPosition = userPosition.getId();
+            } else{
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(addConnection.getConnection());
                 loadBasicDetails(addConnection, model, parentConnectionDetails);
@@ -211,9 +227,14 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
+                model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
                 return "addconnection-form";
-            } else
-                approvalPosition = userPosition.getId();
+            
+            }
+        }
+        if(citizenPortalUser){
+            if (addConnection.getSource() == null || StringUtils.isBlank(addConnection.getSource().toString()))
+                addConnection.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
         }
 
         waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
@@ -235,7 +256,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 + waterTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                 + (nextDesign != null ? nextDesign : "");
-        return "redirect:/application/application-success?pathVars=" + pathVars;
+        return "redirect:/application/citizeenAcknowledgement?pathVars=" + addConnection.getApplicationNumber();
     }
 
 }

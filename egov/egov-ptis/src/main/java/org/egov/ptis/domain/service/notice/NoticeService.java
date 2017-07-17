@@ -46,11 +46,16 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infstr.services.PersistenceService;
@@ -67,7 +72,7 @@ import org.springframework.stereotype.Service;
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class NoticeService extends PersistenceService<PtNotice, Long> {
-    private static final Logger LOGGER = Logger.getLogger(NoticeService.class);
+    
     @Autowired
     PersistenceService<BasicProperty, Long> basicPropertyService;
     @Autowired
@@ -75,28 +80,26 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     @Autowired
     @Qualifier("fileStoreService")
     protected FileStoreService fileStoreService;
-
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
+    @PersistenceContext
+    private EntityManager eManager;
+    
     public NoticeService() {
         super(PtNotice.class);
     }
 
-    public NoticeService(Class<PtNotice> type) {
+    public NoticeService(final Class<PtNotice> type) {
         super(type);
     }
 
     /**
-     * This method populates the <code>PtNotice</code> object along with notice
-     * input stream
+     * This method populates the <code>PtNotice</code> object along with notice input stream
      *
-     * @param basicProperty
-     *            the <code>BasicProperty</code> object for which the notice is
-     *            generated
-     * @param noticeNo
-     *            - notice no
-     * @param noticeType
-     *            - type of notice
-     * @param fileStream
-     *            - input stream of generated notice.
+     * @param basicProperty the <code>BasicProperty</code> object for which the notice is generated
+     * @param noticeNo - notice no
+     * @param noticeType - type of notice
+     * @param fileStream - input stream of generated notice.
      */
     public PtNotice saveNotice(final String applicationNumber, final String noticeNo, final String noticeType,
             final BasicProperty basicProperty, final InputStream fileStream) {
@@ -120,14 +123,13 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     }
 
     /**
-     * Using this method to attach different file store if document is already
-     * signed and been sent for sign again
-     * 
+     * Using this method to attach different file store if document is already signed and been sent for sign again
+     *
      * @param notice
      * @param fileStream
      * @return
      */
-    public PtNotice updateNotice(PtNotice notice, InputStream fileStream) {
+    public PtNotice updateNotice(final PtNotice notice, final InputStream fileStream) {
         final String fileName = notice.getNoticeNo() + ".pdf";
         final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
                 FILESTORE_MODULE_NAME);
@@ -137,7 +139,8 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         getSession().flush();
         return notice;
     }
-
+    
+    @ReadOnly
     public PtNotice getPtNoticeByNoticeNumberAndNoticeType(final String noticeNo, final String noticeType) {
 
         final Query qry = getSession().createQuery(
@@ -146,14 +149,21 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         qry.setString("noticeType", noticeType.toUpperCase());
         return (PtNotice) qry.uniqueResult();
     }
-
+    
+    @ReadOnly
     public PtNotice getNoticeByApplicationNumber(final String applicationNo) {
         return (PtNotice) basicPropertyService.find("from PtNotice where applicationNumber = ?", applicationNo);
     }
-
+    
     public PtNotice getNoticeByNoticeTypeAndApplicationNumber(final String noticeType, final String applicationNo) {
         return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and applicationNumber = ?",
                 noticeType, applicationNo);
+    }
+
+    @ReadOnly
+    public PtNotice getNoticeByNoticeTypeAndAssessmentNumner(final String noticeType, final String assessementNumber) {
+        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ?",
+                noticeType, assessementNumber);
     }
 
     public PersistenceService<BasicProperty, Long> getBasicPropertyService() {
@@ -163,10 +173,11 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
     public void setbasicPropertyService(final PersistenceService<BasicProperty, Long> basicPropertyService) {
         this.basicPropertyService = basicPropertyService;
     }
-
-    public String getNoticeByApplicationNo(String applicationNo) {
+    
+    @ReadOnly
+    public String getNoticeByApplicationNo(final String applicationNo) {
         final StringBuilder queryStr = new StringBuilder(500);
-        String noticeNum = "";
+        String noticeNum;
         queryStr.append(
                 "select notice.noticeNo from PtNotice notice left join notice.basicProperty bp , PropertyMutation mt ");
         queryStr.append(" where notice.applicationNumber=:applicationNo");
@@ -175,16 +186,18 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         final Query query = getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(applicationNo))
             query.setString("applicationNo", applicationNo);
-        List<String> notices = query.list();
-        if (notices.size() != 0) {
+        @SuppressWarnings("unchecked")
+        final List<String> notices = query.list();
+        if (!notices.isEmpty())
             noticeNum = (String) query.list().get(0);
-
-        } else
+        else
             noticeNum = "";
         return noticeNum;
     }
-
-    public List<PropertyMutation> getListofMutations(String indexNumber) {
+    
+    @ReadOnly
+    @SuppressWarnings("unchecked")
+    public List<PropertyMutation> getListofMutations(final String indexNumber) {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select mt from PropertyMutation mt left join mt.basicProperty bp ");
         if (StringUtils.isNotBlank(indexNumber))
@@ -193,7 +206,32 @@ public class NoticeService extends PersistenceService<PtNotice, Long> {
         final Query query = getSession().createQuery(queryStr.toString());
         if (StringUtils.isNotBlank(indexNumber))
             query.setString("assessmentNo", indexNumber);
-        List<PropertyMutation> mutations = query.list();
-        return mutations;
+        return query.list();
     }
+    
+    @ReadOnly
+    public PtNotice getNoticeByTypeUpicNoAndFinYear(final String noticeType, final String assessementNumber) {
+        final CFinancialYear currFinYear = financialYearDAO.getFinancialYearByDate(new Date());
+        return (PtNotice) basicPropertyService.find("from PtNotice where noticeType = ? and basicProperty.upicNo = ? "
+                + " and noticeDate between ? and ? ",
+                noticeType, assessementNumber, currFinYear.getStartingDate(), currFinYear.getEndingDate());
+    }
+    
+    @ReadOnly
+    public PtNotice getPtNoticeByNoticeNumberAndBillType(final String noticeNo, final List<String> noticeType) {
+        final Query qry = getSession().createQuery(
+                "from PtNotice Pn where upper(Pn.noticeNo) = :noticeNumber and upper(noticeType) in (:noticeType) ");
+        qry.setString("noticeNumber", noticeNo.toUpperCase());
+        qry.setParameterList("noticeType", noticeType);
+        return (PtNotice) qry.uniqueResult();
+    }
+    
+    @ReadOnly
+    @SuppressWarnings("unchecked")
+    public List<PtNotice> getNoticeByAssessmentNumner(final String assessementNumber) {
+        final javax.persistence.Query qry = eManager.createNamedQuery("getAllNoticesByAssessmentNo");
+        qry.setParameter(1, assessementNumber);
+        return qry.getResultList();
+    }
+    
 }

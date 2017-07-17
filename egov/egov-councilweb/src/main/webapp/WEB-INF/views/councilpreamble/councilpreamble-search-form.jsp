@@ -42,80 +42,81 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title">Search Preamble</div>
+<div class="row">
+	<div class="col-md-12">
+		<div class="panel panel-primary" data-collapsed="0">
+			<div class="panel-heading">
+				<div class="panel-title">Search Preamble</div>
+			</div>
+			<div class="panel-body">
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.department" /> </label>
+					<div class="col-sm-3 add-margin">
+						<form:select path="department" id="department"
+							cssClass="form-control" cssErrorClass="form-control error">
+							<form:option value="">
+								<spring:message code="lbl.select" />
+							</form:option>
+							<form:options items="${departments}" itemValue="id"
+								itemLabel="name" />
+						</form:select>
+						<form:errors path="department" cssClass="error-msg" />
 					</div>
-					<div class="panel-body">
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.department" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:select path="department" id="department" 
-									cssClass="form-control" cssErrorClass="form-control error">
-									<form:option value="">
-										<spring:message code="lbl.select" />
-									</form:option>
-									<form:options items="${departments}" itemValue="id"
-										itemLabel="name" />
-								</form:select>
-								<form:errors path="department" cssClass="error-msg" />
-							</div>
-							<label class="col-sm-2 control-label text-right"><spring:message
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.preamble.number" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" cssClass="form-control"
-									path="preambleNumber" id="preambleNumber"/>
-								<form:errors path="preambleNumber" cssClass="error-msg" />
-							</div>
-							
-						</div>
-						<div class="form-group">
-							 <label class="col-sm-2 control-label text-right"><spring:message
-									code="lbl.fromdate" /> </label>
-							<div class="col-sm-3 add-margin">
-									<form:input path="fromDate"
-										class="form-control text-left patternvalidation datepicker"
-										 data-date-end-date="0d"  />
-									<form:errors path="fromDate" cssClass="error-msg" />
-							</div> 
-							
-							<label class="col-sm-2 control-label text-right"><spring:message
+					<div class="col-sm-3 add-margin">
+						<form:input type="text" cssClass="form-control"
+							path="preambleNumber" id="preambleNumber" />
+						<form:errors path="preambleNumber" cssClass="error-msg" />
+					</div>
+
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.fromdate" /> </label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="fromDate"
+							class="form-control text-left patternvalidation datepicker"
+							data-date-end-date="0d" />
+						<form:errors path="fromDate" cssClass="error-msg" />
+					</div>
+
+					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.todate" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" cssClass="form-control datepicker"
-									path="toDate" id="meetingDate"/>
-								<form:errors path="toDate" cssClass="error-msg" />
-							</div>
-						</div>
-						<div class="form-group">
-							<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.ward" /> </label>
-							<div class="col-sm-3 add-margin">
-								<form:select path="wards" id="wards" multiple="true" size="5"  cssClass="form-control" cssErrorClass="form-control error">
-									<form:option value="" id="selectall">All</form:option>
-									<form:options  items="${wards}" itemValue="id" itemLabel="name"></form:options>
-								</form:select>
-								<form:errors path="wards" cssClass="error-msg" /> 
-							</div>
-							
-							<%-- <spring:message code="lbl.pressCntrlToSelectMultipleWards"></spring:message> --%>
-							<input type="hidden" id="mode" name="mode" value="${mode}" />
-						</div>
-						
+					<div class="col-sm-3 add-margin">
+						<form:input type="text" cssClass="form-control datepicker"
+							path="toDate" id="meetingDate" />
+						<form:errors path="toDate" cssClass="error-msg" />
 					</div>
 				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.ward" /> </label>
+					<div class="col-sm-3 add-margin">
+						<select name="wards" multiple id="wards" size="5" class="form-control wards tick-indicator">
+					<option value="">All</option>
+					<c:forEach items="${wards}" var="ward">
+						<option value="${ward.id}" title="${ward.name}" >${ward.name}</option>
+					</c:forEach>
+				</select>
+					</div>
+					<input type="hidden" id="mode" name="mode" value="${mode}" />
+				</div>
+
 			</div>
 		</div>
-	<div class="form-group">
-		<div class="text-center">
-			<button type='button' class='btn btn-primary' id="btnsearch">
-				<spring:message code='lbl.search' />
-			</button>
-			<button type="reset" class="btn btn-danger"><spring:message code="lbl.reset"/></button>
-			<a href='javascript:void(0)' class='btn btn-default'
-				onclick='self.close()'><spring:message code='lbl.close' /></a>
-		</div>
 	</div>
+</div>
+<div class="form-group">
+	<div class="text-center">
+		<button type='button' class='btn btn-primary' id="btnsearch">
+			<spring:message code='lbl.search' />
+		</button>
+		<button type="reset" class="btn btn-danger">
+			<spring:message code="lbl.reset" />
+		</button>
+		<a href='javascript:void(0)' class='btn btn-default'
+			onclick='self.close()'><spring:message code='lbl.close' /></a>
+	</div>
+</div>

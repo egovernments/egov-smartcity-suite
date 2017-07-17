@@ -357,7 +357,7 @@ public class SewerageTaxCollection extends TaxCollection {
                 sewerageApplicationDetailsService.save(sewerageApplicationDetails);
                 sewerageApplicationDetailsService.updateIndexes(sewerageApplicationDetails);
 
-                // TODO: Sms and email not sending after doing demand collection,later must be fix
+                //  Sms and email not sending after doing demand collection,later must be fix
 
                 /*
                  * if(sewerageApplicationDetails.getStatus().getCode().equals( SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)){
@@ -415,5 +415,13 @@ public class SewerageTaxCollection extends TaxCollection {
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         return receiptAmountInfo;
     }
+  
+    @Override
+    @Transactional
+    public void apportionCollection(final String billRefNo, final BigDecimal amtPaid,
+            final List<ReceiptDetail> receiptDetails) {
 
+        final SewerageCollectionApportioner apportioner = new SewerageCollectionApportioner();
+        apportioner.apportion(amtPaid, receiptDetails);
+    }
 }

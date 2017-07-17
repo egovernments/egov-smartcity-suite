@@ -104,6 +104,7 @@
 								class="btn btn-secondary"><spring:message code='lbl.more' />..</a>
 						</div>
 					</div>
+					<input type="hidden" value="${isMore }" id="isMore" />
 					<div class="form-group show-searchcomp-more display-hide">
 						<div class="col-md-3 add-margin">
 							<input type="text" name="complainantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" id="ct-name"
@@ -117,20 +118,20 @@
 							<input type="text" name="complainantEmail" class="form-control" id="ct-email"
 								placeholder="<spring:message code='lbl.email'/>" />
 						</div>
+							<%--<div class="col-md-3 add-margin">
+                                <form:select name="complaintDepartment" path="" data-first-option="false" cssClass="form-control" >
+                                    <form:option value=""><spring:message code="lbl.complaintDepartment" /></form:option>
+                                    <form:options items="${complaintTypeDepartments}" itemValue="name" itemLabel="name" />
+                                </form:select>
+                            </div>--%>
 						<div class="col-md-3 add-margin">
-							<form:select name="complaintDepartment" path="" data-first-option="false" cssClass="form-control" >
-								<form:option value=""><spring:message code="lbl.complaintDepartment" /></form:option>
-								<form:options items="${complaintTypeDepartments}" itemValue="name" itemLabel="name" />  
+							<form:select name="complaintType" path="" data-first-option="false" cssClass="form-control">
+								<form:option value=""><spring:message code="lbl.complaintType"/></form:option>
+								<form:options items="${complaintTypedropdown}" itemValue="name" itemLabel="name"/>
 							</form:select>
 						</div>
 					</div>
 					<div class="form-group show-searchcomp-more display-hide">
-						<div class="col-md-3 add-margin">
-							<form:select name="complaintType" path="" data-first-option="false" cssClass="form-control" >
-								<form:option value=""><spring:message code="lbl.complaintType" /></form:option>
-								<form:options items="${complaintTypedropdown}" itemValue="name" itemLabel="name" />  
-							</form:select>
-						</div>
 						<div class="col-md-3 add-margin">
 							<form:select name="complaintStatus" path="" data-first-option="false" cssClass="form-control" >
 								<form:option value=""><spring:message code="lbl.status" /></form:option>
@@ -138,9 +139,9 @@
 							</form:select>
 						</div>
 						<div class="col-md-3 add-margin">
-							<form:select name="receivingCenter" path="" data-first-option="false" cssClass="form-control" >
+							<form:select name="receivingMode" path="" data-first-option="false" cssClass="form-control" >
 								<form:option value=""><spring:message code="lbl.receivingmode" /></form:option>
-								<form:options items="${complaintReceivingModes}"  />  
+								<form:options items="${complaintReceivingModes}"  itemValue="code" itemLabel="name"/>
 							</form:select>
 						</div>
 					</div>

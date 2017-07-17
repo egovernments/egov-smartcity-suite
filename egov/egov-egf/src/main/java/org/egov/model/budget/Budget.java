@@ -263,7 +263,7 @@ public class Budget extends StateAware {
     }
 
     public void setWfState(State state) {
-        setState(state);
+       // setState(state);
     }
 
     public String getSearchBere() {

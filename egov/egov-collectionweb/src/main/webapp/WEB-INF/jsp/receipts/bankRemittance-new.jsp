@@ -48,9 +48,32 @@
 	var isDatepickerOpened = false;
 	jQuery(document)
 			.ready(
-					function() {
+					function($) {
+						
+						if(jQuery("#finYearId").val()!=-1){
+							$("#dateDiv").hide();
+							$("#fromDate").val("");
+							$("#toDate").val("");
+						}
+						else if(jQuery("#finYearId").val()==-1){
+							$("#dateDiv").show();
+						}
+						
+						//hide or show date fields on selecting year from drop down
+						jQuery("#finYearId").on("change",function(){
+							if(jQuery("#finYearId").val()!=-1){
+								$("#dateDiv").hide();
+								$("#fromDate").val("");
+								$("#toDate").val("");
+							}
+							else if(jQuery("#finYearId").val()==-1){
+								$("#dateDiv").show();
+							}
+						});
+
+						
 						jQuery('#remittanceDate').val("");
-						jQuery('#finYearId').prop("disabled", true);
+						//jQuery('#finYearId').prop("disabled", true);
 						jQuery("form").submit(function(event) {
 							doLoadingMask();
 						});
@@ -117,9 +140,8 @@
 		undoLoadingMask();
 	});
 
-	var newServiceName = "###########";
-	var newFundName = "###########";
-	function handleReceiptSelectionEvent(obj) {
+	var isSelected;
+	function handleReceiptSelectionEvent() {
 
 		isSelected = document.getElementsByName('receiptIds');
 		dom.get("multipleserviceselectionerror").style.display = "none";
@@ -127,7 +149,7 @@
 
 		dom.get("button32").disabled = false;
 		dom.get("button32").className = "buttonsubmit";
-
+		var j = 0;
 		for (i = 0; i < isSelected.length; i++) {
 			if (isSelected[i].checked == true) {
 				document.getElementsByName('serviceNameArray')[i].value = document
@@ -156,6 +178,7 @@
 				document.bankRemittanceForm.totalOnlineAmountArray[i].value = "";
 				document.bankRemittanceForm.receiptDateArray[i].value = "";
 			}
+			j++;
 		}
 		var totalCashAmt = document.getElementsByName('totalCashAmountArray');
 		var totalAmtDisplay = 0.00;
@@ -225,7 +248,7 @@
 			}
 		}
 	}
-
+	
 	function validate() {
 		dom.get("bankselectionerror").style.display = "none";
 		dom.get("accountselectionerror").style.display = "none";
@@ -237,18 +260,52 @@
 				&& dom.get("remittanceDate").value == "") {
 			bootbox.alert("Please Enter Date of Remittance");
 			return false;
+		} else {
+			var remittanceDate = dom.get("remittanceDate").value;
+			var receiptDate;
+			isSelected = document.getElementsByName('receiptIds');
+			for (i = 0; i < isSelected.length; i++) {
+				if (isSelected[i].checked == true) {
+					date = new Date(document.getElementsByName('receiptDateTempArray')[i].value);
+					var dd=date.getDate();
+					if(dd<10)dd='0'+dd;
+					var mm=date.getMonth()+1;
+					if(mm<10)mm='0'+mm;
+					receiptDate = dd + '/' + mm + '/' +  date.getFullYear();
+					if (receiptDate != null && receiptDate != '' && remittanceDate!= null && remittanceDate != '') {
+						if (processDate(receiptDate) > processDate(remittanceDate)) {
+							document.getElementById("error_area").style.display="block";
+							document.getElementById("error_area").innerHTML = '<s:text name="bankremittance.before.receiptdate" />'+ '<br>';
+							window.scroll(0, 0);
+							return false;
+						}
+					}
+				}
+			}
 		}
 		</s:if>
+
+		var flag=confirm('Receipts once remitted cannot be modified, please verify before you proceed.');
+        if(flag==false)
+        {
+         return false;
+        }
 		if (!isChecked(document.getElementsByName('receiptIds'))) {
 			dom.get("selectremittanceerror").style.display = "block";
+			window.scroll(0, 0);
 			return false;
 		} else {
-			doLoadingMask('#loadingMask');
-			jQuery('#finYearId').prop("disabled", false);
-			document.bankRemittanceForm.action = "bankRemittance-create.action";
-			return true;
+		       	doLoadingMask('#loadingMask');
+				jQuery('#finYearId').prop("disabled", false);
+				document.bankRemittanceForm.action = "bankRemittance-create.action";
+				return true;
 		}
 
+	}
+
+	function processDate(date) {
+		var parts = date.split("/");
+		return new Date(parts[2], parts[1] - 1, parts[0]);
 	}
 
 	function onChangeBankAccount(branchId) {
@@ -258,6 +315,10 @@
 	}
 
 	function searchDataToRemit() {
+		if(jQuery("#finYearId").val()==-1 && jQuery("#fromDate").val()=="" && jQuery("#toDate").val()==""){
+			bootbox.alert("Please enter either financial year or from date and to date");
+			return false;
+		}
 		if (dom.get("bankBranchMaster").value != null
 				&& dom.get("bankBranchMaster").value == -1) {
 			dom.get("bankselectionerror").style.display = "block";
@@ -281,6 +342,7 @@
 			return false;
 		}
 		jQuery('#finYearId').prop("disabled", false);
+		jQuery('#remittanceAmount').val("");
 		document.bankRemittanceForm.action = "bankRemittance-listData.action";
 		return true;
 	}
@@ -358,9 +420,16 @@
 			deSelectAll();
 		}
 	}
+	function onBodyLoad()
+	{
+		<s:if test="%{isBankCollectionRemitter}">
+			document.getElementById('bankBranchMaster').disabled=true;
+		</s:if>
+	}
 </script>
 </head>
-<body>
+<body  onload="onBodyLoad();">
+	<div class="errorstyle" id="error_area" style="display: none;"></div>
 	<span align="center" style="display: none" id="selectremittanceerror">
 		<li><font size="2" color="red"><b><s:text
 						name="bankremittance.error.norecordselected" /> </b></font></li>
@@ -382,7 +451,7 @@
 		<li><font size="2" color="red"><b><s:text
 						name="bankremittance.error.noApproverselected" /> </b></font></li>
 	</span>
-	<s:form theme="simple" name="bankRemittanceForm">
+	<s:form theme="simple" name="bankRemittanceForm" >
 		<s:push value="model">
 			<s:token />
 			<s:if test="%{hasErrors()}">
@@ -404,7 +473,8 @@
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<td width="4%" class="bluebox">&nbsp;</td>
-							<td class="bluebox"><s:text name="bankremittance.bank" />:</td>
+							<td class="bluebox"><s:text name="bankremittance.bank" /> : <span
+									class="mandatory1">*</span></td>
 							<td class="bluebox"><s:select headerValue="--Select--"
 									headerKey="-1" list="dropdownData.bankBranchList" listKey="id"
 									id="bankBranchMaster" listValue="branchname"
@@ -415,7 +485,8 @@
 									url='receipts/ajaxBankRemittance-accountListOfService.action'
 									selectedValue="%{accountNumberId}" /></td>
 							<td class="bluebox"><s:text
-									name="bankremittance.accountnumber" />:</td>
+									name="bankremittance.accountnumber" />: <span
+				                       class="mandatory1">*</span></td>
 							<td class="bluebox"><s:select headerValue="--Select--"
 									headerKey="-1" list="dropdownData.accountNumberList"
 									listKey="id" id="accountNumberId" listValue="accountnumber"
@@ -426,7 +497,7 @@
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td class="bluebox"><s:text
 									name="bankremittance.financialyear" />:</td>
-							<td class="bluebox"><s:select headerKey="-1"
+							<td class="bluebox"><s:select headerKey="-1" headerValue="--Select--"
 									list="dropdownData.financialYearList" listKey="id"
 									id="finYearId" listValue="finYearRange" label="finYearRange"
 									name="finYearId" value="%{finYearId}" /></td>
@@ -437,73 +508,81 @@
 									id="paymentMode" label="paymentMode" name="paymentMode"
 									value="%{paymentMode}" /></td>
 						</tr>
-						<tr>
+						<tr id="dateDiv">
 							<td width="4%" class="bluebox">&nbsp;</td>
 							<td class="bluebox"><s:text name="bankremittance.fromdate" /></td>
-							<s:date name="fromDate" var="fromFormat"  format="dd/MM/yyyy" />
+							<s:date name="fromDate" var="fromFormat" format="dd/MM/yyyy" />
 							<td class="bluebox"><s:textfield id="fromDate"
-									name="fromDate" data-inputmask="'mask': 'd/m/y'" value="%{fromFormat}"
-									placeholder="DD/MM/YYYY" /></td>
+									name="fromDate" data-inputmask="'mask': 'd/m/y'"
+									value="%{fromFormat}" placeholder="DD/MM/YYYY" /></td>
 							<td class="bluebox"><s:text name="bankremittance.todate" /></td>
-							<s:date name="toDate" var="toFormat"  format="dd/MM/yyyy" />
-							<td class="bluebox"><s:textfield id="toDate" name="toDate" value="%{toFormat}"
-									data-inputmask="'mask': 'd/m/y'"
+							<s:date name="toDate" var="toFormat" format="dd/MM/yyyy" />
+							<td class="bluebox"><s:textfield id="toDate" name="toDate"
+									value="%{toFormat}" data-inputmask="'mask': 'd/m/y'"
 									placeholder="DD/MM/YYYY" /></td>
 						</tr>
 					</table>
+					</div>
 					<div class="buttonbottom">
 						<input name="search" type="submit" class="buttonsubmit"
 							id="search" value="Search" onclick="return searchDataToRemit()" />
 					</div>
 					<s:if test="%{!paramList.isEmpty()}">
-						<display:table name="paramList" uid="currentRow" pagesize="${pageSize}"
-							style="border:1px;width:100%" cellpadding="0" cellspacing="0"
-							export="false" requestURI=""
+						<display:table name="paramList" uid="currentRow"
+							pagesize="${pageSize}" style="border:1px;width:100%"
+							cellpadding="0" cellspacing="0" export="false" requestURI=""
 							excludedParams="serviceNameArray fundCodeArray departmentCodeArray totalCashAmountArray totalChequeAmountArray totalCardAmountArray totalATMAmountArray totalATMAmountTempArray departmentCodeTempArray totalOnlineAmountTempArray receiptDateTempArray serviceNameTempArray totalCardAmountTempArray totalCashAmountTempArray totalChequeAmountTempArray">
 							<display:column headerClass="bluebgheadtd"
 								class="blueborderfortd"
 								title="Select<input type='checkbox' name='selectAllReceipts' value='on' onClick='setCheckboxStatuses(this.checked);handleReceiptSelectionEvent(this.checked);'/>"
 								style="width:5%; text-align: center">
-								<input name="receiptIds" type="checkbox" id="receiptIds"
-									value="${currentRow.id}"
-									onClick="handleReceiptSelectionEvent(this.checked)" />
-								<input type="hidden" name="serviceNameTempArray" disabled="disabled"
-									id="serviceNameTempArray" value="${currentRow.SERVICENAME}" />
-								<input type="hidden" name="fundCodeTempArray" disabled="disabled"
-									id="fundCodeTempArray" value="${currentRow.FUNDCODE}" />
+								<s:checkbox name="receiptIds" id="receiptIds"
+									value="#currentRow.id" onClick="handleReceiptSelectionEvent()" />
+								<input type="hidden" name="serviceNameTempArray"
+									disabled="disabled" id="serviceNameTempArray"
+									value="${currentRow.SERVICENAME}" />
+								<input type="hidden" name="fundCodeTempArray"
+									disabled="disabled" id="fundCodeTempArray"
+									value="${currentRow.FUNDCODE}" />
 								<input type="hidden" name="departmentCodeTempArray"
 									id="departmentCodeTempArray" disabled="disabled"
 									value="${currentRow.DEPARTMENTCODE}" />
-								<input type="hidden" name="totalCashAmountTempArray" disabled="disabled"
-									id="totalCashAmountTempArray"
+								<input type="hidden" name="totalCashAmountTempArray"
+									disabled="disabled" id="totalCashAmountTempArray"
 									value="${currentRow.SERVICETOTALCASHAMOUNT}" />
-								<input type="hidden" name="totalChequeAmountTempArray" disabled="disabled"
-									id="totalChequeAmountTempArray"
+								<input type="hidden" name="totalChequeAmountTempArray"
+									disabled="disabled" id="totalChequeAmountTempArray"
 									value="${currentRow.SERVICETOTALCHEQUEAMOUNT}" />
-								<input type="hidden" name="totalCardAmountTempArray" disabled="disabled"
-									id="totalCardAmountTempArray"
+								<input type="hidden" name="totalCardAmountTempArray"
+									disabled="disabled" id="totalCardAmountTempArray"
 									value="${currentRow.SERVICETOTALCARDPAYMENTAMOUNT}" />
-								<input type="hidden" name="totalOnlineAmountTempArray" disabled="disabled"
-									id="totalOnlineAmountTempArray"
+								<input type="hidden" name="totalOnlineAmountTempArray"
+									disabled="disabled" id="totalOnlineAmountTempArray"
 									value="${currentRow.SERVICETOTALONLINEPAYMENTAMOUNT}" />
-								<input type="hidden" name="receiptDateTempArray" disabled="disabled"
-									id="receiptDateTempArray" value="${currentRow.RECEIPTDATE}" />
+								<input type="hidden" name="receiptDateTempArray"
+									disabled="disabled" id="receiptDateTempArray"
+									value="${currentRow.RECEIPTDATE}" />
 								<input type="hidden" name="serviceNameArray"
-									id="serviceNameArray" />
-								<input type="hidden" name="fundCodeArray" id="fundCodeArray" />
+									id="serviceNameArray"
+									value="${serviceNameArray[currentRow_rowNum-1]}" />
+								<input type="hidden" name="fundCodeArray" id="fundCodeArray"
+									value="${fundCodeArray[currentRow_rowNum-1]}" />
 								<input type="hidden" name="departmentCodeArray"
-									id="departmentCodeArray" />
+									id="departmentCodeArray"
+									value="${departmentCodeArray[currentRow_rowNum-1]}" />
 								<input type="hidden" name="totalCashAmountArray"
-									id="totalCashAmountArray" />
+									id="totalCashAmountArray"
+									value="${totalCashAmountArray[currentRow_rowNum-1]}" />
 								<input type="hidden" name="totalChequeAmountArray"
-									id="totalChequeAmountArray" />
-								<input type="hidden" name="totalCardAmountArray" disabled="disabled"
-									id="totalCardAmountArray" />
-								<input type="hidden" name="totalOnlineAmountArray" disabled="disabled"
-									id="totalOnlineAmountArray" />
+									id="totalChequeAmountArray"
+									value="${totalChequeAmountArray[currentRow_rowNum-1]}" />
+								<input type="hidden" name="totalCardAmountArray"
+									disabled="disabled" id="totalCardAmountArray" />
+								<input type="hidden" name="totalOnlineAmountArray"
+									disabled="disabled" id="totalOnlineAmountArray" />
 								<input type="hidden" name="receiptDateArray"
-									id="receiptDateArray" />
-
+									id="receiptDateArray"
+									value="${receiptDateArray[currentRow_rowNum-1]}" />
 							</display:column>
 
 							<display:column headerClass="bluebgheadtd"
@@ -576,7 +655,7 @@
 								</display:column>
 							</s:if>
 						</display:table>
-				</div>
+				
 				<br />
 				<div id="loadingMask"
 					style="display: none; overflow: hidden; text-align: center">
@@ -609,7 +688,7 @@
 				</div>
 				<div class="buttonbottom">
 					<input name="button32" type="submit" class="buttonsubmit"
-						id="button32" value="Remit to Bank" onclick="return validate()" />
+						id="button32" value="Remit to Bank" onclick="return validate();" />
 					&nbsp; <input name="buttonClose" type="button" class="button"
 						id="button" value="Close" onclick="window.close()" />
 				</div>

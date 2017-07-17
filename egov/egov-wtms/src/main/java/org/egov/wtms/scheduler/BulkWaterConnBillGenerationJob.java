@@ -39,78 +39,54 @@
  */
 package org.egov.wtms.scheduler;
 
-import org.apache.log4j.Logger;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
 import org.egov.wtms.utils.WaterTaxUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
 public class BulkWaterConnBillGenerationJob extends AbstractQuartzJob {
 
-  
     private static final long serialVersionUID = 6652765005378915324L;
-
-    private static final Logger LOGGER = Logger.getLogger(BulkWaterConnBillGenerationJob.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(BulkWaterConnBillGenerationJob.class);
 
     private Integer billsCount;
     private Integer modulo;
+
     @Autowired
     private ApplicationContext beanProvider;
 
-    private WaterConnectionBillService waterConnectionBillService;
-
-    @Autowired
-    private UserService userService;
-    
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
     @Override
     public void executeJob() {
-        LOGGER.debug("Water tax Schedular Running in City:");
-        final Long jobStartTime = System.currentTimeMillis();
-        Boolean schedularEnable=waterTaxUtils.getAppconfigValueForSchedulearEnabled();
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Starting water tax bulk bill generation for {}", waterTaxUtils.getCityCode());
+        long startTimeMillis = System.currentTimeMillis();
         WaterConnectionBillService waterConnectionBillService = null;
         try {
-            waterConnectionBillService = (WaterConnectionBillService) beanProvider
-                    .getBean("waterConnectionBillService");
-        } catch (final NoSuchBeanDefinitionException e) {
+            waterConnectionBillService = (WaterConnectionBillService) beanProvider.getBean("waterConnectionBillService");
+        } catch (NoSuchBeanDefinitionException e) {
             LOGGER.warn("waterConnectionBillService implementation not found");
         }
-        if (waterConnectionBillService != null && (schedularEnable || schedularEnable== true)){
-            waterConnectionBillService.bulkBillGeneration(modulo, billsCount); 
+        if (waterConnectionBillService != null && waterTaxUtils.getAppconfigValueForSchedulearEnabled())
+            waterConnectionBillService.bulkBillGeneration(modulo, billsCount);
+        if (LOGGER.isDebugEnabled()) {
+            long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
+            LOGGER.debug("Water tax bulk bill generation completed for {} in {} seconds", waterTaxUtils.getCityCode(),
+                    elapsedTimeMillis);
         }
-        final Long timeTaken = System.currentTimeMillis() - jobStartTime;
-        LOGGER.debug("Water tax Schedular completed for City and time taked is :" + timeTaken +"==="+waterTaxUtils.getCityCode());
     }
 
-    public Integer getBillsCount() {
-        return billsCount;
-    }
-
-    public void setBillsCount(final Integer billsCount) {
+    public void setBillsCount(Integer billsCount) {
         this.billsCount = billsCount;
     }
 
-    public Integer getModulo() {
-        return modulo;
-    }
-
-    public void setModulo(final Integer modulo) {
+    public void setModulo(Integer modulo) {
         this.modulo = modulo;
     }
-
-    public WaterConnectionBillService getWaterConnectionBillService() {
-        return waterConnectionBillService;
-    }
-
-    public void setWaterConnectionBillService(final WaterConnectionBillService waterConnectionBillService) {
-        this.waterConnectionBillService = waterConnectionBillService;
-    }
-
 }

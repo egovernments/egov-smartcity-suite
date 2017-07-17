@@ -80,7 +80,16 @@ $(document).ready(function(){
 		var fromDate = $("#fromDate").val();
 		var toDate = $("#toDate").val();
 		var posId = $("#positionId").val();
+		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
 		var validate = true;
+		if($("#isHodYes").prop("checked") && hoddept==null){
+			$('.hoderror').html('HOD Department is required').show();
+			validate = false;	
+		}
+		else{
+			$('.hoderror').hide();
+		}
+		
 		if(null==deptId || ''==deptId){
 			$('.departmenterror').html('Department is required').show();
 			validate = false;
@@ -147,6 +156,10 @@ $(document).ready(function(){
 		}
 	});
 	
+	$("#isHodNo").blur(function (){
+		$("#hoderror").hide();
+	});
+	
 	function validateDateRange() {
 
 		if($("#fromDate").val() != '' && $("#toDate").val() != ''){
@@ -175,37 +188,7 @@ $(document).ready(function(){
 		}
 	}
 	
-	function validatePrimaryPosition(index)
-	{
-
-		positionId = $("#positionId").val();
-		assignmentId = $("#editassignIds").val();
-		$.ajax({
-			url: '/eis/employee/ajax/primaryPosition',
-			type: "GET",
-			data: {
-				positionId : $("#positionId").val(),
-				assignmentId : $("#editassignIds").val()   
-			},
-			dataType : 'json',
-			success: function (response) {
-				if(response == true){
-					$("#primary_yes").prop("checked",false);
-					$("#primary_no").prop("checked",true);
-					addRow(index);		
-					edit=false;
-				}
-				else{
-					addRow(index);		
-					edit=false;
-				}
-				resetAssignmentValues();
-
-			},error: function (response) {
-				console.log("failed");
-			}
-		});
-	}
+	
 	
 	//Position auto-complete
 	
@@ -262,26 +245,75 @@ $(document).ready(function(){
 	$("#btn-add").click(function() {
 		var primary = $("#primary_yes").prop("checked");
 
+		if($("#mode").val()=="update") {
+			$("#fromDate").prop('disabled', false);
+			$('#fromDate').addClass( "form-control datepicker" );
+		}
+
 		if(validateAssignment() && validateDateRange()) {
 			if(!edit){
+				if(primary==true){
+					validatePrimaryPosition(edit);
+				}
+				else{
 				rowCount = $("#assignmentTable tr").length;
 				addRow(rowCount);
 				rowCount++;
+				resetAssignmentValues();
+				}
 			}
-			else{
-				deleteRow.remove();
-				if(primary==true ){
-					validatePrimaryPosition(editedRowIndex);
+			else{		
+				if(primary==true ){	
+					 validatePrimaryPosition(edit);
+					 edit=false;
 				}
 				else{
+					deleteRow.remove();
+					addRow(editedRowIndex);		
+					edit=false;
+					resetAssignmentValues();
+				}
+			}
+			
+		}	
+	});
+	
+	function validatePrimaryPosition(edit)
+	{		
+		$.ajax({
+			url: '/eis/employee/ajax/primaryPosition',
+			type: "GET",
+			data: {
+				positionId : $("#positionId").val(),
+				assignmentId : $("#editassignIds").val(), 
+				code : $("#code").val(),
+				fromDate : $("#fromDate").val(),
+				toDate : $("#toDate").val()
+			},
+			dataType : 'json',
+			success: function (response) {
+				if(response != ""){
+					response = response.substring(0,response.length-1);
+					bootbox.alert("Assignment overlaps with existing primary assignment of employee "+response);
+					edit=false;
+				}
+				else if(edit){	
+					deleteRow.remove();
 					addRow(editedRowIndex);		
 					edit=false;
 				}
+				else{
+					rowCount = $("#assignmentTable tr").length;
+					addRow(rowCount);
+					rowCount++;
+				}
+				resetAssignmentValues();
 
+			},error: function (response) {
+				console.log("failed");
 			}
-			resetAssignmentValues();
-		}	
-	});
+		});
+	}
 	
 	function resetAssignmentValues() {
 		if(!edit) {
@@ -311,16 +343,32 @@ $(document).ready(function(){
 		var ftn = (null!=$("#functionId").val() || 'undefined'!=$("#functionId").val())?$("#functionId").val():null;
 		var functionary = (null!=$("#functionaryId").val() || 'undefined'!=$("#functionaryId").val())?$("#functionaryId").val():null;
 		var grade = (null!=$("#gradeId").val() || 'undefined'!=$("#gradeId").val())?$("#gradeId").val():null;
+		$('.hoderror').hide;
 		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
-		var hoddept = (null!=$("#hodDeptId").val() || 'undefined'!=$("#hodDeptId").val())?$("#hodDeptId").val():null;
-		var hodInput="";
+		var result = $('#hodDeptId :selected').map(function(i, opt) {
+			  return $(opt).text();
+			}).toArray().join(', ');
+	   var hoddeptname = result.split(",");
 		
+		var hodInput="";
+		var hodname = "";
+		var hodDepartment = "";
+		if(null!=hoddeptname){
+			for(var i=0;i<hoddeptname.length;i++) {
+				
+				hodname = hodname+'<input type="text" id="assignments['+index+'].hodDept['+i+'].hod" name="assignments['+index+'].hodDept['+i+'].hod" value="'+hoddeptname[i]+'"/>';
+			}
+			hodname = hodname+'<input type="hidden" id="hodNames'+index+'" value="'+hoddeptname+'"/>';
+		}
 		if(null!=hoddept){
 			for(var i=0;i<hoddept.length;i++) {
 				hodInput = hodInput+'<input type="hidden" id="assignments['+index+'].deptSet['+i+'].hod" name="assignments['+index+'].deptSet['+i+'].hod" value="'+hoddept[i]+'"/>';
+				hodDepartment = hodDepartment+'<input type="hidden" id="assignments['+index+'].hodList['+i+'].hod" name="assignments['+index+'].hodList['+i+'].hod" value="'+hoddept[i]+'"/>';
+
 			}
 			hodInput = hodInput+'<input type="hidden" id="hodIds'+index+'" value="'+hoddept+'"/>';
 		}
+		
 		var del="";
 		  del='<span class="add-padding"><i id="delete_row" class="fa fa-remove"  value="'+index+'"></i></span>';
 		var text = 
@@ -358,8 +406,13 @@ $(document).ready(function(){
 							'<input type="hidden" id="assignments['+index+'].functionary" name="assignments['+index+'].functionary" '+
 							'value="'+functionary+'"/>'+
 							'<input type="hidden" id="assignments['+index+'].grade" name="assignments['+index+'].grade" '+
-							'value="'+grade+'"/>'+hodInput+
-						'</td>'+	
+							'value="'+grade+'"/>' +
+						'</td>'+
+						'<td>'+	
+						hodInput +
+						hodname +
+						hodDepartment +
+					'</td>'+
 						'<td>'+	
 							'<span class="add-padding"><i id="edit_row" class="fa fa-edit" value="'+index+'"></i></span>'+del+
 						'</td>'+	
@@ -371,6 +424,7 @@ $(document).ready(function(){
 		$("#table_department"+index+"").val($("#deptId").find('option:selected').text());
 		$("#table_designation"+index+"").val($("#designationName").val());
 		$("#table_position"+index+"").val($("#positionName").val());
+		
 	}
 	
 	$(document).on('click',"#delete_row",function (){
@@ -385,6 +439,12 @@ $(document).ready(function(){
 	
 	
 	$(document).on('click',"#edit_row",function (){
+
+		if($("#mode").val()=="update") {
+			$("#fromDate").prop('disabled', true);
+			$('#fromDate').removeClass( "datepicker" );
+		}
+		
 		
 		if($("#table_assignid"+$(this).attr("value")+"").val()!=undefined){
 		 $("#editassignIds").val($("#table_assignid"+$(this).attr("value")+"").val());
@@ -393,6 +453,8 @@ $(document).ready(function(){
 		edit = true;
 		deleteRow = $(this).closest('tr');
 		editedRowIndex =$(this).attr("value");
+		var hodInput="";
+		var hoddept = $("#hodDeptIds"+editedRowIndex).val() ;
 		var primary = document.getElementById("assignments["+editedRowIndex+"].primary").value;
 		var fromDate = document.getElementById("assignments["+editedRowIndex+"].fromDate").value;
 		var toDate = document.getElementById("assignments["+editedRowIndex+"].toDate").value;
@@ -406,6 +468,15 @@ $(document).ready(function(){
 		var functionary = document.getElementById("assignments["+editedRowIndex+"].functionary").value;
 		var grade = document.getElementById("assignments["+editedRowIndex+"].grade").value;
 		
+	
+		if(null!=hoddept && hoddept != "0"){
+			for(var i=0;i<hoddept;i++) {
+              	hodInput = document.getElementById("assignments["+editedRowIndex+"].deptSet["+i+"].hod").value + "," + hodInput ;		
+			}
+			
+		}else{
+			hodInput=(null!=$("#hodIds"+editedRowIndex).val() || 'undefined'!=$("#hodIds"+editedRowIndex).val())?$("#hodIds"+editedRowIndex).val():null;
+		}
 		if(primary=="true"){
 			$("#primary_yes").prop("checked",true);
 			$("#primary_no").prop("checked",false);
@@ -425,17 +496,22 @@ $(document).ready(function(){
 		$("#functionId").val(ftn);
 		$("#functionaryId").val(functionary);
 		$("#grade").val(grade);
-		if(null!=document.getElementById("hodIds"+editedRowIndex)) {
-			var hodIds = document.getElementById("hodIds").value;
-			if(null!=hodIds){
-				var dataArray = hodIds.split(","); 
+		if(hodInput!="" && hodInput!=null) {
+			
+				var dataArray = hodInput.split(","); 
 				$("#hodDeptId").val(dataArray);
 				$("#isHodYes").prop("checked",true);
 				$("#isHodNo").prop("checked",false);
 				$('#hodDeptDiv').show();
-			}	
+				
 		}	
+		else{
+			$("#isHodYes").prop("checked",false);
+			$("#isHodNo").prop("checked",true);
+			$('#hodDeptDiv').hide();
+		}
 	});
+	
 	
 	$("#isHodYes").click(function () {
 		$('#hodDeptDiv').show();
@@ -462,41 +538,133 @@ $(document).ready(function(){
 		$("#isactive_yes").prop("checked",false);
 	});
 	
-	$("#submit").click(function () {
+	function getdate() {
+		var today = new Date();
+		var dd = today.getDate();
+		var mm = today.getMonth() + 1; // January is 0!
+
+		var yyyy = today.getFullYear();
+		if (dd < 10) {
+			dd = '0' + dd
+		}
+		if (mm < 10) {
+			mm = '0' + mm
+		}
+		var today = dd + '/' + mm + '/' + yyyy;
+		return today;
+	}
+	
+   $('#btnsubmit').click(function(e){
+	   
+	   if($('form').valid()){
+		 
 		var count = 0;
 		var isactive_no = $("#isactive_no").prop("checked");
-        jQuery(".table-bordered tr").find('input').each(function(){
-                if(jQuery(this).val() == "true"){
-                        count++;
-                }
-        });
-		if(($("#assignmentTable tr").length==1 || count == 0) && !isactive_no){
-			$('.assignmentserror').html('Employee should have primary assignment').show().fadeOut(7000);
-			$('.fromdateerror').hide();
-			$('.departmenterror').hide();
-			$('.designationerror').hide();
-			$('.positionerror').hide();
-			$('.todateerror').hide();
-			$('.fromdateerror').focus();
-			return false;
+		var i=1;
+		var length = $("#assignmentTable tr").length;
+		if($("#mode").val()=="update") //create
+		{
+		i=0;
+		length = length-1;
 		}
-	});
 
+			//assignments['+index+'].toDate
+        if(($("#assignmentTable tr").length-1)>=1 && isactive_no && ($("#mode").val()=="update")){
+        	for(i;i<length;i++) {
+        		var date = $("#table_date_range"+i).val();
+    			var stsplit = date.split("-");
+    			var toDate = stsplit[1];
+        		
+        		var currDate = getdate();
+        		if (dateDifference(currDate, toDate) <= 0) {
+        			count++;
+        			break;        			
+        		} 				
+			}			
+		}
+        if((length == 0) && isactive_no){
+			bootbox.alert("Employee should have assignment");
+			return false;
+        }
+        
+        var submit = true;
+
+		if(count>0){
+			bootbox.confirm("There are assignment/s still open for this user, it may affect the workflow items if any associated with this user.  Do you still want to deactivate the user ?", function (result) {
+    			if(result){
+    				$("form").submit();
+				}
+    			else{
+    			}
+    				
+    		});
+		}
+		else{
+		$("form").submit();
+		}
+
+	   }
+		
+   })
+
+   function validateDateRange() {
+
+		if($("#fromDate").val() != '' && $("#toDate").val() != ''){
+			var start = $("#fromDate").val();
+			var end = $("#toDate").val();
+			
+			if (dateDifference(start,end) < 0) {
+				bootbox.alert("From date  should not be greater than the To Date.");
+				$('#toDate').val('');
+				return false;
+			} else {
+				return true;
+			}
+			return true;
+		}
+	}
+	
+   function dateDifference(start,end){
+		var stsplit = start.split("/");
+		var ensplit = end.split("/");
+
+		start = stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2];
+		end = ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2];
+
+
+		var startDate = Date.parse(start);
+		var endDate = Date.parse(end);
+
+		// Check the date range, 86400000 is the number of milliseconds in one day
+		var difference = (endDate - startDate) / (86400000 * 7);
+		return difference;
+	
+	}
 	
 	function validateJurisdiction() {
 		$('.boundaryTypeerror').hide();
 		$('.boundaryerror').hide();
 		$('.duplicatejurisdictionerror').hide();
-		if(($("#jurisdictionTable tr").length-1)>=1){
-			for(var i=0;i<$("#jurisdictionTable tr").length-1;i++) {
-				if(($('#table_boundaryType'+i).val()).localeCompare($("#boundaryTypeId").find('option:selected').text())==0){
-					if(($('#table_boundary'+i).val()).localeCompare($("#boundarySelect").find('option:selected').text())==0){
-						$('.duplicatejurisdictionerror').html('Already this jurisdiction combination exist').show();
-						return false;
+		
+		var i=1;
+		var length = $("#jurisdictionTable tr").length;
+		if($("#mode").val()=="update")
+		{
+		 i=0;
+		 length = length - 1 ;
+		}
+
+			if(($("#jurisdictionTable tr").length-1)>=1){		
+				for(i;i<length;i++) {
+					if(($('#table_boundaryType'+i).val()).localeCompare($("#boundaryTypeId").find('option:selected').text())==0){
+						if(($('#table_boundary'+i).val()).localeCompare($("#boundarySelect").find('option:selected').text())==0){
+							$('.duplicatejurisdictionerror').html('Already this jurisdiction combination exist').show();
+							return false;
+						}
 					}
 				}
 			}
-		}
+		
 		$('.boundaryTypeerror').hide();
 		$('.boundaryerror').hide();
 		var boundaryTypeId = $("#boundaryTypeId").val();
@@ -520,6 +688,8 @@ $(document).ready(function(){
 		if(validateJurisdiction()) {
 			if(!jurdctnedit){
 				jurdctnrowCount = $("#jurisdictionTable tr").length;
+				if($("#mode").val()=="update") 
+					jurdctnrowCount = jurdctnrowCount-1;
 				jurdctnaddRow(jurdctnrowCount);
 				jurdctnrowCount++;
 			}

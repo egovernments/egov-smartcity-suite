@@ -332,11 +332,11 @@ public class BudgetSearchAction extends BaseFormAction {
         final Budget budget = budgetDetail.getBudget();
         // Dont restrict search by the selected budget, but by all budgets in the tree of selected budget
         budgetDetail.setBudget(null);
-        if (budget == null)
-            budgetList.addAll(budgetDetailService.findBudgetTree(
-                    budgetDetailService.findApprovedPrimaryParentBudgetForFY(financialYear), budgetDetail));
-        else
+        if (budget != null && budget.getId() != null && budget.getId() != 0)
             budgetList.addAll(budgetDetailService.findBudgetTree(budget, budgetDetail));
+        else if (budget != null && budget.getFinancialYear() != null && budget.getFinancialYear().getId() != null)
+            budgetList.addAll(budgetDetailService.findBudgetTree(
+                    budgetDetailService.findApprovedPrimaryParentBudgetForFY(budget.getFinancialYear().getId()), budgetDetail));
         getSession().put(Constants.SEARCH_CRITERIA_KEY, budgetDetail);
         if (budgetList.isEmpty())
             addActionError(getText("budget.no.details.found"));
@@ -397,7 +397,7 @@ public class BudgetSearchAction extends BaseFormAction {
     }
 
     public String divideAndRoundBigDecToString(final BigDecimal amount) {
-        BigDecimal value = BigDecimal.ZERO;
+        BigDecimal value = amount;
         value = value.divide(new BigDecimal(1000), 2, BigDecimal.ROUND_HALF_UP);
         return value.toString();
     }

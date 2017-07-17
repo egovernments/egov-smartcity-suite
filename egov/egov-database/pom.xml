@@ -4,10 +4,13 @@
     <parent>
         <artifactId>egov-erp</artifactId>
         <groupId>org.egov</groupId>
-        <version>2.1.0-SNAPSHOT</version>
+        <version>3.0.0-SNAPSHOT</version>
     </parent>
     <name>e-governments database</name>
     <artifactId>egov-database</artifactId>
+    <properties>
+        <validateOnMigrate>true</validateOnMigrate>
+    </properties>
     <build>
         <resources>
             <!-- This way we instruct maven to inject values from filters into the resources -->
@@ -17,6 +20,21 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <artifactId>maven-clean-plugin</artifactId>
+                <version>${mvn.clean.plugin.version}</version>
+                <configuration>
+                    <filesets>
+                        <fileset>
+                            <directory>src/main/resources/db</directory>
+                            <includes>
+                                <include>**</include>
+                            </includes>
+                            <followSymlinks>false</followSymlinks>
+                        </fileset>
+                    </filesets>
+                </configuration>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
@@ -82,6 +100,9 @@
                                 </resource>
                                 <resource>
                                     <directory>../egov-stms/src/main/resources/db/migration</directory>
+                                </resource>
+                                 <resource>
+                                    <directory>../egov-mrs/src/main/resources/db/migration</directory>
                                 </resource>
                             </resources>
                         </configuration>
@@ -182,12 +203,14 @@
                         <configuration>
                             <skip>false</skip>
                             <cleanDisabled>true</cleanDisabled>
+                            <validateOnMigrate>${validateOnMigrate}</validateOnMigrate>
                         </configuration>
                         <executions>
                             <execution>
                                 <id>migrate-database</id>
                                 <phase>process-resources</phase>
                                 <goals>
+                                    <goal>repair</goal>
                                     <goal>migrate</goal>
                                 </goals>
                                 <configuration>

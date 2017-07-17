@@ -61,7 +61,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
@@ -212,7 +212,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                     final File file = fileStoreService.fetch(fsm, FILESTORE_MODULE_NAME);
                     final byte[] bFile = FileUtils.readFileToByteArray(file);
                     reportOutput.setReportOutputData(bFile);
-                    reportOutput.setReportFormat(FileFormat.PDF);
+                    reportOutput.setReportFormat(ReportFormat.PDF);
                 }
             }
 
@@ -237,7 +237,7 @@ public class BillGenerationAction extends PropertyTaxBaseAction {
                 PTMODULENAME);
         if ("Y".equalsIgnoreCase(clientSpecificDmdBill)) {
             DemandBillService demandBillService = (DemandBillService) beanProvider.getBean("demandBillService");
-            ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber);
+            ReportOutput reportOutput = demandBillService.generateDemandBill(indexNumber, NOTICE_TYPE_BILL);
             reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         } else {
             generateBill();

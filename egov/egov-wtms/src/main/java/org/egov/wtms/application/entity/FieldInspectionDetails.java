@@ -85,6 +85,11 @@ public class FieldInspectionDetails extends AbstractAuditable {
 
     @NotNull
     private double estimationCharges;
+    
+    private double supervisionCharges;
+    private double securityDeposit;
+    private double roadCuttingCharges;
+    private double applicationFee;
 
     @Override
     public Long getId() {
@@ -134,6 +139,38 @@ public class FieldInspectionDetails extends AbstractAuditable {
 
     public void setEstimationCharges(final double estimationCharges) {
         this.estimationCharges = estimationCharges;
+    }
+    
+    public double getSupervisionCharges() {
+        return supervisionCharges;
+    }
+
+    public void setSupervisionCharges(double supervisionCharges) {
+        this.supervisionCharges = supervisionCharges;
+    }
+
+    public double getSecurityDeposit() {
+        return securityDeposit;
+    }
+
+    public void setSecurityDeposit(double securityDeposit) {
+        this.securityDeposit = securityDeposit;
+    }
+
+    public double getRoadCuttingCharges() {
+        return roadCuttingCharges;
+    }
+
+    public void setRoadCuttingCharges(double roadCuttingCharges) {
+        this.roadCuttingCharges = roadCuttingCharges;
+    }
+
+    public double getApplicationFee() {
+        return applicationFee;
+    }
+
+    public void setApplicationFee(double applicationFee) {
+        this.applicationFee = applicationFee;
     }
 
 }

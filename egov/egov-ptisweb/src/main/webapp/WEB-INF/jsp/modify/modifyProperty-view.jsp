@@ -1,41 +1,41 @@
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~      accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~       Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~       The updated version of eGov suite of products as by eGovernments Foundation
+  ~       is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~       This program is free software: you can redistribute it and/or modify
+  ~       it under the terms of the GNU General Public License as published by
+  ~       the Free Software Foundation, either version 3 of the License, or
+  ~       any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~       This program is distributed in the hope that it will be useful,
+  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~       GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~       You should have received a copy of the GNU General Public License
+  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~       http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~       In addition to the terms of the GPL license to be adhered to in using this
+  ~       program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~           1) All versions of this program, verbatim or modified must carry this
+  ~              Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~           2) Any misrepresentation of the origin of the material is prohibited. It
+  ~              is required that all modified versions of this material be marked in
+  ~              reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~           3) This license does not grant any rights to any user of the program
+  ~              with regards to rights under trademark law for use of the trade names
+  ~              or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -115,14 +115,18 @@
 			
 			function loadOnStartUp() {
 				enableFieldsForPropTypeView();
-				enableAppartnaumtLandDetailsView();
 				enableOrDisableSiteOwnerDetails(jQuery('input[name="propertyDetail.structure"]'));
 				toggleFloorDetailsView();
 				showHideFirmName();
 				showHideLengthBreadth();
+				var userDesign = '<s:property value="%{currentDesignation}"/>';
+				if(userDesign == 'Commissioner') {
+					jQuery('#Forward').hide();
+				}
 			}
 
-			function enableDisableFirmName(obj){ 
+			function enableDisableFirmName(obj) { 
+				if(obj != null) {
 				var selIndex = obj.selectedIndex;
 				var selText = obj.options[selIndex].text; 
 				var rIndex = getRow(obj).rowIndex;
@@ -135,6 +139,7 @@
 				} else{
 					firmval.readOnly = false;
 				}
+			  }
 			}  
 
 			function showHideLengthBreadth(){
@@ -153,7 +158,8 @@
 		        }
 			}
 
-			function calculatePlintArea(obj){ 
+			function calculatePlintArea(obj) { 
+				if(obj != null) {
 				var rIndex = getRow(obj).rowIndex;
 				var tbl = document.getElementById('floorDetails');
 				var builtUpArea=getControlInBranch(tbl.rows[rIndex],'builtUpArea');
@@ -174,9 +180,11 @@
 					}else
 						builtUpArea.value="";
 				}
+			  }
 			}
 			
 			function enableDisableLengthBreadth(obj){ 
+				if(obj != null) {
 				var selIndex = obj.selectedIndex;
 				if(obj.value=='true'){
 						obj.value='true';
@@ -206,32 +214,18 @@
 						builtUpArea.readOnly = false;
 					}
 				}
-			}
-
-			function enableAppartnaumtLandDetailsView() {
-				if (document.forms[0].appurtenantLandChecked.checked == true) {
-					jQuery('tr.vacantlanddetaills').show();
-					jQuery('#appurtenantRow').show();
-					jQuery('tr.floordetails').show();
-					jQuery('tr.extentSite').hide();
-				} else {
-					enableFieldsForPropTypeView();
 				}
 			}
 
 			function enableFieldsForPropTypeView() {
 				var propType = '<s:property value="%{model.propertyDetail.propertyTypeMaster.type}"/>';
 				if (propType != "select") {
-					//onChangeOfPropertyTypeFromMixedToOthers(propType);
 					if (propType == "Vacant Land") {
 						jQuery('tr.floordetails').hide();
 						jQuery('tr.vacantlanddetaills').show();
 						jQuery('tr.construction').hide();
 						jQuery('tr.amenities').hide();
-						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').hide();
-						jQuery('tr.appurtenant').hide();
-					//	jQuery('tr.superStructureRow').hide();
 						jQuery("#apartment").prop('selectedIndex', 0);
 						jQuery('td.apartmentRow').hide();
 					} else {
@@ -239,10 +233,7 @@
 						jQuery('tr.vacantlanddetaills').hide();
 						jQuery('tr.construction').show();
 						jQuery('tr.amenities').show();
-						jQuery('#appurtenantRow').hide();
 						jQuery('tr.extentSite').show();
-						jQuery('tr.appurtenant').show();
-					//	jQuery('tr.superStructureRow').show();
 						jQuery('td.apartmentRow').show();
 					}
 				}
@@ -287,7 +278,7 @@
 			}				
 
 </script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+        <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/javascript/helper.js' context='/ptis'/>"></script>
 	</head>
 	<body onload="loadOnStartUp();">
@@ -334,6 +325,7 @@
 					        model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED) ||
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@REVENUE_OFFICER_DESGN.toUpperCase()) ||
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@BILL_COLLECTOR_DESGN.toUpperCase()) ||
+							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@TAX_COLLECTOR_DESGN.toUpperCase()) ||
 							((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
 							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
 							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED))}">
@@ -348,23 +340,20 @@
 							<%@ include file="../common/workflowHistoryView.jsp"%>
 						<tr>					
 					</s:if> 
-					<s:if test="%{(!(model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING)
-					     || model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)) ||
-						((userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@JUNIOR_ASSISTANT.toUpperCase()) || 
-							userDesignationList.toUpperCase().contains(@org.egov.ptis.constants.PropertyTaxConstants@SENIOR_ASSISTANT.toUpperCase()))
-							&& model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_DIGITALLY_SIGNED)))}">
+					<s:if test="%{(currentDesignation != null && !@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())) ||
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_REJECTED) ||
+					   model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NEW)}">
 						<tr>
 							 <%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
 						</tr>
 					</s:if>
-					<s:if test="%{model.state.nextAction.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVAL_PENDING) ||
-					    model.state.value.endsWith(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_COMMISSIONER_APPROVED)}">
+					<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}">
 						<div id="workflowCommentsDiv" align="center">
 					         <table width="100%">
 								<tr>
 						        	<td width="10%" class="bluebox">&nbsp;</td>
 						           	<td width="20%" class="bluebox">&nbsp;</td>
-						           	<td class="bluebox" width="13%">Approver Remarks: </td>
+						           	<td class="bluebox" width="13%">Remarks: </td>
 						           	<td class="bluebox"> 
 						           		<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
 						           	</td>
@@ -388,5 +377,7 @@
 				</div>
 			</s:push>
 		</s:form>
+	<%@ include file="../workflow/commontaxcalc-details.jsp"%>
+	<script type="text/javascript" src="<cdn:url value='/resources/javascript/tax-calculator.js?rnd=${app_release_no}'/>"></script>
 	</body>
 </html>

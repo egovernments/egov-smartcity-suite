@@ -51,7 +51,7 @@ function getUsersByDesignationAndDept() {
 function callAlertForDepartment() {
     var value=document.getElementById("approverDepartment").value;
 	if(value=="-1") {
-		bootbox.alert("Please select the Approver Department");
+		bootbox.alert("Please select the Department");
 		document.getElementById("approverDepartment").focus();
 		return false;
 	}
@@ -60,13 +60,13 @@ function callAlertForDepartment() {
 function callAlertForDesignation() {
 	var value=document.getElementById("approverDesignation").value;
 	if(value=="-1") {
-		bootbox.alert("Please select the approver designation");
+		bootbox.alert("Please select the Designation");
 		document.getElementById("approverDesignation").focus();
 		return false;
 	}
 }
 	
-function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue) {
+function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValue,amountRuleValue,additionalRuleValue,pendingActionsValue,currentDesignation) {
 	  var designationObj =document.getElementById('approverDesignation');
 	  designationObj.options.length = 0;
 	  designationObj.options[0] = new Option("----Choose----","-1");
@@ -74,7 +74,7 @@ function loadDesignationByDeptAndType(typeValue,departmentValue,currentStateValu
 	  approverObj.options.length = 0;
 	  approverObj.options[0] = new Option("----Choose----","-1");
 	  populateapproverDesignation({departmentRule:departmentValue,type:typeValue,amountRule:amountRuleValue,additionalRule:additionalRuleValue,
-	  													currentState:currentStateValue,pendingAction:pendingActionsValue});
+	  													currentState:currentStateValue,pendingAction:pendingActionsValue,designation:currentDesignation});
 }
 
 function loadDesignationFromMatrix() {
@@ -85,7 +85,8 @@ function loadDesignationFromMatrix() {
 	var additionalRule = dom.get('additionalRule').value;
 	var pendingAction = document.getElementById('pendingActions').value;
 	var stateType = '<s:property value="%{stateType}"/>';
-	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction); 
+	var currentDesignation = document.getElementById('currentDesignation').value;
+	loadDesignationByDeptAndType(stateType,dept,currentState,amountRule,additionalRule,pendingAction,currentDesignation); 
 }
 
 function populateApprover() {
@@ -95,7 +96,7 @@ function populateApprover() {
 function setDesignation() {
 	document.getElementById("approverDesignation").value = '<s:property value="%{approverDesignation}"/>';
 	populateApprover();
-}
+} 
 
 function setApprover() {
 	document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';
@@ -114,7 +115,10 @@ function setApprover() {
 <s:hidden id="workFlowDepartment" name="workFlowDepartment" value="%{workFlowDepartment}"/>
 <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
 <s:hidden id="approverName" name="approverName" />
-
+<br>
+	<s:checkbox name="applicationCheck" id="applicationCheck" value="%{applicationCheck}" cssClass="applicationcheckbox"/>
+			<span style="font-size: 15px; color: red"> <s:text
+					name="lbl.validation.checkbox" /> <br>
 <s:if test="%{#request.approverOddTextCss==null}">
       <c:set var="approverOddTextCss" value="greybox" scope="request"/>
        <c:set var="approverOddCSS" value="greybox" scope="request"/>
@@ -134,7 +138,7 @@ function setApprover() {
 	</tr>
 	  	<tr>   
 	  	 	 <td class="${approverOddCSS}" width="5%">&nbsp;</td>
-			 <td class="${approverOddCSS}" id="deptLabel" width="14%"><s:text name="wf.approver.department"/>:</td>
+			 <td class="${approverOddCSS}" id="deptLabel" width="5%"><s:text name="wf.approver.department"/>:</td>
 			 <td class="${approverOddTextCss}" width="14%">
 				<s:select name="approverDepartment" id="approverDepartment" list="dropdownData.approverDepartmentList" 
 					listKey="id" listValue="name" headerKey="-1" headerValue="----Choose----"  
@@ -143,14 +147,14 @@ function setApprover() {
 				<egov:ajaxdropdown fields="['Text','Value']" url="workflow/ajaxWorkFlow-getDesignationsByObjectType.action" id="approverDesignation" dropdownId="approverDesignation" 
 					contextToBeUsed="/eis" afterSuccess="setDesignation();"/>
 			</td>
-			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver.designation"/>:</td>
+			<td class="${approverOddCSS}" width="5%"><s:text name="wf.approver.designation"/>:</td>
 			<td class="${approverOddTextCss}" width="14%">
 				<s:select id="approverDesignation" name="approverDesignation" list="dropdownData.designationList" listKey="designationId" headerKey="-1" listValue="designationName" headerValue="----Choose----" 
 					onchange="populateApprover();" onfocus="callAlertForDepartment();" cssClass="dropDownCss" />
 				<egov:ajaxdropdown id="approverPositionId" fields="['Text','Value']" dropdownId="approverPositionId" 
 					url="workflow/ajaxWorkFlow-getPositionByPassingDesigId.action" contextToBeUsed="/eis" afterSuccess="setApprover();"/>
 			</td>
-			<td class="${approverOddCSS}" width="14%"><s:text name="wf.approver"/>:</td>
+			<td class="${approverOddCSS}" width="5%"><s:text name="wf.approver"/>:</td>
 			<td class="${approverOddTextCss}" width="14%">
 			  	<s:select id="approverPositionId"  name="approverPositionId" list="dropdownData.approverList" headerKey="-1" headerValue="----Choose----" listKey="id" listValue="firstName"  onfocus="callAlertForDesignation();" 
 			  			value="%{approverPositionId}" cssClass="dropDownCss" /></td> 
@@ -164,14 +168,26 @@ function setApprover() {
          <table width="100%">
          <tr>
            <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
-           <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
-           <td class="${approverEvenCSS}" width="13%"><s:text name="wf.approver.remarks"/>: </td>
-           <td class="${approverEvenTextCSS}"> 
-           	<textarea id="approverComments" name="approverComments" rows="2" cols="35" ></textarea>  
+           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+           <td class="${approverEvenCSS}" width="5%"><s:text name="wf.approver.remarks"/>: </td>
+           <td style="width: 25%;" class="${approverEvenTextCSS}"> 
+           	<textarea id="approverComments" class="form-control" name="approverComments" maxlength="1024" rows="2" cols="70" ></textarea>  
            </td>
            <td class="${approverEvenCSS}">&nbsp;</td>
-           <td width="10%" class="${approverEvenCSS}">&nbsp;</td>
+           <td width="20%" class="${approverEvenCSS}">&nbsp;</td>
            <td  class="${approverEvenCSS}">&nbsp;</td>
            </tr>
          </table>
+         <table>
+         <tr>
+          <td>
+         <font size="1" color="red">
+         <div style="text-align: right;">
+         &nbsp;&nbsp;&nbsp;&nbsp;
+         <s:text name="commentsMaxLength" />
+         </div>
+         </td>
+         </tr>
+         </table>
+         
   </div>       

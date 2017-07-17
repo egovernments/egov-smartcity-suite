@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -65,6 +66,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
@@ -122,7 +125,15 @@ public class ChangeOfUseController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam final String workFlowAction,
             final BindingResult errors) {
-
+        final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
+        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        if (!isCSCOperator && !citizenPortalUser) {
+            final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
+                    .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
+            if (!isJuniorAsstOrSeniorAsst)
+                throw new ValidationException("err.creator.application");
+        }
         final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(changeOfUse.getConnection().getConsumerCode(),
@@ -153,7 +164,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                     applicationDocs.add(applicationDocument);
                 i++;
             }
-        waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse, resultBinder);
+        waterConnectionDetailsService.validateWaterRateAndDonationHeader(changeOfUse);
         if (resultBinder.hasErrors()) {
             final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                     .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
@@ -190,10 +201,12 @@ public class ChangeOfUseController extends GenericConnectionController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
-        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
                     .getPropertyIdentifier());
-            if (userPosition == null) {
+            if (userPosition != null) {
+                approvalPosition = userPosition.getId();
+            } else{
                 final WaterConnectionDetails parentConnectionDetails = waterConnectionDetailsService
                         .getActiveConnectionDetailsByConnection(changeOfUse.getConnection());
                 loadBasicData(model, parentConnectionDetails, changeOfUse, changeOfUse);
@@ -205,12 +218,17 @@ public class ChangeOfUseController extends GenericConnectionController {
                 model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
+                model.addAttribute("noJAORSAMessage" ,"No JA/SA exists to forward the application.");
                 return "changeOfUse-form";
-            } else
-                approvalPosition = userPosition.getId();
+        }
         }
 
         changeOfUse.setApplicationDate(new Date());
+        if(citizenPortalUser){
+            if (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString()))
+                changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+        }
+
         changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
                 .getApplicationType().getCode(), workFlowAction,sourceChannel);
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
@@ -230,7 +248,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 + waterTaxUtils.getApproverName(approvalPosition) + ","
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
                 + (nextDesign != null ? nextDesign : "");
-        return "redirect:/application/application-success?pathVars=" + pathVars;
+        return "redirect:/application/citizeenAcknowledgement?pathVars=" + changeOfUse.getApplicationNumber();
     }
 
     private void loadBasicData(final Model model, final WaterConnectionDetails parentConnectionDetails,
@@ -263,6 +281,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("usageTypes", usageTypeService.getActiveUsageTypes());
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
+        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
     }
 
 }

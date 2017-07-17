@@ -27,18 +27,22 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Install [maven v3.2.x][Maven]
 * Install [PostgreSQL v9.4][PostgreSQL]
 * Install [Elastic Search v2.4.x][Elastic Search]
-* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Jboss Wildfly v10.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
-* Install [JDK 8 update 92 or higher][JDK8 build]
+* Install [JDK 8 update 112 or higher][JDK8 build]
 
 #### Database Setup
-Create a database and user in postgres
+1. Create a database and user in postgres
+2. Create a schema called `generic`
+3. Execute `ALTER ROLE <your_login_role> SET search_path TO generic,public;`
 
 #### Elastic Search Setup
 Elastic seach server properties needs to be configured in `elasticsearch.yml` under `<ELASTICSEARCH_INSTALL_DIR>/config`
 ```properties
-cluster.name: elasticsearch-<username> ## Your local elasticsearch clustername, DO NOT use default clustername
-transport.tcp.port: 9300 ## This is the default port
+## Your local elasticsearch clustername, DO NOT use default clustername
+cluster.name: elasticsearch-<username>
+## This is the default port
+transport.tcp.port: 9300
 
 ```
 NB: `<username>` user name of the loggedin system, enter the below command in terminal to find the username.
@@ -57,18 +61,21 @@ $ git checkout develop
 2. Change directory to `<CLONED_REPO_DIR>/egov/egov-config/src/main/resources/config/` and create a file called `egov-erp-<username>.properties` and enter the following values based on your environment config.
 
  ```properties
- elasticsearch.hosts=localhost ##comma separated list of host names 
+ ##comma separated list of host names 
+ elasticsearch.hosts=localhost
  elasticsearch.port=9300
  elasticsearch.cluster.name=elasticsearch-<username>
-
- mail.enabled=false ##Enables or disabled email sending, this is disabled by default
+ 
+ ##Enables or disabled email sending, this is disabled by default
+ mail.enabled=false
  mail.port=465
  mail.host=smtp.gmail.com
  mail.protocol=smtps
  mail.sender.username=abc123@gmail.com
  mail.sender.password=12345
-
- sms.enabled=false  ##Enables or disables SMS sending, this is disabled by default
+ 
+ ##Enables or disables SMS sending, this is disabled by default
+ sms.enabled=false
  sms.provider.url=http://some.sms.provider.url
  sms.sender.username=sms_username
  sms.sender.password=sms_user_password
@@ -93,8 +100,10 @@ $ git checkout develop
 #eg:401=Invalid Username or Password
 
  ```
-One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
+ One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
+
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
+
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
  ```bash
@@ -120,8 +129,10 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
  to control the redis server host and port use the following property values (only required if installed with non default).
 
  ```properties
- redis.host.name=<your_redis_server_host> ## localhost by default
- redis.host.port=<your_redis_server_port> ## 6379 by default
+ ## Replace <your_redis_server_host> with your redis host, localhost by default
+ redis.host.name=<your_redis_server_host>
+ ## Replace <your_redis_server_port> with your redis port, 6379 by default
+ redis.host.port=<your_redis_server_port>
  ```
 
 #### Deploying Application
@@ -212,9 +223,9 @@ This section gives more details regarding developing and contributing to eGov su
 * Install [maven >= v3.2.x][Maven]
 * Install [PostgreSQL >= v9.4 ][PostgreSQL]
 * Install [Elastic Search >= v2.4.x][Elastic Search]
-* Install [Jboss Wildfly v10.0.x][Wildfly Customized]
+* Install [Jboss Wildfly v10.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
-* Install [JDK 8 update 92 or later][JDK8 build]
+* Install [JDK 8 update 112 or later][JDK8 build]
 
 __Note__: Please check in [eGov Tools Repository] for any of the above software installables before downloading from internet.
 
@@ -270,7 +281,7 @@ Browser:-
 [Git]: https://git-scm.com/downloads
 [JDK8 build]: http://www.oracle.com/technetwork/java/javase/downloads
 [eGov Opensource JIRA]: http://issues.egovernments.org/browse/PHOENIX
-[Wildfly Customized]: http://downloads.egovernments.org/wildfly-10.0.0.Final.zip
+[Wildfly Customized]: http://devops.egovernments.org/downloads/wildfly/wildfly-latest.zip
 [Eclipse Mars]: https://eclipse.org/downloads/packages/release/Mars/M1
 [Elastic Search]: https://download.elasticsearch.org/elasticsearch/elasticsearch/elasticsearch-2.4.1.zip
 [Spring Profiles]: http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-environment
@@ -280,8 +291,8 @@ Browser:-
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
-[GHPAGE]:http://egovernments.github.io/eGov/
+[GHPAGE]:https://egovernments.org/solutions.php
 [versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
 [versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
 [codacy]:https://www.codacy.com/app/egovernments/eGov
-[codacy img]:https://api.codacy.com/project/badge/Grade/5415cc7717a349c3a72c349a24dace35
+[codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987

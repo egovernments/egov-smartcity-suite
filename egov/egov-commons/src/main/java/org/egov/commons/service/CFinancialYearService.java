@@ -40,13 +40,6 @@
 
 package org.egov.commons.service;
 
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.repository.CFinancialYearRepository;
@@ -55,14 +48,15 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class CFinancialYearService {
 
     private final CFinancialYearRepository cFinancialYearRepository;
-
-    @PersistenceContext
-    private EntityManager entityManager;
 
     @Autowired
     public CFinancialYearService(final CFinancialYearRepository cFinancialYearRepository) {
@@ -83,6 +77,10 @@ public class CFinancialYearService {
         return cFinancialYearRepository.findAll(new Sort(Sort.Direction.ASC, "finYearRange"));
     }
 
+    public List<CFinancialYear> getAllFinancialYears() {
+        return cFinancialYearRepository.getAllFinancialYears();
+    }
+
     public CFinancialYear findOne(final Long id) {
         return cFinancialYearRepository.findOne(id);
     }
@@ -91,7 +89,7 @@ public class CFinancialYearService {
         if (cFinancialYear.getFinYearRange() != null)
             return cFinancialYearRepository.findByFinancialYearRange(cFinancialYear.getFinYearRange());
         else
-            return cFinancialYearRepository.findAll();
+            return findAll();
     }
 
     public Date getNextFinancialYearStartingDate() {
@@ -107,20 +105,27 @@ public class CFinancialYearService {
     }
 
     public CFinancialYear getFinancialYearByDate(Date date) {
-    	return cFinancialYearRepository.getFinancialYearByDate(date);
+        return cFinancialYearRepository.getFinancialYearByDate(date);
     }
 
     public List<CFinancialYear> getFinancialYearNotClosed() {
         return cFinancialYearRepository.findByIsClosedFalseOrderByFinYearRangeDesc();
     }
 
-    public CFinancialYear findByFinYearRange(String finYearRange){
+    public CFinancialYear getFinacialYearByYearRange(String finYearRange) {
         return cFinancialYearRepository.findByFinYearRange(finYearRange);
     }
 
-    public List<CFinancialYear> getFinancialYears(List<Long> financialYearList)
-    {
+    public List<CFinancialYear> getFinancialYears(List<Long> financialYearList) {
         return cFinancialYearRepository.findByIdIn(financialYearList);
     }
+
+    public CFinancialYear getPreviousFinancialYearForDate(Date date) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        cal.add(Calendar.YEAR, -1);
+        return cFinancialYearRepository.getFinancialYearByDate(cal.getTime());
+    }
+
 
 }

@@ -51,36 +51,28 @@
 	<tr>
 		<td colspan="5">
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
-			<s:if test="%{hearings == null}"> <s:set var="hearingIdx" value="0"/></s:if>
-				<s:elseif test="%{state.text1.equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@OBJECTION_HEARINGDATE_SAVED)}">  <s:set var="hearingIdx" value="%{hearings.size()-1}"/> </s:elseif>
-				<s:else>  <s:set var="hearingIdx" value="%{hearings.size()}"/>  </s:else>
 				<tr>
-				
-					<td class="bluebox" width="25%"> <s:text name="objection.planned.hearingDate" />
-						<span class="mandatory1">*</span> &nbsp;
-								<s:hidden name="objection.hearings[%{hearingIdx}].id" id="objection.hearings[%{hearingIdx}].id"/>	
-													
-						<s:textfield name="objection.hearings[%{hearingIdx}].plannedHearingDt" cssClass="datepicker" value="%{#plannedHearingDtId}" autocomplete="off"
-				id="plannedHearingDtId" size="12" maxlength="12"></s:textfield>
-				
-						
+					<td class="bluebox" width="25%">
+						<s:text name="objection.planned.hearingDate"/><span class="mandatory1">*</span> &nbsp;
+						<s:hidden name="objection.hearings[0].id" id="objection.hearings[0].id"/>	
+						<s:textfield name="objection.hearings[0].plannedHearingDt" cssClass="datepicker" value="%{#plannedHearingDtId}" autocomplete="off"
+							id="plannedHearingDtId" size="12" maxlength="12"></s:textfield>
 					</td>
 				
 					<td class="bluebox" width="25%" colspan="1">&nbsp;&nbsp;<s:text name="objection.planned.hearingTime" />
 						<span class="mandatory1">*</span>&nbsp;
 						<s:select headerKey="" headerValue="%{getText('default.select')}"
-						name="objection.hearings[%{hearingIdx}].hearingTime"
+						name="objection.hearings[0].hearingTime"
 						listKey="key" listValue="value" list="hearingTimingMap"  id="hearingTime"
-						value="%{objection.hearings[%{hearingIdx}].hearingTime}"
+						value="%{objection.hearings[0].hearingTime}"
 						 cssClass="selectnew" cssStyle="width:30%"  
 						data-optional="0" data-errormsg="Hearing time is required!"/>
-						
 					</td>
 					<td class="bluebox" width="10%">
 						<s:text name="objection.planned.hearingVenue" />
 						<span class="mandatory1">*</span>&nbsp;
-						<s:textfield name="objection.hearings[%{hearingIdx}].hearingVenue"
-							id="hearingVenue" value="%{objection.hearings[%{hearingIdx}].hearingVenue}" maxlength="125"
+						<s:textfield name="objection.hearings[0].hearingVenue"
+							id="hearingVenue" value="%{objection.hearings[0].hearingVenue}" maxlength="125"
 							size="30" />
 					</td>
 				</tr>

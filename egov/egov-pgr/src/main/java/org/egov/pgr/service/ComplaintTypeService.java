@@ -40,7 +40,7 @@
 
 package org.egov.pgr.service;
 
-import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
@@ -62,6 +62,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -115,6 +116,7 @@ public class ComplaintTypeService {
         return complaintTypeRepository.getOne(id);
     }
 
+    @ReadOnly
     public Page<ComplaintType> getListOfComplaintTypes(final Integer pageNumber, final Integer pageSize) {
         final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
         return complaintTypeRepository.findAll(pageable);
@@ -125,6 +127,7 @@ public class ComplaintTypeService {
      *
      * @return complaint Type list
      */
+    @ReadOnly
     public List<ComplaintType> getFrequentlyFiledComplaints() {
 
         DateTime previousDate = new DateTime();
@@ -140,7 +143,7 @@ public class ComplaintTypeService {
         criteria.add(Restrictions.eq("compType.isActive", Boolean.TRUE));
         criteria.setMaxResults(5).addOrder(Order.desc("count"));
         final List<Object> resultList = criteria.list();
-        final List<ComplaintType> complaintTypeList = new ArrayList<ComplaintType>();
+        final List<ComplaintType> complaintTypeList = new ArrayList<>();
 
         for (final Object row : resultList) {
             final Object[] columns = (Object[]) row;
@@ -155,11 +158,14 @@ public class ComplaintTypeService {
         return complaintTypeRepository.findByCode(code);
     }
 
-    public List<Department> getAllComplaintTypeDepartments() {
-        return complaintTypeRepository.findAllComplaintTypeDepartments();
-    }
-
     public List<ComplaintType> findActiveComplaintTypes() {
         return complaintTypeRepository.findByIsActiveTrueOrderByNameAsc();
+    }
+
+    public List<String> getActiveComplaintTypeCode() {
+        return findActiveComplaintTypes()
+                .stream()
+                .map(ComplaintType::getCode)
+                .collect(Collectors.toList());
     }
 }

@@ -50,27 +50,48 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator{
-	
-	private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
-	
-	@Autowired
+public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
+
+    private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
+
+    @Autowired
     private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
-	@Override
-	public String generateNoticeNumber(String noticeType) {
-		String noticeNumber = "";
-		if(StringUtils.isNotBlank(noticeType)){
-			String noticeTypeCode = "";
-			if (noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE)) 
-				noticeTypeCode = "SN";
-        	else if(noticeType.equalsIgnoreCase(PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE))
-        		noticeTypeCode = "MC";
-        	
-			final String sequenceName = SEQ_EGPT_NOTICE_NUMBER;
-	        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-	        noticeNumber = String.format("%s/%s%06d",noticeTypeCode,ApplicationThreadLocals.getCityCode(), nextSequence);
-		}
-		return noticeNumber;
-	}
+    @Override
+    public String generateNoticeNumber(final String noticeType) {
+        String noticeNumber = "";
+        if (StringUtils.isNotBlank(noticeType)) {
+            String noticeTypeCode = "";
+            if (PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "SN";
+            else if (PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "MC";
+            else if (PropertyTaxConstants.NOTICE_TYPE_ESD.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "ESD";
+            else if (PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "RP";
+            else if (PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "GRP";
+            else if (PropertyTaxConstants.NOTICE_TYPE_REVISIONPETITION_HEARINGNOTICE.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "HN";
+            else if (PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "VR";
+            else if (PropertyTaxConstants.NOTICE_TYPE_INVENTORY.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "IN";
+            else if (PropertyTaxConstants.NOTICE_TYPE_DISTRESS.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "DN";
+            else if (PropertyTaxConstants.NOTICE_TYPE_EXEMPTION.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "EX";
+            else if (PropertyTaxConstants.VALUATION_CERTIFICATE.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "VC";
+            else if (PropertyTaxConstants.NOTICE_TYPE_OC.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "OC";
+            else if (PropertyTaxConstants.NOTICE_TYPE_OCCUPIER.equalsIgnoreCase(noticeType))
+                noticeTypeCode = "ON";
+            final String sequenceName = SEQ_EGPT_NOTICE_NUMBER;
+            final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+            noticeNumber = String.format("%s/%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(), nextSequence);
+        }
+        return noticeNumber;
+    }
 }

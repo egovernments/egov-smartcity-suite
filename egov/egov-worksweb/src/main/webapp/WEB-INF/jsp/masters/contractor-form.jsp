@@ -45,35 +45,6 @@
 </style>
 
 <script type="text/javascript">
-function checkPanNumber() {
-	var panNumber = document.getElementById('panNumber').value.length;
-    if(panNumber<10 && panNumber!='')
-        {
-    	showMessage('contractor_error', '<s:text name="contractor.panNumber.length" />');
-        window.scroll(0,0);
-        return false;
-        }
-    return true;
-}
-function validateContractorFormAndSubmit() {
-	if(!checkPanNumber())
-		return false;
-	clearMessage('contractor_error');
-	links=document.contractor.getElementsByTagName("span");
-	errors=false;
-	for(i=0;i<links.length;i++) {
-        if(links[i].innerHTML=='&nbsp;x' && links[i].style.display!='none'){
-            errors=true;
-            break;
-        }
-    }
-    
-    if(errors) {
-        dom.get("contractor_error").style.display='';
-    	document.getElementById("contractor_error").innerHTML='<s:text name="contractor.validate_x.message" />';
-    	return false;
-    }
-}
 var departmentDropdownOptions=[{label:"--- Select ---", value:"0"},
     <s:iterator var="s" value="dropdownData.departmentList" status="status">  
     {"label":"<s:property value="%{name}"/>" ,
@@ -97,6 +68,14 @@ var statusDropdownOptions=[
     }<s:if test="!#status.last">,</s:if>
     </s:iterator>       
     ]
+
+var categoryDropdownOptions=[{label:"--- Select ---", value:"0"},
+	<s:iterator var="s" value="dropdownData.contractorDetailsCategoryValues" status="status">   
+	{"label":"<s:text name="%{s}"/>" ,
+		"value":"<s:text name="%{s}" />"
+	}<s:if test="!#status.last">,</s:if>
+	</s:iterator>       
+	]
      
 function createTextBoxFormatter(size,maxlength) {
 	var textboxFormatter = function(el, oRecord, oColumn, oData) {
@@ -109,7 +88,21 @@ function createTextBoxFormatter(size,maxlength) {
 	return textboxFormatter;	
 }
 
+function categorySelectDropDownFormatter(){
+	var selectFormatter = function(el,oRecord,oColumn,oDate){
+		var fieldName = "contractorCategorydetails[" + oRecord.getCount() + "]." +  oColumn.getKey();
+		var id = oColumn.getKey()+oRecord.getId();
+		
+		markup = "<select name = '"+fieldName+"' id = '"+id+"'>\
+					<option value = '0'>---Select---</option>\
+					</select>";
+		el.innerHTML = markup;
+	}
+	return selectFormatter;
+}
+
 var regNoTextboxFormatter= createTextBoxFormatter(11,50);
+var categorySelectFormatter = categorySelectDropDownFormatter();
 
 var dateFormatter = function(e2, oRecord, oColumn, oData) {
 	var fieldName = "actionContractorDetails[" + oRecord.getCount() + "].validity." +  oColumn.getKey();
@@ -133,9 +126,22 @@ function createHiddenFormatter(el, oRecord, oColumn){
 	}
 	return hiddenFormatter;
 }
+
+function createCategoryHiddenFormatter(el, oRecord, oColumn){
+	var hiddenFormatter = function(el, oRecord, oColumn, oData) {
+	    var value = (YAHOO.lang.isValue(oData))?oData:"";
+	    var id=oColumn.getKey()+oRecord.getId();
+	    var fieldName = "actionContractorDetails[" + oRecord.getCount() + "]." + oColumn.getKey();
+	    markup="<input type='hidden' id='"+id+"' name='"+fieldName+"' value='"+value+"'/>";
+	    el.innerHTML = markup;
+	}
+	return hiddenFormatter;
+}
+
 var departmentIdHiddenFormatter= createHiddenFormatter(5,5);
 var gradeIdHiddenFormatter= createHiddenFormatter(5,5);
 var statusIdHiddenFormatter= createHiddenFormatter(5,5);
+var categoryHiddenFormatter = createCategoryHiddenFormatter(5,5);
 
 var contractorDataTable;
 var makeContractorDataTable = function() {
@@ -144,13 +150,15 @@ var makeContractorDataTable = function() {
 		{key:"department", hidden:true, formatter:departmentIdHiddenFormatter, sortable:false, resizeable:false},
 		{key:"grade", hidden:true, formatter:gradeIdHiddenFormatter, sortable:false, resizeable:false},
 		{key:"status", hidden:true, formatter:statusIdHiddenFormatter, sortable:false, resizeable:false},
+		{key:"category", hidden:true, formatter:categoryHiddenFormatter, sortable:false, resizeable:false},
 		{key:"SlNo", label:'Sl No', sortable:false, resizeable:false},
-		{key:"departmentName", label:'<span class="mandatory1">*</span><s:text name="contractor.department"/>', formatter:"dropdown",dropdownOptions:departmentDropdownOptions, sortable:false, resizeable:false},	
-		{key:"registrationNumber", label:'<s:text name="contractor.registrationNo"/>', formatter:regNoTextboxFormatter, sortable:false, resizeable:false},		
-		{key:"gradeName", label:'<s:text name="contractor.grade" />',formatter:createDropdownFormatter('contractorGradedetails','id'), dropdownOptions:gradeDropdownOptions, sortable:false, resizeable:false},			
-		{key:"statusDesc", label:'<span class="mandatory1">*</span><s:text name="contractor.status" />',formatter:createDropdownFormatter('contractorStatusdetails','id'),dropdownOptions:statusDropdownOptions, sortable:false, resizeable:false},		
-		{key:"startDate", label:'<span class="mandatory1">*</span><s:text name="contractor.fromDate" />', formatter:dateFormatter,sortable:false, resizeable:false},
-		{key:"endDate",label:'<s:text name="contractor.toDate"/>', formatter:dateFormatter,sortable:false, resizeable:false},
+		{key:"departmentName", label:'<label for="department"><s:text name="contractor.department"/><span class="mandatory1">*</span>', formatter:"dropdown",dropdownOptions:departmentDropdownOptions, sortable:false, resizeable:false},	
+		{key:"registrationNumber", label:'<label for="registrationNumber"><s:text name="contractor.registrationNo"/></label>', formatter:regNoTextboxFormatter, sortable:false, resizeable:false},		
+		{key:"categoryName", label:'<label for="category"><s:text name="contractor.category" /></label>',formatter:"dropdown",dropdownOptions:categoryDropdownOptions,sortable:false, resizeable:false},
+		{key:"gradeName", label:'<label for="grade"><s:text name="contractor.grade" /></label>',formatter:createDropdownFormatter('contractorGradedetails','id'), dropdownOptions:gradeDropdownOptions, sortable:false, resizeable:false},			
+		{key:"statusDesc", label:'<label for="status"><s:text name="contractor.status" /><span class="mandatory1">*</span>',formatter:createDropdownFormatter('contractorStatusdetails','id'),dropdownOptions:statusDropdownOptions, sortable:false, resizeable:false},		
+		{key:"startDate", label:'<label for="fromDate"><s:text name="contractor.fromDate" /><span class="mandatory1">*</span>', formatter:dateFormatter,sortable:false, resizeable:false},
+		{key:"endDate",label:'<label for="toDate"><s:text name="contractor.toDate"/>', formatter:dateFormatter,sortable:false, resizeable:false},
 		{key:'deleteRow',label:'<s:text name="contractorDetails.row.delete"/>',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}  
 	];
 	
@@ -184,9 +192,13 @@ var makeContractorDataTable = function() {
     	    var selectedIndex=oArgs.target.selectedIndex; 
         	this.updateCell(record,this.getColumn('status'),statusDropdownOptions[selectedIndex].value);
         }
+        if(column.key=='categoryName'){
+    	    var selectedIndex=oArgs.target.selectedIndex; 
+        	this.updateCell(record,this.getColumn('category'),categoryDropdownOptions[selectedIndex].value);
+        }
 	});
 	
-	contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});	
+	contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value,department:"${defaultDepartmentId}"});	
 	dom.get("status"+contractorDataTable.getRecordSet().getRecord(0).getId()).value=statusDropdownOptions[0].value;
 
 	return {
@@ -194,7 +206,6 @@ var makeContractorDataTable = function() {
 	    oDT: contractorDataTable
 	};  
 }
-
 </script>
 
 <div class="errorstyle" id="contractor_error" class="alert alert-danger" style="display: none;"></div>
@@ -207,16 +218,25 @@ var makeContractorDataTable = function() {
 		<div class="panel-title"></div>
 	</div>
 	<div class="panel-body">
-
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
-					name="contractor.code" /><span class="mandatory"></span>
-			</label>
-			<div class="col-sm-3 add-margin">
-				<s:textfield name="code" disabled="%{sDisabled}" id="code"
-					maxlength="50" cssClass="form-control" value="%{code}" />
-			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<s:if test="%{contractorCodeAutoGeneration && mode=='edit'}">
+				<label class="col-sm-2 control-label text-right" for="code"> <s:text
+						name="contractor.code" /></span>
+				</label>
+				<div class="col-xs-3 add-margin view-content">
+					<s:property value="%{code}" />
+				</div>
+			</s:if>
+			<s:else>
+				<label class="col-sm-2 control-label text-right" for="code"> <s:text
+						name="contractor.code" /><span class="mandatory"></span>
+				</label>
+				<div class="col-sm-3 add-margin">
+					<s:textfield name="code" disabled="%{sDisabled}"
+						maxlength="50" cssClass="form-control" value="%{code}" />
+				</div>
+			</s:else>
+			<label class="col-sm-2 control-label text-right" for="name"> <s:text
 					name="contractor.name" /><span class="mandatory"></span>
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -226,32 +246,32 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="correspondenceAddress" > <s:text
 					name="contractor.correspondenceAddress" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textarea name="correspondenceAddress" cols="35"
-					cssClass="form-control" id="correspondenceAddress"
-					value="%{correspondenceAddress}" />
+					cssClass="form-control textfieldsvalidate" id="correspondenceAddress"
+					value="%{correspondenceAddress}" maxlength = "250" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="paymentAddress"> <s:text
 					name="contractor.paymentAddress" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textarea name="paymentAddress" cols="35" cssClass="form-control"
-					id="paymentAddress" value="%{paymentAddress}" />
+				<s:textarea name="paymentAddress" cols="35" cssClass="form-control textfieldsvalidate"
+					id="paymentAddress" value="%{paymentAddress}" maxlength = "250" />
 			</div>
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="contactPerson"> <s:text
 					name="contractor.contactPerson" />
 			</label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-sm-3 add-margin contactPerson"> 
 				<s:textfield name="contactPerson" id="contactPerson" size="40"
 					maxlength="100" cssClass="form-control" value="%{contactPerson}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="email"> <s:text
 					name="contractor.email" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -261,24 +281,31 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="narration"> <s:text
 					name="contractor.narration" />
 			</label>
 			<div class="col-sm-3 add-margin">
-				<s:textarea name="narration" cols="35" cssClass="form-control"
-					id="narration" value="%{narration}" />
+				<s:textarea name="narration" cols="35" cssClass="form-control textfieldsvalidate"
+					id="narration" value="%{narration}" maxlength = "250" />
+			</div>
+			<label class="col-sm-2 control-label text-right" for="mobileNumber"> <s:text
+					name="depositworks.applicant.mobile" />
+			</label>
+			<div class="col-sm-3 add-margin">
+				<s:textfield name="mobileNumber" id="mobileNumber" maxlength="10"
+					cssClass="form-control" value="%{mobileNumber}" />
 			</div>
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="panNumber"> <s:text
 					name="contractor.panNo" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textfield name="panNumber" id="panNumber" maxlength="10"
 					cssClass="form-control" value="%{panNumber}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="tinNumber"> <s:text
 					name="contractor.tinNo" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -288,16 +315,16 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="bank"> <s:text
 					name="contractor.bank" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:select headerKey="-1" headerValue="select"
-					list="dropdownData.bankList" name="bank" id="bank"
-					cssClass="form-control" listKey="id" listValue="name"
-					value="%{bank.id}" />
+				list="dropdownData.bankList" name="bank.id" id="bank"
+				cssClass="form-control" listKey="id" listValue="name"
+				value="%{bank.id}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="ifscCode"> <s:text
 					name="contractor.ifscCode" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -307,14 +334,14 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="bankAccount"> <s:text
 					name="contractor.bankAccount" />
 			</label>
 			<div class="col-sm-3 add-margin">
 				<s:textfield name="bankAccount" id="bankAccount" maxlength="22"
 					size="24" cssClass="form-control" value="%{bankAccount}" />
 			</div>
-			<label class="col-sm-2 control-label text-right"> <s:text
+			<label class="col-sm-2 control-label text-right" for="pwdApprovalCode"> <s:text
 					name="contractor.pwdApprovalCode" />
 			</label>
 			<div class="col-sm-3 add-margin">
@@ -324,7 +351,7 @@ var makeContractorDataTable = function() {
 		</div>
 
 		<div class="form-group">
-			<label class="col-sm-2 control-label text-right"> 
+			<label class="col-sm-2 control-label text-right" for="exemptionForm"> 
 			<s:text	name="contractor.exemptionFrom" /></label>
 			<div class="col-sm-3 add-margin">
 
@@ -343,8 +370,8 @@ var makeContractorDataTable = function() {
 		<div class="panel-body">
 			<div class="form-group">
 				<div class="text-right add-margin">
-				<button class="btn btn-primary"
-				onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value});return false;">
+				<button class="btn btn-primary" id = "addContractorDetails"
+				onclick="contractorDataTable.addRow({SlNo:contractorDataTable.getRecordSet().getLength()+1,status:statusDropdownOptions[0].value,category:categoryDropdownOptions[0].value});return false;">
 				<s:text name="contractor.addContractorDetail" /></button>
 				</div>
 
@@ -364,7 +391,9 @@ var makeContractorDataTable = function() {
 	                                gradeName:'<s:property value="grade.grade"/>',
 	                                statusDesc:'<s:property value="status.description"/>',
 	                                startDate:'<s:property value="validity.startDate"/>',
-	                                endDate:'<s:property value="validity.endDate"/>'});
+	                                endDate:'<s:property value="validity.endDate"/>',
+	                                category:'<s:property value="category"/>',
+	                                categoryName:'<s:property value="category"/>'});
 	          </s:if>
 	          <s:else>
 		        contractorDataTable.addRow(
@@ -377,7 +406,9 @@ var makeContractorDataTable = function() {
 	                                gradeName:'<s:property value="grade.grade"/>',
 	                                statusDesc:'<s:property value="status.description"/>',
 	                                startDate:'<s:property value="validity.startDate"/>',
-	                                endDate:'<s:property value="validity.endDate"/>'});
+	                                endDate:'<s:property value="validity.endDate"/>',
+	                                category:'<s:property value="category"/>',
+	                                categoryName:'<s:property value="category"/>'});
 	            </s:else>  
 	              
 			        var record = contractorDataTable.getRecord(parseInt('<s:property value="#row_status.index"/>'));
@@ -412,7 +443,12 @@ var makeContractorDataTable = function() {
 			                contractorDataTable.getTdEl({record:record, column:column}).getElementsByTagName("select").item(0).selectedIndex = i;
 			            }
 			        }
-
+			        column = contractorDataTable.getColumn('categoryName');
+			        for(i=0; i < categoryDropdownOptions.length; i++) {
+			            if (categoryDropdownOptions[i].value == '<s:property value="category"/>') {
+			                contractorDataTable.getTdEl({record:record, column:column}).getElementsByTagName("select").item(0).selectedIndex = i;
+			            }
+			        }
 			       </s:iterator>         
 </script>
 				</div>

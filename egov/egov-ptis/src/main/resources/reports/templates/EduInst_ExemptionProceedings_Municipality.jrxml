@@ -1,0 +1,223 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-03T09:02:42 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="EdiInst_ExemptionProceedings_Municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="100"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageHeight" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.pageWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.topMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.bottomMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.leftMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.rightMargin" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnWidth" value="pixel"/>
+	<property name="com.jaspersoft.studio.unit.columnSpacing" value="pixel"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infra.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
+	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="copyType" class="java.lang.String"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="commissioner" class="java.lang.String"/>
+	<parameter name="noticeDate" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="doorNumber" class="java.lang.String"/>
+	<parameter name="AssessmentNumber" class="java.lang.String"/>
+	<parameter name="Locality" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="exemptionReason" class="java.lang.String"/>
+	<parameter name="currentPropertyTax" class="java.math.BigDecimal"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
+	<title>
+		<band height="365" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="46" y="52" width="175" height="11" isPrintWhenDetailOverflows="true" uuid="b90e4a9e-3262-4a87-a97d-ff498a62c2dd"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Roc.No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+($P{noticeNo}!=null?$P{noticeNo}:" ")+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="85" y="12" width="407" height="18" uuid="d86d2b1b-ba2f-4e05-b014-8542efbdbe8d"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["PROCEEDINGS OF COMMISSIONER, "+$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="37" y="2" width="88" height="10" isPrintWhenDetailOverflows="true" uuid="3dc6fd3e-b10a-477f-9022-d2dcf5b02ad8"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8" isBold="false" isItalic="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{copyType}=="citizen"?"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Party’s Copy:-</style>":"<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">Office Copy:-</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="170" y="34" width="258" height="18" uuid="4966c7b0-dee1-470a-ae73-85fd8fb7dede"/>
+				<textElement textAlignment="Left" markup="none">
+					<font size="9" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[" Present: Sri/Smt."+$P{commissioner}+"\n\tCommissioner"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="380" y="52" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
+				<textElement markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dated : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{noticeDate}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="44" y="60" width="456" height="30" isPrintWhenDetailOverflows="true" uuid="46404e64-90bf-456e-b741-7f56476bd69b"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tSub:  <style forecolor=\"#000000\" isBold=\"true\"> Property Tax-Exemption of Property Tax – Granting of Exemption – Orders – Issued. </style>\n\n\tRead: Application dt: <style forecolor=\"#000000\" isBold=\"true\"> "+$P{applicationDate}+"</style> from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style> R/O  <style forecolor=\"#000000\" isBold=\"true\"> "+$P{cityName}+"</style> \n\n\t\t\t\t\t <style forecolor=\"#000000\" isBold=\"true\" size=\"14\"> *  *  * </style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement positionType="Float" x="46" y="90" width="70" height="10" isPrintWhenDetailOverflows="true" uuid="c0cbbef2-17b1-4234-b65a-471b26b5f760"/>
+				<textElement markup="styled">
+					<font size="8" isBold="true" isUnderline="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["ORDER:"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="FixRelativeToBottom" isPrintRepeatedValues="false" x="44" y="100" width="452" height="190" uuid="98a27ce7-5155-4f94-b3ae-38bfdd3a051f"/>
+				<box topPadding="2" leftPadding="2" bottomPadding="2" rightPadding="2"/>
+				<textElement textAlignment="Justified" markup="styled">
+					<font size="8" isPdfEmbedded="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tIn the reference read above, Sri <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerName})+"</style>, (Designation)  of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+($P{doorNumber}!=null?$P{doorNumber}:" ")+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{AssessmentNumber}+"</style>, Locality<style forecolor=\"#000000\" isBold=\"true\"> "+($P{Locality}!=null?$P{Locality}:" ")+"</style> has applied for exemption of property tax,   under the category <style forecolor=\"#000000\" isBold=\"true\"> Recognized Educational Institutions / Charitable Institutions, as per Sec.88 of A.P.Municipalites Act, 1965.</style>  \n\n\t On receipt of the same, the said property is got inspected by the revenue officials and found the following:- \n a) that the Educational Institute is recognized by the Government. \n b) that the building for which exemption is sought is owned by the Trust/Organization and is fully occupied by them and is being utilised for the charitable purpose only. \n c) that as per the State Gazette/District Gazette, the Trust (or) Organization is notified as  Charitable Institution by the Commissioner of Endowments. \n d) that the Trust Deed is registered under Registration Act, 1908. \n e) that, the Trust/Organization is conducting regular Meetings and recording minutes for the last (3) years \n f) that the Annual Reports/ Audit Reports /Annual Accounts of  the organizations, is verified, for the last (3) years \n g) that the Trust/Organization is not collecting any amounts from the public. \n\n\t After careful examination of the above issue, as per the information available in the Municipal Office records and in terms of Sec. 88 of A.P. Municipalities Act, 1965,  the Trust/Organization is exempted from payment of property tax , as detailed below:-"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="100" y="330" width="100" height="10" uuid="42e2d5d7-1aa6-4303-a92f-7de3e6884f9a"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[H/Y PropertyTax Payable
+]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="100" y="340" width="100" height="25" isPrintWhenDetailOverflows="true" uuid="3a4caf54-3d62-4755-9787-3f7112629eac"/>
+				<box leftPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="200" y="340" width="129" height="25" isPrintWhenDetailOverflows="true" uuid="387a7bca-2518-4a4d-a172-5b3b8303cdcb"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{currentPropertyTax}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="200" y="330" width="129" height="10" uuid="c905c767-46cc-4d56-a4f9-176fc949db8e"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount of H/Y property tax now exempted from]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="329" y="330" width="122" height="10" uuid="d447c141-c7f9-42e7-8993-d206c69f85c4"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Reason for exemption]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" pattern="###0" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="329" y="340" width="121" height="25" isPrintWhenDetailOverflows="true" uuid="94949b2a-c9a0-4049-a957-fb8493669635"/>
+				<box rightPadding="2">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{exemptionReason}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageFooter>
+		<band height="124" splitType="Prevent">
+			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
+			<textField>
+				<reportElement x="270" y="49" width="200" height="21" uuid="dcf04571-2bc9-47df-accb-1e137dc3c859"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{isCommissioner}?"Commissioner":"For Commissioner"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="200" y="70" width="294" height="20" uuid="e071b86b-1647-4965-83be-0e4d01a07077"/>
+				<textElement textAlignment="Right" markup="none">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="30" y="80" width="66" height="13" uuid="ee0b46ab-d6b5-4f26-81dd-585a6ebe8465"/>
+				<textElement textAlignment="Left">
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[To:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="30" y="94" width="360" height="16" uuid="010d479a-ce72-484b-8627-7a3edd9649cb"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Sri/Smt: "+$P{ownerName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="30" y="110" width="360" height="11" uuid="ef01b0c5-d0d9-4299-b3c8-812341720f3d"/>
+				<textElement verticalAlignment="Middle">
+					<font size="8"/>
+				</textElement>
+				<text><![CDATA[The Revenue Officer/Revenue Inspector of this office for necessary action.]]></text>
+			</staticText>
+			<image hAlign="Center" vAlign="Bottom" isUsingCache="true" onErrorType="Blank">
+				<reportElement x="323" y="0" width="171" height="51" uuid="9e3c6655-0d01-4860-9e68-26109d59f39f"/>
+				<imageExpression><![CDATA[$P{userSignature}]]></imageExpression>
+			</image>
+		</band>
+	</pageFooter>
+</jasperReport>

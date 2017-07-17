@@ -60,8 +60,8 @@
 								path="pwrList[0].pwrDueDate" class="form-control datepicker"
 								title="Please enter a valid date"
 								pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
-								id="pwrList[0].pwrDueDate" data-inputmask="'mask': 'd/m/y'"
-								required="required" />
+								id="pwrDueDate" data-inputmask="'mask': 'd/m/y'"
+							 />
 							<form:errors path="pwrList[0].pwrDueDate"
 								cssClass="add-margin error-msg" />
 						</div>
@@ -73,38 +73,12 @@
 								path="pwrList[0].pwrApprovalDate"
 								class="form-control datepicker"
 								title="Please enter a valid date"
-								pattern="\d{1,2}/\d{1,2}/\d{4}" id="pwrList[0].pwrApprovalDate"
-								data-inputmask="'mask': 'd/m/y'" required="required" />
+								pattern="\d{1,2}/\d{1,2}/\d{4}" id="pwrApprovalDate"
+								data-inputmask="'mask': 'd/m/y'" />
 							<form:errors path="pwrList[0].pwrApprovalDate"
 								cssClass="add-margin error-msg" />
 						</div>
 					</div>
-
-					<c:choose>
-						<c:when test="${not empty pwrDocList}">
-
-							<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
-
-						</c:when>
-						<c:otherwise>
-							<div class="form-group">
-								<label class="col-sm-3 control-label text-right"><font
-									size="4"><spring:message code="lbl.mesg.document" /></font> </label>
-								<div class="col-sm-3 add-margin">
-
-									<input type="file" id="file"
-										name="pwrList[0].pwrDocuments[0].files"
-										class="file-ellipsis upload-file">
-
-									<form:errors path="pwrList[0].pwrDocuments[0].files"
-										cssClass="add-margin error-msg" />
-
-								</div>
-							</div>
-
-						</c:otherwise>
-					</c:choose>
-
 					<div class="panel-heading ">
 						<div class="panel-title" style="font-weight: bold">Counter
 							Affidavit Details</div>
@@ -118,8 +92,8 @@
 								class="form-control datepicker"
 								title="Please enter a valid date"
 								pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
-								id="counterAffidavits[0].counterAffidavitDueDate"
-								data-inputmask="'mask': 'd/m/y'" required="required" />
+								id="counterAffidavitDueDate"
+								data-inputmask="'mask': 'd/m/y'"/>
 							<form:errors path="counterAffidavits[0].counterAffidavitDueDate"
 								cssClass="add-margin error-msg" />
 						</div>
@@ -132,8 +106,8 @@
 								class="form-control datepicker"
 								title="Please enter a valid date"
 								pattern="\d{1,2}/\d{1,2}/\d{4}"
-								id="counterAffidavits[0].counterAffidavitApprovalDate"
-								data-inputmask="'mask': 'd/m/y'" required="required" />
+								id="counterAffidavitApprovalDate"
+								data-inputmask="'mask': 'd/m/y'"  />
 							<form:errors
 								path="counterAffidavits[0].counterAffidavitApprovalDate"
 								cssClass="add-margin error-msg" />
@@ -144,11 +118,24 @@
 								code="lbl.eofficecomputernumber" />:</label>
 						<div class="col-sm-3 add-margin">
 							<form:input path="counterAffidavits[0].eOfficeComputerNumber"
-								class="form-control text-left patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters" maxlength="16"/>
+								class="form-control  patternvalidation"
+								data-pattern="alphanumerichyphenbackslash"  id="eoffice" maxlength="16"/>
 							<form:errors path="counterAffidavits[0].eOfficeComputerNumber"
 								cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label text-right"><spring:message
+								code="lbl.cafillingdate" />:</label>
+						<div class="col-sm-3 add-margin">
+							<form:input name="pwrList[0].caFilingDate"
+								path="pwrList[0].caFilingDate" class="form-control datepicker"
+								title="Please enter a valid date"
+								pattern="\d{1,2}/\d{1,2}/\d{4}" data-date-end-date="-1d"
+								id="caFilingDate" data-inputmask="'mask': 'd/m/y'"/>
+							<form:errors path="pwrList[0].caFilingDate"
+								cssClass="add-margin error-msg" />
 						</div>
 					</div>
 
 					<div>
+					 </div>
+			 <div id="pwrDocuments"></div>

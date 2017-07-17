@@ -91,18 +91,7 @@ function validateMiscReceipt()
     if(!validateMiscDetails()){
     	document.getElementById("receipt_error_area").style.display="block";
         return false;
-    }else{
-    	var receiptDate = document.getElementById("voucherDate").value;
-        var financialYearDate = document.getElementById("financialYearDate").value;
-    	if(process(financialYearDate) > process(receiptDate)) {
-			 document.getElementById("receipt_error_area").style.display="block";
-    		document.getElementById("receipt_error_area").innerHTML+=
-				'<s:text name="challan.error.receiptdate.lessthan.financialyear" />'+ '<br>';   	
-			       window.scroll(0,0);
-				return false;
-   		}
     }
-    
 	return true;
 }
 
@@ -293,10 +282,12 @@ function getSchemelist(fund)
 }
 
 function getBankBranchList(){
+	setTimeout(function(){
         var serviceId=dom.get("serviceId").value;
         var fundId=dom.get("fundId").value;
         if(fundId!="-1" && serviceId!="-1"){
             populatebankBranchMaster({serviceId:serviceId,fundId:fundId});
+            document.getElementById("accountNumberMaster").options.length = 1;
         }
         else{
             if(document.getElementById("bankBranchMaster")!=null){
@@ -306,6 +297,7 @@ function getBankBranchList(){
                 document.getElementById("accountNumberMaster").options.length = 1;
             }
         }
+	 }, 1000);
 }
 
 function getSubSchemelist(scheme)
@@ -776,8 +768,6 @@ var totaldbamt=0,totalcramt=0;
                 url='receipts/ajaxBankRemittance-bankBranchList.action' selectedValue="%{bankbranch.id}"/> 
           <egov:ajaxdropdown id="schemeIdDropdown" fields="['Text','Value']" dropdownId='schemeId' url='receipts/ajaxReceiptCreate-ajaxLoadSchemes.action' />
          <s:hidden label="receiptMisc.fund.id" id="receiptMisc.fund.id"  name="receiptMisc.fund.id"/>
-         <s:date name="financialYearDate" var="financialYearDateFormat" format="dd/MM/yyyy"/>
-         <s:hidden id="financialYearDate"  name="financialYearDate" value="%{financialYearDateFormat}"/>
           </td>
           </s:if>
            <s:else>

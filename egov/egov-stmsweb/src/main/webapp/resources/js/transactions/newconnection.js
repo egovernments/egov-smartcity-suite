@@ -40,7 +40,9 @@
 $(document).ready(function(){
 	
 	loadPropertyDetails();
-
+	mode=$('#mode').val()
+	if(mode == 'create')
+		$('#propertyIdentifier').val($('#ptAssessmentNo').val());
 	$('#propertyIdentifier').blur(function(){
 		validateSewerageConnection();
 	});
@@ -48,7 +50,10 @@ $(document).ready(function(){
 	$('#noOfClosetsResidential').blur(function(){
 		var propertyType = $('#propertyType').val()
 		var noOfClosetsResidential = $('#noOfClosetsResidential').val()
-		if(noOfClosetsResidential != ''){
+		if(noOfClosetsResidential==="0" ){
+			bootbox.alert("Please enter number of closets value more than 0");
+		}
+		else if(noOfClosetsResidential != ''){
 			validateClosets(propertyType , noOfClosetsResidential,true);
 		} else{
 			bootbox.alert("Please Enter Closets For Property Type Residential");
@@ -58,7 +63,10 @@ $(document).ready(function(){
 	$('#noOfClosetsNonResidential').blur(function(){
 		var propertyType = $('#propertyType').val()
 		var noOfClosetsNonResidential = $('#noOfClosetsNonResidential').val()
-		if(noOfClosetsNonResidential != ''){
+		if(noOfClosetsNonResidential==="0" ){
+			bootbox.alert("Please enter number of closets value more than 0");
+		}
+		else if(noOfClosetsNonResidential != ''){
 			validateClosets(propertyType , noOfClosetsNonResidential,false);
 		} else{
 			bootbox.alert("Please Enter Closets For Property Type Non Residential");
@@ -96,7 +104,7 @@ $(document).ready(function(){
 	}
 	
 	function validateSewerageConnection() {
-		propertyID=$('#propertyIdentifier').val()
+		var propertyID=$('#propertyIdentifier').val();
 		if(propertyID != '') {
 			$.ajax({
 				url: "/stms/ajaxconnection/check-connection-exists",      
@@ -242,3 +250,4 @@ function getWaterTaxDue(propertyID) {
 		return result;
 	}
 }
+

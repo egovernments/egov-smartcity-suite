@@ -39,12 +39,28 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
+import static java.lang.String.format;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.entity.Source;
@@ -53,19 +69,26 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
+import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
@@ -75,11 +98,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
-
-import static java.lang.String.format;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
 
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
     @Autowired
@@ -106,19 +124,24 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     @Autowired
     private MessagingService messagingService;
     private SMSEmailService sMSEmailService;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    
+
     @Autowired
     private PropertyService propertyService;
 
+    @Autowired
+    private ReportService reportService;
+
+    @Autowired
+    private PtDemandDao ptDemandDAO;
 
     public RevisionPetitionService() {
         super(RevisionPetition.class);
     }
 
-    public RevisionPetitionService(Class<RevisionPetition> type) {
+    public RevisionPetitionService(final Class<RevisionPetition> type) {
         super(type);
     }
 
@@ -129,13 +152,15 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @return
      */
     @Transactional
-    public RevisionPetition createRevisionPetition(RevisionPetition objection) {
+    public RevisionPetition createRevisionPetition(final RevisionPetition objection) {
+        RevisionPetition revisionPetition;
+        propertyService.processAndStoreDocument(objection.getDocuments());
         if (objection.getId() == null)
-            objection = persist(objection);
+            revisionPetition = persist(objection);
         else
-            objection = merge(objection);
+            revisionPetition = merge(objection);
 
-        return objection;
+        return revisionPetition;
 
     }
 
@@ -178,10 +203,10 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 if (position != null)
                     user = eisCommonService.getUserForPosition(position.getId(), new Date());
 
-                objection.start().withNextAction(wfmatrix.getPendingActions())
-                .withStateValue(wfmatrix.getCurrentState()).withOwner(position)
-                .withSenderName(user != null && user.getName() != null ? user.getName() : "").withOwner(user)
-                .withComments("");
+                objection.transition().start().withNextAction(wfmatrix.getPendingActions())
+                        .withStateValue(wfmatrix.getCurrentState()).withOwner(position)
+                        .withSenderName(user != null && user.getName() != null ? user.getName() : "").withOwner(user)
+                        .withComments("");
             }
 
             applyAuditing(objection.getState());
@@ -209,9 +234,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
                     .withApplicationNumber(objection.getObjectionNumber()).withApplicationDate(
                             objection.getCreatedDate() != null ? objection.getCreatedDate() : new Date())
-                    .withApplicationType(APPLICATION_TYPE_REVISION_PETITION).withApplicantName(objection.getBasicProperty().getFullOwnerName())
-                    .withStatus(objection.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, objection.getObjectionNumber(), ""))
-                    .withApplicantAddress(objection.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                    .withApplicationType(APPLICATION_TYPE_REVISION_PETITION)
+                    .withApplicantName(objection.getBasicProperty().getFullOwnerName())
+                    .withStatus(objection.getState().getValue())
+                    .withUrl(format(APPLICATION_VIEW_URL, objection.getObjectionNumber(), ""))
+                    .withApplicantAddress(objection.getBasicProperty().getAddress().toString())
+                    .withOwnername(user.getUsername() + "::" + user.getName())
                     .withChannel(Source.SYSTEM.toString()).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
         } else {
@@ -248,13 +276,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      */
 
     @Transactional
-    public RevisionPetition updateRevisionPetition(RevisionPetition objection) {
+    public RevisionPetition updateRevisionPetition(final RevisionPetition objection) {
+        RevisionPetition revisionPetition;
         if (objection.getId() == null)
-            objection = persist(objection);
+            revisionPetition = persist(objection);
         else
-            objection = update(objection);
+            revisionPetition = update(objection);
 
-        return objection;
+        return revisionPetition;
 
     }
 
@@ -265,7 +294,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @return
      */
     public RevisionPetition getRevisionPetitionByApplicationNumber(final String applicationNumber) {
-        RevisionPetition revPetitionObject = null;
+        RevisionPetition revPetitionObject;
         final Criteria appCriteria = getSession().createCriteria(RevisionPetition.class, "revPetiton");
         appCriteria.add(Restrictions.eq("revPetiton.objectionNumber", applicationNumber));
         revPetitionObject = (RevisionPetition) appCriteria.uniqueResult();
@@ -280,18 +309,16 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param applicationType
      */
     public void sendEmailandSms(final RevisionPetition objection, final String applicationType) {
-        if (objection != null) {
-            for (PropertyOwnerInfo ownerInfo : objection.getBasicProperty().getPropertyOwnerInfo()) {
+        if (objection != null)
+            for (final PropertyOwnerInfo ownerInfo : objection.getBasicProperty().getPropertyOwnerInfo())
                 sendEmailAndSms(objection, ownerInfo.getOwner(), applicationType);
-            }
-        }
     }
 
     private void sendEmailAndSms(final RevisionPetition objection, final User user, final String applicationType) {
         final String mobileNumber = user.getMobileNumber();
         final String emailid = user.getEmailId();
         final String applicantName = user.getName();
-        final List<String> args = new ArrayList<String>();
+        final List<String> args = new ArrayList<>();
         args.add(applicantName);
         String smsMsg = "";
         String emailSubject = "";
@@ -321,29 +348,149 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     public void setsMSEmailService(final SMSEmailService sMSEmailService) {
         this.sMSEmailService = sMSEmailService;
     }
-    
-    public RevisionPetition createRevisionPetition(RevisionPetition objection, HashMap<String, String> meesevaParams){
+
+    public RevisionPetition createRevisionPetition(final RevisionPetition objection,
+            final HashMap<String, String> meesevaParams) {
         createRevisionPetition(objection);
         return objection;
     }
-    
-    public Assignment getWorkflowInitiator(RevisionPetition objection) {
-        Assignment wfInitiator=null;
-        if (propertyService.isEmployee(objection.getCreatedBy())){
-                if(objection.getState() != null  && objection.getState().getInitiatorPosition() != null)
-                    wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
-                    .getCreatedBy(),objection.getState().getInitiatorPosition());
-                else 
-                    wfInitiator = assignmentService.getPrimaryAssignmentForUser(objection.getCreatedBy().getId());
+
+    public Assignment getWorkflowInitiator(final RevisionPetition objection) {
+        Assignment wfInitiator;
+        if (propertyService.isEmployee(objection.getCreatedBy())
+                && !ANONYMOUS_USER.equalsIgnoreCase(objection.getCreatedBy().getName())
+                && !propertyService.isCitizenPortalUser(objection.getCreatedBy())) {
+            if (objection.getState() != null && objection.getState().getInitiatorPosition() != null)
+                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
+                        .getCreatedBy(), objection.getState().getInitiatorPosition());
+            else
+                wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(objection.getCreatedBy().getId()).get(0);
+        } else if (!objection.getStateHistory().isEmpty()){
+            if (objection.getState().getInitiatorPosition() == null)
+                wfInitiator = assignmentService.getAssignmentsForPosition(
+                        objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
+            else
+                wfInitiator = assignmentService.getAssignmentsForPosition(
+                        objection.getState().getInitiatorPosition().getId(), new Date()).get(0);
         }
-        else if (!objection.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getStateHistory().get(0)
-                    .getOwnerPosition().getId());
-        else{
-            wfInitiator = assignmentService.getPrimaryAssignmentForPositon(objection.getState().getOwnerPosition()
-                    .getId());
-        }
+        else
+            wfInitiator = assignmentService.getAssignmentsForPosition(objection.getState().getOwnerPosition()
+                    .getId(), new Date()).get(0);
         return wfInitiator;
     }
 
+    public RevisionPetition getExistingObjections(final BasicProperty basicProperty) {
+        return find("from RevisionPetition rp where rp.basicProperty = ?", basicProperty);
+    }
+
+    public RevisionPetition getExistingGRP(final BasicProperty basicProperty) {
+        return find("from RevisionPetition rp where rp.basicProperty = ? and rp.type = ?", basicProperty,
+                PropertyTaxConstants.NATURE_OF_WORK_GRP);
+    }
+
+    /**
+     * @param reportOutput
+     * @param objection
+     * @return ReportOutput
+     */
+    public ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,
+            final String noticeNo) {
+        reportOutput.setReportFormat(ReportFormat.PDF);
+        final HashMap<String, Object> reportParams = new HashMap<>();
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+        String natureOfWork;
+        ReportRequest reportRequest;
+        if (objection != null) {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            final String cityGrade = request.getSession().getAttribute("cityGrade") != null
+                    ? request.getSession().getAttribute("cityGrade").toString() : null;
+            Boolean isCorporation;
+            if (cityGrade != null && cityGrade != ""
+                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
+                isCorporation = true;
+            else
+                isCorporation = false;
+            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
+                natureOfWork = NATURE_REVISION_PETITION;
+            else
+                natureOfWork = NATURE_GENERAL_REVISION_PETITION;
+            reportParams.put("isCorporation", isCorporation);
+            reportParams.put("cityName", cityName);
+            reportParams.put("recievedBy", objection.getBasicProperty().getFullOwnerName());
+            reportParams.put("natureOfWork", natureOfWork);
+
+            if (objection.getHearings() != null && !objection.getHearings().isEmpty()
+                    && objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt() != null)
+                reportParams.put("hearingNoticeDate", dateformat
+                        .format(objection.getHearings().get(objection.getHearings().size() - 1).getPlannedHearingDt()));
+            else
+                reportParams.put("hearingNoticeDate", "");
+            reportParams.put("currentDate", dateformat.format(new Date()));
+            reportParams.put("recievedOn", dateformat.format(objection.getRecievedOn()));
+            reportParams.put("docNumberObjection", noticeNo);
+            reportParams.put("houseNo", objection.getBasicProperty().getAddress().getHouseNoBldgApt());
+            reportParams.put("locality", objection.getBasicProperty().getPropertyID().getLocality().getName());
+            reportParams.put("assessmentNo", objection.getBasicProperty().getUpicNo());
+            reportParams.put("hearingTime",
+                    objection.getHearings().get(objection.getHearings().size() - 1).getHearingTime());
+            reportParams.put("hearingVenue",
+                    objection.getHearings().get(objection.getHearings().size() - 1).getHearingVenue());
+            reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_HEARINGNOTICE,
+                    objection, reportParams);
+            reportOutput = reportService.createReport(reportRequest);
+        }
+        return reportOutput;
+    }
+
+    /**
+     * @param reportOutput
+     * @param objection
+     * @return
+     */
+    public ReportOutput createEndoresement(ReportOutput reportOutput, final RevisionPetition objection) {
+
+        reportOutput.setReportFormat(ReportFormat.PDF);
+        final HashMap<String, Object> reportParams = new HashMap<>();
+        final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
+        String natureOfWork;
+        ReportRequest reportRequest;
+        if (objection != null) {
+            final Map<String, BigDecimal> currentDemand = ptDemandDAO.getDemandCollMap(objection.getProperty());
+            final Map<String, BigDecimal> earlierDemand = ptDemandDAO
+                    .getDemandCollMap(propertyService.getLatestHistoryProperty(objection.getBasicProperty().getUpicNo()));
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            final String url = WebUtils.extractRequestDomainURL(request, false);
+            final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
+                    .concat((String) request.getSession().getAttribute("citylogo"));
+            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
+                natureOfWork = NATURE_REVISION_PETITION;
+            else
+                natureOfWork = NATURE_GENERAL_REVISION_PETITION;
+            reportParams.put("logoPath", cityLogo);
+            reportParams.put("cityName", cityName);
+            reportParams.put("natureOfWork", natureOfWork);
+            reportParams.put("recievedBy", objection.getBasicProperty().getFullOwnerName());
+            reportParams.put("docNumberObjection", objection.getObjectionNumber());
+            reportParams.put("currentDate", dateformat.format(new Date()));
+            reportParams.put("receivedOn", dateformat.format(objection.getRecievedOn()));
+            reportParams.put("HouseNo", objection.getBasicProperty().getUpicNo());
+            reportParams.put("wardNumber", objection.getBasicProperty().getBoundary() != null
+                    ? objection.getBasicProperty().getBoundary().getName() : "");
+            reportParams.put("HalfYearPropertyTaxTo",
+                    currentDemand.get(CURR_SECONDHALF_DMD_STR).divide(BigDecimal.valueOf(2)).setScale(2));
+            reportParams.put("HalfYearPropertyTaxFrom",
+                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).divide(BigDecimal.valueOf(2)).setScale(2));
+            reportParams.put("AnnualPropertyTaxTo", currentDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2).toString());
+            reportParams.put("AnnualPropertyTaxFrom",
+                    earlierDemand.get(CURR_SECONDHALF_DMD_STR).setScale(2).toString());
+
+            reportRequest = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_REVISIONPETITION_ENDORSEMENT,
+                    objection, reportParams);
+            reportOutput = reportService.createReport(reportRequest);
+        }
+        return reportOutput;
+
+    }
 }

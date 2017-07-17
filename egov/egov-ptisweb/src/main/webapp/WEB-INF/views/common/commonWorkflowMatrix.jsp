@@ -44,12 +44,16 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <c:if test="${nextAction !='END'}" > 
 		<div class="panel panel-primary" data-collapsed="0" >				
-			<div class="panel-heading">
-				<div class="panel-title">
-					<spring:message code="lbl.approverdetails"/>
-				</div>					
-			</div>
 			<div class="panel-body">
+				</br> <input type="checkbox" id="applicationCheck" cssClass="applicationcheckbox" onchange="EnableForwardButton()"/>
+				<spring:message code="lbl.checkbox" />
+			</div>
+		<div class="panel-heading">
+			<div class="panel-title">
+				<spring:message code="lbl.forwardto" />
+			</div>
+		</div> 
+		<div class="panel-body">
 	
  <c:if test="${currentState!= 'null' && !'Closed'.equalsIgnoreCase(currentState)}">
 	<form:hidden path="" id="currentState" name="currentState" value="${currentState}"/>
@@ -68,7 +72,7 @@
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 				<div class="row show-row"  id="approverDetailHeading">
 				<div class="show-row form-group" >
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approverdepartment"/><span class="mandatory"></span></label>
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false"
 							id="approvalDepartment" cssClass="form-control"
@@ -80,7 +84,7 @@
 								itemLabel="name" />     
 						</form:select>
 					</div>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.approverdesignation"/><span class="mandatory"></span></label>
+					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.designation"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 						<form:select path="" data-first-option="false" 
 							id="approvalDesignation" cssClass="form-control" onfocus="callAlertForDepartment();"
@@ -92,7 +96,7 @@
 					</div>
 				</div>
 				<div class="show-row form-group">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.approver"/><span class="mandatory"></span></label>
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.employee"/><span class="mandatory"></span></label>
 					<div class="col-sm-3 add-margin">
 					<form:select path="" data-first-option="false" 
 						id="approvalPosition" name="approvalPosition" cssClass="form-control" onfocus="callAlertForDesignation();" 
@@ -108,8 +112,10 @@
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-6 add-margin">
-						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
-					</div>
+					<form:textarea class="form-control" path="" id="approvalComent"
+						name="approvalComent" maxlength="1024"/>
+					<small class="error-msg" style="float:right;"> <spring:message code="lbl.comments.maxlength" /> </small>	
+				     </div>
 				</div>
 				
 			</div>				

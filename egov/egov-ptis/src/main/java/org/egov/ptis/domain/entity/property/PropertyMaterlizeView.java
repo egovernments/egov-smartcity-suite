@@ -48,12 +48,10 @@ import java.util.Set;
 
 public class PropertyMaterlizeView implements Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = -6146352214041057969L;
     private Integer basicPropertyID;
     private String propertyId;
+    private String oldMuncipalNum;
     private String ownerName;
     private String houseNo;
     private String propertyAddress;
@@ -86,6 +84,7 @@ public class PropertyMaterlizeView implements Serializable {
     private Set<InstDmdCollMaterializeView> instDmdColl;
     private BigDecimal alv;
     private Boolean isExempted;
+    private String usage;
     private Character source;
     private Set<FloorDetailsView> floorDetails;
     private String mobileNumber;
@@ -100,8 +99,12 @@ public class PropertyMaterlizeView implements Serializable {
     private Date assessmentDate;
     private Date lastUpdated;
     private String surveyNo;
+    private String duePeriod;
+    private BigDecimal advance;
+    private BigDecimal rebate;
+    private BigDecimal adjustment;
 
-
+    
     public Integer getBasicPropertyID() {
         return basicPropertyID;
     }
@@ -292,7 +295,15 @@ public class PropertyMaterlizeView implements Serializable {
         this.isExempted = isExempted;
     }
 
-    public Character getSource() {
+    public String getUsage() {
+		return usage;
+	}
+
+	public void setUsage(String usage) {
+		this.usage = usage;
+	}
+
+	public Character getSource() {
         return source;
     }
 
@@ -492,13 +503,51 @@ public class PropertyMaterlizeView implements Serializable {
         this.lastUpdated = lastUpdated;
     }
 
-	public String getSurveyNo() {
-		return surveyNo;
-	}
+        public String getSurveyNo() {
+                return surveyNo;
+        }
 
-	public void setSurveyNo(String surveyNo) {
-		this.surveyNo = surveyNo;
-	}
-    
-    
+        public void setSurveyNo(String surveyNo) {
+                this.surveyNo = surveyNo;
+        }
+
+    public String getDuePeriod() {
+        return duePeriod;
+    }
+
+    public void setDuePeriod(String duePeriod) {
+        this.duePeriod = duePeriod;
+    }
+
+    public BigDecimal getAdvance() {
+        return advance;
+    }
+
+    public void setAdvance(BigDecimal advance) {
+        this.advance = advance;
+    }
+    public String getOldMuncipalNum() {
+        return oldMuncipalNum;
+    }
+
+    public void setOldMuncipalNum(String oldMuncipalNum) {
+        this.oldMuncipalNum = oldMuncipalNum;
+    }
+
+    public BigDecimal getRebate() {
+        return rebate;
+    }
+
+    public void setRebate(BigDecimal rebate) {
+        this.rebate = rebate;
+    }
+
+    public BigDecimal getAdjustment() {
+        return adjustment;
+    }
+
+    public void setAdjustment(BigDecimal adjustment) {
+        this.adjustment = adjustment;
+    }
+      
 }

@@ -50,7 +50,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.io.FileUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
@@ -77,9 +77,7 @@ public class SewerageWorkOrderNoticeController {
     @Autowired
     private MessageSource messageSource;
 
-    public static final String WORKORDERNOTICE = "sewerageWorkOrderNotice";
-
-    String errorMessage = "";
+  
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
     @Autowired
@@ -92,6 +90,7 @@ public class SewerageWorkOrderNoticeController {
     @RequestMapping(value = "/workordernotice", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> createWorkOrderReport(final HttpServletRequest request,
             final HttpSession session) throws IOException {
+        String errorMessage = "";
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         if (!errorMessage.isEmpty())
@@ -110,7 +109,7 @@ public class SewerageWorkOrderNoticeController {
             final FileStoreMapper fmp = sewerageNotice.getFileStore();
             final File file = fileStoreService.fetch(fmp, SewerageTaxConstants.FILESTORE_MODULECODE);
             reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
-            reportOutput.setReportFormat(FileFormat.PDF);
+            reportOutput.setReportFormat(ReportFormat.PDF);
         } else {
             reportOutput = sewerageNoticeService.generateReportOutputForWorkOrder(sewerageApplicationDetails, session, request);
             if (reportOutput != null && reportOutput.getReportOutputData() != null) {
@@ -127,31 +126,42 @@ public class SewerageWorkOrderNoticeController {
         return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
-    public void validateWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails, final Boolean isView) {
-        if (null != sewerageApplicationDetails && sewerageApplicationDetails.getConnection().getLegacy())
+    private String validateWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails, final Boolean isView) {
+        String errorMessage=null;
+       if(sewerageApplicationDetails!=null) { 
+        if (sewerageApplicationDetails.getConnection().getLegacy())
             errorMessage = messageSource.getMessage("err.validate.workorder.for.legacy", new String[] { "" }, null);
         else if (isView && null == sewerageApplicationDetails.getWorkOrderNumber())
-            errorMessage = messageSource.getMessage("err.validate.workorder.view",
-                    new String[] { sewerageApplicationDetails.getApplicationNumber() }, null);
+            return buildErrorMessage(sewerageApplicationDetails);
         else if (!isView
                 && !sewerageApplicationDetails.getStatus().getCode()
                         .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED))
-            errorMessage = messageSource.getMessage("err.validate.workorder.view",
-                    new String[] { sewerageApplicationDetails.getApplicationNumber() }, null);
+           return buildErrorMessage(sewerageApplicationDetails);
+       }
+        return errorMessage;
+    }
+
+    private String buildErrorMessage(final SewerageApplicationDetails sewerageApplicationDetails) {
+        String errorMessage;
+        errorMessage = messageSource.getMessage("err.validate.workorder.view",
+                new String[] { sewerageApplicationDetails.getApplicationNumber() }, null);
+        return errorMessage;
     }
 
     @RequestMapping(value = "/workorder/view/{applicationNumber}", method = RequestMethod.GET)
     public @ResponseBody ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
             final HttpSession session, final HttpServletRequest request) throws IOException {
+        String errorMessage ;
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
-        validateWorkOrder(sewerageApplicationDetails, true);
-        if (!errorMessage.isEmpty())
+        errorMessage= validateWorkOrder(sewerageApplicationDetails, true);
+        if (errorMessage!=null && !errorMessage.isEmpty())
             return redirect();
         return generateReport(sewerageApplicationDetails, session, request);
     }
 
     private ResponseEntity<byte[]> redirect() {
+        String errorMessage = "";
         errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
                 + "</p></body></html>";
         final byte[] byteData = errorMessage.getBytes();

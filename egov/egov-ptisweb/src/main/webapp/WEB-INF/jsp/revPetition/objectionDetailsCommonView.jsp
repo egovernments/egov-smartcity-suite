@@ -98,7 +98,12 @@
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
+			<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.details.heading" />
+					</s:if>
+					<s:else>
 				<s:text name="objection.details.heading" />
+				</s:else>
 			</div>
 		</td>
 	</tr>
@@ -107,19 +112,44 @@
 			<table width="100%" border="0" cellspacing="0" cellpadding="0">
 				<tr>
 					<th class="bluebgheadtd">
+					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.number" />
+					</s:if>
+					<s:else>
 						<s:text name="objection.number" />
+						</s:else>
 					</th>
 					<th class="bluebgheadtd">
+					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.received.date" />
+					</s:if>
+					<s:else>
 						<s:text name="objection.received.date" />
+						</s:else>
 					</th>
 					<th class="bluebgheadtd">
+					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.received.by" />
+					</s:if>
+					<s:else>
 						<s:text name="objection.received.by" />
+						</s:else>
 					</th>
 					<th class="bluebgheadtd">
+					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.remarks" />
+					</s:if>
+					<s:else>
 						<s:text name="objection.remarks" />
+						</s:else>
 					</th>
 					<th class="bluebgheadtd">
+					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.details.heading" />
+					</s:if>
+					<s:else>
 						<s:text name="objection.details.heading" />
+						</s:else>
 					</th>
 					<th class="bluebgheadtd">
 						<s:text name="objection.status" />

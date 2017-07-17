@@ -37,10 +37,41 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-/*jQuery(document).ready(
+jQuery(document).ready(
 		function($) {
+			$('#buttonid').click(function() {
+				formValidation();
 			
-			var modeval=$("#mode").val();
+				
+			});
+		
+		});
+
+	
+function formValidation(){
+	var pwrduedate = $("#pwrDueDate").val();
+	var pwrapprovaldate = $("#pwrApprovalDate").val();
+	var counteraffidavitduedate = $("#counterAffidavitDueDate").val();
+	var counteraffidavitapprovaldate = $("#counterAffidavitApprovalDate").val();
+	var eofficenum = $("#eoffice").val();
+	var cafilingdate = $("#caFilingDate").val();
+	if (((pwrduedate == null || pwrduedate == "") && (pwrapprovaldate == null || pwrapprovaldate == "") && 
+			(counteraffidavitduedate== null || counteraffidavitduedate== "") && 
+			(counteraffidavitapprovaldate== null || counteraffidavitapprovaldate=="") && (eofficenum== null || eofficenum =="")
+			&& (cafilingdate == null || cafilingdate==""))) {
+		bootbox
+				.alert('Please enter one field else close screen');
+		return false;
+	}
+  if ($( "#legalcasecaform" ).valid())
+	  {
+	  document.forms[0].submit();
+	  }
+  		}
+
+	
+			
+			/*var modeval=$("#mode").val();
 			var $tableBody = $('#caffidavitdetails').find("tbody"),
 		    $trLast = $tableBody.find("tr:last");
 			

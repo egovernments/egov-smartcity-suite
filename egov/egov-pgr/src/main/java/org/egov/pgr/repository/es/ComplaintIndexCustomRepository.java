@@ -40,23 +40,41 @@
 
 package org.egov.pgr.repository.es;
 
+import java.util.List;
+import java.util.Map;
+
 import org.egov.pgr.entity.es.ComplaintDashBoardRequest;
+import org.egov.pgr.entity.es.ComplaintIndex;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 
-import java.util.Map;
-
-
 public interface ComplaintIndexCustomRepository {
 
-    Map<String, SearchResponse> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String grouByField);
+    Map<String, SearchResponse> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                         BoolQueryBuilder query, String grouByField);
 
-    SearchResponse findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String grouByField);
+    Map<String, SearchResponse> findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                                BoolQueryBuilder query, String grouByField);
 
     String getWardName(String wardNo);
 
     String getFunctionryMobileNumber(String functionaryName);
 
-    SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String grouByField);
+    SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,
+                                            String grouByField);
+
+    SearchResponse findByAllFunctionary(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+
+    SearchResponse findByAllUlb(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+
+    SearchResponse findBYAllWards(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+
+    SearchResponse findBYAllLocalities(final ComplaintDashBoardRequest complaintDashBoardRequest, final BoolQueryBuilder query);
+
+    List<ComplaintIndex> findAllComplaintsBySource(String fieldName, String paramValue);
+
+    List<ComplaintIndex> findAllComplaintsByField(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+
+    SearchResponse findByAllCitizenRating(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
 
 }

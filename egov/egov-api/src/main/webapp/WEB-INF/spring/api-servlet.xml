@@ -1,59 +1,46 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
-  ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
-  ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
-  ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
-  ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
-  ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
-  ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
-  ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
-  ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
-  ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
-  -->
+<!-- ~ eGov suite of products aim to improve the internal efficiency,transparency, 
+	~ accountability and the service delivery of the government organizations. 
+	~ ~ Copyright (C) <2015> eGovernments Foundation ~ ~ The updated version 
+	of eGov suite of products as by eGovernments Foundation ~ is available at 
+	http://www.egovernments.org ~ ~ This program is free software: you can redistribute 
+	it and/or modify ~ it under the terms of the GNU General Public License as 
+	published by ~ the Free Software Foundation, either version 3 of the License, 
+	or ~ any later version. ~ ~ This program is distributed in the hope that 
+	it will be useful, ~ but WITHOUT ANY WARRANTY; without even the implied warranty 
+	of ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the ~ GNU General 
+	Public License for more details. ~ ~ You should have received a copy of the 
+	GNU General Public License ~ along with this program. If not, see http://www.gnu.org/licenses/ 
+	or ~ http://www.gnu.org/licenses/gpl.html . ~ ~ In addition to the terms 
+	of the GPL license to be adhered to in using this ~ program, the following 
+	additional terms are to be complied with: ~ ~ 1) All versions of this program, 
+	verbatim or modified must carry this ~ Legal Notice. ~ ~ 2) Any misrepresentation 
+	of the origin of the material is prohibited. It ~ is required that all modified 
+	versions of this material be marked in ~ reasonable ways as different from 
+	the original version. ~ ~ 3) This license does not grant any rights to any 
+	user of the program ~ with regards to rights under trademark law for use 
+	of the trade names ~ or trademarks of eGovernments Foundation. ~ ~ In case 
+	of any queries, you can reach eGovernments Foundation at contact@egovernments.org. -->
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
-       xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="
 		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
 		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <mvc:annotation-driven enable-matrix-variables="true"
-                           conversion-service="conversionService"
-                           validator="validator">
-    </mvc:annotation-driven>
-    
-   	<!-- Configure to plugin JSON as request and response in method handler -->
+	<mvc:annotation-driven enable-matrix-variables="true"
+		conversion-service="conversionService" validator="validator">
+		<mvc:message-converters register-defaults="true">
+			<bean class="org.springframework.http.converter.StringHttpMessageConverter">
+				<constructor-arg index="0" name="defaultCharset"
+					value="UTF-8" />
+			</bean>
+		</mvc:message-converters>
+	</mvc:annotation-driven>
+
+	<!-- Configure to plugin JSON as request and response in method handler -->
 	<bean
 		class="org.springframework.web.servlet.mvc.method.annotation.RequestMappingHandlerAdapter">
 		<property name="messageConverters">
@@ -68,30 +55,35 @@
 		class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
 	</bean>
 
-	<bean id="conversionService" class="org.springframework.core.convert.support.DefaultConversionService"/>
-	
-	<bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-		<property name="targetClass" value="org.springframework.core.convert.support.ConversionServiceFactory"/>
-		<property name="targetMethod" value="registerConverters"/>
+	<bean id="conversionService"
+		class="org.springframework.core.convert.support.DefaultConversionService" />
+
+	<bean
+		class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
+		<property name="targetClass"
+			value="org.springframework.core.convert.support.ConversionServiceFactory" />
+		<property name="targetMethod" value="registerConverters" />
 		<property name="arguments">
 			<list>
 				<set>
-					<bean class="org.springframework.data.repository.support.DomainClassConverter">
-						<constructor-arg ref="conversionService"/>
+					<bean
+						class="org.springframework.data.repository.support.DomainClassConverter">
+						<constructor-arg ref="conversionService" />
 					</bean>
 				</set>
-				<ref bean="conversionService"/>
+				<ref bean="conversionService" />
 			</list>
 		</property>
 	</bean>
 
 
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
-        <property name="validationMessageSource" ref="messageSource"/>
-    </bean>
+	<bean id="validator"
+		class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean">
+		<property name="validationMessageSource" ref="messageSource" />
+	</bean>
 
 	<bean id="messageSource"
-		  class="org.springframework.context.support.ResourceBundleMessageSource">
+		class="org.springframework.context.support.ResourceBundleMessageSource">
 		<property name="parentMessageSource" ref="parentMessageSource" />
 		<property name="basenames">
 			<list>
@@ -99,11 +91,11 @@
 				<value>messages/message</value>
 			</list>
 		</property>
-		<!-- Disabling caching since on development-->
-		<property name="cacheSeconds" value="0"/>
+		<!-- Disabling caching since on development -->
+		<property name="cacheSeconds" value="0" />
 	</bean>
 
-    <!-- Imports user-defined @Controller beans that process client requests -->
-    <context:component-scan base-package="org.egov.api"/>
+	<!-- Imports user-defined @Controller beans that process client requests -->
+	<context:component-scan base-package="org.egov.api" />
 
 </beans>

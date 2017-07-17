@@ -41,7 +41,11 @@
 
 package org.egov.ptis.domain.entity.property;
 
-public class PropertyMutationMaster {
+import java.io.Serializable;
+
+public class PropertyMutationMaster implements Serializable {
+    private static final long serialVersionUID = 8232626581214227934L;
+
     private Long id = null;
     private String mutationName = null;
     private String mutationDesc = null;
@@ -57,8 +61,7 @@ public class PropertyMutationMaster {
     }
 
     /**
-     * @param idMutation
-     *            The idMutation to set.
+     * @param idMutation The idMutation to set.
      */
     public void setId(Long id) {
         this.id = id;
@@ -72,8 +75,7 @@ public class PropertyMutationMaster {
     }
 
     /**
-     * @param mutationDesc
-     *            The mutationDesc to set.
+     * @param mutationDesc The mutationDesc to set.
      */
     public void setMutationDesc(String mutationDesc) {
         this.mutationDesc = mutationDesc;
@@ -87,8 +89,7 @@ public class PropertyMutationMaster {
     }
 
     /**
-     * @param mutationName
-     *            The mutationName to set.
+     * @param mutationName The mutationName to set.
      */
     public void setMutationName(String mutationName) {
         this.mutationName = mutationName;
@@ -102,8 +103,7 @@ public class PropertyMutationMaster {
     }
 
     /**
-     * @param type
-     *            The type to set.
+     * @param type The type to set.
      */
     public void setType(String type) {
         this.type = type;
@@ -117,8 +117,7 @@ public class PropertyMutationMaster {
     }
 
     /**
-     * @param code
-     *            the code to set
+     * @param code the code to set
      */
     public void setCode(String code) {
         this.code = code;
@@ -132,8 +131,7 @@ public class PropertyMutationMaster {
     }
 
     /**
-     * @param orderId
-     *            the orderId to set
+     * @param orderId the orderId to set
      */
     public void setOrderId(String orderId) {
         this.orderId = orderId;

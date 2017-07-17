@@ -39,11 +39,25 @@
  */
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.masters.service.BoundaryWiseReportService;
+import org.egov.wtms.reports.entity.WaterConnectionHelperAdaptor;
+import org.egov.wtms.reports.entity.WaterConnectionReportResult;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,17 +71,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-
 @Controller
 @RequestMapping(value = "/reports")
 public class NumberOfConnectionReportController {
@@ -77,7 +80,6 @@ public class NumberOfConnectionReportController {
     
     @Autowired
     private BoundaryService boundaryService;
-
 
     @Autowired
     public NumberOfConnectionReportController(final BoundaryWiseReportService drillDownReportService) {
@@ -111,16 +113,13 @@ public class NumberOfConnectionReportController {
 
     @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/connectionReportList", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTablesUpdate(@RequestParam final String ward,
+    @ResponseBody
+    public void springPaginationDataTablesUpdate(@RequestParam final String ward,
             @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response)
             throws IOException {
-
-        SQLQuery drillDownreportQuery = null;
-        String result = null;
-        drillDownreportQuery = boundaryWiseReportService.getDrillDownReportQuery(ward, block);
-        drillDownreportQuery.setResultTransformer(Transformers.aliasToBean(WaterConnectionReportResult.class));
-        final List<WaterConnectionReportResult> drillDownresult = drillDownreportQuery.list();
-        result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, WaterConnectionReportResult.class,
+    
+        final List<WaterConnectionReportResult> drillDownresult = boundaryWiseReportService.getDrillDownReportResult(ward, block);
+        String  result = new StringBuilder("{ \"data\":").append(toJSON(drillDownresult, WaterConnectionReportResult.class,
                 WaterConnectionHelperAdaptor.class)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());

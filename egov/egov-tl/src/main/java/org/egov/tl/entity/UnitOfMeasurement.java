@@ -44,6 +44,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -55,7 +56,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "EGTL_MSTR_UNITOFMEASURE")
 @SequenceGenerator(name = UnitOfMeasurement.SEQUENCE, sequenceName = UnitOfMeasurement.SEQUENCE, allocationSize = 1)
-@Unique(fields = {"name", "code"},enableDfltMsg = true)
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 public class UnitOfMeasurement extends AbstractAuditable {
 
     public static final String SEQUENCE = "SEQ_EGTL_MSTR_UNITOFMEASURE";
@@ -67,18 +68,22 @@ public class UnitOfMeasurement extends AbstractAuditable {
 
     @NotBlank(message = "tradelic.uommaster.name.null")
     @Length(min = 1, max = 50, message = "tradelic.uommaster.name.length")
+    @SafeHtml
     private String name;
 
     @NotBlank(message = "tradelic.uommaster.code.null")
     @Length(min = 1, max = 50, message = "tradelic.uommaster.code.length")
+    @SafeHtml
     private String code;
 
     private boolean active;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(Long id) {
         this.id = id;
     }

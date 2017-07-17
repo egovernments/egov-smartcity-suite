@@ -41,6 +41,7 @@
 
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ page language="java"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <html>
 
 <head>
@@ -54,11 +55,11 @@
 	TYPE="text/css">
 <script type="text/javascript" src="/EGF/resources/javascript/tabber.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
-	src="/EGF/resources/javascript/RemitRecoveryHelper.js?rnd=${app_release_no}"></script>
+	src="/EGF/resources/javascript/remitrecovery-helper.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/tabber2.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"> </script>
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"> </script>
 <title><s:text name="remit.recovery.create.title" /></title>
 <script>
 
@@ -159,6 +160,7 @@ function printVoucher(){
 			 var myform = jQuery('#remittanceForm');
 			// re-disabled the set of inputs that you previously
 			var disabled = myform.find(':input:disabled').removeAttr('disabled'); 
+			disableRemitRecoverView();
 			document.remittanceForm.action='${pageContext.request.contextPath}/deduction/remitRecovery-sendForApproval.action';
 			document.remittanceForm.submit();
 		}
@@ -442,6 +444,7 @@ function printVoucher(){
 
 			</div>
 			<div class="buttonbottom" id="buttondiv">
+				<s:hidden type="hidden" id="selectedRows" name="selectedRows" />
 				<s:hidden name="paymentid" value="%{paymentheader.id}" />
 				<s:hidden name="actionname" id="actionName" value="%{action}" />
 				<s:if test="%{showMode!='view'}">

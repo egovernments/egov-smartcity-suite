@@ -48,11 +48,11 @@ import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.PaymentInfo;
+import org.egov.collection.integration.models.PaymentInfoRequest;
 import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.pgi.PaymentRequest;
-import org.egov.infra.validation.exception.ValidationException;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)
@@ -66,7 +66,7 @@ public interface CollectionIntegrationService {
      * @param refNum The bill reference number
      * @return The bill receipt information
      */
-    public List<BillReceiptInfo> getBillReceiptInfo(String serviceCode, String refNum);
+     List<BillReceiptInfo> getBillReceiptInfo(String serviceCode, String refNum);
 
     /**
      * Returns the bill receipt information for given set of reference numbers (typically bill numbers)
@@ -76,7 +76,7 @@ public interface CollectionIntegrationService {
      * @return Map of bill receipt information objects. Key = bill reference number, value = List of Bill receipt information
      * objects
      */
-    public Map<String, List<BillReceiptInfo>> getBillReceiptInfo(String serviceCode, Set<String> refNums);
+     Map<String, List<BillReceiptInfo>> getBillReceiptInfo(String serviceCode, Set<String> refNums);
 
     /**
      * Returns the bill receipt information for given receipt number
@@ -85,7 +85,7 @@ public interface CollectionIntegrationService {
      * @param receiptNum The Collections or Manual Receipt Number
      * @return The bill receipt information
      */
-    public BillReceiptInfo getReceiptInfo(String serviceCode, String receiptNum);
+     BillReceiptInfo getReceiptInfo(String serviceCode, String receiptNum);
 
     /**
      * Returns HashMap of the bill receipt information for given set of receipt numbers
@@ -94,7 +94,7 @@ public interface CollectionIntegrationService {
      * @param receiptNums Set of Collections or Manual Receipt Number
      * @return Map of bill receipt information objects. Key = bill reference number, value = Bill receipt information object
      */
-    public Map<String, BillReceiptInfo> getReceiptInfo(String serviceCode, Set<String> receiptNums);
+     Map<String, BillReceiptInfo> getReceiptInfo(String serviceCode, Set<String> receiptNums);
 
     /**
      * Returns set of bill receipt information for given instrument number. One instrument might have been used to pay for more
@@ -104,7 +104,7 @@ public interface CollectionIntegrationService {
      * @param instrumentNum The instrument number
      * @return The set of bill receipt information objects for given instrument number
      */
-    public List<BillReceiptInfo> getInstrumentReceiptInfo(String serviceCode, String instrumentNum);
+     List<BillReceiptInfo> getInstrumentReceiptInfo(String serviceCode, String instrumentNum);
 
     /**
      * Returns the bill receipt information for given set of instrument numbers. Since one instrument may belong to more than one
@@ -114,7 +114,7 @@ public interface CollectionIntegrationService {
      * @param instrumentNums Set of instrument numbers
      * @return Map of bill receipt information objects. Key = instrument number, value = Set of Bill receipt information objects
      */
-    public Map<String, List<BillReceiptInfo>> getInstrumentReceiptInfo(String serviceCode, Set<String> instrumentNums);
+     Map<String, List<BillReceiptInfo>> getInstrumentReceiptInfo(String serviceCode, Set<String> instrumentNums);
 
     /**
      * This method creates the receipt for the given bill and payment information
@@ -125,7 +125,7 @@ public interface CollectionIntegrationService {
      * care that only a single mode of payment is permitted, i.e., the List should contain a single entry.
      * @return an instance of <code>BillReceiptInfo</code> containing all details of the created receipt.
      */
-    public BillReceiptInfo createReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
+     BillReceiptInfo createReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
 
     /**
      * Returns the online pending bill receipt information for given service and consumer code
@@ -134,7 +134,7 @@ public interface CollectionIntegrationService {
      * @param consumerCode The consumer code of the billing system
      * @return List of Pending Bill receipt information objects
      */
-    public List<BillReceiptInfo> getOnlinePendingReceipts(String serviceCode, String consumerCode);
+     List<BillReceiptInfo> getOnlinePendingReceipts(String serviceCode, String consumerCode);
 
     /**
      * This method creates the miscellaneous receipt for the given bill and payment information
@@ -145,7 +145,7 @@ public interface CollectionIntegrationService {
      * care that only a single mode of payment is permitted, i.e., the List should contain a single entry.
      * @return an instance of <code>BillReceiptInfo</code> containing all details of the created receipt.
      */
-    public BillReceiptInfo createMiscellaneousReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
+     BillReceiptInfo createMiscellaneousReceipt(BillInfo bill, List<PaymentInfo> paymentInfoList);
 
     /**
      * This method returns the count of receipts created with the sum total of receipt amount for the given date range
@@ -153,7 +153,7 @@ public interface CollectionIntegrationService {
      * @param toDate To Date to Search the Aggregate Payment
      * @return List of <code>RestAggregatePaymentInfo</code> containing aggregate information of receipts
      */
-    public List<RestAggregatePaymentInfo> getAggregateReceiptTotal(PaymentInfoSearchRequest paymentInfoSearchRequest);
+     List<RestAggregatePaymentInfo> getAggregateReceiptTotal(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
     /**
      * This method returns the list of receipt created in the system for the given date range and service code of the billing
@@ -163,34 +163,43 @@ public interface CollectionIntegrationService {
      * @param serviceCode The service code of the billing system
      * @return List of <code>RestReceiptInfo</code> containing details of Receipt Information
      */
-    public List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest paymentInfoSearchRequest);
+     List<RestReceiptInfo> getReceiptDetailsByDateAndService(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
     /**
      * This method cancel the receipt information provided by the billing system
      * @param paymentInfoSearchRequest
      * @return success/failure based on the cancellation status
      */
-    public String cancelReceipt(PaymentInfoSearchRequest paymentInfoSearchRequest);
+     String cancelReceipt(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
     /**
      * This method returns the receipt information for the transaction id and channel information provided by the billing system.
      * @param paymentInfoSearchRequest
      * @return <code>RestReceiptInfo</code> containing details of Receipt Information
      */
-    public RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest);
+     RestReceiptInfo getDetailsByTransactionId(PaymentInfoSearchRequest paymentInfoSearchRequest);
 
     /**
      * This method returns sorted list of only the paid receipt detail for the receipt number provided
      * @param receiptNumber
      * @return List of <code>ReceiptDetail</code>
      */
-    public List<ReceiptDetail> getReceiptDetailListByReceiptNumber(String receiptNumber);
-    
+     List<ReceiptDetail> getReceiptDetailListByReceiptNumber(String receiptNumber);
+
     /**
      * This method returns Payment Request to process payments through mobile
      * @param billInfo
      * @return PaymentRequest
      */
-    public PaymentRequest processMobilePayments(BillInfoImpl billInfo) throws ValidationException;
+     PaymentRequest processMobilePayments(BillInfoImpl billInfo);
+
+    /**
+     * @param paymentInfoRequest
+     * @return
+     */
+     List<RestReceiptInfo> getDetailsByUserServiceAndConsumerCode( PaymentInfoRequest paymentInfoRequest);
+
+    
+     byte[] downloadReceiptByReceiptAndConsumerNo(String receiptNumber, String consumerCode);
 
 }

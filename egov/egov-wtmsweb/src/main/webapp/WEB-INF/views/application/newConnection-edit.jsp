@@ -1,41 +1,41 @@
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~      accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~       Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~       The updated version of eGov suite of products as by eGovernments Foundation
+  ~       is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~       This program is free software: you can redistribute it and/or modify
+  ~       it under the terms of the GNU General Public License as published by
+  ~       the Free Software Foundation, either version 3 of the License, or
+  ~       any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~       This program is distributed in the hope that it will be useful,
+  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~       GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~       You should have received a copy of the GNU General Public License
+  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~       http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~       In addition to the terms of the GPL license to be adhered to in using this
+  ~       program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~           1) All versions of this program, verbatim or modified must carry this
+  ~              Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~           2) Any misrepresentation of the origin of the material is prohibited. It
+  ~              is required that all modified versions of this material be marked in
+  ~              reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~           3) This license does not grant any rights to any user of the program
+  ~              with regards to rights under trademark law for use of the trade names
+  ~              or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -49,13 +49,17 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 <div class="page-container" id="page-container">
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
+			<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/> 
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
+	<form:hidden path="" id="isCommissionerLoggedIn" value="${isCommissionerLoggedIn}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
 	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>  
 	<input type="hidden" id ="typeOfConnection"  value="${typeOfConnection}"/>
 	<input type="hidden" id="meterFocus" value="${meterFocus}"/>
+	<input type="hidden" id="isSanctionedDetailEnable" value="${isSanctionedDetailEnable}"/>
+	<input type="hidden" id="proceedWithoutDonation" value="${proceedWithoutDonation}"/>
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 	<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
@@ -68,13 +72,14 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<c:if test="${waterConnectionDetails.status.code != 'CREATED'}">
 		<jsp:include page="connectiondetails-view.jsp"></jsp:include>
 	</c:if>
-	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='fieldInspection'}">
+	<c:if test="${(waterConnectionDetails.status.code =='CREATED'  )&& mode=='fieldInspection'}">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
 		</div>
 		<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 			<jsp:include page="estimationdetails.jsp"></jsp:include>
-	</c:if>				
+	</c:if>	
+			
 	<c:if test="${waterConnectionDetails.status.code =='CREATED' && mode=='edit' }">
 		<div class="panel panel-primary" data-collapsed="0">
 			<jsp:include page="connectiondetails.jsp"></jsp:include> 	
@@ -97,7 +102,7 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 			</div>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 		</div>	
-		<c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONAMOUNTPAID'}">
+		<c:if test="${ (isSanctionedDetailEnable == true && waterConnectionDetails.status.code == 'ESTIMATIONAMOUNTPAID') }">
 		<jsp:include page="sanctiondetails.jsp"></jsp:include>
 		</c:if>	
 		<c:if test="${waterConnectionDetails.status.code == 'WORKORDERGENERATED'}">
@@ -122,4 +127,4 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 </form:form>
 <script src="<cdn:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

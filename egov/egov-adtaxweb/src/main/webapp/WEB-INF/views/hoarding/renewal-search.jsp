@@ -87,7 +87,16 @@
 								</form:select>
 							<form:errors path="advertisement.subCategory" cssClass="error-msg"/>
                         </div>
-                    </div>
+                        </div>
+                         <div class="form-group">
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.owner.Details"/></label>
+                        <div class="col-sm-3 add-margin">
+                      
+                            <form:input type="text" class="form-control" id="ownerDetail" path="ownerDetail"/>
+							<form:errors path="ownerDetail" cssClass="error-msg"/>
+                        </div>	
+                        </div>	
+                    
 	            </div>
 	        </div>
         	<div class="row">

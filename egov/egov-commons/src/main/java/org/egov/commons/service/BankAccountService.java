@@ -185,7 +185,7 @@ public class BankAccountService extends PersistenceService<Bankaccount, Long> {
                 append("egf_instrumentvoucher eiv,egf_instrumentheader ih,egw_status egws ").
                 append("where ph.voucherheaderid=vh.id and coa.id=bankaccount.glcodeid and vh.id=eiv.VOUCHERHEADERID and ").
                 append("  eiv.instrumentheaderid=ih.id and egws.id=ih.id_status and egws.moduletype='Instrument' and egws.description='New' and ih.transactionNumber is not null").
-                append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque=1 ").
+                append("and ih.instrumenttype=(select id from egf_instrumenttype where upper(type)='CHEQUE') and ispaycheque='1' ").
                 append(" and bank.isactive=true  and bankBranch.isactive=true and bankaccount.isactive=true ").
                 append(" and bank.id = bankBranch.bankid and bankBranch.id = bankaccount.branchid and bankaccount.branchid=:branchId").
                 append("  and bankaccount.type in ('RECEIPTS_PAYMENTS','PAYMENTS') and vh.voucherdate <= :asOnDate and ph.bankaccountnumberid=bankaccount.id  order by vh.voucherdate desc");

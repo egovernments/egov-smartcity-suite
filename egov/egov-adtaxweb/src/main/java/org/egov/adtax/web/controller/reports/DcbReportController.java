@@ -46,7 +46,7 @@ import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AdvertisementReportService;
 import org.egov.adtax.web.controller.GenericController;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.GlobalSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -65,8 +65,7 @@ public class DcbReportController extends GenericController {
 
     @Autowired
     private AdvertisementReportService hoardingReportService;
-    @Autowired
-    private ApplicationProperties applicationProperties;
+
     @Autowired
     private AdvertisementPermitDetailService advertisementPermitDetailService;
 
@@ -76,8 +75,9 @@ public class DcbReportController extends GenericController {
     }
 
     @RequestMapping(value = "search-for-dcbreport", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+    @ResponseBody
+    public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
+        return "{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, null))
                 + "}";
     }
@@ -85,10 +85,10 @@ public class DcbReportController extends GenericController {
     @RequestMapping(value = "getHoardingDcb/{id}")
     public String viewHoarding(@PathVariable final Long id, final Model model) {
         AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(id);
-        if(advertisementPermitDetail!=null){
-        final Advertisement hoarding = advertisementPermitDetail.getAdvertisement();
-        model.addAttribute("hoarding", hoarding);
-        model.addAttribute("dcbResult", hoardingReportService.getHoardingWiseDCBResult(hoarding));
+        if (advertisementPermitDetail != null) {
+            final Advertisement hoarding = advertisementPermitDetail.getAdvertisement();
+            model.addAttribute("hoarding", hoarding);
+            model.addAttribute("dcbResult", hoardingReportService.getHoardingWiseDCBResult(hoarding));
         }
         return "report-dcbview";
     }

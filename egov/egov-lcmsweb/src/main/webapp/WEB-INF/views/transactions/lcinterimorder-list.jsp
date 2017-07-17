@@ -50,7 +50,7 @@
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden"  id="lcNumber" name="lcNumber" value="${legalCase.lcNumber}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<input type="hidden" name="lcInterimOrderList" id="lcInterimOrderList"
 		value="${lcInterimOrderList}">
 	<input type="hidden" id=legalCaseInterimOrder name="legalCaseInterimOrder"

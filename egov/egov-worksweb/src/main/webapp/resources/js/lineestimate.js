@@ -95,6 +95,18 @@ $(document).ready(function(){
 	
 	replaceWorkCategoryChar();
 	replaceBeneficiaryChar();
+	
+	var hiddenFields = $("#hiddenfields").val().replace(/[\[\]']+/g,'').replace(/, /g, ",").split(",");
+	$.each(hiddenFields,function(){
+		var fieldName = this.toString().trim();
+		var label = $("label[for='"+fieldName+"']");
+		label.hide();
+		$("#"+fieldName).hide();
+		$("#"+fieldName+"-value").hide();
+		$("#subjectDescriptionHide").hide();
+		$('#'+fieldName).removeAttr('required')
+	});
+
 });
 
 function renderPdf() {
@@ -116,7 +128,7 @@ $('.btn-primary').click(function(){
 			
 			if(adminSanctionDate > technicalSanctionDate && technicalSanctionDate != '') {
 				bootbox.alert($('#errorTechDate').val());
-				$('#technicalSanctionDate').val("");
+				$('#technicalSanctionDate').val('').datepicker('update');
 				return false;
 			}
 
@@ -186,13 +198,7 @@ function addLineEstimate() {
 	if (rowcount < 30) {
 		if (document.getElementById('estimateRow') != null) {
 			// get Next Row Index to Generate
-			var nextIdx = 0;
-			if($detailsRowCount == 0)
-				nextIdx = $("#tblestimate tbody tr").length;
-			else
-				nextIdx = $detailsRowCount++;
-			
-			
+			var nextIdx = $("#tblestimate tbody tr").length;;
 			
             var estimateNo = (new Date()).valueOf();
 			// validate status variable for exiting function
@@ -303,34 +309,44 @@ function deleteLineEstimate(obj) {
 	} else {
 		tbl.deleteRow(rIndex);
 		//starting index for table fields
-		var idx=parseInt($detailsRowCount);
-		
-		generateSno();
-		
+		var idx= 0;
+		var sno = 1;
 		//regenerate index existing inputs in table row
-		$("#tblestimate tbody tr").each(function() {
+		jQuery("#tblestimate tbody tr").each(function() {
 		
-			hiddenElem=$(this).find("input:hidden");
-			
-			if(!$(hiddenElem).val())
-			{
-				$(this).find("input, errors, textarea").each(function() {
-					   $(this).attr({
+				jQuery(this).find("input, select, textarea, errors, span, input:hidden").each(function() {
+					var classval = jQuery(this).attr('class');
+					if(classval == 'spansno') {
+						jQuery(this).text(sno);
+						sno++;
+					} else {
+					jQuery(this).attr({
 					      'name': function(_, name) {
-					    	  return name.replace(/\[.\]/g, '['+ idx +']'); 
+					    	  if(!(jQuery(this).attr('name')===undefined))
+					    		  return name.replace(/\[.\]/g, '['+ idx +']'); 
 					      },
+					      'id': function(_, id) {
+					    	  if(!(jQuery(this).attr('id')===undefined))
+					    		  return id.replace(/\[.\]/g, '['+ idx +']'); 
+					      },
+					      'class' : function(_, name) {
+								if(!(jQuery(this).attr('class')===undefined))
+									return name.replace(/\[.\]/g, '['+ idx +']'); 
+							},
 						  'data-idx' : function(_,dataIdx)
 						  {
 							  return idx;
 						  }
 					   });
+					}
 			    });
+				
 				idx++;
-			}
 		});
 		calculateEstimatedAmountTotal();
 		return true;
-	}	
+	}
+		
 }
 
 function calculateEstimatedAmountTotal(){
@@ -466,18 +482,6 @@ $(document).ready(function(){
 	'#ward');
 });
 
-function validateQuantity() {
-	$( "input[name$='quantity']" ).on("keyup", function(){
-	    var valid = /^[1-9](\d{0,9})(\.\d{0,2})?$/.test(this.value),
-	        val = this.value;
-	    
-	    if(!valid){
-	        console.log("Invalid input!");
-	        this.value = val.substring(0, val.length - 1);
-	    }
-	});
-}
-
 function validateadminSanctionNumber() {
 	$( "input[name$='adminSanctionNumber']" ).on("keyup", function(){
 		var valid = /^[a-zA-Z0-9\\/-]*$/.test(this.value),
@@ -536,13 +540,10 @@ function validateWorkFlowApprover(name) {
 		if(lineEstimateStatus == 'BUDGET_SANCTIONED') {
 			var lineEstimateDate = new Date($('#lineEstimateDate').val());
 			var councilResolutionDate = $('#councilResolutionDate').data('datepicker').date;	
-			if (councilResolutionDate != "") {
-				if (councilResolutionDate < lineEstimateDate) {
+			if (councilResolutionDate != '' && councilResolutionDate < lineEstimateDate) {
 					bootbox.alert($('#errorCouncilResolutionDate').val());
-					$('#councilResolutionDate').val("");
+					$('#councilResolutionDate').val('').datepicker('update');
 					return false;
-				}
-				return true;
 			}
 		}
 	}

@@ -371,18 +371,20 @@ public class LetterOfAcceptanceService {
 
     public List<ContractorDetail> searchContractorDetails(final SearchRequestContractor searchRequestContractor) {
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ContractorDetail.class, "cd")
-                .createAlias("contractor", "contractor");
+                .createAlias("contractor", "contractor").createAlias("cd.status", "status");
         if (searchRequestContractor != null) {
             if (searchRequestContractor.getDepartment() != null)
                 criteria.add(Restrictions.eq("department.id", searchRequestContractor.getDepartment()));
             if (searchRequestContractor.getContractorClass() != null)
                 criteria.add(Restrictions.ge("grade.id", searchRequestContractor.getContractorClass()));
             if (searchRequestContractor.getContractorCode() != null)
-                criteria.add(Restrictions.eq("contractor.code", searchRequestContractor.getContractorCode()).ignoreCase());
-            if (searchRequestContractor.getNameOfAgency() != null)
                 criteria.add(
-                        Restrictions.ilike("contractor.name", searchRequestContractor.getNameOfAgency(), MatchMode.ANYWHERE));
+                        Restrictions.eq("contractor.code", searchRequestContractor.getContractorCode()).ignoreCase());
+            if (searchRequestContractor.getNameOfAgency() != null)
+                criteria.add(Restrictions.ilike("contractor.name", searchRequestContractor.getNameOfAgency(),
+                        MatchMode.ANYWHERE));
         }
+        criteria.add(Restrictions.eq("status.code", WorksConstants.ACTIVE).ignoreCase());
         criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
         return criteria.list();
     }
@@ -402,7 +404,7 @@ public class LetterOfAcceptanceService {
         return workIdNumbers;
     }
 
-    public List<WorkOrder> getLoaForCreateMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
+    public List<WorkOrder> getLoaForCreateMilestone(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance) {
         final StringBuilder queryStr = new StringBuilder(500);
 
         buildWhereClause(searchRequestLetterOfAcceptance, queryStr);
@@ -411,10 +413,11 @@ public class LetterOfAcceptanceService {
         return workOrderList;
     }
 
-    private void buildWhereClause(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance, final StringBuilder queryStr) {
+    private void buildWhereClause(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+            final StringBuilder queryStr) {
 
         queryStr.append(
-                "select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status and not exists (select ms.workOrderEstimate.workOrder.id from Milestone ms where ms.workOrderEstimate.workOrder.id = wo.id and upper(wo.egwStatus.code)  != upper(:workorderstatus) )");
+                "select distinct wo from WorkOrder wo where wo.egwStatus.moduletype = :moduleType and wo.egwStatus.code = :status and not exists (select ms.workOrderEstimate.workOrder.id from Milestone ms where ms.workOrderEstimate.workOrder.id = wo.id and upper(wo.egwStatus.code)  != upper(:workorderstatus) and upper(ms.status.code)  != upper(:milestonestatus))");
         queryStr.append(
                 " and wo.estimateNumber in (select led.estimateNumber from LineEstimateDetails led where led.lineEstimate.executingDepartment.id = :departmentName)");
 
@@ -446,13 +449,14 @@ public class LetterOfAcceptanceService {
 
     }
 
-    private Query setParameterForMilestone(SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
+    private Query setParameterForMilestone(final SearchRequestLetterOfAcceptance searchRequestLetterOfAcceptance,
             final StringBuilder queryStr) {
         final Query qry = entityManager.createQuery(queryStr.toString());
 
         qry.setParameter("status", WorksConstants.APPROVED);
         qry.setParameter("moduleType", WorksConstants.WORKORDER);
         qry.setParameter("workorderstatus", WorksConstants.CANCELLED_STATUS);
+        qry.setParameter("milestonestatus", WorksConstants.CANCELLED_STATUS);
         if (searchRequestLetterOfAcceptance != null) {
             qry.setParameter("departmentName", searchRequestLetterOfAcceptance.getDepartmentName());
             if (StringUtils.isNotBlank(searchRequestLetterOfAcceptance.getWorkIdentificationNumber()))
@@ -511,7 +515,11 @@ public class LetterOfAcceptanceService {
                     .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
                 String appropriationNumber = lineEstimateAppropriationService
                         .generateBudgetAppropriationNumber(lineEstimateDetails);
+                try{
                 lineEstimateService.releaseBudgetOnReject(lineEstimateDetails, appropriationAmount, appropriationNumber);
+                }catch(final ValidationException v) {
+                    throw new ValidationException(v.getErrors());
+                }
             }
         }
         final WorkOrder savedworkOrder = letterOfAcceptanceRepository.save(workOrder);

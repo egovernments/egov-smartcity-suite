@@ -83,17 +83,29 @@ var subcategory = '${advertisement.subCategory.id}';
 var adminBoundry = '${advertisement.ward.id}';
 var revenueBoundary = '${advertisement.locality.id}';
 
-$('#submit').click(function(e){
-	if($('#hoardingform').valid()){
-			if($('#measurement').val() <= 0){
+
+	$('#submit').click(function(e) {
+		function isDate(date) {
+			var timeStamp = Date.parse(date);
+			if (isNaN(timestamp))
+				bootbox.alert('Plese select a valid date!');
+			return true
+		}
+
+		var endDate = $('.datepicker').val();
+		if (isDate(endDate) == false) {
+
+			e.preventDefault();
+		}
+		if ($('#hoardingform').valid()) {
+			if ($('#measurement').val() <= 0) {
 				bootbox.alert('Please enter valid measurement');
 				e.preventDefault();
-			}else 
+			} else
 				return true;
-	}
-	else 
-		return false;
-});
+		} else
+			return false;
+	});
 </script>
 <script src="<cdn:url value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url value='/resources/app/js/legacyAdvertisement.js?rnd=${app_release_no}'/>"></script>

@@ -56,33 +56,43 @@
 			<span class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="propTypeId"
 				id="propTypeId" listKey="id" listValue="type" list="dropdownData.PropTypeMaster" value="%{propTypeId}"
-				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();" title="Type of ownership"/></td>
+				cssClass="selectnew" onchange="populatePropTypeCategory();toggleFloorDetails();enableFieldsForPropType();populatePropDepartment();" title="Type of ownership"/></td>
 				
 		<td class="greybox" width="25%"><s:text name="property.type"></s:text>
 			<span class="mandatory1" id="prntMandatory">*</span> :</td>
 		<egov:ajaxdropdown id="propTypeCategoryId" fields="['Text','Value']" dropdownId="propTypeCategoryId"
-			url="/public/common/ajaxCommon-propTypeCategoryByPropType.action" />
+			url="/common/ajaxCommon-propTypeCategoryByPropType.action" />
 		<td class="greybox">
 		   <s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDetail.categoryType"
 				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{propertyDetail.categoryType}"
-				cssClass="selectnew" onchange="populateUsages();" title="Different types of properties"/>
+				cssClass="selectnew" onchange="populateUsages()" title="Different types of properties"/>
 		   <s:hidden name="propertyCategory" id="propertyCategory"/>
 		</td>
 	</tr>
 	
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
-		<td class="greybox apartmentRow" width="25%"><s:text name="apartcomplex.name"></s:text> :</td>
-		<td class="greybox apartmentRow" width=""><s:select headerKey=""
+		<td class="greybox" width="25%">
+		  <div class="apartmentRow"><s:text name="apartcomplex.name"></s:text> :</div></td>
+		<td class="greybox" width="">		
+		   <div class="apartmentRow">
+		     <s:select headerKey=""
 				headerValue="%{getText('default.select')}" 	name="propertyDetail.apartment" id="apartment"
 				listKey="id" listValue="name" value="%{propertyDetail.apartment.id}"
-				list="dropdownData.apartments" cssClass="selectnew"  title="In Which property belongs to"/></td>
-		<td class="greybox" width="25%"><s:text name="exemptioncategory"/> :</td>
+				list="dropdownData.apartments" cssClass="selectnew"  title="In Which property belongs to"/>
+		   </div>
+		   		
+		</td>
+	</tr>
+	<tr>
+	<td class="greybox" width="5%">&nbsp;</td>
+	<td class="greybox" width="25%"><s:text name="label.property.department"/> :</td>
+		<egov:ajaxdropdown id="propertyDepartmentId" fields="['Value','Text']" dropdownId="propertyDepartmentId"
+			url="/common/ajaxcommon-propdepartment-byproptype.action" />
 		<td class="greybox">
-		<s:select name="taxExemptionId" id="taxExemptionId" headerValue="select"
-				headerKey="" list="dropdownData.taxExemptionReasonList" value="%{taxExemptionId}" 
-				listKey="id" listValue="name" cssClass="selectnew" data-optional="1">
-			</s:select>
+		   <s:select headerKey="" headerValue="%{getText('default.select')}" name="propertyDepartmentId"
+				id="propertyDepartmentId" listKey="id" listValue="name" list="propertyDepartmentList" value="%{propertyDepartmentId}"
+				cssClass="selectnew" title="Different types of properties"/>
 		</td>
 	</tr>
 
@@ -137,9 +147,13 @@
 		<td class="greybox"><s:select headerKey="-1" headerValue="%{getText('default.select')}" name="mutationId"
 				id="mutationId" listKey="id" listValue="mutationName" list="dropdownData.MutationList" value="%{mutationId}"
 				cssClass="selectnew" onchange="makeMandatory();" /></td>
-		<td class="greybox parentIndexText"><s:text name="prntPropAssessmentNum" /> <span
-			class="mandatory1" id="prntMandatory">*</span> :</td>
-		<td class="greybox parentIndexText"><s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield></td>
+		<td class="greybox"><div class="parentIndexText"><s:text name="prntPropAssessmentNum" /> <span
+			class="mandatory1" id="prntMandatory">*</span> :</div></td>
+		<td class="greybox">
+		  <div class="parentIndexText">
+		  <s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield>
+		  </div>
+		  </td>
 
 	</tr>
 
@@ -149,27 +163,11 @@
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:textfield name="areaOfPlot" title="Extent of Site of the Property" id="areaOfPlot" size="12" maxlength="8" value="%{areaOfPlot}" 
 		onblur="trim(this,this.value);checkForTwoDecimals(this,'extent of site');checkZero(this,'extent of site');"></s:textfield></td>
-		
-	</tr>
- 
-   <tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" title="If property belongs to Appurtenent land" id="appurtenantLandChecked"
-				value="%{propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" onfocus="makePropertyTypeMandatory();" />
-		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox"><s:textfield maxlength="64" title="Property certification number" name="propertyDetail.occupancyCertificationNo" id="propertyDetail.occupancyCertificationNo" value="%{propertyDetail.occupancyCertificationNo}"></s:textfield></td>
 	</tr>
-
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
-			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="propertyDetail.extentAppartenauntLand" id="extentAppartenauntLand"
-				value="%{propertyDetail.extentAppartenauntLand}" size="12"	maxlength="8" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
-	</tr>
+ 	<s:hidden id="appurtenantLandChecked" name="propertyDetail.appurtenantLandChecked" value="%{propertyDetail.appurtenantLandChecked}"/>
+ 	<s:hidden id="extentAppartenauntLand" name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>
 	
 	<%-- <tr class="superStructureRow">
 		<td class="greybox">&nbsp;</td>
@@ -185,6 +183,7 @@
 				name="propertyDetail.siteOwner" id="siteOwner"></s:textfield></td>
 	</tr> --%>
 	
+	<s:if test="%{!basicProperty.regdDocNo.isEmpty()}">
 	<tr>
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="reg.docno"></s:text><span class="mandatory1">*</span> :</td>
@@ -197,7 +196,7 @@
 		 <s:textfield name="basicProperty.regdDocDate" title="Document dated" id="basicProperty.regdDocDate" value="%{#docDate}" size="12" autocomplete="off"
 				maxlength="12" cssClass="datepicker"></s:textfield></td>
 	</tr>
-
+	</s:if>
 	<!-- Amenities section -->
 
 	<tr class="amenities">
@@ -245,7 +244,17 @@
 			</div>
 		</td>
 	</tr>
-
+	<s:if test="%{id == null && !dataEntry}">
+		<tr class="floordetails">
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><s:text name="floor.data.enterted"></s:text>
+				<span class="mandatory1">*</span> :</td>
+			<td class="bluebox"><s:checkbox name="floorDetailsEntered" title="Floor details enerted or not" id="floorDetailsEntered"
+					value="%{floorDetailsEntered}" onclick="makePlingthAreaReadonly();"/>
+			</td>
+		</tr>
+	</s:if>
+	
 	<tr id="vacantLandRow" class="vacantlanddetaills">
 		<td colspan="5">
 			<div class="headingsmallbg">
@@ -296,6 +305,11 @@
 		populatelocationFactor({
 			wardId : document.getElementById("wardId").value
 		});
-	} 
+	}
+ 	function populatePropDepartment() {
+		populatepropertyDepartmentId({
+			propTypeId : document.getElementById("propTypeId").value
+		});
+	}
     
 </script>

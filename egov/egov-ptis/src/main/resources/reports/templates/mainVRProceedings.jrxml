@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-03-06T16:38:35 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainVRProceedings" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="15" rightMargin="25" topMargin="20" bottomMargin="10" isSummaryNewPage="true" whenResourceMissingType="Error" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="isCorporation" class="java.lang.Boolean"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="approverName" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="houseNo" class="java.lang.String"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="assessmentNo" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String"/>
+	<parameter name="financialYear" class="java.lang.String"/>
+	<parameter name="vrFromDate" class="java.lang.String"/>
+	<parameter name="vrToDate" class="java.lang.String"/>
+	<parameter name="totalMonths" class="java.lang.Integer"/>
+	<parameter name="halfYearTax" class="java.lang.String"/>
+	<parameter name="newTax" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="35" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="540" height="30" uuid="cc986a3e-b45b-435c-aaeb-bcd5180159a6"/>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userSignature">
+					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="copyType">
+					<subreportParameterExpression><![CDATA["official"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="approverName">
+					<subreportParameterExpression><![CDATA[$P{approverName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerName">
+					<subreportParameterExpression><![CDATA[$P{ownerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$P{noticeNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="currentDate">
+					<subreportParameterExpression><![CDATA[$P{currentDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="houseNo">
+					<subreportParameterExpression><![CDATA[$P{houseNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="locality">
+					<subreportParameterExpression><![CDATA[$P{locality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="assessmentNo">
+					<subreportParameterExpression><![CDATA[$P{assessmentNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="financialYear">
+					<subreportParameterExpression><![CDATA[$P{financialYear}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="vrFromDate">
+					<subreportParameterExpression><![CDATA[$P{vrFromDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="vrToDate">
+					<subreportParameterExpression><![CDATA[$P{vrToDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="totalMonths">
+					<subreportParameterExpression><![CDATA[$P{totalMonths}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="halfYearTax">
+					<subreportParameterExpression><![CDATA[$P{halfYearTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="newTax">
+					<subreportParameterExpression><![CDATA[$P{newTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(null, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("vacancyRemissionProceedings_corp.jasper"):ReportUtil.getTemplateAsStream("vacancyRemissionProceedings_municipality.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<summary>
+		<band height="35" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="540" height="30" uuid="28effcea-ccef-4dfd-98e6-300b1de4a221"/>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userSignature">
+					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="copyType">
+					<subreportParameterExpression><![CDATA["citizen"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="approverName">
+					<subreportParameterExpression><![CDATA[$P{approverName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerName">
+					<subreportParameterExpression><![CDATA[$P{ownerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$P{noticeNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="currentDate">
+					<subreportParameterExpression><![CDATA[$P{currentDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="houseNo">
+					<subreportParameterExpression><![CDATA[$P{houseNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="locality">
+					<subreportParameterExpression><![CDATA[$P{locality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="assessmentNo">
+					<subreportParameterExpression><![CDATA[$P{assessmentNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="financialYear">
+					<subreportParameterExpression><![CDATA[$P{financialYear}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="vrFromDate">
+					<subreportParameterExpression><![CDATA[$P{vrFromDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="vrToDate">
+					<subreportParameterExpression><![CDATA[$P{vrToDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="totalMonths">
+					<subreportParameterExpression><![CDATA[$P{totalMonths}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="halfYearTax">
+					<subreportParameterExpression><![CDATA[$P{halfYearTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="newTax">
+					<subreportParameterExpression><![CDATA[$P{newTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource(null, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("vacancyRemissionProceedings_corp.jasper"):ReportUtil.getTemplateAsStream("vacancyRemissionProceedings_municipality.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

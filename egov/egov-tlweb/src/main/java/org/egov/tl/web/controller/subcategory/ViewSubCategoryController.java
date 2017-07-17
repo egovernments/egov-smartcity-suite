@@ -41,48 +41,56 @@
 package org.egov.tl.web.controller.subcategory;
 
 import org.egov.tl.entity.LicenseSubCategory;
-import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.entity.LicenseSubCategoryDetails;
+import org.egov.tl.service.LicenseSubCategoryService;
+import org.egov.tl.service.SubCategoryDetailsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping("/licensesubcategory")
 public class ViewSubCategoryController {
 
-    private final LicenseSubCategoryService licenseSubCategoryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
-    private LicenseCategoryService licenseCategoryService;
+    private SubCategoryDetailsService subCategoryDetailsService;
 
-    @Autowired
-    private UnitOfMeasurementService unitOfMeasurementService;
+    @RequestMapping(value = "/licensesubcategory/by-category", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LicenseSubCategory> subcategories(@RequestParam Long categoryId) {
+        return licenseSubCategoryService.getSubCategoriesByCategory(categoryId);
+    }
 
-    @Autowired
-    private FeeTypeService feeTypeService;
+    @RequestMapping(value = "/licensesubcategory/detail", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LicenseSubCategoryDetails> subcategoryDetailsBySubcategoryId(@RequestParam Long subCategoryId) {
+        return subCategoryDetailsService.getSubcategoryDetailsBySubcategoryId(subCategoryId);
+    }
 
-    @Autowired
-    public ViewSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
-        this.licenseSubCategoryService = licenseSubCategoryService;
+    @RequestMapping(value = "/licensesubcategory/detail-by-feetype", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public LicenseSubCategoryDetails subcategoryDetailBySubcategoryAndFeeType(@RequestParam Long subCategoryId, @RequestParam Long feeTypeId) {
+        return subCategoryDetailsService.getSubcategoryDetailBySubcategoryAndFeeType(subCategoryId, feeTypeId);
     }
 
     @ModelAttribute
-    public LicenseSubCategory licenseCategoryModel(@PathVariable final String code) {
-        return licenseSubCategoryService.findSubCategoryByCode(code);
+    public LicenseSubCategory licenseSubCategory(@PathVariable(required = false) String code) {
+        return licenseSubCategoryService.getSubCategoryByCode(code);
     }
 
-    @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
-    public String categoryView(final Model model) {
-        model.addAttribute("licenseCategories", licenseCategoryService.findAll());
-        model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-        model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
+    @RequestMapping(value = "/licensesubcategory/view/{code}", method = GET)
+    public String viewSubCategory() {
         return "subcategory-view";
     }
 }

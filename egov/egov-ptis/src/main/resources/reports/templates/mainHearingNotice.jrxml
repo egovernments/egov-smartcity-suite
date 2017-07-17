@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-11-04T12:14:36 -->
+<!-- 2016-12-26T13:15:49 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainHearingNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="40" isSummaryNewPage="true" whenResourceMissingType="Error" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -48,6 +48,7 @@
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="cityName" class="java.lang.String"/>
 	<parameter name="isCorporation" class="java.lang.Boolean"/>
+	<parameter name="natureOfWork" class="java.lang.String"/>
 	<parameter name="docNumberObjection" class="java.lang.String"/>
 	<parameter name="recievedOn" class="java.lang.String"/>
 	<parameter name="hearingNoticeDate" class="java.lang.String"/>
@@ -71,6 +72,9 @@
 				</subreportParameter>
 				<subreportParameter name="copyType">
 					<subreportParameterExpression><![CDATA["citizen"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="natureOfWork">
+					<subreportParameterExpression><![CDATA[$P{natureOfWork}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="docNumberObjection">
 					<subreportParameterExpression><![CDATA[$P{docNumberObjection}]]></subreportParameterExpression>
@@ -120,6 +124,9 @@
 				</subreportParameter>
 				<subreportParameter name="docNumberObjection">
 					<subreportParameterExpression><![CDATA[$P{docNumberObjection}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="natureOfWork">
+					<subreportParameterExpression><![CDATA[$P{natureOfWork}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="recievedOn">
 					<subreportParameterExpression><![CDATA[$P{recievedOn}]]></subreportParameterExpression>

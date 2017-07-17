@@ -42,12 +42,10 @@ package org.egov.ptis.scheduler;
 import org.apache.log4j.Logger;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.ptis.service.DemandBill.DemandBillService;
-import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-@DisallowConcurrentExecution
 public class BulkBillGenerationJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = 8529011650151018147L;
@@ -73,16 +71,8 @@ public class BulkBillGenerationJob extends AbstractQuartzJob {
             demandBillService.bulkBillGeneration(modulo, billsCount);
     }
 
-    public Integer getBillsCount() {
-        return billsCount;
-    }
-
     public void setBillsCount(final Integer billsCount) {
         this.billsCount = billsCount;
-    }
-
-    public Integer getModulo() {
-        return modulo;
     }
 
     public void setModulo(final Integer modulo) {

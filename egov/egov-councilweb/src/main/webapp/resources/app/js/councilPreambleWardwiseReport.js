@@ -44,17 +44,14 @@ $.fn.serializeObject = function()
     var a = this.serializeArray();
     $.each(a, function() {
         if (o[this.name]) {
-        	//console.log("Name : "+o[this.name]);
             if (!o[this.name].push) {
                 o[this.name] = [o[this.name]];
             }
-            //console.log("value : "+this.value);
             o[this.name].push(this.value);
         } else {
             o[this.name] = this.value;
         }
     });
-    console.log(o);
     return o;
 };    
 
@@ -66,7 +63,6 @@ jQuery('#btnsearch').click(function(e) {
 $('form').keypress(function(e) {
 	if (e.which == 13) {
 		e.preventDefault();
-		alert($('#councilPreamblesearchform').serialize());
 		callAjaxSearch();
 	}
 });
@@ -83,7 +79,6 @@ function getFormData($form) {
 			if(Array.isArray(indexed_array[n['name']]))
 			{
 				arry=indexed_array[n['name']];
-				console.log(arry);
 				arry.push(n['value']);
 			}
 			else
@@ -104,8 +99,6 @@ function getFormData($form) {
 
 function callAjaxSearch() {
 	
-	//console.log($.param());
-	
 	// To get current date
 	var currentDate = new Date();
 	var day = currentDate.getDate();
@@ -120,7 +113,15 @@ function callAjaxSearch() {
 					url : "/council/councilreports/preamblewardwise/search-result",
 					type : "POST",
 					traditional: true,
-					"data" : getFormData(jQuery('form'))
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},
 
 				"bDestroy" : true,
@@ -188,7 +189,17 @@ function callAjaxSearch() {
 			     	                   "render": function ( data, type, row ) {
 			     	                       return type === 'display' && '<div><span>'+(data.length > 500 ? data.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(data)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : data+"</p>");
 			     	                   },
-			     	                   "targets": [1,4]
+			     	                   "targets": [1]
+				     	           },
+			     	             {
+				     	        	  "render" : function(data, type, row) {
+				     	        		  var str = data.replace(/\\u[\n\r\dA-F]{4}/gi, 
+										          function (match) {
+								               return String.fromCharCode(parseInt(match.replace(/\\u/g, ''), 16));
+								          });
+				     	        		  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");;
+				     	        	  },
+			     	                   "targets": [4]
 				     	           }
 				     	          ] 
 			});

@@ -39,7 +39,8 @@
  */
 package org.egov.stms.elasticSearch.entity;
 
-
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,7 +49,7 @@ import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
-public class SewerageNoticeSearchRequest {
+public class SewerageNoticeSearchRequest extends DataTableSearchRequest {
     private String searchText;
     private String shscNumber;
     private String moduleName;
@@ -62,8 +63,9 @@ public class SewerageNoticeSearchRequest {
     private String noticeGeneratedFrom;
     private String noticeGeneratedTo;
     private String noticeType;
+    private ReportFormat printFormat;
 
-    SimpleDateFormat formatterYYYYMMDD = new SimpleDateFormat("yyyy-MM-dd");//todo: Give valid name for this variable.
+    SimpleDateFormat formatterYYYYMMDD = new SimpleDateFormat("yyyy-MM-dd");// todo: Give valid name for this variable.
     SimpleDateFormat dtft = new SimpleDateFormat("dd/MM/yyyy");
     private static final Logger logger = LoggerFactory.getLogger(SewerageNoticeSearchRequest.class);
 
@@ -123,34 +125,6 @@ public class SewerageNoticeSearchRequest {
         this.searchText = searchText;
     }
 
-    /*public Filters searchFilters() {
-        final List<Filter> andFilters = new ArrayList<>(0);
-        andFilters.add(termsStringFilter(SEARCHABLE_SHSCNO, shscNumber));
-        andFilters.add(termsStringFilter(CLAUSES_CITYNAME, ulbName));
-        andFilters.add(queryStringFilter(SEARCHABLE_CONSUMER_NAME, applicantName));
-        andFilters.add(queryStringFilter(CLAUSES_MOBILENO, mobileNumber));
-        andFilters.add(termsStringFilter(CLAUSES_DOORNO, doorNumber));
-        andFilters.add(termsStringFilter(CLAUSES_REVWARD_NAME, revenueWard));
-        andFilters.add(queryStringFilter(CLAUSES_APPLICATION_DATE, applicationDate));
-        if (noticeType != null) {
-            if (noticeType.equals(NOTICE_WORK_ORDER)) {
-              //  andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_WO_NOTICE, noticeType));
-                andFilters.add(rangeFilter(CLAUSES_WO_NOTICE_DATE, noticeGeneratedFrom,
-                        noticeGeneratedTo));//TODO: CHECK WHETHER NOTICEGENERATEDFROM DATE IS MANDATORY TO CHECK IN RANGEFILTER METHOD.
-            } else if (noticeType.equals(NOTICE_ESTIMATION)) {  
-              //  andFilters.add(queryStringFilter(SewerageTaxConstants.SEARCHABLE_EM_NOTICE, noticeType));
-                andFilters.add(rangeFilter(CLAUSES_EM_NOTICE_DATE, noticeGeneratedFrom,
-                        noticeGeneratedTo));
-            }
-            else if(noticeType.equals(NOTICE_CLOSE_CONNECTION)){
-                andFilters.add(rangeFilter(CLAUSES_CC_NOTICE_DATE, noticeGeneratedFrom, noticeGeneratedTo));
-            }
-        }
-        if (logger.isDebugEnabled())
-            logger.debug("finished filters");
-        return Filters.withAndFilters(andFilters);
-    }*/
-
     public String searchQuery() {
         return searchText;
     }
@@ -209,15 +183,12 @@ public class SewerageNoticeSearchRequest {
             } catch (final ParseException e) {
 
             }
+        } else {
+            cal.setTime((new Date()));
+            cal.add(Calendar.DAY_OF_YEAR, 1);
+            this.noticeGeneratedTo = formatterYYYYMMDD.format(cal.getTime());
+
         }
-            else
-            {
-                cal.setTime((new Date()));
-                cal.add(Calendar.DAY_OF_YEAR, 1);
-                this.noticeGeneratedTo = formatterYYYYMMDD.format(cal.getTime());
-        
-            }
-        
 
     }
 
@@ -227,6 +198,14 @@ public class SewerageNoticeSearchRequest {
 
     public String getNoticeType() {
         return noticeType;
+    }
+
+    public ReportFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(ReportFormat printFormat) {
+        this.printFormat = printFormat;
     }
 
 }

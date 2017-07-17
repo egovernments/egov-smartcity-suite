@@ -39,35 +39,36 @@
  */
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.wtms.application.entity.DataEntryConnectionReport;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.DataEntryConnectionReportService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.reports.entity.DataEntryConnectionReportAdaptor;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.infra.web.utils.WebUtils.toJSON;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping("/report/dataEntryConnectionReport/search")
@@ -93,29 +94,38 @@ public class DataEntryConnectionReportController {
         return new DataEntryConnectionReport();
     }
 
-    public @ModelAttribute("revenueWards") List<Boundary> revenueWardList() {
+    @ModelAttribute("revenueWards")
+    public List<Boundary> revenueWardList() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WaterTaxConstants.REVENUE_WARD,
                 REVENUE_HIERARCHY_TYPE);
     }
 
     @RequestMapping(value = "/result/", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ParseException {
+    @ResponseBody
+    public void searchResult(final HttpServletRequest request, final HttpServletResponse response)
+            throws IOException {
         String ward = "";
-        if (null != request.getParameter("ward"))
-            ward = request.getParameter("ward");
-        final SQLQuery query = dataEntryConnectionReportService.getDataEntryConnectionReportDetails(ward);
-        List<DataEntryConnectionReport> dataEntryConnectionReportlist = query.list();
-        for (final DataEntryConnectionReport dataEntryReport : dataEntryConnectionReportlist) {
-            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumberOrConsumerCodeAndStatus(dataEntryReport.getHscNo(),ConnectionStatus.ACTIVE);
-            if (waterConnectionDetails != null && waterConnectionDetails.getExistingConnection() != null) {
-                dataEntryReport.setDonationCharges(waterConnectionDetails.getExistingConnection().getDonationCharges());
-                dataEntryReport.setMonthlyFee(waterConnectionDetails.getExistingConnection().getMonthlyFee());
+        try {
+            if (null != request.getParameter("ward"))
+                ward = request.getParameter("ward");
+            final List<DataEntryConnectionReport> dataEntryConnectionReportlist = dataEntryConnectionReportService
+                    .getDataEntryConnectionReportDetails(ward);
+            for (final DataEntryConnectionReport dataEntryReport : dataEntryConnectionReportlist) {
+                final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                        .findByApplicationNumberOrConsumerCodeAndStatus(dataEntryReport.getHscNo(), ConnectionStatus.ACTIVE);
+                if (waterConnectionDetails != null && waterConnectionDetails.getExistingConnection() != null) {
+                    dataEntryReport.setDonationCharges(waterConnectionDetails.getExistingConnection().getDonationCharges());
+                    dataEntryReport.setMonthlyFee(waterConnectionDetails.getExistingConnection().getMonthlyFee());
+                }
             }
+            final String result = new StringBuilder("{ \"data\":").append(
+                    toJSON(dataEntryConnectionReportlist, DataEntryConnectionReport.class,
+                            DataEntryConnectionReportAdaptor.class))
+                    .append("}").toString();
+            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
+            IOUtils.write(result, response.getWriter());
+        } catch (final ParseException e) {
+            throw new ApplicationRuntimeException("Error while getting data entry report result " + e);
         }
-        String result = new StringBuilder("{ \"data\":").append(toJSON(dataEntryConnectionReportlist, DataEntryConnectionReport.class, DataEntryConnectionReportAdaptor.class)).append("}").toString();
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(result, response.getWriter());
     }
 }

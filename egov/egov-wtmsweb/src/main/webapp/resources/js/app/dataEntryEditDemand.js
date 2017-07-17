@@ -112,6 +112,8 @@ $(document).ready(function(e){
 			var j=0;
 			 var installmentsecond = $("#current2HalfInstallment").val();
 			  var installmentfirst =$("#current1HalfInstallment").val();
+			  var connectionType = $("#connectionTypeValue").val();
+			  var isPreviousDemandNotPresent = false;  
 			$("#dcbOnlinePaymentTable tr.item").each(function() {
 				i++;
 			  $this = $(this);
@@ -119,6 +121,19 @@ $(document).ready(function(e){
 			  var actcollection = parseInt($this.find("#actualCollection").val());
 			  var installment = $this.find("#installment").val();
 			  $actualtextbox=$this.find("#actualAmount");
+			  
+			  
+			  if(connectionType === "METERED"){
+				  if(actamount == 0){
+					  isPreviousDemandNotPresent = true;
+				  }
+				  else if(actamount != 0 && isPreviousDemandNotPresent){
+					  bootbox.alert("Please enter the demand for all the previous installments. Random entry not allowed.");
+					  e.preventDefault();
+					  return false;
+				  }
+			  
+			  }
 			  
 			  if($actualtextbox.data('old-value'))
 			  {
@@ -134,23 +149,29 @@ $(document).ready(function(e){
 			  if(actamount == 0 && actcollection == 0){
 				  j++;
 			  }
-			  if(actcollection > actamount){
-				  bootbox.alert('Collection should not be greater than actual amount');
-				  e.preventDefault();
-				  return false;
-			  }
-			  if(installment==installmentfirst &&  actamount == 0)
-			  {
-			  bootbox.alert('Enter Demand of Current Year First installment ' +installmentfirst );
-			  e.preventDefault();
-			  return false;
-			  }
-		  if(installment==installmentsecond &&  actamount == 0)
-		  {
-		  bootbox.alert('Enter Demand of Current Year Second installment ' +installmentsecond);
-		  e.preventDefault();
-		  return false;
-		  }
+			 
+				  if(actcollection > actamount){
+					  bootbox.alert('Collection should not be greater than actual amount');
+					  e.preventDefault();
+					  return false;
+				  }
+				  
+		
+				  if(connectionType === "NON_METERED"){
+					  if(installment==installmentfirst &&  actamount == 0)
+					  {
+					  bootbox.alert('Enter Demand of Current Year First installment ' +installmentfirst );
+					  e.preventDefault();
+					  return false;
+					  }
+					  if(installment==installmentsecond &&  actamount == 0)
+					  {
+					  bootbox.alert('Enter Demand of Current Year Second installment ' +installmentsecond);
+					  e.preventDefault();
+					  return false;
+					  }
+				  }
+			  
 			});
 			if(i==j)
 			  {

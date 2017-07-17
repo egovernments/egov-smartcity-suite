@@ -92,12 +92,14 @@
 									id="donationDetail[${status.index}].noOfClosets" 
 									value="${donationRates.noOfClosets}"  name="donationDetail[${status.index}].noOfClosets" 
 									maxlength="8" required="required" />
+									<form:errors path="donationDetail[${status.index}].noOfClosets" class="error-msg add-margin" />
 								</td>
 								<td>
 									<input type="text" class="form-control patternvalidation donationRatesAmount" 
 									id="donationDetail[${status.index}].amount"  
 									style="text-align: right; font-size: 12px;" value="${donationRates.amount}" data-pattern="decimalvalue" 
-									name="donationDetail[${status.index}].amount"  maxlength="8" required="required" />
+									name="donationDetail[${status.index}].amount"  maxlength="8" required="required"/>
+									<form:errors path="donationDetail[${status.index}].amount" class="error-msg add-margin"/>
 								</td>
 								<form:hidden path="donationDetail[${status.index}].id" id="id" value="${donationRates.id}"></form:hidden>
 								<td>
@@ -137,4 +139,4 @@
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/moment.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/masters/donationMaster.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url  value='/resources/javascript/helper.js' context='/stms'/>"></script>
+<script src="<cdn:url  value='/resources/javascript/helper.js?rnd=${app_release_no}'/>"></script>

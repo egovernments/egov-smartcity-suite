@@ -39,6 +39,7 @@
  */
 package org.egov.tl.service;
 
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
 import org.egov.tl.entity.DemandGenerationLogDetail;
 import org.egov.tl.entity.License;
@@ -47,56 +48,79 @@ import org.egov.tl.repository.DemandGenerationLogDetailRepository;
 import org.egov.tl.repository.DemandGenerationLogRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.egov.tl.entity.enums.ProcessStatus.COMPLETED;
+import static org.egov.tl.entity.enums.ProcessStatus.INCOMPLETE;
 
 @Service
 @Transactional(readOnly = true)
 public class DemandGenerationLogService {
-    private final DemandGenerationLogRepository demandGenerationLogRepository;
-    private final DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
+
+    private static final String INSTALLMENT_YEAR = "%d-%s";
 
     @Autowired
-    public DemandGenerationLogService(final DemandGenerationLogRepository demandGenerationLogRepository,
-            final DemandGenerationLogDetailRepository demandGenerationLogDetailRepository) {
-        this.demandGenerationLogRepository = demandGenerationLogRepository;
-        this.demandGenerationLogDetailRepository = demandGenerationLogDetailRepository;
+    private DemandGenerationLogRepository demandGenerationLogRepository;
+
+    @Autowired
+    private DemandGenerationLogDetailRepository demandGenerationLogDetailRepository;
+
+    public DemandGenerationLog getDemandGenerationLogByInstallmentYear(String installmentYearRange) {
+        return demandGenerationLogRepository.findByInstallmentYear(installmentYearRange);
     }
 
-    public DemandGenerationLog findByInstallmentYear(final String installmentYear) {
-        return demandGenerationLogRepository.findByInstallmentYear(installmentYear);
+    public DemandGenerationLog getPreviousInstallmentDemandGenerationLog(String installmentYearRange) {
+        //Assuming installment year range will always be in the format of YYYY-YY
+        int previousInstallmentStartYear = Integer.valueOf(installmentYearRange.split("-")[0]) - 1;
+        String previousInstallmentYearRange = String.format(INSTALLMENT_YEAR, previousInstallmentStartYear,
+                String.valueOf(previousInstallmentStartYear + 1).substring(2, 4));
+        return getDemandGenerationLogByInstallmentYear(previousInstallmentYearRange);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public DemandGenerationLog createDemandGenerationLog(final DemandGenerationLog demandGenerationLog) {
-        demandGenerationLog.setExecutionStatus(ProcessStatus.INPROGRESS);
-        demandGenerationLog.setDemandGenerationStatus(ProcessStatus.INCOMPLETE);
+    @Transactional
+    public DemandGenerationLog createDemandGenerationLog(String installmentYearRange) {
+        return demandGenerationLogRepository.save(new DemandGenerationLog(installmentYearRange));
+    }
+
+
+    @Transactional
+    public DemandGenerationLog completeDemandGenerationLog(DemandGenerationLog demandGenerationLog) {
+        demandGenerationLog.setDemandGenerationStatus(COMPLETED);
+        for (DemandGenerationLogDetail detail : demandGenerationLog.getDetails()) {
+            if (detail.getStatus().equals(INCOMPLETE)) {
+                demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
+                break;
+            }
+        }
+        demandGenerationLog.setExecutionStatus(COMPLETED);
         return demandGenerationLogRepository.save(demandGenerationLog);
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public DemandGenerationLogDetail createDemandGenerationLogDetail(final DemandGenerationLog demandGenerationLog,
-            final License license) {
-        final DemandGenerationLogDetail demandGenerationLogDetail = new DemandGenerationLogDetail();
-        demandGenerationLogDetail.setLicense(license);
-        demandGenerationLogDetail.setDemandGenerationLog(demandGenerationLog);
-        demandGenerationLogDetail.setStatus(ProcessStatus.INPROGRESS);
-        demandGenerationLog.getDetails().add(demandGenerationLogDetail);
-        return demandGenerationLogDetailRepository.save(demandGenerationLogDetail);
+    @Transactional
+    public DemandGenerationLogDetail createOrGetDemandGenerationLogDetail(DemandGenerationLog demandGenerationLog, License license) {
+
+        DemandGenerationLogDetail logDetail = demandGenerationLogDetailRepository.
+                findByDemandGenerationLogIdAndLicenseId(demandGenerationLog.getId(), license.getId());
+        if (logDetail == null) {
+            logDetail = new DemandGenerationLogDetail();
+            logDetail.setLicense(license);
+            logDetail.setDemandGenerationLog(demandGenerationLog);
+            logDetail.setStatus(ProcessStatus.INPROGRESS);
+            demandGenerationLog.getDetails().add(logDetail);
+        }
+        return logDetail;
     }
 
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateDemandGenerationLogDetail(final DemandGenerationLogDetail demandGenerationLogDetail,
-            final ProcessStatus status, final String details) {
-        demandGenerationLogDetail.setStatus(status);
-        demandGenerationLogDetail.setDetail(details);
-        demandGenerationLogDetailRepository.save(demandGenerationLogDetail);
-    }
-
-    public DemandGenerationLog updateDemandGenerationLog(final DemandGenerationLog demandGenerationLog,
-            final ProcessStatus executionStatus, final ProcessStatus demandGenerationStatus) {
-        demandGenerationLog.setExecutionStatus(executionStatus);
-        demandGenerationLog.setDemandGenerationStatus(demandGenerationStatus);
-        return demandGenerationLogRepository.save(demandGenerationLog);
+    @Transactional
+    public void updateDemandGenerationLogDetailOnException(DemandGenerationLog demandGenerationLog,
+                                                           DemandGenerationLogDetail logDetail, RuntimeException exception) {
+        String error;
+        if (exception instanceof ValidationException)
+            error = ((ValidationException) exception).getErrors().get(0).getMessage();
+        else
+            error = "Error : " + exception;
+        logDetail.setStatus(INCOMPLETE);
+        logDetail.setDetail(error);
+        demandGenerationLog.setDemandGenerationStatus(INCOMPLETE);
     }
 }

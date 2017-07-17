@@ -46,9 +46,9 @@
 	id="councilAgendasearchform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-		
-		<jsp:include page="../agenda/agenda-search-form.jsp"/>
-		
+
+	<jsp:include page="../agenda/agenda-search-form.jsp" />
+
 </form:form>
 <div class="row display-hide report-section">
 	<div class="col-md-12 table-header text-left">Council Agenda
@@ -60,8 +60,8 @@
 				<tr>
 					<th><spring:message code="lbl.agendaNumber" /></th>
 					<th><spring:message code="lbl.committeetype" /></th>
-					<th><spring:message code="lbl.status"/>
-					<th><spring:message code="lbl.view"/></th>
+					<th><spring:message code="lbl.status" />
+					<th><spring:message code="lbl.view" /></th>
 					<th>&nbsp;</th>
 				</tr>
 			</thead>
@@ -75,12 +75,14 @@
 			e.preventDefault();
 		}
 	});
-	
-	
 </script>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">	
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/app/css/council-style.css?rnd=${app_release_no}'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
@@ -90,13 +92,14 @@
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.columnFilter.js' context='/egi'/>"></script>
-<script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/datetime-moment.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/app/js/councilAgendaHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/common-util-helper.js?rnd=${app_release_no}'/>"></script>

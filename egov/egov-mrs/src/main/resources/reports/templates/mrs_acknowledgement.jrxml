@@ -1,0 +1,266 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2017-02-24T17:46:22 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="hoardingacknowledgement" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="aec3a077-3cdb-4d34-aa53-7dc22f2ae903">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="116"/>
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="zoneName" class="java.lang.String"/>
+	<parameter name="address" class="java.lang.String"/>
+	<parameter name="municipality" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="appType" class="java.lang.String"/>
+	<parameter name="acknowledgementNo" class="java.lang.String"/>
+	<parameter name="ApplicationCentre" class="java.lang.String"/>
+	<parameter name="Party&apos;s Copy" class="java.lang.String"/>
+	<parameter name="Office&apos;s Copy" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<parameter name="dueDate" class="java.lang.String"/>
+	<parameter name="cityname" class="java.lang.String"/>
+	<parameter name="registrationUnit" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="100" splitType="Stretch">
+			<textField>
+				<reportElement x="110" y="24" width="360" height="30" uuid="eedf79e2-6a74-4e5a-9dfe-a9134e023026"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}!=null?$P{municipality}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="30" y="50" width="504" height="50" uuid="b2b87ff1-f08e-4a1e-836c-2033497e4a59"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ApplicationCentre} + "\n[Citizen Service Centre]"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="-10" width="100" height="30" uuid="33dcd5da-038d-4745-863c-6972ed424169"/>
+				<textFieldExpression><![CDATA[$P{Party's Copy}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="428" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="70" width="100" height="30" uuid="537b911d-6ed6-403c-81ef-e6044b34a1b2"/>
+				<text><![CDATA[Service Type      :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="130" width="100" height="30" uuid="9d2e4eb9-692d-4153-8598-44d3ed85a2a3"/>
+				<text><![CDATA[Address              :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="160" width="100" height="30" uuid="14506695-3eb6-4972-80eb-158b9f407ced"/>
+				<text><![CDATA[Registration Unit :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="100" width="100" height="30" uuid="d598fdf6-5a43-480c-8f26-44e927457738"/>
+				<text><![CDATA[Name                 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="220" width="100" height="30" uuid="15811917-bcac-45ef-aeba-eca05c1b193c"/>
+				<text><![CDATA[Date                    :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="70" width="200" height="30" uuid="1db5e77f-4f3b-4ab9-8f24-799f1431d0ee"/>
+				<textFieldExpression><![CDATA[$P{appType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="100" width="200" height="30" uuid="ec030f26-c149-4d0c-b99e-55a0e0a7e8bb"/>
+				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="130" width="200" height="30" uuid="b2439377-384a-4fe5-b878-bd825e95bb84"/>
+				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="160" width="200" height="30" uuid="4ffff750-8bc2-4f26-b7ee-8ed3f4471f29"/>
+				<textFieldExpression><![CDATA[$P{registrationUnit}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="220" width="200" height="30" uuid="17ba1c36-a894-4109-b42b-48399160176b"/>
+				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="360" width="470" height="30" uuid="b2988873-9bc4-44cc-bba1-75428f5e5951"/>
+				<text><![CDATA[2.  If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as compensation.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="390" width="370" height="30" uuid="a7286968-be57-4210-8db3-05402e21da72"/>
+				<text><![CDATA[3.  Don’t consult any mediator/broker.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="310" width="70" height="20" uuid="751f884c-23d9-4b78-88f0-cb3b9647409d"/>
+				<text><![CDATA[Note :]]></text>
+			</staticText>
+			<break>
+				<reportElement x="0" y="427" width="555" height="1" uuid="2734870e-0d9f-4aa9-8c00-27fb7e53a353"/>
+			</break>
+			<textField>
+				<reportElement x="0" y="330" width="460" height="30" uuid="a672c9f9-dd23-4ade-a50f-3437e2675896"/>
+				<textFieldExpression><![CDATA["1. You can track the status of your application from "+$P{cityname} +".cdma.ap.gov.in"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="311" y="279" width="190" height="20" uuid="aa3b190c-e9ad-40e4-a071-49418aacf1ab"/>
+				<text><![CDATA[Signature Of the counter operator]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="60" y="10" width="440" height="25" uuid="f39c0da1-fb1a-41ab-981b-92d7dd2d838a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No. "+$P{acknowledgementNo}]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="" x="0" y="50" width="550" height="1" uuid="7afcb016-257a-4070-985e-411e80b9d9a4"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="" x="0" y="300" width="550" height="1" uuid="f7366034-c382-4cc6-8d02-1121ee8c4be5"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="301" y="220" width="100" height="30" uuid="485f547f-8327-4e18-8baa-634127693b13"/>
+				<text><![CDATA[Due Date  :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="401" y="220" width="100" height="30" uuid="caf5d37a-a61b-45c3-bba1-dd94dc7fd2ff"/>
+				<textFieldExpression><![CDATA[$P{dueDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="101" y="190" width="199" height="30" uuid="e1c57635-e2e0-4d03-8065-3d901659079a"/>
+				<textFieldExpression><![CDATA[$P{zoneName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="190" width="100" height="30" uuid="06ba4c38-9f0d-4262-8397-93046c353ba0"/>
+				<text><![CDATA[Boundry              :]]></text>
+			</staticText>
+		</band>
+		<band height="731">
+			<staticText>
+				<reportElement x="0" y="300" width="100" height="30" uuid="f0b99d77-e9b9-4b11-9e0f-d608aa08c30d"/>
+				<text><![CDATA[Boundary            :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="330" width="100" height="30" uuid="d6bd869e-7d38-48e2-9581-9b380197f6fb"/>
+				<text><![CDATA[Date                   :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="210" width="200" height="30" uuid="85d88fa4-c658-4d76-bba2-36553eab31ef"/>
+				<textFieldExpression><![CDATA[$P{applicantName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="240" width="200" height="30" uuid="1a1e3cb1-8901-43d0-b765-6219db95a79a"/>
+				<textFieldExpression><![CDATA[$P{address}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="240" width="100" height="30" uuid="d27cbd20-c886-4caf-a046-c44782545d14"/>
+				<text><![CDATA[Address              :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="210" width="100" height="30" uuid="402b78f7-045a-4b35-96f3-3ebaafc1e8d7"/>
+				<text><![CDATA[Name                 :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="180" width="100" height="30" uuid="c051b4e4-c502-41c3-a1ae-b6f844aba18e"/>
+				<text><![CDATA[Service Type      :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="300" width="200" height="30" uuid="7db5d56c-546b-4ad9-a150-f50fd2e7dca9"/>
+				<textFieldExpression><![CDATA[$P{zoneName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="330" width="200" height="30" uuid="15b17e4e-1f90-4f94-a39e-8b006c1e9c9a"/>
+				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="100" y="180" width="200" height="30" uuid="0d83b174-0448-4e4d-b372-ea2d34f80170"/>
+				<textFieldExpression><![CDATA[$P{appType}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="520" width="370" height="30" uuid="538380fb-ae78-418f-9348-d4e7fb952916"/>
+				<text><![CDATA[3.  Don’t consult any mediator/broker.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="490" width="470" height="30" uuid="bc634c23-d47f-422e-bb90-fc85895e3595"/>
+				<text><![CDATA[2.  If the service is not closed on or before the due date, Rs. 50/- will be paid for each day of delay as compensation.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="440" width="70" height="20" uuid="14ce1dc8-f122-4fd2-8db9-5896cdaec9b3"/>
+				<text><![CDATA[Note :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="0" y="460" width="460" height="30" uuid="255c8b92-c342-45ae-8236-55172f5b5b3e"/>
+				<textFieldExpression><![CDATA["1. You can track the status of your application from "+$P{cityname} +".cdma.ap.gov.in"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="3" y="7" width="100" height="30" uuid="0d07a14c-7865-4b27-b69d-3375c212630a"/>
+				<textFieldExpression><![CDATA[$P{Office's Copy}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="320" y="390" width="180" height="20" uuid="7ebf092c-73a0-4299-9ce8-b7674d9888dd"/>
+				<text><![CDATA[Signature Of the counter operator]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="70" y="132" width="420" height="25" uuid="8007c97e-f3e7-45d0-9d2f-06dda3baaaec"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="10" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Receipt-cum-Acknowledgement No. "+$P{acknowledgementNo}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="105" y="50" width="360" height="30" uuid="71ad2e31-4d59-4260-a778-88820fde8e9c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}!=null?$P{municipality}:""]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="33" y="80" width="504" height="50" uuid="56ea5714-1053-4696-a0b9-2958c1be487a"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{ApplicationCentre} + "\n[Citizen Service Centre]"]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement key="" x="0" y="170" width="550" height="1" uuid="30db9677-420b-47bd-8bff-e0f8ddf10f17"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<line>
+				<reportElement key="" x="2" y="420" width="550" height="1" uuid="31ecb060-6fa8-4616-8cae-d08843fe927a"/>
+				<graphicElement>
+					<pen lineStyle="Dashed"/>
+				</graphicElement>
+			</line>
+			<staticText>
+				<reportElement x="301" y="330" width="100" height="30" uuid="3c2d06bb-5e8c-42a5-b279-dbb3ab519118"/>
+				<text><![CDATA[Due Date  :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="401" y="330" width="100" height="30" uuid="0de77957-a4fa-44ae-aa03-068912fd7ee2"/>
+				<textFieldExpression><![CDATA[$P{dueDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="0" y="270" width="100" height="30" uuid="2145b8a9-d7d9-47e1-a160-ac259b8fc727"/>
+				<text><![CDATA[Registration Unit :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="100" y="270" width="200" height="30" uuid="d1ba9483-b2cd-40d5-a123-459ad5484944"/>
+				<textFieldExpression><![CDATA[$P{registrationUnit}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

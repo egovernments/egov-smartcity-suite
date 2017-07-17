@@ -40,136 +40,46 @@
 
 package org.egov.pgr.service.reports;
 
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDateTime;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infstr.services.Page;
+import org.egov.pgr.entity.dto.DrillDownReportRequest;
+import org.egov.pgr.entity.view.DrillDownReports;
+import org.egov.pgr.repository.ComplainttypewiseReportRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class ComplaintTypeWiseReportService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
+    @Autowired
+    private ComplainttypewiseReportRepository complainttypewiseReportRepository;
 
-    public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
-            final String complaintType, final String complaintDateType) {
-
-        final StringBuilder query = new StringBuilder();
-
-        query.append(
-                "SELECT ctype.id as  complainttypeid, ctype.name as name,COUNT(CASE WHEN cs.name IN ('REGISTERED') THEN 1 END) registered ,  COUNT(CASE WHEN cs.name IN ('FORWARDED','PROCESSING','NOTCOMPLETED') THEN 1 END) inprocess,  COUNT(CASE WHEN cs.name IN ('COMPLETED','CLOSED') THEN 1 END) Completed, COUNT(CASE WHEN cs.name IN ('REOPENED') THEN 1 END) reopened,   COUNT(CASE WHEN cs.name IN ('WITHDRAWN','REJECTED') THEN 1 END) Rejected, ");
-        query.append(
-                "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 1 else 0 END) withinsla, ");
-        query.append(
-                "SUM(CASE WHEN state.value in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) > (interval '1h' * ctype.slahours) THEN 1 WHEN (state.value not in ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - CURRENT_DATE ) > (interval '1h' * ctype.slahours)) THEN 1 ELSE 0 END) beyondsla ");
-        query.append("FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,egpgr_complaint cd ,eg_wf_states state ");
-        buildWhereClause(fromDate, toDate, complaintType, complaintDateType, query);
-        query.append(" group by ctype.name,ctype.id ");
-
-        return setParameterForComplaintTypeReportQuery(query.toString(), fromDate, toDate, complaintDateType);
-
+    @ReadOnly
+    public Page<DrillDownReports> pagedComplainttypewiseRecords(DrillDownReportRequest reportRequest) {
+        return complainttypewiseReportRepository.findComplainttypewiseRecord(reportRequest);
     }
 
-    private void buildWhereClause(final DateTime fromDate, final DateTime toDate, final String complaintType,
-            final String complaintDateType, final StringBuilder query) {
-
-        query.append(" WHERE cd.status = cs.id and cd.complainttype= ctype.id  and cd.state_id = state.id");
-
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (fromDate != null && toDate != null)
-            query.append(" and ( cd.createddate BETWEEN :fromDates and :toDates) ");
-        else if (fromDate != null)
-            query.append(" and cd.createddate >=   :fromDates ");
-        else if (toDate != null)
-            query.append(" and cd.createddate <=  :toDates ");
-
-        if (complaintType != null && !"".equals(complaintType)) {
-            query.append(" and (ctype.id)= '");
-            query.append(complaintType.toUpperCase()).append("' ");
-        }
-
+    @ReadOnly
+    public Page<DrillDownReports> pagedComplainttypewiseRecordsByCompalintId(DrillDownReportRequest reportRequest) {
+        return complainttypewiseReportRepository.findComplainttypewiseRecordsByComplaintId(reportRequest);
     }
 
-    private SQLQuery setParameterForComplaintTypeReportQuery(final String querykey, final DateTime fromDate,
-            final DateTime toDate, final String complaintDateType) {
-        final SQLQuery qry = entityManager.unwrap(Session.class).createSQLQuery(querykey);
-
-        if (complaintDateType != null && complaintDateType.equals("lastsevendays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(7).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastthirtydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(30).toDate());
-        else if (complaintDateType != null && complaintDateType.equals("lastninetydays"))
-            qry.setParameter("fromDates", getCurrentDateWithOutTime().minusDays(90).toDate());
-        else if (fromDate != null && toDate != null) {
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-
-        } else if (fromDate != null)
-            qry.setParameter("fromDates", resetTimeByPassingDate(fromDate));
-        else if (toDate != null)
-            qry.setParameter("toDates", getEndOfDayByDate(toDate));
-        return qry;
-
+    @ReadOnly
+    public Object[] complaintwiseReportGrandTotal(DrillDownReportRequest reportRequest) {
+        return complainttypewiseReportRepository.findGrandTotal(reportRequest);
     }
 
-    private Date getEndOfDayByDate(final DateTime fromDate) {
-        return fromDate.withTime(23, 59, 59, 999).toDate();
+    @ReadOnly
+    public List<DrillDownReports> getAllComplainttypewiseRecords(DrillDownReportRequest reportRequest) {
+        return complainttypewiseReportRepository.findComplainttypewiseRecordList(reportRequest);
     }
 
-    private Date resetTimeByPassingDate(final DateTime fromDate) {
-        return fromDate.withTime(0, 0, 0, 0).toDate();
+    @ReadOnly
+    public List<DrillDownReports> getComplainttypewiseRecordsByComplaintId(DrillDownReportRequest reportRequest) {
+        return complainttypewiseReportRepository.findComplainttypewiseRecordlistByComplaintId(reportRequest);
     }
-
-    private DateTime getCurrentDateWithOutTime() {
-        return new LocalDateTime().withTime(0, 0, 0, 0).toDateTime();
-    }
-
-    public SQLQuery getComplaintTypeWiseReportQuery(final DateTime fromDate, final DateTime toDate,
-            final String complaintDateType, final String complaintTypeWithStatus, final String status) {
-
-        final StringBuilder query = new StringBuilder();
-
-        query.append(
-                " SELECT  distinct complainant.id as complaintid, crn,cd.createddate,complainant.name as complaintname,cd.details,cs.name as status , bndry.name || ' - ' || childlocation.name as boundaryname, cd.citizenfeedback as feedback,");
-        query.append(
-                "CASE WHEN state.value IN ('COMPLETED','REJECTED','WITHDRAWN') AND (cd.createddate - state.lastmodifieddate) < (interval '1h' * ctype.slahours) THEN 'Yes' WHEN (state.value NOT IN ('COMPLETED','REJECTED','WITHDRAWN') ");
-        query.append(
-                "AND (cd.createddate - CURRENT_DATE) < (interval '1h' * ctype.slahours)) THEN 'Yes' ELSE 'No' END as issla  ");
-        query.append(
-                "FROM egpgr_complaintstatus cs ,egpgr_complainttype ctype ,eg_wf_states state, egpgr_complaint cd left JOIN eg_boundary bndry ");
-        query.append(
-                "on cd.location =bndry.id left JOIN eg_boundary childlocation on  cd.childlocation=childlocation.id  left JOIN eg_department dept on cd.department =dept.id  ");
-        query.append(
-                "left join eg_position pos on cd.assignee=pos.id left join view_egeis_employee emp on pos.id=emp.position , egpgr_complainant complainant ");
-
-        buildWhereClause(fromDate, toDate, complaintTypeWithStatus, complaintDateType, query);
-        query.append(" and complainant.id=cd.complainant   ");
-        if (status != null && !"".equals(status))
-            if (status.equalsIgnoreCase("registered"))
-                query.append(" and cs.name in ('REGISTERED')");
-            else if (status.equalsIgnoreCase("inprocess"))
-                query.append(" and cs.name in ('FORWARDED','PROCESSING','NOTCOMPLETED')");
-            else if (status.equalsIgnoreCase("rejected"))
-                query.append(" and cs.name in ('WITHDRAWN','REJECTED')");
-            else if (status.equalsIgnoreCase("completed"))
-                query.append(" and cs.name in ('COMPLETED','CLOSED')");
-            else if (status.equalsIgnoreCase("reopened"))
-                query.append(" and cs.name in ('REOPENED')");
-
-        return setParameterForComplaintTypeReportQuery(query.toString(), fromDate, toDate, complaintDateType);
-
-    }
-
 }

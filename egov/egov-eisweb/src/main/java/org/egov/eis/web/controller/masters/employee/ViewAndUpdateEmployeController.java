@@ -46,9 +46,11 @@ import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.EmployeeTypeRepository;
+import org.egov.eis.repository.HeadOfDepartmentsRepository;
 import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.JurisdictionService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
@@ -70,7 +72,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/employee")
 public class ViewAndUpdateEmployeController {
+    private static final String EMPLOYEEDETAILS_FORM = "employeedetails-form";
+    private static final String EMPLOYEESUCCESS = "employee-success";
     private static final Logger LOGGER = Logger.getLogger(ViewAndUpdateEmployeController.class);
+    private static final String IMAGE = "image";
+    private static final String EMPLOYEEFORM = "employee-form";
+
     @Autowired
     private DepartmentService departmentService;
 
@@ -89,6 +96,9 @@ public class ViewAndUpdateEmployeController {
     @Autowired
     private MessageSource messageSource;
 
+    @Autowired
+    private HeadOfDepartmentsRepository headOfDepartmentsRepository;
+
     @ModelAttribute
     public Employee employeeModel(@PathVariable final String code) {
         return employeeService.getEmployeeByCode(code);
@@ -100,11 +110,13 @@ public class ViewAndUpdateEmployeController {
         setDropDownValues(model);
         model.addAttribute("mode", "update");
         final Employee employee = employeeService.getEmployeeByCode(code);
+        for (final Assignment assign : employee.getAssignments())
+            assign.setDeptSet(headOfDepartmentsRepository.getAllHodDepartments(assign.getId()));
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        model.addAttribute("image", image);
-        return "employee-form";
+        model.addAttribute(IMAGE, image);
+        return EMPLOYEEFORM;
     }
 
     @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
@@ -116,11 +128,6 @@ public class ViewAndUpdateEmployeController {
         if (codeExists)
             errors.rejectValue("code", "Unique.employee.code");
 
-        if (errors.hasErrors()) {
-            setDropDownValues(model);
-            model.addAttribute("mode", "update");
-            return "employee-form";
-        }
         try {
             if (!file.isEmpty())
                 employee.setSignature(file.getBytes());
@@ -134,27 +141,60 @@ public class ViewAndUpdateEmployeController {
             final String fieldError = messageSource.getMessage("position.exists.workflow",
                     new String[] { positionName }, null);
             model.addAttribute("error", fieldError);
-            return "employee-form";
+            return EMPLOYEEFORM;
         }
+        if (!employeeService.primaryAssignmentExists(employee) && employee.isActive())
+            errors.rejectValue("assignments", "primary.assignment");
+
+        if (employeeService.primaryAssignExistsForSamePeriod(employee))
+            errors.rejectValue("assignments", "primary.assignment.daterange");
+
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
+            model.addAttribute("mode", "update");
+            return EMPLOYEEFORM;
+        }
+
         String image = null;
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        model.addAttribute("image", image);
+        model.addAttribute(IMAGE, image);
 
         employeeService.update(employee);
         redirectAttrs.addFlashAttribute("employee", employee);
         model.addAttribute("message", "Employee updated successfully");
-        return "employee-success";
+        return EMPLOYEESUCCESS;
+    }
+
+    @RequestMapping(value = "/updatecontact/{code}", method = RequestMethod.GET)
+    public String editContact(final Model model, @PathVariable final String code) {
+        setDropDownValues(model);
+        return EMPLOYEEDETAILS_FORM;
+    }
+
+    @RequestMapping(value = "/updatecontact/{code}", method = RequestMethod.POST)
+    public String updateContact(@Valid @ModelAttribute final Employee employee, final BindingResult errors,
+            final RedirectAttributes redirectAttrs, final Model model) {
+        if (errors.hasErrors()) {
+            setDropDownValues(model);
+            return EMPLOYEEDETAILS_FORM;
+        }
+        employeeService.updateEmployeeDetails(employee);
+        redirectAttrs.addFlashAttribute("employee", employee);
+        model.addAttribute("message", "Employee updated successfully");
+        return EMPLOYEESUCCESS;
     }
 
     @RequestMapping(value = "/view/{code}", method = RequestMethod.GET)
     public String view(@PathVariable final String code, final Model model) {
         final Employee employee = employeeService.getEmployeeByCode(code);
         String image = null;
+        for (final Assignment assign : employee.getAssignments())
+            assign.setDeptSet(headOfDepartmentsRepository.getAllHodDepartments(assign.getId()));
         if (null != employee.getSignature())
             image = Base64.encodeBytes(employee.getSignature());
-        model.addAttribute("image", image);
-        return "employee-success";
+        model.addAttribute(IMAGE, image);
+        return EMPLOYEESUCCESS;
     }
 
     private void setDropDownValues(final Model model) {

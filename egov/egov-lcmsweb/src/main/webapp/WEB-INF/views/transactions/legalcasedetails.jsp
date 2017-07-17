@@ -116,7 +116,7 @@
 </div>
 <div class="form-group">
 	<label class="col-sm-3 control-label text-right"><spring:message
-			code="lbl.caseNumber" /><span class="mandatory"></span>:</label>
+			code="lbl.casenumber" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-2 add-margin text-center">
 		<form:input class="form-control patternvalidation"
 			data-pattern="number" maxlength="50" id="caseNumber"
@@ -173,7 +173,7 @@
 	<label class="col-sm-2 control-label text-right" id="persons"><spring:message
 			code="lbl.prayer" /><span class="mandatory"></span>:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
-		<form:textarea class="form-control" maxlength="1024" id="prayer"
+		<form:textarea class="form-control" maxlength="10000" id="prayer"
 			path="prayer" />
 		<form:errors path="prayer" cssClass="add-margin error-msg" />
 	</div>
@@ -203,14 +203,16 @@
 	<label class="col-sm-3 control-label text-right"><spring:message
 			code="lbl.officerincharge" />:</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control" maxlength="50" id="officerIncharge"
-			path="officerIncharge" />
-		<form:errors path="officerIncharge" cssClass="add-margin error-msg" />
+	<input id="positionName" type="text" 
+	 value="${legalCase.officerIncharge.name}"   
+	class="form-control typeahead " autocomplete="off" placeholder=""/> 						 
+	<form:hidden path="officerIncharge" id='positionId'/>																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																																													
+	 <form:errors path="officerIncharge" cssClass="add-margin error-msg" /> 
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.noticedate" /><span class="mandatory">:</span></label>
 	<div class="col-sm-3 add-margin">
-		<form:input path="noticeDate" class="form-control datepicker"
+		<form:input path="noticeDate" class="form-control datepicker"																																																																						
 			title="Please enter a valid date" pattern="\d{1,2}/\d{1,2}/\d{4}"
 			data-date-end-date="-1d" id="noticeDate"
 			data-inputmask="'mask': 'd/m/y'" />
@@ -221,15 +223,15 @@
 	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
 			code="lbl.fieldbycarp" /> ?:</label>
 	<div class="col-sm-3 add-margin">
-		<form:checkbox id="activeid" path="isfiledbycorporation"
-			value="isfiledbycorporation" />
-		<form:errors path="isfiledbycorporation" />
+		<form:checkbox id="activeid" path="isFiledByCorporation"
+			value="isFiledByCorporation" />
+		<form:errors path="isFiledByCorporation" />
 	</div>
 	<label class="col-sm-2 control-label text-right"><spring:message
 			code="lbl.oldreferencenumber" />:</label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control text-left patternvalidation" maxlength="4" id="oldReferenceNumber"
-			path="oldReferenceNumber" data-pattern="number" />
+		<form:input class="form-control patternvalidation" maxlength="10" id="oldrefnumber"
+			path="oldReferenceNumber" data-pattern="address" />
 		<form:errors path="oldReferenceNumber" cssClass="add-margin error-msg" />
 	</div>
 </div>

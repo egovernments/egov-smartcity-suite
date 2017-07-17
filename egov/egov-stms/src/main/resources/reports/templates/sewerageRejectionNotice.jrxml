@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-06-23T13:32:42 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sewerageRejectionNotice" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="f67baf77-331d-49a1-99af-e4f5db566285">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="applicationType" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="remarks" class="java.lang.String"/>
+	<parameter name="presentCommissioner" class="java.lang.String"/>
+	<parameter name="rejectionDate" class="java.lang.String"/>
+	<parameter name="rejectionNumber" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="99" splitType="Stretch">
+			<textField isBlankWhenNull="true">
+				<reportElement x="110" y="20" width="350" height="20" uuid="3e47e6ba-bc33-4d17-a35c-c3e77814f76c"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="110" y="40" width="440" height="20" uuid="308e2c0b-b429-4f45-afd8-dcf9e8a5e52c"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Rejection Notice for"+" "+$P{applicationType}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="410" y="80" width="118" height="12" uuid="a443e80b-a738-49ac-9303-0dc28f78f155"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{rejectionDate}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="103" y="80" width="118" height="12" uuid="6461a38d-bd11-47bb-a722-1bc7c15d0b60"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{rejectionNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="17" y="79" width="89" height="13" uuid="03c18930-d586-46e0-bfcc-e96dc0e8537f"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rejection No. :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="320" y="80" width="93" height="12" uuid="e2f33f03-fbf0-4af5-bde7-c403678270d9"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rejection Date : ]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="165" splitType="Stretch">
+			<textField>
+				<reportElement x="15" y="17" width="195" height="20" uuid="52460259-e99f-4f65-9598-d287d20ac5c2"/>
+				<textElement textAlignment="Left"/>
+				<textFieldExpression><![CDATA["Dear"+" "+$P{applicantName}+","]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="15" y="47" width="535" height="30" uuid="f367124a-f3b5-430d-95b7-f101935631ba"/>
+				<textElement textAlignment="Left" markup="none"/>
+				<textFieldExpression><![CDATA["We regret to say that your application for"+" " +$P{applicationType}+","+" "+"is hereby rejected on following grounds :"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="15" y="81" width="535" height="29" uuid="a9c3dae5-1228-4529-8d09-2304425c5768"/>
+				<textFieldExpression><![CDATA[$P{remarks}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="400" y="144" width="125" height="15" uuid="07c73913-a328-4b2d-a9ee-8d7e7a6affd2"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{presentCommissioner}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="400" y="124" width="90" height="20" uuid="a7e6846d-8f5f-4f67-891e-fa03a9d51839"/>
+				<text><![CDATA[Commissioner,]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

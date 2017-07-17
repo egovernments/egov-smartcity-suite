@@ -68,6 +68,9 @@ body
 			</div>
 			<div class="row">
 				<div class="text-center">
+					<c:if test="${showAckBtn}">
+						<a href="/ptis/vacancyremission/printAck/${propertyId}" class="btn btn-default">Generate Acknowledgment</a>
+					</c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 				</div>
 			</div>

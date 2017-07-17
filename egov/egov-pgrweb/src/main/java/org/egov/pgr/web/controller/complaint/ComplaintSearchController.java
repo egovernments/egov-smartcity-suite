@@ -47,6 +47,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.Role;
@@ -60,10 +62,12 @@ import org.egov.pgr.entity.es.ComplaintIndex;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.web.contract.ComplaintSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -92,6 +96,9 @@ public class ComplaintSearchController {
     @Autowired
     private ComplaintIndexService complaintIndexService;
 
+    @Autowired
+    private ReceivingModeService receivingModeService;
+
     @ModelAttribute("complaintTypedropdown")
     public List<ComplaintType> complaintTypes() {
         return complaintTypeService.findActiveComplaintTypes();
@@ -109,12 +116,12 @@ public class ComplaintSearchController {
 
     @ModelAttribute("complaintReceivingModes")
     public List complaintReceivingModes() {
-        return complaintService.getAllReceivingModes();
+        return receivingModeService.getReceivingModes();
     }
 
     @ModelAttribute("currentLoggedUser")
     public String currentLoggedUser() {
-        User user = securityUtils.getCurrentUser();
+        final User user = securityUtils.getCurrentUser();
         return user != null ? user.getUsername() : EMPTY;
     }
 
@@ -123,17 +130,16 @@ public class ComplaintSearchController {
         final User user = securityUtils.getCurrentUser();
         if (user != null)
             for (final Role role : user.getRoles())
-                if (GO_ROLE_NAME.equalsIgnoreCase(role.getName())) {
+                if (GO_ROLE_NAME.equalsIgnoreCase(role.getName()))
                     return Boolean.TRUE;
-                }
         return Boolean.FALSE;
     }
 
     @ModelAttribute("employeeposition")
     public Long employeePosition() {
         final User user = securityUtils.getCurrentUser();
-        return (user != null && !assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).isEmpty()) ?
-                assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).get(0).getPosition().getId()
+        return user != null && !assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).isEmpty()
+                ? assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).get(0).getPosition().getId()
                 : 0L;
     }
 
@@ -147,14 +153,15 @@ public class ComplaintSearchController {
         return ApplicationThreadLocals.getCityName();
     }
 
-    @RequestMapping(method = GET, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
-    public String showSearch() {
+    @RequestMapping(method = GET, value = { "/complaint/search", "/complaint/citizen/anonymous/search" })
+    public String showSearch(final HttpServletRequest request, final Model model) {
+        model.addAttribute("isMore", Boolean.parseBoolean(request.getParameter("isMore")));
         return "complaint-search";
     }
 
-    @RequestMapping(method = POST, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
+    @RequestMapping(method = POST, value = { "/complaint/search", "/complaint/citizen/anonymous/search" })
     @ResponseBody
-    public Iterable<ComplaintIndex> searchComplaints(@ModelAttribute ComplaintSearchRequest searchRequest) {
+    public Iterable<ComplaintIndex> searchComplaints(@ModelAttribute final ComplaintSearchRequest searchRequest) {
         return complaintIndexService.searchComplaintIndex(searchRequest.query());
     }
 }

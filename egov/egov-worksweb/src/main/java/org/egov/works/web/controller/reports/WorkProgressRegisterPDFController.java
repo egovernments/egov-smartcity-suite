@@ -53,7 +53,7 @@ import javax.servlet.http.HttpSession;
 
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -94,9 +94,6 @@ public class WorkProgressRegisterPDFController {
     private DepartmentService departmentService;
 
     public static final String WORKPROGRESSREGISTERPDF = "workProgressRegisterPdf";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -107,11 +104,10 @@ public class WorkProgressRegisterPDFController {
             @RequestParam("adminSanctionFromDate") final Date adminSanctionFromDate,
             @RequestParam("adminSanctionToDate") final Date adminSanctionToDate,
             @RequestParam("workIdentificationNumber") final String workIdentificationNumber,
-            @RequestParam("contractor") final String contractor,
-            @RequestParam("department") final Long department,
+            @RequestParam("contractor") final String contractor, @RequestParam("department") final Long department,
             @RequestParam("spillOverFlag") final boolean spillOverFlag,
-            @RequestParam("contentType") final String contentType,
-            final HttpSession session) throws IOException {
+            @RequestParam("contentType") final String contentType, final HttpSession session) throws IOException {
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
         final WorkProgressRegisterSearchRequest searchRequest = new WorkProgressRegisterSearchRequest();
         searchRequest.setAdminSanctionFromDate(adminSanctionFromDate);
         searchRequest.setAdminSanctionToDate(adminSanctionToDate);
@@ -125,16 +121,13 @@ public class WorkProgressRegisterPDFController {
         String queryParameters = "Work Progress Register Report ";
         if (spillOverFlag)
             queryParameters = "Work Progress Register for Spill Over Line Estimates ";
-        if (adminSanctionFromDate != null
-                || adminSanctionToDate != null
-                || workIdentificationNumber != null
-                || contractor != null
-                || department != null)
+        if (adminSanctionFromDate != null || adminSanctionToDate != null || workIdentificationNumber != null
+                || contractor != null || department != null)
             queryParameters += "for ";
 
         if (adminSanctionFromDate != null && adminSanctionToDate != null)
-            queryParameters += "Date Range : " + DateUtils.getFormattedDate(adminSanctionFromDate,"dd/MM/yyyy") + " - " + DateUtils.getFormattedDate(adminSanctionToDate,"dd/MM/yyyy")
-                    + ", ";
+            queryParameters += "Date Range : " + DateUtils.getFormattedDate(adminSanctionFromDate, "dd/MM/yyyy") + " - "
+                    + DateUtils.getFormattedDate(adminSanctionToDate, "dd/MM/yyyy") + ", ";
         if (adminSanctionFromDate != null && adminSanctionToDate == null)
             queryParameters += "Admin Sanction From Date : " + adminSanctionFromDate + ", ";
         if (adminSanctionToDate != null && adminSanctionFromDate == null)
@@ -151,15 +144,17 @@ public class WorkProgressRegisterPDFController {
 
         reportParams.put("queryParameters", queryParameters);
 
-        return generateReport(workProgressRegisters, request, session, contentType);
+        return generateReport(workProgressRegisters, request, session, contentType, reportParams);
     }
 
     private ResponseEntity<byte[]> generateReport(final List<WorkProgressRegister> workProgressRegisters,
-            final HttpServletRequest request,
-            final HttpSession session, final String contentType) {
+            final HttpServletRequest request, final HttpSession session, final String contentType,
+            final Map<String, Object> reportParams) {
         final List<WorkProgressRegisterPdf> workProgressRegisterPdfList = new ArrayList<WorkProgressRegisterPdf>();
 
         String dataRunDate = "";
+        ReportRequest reportInput = null;
+        ReportOutput reportOutput = null;
 
         if (workProgressRegisters != null && !workProgressRegisters.isEmpty())
             for (final WorkProgressRegister wpr : workProgressRegisters) {
@@ -208,19 +203,19 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setSubTypeOfWork("");
                 if (wpr.getAdminSanctionBy() != null)
-                    pdf.setAdminSanctionAuthorityDate(worksUtils.getUserDesignation(wpr.getAdminSanctionBy()) + " - "
-                            + wpr.getAdminSanctionBy().getName() + ", "
-                            + DateUtils.getFormattedDate(wpr.getAdminSanctionDate(),"dd/MM/yyyy"));
+                    pdf.setAdminSanctionAuthorityDate(wpr.getAdminSanctionBy() + " , "
+                            + DateUtils.getFormattedDate(wpr.getAdminSanctionDate(), "dd/MM/yyyy"));
                 else
                     pdf.setAdminSanctionAuthorityDate("");
                 if (wpr.getAdminSanctionAmount() != null)
-                    pdf.setAdminSanctionAmount(wpr.getAdminSanctionAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setAdminSanctionAmount(
+                            wpr.getAdminSanctionAmount().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setAdminSanctionAmount("NA");
                 if (wpr.getTechnicalSanctionBy() != null)
-                    pdf.setTechnicalSanctionAuthorityDate(worksUtils.getUserDesignation(wpr.getTechnicalSanctionBy()) + " - "
-                            + wpr.getTechnicalSanctionBy().getName() + ", "
-                            + DateUtils.getFormattedDate(wpr.getTechnicalSanctionDate(),"dd/MM/yyyy"));
+                    pdf.setTechnicalSanctionAuthorityDate(worksUtils.getUserDesignation(wpr.getTechnicalSanctionBy())
+                            + " - " + wpr.getTechnicalSanctionBy().getName() + ", "
+                            + DateUtils.getFormattedDate(wpr.getTechnicalSanctionDate(), "dd/MM/yyyy"));
                 else
                     pdf.setTechnicalSanctionAuthorityDate("NA");
                 if (wpr.getEstimateAmount() != null)
@@ -232,12 +227,12 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setModeOfAllotment("");
                 if (wpr.getAgreementNumber() != null)
-                    pdf.setAgreementNumberDate(wpr.getAgreementNumber() + " - " + DateUtils.getFormattedDate(wpr.getAgreementDate(),"dd/MM/yyyy"));
+                    pdf.setAgreementNumberDate(wpr.getAgreementNumber() + " - "
+                            + DateUtils.getFormattedDate(wpr.getAgreementDate(), "dd/MM/yyyy"));
                 else
                     pdf.setAgreementNumberDate("");
                 if (wpr.getContractor() != null)
-                    pdf.setContractorCodeName(wpr.getContractor().getCode() + " - "
-                            + wpr.getContractor().getName());
+                    pdf.setContractorCodeName(wpr.getContractor().getCode() + " - " + wpr.getContractor().getName());
                 else
                     pdf.setContractorCodeName("");
                 if (wpr.getAgreementAmount() != null)
@@ -245,11 +240,13 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setAgreementAmount("NA");
                 if (wpr.getLatestMbNumber() != null && wpr.getLatestMbDate() != null)
-                    pdf.setLatestMbNumberDate(wpr.getLatestMbNumber() + " - " + DateUtils.getFormattedDate(wpr.getLatestMbDate(),"dd/MM/yyyy"));
+                    pdf.setLatestMbNumberDate(wpr.getLatestMbNumber() + " - "
+                            + DateUtils.getFormattedDate(wpr.getLatestMbDate(), "dd/MM/yyyy"));
                 else
                     pdf.setLatestMbNumberDate("");
                 if (wpr.getLatestBillNumber() != null)
-                    pdf.setLatestBillNumberDate(wpr.getLatestBillNumber() + " - " + DateUtils.getFormattedDate(wpr.getLatestBillDate(),"dd/MM/yyyy"));
+                    pdf.setLatestBillNumberDate(wpr.getLatestBillNumber() + " - "
+                            + DateUtils.getFormattedDate(wpr.getLatestBillDate(), "dd/MM/yyyy"));
                 else
                     pdf.setLatestBillNumberDate("");
                 if (wpr.getBilltype() != null)
@@ -269,11 +266,13 @@ public class WorkProgressRegisterPDFController {
                 else
                     pdf.setMilestonePercentageCompleted("NA");
                 if (wpr.getTotalBillPaidSoFar() != null)
-                    pdf.setTotalBillPaidSoFar(wpr.getTotalBillPaidSoFar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
+                    pdf.setTotalBillPaidSoFar(
+                            wpr.getTotalBillPaidSoFar().setScale(2, BigDecimal.ROUND_HALF_EVEN).toString());
                 else
                     pdf.setTotalBillPaidSoFar("NA");
                 if (wpr.getBalanceValueOfWorkToBill() != null) {
-                    if (wpr.getBilltype() != null && wpr.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString()))
+                    if (wpr.getBilltype() != null
+                            && wpr.getBilltype().equalsIgnoreCase(BillTypes.Final_Bill.toString()))
                         pdf.setBalanceValueOfWorkToBill("NA");
                     else
                         pdf.setBalanceValueOfWorkToBill(
@@ -281,24 +280,24 @@ public class WorkProgressRegisterPDFController {
                 } else
                     pdf.setBalanceValueOfWorkToBill("NA");
 
-                dataRunDate = DateUtils.getFormattedDate(wpr.getCreatedDate(),"dd/MM/yyyy hh:mm a");
+                dataRunDate = DateUtils.getFormattedDate(wpr.getCreatedDate(), "dd/MM/yyyy hh:mm a");
 
                 workProgressRegisterPdfList.add(pdf);
             }
 
         reportParams.put("heading", WorksConstants.HEADING_WORK_PROGRESS_REGISTER_REPORT);
-        reportParams.put("reportRunDate", DateUtils.getFormattedDate(new Date(),"dd/MM/yyyy hh:mm a"));
+        reportParams.put("reportRunDate", DateUtils.getFormattedDate(new Date(), "dd/MM/yyyy hh:mm a"));
         reportParams.put("dataRunDate", dataRunDate);
 
         reportInput = new ReportRequest(WORKPROGRESSREGISTERPDF, workProgressRegisterPdfList, reportParams);
 
         final HttpHeaders headers = new HttpHeaders();
         if (contentType.equalsIgnoreCase("pdf")) {
-            reportInput.setReportFormat(FileFormat.PDF);
+            reportInput.setReportFormat(ReportFormat.PDF);
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=WorkProgressRegister.pdf");
         } else {
-            reportInput.setReportFormat(FileFormat.XLS);
+            reportInput.setReportFormat(ReportFormat.XLS);
             headers.setContentType(MediaType.parseMediaType("application/vnd.ms-excel"));
             headers.add("content-disposition", "inline;filename=WorkProgressRegister.xls");
         }

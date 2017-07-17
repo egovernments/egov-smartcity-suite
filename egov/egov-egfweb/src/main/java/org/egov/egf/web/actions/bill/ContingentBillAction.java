@@ -522,7 +522,7 @@ public class ContingentBillAction extends BaseBillAction {
         if (parameters.get(ACTION_NAME)[0].contains("reject"))
             cbill.getCreatedBy().getId().intValue();
         // billRegisterWorkflowService.transition(parameters.get(ACTION_NAME)[0]+"|"+userId, cbill,parameters.get("comments")[0]);
-        cbill.transition(true).end().withOwner(getPosition()).withComments(parameters.get("comments")[0]);
+        cbill.transition().end().withOwner(getPosition()).withComments(parameters.get("comments")[0]);
         final String statusQury = "from EgwStatus where upper(moduletype)=upper('" + FinancialConstants.CONTINGENCYBILL_FIN
                 + "') and  upper(description)=upper('" + FinancialConstants.CONTINGENCYBILL_CANCELLED_STATUS + "')";
         final EgwStatus egwStatus = (EgwStatus) persistenceService.find(statusQury);
@@ -838,7 +838,7 @@ public class ContingentBillAction extends BaseBillAction {
         commonBean.setBillDate(cbill.getBilldate());
         commonBean.setBillNumber(cbill.getBillnumber());
         if (null != cbill.getEgBillregistermis().getEgBillSubType())
-            commonBean.setBillSubType(cbill.getEgBillregistermis().getEgBillSubType().getId());
+            commonBean.setBillSubType(cbill.getEgBillregistermis().getEgBillSubType().getId().intValue());
         commonBean.setInwardSerialNumber(cbill.getEgBillregistermis().getInwardSerialNumber());
         commonBean.setPartyBillNumber(cbill.getEgBillregistermis().getPartyBillNumber());
         commonBean.setPartyBillDate(cbill.getEgBillregistermis().getPartyBillDate());
@@ -1167,7 +1167,7 @@ public class ContingentBillAction extends BaseBillAction {
         bill.setNarration(voucherHeader.getDescription());
         // mis.setSourcePath("/EGF/bill/contingentBill!beforeView.action?billRegisterId=");
         final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id=?",
-                commonBean.getBillSubType());
+                commonBean.getBillSubType().longValue());
         mis.setEgBillSubType(egBillSubType);
         mis.setInwardSerialNumber(commonBean.getInwardSerialNumber());
         mis.setPartyBillNumber(commonBean.getPartyBillNumber());

@@ -44,25 +44,34 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-<div id="main">
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title text-center">
-					<c:if test="${mode == 'cancel'}">
-						<spring:message code="lineestimate.cancel.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
-					</c:if>
-					<c:out value="${message }" /><br />
-					<c:forEach items="${basMessages }" var="basMessage">
-						<c:out value="${basMessage }" /><br />
-					</c:forEach>
-				</div>
-			</div>
+<c:choose>
+	<c:when test="${errorMessage  != null}">
+		<div class="alert alert-danger col-md-12">
+			<c:out value="${errorMessage }" />
 		</div>
-	</div>					
-</div>					
-</div>
+	</c:when>
+	<c:otherwise>
+		<div id="main">
+		<div class="row">
+			<div class="col-md-12">
+				<div class="panel panel-primary" data-collapsed="0">
+					<div class="panel-heading">
+						<div class="panel-title text-center">
+							<c:if test="${mode == 'cancel'}">
+								<spring:message code="lineestimate.cancel.success" arguments="${lineEstimate.getLineEstimateNumber()}"/>
+							</c:if>
+							<c:out value="${message }" /><br />
+							<c:forEach items="${basMessages }" var="basMessage">
+								<c:out value="${basMessage }" /><br />
+							</c:forEach>
+						</div>
+					</div>
+				</div>
+			</div>					
+		</div>		
+		</div>
+	</c:otherwise>
+</c:choose>
 <div class="row text-center">
 	<div class="add-margin">
 		<c:if test="${lineEstimate.status.code == 'ADMINISTRATIVE_SANCTIONED' }">
@@ -71,7 +80,6 @@
 		<a href="javascript:void(0)" class="btn btn-default inboxload" onclick="self.close()" ><spring:message code="lbl.close" /></a>
 	</div>
 </div>
-
 <script type="text/javascript">
 function renderPdf() {
 	window.open("/egworks/lineestimate/lineEstimatePDF/" + ${lineEstimate.id}, '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');

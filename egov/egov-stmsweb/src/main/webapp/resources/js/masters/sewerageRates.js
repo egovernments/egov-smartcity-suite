@@ -121,7 +121,7 @@ $(document).ready(function() {
 					}
 					
 					function overwriteSewerageRate(res) {
-						bootbox.confirm("With entered combination monthly rate is present as "+res+". Do you want to overwrite it?",function(result){
+						bootbox.confirm("With entered combination monthly rate is present. Do you want to overwrite it?",function(result){
 							if(result){
 								isSubmitForm=true;
 								$('#submitform').trigger('click');
@@ -294,4 +294,117 @@ $(document).ready(function() {
 						});
 					});
 					
+					$(".btn-addRow").click(function(){
+						if($('#sewerageRatesMasterform').valid()){
+							if(checkUniqueNumberOfClosets()){
+								var currentIndex=$("#sewerageDetailmasterTable tr").length;
+								addRowToTable(currentIndex);
+							}
+						}
+					});
+					
+					function addRowToTable(currentIndex){
+						$("#sewerageDetailmasterTable tr:last .delete-button").hide();
+						$("#sewerageDetailmasterTable tbody")
+						.append(
+								'<tr> <td> <input id="id'+(currentIndex)+'" type="hidden"> <input type="text" class="form-control patternvalidation donationRatesNoOfClosets" maxlength="8" style="text-align: left; font-size: 12px;" id="sewerageDetailmasterNoOfClosets'+(currentIndex - 1)+'" name="sewerageDetailmaster[' + (currentIndex -1) + '].noOfClosets" data-pattern="number" required="required"/></td><td><input class="form-control patternvalidation donationRatesAmount" data-pattern="decimalvalue" maxlength="8" style="text-align: right; font-size: 12px;" id="sewerageDetailmasterAmount'+(currentIndex - 1)+'" name="sewerageDetailmaster[' + (currentIndex-1) + '].amount" type="text" required="required"/></td>  <td> <button type="button" onclick="deleteRow(this)" id="Add" class="btn btn-primary display-hide delete-button">Delete Row </button> </td></tr>');
+						patternvalidation(); 
+						$("#sewerageDetailmasterTable tr:last .delete-button").show();
+					}
+					
+					$(".btn-addNewRow").click(function(){
+						if($('#sewerageMasterUpdateform').valid()){
+							
+							if(checkUniqueNumberOfClosets())
+							{
+								var currentIndex=$("#sewerageMasterViewTable tr").length;
+								addNewRowToTable(currentIndex);
+							}
+						}
+					});
+					
+					function addNewRowToTable(currentIndex){
+						$("#sewerageMasterViewTable tr:last .delete-button").hide();
+						$("#sewerageMasterViewTable tbody")
+						.append(
+								'<tr> <td> <input id="id'+(currentIndex)+'" type="hidden"> <input type="text" class="form-control patternvalidation donationRatesNoOfClosets" maxlength="8" style="text-align: center; font-size: 12px;" id="sewerageDetailmasterNoOfClosets'+(currentIndex - 1)+'" name="sewerageDetailmaster[' + (currentIndex -1) + '].noOfClosets" data-pattern="number" required="required"/></td><td><input class="form-control patternvalidation donationRatesAmount" data-pattern="decimalvalue" maxlength="8" style="text-align: right; font-size: 12px;" id="sewerageDetailmasterAmount'+(currentIndex - 1)+'" name="sewerageDetailmaster[' + (currentIndex-1) + '].amount" type="text" required="required"/></td>  <td> <button type="button" onclick="deleteCurrentRow(this)" id="Add" class="btn btn-primary display-hide delete-button">Delete Row </button> </td></tr>');
+						patternvalidation(); 
+						$("#sewerageMasterViewTable tr:last .delete-button").show();
+					}
+					
+					function checkUniqueNumberOfClosets(){
+						var donationCollection=[];
+						var isValidation=true;
+						
+						$('.donationRatesNoOfClosets').each(function(i,obj){
+							if($(this).val() != ""){
+								if($(this).val()==="0" ){
+									var textbox=$(this);
+									bootbox.alert('Number of closets should be more than 0',function(){
+									setTimeout(function(){ textbox.focus(); }, 400);
+									});
+									isValidation=false;
+									return false;
+								}
+								else{
+								
+										if(i==0){
+											donationCollection.push($(this).val());
+										}
+										else
+										{
+											if(donationCollection.indexOf($(this).val())===-1)
+											{
+												donationCollection.push($(this).val());
+											}
+											else
+											{
+												isValidation=false;
+												var textfield=$(this);
+												bootbox.alert('Entered Number Of Closets '+$(this).val()+' is a duplicate value. Please enter different value.', function(){
+													
+													setTimeout(function(){ textfield.focus(); }, 400);
+												});
+												return false;
+											}
+										}
+								}
+							}
+						});
+						return isValidation;
+					}
+					
+					
+					
 				});
+
+function deleteRow(obj){
+	var curRow=obj.parentNode.parentNode.rowIndex;
+		if(curRow!=1){
+		document.getElementById("sewerageDetailmasterTable").deleteRow(curRow);
+				if(curRow==2){
+					$("#sewerageDetailmasterTable tr:last .delete-button").hide();
+				}
+				else{
+				$("#sewerageDetailmasterTable tr:last .delete-button").show();
+				}
+				return true;
+		}
+	}
+
+
+
+function deleteCurrentRow(obj){
+
+		var curRow=obj.parentNode.parentNode.rowIndex;
+		if(curRow!=1){
+		document.getElementById("sewerageMasterViewTable").deleteRow(curRow);
+				if(curRow==2){
+					$("#sewerageMasterViewTable tr:last .delete-button").hide();
+				}
+				else{
+				$("#sewerageMasterViewTable tr:last .delete-button").show();
+				}
+				return true;
+		}
+	}

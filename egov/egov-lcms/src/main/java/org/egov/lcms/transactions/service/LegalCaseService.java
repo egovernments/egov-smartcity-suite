@@ -39,26 +39,38 @@
  */
 package org.egov.lcms.transactions.service;
 
+import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.lcms.entity.es.LegalCaseDocument;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.lcms.service.es.LegalCaseDocumentService;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
+import org.egov.lcms.transactions.entity.Judgment;
+import org.egov.lcms.transactions.entity.JudgmentImpl;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.entity.LegalCaseAdvocate;
-import org.egov.lcms.transactions.entity.LegalCaseDocuments;
+import org.egov.lcms.transactions.entity.LegalCaseDisposal;
+import org.egov.lcms.transactions.entity.LegalCaseInterimOrder;
+import org.egov.lcms.transactions.entity.LegalCaseUploadDocuments;
 import org.egov.lcms.transactions.entity.Pwr;
 import org.egov.lcms.transactions.entity.PwrDocuments;
+import org.egov.lcms.transactions.entity.ReportStatus;
 import org.egov.lcms.transactions.repository.LegalCaseRepository;
+import org.egov.lcms.transactions.repository.LegalCaseUploadDocumentsRepository;
 import org.egov.lcms.transactions.repository.PwrDocumentsRepository;
+import org.egov.lcms.transactions.repository.ReportStatusRepository;
 import org.egov.lcms.utils.LegalCaseUtil;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @Transactional(readOnly = true)
@@ -74,6 +86,21 @@ public class LegalCaseService {
 
     @Autowired
     private LegalCaseUtil legalCaseUtil;
+
+    @Autowired
+    private FileStoreService fileStoreService;
+
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
+
+    @Autowired
+    private LegalCaseUploadDocumentsRepository legalCaseUploadDocumentsRepository;
+
+    @Autowired
+    private ReportStatusRepository reportStatusRepository;
+
+    @Autowired
+    private LegalCaseDocumentService legalCaseDocumentService;
 
     @Autowired
     public LegalCaseService(final LegalCaseRepository legalCaseRepository) {
@@ -94,27 +121,45 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase persist(LegalCase legalcase) {
+    public LegalCase persist(final LegalCase legalcase, final MultipartFile[] files)
+            throws IOException, ParseException {
         legalcase.setCaseNumber(
                 legalcase.getCaseNumber() + (legalcase.getWpYear() != null ? "/" + legalcase.getWpYear() : ""));
         legalcase.setStatus(legalCaseUtil.getStatusForModuleAndCode(LcmsConstants.MODULE_TYPE_LEGALCASE,
                 LcmsConstants.LEGALCASE_STATUS_CREATED));
-        final List<LegalCaseDocuments> legalDoc = legalCaseUtil.getLegalCaseDocumentList(legalcase);
-        legalcase = prepareChildEntities(legalcase);
-        processAndStoreApplicationDocuments(legalcase, legalDoc);
+        prepareChildEntities(legalcase);
         updateNextDate(legalcase, legalcase.getPwrList());
-        return legalCaseRepository.save(legalcase);
+        setLegalCaseReportStatus(legalcase, legalcase.getPwrList());
+        final LegalCase savedlegalcase = legalCaseRepository.save(legalcase);
+        legalCaseSmsService.sendSmsToOfficerInchargeForLegalCase(legalcase);
+        persistLegalCaseIndex(savedlegalcase, null, null, null, null);
+        final List<LegalCaseUploadDocuments> documentDetails = getLegalcaseUploadDocumentDetails(savedlegalcase, files);
+        if (!documentDetails.isEmpty()) {
+            savedlegalcase.setLegalCaseUploadDocuments(documentDetails);
+            persistLegalcaseUploadDocuments(documentDetails);
+        }
+        return savedlegalcase;
     }
 
     @Transactional
-    public LegalCase update(final LegalCase legalcase) {
-        updateLegalCaseDeptAndPwr(legalcase, legalcase.getPwrList());
-        processAndStorePwrDocuments(legalcase);
-        return legalCaseRepository.save(legalcase);
+    public LegalCase update(final LegalCase legalcase, final MultipartFile[] files) throws IOException, ParseException {
+        updateCounterAffidavitAndPwr(legalcase, legalcase.getPwrList());
+        final LegalCase savedCaAndPwr = legalCaseRepository.save(legalcase);
+        persistLegalCaseIndex(legalcase, null, null, null, null);
+        legalCaseSmsService.sendSmsToOfficerInchargeForCounterAffidavit(legalcase.getCounterAffidavits());
+        legalCaseSmsService.sendSmsToOfficerInchargeForPWR(legalcase.getPwrList());
+        legalCaseSmsService.sendSmsToStandingCounselForCounterAffidavit(legalcase.getCounterAffidavits());
+        final List<PwrDocuments> documentDetails = getPwrDocumentDetails(savedCaAndPwr, files);
+        if (!documentDetails.isEmpty()) {
+            savedCaAndPwr.getPwrList().get(0).setPwrDocuments(documentDetails);
+            persistPwrDocuments(documentDetails);
+        }
+        return savedCaAndPwr;
+
     }
 
     @Transactional
-    public void updateLegalCaseDeptAndPwr(final LegalCase legalcase, final List<Pwr> pwrList) {
+    public void updateCounterAffidavitAndPwr(final LegalCase legalcase, final List<Pwr> pwrList) {
         /*
          * final List<LegalCaseDepartment> legalcaseDetails = new
          * ArrayList<LegalCaseDepartment>(0);
@@ -123,7 +168,6 @@ public class LegalCaseService {
         final List<CounterAffidavit> caListtemp = new ArrayList<CounterAffidavit>(0);
         for (final Pwr legalpwr : pwrList) {
             legalpwr.setLegalCase(legalcase);
-            legalpwr.setCaFilingdate(new Date());
             pwrListtemp.add(legalpwr);
         }
         legalcase.getPwrList().clear();
@@ -153,8 +197,8 @@ public class LegalCaseService {
 
     }
 
-    public List<LegalCaseDocuments> getLegalCaseDocList(final LegalCase legalCase) {
-        return legalCase.getLegalCaseDocuments();
+    public List<LegalCaseUploadDocuments> getLegalCaseDocList(final LegalCase legalCase) {
+        return legalCase.getLegalCaseUploadDocuments();
     }
 
     public List<PwrDocuments> getPwrDocList(final LegalCase legalCase) {
@@ -202,7 +246,6 @@ public class LegalCaseService {
         if (!legalcase.getPwrList().isEmpty()) {
             for (final Pwr legalpwr : legalcase.getPwrList()) {
                 legalpwr.setLegalCase(legalcase);
-                legalpwr.setCaFilingdate(new Date());
                 pwrListtemp.add(legalpwr);
             }
             legalcase.getPwrList().clear();
@@ -213,7 +256,7 @@ public class LegalCaseService {
     }
 
     @Transactional
-    public LegalCase saveStandingCouncilEntity(final LegalCaseAdvocate legalCaseAdvocate) {
+    public LegalCase saveStandingCouncilEntity(final LegalCaseAdvocate legalCaseAdvocate) throws ParseException {
         LegalCaseAdvocate legalCaseAdvocatetemp = null;
         AdvocateMaster seniorLegalMaster = null;
         final AdvocateMaster advocateName = advocateMasterService
@@ -236,6 +279,7 @@ public class LegalCaseService {
             legalCaseAdvocatetemp.setOrderDateJunior(legalCaseAdvocate.getOrderDateJunior());
             legalCaseAdvocatetemp.setOrderNumberJunior(legalCaseAdvocate.getOrderNumberJunior());
             legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocatetemp);
+            legalCaseSmsService.sendSmsToStandingCounsel(legalCaseAdvocatetemp);
 
         } else {
             legalCaseAdvocate.setAdvocateMaster(advocateName);
@@ -243,49 +287,11 @@ public class LegalCaseService {
             legalCaseAdvocate.setSeniorAdvocate(seniorLegalMaster);
             legalCaseAdvocate.setIsActive(Boolean.TRUE);
             legalCaseAdvocate.getLegalCase().getLegalCaseAdvocates().add(legalCaseAdvocate);
+            legalCaseSmsService.sendSmsToStandingCounsel(legalCaseAdvocate);
         }
+        persistLegalCaseIndex(legalCaseAdvocate.getLegalCase(), null, null, null, null);
         return legalCaseRepository.save(legalCaseAdvocate.getLegalCase());
 
-    }
-
-    public void processAndStoreApplicationDocuments(final LegalCase legalcase,
-            final List<LegalCaseDocuments> legalDoc) {
-        if (legalcase.getId() == null) {
-            if (!legalcase.getLegalCaseDocuments().isEmpty())
-                for (final LegalCaseDocuments applicationDocument : legalcase.getLegalCaseDocuments()) {
-                    applicationDocument.setLegalCase(legalcase);
-                    applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
-                    applicationDocument.setSupportDocs(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
-                }
-        } else {
-            final List<LegalCaseDocuments> tempLegalCaseDoc = new ArrayList<LegalCaseDocuments>(
-                    legalcase.getLegalCaseDocuments());
-
-            for (final LegalCaseDocuments applicationDocument : tempLegalCaseDoc)
-                if (applicationDocument.getFiles() != null) {
-                    applicationDocument.setLegalCase(legalcase);
-                    applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
-                    applicationDocument.getSupportDocs()
-                            .addAll(legalCaseUtil.addToFileStore(applicationDocument.getFiles()));
-                    legalcase.getLegalCaseDocuments().add(applicationDocument);
-                }
-            legalcase.getLegalCaseDocuments().addAll(legalDoc);
-
-        }
-    }
-
-    @Transactional
-    public void processAndStorePwrDocuments(final LegalCase legalcase) {
-        final List<PwrDocuments> pwrDocList = new ArrayList<PwrDocuments>();
-        if (!legalcase.getPwrList().get(0).getPwrDocuments().isEmpty())
-            for (final PwrDocuments pwr : legalcase.getPwrList().get(0).getPwrDocuments())
-                if (pwr != null && pwr.getId() == null) {
-                    pwr.setPwr(legalcase.getPwrList().get(0));
-                    pwr.setDocumentName("Pwr");
-                    pwr.setSupportDocs(legalCaseUtil.addToFileStore(pwr.getFiles()));
-                    pwrDocList.add(pwr);
-                    pwrDocumentsRepository.save(pwr);
-                }
     }
 
     @Transactional
@@ -295,8 +301,8 @@ public class LegalCaseService {
 
     public void updateNextDate(final LegalCase legalCase, final List<Pwr> pwr) {
 
-        if (pwr.get(0).getCaFilingdate() != null)
-            legalCase.setNextDate(pwr.get(0).getCaFilingdate());
+        if (pwr.get(0).getCaFilingDate() != null)
+            legalCase.setNextDate(pwr.get(0).getCaFilingDate());
         else if (pwr.get(0).getCaDueDate() != null)
             legalCase.setNextDate(pwr.get(0).getCaDueDate());
         else if (pwr.get(0).getPwrDueDate() != null)
@@ -305,4 +311,85 @@ public class LegalCaseService {
             legalCase.setNextDate(legalCase.getCaseDate());
 
     }
+
+    public List<PwrDocuments> getPwrDocumentDetails(final LegalCase legalCase, final MultipartFile[] files)
+            throws IOException {
+        final List<PwrDocuments> documentDetailsList = new ArrayList<PwrDocuments>();
+
+        if (files != null)
+            for (int i = 0; i < files.length; i++)
+                if (!files[i].isEmpty()) {
+                    final PwrDocuments applicationDocument = new PwrDocuments();
+                    applicationDocument.setPwr(legalCase.getPwrList().get(0));
+                    applicationDocument.setDocumentName(LcmsConstants.PWR_DOCUMENTNAME);
+                    applicationDocument.setSupportDocs(
+                            fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
+                                    files[i].getContentType(), LcmsConstants.FILESTORE_MODULECODE));
+                    documentDetailsList.add(applicationDocument);
+
+                }
+        return documentDetailsList;
+    }
+
+    public void persistPwrDocuments(final List<PwrDocuments> documentDetailsList) {
+        if (documentDetailsList != null && !documentDetailsList.isEmpty())
+            for (final PwrDocuments doc : documentDetailsList)
+                pwrDocumentsRepository.save(doc);
+    }
+
+    public List<LegalCaseUploadDocuments> getLegalcaseUploadDocumentDetails(final LegalCase legalCase,
+            final MultipartFile[] files) throws IOException {
+        final List<LegalCaseUploadDocuments> documentDetailsList = new ArrayList<LegalCaseUploadDocuments>();
+
+        if (files != null)
+            for (int i = 0; i < files.length; i++)
+                if (!files[i].isEmpty()) {
+                    final LegalCaseUploadDocuments applicationDocument = new LegalCaseUploadDocuments();
+                    applicationDocument.setLegalCase(legalCase);
+                    applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
+                    applicationDocument.setSupportDocs(
+                            fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
+                                    files[i].getContentType(), LcmsConstants.FILESTORE_MODULECODE));
+                    documentDetailsList.add(applicationDocument);
+
+                }
+        return documentDetailsList;
+    }
+
+    public void persistLegalcaseUploadDocuments(final List<LegalCaseUploadDocuments> documentDetailsList) {
+        if (documentDetailsList != null && !documentDetailsList.isEmpty())
+            for (final LegalCaseUploadDocuments doc : documentDetailsList)
+                legalCaseUploadDocumentsRepository.save(doc);
+    }
+
+    public void setLegalCaseReportStatus(final LegalCase legalCase, final List<Pwr> pwr) {
+        final String caseStatus = legalCase.getStatus().getCode();
+        ReportStatus reportStatus = null;
+        if (caseStatus.equalsIgnoreCase(LcmsConstants.LEGALCASE_STATUS_CREATED))
+            if (reportStatus == null && pwr != null && !pwr.isEmpty())
+                if (pwr.get(0).getCaFilingDate() != null)
+                    reportStatus = getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_COUNTERFILED);
+                else if (pwr.get(0).getPwrApprovalDate() == null)
+                    legalCase.setReportStatus(getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_PWRPENDING));
+                else
+                    reportStatus = getReportStatusByCode(LcmsConstants.CODE_REPORTSTATUS_DCAPENDING);
+
+        if (reportStatus != null)
+            legalCase.setReportStatus(reportStatus);
+
+    }
+
+    public ReportStatus getReportStatusByCode(final String reportStatusCode) {
+        final ReportStatus reportStatus = reportStatusRepository.findByCode(reportStatusCode);
+        return reportStatus;
+    }
+
+    public LegalCaseDocument persistLegalCaseIndex(final LegalCase legalCase,
+            final LegalCaseInterimOrder legalCaseInterimOrder, final Judgment judgment, final JudgmentImpl judgmentImpl,
+            final LegalCaseDisposal closeCase) throws ParseException {
+        return legalCaseDocumentService.persistLegalCaseDocumentIndex(legalCase, legalCaseInterimOrder, judgment,
+                judgmentImpl, closeCase);
+
+    }
+
 }

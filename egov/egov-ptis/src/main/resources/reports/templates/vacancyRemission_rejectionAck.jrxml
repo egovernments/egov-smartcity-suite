@@ -38,10 +38,9 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.1.1.final using JasperReports Library version 6.1.1  -->
-<!-- 2015-11-04T16:10:56 -->
-<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vacancyRemission_rejectionAck" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45b00e5b-247b-4a24-af02-c47b3174acc1">
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-03-28T17:20:44 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="vacancyRemission_rejectionAck" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="60" bottomMargin="40" uuid="45b00e5b-247b-4a24-af02-c47b3174acc1">
 	<import value="org.egov.infstr.utils.*"/>
 	<parameter name="logoPath" class="java.lang.String"/>
 	<parameter name="loggedInUsername" class="java.lang.String"/>
@@ -57,23 +56,23 @@
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="328" splitType="Stretch">
+		<band height="383" splitType="Stretch">
 			<staticText>
-				<reportElement x="103" y="69" width="350" height="30" uuid="a1d68b41-00f1-4f16-999f-3611f5827dc4"/>
+				<reportElement x="103" y="93" width="350" height="30" uuid="a1d68b41-00f1-4f16-999f-3611f5827dc4"/>
 				<textElement textAlignment="Center">
 					<font size="14" isBold="true" isUnderline="true"/>
 				</textElement>
 				<text><![CDATA[Rejection Acknowledgement]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToBandHeight" x="19" y="127" width="240" height="24" uuid="f83ddafd-37cb-4b2f-afd3-ac2a7e95446e"/>
-				<textElement>
+				<reportElement stretchType="RelativeToBandHeight" x="19" y="134" width="222" height="24" uuid="f83ddafd-37cb-4b2f-afd3-ac2a7e95446e"/>
+				<textElement textAlignment="Left">
 					<font size="11"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Assessment Number : "+$F{assessmentNo}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="276" y="127" width="260" height="24" uuid="3b1ea34a-22df-44bc-874a-05d6453b7f99"/>
+				<reportElement x="276" y="135" width="244" height="24" uuid="3b1ea34a-22df-44bc-874a-05d6453b7f99"/>
 				<box bottomPadding="4"/>
 				<textElement textAlignment="Right">
 					<font size="11"/>
@@ -81,38 +80,38 @@
 				<textFieldExpression><![CDATA["Rejection Date : "+$P{rejectionDate}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="20" y="172" width="522" height="50" uuid="7d3375ac-cf50-432b-8906-9b75228b6e29"/>
-				<textElement markup="styled">
+				<reportElement x="17" y="192" width="510" height="68" uuid="7d3375ac-cf50-432b-8906-9b75228b6e29"/>
+				<textElement textAlignment="Justified" markup="styled">
 					<font size="11"/>
 					<paragraph lineSpacing="1_1_2"/>
 				</textElement>
 				<textFieldExpression><![CDATA["	This is to acknowledge that an application for <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> Vacancy Remission </style> has been rejected by <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{rejectingUser}+"</style> for Property with Assessment No. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{assessmentNo}+"</style> with address <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$F{ownerAddress}+"</style> ."]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement stretchType="RelativeToBandHeight" x="455" y="248" width="80" height="20" uuid="e7925f01-4cea-45f6-9b61-08093d9610e5"/>
-				<textElement textAlignment="Right" markup="html">
-					<font isBold="true"/>
+				<reportElement stretchType="RelativeToBandHeight" x="416" y="287" width="80" height="20" uuid="e7925f01-4cea-45f6-9b61-08093d9610e5"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle" markup="html">
+					<font size="11" isBold="true"/>
 				</textElement>
 				<text><![CDATA[Signature]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="374" y="269" width="164" height="20" uuid="2169d71d-a6d0-4020-8408-eae9d6d69e9a"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
+				<reportElement x="297" y="311" width="228" height="20" uuid="2169d71d-a6d0-4020-8408-eae9d6d69e9a"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{loggedInUsername}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement x="375" y="291" width="164" height="20" uuid="889145da-c3f9-43d3-a94a-982e216124bd"/>
-				<textElement textAlignment="Right">
-					<font isBold="true"/>
+				<reportElement x="268" y="334" width="259" height="20" uuid="889145da-c3f9-43d3-a94a-982e216124bd"/>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="11" isBold="true"/>
 					<paragraph lineSpacing="Single"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="94" y="12" width="439" height="27" uuid="d6530b4c-b8ff-43bd-b423-5594dc988756"/>
+				<reportElement x="94" y="12" width="416" height="27" uuid="d6530b4c-b8ff-43bd-b423-5594dc988756"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="none">
 					<font fontName="SansSerif" size="16" isBold="true" pdfFontName="Helvetica-Bold" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
 					<paragraph lineSpacing="Single"/>
@@ -120,7 +119,7 @@
 				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
 			</textField>
 			<image hAlign="Center" vAlign="Middle" onErrorType="Blank">
-				<reportElement x="29" y="6" width="60" height="60" uuid="43406965-7e40-472f-8a2c-4fe6b2a9aef5"/>
+				<reportElement x="23" y="6" width="60" height="60" uuid="43406965-7e40-472f-8a2c-4fe6b2a9aef5"/>
 				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
 			</image>
 		</band>

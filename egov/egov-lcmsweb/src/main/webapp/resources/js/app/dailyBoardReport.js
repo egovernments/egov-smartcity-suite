@@ -46,94 +46,127 @@ jQuery(document).ready(function($) {
 				submitForm();
 
 		});
-});
 
+	  var assignPosition = new Bloodhound({
+			datumTokenizer : function(datum) {
+				return Bloodhound.tokenizers
+						.whitespace(datum.value);
+			},
+			queryTokenizer : Bloodhound.tokenizers.whitespace,
+			remote : {
+				url : '/lcms/ajax/getposition', 
+				replace : function(url, uriEncodedQuery) {
+					return url + '?positionName=' + uriEncodedQuery;
 
-		
-function submitForm() {
-	if($('form').valid()){
-		var caseType = $("#caseCategory").val();
-		var today = getdate();
-		
-		oTable= $('#dailyBoardReportResult-table');
-		$('#dailyBoardReportResult-header').show();
-		$('#reportgeneration-header').show();
-		var oDataTable=oTable.dataTable({
-			"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-			"aLengthMenu": [[10, 25, 50, 100], [10, 25, 50, 100]],
-			"autoWidth": false,
-			"bDestroy": true,
-			"processing": true,
-			"oTableTools" : {
-				"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-				"aButtons" : [ 
-					               {
-							             "sExtends": "pdf",
-							             "mColumns": [ 1, 2, 3, 4,5,6,7,8,9,10],
-		                                 "sPdfMessage": "Report generated on "+today+"",
-		                                 "sTitle": "LegalCase Daily Board Report",
-		                                 "sPdfOrientation": "landscape"
-						                },
-						                {
-								             "sExtends": "xls",
-								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-			                                 "sPdfMessage": "Daily Board Report",
-			                                 "sTitle": "LegalCase Daily Board Report"
-							             },
-							             {
-								             "sExtends": "print",
-								             "mColumns": [ 1,2,3,4,5,6,7,8,9,10],
-			                                 "sPdfMessage": "Daily Board Report",
-			                                 "sTitle": "LegalCase Daily Board Report"
-							             }],
 				},
-				ajax : {
-					
-					url : "/lcms/reports/dailyBoardReportresults",
-					data : {
-						'caseType' :caseType,
-						'fromDate' :$("#fromDate").val(),
-						'toDate': $("#toDate").val(),
-						'officerIncharge' : $("#officerIncharge").val()
-					}
-				},
-				columns :[{"title" : "S.no"},
-				             
-					       { "data" : "caseTitle" , "title": "Case Title"},  
-						  { "data" : "courtName", "title": "Court Name"},
-						  { "data" : "caseNumber", "title": "Case Number"},
-						  { "data" : "petitionerName", "title": "Petitioners"},
-						  { "data" : "respondantName", "title": "Respondants"},
-						  { "data" : "petitionType", "title": "Petition Type"},
-						  { "data" : "standingCouncil", "title": "Standing Council"},
-						  { "data" : "officerIncharge", "title": "In Charge Officer"},
-						  { "data" : "caseStatus", "title": "Status"},
-						  { "data" : "nextDate", "title": "Next Imp Date"}
-						  ],
-				           "fnDrawCallback": function ( oSettings ) {
-				                if ( oSettings.bSorted || oSettings.bFiltered )
-				                {
-				                    for ( var i=0, iLen=oSettings.aiDisplay.length ; i<iLen ; i++ )
-				                    {
-				                        $('td:eq(0)', oSettings.aoData[ oSettings.aiDisplay[i] ].nTr ).html( i+1 );
-				                    }
-				                }
-				            }	
-				});
-	}
-	
-	function updateSerialNo()
-	{
-		$( "#dailyBoardReportsResults-table tbody tr" ).each(function(index) {
-			if($(this).find('td').length>1)
-			{
-				oDataTable.fnUpdate(''+(index+1), index, 0);
+				filter : function(data) {
+			
+					return $.map(data, function(value) {
+						
+						return {
+							name : value,
+							value : value
+						};
+						
+					});
+				}
 			}
 		});
 		
-	}
-	
+		assignPosition.initialize();
+		var typeaheadobj = $('#positionName').typeahead({
+			hint: false,
+			highlight: false,
+			minLength: 3
+		},  {
+			displayKey : 'name',
+			source : assignPosition.ttAdapter()
+		});
+		
+		typeaheadWithEventsHandling(typeaheadobj, '#officerIncharge'); 
+});
 
+var oTable = $('#dailyBoardReportResult-table');
+var oDataTable;
+		
+function submitForm() {
+	if($('form').valid()){
+		var today = getdate();
+		$('#dailyBoardReportResult-header').show();
+		$('#reportgeneration-header').show();
+		$.get("/lcms/reports/dailyBoardReportresults/",$('#dailyboardreportForm').serialize())
+		.done(function(searchResult) {
+		console.log(JSON.stringify(searchResult));
+		oDataTable=oTable.DataTable({
+			dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-3 col-xs-6 text-right'B><'col-md-4 col-xs-6 text-right'p>>",
+			"autoWidth": false,
+			"bDestroy": true,
+			"processing": true,
+			buttons: [
+						{
+						    extend: 'excel',
+						    filename: 'LegalCase Daily Board Report',
+							message : "Report generated on "+today+"",
+							exportOptions : {
+								columns : [0,1, 2, 3, 4, 5, 6, 7, 8,9,10]
+							}
+						},
+					  {
+					    extend: 'pdf',
+					    title: 'LegalCase Daily Board Report',
+					    filename: 'Daily Board Report',
+					    message : "Report generated on "+today+"",
+					    pageSize : 'A3',
+					    orientation : 'landscape',
+						exportOptions : {
+							columns : [0,1, 2, 3, 4, 5, 6, 7, 8,9,10]
+						}
+					},
+					{
+					    extend: 'print',
+					    header : true,
+					    title: 'LegalCase Daily Board Report',
+					    filename: 'Daily Board Report',
+						exportOptions : {
+							columns : [0,1, 2, 3, 4, 5, 6, 7, 8,9,10]
+						}
+					}
+					],
+					searchable : true,
+					data : searchResult,
+				columns :[{"title" : "S.no","sClass" : "text-center"},
+				             
+					       { "data" : "caseTitle" , "title": "Case Title" ,"sClass" : "text-center"},  
+						  { "data" : "courtName", "title": "Court Name","sClass" : "text-center"},
+						  { "data" : "caseNumber", "title": "Case Number","sClass" : "text-center"},
+						  { "data" : "petitionerName", "title": "Petitioners","sClass" : "text-center"},
+						  { "data" : "respondantName", "title": "Respondants","sClass" : "text-center"},
+						  { "data" : "petitionType", "title": "Petition Type","sClass" : "text-center"},
+						  { "data" : "standingCounsel", "title": "Standing Counsel","sClass" : "text-center"},
+						  { "data" : "officerIncharge", "title": "In Charge Officer","sClass" : "text-center"},
+						  { "data" : "caseStatus", "title": "Status","sClass" : "text-center"},
+						  { "data" : "nextDate", "title": "Next Imp Date","sClass" : "text-center"}
+						  
+						  ],
+						  "fnRowCallback" : function(row, data, index) {
+								$('td:eq(3)',row).html('<a href="javascript:void(0);" onclick="openLegalCase(\''+ data.lcNumber +'\')">' + data.caseNumber + '</a>');
+							}
+				          
+				});
+		
+
+		 //s.no auto generation(will work in exported documents too..)
+		oDataTable.on( 'order.dt search.dt', function () {
+			oDataTable.column(0, {search:'applied', order:'applied'}).nodes().each( function (cell, i) {
+               cell.innerHTML = i+1;
+               oDataTable.cell(cell).invalidate('dom'); 
+           } );
+       } ).draw();
+		
+	})
+
+	}
+		
 }
 
 function onchnageofDate() {
@@ -171,4 +204,6 @@ function getdate()
     return today;
 }
 
-
+function openLegalCase(lcNumber) {
+	window.open("/lcms/application/view/?lcNumber="+ lcNumber , "", "height=650,width=980,scrollbars=yes,left=0,top=0,status=yes");
+}

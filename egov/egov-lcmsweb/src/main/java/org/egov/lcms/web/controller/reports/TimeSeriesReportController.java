@@ -40,16 +40,17 @@
 
 package org.egov.lcms.web.controller.reports;
 
-import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 
-import org.egov.infra.web.utils.WebUtils;
+import org.egov.infra.utils.JsonUtils;
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
 import org.egov.lcms.reports.entity.TimeSeriesReportResult;
+import org.egov.lcms.transactions.service.LegalCommonReportService;
 import org.egov.lcms.transactions.service.TimeSeriesReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.lcms.web.adaptor.TimeSeriesReportJsonAdaptor;
@@ -57,11 +58,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
@@ -71,8 +70,11 @@ public class TimeSeriesReportController {
     @Autowired
     private TimeSeriesReportService timeSeriesReportService;
 
+    @Autowired
+    private LegalCommonReportService legalCommonReportService;
+
     public @ModelAttribute("aggregatedByList") List<String> getAggregatedBy() {
-        final List<String> aggregatedByList = new ArrayList<String>();
+        final List<String> aggregatedByList = new ArrayList<>();
         aggregatedByList.add(LcmsConstants.COURTNAME);
         aggregatedByList.add(LcmsConstants.PETITIONTYPE);
         aggregatedByList.add(LcmsConstants.CASESTATUS);
@@ -84,7 +86,7 @@ public class TimeSeriesReportController {
     }
 
     public @ModelAttribute("period") List<String> getPeriod() {
-        final List<String> period = new ArrayList<String>();
+        final List<String> period = new ArrayList<>();
         period.add(LcmsConstants.AGG_YEAR);
         period.add(LcmsConstants.AGG_MONTH);
         return period;
@@ -97,21 +99,24 @@ public class TimeSeriesReportController {
         return "timeseriesreport-form";
     }
 
-    @ExceptionHandler(Exception.class)
     @RequestMapping(value = "/timeSeriesReportresults", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-    public @ResponseBody String getTimeSeriesReportResult(@RequestParam final String aggregatedBy,
-            @RequestParam final String period, @RequestParam final Date fromDate, @RequestParam final Date toDate,
-            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
+    @ResponseBody
+    public String getTimeSeriesReportResult(@ModelAttribute final TimeSeriesReportResult timeSeriesReport,
+            final HttpServletRequest request) throws ParseException {
 
-        final TimeSeriesReportResult timeSeriesReportObj = new TimeSeriesReportResult();
-        timeSeriesReportObj.setAggregatedBy(aggregatedBy);
-        timeSeriesReportObj.setPeriod(period);
-        timeSeriesReportObj.setFromDate(fromDate);
-        timeSeriesReportObj.setToDate(toDate);
-        final List<TimeSeriesReportResult> timeSeriesReportList = timeSeriesReportService.getTimeSeriesReports(timeSeriesReportObj);
-        final String result = new StringBuilder("{ \"data\":").append(
-                WebUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, TimeSeriesReportJsonAdaptor.class))
+        final List<TimeSeriesReportResult> timeSeriesReportList = timeSeriesReportService
+                .getTimeSeriesReportsResults(timeSeriesReport);
+        return new StringBuilder("{ \"data\":").append(
+                JsonUtils.toJSON(timeSeriesReportList, TimeSeriesReportResult.class, TimeSeriesReportJsonAdaptor.class))
                 .append("}").toString();
-        return result;
+    }
+
+    @RequestMapping(value = "/drilldownreportresult", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LegalCommonReportResult> getDrillDownReportResult(
+            @ModelAttribute final LegalCommonReportResult legalCommonReportObj,
+            final HttpServletRequest request) throws ParseException {
+        return legalCommonReportService.getLegalCommonReportsResults(legalCommonReportObj, null);
+
     }
 }

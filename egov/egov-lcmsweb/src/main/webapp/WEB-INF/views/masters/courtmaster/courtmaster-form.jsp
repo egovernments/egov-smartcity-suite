@@ -94,9 +94,6 @@
 					<div class="col-sm-2 add-margin">
 						<form:select path="active" id="active" cssClass="form-control"
 							cssErrorClass="form-control error" required="required">
-							<form:option value="">
-								<spring:message code="lbl.select" />
-							</form:option>
 							<form:option value="true">YES</form:option>
 							<form:option value="false">NO</form:option>
 							<form:errors path="active" cssClass="error-msg" />

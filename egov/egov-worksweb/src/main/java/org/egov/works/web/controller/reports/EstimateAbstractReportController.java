@@ -44,13 +44,16 @@ import java.util.Collections;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.EgwTypeOfWorkHibernateDAO;
 import org.egov.commons.service.FinancialYearService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.services.masters.SchemeService;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.lineestimate.entity.enums.Beneficiary;
 import org.egov.works.lineestimate.entity.enums.WorkCategory;
 import org.egov.works.master.service.NatureOfWorkService;
 import org.egov.works.reports.entity.EstimateAbstractReport;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -77,15 +80,22 @@ public class EstimateAbstractReportController {
     @Autowired
     private EgwTypeOfWorkHibernateDAO egwTypeOfWorkHibernateDAO;
 
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/departmentwise-searchform", method = RequestMethod.GET)
     public String departmentWiseShowSearchForm(
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
+        final CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
         estimateAbstractReport.setFinancialYear(currentFinancialYear.getId());
         estimateAbstractReport.setCurrentFinancialYearId(currentFinancialYear.getId());
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);
+        estimateAbstractReport.setDepartment(worksUtils.getDefaultDepartmentId());
         return "estimateAbstractReportByDepartmentWise-search";
     }
 
@@ -94,10 +104,16 @@ public class EstimateAbstractReportController {
             @ModelAttribute final EstimateAbstractReport estimateAbstractReport,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
-        CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
+        final CFinancialYear currentFinancialYear = financialYearService.getCurrentFinancialYear();
         estimateAbstractReport.setFinancialYear(currentFinancialYear.getId());
         estimateAbstractReport.setCurrentFinancialYearId(currentFinancialYear.getId());
         model.addAttribute("estimateAbstractReport", estimateAbstractReport);
+        final String defaultApproverDept = worksApplicationProperties.getDefaultApproverDepartment();
+        if (defaultApproverDept != null) {
+            final Department approverDepartment = departmentService.getDepartmentByName(defaultApproverDept);
+            if (approverDepartment != null)
+                estimateAbstractReport.getDepartments().add(approverDepartment);
+        }
         return "estimateAbstractReportByTypeOfWorkWise-search";
     }
 

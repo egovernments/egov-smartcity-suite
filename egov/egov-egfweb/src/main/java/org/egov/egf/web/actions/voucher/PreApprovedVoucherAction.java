@@ -70,6 +70,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Relation;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
+import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
@@ -77,6 +78,7 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationException;
@@ -165,6 +167,13 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     private BillsAccountingService billsAccountingService;
     @Autowired
     private BillsService billsManager;
+    
+    @Autowired
+    private ChartOfAccountDetailService chartOfAccountDetailService;
+    
+    @Autowired
+    private AppConfigService appConfigService;
+    
     private static final Logger LOGGER = Logger.getLogger(PreApprovedVoucherAction.class);
     protected FinancialYearHibernateDAO financialYearDAO;
     private final PreApprovedVoucher preApprovedVoucher = new PreApprovedVoucher();
@@ -193,7 +202,6 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
     private String action = "";
     SimpleWorkflowService<ContraJournalVoucher> contraWorkflowService;
     private Map<String, Object> billDetails;
-    // private Long vhid;
     private VoucherHelper voucherHelper;
     private JournalVoucherModifyAction journalvouchermodify;
     private boolean showVoucherDate;
@@ -450,9 +458,10 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 result = "voucherview";
         billRegister = (EgBillregister) persistenceService.find(
                 "select mis.egBillregister from EgBillregistermis mis where mis.voucherHeader.id=?", voucherHeader.getId());
+        
         return result;
     }
-
+    
     @SuppressWarnings("unchecked")
     private void loadApproverUser(final String type) {
         final String scriptName = "billvoucher.nextDesg";
@@ -561,14 +570,8 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             methodName = "save";
             String voucherDate = formatter1.format(voucherHeader.getVoucherDate());
             String cutOffDate1 = null;
-            // check budgetary check
             egBillregister = billsService.getBillRegisterById(Integer.valueOf(parameters.get(BILLID)[0]));
-            // egBillregister = (EgBillregister) getPersistenceService().find(" from EgBillregister where id=?",
-            // Long.valueOf(parameters.get(BILLID)[0]));
-            if (!financialYearDAO.isSameFinancialYear(egBillregister.getBilldate(), voucherHeader.getVoucherDate()))
-                throw new ValidationException(
-                        "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s",
-                        "Voucher could not be permitted in the current year for the Bill prepared in the previous financial year/s");
+            validateBillVoucherDate(egBillregister,voucherHeader);
             getMasterDataForBill();
             populateWorkflowBean();
             voucherHeader = preApprovedActionHelper.createVoucherFromBill(voucherHeader, workflowBean,
@@ -650,6 +653,36 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
 
     }
 
+    private void validateBillVoucherDate(EgBillregister egBillregister, CVoucherHeader voucherHeader) {
+        // Allow bills accounting accross years (appacofig key :allow_billsaccounting_across_years and values are 'yes' and 'no')
+        AppConfig appConfigAccrossYears = appConfigService.getAppConfigByModuleNameAndKeyName(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
+                FinancialConstants.APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS);
+        AppConfig appConfigAccrossYearsEndDate = appConfigService.getAppConfigByModuleNameAndKeyName(
+                FinancialConstants.MODULE_NAME_APPCONFIG,
+                FinancialConstants.APPCONFIG_BILLACCOUNTING_ACCROSS_YEARS_ENDDATE);
+        try {
+            if ("no".equalsIgnoreCase(appConfigAccrossYears.getConfValues().get(0).getValue())
+                    && !financialYearDAO.isSameFinancialYear(egBillregister.getBilldate(), voucherHeader.getVoucherDate())) {
+                throw new ValidationException(
+                        "bill.accounting.year.check", "bill.accounting.year.check");
+            }
+
+            if ("yes".equalsIgnoreCase(appConfigAccrossYears.getConfValues().get(0).getValue())
+                    && !appConfigAccrossYearsEndDate.getConfValues().isEmpty() && voucherHeader.getVoucherDate()
+                            .after(df.parse(appConfigAccrossYearsEndDate.getConfValues().get(0).getValue())))
+                throw new ValidationException(
+                        "bill.accounting.voucherdate.enddate.check", getText("bill.accounting.voucherdate.enddate.check",
+                                new String[] { appConfigAccrossYearsEndDate.getConfValues().get(0).getValue() }));
+
+            if (egBillregister.getBilldate().after(voucherHeader.getVoucherDate())) {
+                throw new ValidationException(
+                        "bill.accounting.voucher.date.check", "bill.accounting.voucher.date.check");
+            }
+        } catch (ParseException e) {
+            LOGGER.error(e.getMessage());
+        }
+    }
     @Action(value = "/voucher/preApprovedVoucher-update")
     public String update() throws ValidationException {
         if (LOGGER.isDebugEnabled())
@@ -674,12 +707,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
                 addActionMessage(getText("billVoucher.file.canceled"));
             else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-                if ("Closed".equals(voucherHeader.getState().getValue()))
                     addActionMessage(getText("pjv.voucher.final.approval", new String[] { "The File has been approved" }));
-                else
-                    addActionMessage(getText("pjv.voucher.approved",
-                            new String[] { voucherService.getEmployeeNameForPositionId(voucherHeader.getState()
-                                    .getOwnerPosition()) }));
             }
         } catch (final ValidationException e) {
 
@@ -718,7 +746,7 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("voucher id=======" + vhid);
                 voucherHeader = (CVoucherHeader) getPersistenceService().find(VOUCHERQUERY, vhid);
-                voucherHeader.start().withOwner(getPosition());
+                voucherHeader.transition().start().withOwner(getPosition());
                 addActionMessage(getText("pjv.voucher.wc.created", new String[] { voucherHeader.getVoucherNumber() }));
             } else
                 addActionError(getText("pjv.budgetcheck.failed"));
@@ -876,11 +904,14 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                     "from CGeneralLedgerDetail where generalLedgerId.id=?", gl.getId());
             if (gldetailList != null && !gldetailList.isEmpty()) {
                 for (final CGeneralLedgerDetail gldetail : gldetailList) {
-                    temp = new HashMap<String, Object>();
-                    temp = getAccountDetails(gldetail.getDetailTypeId().getId(), gldetail.getDetailKeyId(), temp);
-                    temp.put(Constants.GLCODE, gl.getGlcode());
-                    temp.put("amount", gldetail.getAmount());
-                    tempList.add(temp);
+                    if (chartOfAccountDetailService.getByGlcodeIdAndDetailTypeId(gl.getGlcodeId().getId(),
+                            gldetail.getDetailTypeId().getId()) != null) {
+                        temp = new HashMap<String, Object>();
+                        temp = getAccountDetails(gldetail.getDetailTypeId().getId(), gldetail.getDetailKeyId(), temp);
+                        temp.put(Constants.GLCODE, gl.getGlcode());
+                        temp.put("amount", gldetail.getAmount());
+                        tempList.add(temp);
+                    }
                 }
                 names.put("tempList", tempList);
             }
@@ -918,13 +949,20 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
             tempList.add(temp);
 
             for (final EgBillPayeedetails payeeDetails : billdetails.getEgBillPaydetailes()) {
-                payeeMap = new HashMap<String, Object>();
-                payeeMap = getAccountDetails(payeeDetails.getAccountDetailTypeId(), payeeDetails.getAccountDetailKeyId(),
-                        payeeMap);
-                payeeMap.put(Constants.GLCODE, coa.getGlcode());
-                payeeMap.put(Constants.DEBITAMOUNT, payeeDetails.getDebitAmount() == null ? 0 : payeeDetails.getDebitAmount());
-                payeeMap.put(Constants.CREDITAMOUNT, payeeDetails.getCreditAmount() == null ? 0 : payeeDetails.getCreditAmount());
-                payeeList.add(payeeMap);
+                payeeMap = new HashMap<>();
+                if (chartOfAccountDetailService.getByGlcodeIdAndDetailTypeId(
+                        payeeDetails.getEgBilldetailsId().getGlcodeid().longValue(),
+                        payeeDetails.getAccountDetailTypeId().intValue()) != null) {
+                    payeeMap = getAccountDetails(payeeDetails.getAccountDetailTypeId(), payeeDetails.getAccountDetailKeyId(),
+                            payeeMap);
+                    payeeMap.put(Constants.GLCODE, coa.getGlcode());
+                    payeeMap.put(Constants.DEBITAMOUNT,
+                            payeeDetails.getDebitAmount() == null ? 0 : payeeDetails.getDebitAmount());
+                    payeeMap.put(Constants.CREDITAMOUNT,
+                            payeeDetails.getCreditAmount() == null ? 0 : payeeDetails.getCreditAmount());
+                    payeeList.add(payeeMap);
+                }
+                
             }
         }
         billDetails.put("tempList", tempList);
@@ -964,33 +1002,33 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 temp.put(Constants.CREDITAMOUNT, gl.getCreditAmount() == null ? 0 : gl.getCreditAmount());
                 temp.put("billdetailid", gl.getId());
                 tempList.add(temp);
-
-                final List<CGeneralLedgerDetail> gldetailList = getPersistenceService().findAllBy(
-                        "from CGeneralLedgerDetail where generalLedgerId.id=?", gl.getId());
-                for (final CGeneralLedgerDetail gldetail : gldetailList) {
-                    subledger = new PreApprovedVoucher();
-                    subledger.setGlcode(coa);
-                    final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,
-                            gldetail.getDetailTypeId().getId());
-                    detailtypeIdList.add(detailtype);
-                    subledger.setDetailType(detailtype);
-                    payeeMap = new HashMap<String, Object>();
-                    payeeMap = getAccountDetails(gldetail.getDetailTypeId().getId(), gldetail.getDetailKeyId(), payeeMap);
-                    subledger.setDetailKey(payeeMap.get(Constants.DETAILKEY) + "");
-                    if ((payeeMap.get(Constants.DETAILKEY) + "").contains(Constants.MASTER_DATA_DELETED))
-                        addActionError(Constants.VOUCHERERRORMESSAGE);
-                    subledger.setDetailCode(payeeMap.get(Constants.DETAILCODE) + "");
-                    subledger.setDetailKeyId(gldetail.getDetailKeyId());
-                    subledger.setAmount(gldetail.getAmount());
-                    subledger.setFunctionDetail(temp.get("function") != null ? temp.get("function").toString() : "");
-                    if (gl.getDebitAmount() == null || gl.getDebitAmount() == 0) {
-                        subledger.setDebitAmount(BigDecimal.ZERO);
-                        subledger.setCreditAmount(gldetail.getAmount());
-                    } else {
-                        subledger.setDebitAmount(gldetail.getAmount());
-                        subledger.setCreditAmount(BigDecimal.ZERO);
+                for (CGeneralLedgerDetail gldetail : gl.getGeneralLedgerDetails()) {
+                    if (chartOfAccountDetailService.getByGlcodeIdAndDetailTypeId(gl.getGlcodeId().getId(),
+                            gldetail.getDetailTypeId().getId().intValue()) != null) {
+                        subledger = new PreApprovedVoucher();
+                        subledger.setGlcode(coa);
+                        final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,
+                                gldetail.getDetailTypeId().getId());
+                        detailtypeIdList.add(detailtype);
+                        subledger.setDetailType(detailtype);
+                        payeeMap = new HashMap<>();
+                        payeeMap = getAccountDetails(gldetail.getDetailTypeId().getId(), gldetail.getDetailKeyId(), payeeMap);
+                        subledger.setDetailKey(payeeMap.get(Constants.DETAILKEY) + "");
+                        if ((payeeMap.get(Constants.DETAILKEY) + "").contains(Constants.MASTER_DATA_DELETED))
+                            addActionError(Constants.VOUCHERERRORMESSAGE);
+                        subledger.setDetailCode(payeeMap.get(Constants.DETAILCODE) + "");
+                        subledger.setDetailKeyId(gldetail.getDetailKeyId());
+                        subledger.setAmount(gldetail.getAmount());
+                        subledger.setFunctionDetail(temp.get("function") != null ? temp.get("function").toString() : "");
+                        if (gl.getDebitAmount() == null || gl.getDebitAmount() == 0) {
+                            subledger.setDebitAmount(BigDecimal.ZERO);
+                            subledger.setCreditAmount(gldetail.getAmount());
+                        } else {
+                            subledger.setDebitAmount(gldetail.getAmount());
+                            subledger.setCreditAmount(BigDecimal.ZERO);
+                        }
+                        payeeList.add(subledger);
                     }
-                    payeeList.add(subledger);
                 }
             }
             /*
@@ -1021,26 +1059,30 @@ public class PreApprovedVoucherAction extends GenericWorkFlowAction {
                 tempList.add(temp);
 
                 for (final EgBillPayeedetails payeeDetails : billdetails.getEgBillPaydetailes()) {
-                    subledger = new PreApprovedVoucher();
-                    subledger.setGlcode(coa);
-                    final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,
-                            payeeDetails.getAccountDetailTypeId());
-                    detailtypeIdList.add(detailtype);
-                    subledger.setDetailType(detailtype);
-                    payeeMap = new HashMap<String, Object>();
-                    payeeMap = getAccountDetails(payeeDetails.getAccountDetailTypeId(), payeeDetails.getAccountDetailKeyId(),
-                            payeeMap);
-                    subledger.setDetailKey(payeeMap.get(Constants.DETAILKEY) + "");
-                    subledger.setDetailCode(payeeMap.get(Constants.DETAILCODE) + "");
-                    subledger.setDetailKeyId(payeeDetails.getAccountDetailKeyId());
-                    if (payeeDetails.getDebitAmount() == null) {
-                        subledger.setDebitAmount(BigDecimal.ZERO);
-                        subledger.setCreditAmount(payeeDetails.getCreditAmount());
-                    } else {
-                        subledger.setDebitAmount(payeeDetails.getDebitAmount());
-                        subledger.setCreditAmount(BigDecimal.ZERO);
+                    if (chartOfAccountDetailService.getByGlcodeIdAndDetailTypeId(
+                            payeeDetails.getEgBilldetailsId().getGlcodeid().longValue(),
+                            payeeDetails.getAccountDetailTypeId().intValue()) != null) {
+                        subledger = new PreApprovedVoucher();
+                        subledger.setGlcode(coa);
+                        final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY,
+                                payeeDetails.getAccountDetailTypeId());
+                        detailtypeIdList.add(detailtype);
+                        subledger.setDetailType(detailtype);
+                        payeeMap = new HashMap<>();
+                        payeeMap = getAccountDetails(payeeDetails.getAccountDetailTypeId(), payeeDetails.getAccountDetailKeyId(),
+                                payeeMap);
+                        subledger.setDetailKey(payeeMap.get(Constants.DETAILKEY) + "");
+                        subledger.setDetailCode(payeeMap.get(Constants.DETAILCODE) + "");
+                        subledger.setDetailKeyId(payeeDetails.getAccountDetailKeyId());
+                        if (payeeDetails.getDebitAmount() == null) {
+                            subledger.setDebitAmount(BigDecimal.ZERO);
+                            subledger.setCreditAmount(payeeDetails.getCreditAmount());
+                        } else {
+                            subledger.setDebitAmount(payeeDetails.getDebitAmount());
+                            subledger.setCreditAmount(BigDecimal.ZERO);
+                        }
+                        payeeList.add(subledger);
                     }
-                    payeeList.add(subledger);
                 }
             }
         billDetails.put("tempList", tempList);

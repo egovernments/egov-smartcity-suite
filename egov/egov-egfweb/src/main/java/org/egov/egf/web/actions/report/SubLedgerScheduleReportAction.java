@@ -53,6 +53,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.Fund;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -134,6 +135,7 @@ public class SubLedgerScheduleReportAction extends BaseFormAction {
             @RequiredFieldValidator(fieldName = "endDate", message = "", key = FinancialConstants.REQUIRED) })
     @ValidationErrorPage(value = FinancialConstants.STRUTS_RESULT_PAGE_SEARCH)
     @SkipValidation
+    @ReadOnly
     @Action(value = "/report/subLedgerScheduleReport-ajaxSearch")
     public String ajaxSearch() throws TaskFailedException {
         if (LOGGER.isDebugEnabled())

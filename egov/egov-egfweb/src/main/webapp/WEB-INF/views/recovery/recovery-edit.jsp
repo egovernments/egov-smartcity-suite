@@ -41,6 +41,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="../update" modelAttribute="recovery"
 	id="recoveryform" cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
@@ -77,4 +78,4 @@
 </script>
 
 <script type="text/javascript"
-	src="<c:url value='/resources/app/js/recoveryHelper.js'/>"></script>
+	src="<cdn:url value='/resources/app/js/recoveryHelper.js?rnd=${app_release_no}'/>"></script>

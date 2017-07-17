@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-02-02T10:43:44 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainRetiredAssociationExemptionNotice" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" isSummaryNewPage="true" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
+	<property name="ireport.zoom" value="1.5"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.ptis.report.bean.PropertyAckNoticeInfo"/>
+	<parameter name="isCorporation" class="java.lang.Boolean"/>
+	<parameter name="userSignature" class="java.lang.Object"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="noticeNo" class="java.lang.String"/>
+	<parameter name="copyType" class="java.lang.String"/>
+	<parameter name="commissioner" class="java.lang.String"/>
+	<parameter name="noticeDate" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="doorNumber" class="java.lang.String"/>
+	<parameter name="AssessmentNumber" class="java.lang.String"/>
+	<parameter name="Locality" class="java.lang.String"/>
+	<parameter name="applicationDate" class="java.lang.String"/>
+	<parameter name="exemptionReason" class="java.lang.String"/>
+	<parameter name="currentPropertyTax" class="java.math.BigDecimal"/>
+	<parameter name="isCommissioner" class="java.lang.Boolean"/>
+	<title>
+		<band height="66" splitType="Stretch">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="30" uuid="f72beaa3-2064-4eed-b11e-39605297e6ea"/>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$P{noticeNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="commissioner">
+					<subreportParameterExpression><![CDATA[$P{commissioner}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noticeDate">
+					<subreportParameterExpression><![CDATA[$P{noticeDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="doorNumber">
+					<subreportParameterExpression><![CDATA[$P{doorNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AssessmentNumber">
+					<subreportParameterExpression><![CDATA[$P{AssessmentNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="Locality">
+					<subreportParameterExpression><![CDATA[$P{Locality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="exemptionReason">
+					<subreportParameterExpression><![CDATA[$P{exemptionReason}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="copyType">
+					<subreportParameterExpression><![CDATA["citizen"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userSignature">
+					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerName">
+					<subreportParameterExpression><![CDATA[$P{ownerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="currentPropertyTax">
+					<subreportParameterExpression><![CDATA[$P{currentPropertyTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="isCommissioner">
+					<subreportParameterExpression><![CDATA[$P{isCommissioner}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("NGO_ExemptionProceedings_corporationDetails.jasper"):ReportUtil.getTemplateAsStream("NGO_ExemptionProceedings_MunicipalityDetails.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</title>
+	<summary>
+		<band height="140">
+			<subreport>
+				<reportElement stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="30" uuid="9c2666cf-fb19-4d0a-af96-de27efdc34f1"/>
+				<subreportParameter name="noticeNo">
+					<subreportParameterExpression><![CDATA[$P{noticeNo}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="commissioner">
+					<subreportParameterExpression><![CDATA[$P{commissioner}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="noticeDate">
+					<subreportParameterExpression><![CDATA[$P{noticeDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="doorNumber">
+					<subreportParameterExpression><![CDATA[$P{doorNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="AssessmentNumber">
+					<subreportParameterExpression><![CDATA[$P{AssessmentNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="Locality">
+					<subreportParameterExpression><![CDATA[$P{Locality}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="applicationDate">
+					<subreportParameterExpression><![CDATA[$P{applicationDate}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="exemptionReason">
+					<subreportParameterExpression><![CDATA[$P{exemptionReason}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="cityName">
+					<subreportParameterExpression><![CDATA[$P{cityName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="copyType">
+					<subreportParameterExpression><![CDATA["official"]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="userSignature">
+					<subreportParameterExpression><![CDATA[$P{userSignature}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="ownerName">
+					<subreportParameterExpression><![CDATA[$P{ownerName}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="currentPropertyTax">
+					<subreportParameterExpression><![CDATA[$P{currentPropertyTax}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="isCommissioner">
+					<subreportParameterExpression><![CDATA[$P{isCommissioner}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportExpression><![CDATA[$P{isCorporation}==true?ReportUtil.getTemplateAsStream("NGO_ExemptionProceedings_corporationDetails.jasper"):ReportUtil.getTemplateAsStream("NGO_ExemptionProceedings_MunicipalityDetails.jasper")]]></subreportExpression>
+			</subreport>
+		</band>
+	</summary>
+</jasperReport>

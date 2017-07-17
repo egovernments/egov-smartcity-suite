@@ -40,7 +40,7 @@
 
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<table width="100%" border="0" cellspacing="0" cellpadding="0">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
 	<tr>
 		<td class="greybox" width="5%">
 			&nbsp;
@@ -192,26 +192,12 @@
 	
 	<tr class="appurtenant">
 		<td class="bluebox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : 
-		<td class="bluebox"><s:checkbox name="property.propertyDetail.appurtenantLandChecked" id="appurtenantLandChecked"
-				value="%{property.propertyDetail.appurtenantLandChecked}" onclick="enableAppartnaumtLandDetails();" />
-		</td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64" name="property.propertyDetail.occupancyCertificationNo" id="certificationNumber" value="%{property.propertyDetail.occupancyCertificationNo}"/></td>
-	</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
-			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield name="property.propertyDetail.extentAppartenauntLand" id="extentAppartenauntLand"
-				value="%{property.propertyDetail.extentAppartenauntLand}" size="12"	maxlength="12" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield>
-		</td>
 		<td class="greybox" colspan="2">
-			&nbsp;
+			&nbsp;			
 		</td>
 	</tr>
-	
 	<!-- Amenities section -->
 	
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -258,7 +244,7 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center" class="formmainbox" style="box-shadow:none;">
+			<div align="center" class="overflow-x-scroll floors-tbl-freeze-column-div">
 				<%@ include file="../common/FloorFormForRevisionPetition.jsp"%>
 				<br/>
 			</div>
@@ -278,13 +264,6 @@
 			</div>
 		</td>
 	</tr>
-	<s:if test="%{!documentTypes.isEmpty()}">
-		 <tr >
-			<td colspan="5">
-				<%@ include file="../common/DocumentUploadForm.jsp"%>
-			</td>
-		</tr>
-	</s:if>
 	<!-- Displaying tax details -->
 	<tr>
 		<td colspan="5">

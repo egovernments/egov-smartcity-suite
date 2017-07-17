@@ -70,18 +70,16 @@ public class CouncilAgendaService {
     private final CouncilAgendaRepository councilAgendaRepository;
     @PersistenceContext
     private EntityManager entityManager;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
+    
     @Autowired
     public CouncilAgendaService(final CouncilAgendaRepository councilAgendaRepository,final CouncilAgendaDetailsRepository councilAgendaDetailsRepository) {
         this.councilAgendaRepository = councilAgendaRepository;
         this.councilAgendaDetailsRepository= councilAgendaDetailsRepository;
     }
     
-    
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Transactional
     public CouncilAgenda create(final CouncilAgenda councilAgenda) {

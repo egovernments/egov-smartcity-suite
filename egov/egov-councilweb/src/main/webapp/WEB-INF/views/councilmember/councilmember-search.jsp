@@ -129,8 +129,9 @@
 				<tr>
 					<th><spring:message code="lbl.electionward" /></th>
 					<th><spring:message code="lbl.designation" /></th>
-					<th><spring:message code="lbl.partyaffiliation" /></th>
+					<th><spring:message code="lbl.partyaffiliation" />/Category</th>
 					<th><spring:message code="lbl.name" /></th>
+					<th><spring:message code="lbl.status" /></th>
 					<th><spring:message code="lbl.view"/></th>
 					<th>&nbsp;</th>
 				</tr>

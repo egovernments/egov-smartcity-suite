@@ -42,8 +42,7 @@ $(document).ready(function() {
 	
 	
 	$(".councilcommitmem").change(function(){  
-    	$hiddenName=$(this).data('change-to');
-    	console.log( $hiddenName );
+    	var $hiddenName=$(this).data('change-to');
     	if($(this).is(':checked')){
     		$('input[name="'+$hiddenName+'"]').val(true);
     	}else{
@@ -66,10 +65,11 @@ $(document).ready(function() {
 	});
 	
 
-	$("#buttonSubmit").click(function(e){ 
+	$("#btnsubmit").click(function(e){ 
+		
 			var chkbxLength = $('.councilcommitmem:checked').length;
 			if(chkbxLength <= 0){
-				bootbox.alert('Please select atleast one value');
+				bootbox.alert('Please enter attendance details atleast for one member');
 				return false;
 			}
 			return true;
@@ -81,22 +81,13 @@ $(document).ready(function() {
 			callAjaxSearch();
 		});
 
-	$('form').keypress(function (e) {
-	    if (e.which == 13) {
-	    	e.preventDefault();
-	    	callAjaxSearch();
-	    }
-	}); 
-
-
-	
 });
 
 function setHiddenValue(flag)
 {
 	
 	$('.councilcommitmem').each(function(){
-		$hiddenName=$(this).data('change-to');
+		var $hiddenName=$(this).data('change-to');
 		$('input[name="'+$hiddenName+'"]').val(flag);
 	});
 	
@@ -113,17 +104,23 @@ function getFormData($form){
 }
 
 var viewurl='/council/councilmeeting/attendance/search/view/';
-var editurl='/council/councilmeeting/attendance/search/edit/';
+var editurl='/council/councilmeeting/attend/search/edit/';
 function callAjaxSearch() {
 	
-	drillDowntableContainer = jQuery("#resultTable");	
 	jQuery('.report-section').removeClass('display-hide');
-	reportdatatable = drillDowntableContainer
-			.dataTable({
+	jQuery("#resultTable").dataTable({
 				ajax : {
 					url : "/council/councilmeeting/ajaxsearch/"+$('#mode').val(),      
 					type: "POST",
-					"data":  getFormData(jQuery('form'))
+					beforeSend : function() {
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+					},
+					"data" : getFormData(jQuery('form')),
+					complete : function() {
+						$('.loader-class').modal('hide');
+					}
 				},
 				"destroy": true,
 				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",

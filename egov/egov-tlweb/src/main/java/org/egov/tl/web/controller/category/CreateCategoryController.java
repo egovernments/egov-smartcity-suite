@@ -40,49 +40,44 @@
 
 package org.egov.tl.web.controller.category;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.LicenseCategory;
-import org.egov.tl.service.masters.LicenseCategoryService;
+import org.egov.tl.service.LicenseCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensecategory")
 public class CreateCategoryController {
 
-    private final LicenseCategoryService licenseCategoryService;
-
     @Autowired
-    public CreateCategoryController(final LicenseCategoryService licenseCategoryService) {
-        this.licenseCategoryService = licenseCategoryService;
-    }
+    private LicenseCategoryService licenseCategoryService;
 
     @ModelAttribute
-    public LicenseCategory licenseCategoryModel() {
+    public LicenseCategory licenseCategory() {
         return new LicenseCategory();
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String createCategoryForm(final Model model) {
+    @RequestMapping(value = "/create", method = GET)
+    public String showCreateCategoryForm() {
         return "licensecategory-create";
     }
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String createCategory(@ModelAttribute @Valid final LicenseCategory licenseCategory, final BindingResult errors,
-            final RedirectAttributes additionalAttr) {
-
-        if (errors.hasErrors())
+    @RequestMapping(value = "/create", method = POST)
+    public String createCategory(@ModelAttribute @Valid LicenseCategory licenseCategory, BindingResult bindingResult,
+                                 RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
             return "licensecategory-create";
-
-        licenseCategoryService.persistCategory(licenseCategory);
-        additionalAttr.addFlashAttribute("message", "msg.create.category.success");
+        licenseCategoryService.saveCategory(licenseCategory);
+        responseAttrbs.addFlashAttribute("message", "msg.create.category.success");
 
         return "redirect:/licensecategory/view/" + licenseCategory.getCode();
     }

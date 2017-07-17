@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-03-23T11:40:01 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ESDCertificate_Corporation" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="5f99a57d-d4d7-42d2-824c-02ee7d858b01">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="org.egov.infra.utils.*"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
+	<parameter name="billNumber" class="java.lang.String"/>
+	<parameter name="billDate" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="doorNo" class="java.lang.String"/>
+	<parameter name="finYear" class="java.lang.String"/>
+	<parameter name="futureDate" class="java.lang.String"/>
+	<parameter name="totalTaxDue" class="java.math.BigDecimal"/>
+	<parameter name="sectionAct" class="java.lang.String"/>
+	<parameter name="eSDNoticeNumber" class="java.lang.String"/>
+	<parameter name="eSDNoticeDate" class="java.lang.String"/>
+	<parameter name="consumerId" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="600" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="72" y="20" width="430" height="27" uuid="1ebcde9e-694e-4d76-b730-7ce76ef49065"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="16" isBold="true" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="20" y="49" width="520" height="23" uuid="cbab1d62-a3d4-4b80-993e-a51b1cda3fb2">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[ESSENTIAL SERVICES DISCONNECTION NOTICE]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="24" y="113" width="36" height="22" uuid="344c635b-bb55-400a-9cb0-6f714b2fcdce">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="60" y="113" width="260" height="22" uuid="e3b0c16e-3898-42ef-a9e1-bedd74d52d35"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{eSDNoticeNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="25" y="140" width="45" height="22" uuid="fbea28bb-3e97-4e28-adb6-8f2d399dc21a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="70" y="140" width="180" height="22" uuid="ede453f0-8bb5-4727-8bb6-bfa32d635e44"/>
+				<textElement>
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{eSDNoticeDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="61" y="178" width="55" height="22" uuid="634f2aa7-60d7-4abc-8b53-6061fafea1c7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sub :-]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="116" y="178" width="408" height="40" uuid="ee73b2ac-2474-4db3-81d7-ec6a64a15b15"/>
+				<textElement markup="styled">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Taxes - <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{cityName} +"</style> Municipality - Non Payment of Property Taxes on the Premises No : <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+ $P{doorNo}+ "</style>, Assessment Number: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+ $P{consumerId} +" </style>, disconnection of Essential Services like Water Supply, Drainage etc - Reg."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="63" y="229" width="55" height="22" uuid="d1e926fe-6e17-4201-9845-425d34c392c9">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ref :-]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="117" y="230" width="407" height="21" uuid="d8728c78-cc8a-4e98-9362-769988529a39"/>
+				<textElement markup="styled">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["This Office Bill No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{billNumber}+"</style> Dt: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+$P{billDate}+"</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="242" y="261" width="98" height="17" uuid="41b82a93-aca0-4697-b34f-9eb59990a048"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[@@@]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="24" y="285" width="505" height="53" uuid="96c7ec4d-900f-4711-b3cc-da4e5e3a1d09"/>
+				<textElement markup="styled">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["        It is observed that an amount of Rs.<style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{totalTaxDue}+"</style>/-, is due towards Property Tax up to <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{finYear}+"</style>. This tax has not been paid till date on the premises No: <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{doorNo}+"</style>, which stands in the name of Ms/Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+JRStringUtil.xmlEncode($P{ownerName})+"</style>, inspite of Serving of Bill,Several personal approaches and persuasions."]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="24" y="351" width="505" height="53" uuid="8b03d18a-d23b-4d6e-9456-caa6ee218d1d"/>
+				<textElement markup="styled">
+					<font size="11"/>
+				</textElement>
+				<textFieldExpression><![CDATA["        Therefore, take notice that Essential Services to the above said premises, such as Water Supply, Drainage etc., will be ordered for disconnection under Section under Section 269(2) of Municipal Corporations Act,1955 (formerly GHMC Act, 1955), if the dues are not paid within <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+"(48)"+"</style> hours i.e. on or before <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{futureDate}+"</style> without any further notice."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="346" y="458" width="150" height="23" uuid="be5fd33e-a114-4a16-9eb3-479d7a3947f7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Commissioner,]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="30" y="537" width="49" height="25" uuid="5037852f-cf71-4917-bc26-d6dbcfb5fc3d">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<text><![CDATA[To,]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="30" y="562" width="410" height="30" uuid="75a82923-78eb-4539-b104-83b7af8cdeed"/>
+				<textElement textAlignment="Left" markup="styled">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA["M/s, Smt/ Sri <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\"> "+$P{ownerName}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="96" y="75" width="384" height="30" uuid="06213648-623d-47c0-844d-3f05b12307f3"/>
+				<textElement textAlignment="Center">
+					<font size="11" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{sectionAct}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="291" y="479" width="249" height="25" uuid="75caf9c0-1eb2-447d-bb56-2692c4341d56"/>
+				<textElement textAlignment="Center">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

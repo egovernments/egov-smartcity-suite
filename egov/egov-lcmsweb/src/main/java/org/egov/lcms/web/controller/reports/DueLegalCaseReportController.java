@@ -43,7 +43,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.egov.lcms.reports.entity.DueReportResult;
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
 import org.egov.lcms.utils.constants.LcmsConstants;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.springframework.stereotype.Controller;
@@ -54,64 +54,44 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 @Controller
 @RequestMapping(value = "/reports")
-public class DueLegalCaseReportController extends GenericLegalCaseController {
+public class DueLegalCaseReportController  extends GenericLegalCaseController {
 
-	@ModelAttribute
-	private DueReportResult getDueReportResult() {
-		String []tempArray = null;
-		//int cap1=tempArray.length *2;
-		/*tempArray=(String[]) new String[2];
-		int cap=tempArray.length *2;
-		String[] tmp = (String[]) new String[tempArray.length *2];
-        System.arraycopy(tempArray, 0, tmp, 0, 0);
-        tempArray=tmp;
-		int arr1[] = { 0, 1, 2, 3, 4, 5 };
-		   int arr2[] = { 5, 10, 20, 30, 40, 50 };
-		    
-		   // copies an array from the specified source array
-		   System.arraycopy(arr1, 0, arr2, 0, 1);
-		   for(int dd:arr2)
-		   {
-		   }*/
-		
-		return new DueReportResult();
-	}
+    public @ModelAttribute("reportTypeList") List<String> getReportByTypes() {
+        final List<String> reportTypeList = new ArrayList<String>();
+        reportTypeList.add(LcmsConstants.DUEPWRREPORT);
+        reportTypeList.add(LcmsConstants.DUECAREPORT);
+        reportTypeList.add(LcmsConstants.DUEJUDGEMENTIMPLPREPORT);
+        reportTypeList.add(LcmsConstants.DUEEMPLOYEEHEARINGREPORT);
+        return reportTypeList;
+    }
 
-	public @ModelAttribute("reportTypeList") List<String> getReportByTypes() {
-		List<String> reportTypeList = new ArrayList<String>();
-		reportTypeList.add(LcmsConstants.DUEPWRREPORT);
-		reportTypeList.add(LcmsConstants.DUECAREPORT);
-		reportTypeList.add(LcmsConstants.DUEJUDGEMENTIMPLPREPORT);
-		reportTypeList.add(LcmsConstants.DUEEMPLOYEEHEARINGREPORT);
-		return reportTypeList;
-	}
+    @RequestMapping(method = RequestMethod.GET, value = "/dueReport")
+    public String dueReportForm(final Model model) {
+        model.addAttribute("legalCommonReport", new LegalCommonReportResult());
+        return "duereport-form";
+    }
 
-	@RequestMapping(method = RequestMethod.GET, value = "/dueReport")
-	public String dueReportForm(final Model model) {
-		return "duereport-form";
-	}
+    @RequestMapping(method = RequestMethod.GET, value = "/caDueReport")
+    public String caDueForm(final Model model) {
+        model.addAttribute("currentDate", new Date());
+        return "counterAffidavitDueReport-form";
+    }
 
-	@RequestMapping(method = RequestMethod.GET, value = "/caDueReport")
-	public String caDueForm(final Model model) {
-		model.addAttribute("currentDate", new Date());
-		return "counterAffidavitDueReport-form";
-	}
+    @RequestMapping(method = RequestMethod.GET, value = "/pwrDueReport")
+    public String searchForm(final Model model) {
+        model.addAttribute("currentDate", new Date());
+        return "pwrDueReport-form";
+    }
 
-	@RequestMapping(method = RequestMethod.GET, value = "/pwrDueReport")
-	public String searchForm(final Model model) {
-		model.addAttribute("currentDate", new Date());
-		return "pwrDueReport-form";
-	}
+    @RequestMapping(method = RequestMethod.GET, value = "/judgementImplDueReport")
+    public String searchJudgementImplDueForm(final Model model) {
+        model.addAttribute("currentDate", new Date());
+        return "judgementImplDueReport-form";
+    }
 
-	@RequestMapping(method = RequestMethod.GET, value = "/judgementImplDueReport")
-	public String searchJudgementImplDueForm(final Model model) {
-		model.addAttribute("currentDate", new Date());
-		return "judgementImplDueReport-form";
-	}
-
-	@RequestMapping(method = RequestMethod.GET, value = "/employeeHearingDueReport")
-	public String searchHearingDueForm(final Model model) {
-		model.addAttribute("currentDate", new Date());
-		return "employeehearingDueReport-form";
-	}
+    @RequestMapping(method = RequestMethod.GET, value = "/employeeHearingDueReport")
+    public String searchHearingDueForm(final Model model) {
+        model.addAttribute("currentDate", new Date());
+        return "employeehearingDueReport-form";
+    }
 }

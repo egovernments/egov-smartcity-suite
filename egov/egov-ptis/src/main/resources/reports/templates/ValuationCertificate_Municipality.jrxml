@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-01-11T15:33:41 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="ValuationCertificate" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="80" bottomMargin="80" uuid="9da61367-4253-429a-bde9-ed4ef155fa49">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="noticeNumber" class="java.lang.String"/>
+	<parameter name="ownerName" class="java.lang.String"/>
+	<parameter name="reportDate" class="java.lang.String"/>
+	<parameter name="doorNo" class="java.lang.String"/>
+	<parameter name="upicNo" class="java.lang.String"/>
+	<parameter name="locality" class="java.lang.String"/>
+	<parameter name="address" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="132" splitType="Stretch">
+			<textField>
+				<reportElement x="37" y="30" width="150" height="20" uuid="b5cd2658-eca8-4340-9d7c-7770b7d76192"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["L.Dis.No. : <style forecolor=\"#000000\" isBold=\"true\">"+$P{noticeNumber}.trim()+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="37" y="50" width="150" height="20" uuid="e8fef819-1dce-49fb-9c1c-11d73bf51296"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dated : <style forecolor=\"#000000\" isBold=\"true\">"+$P{reportDate}.trim()+"</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="350" y="30" width="145" height="20" uuid="16da525b-2ebe-4e3f-9ba8-7ea6c34a12f4"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle"/>
+				<text><![CDATA[O/o Municipality,]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="350" y="50" width="180" height="20" uuid="14136cd5-a272-4589-9867-aa69ecb761c3"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="styled">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\">"+$P{cityName}.trim()+"</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="110" y="100" width="290" height="30" uuid="0e4788bb-e3c4-4360-b52c-cb914637e986"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true" isItalic="false" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[VALUATION CERTIFICATE]]></text>
+			</staticText>
+		</band>
+	</title>
+	<detail>
+		<band height="342" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement x="37" y="2" width="484" height="70" uuid="2f2efdf6-bcf0-4dd6-8f8b-91c355db0f18"/>
+				<textElement textAlignment="Justified" verticalAlignment="Bottom" markup="styled">
+					<paragraph lineSpacingSize="1.5"/>
+				</textElement>
+				<textFieldExpression><![CDATA["\tCertified that the House bearing D.No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNo}.trim()+"</style> , Assessment No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{upicNo}.trim()+"</style> , situated at <style forecolor=\"#000000\" isBold=\"true\">"+$P{locality}.trim()+"</style> stands in the name of <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerName}.trim() +"</style> , as per the records of this Municipality and the value of the said house is approximately is Rs. __________________ (Rupees "]]></textFieldExpression>
+			</textField>
+			<line>
+				<reportElement x="37" y="88" width="484" height="1" uuid="e41eb601-06df-4257-9704-10b02c1b21be"/>
+			</line>
+			<line>
+				<reportElement x="37" y="104" width="242" height="1" uuid="e41eb601-06df-4257-9704-10b02c1b21be"/>
+			</line>
+			<textField>
+				<reportElement x="35" y="113" width="484" height="30" uuid="735904df-f885-425c-b05a-8f79122ce56e"/>
+				<textElement textAlignment="Justified" verticalAlignment="Justified" markup="none"/>
+				<textFieldExpression><![CDATA["\t This Certificate is issued as per the request of the Owner of the above House and it is valid for surety purpose only in the court of law."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="37" y="156" width="484" height="30" uuid="05f6748c-0450-4b28-b50a-0a164799e7c9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+			</staticText>
+			<staticText>
+				<reportElement x="390" y="195" width="100" height="30" uuid="419b0da3-fee5-4548-ab65-d831bfab42a2"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Commissioner,]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="311" y="225" width="210" height="20" uuid="bb1de1e1-1cb8-4108-8f92-a4989e7623f3"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
+					<font size="10" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["<style forecolor=\"#000000\" isBold=\"true\">"+$P{cityName}.trim()+"</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="37" y="231" width="60" height="20" uuid="39add18d-a3aa-4965-99d8-202788ae54d8"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[To,]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="37" y="251" width="213" height="87" uuid="5f0f9d8a-a04a-4281-aeeb-6d8ca162d9d7"/>
+				<textElement textAlignment="Justified" verticalAlignment="Top" markup="styled"/>
+				<textFieldExpression><![CDATA["Sri <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerName}.trim()+"</style> \nD.No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{doorNo}.trim()+"</style> \nAssessment No. <style forecolor=\"#000000\" isBold=\"true\">"+$P{upicNo}.trim()+"</style> \nAddress. <style forecolor=\"#000000\" isBold=\"true\">"+$P{address}.trim()+"</style>"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="279" y="85" width="100" height="20" uuid="0f94ed5a-c446-462f-a25d-43b197197276"/>
+				<textElement verticalAlignment="Bottom"/>
+				<text><![CDATA[ only)]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

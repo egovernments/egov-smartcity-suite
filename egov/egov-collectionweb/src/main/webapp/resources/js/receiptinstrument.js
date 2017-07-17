@@ -12,6 +12,11 @@ function setBankInstrumentDetails(elem) {
 	document.getElementById("instrumentTypeCashOrCard").value = "bankchallan";
 }
 
+function setOnlineInstrumentDetails(elem) {
+	document.getElementById("instrHeaderOnline.instrumentAmount").value = elem.value;
+	document.getElementById("instrumentTypeCashOrCard").value = "online";
+}
+
 var bankfuncObj;
 var bankArray;
 function loadDropDownCodesBank() {
@@ -36,15 +41,15 @@ var yuiflagBank = new Array();
 function autocompletecodeBank(obj, myEvent) {
 	// Fix-Me
 	var branchObj = document.getElementById('instrumentBranchName');
-	jQuery(branchObj).trigger('focus');
-	jQuery(obj).focus();
+	//jQuery(branchObj).trigger('focus');
+	//jQuery(obj).focus();
 	var src = obj;
 	var target = document.getElementById('bankcodescontainer');
 	var posSrc = findPos(src);
 	target.style.left = posSrc[0];
 	target.style.top = posSrc[1] - 40;
 	target.style.width = 450;
-
+	bankfuncObj
 	var coaCodeObj = obj;
 	var currRow = getRow(obj);
 	// 40 --> Down arrow, 38 --> Up arrow
@@ -62,10 +67,10 @@ function autocompletecodeBank(obj, myEvent) {
 				bankfuncObj.applyLocalFilter = true;
 				bankfuncObj.queryMatchContains = true;
 				oAutoComp.minQueryLength = 0;
-				// if(bankfuncObj){
-				// bankfuncObj.applyLocalFilter = true;
-				// bankfuncObj.queryMatchContains = true;
-				// }
+				if(bankfuncObj){
+			    bankfuncObj.applyLocalFilter = true;
+			    bankfuncObj.queryMatchContains = true;
+				 }
 			}
 		}
 		yuiflagBank[currRow] = 1;
@@ -297,6 +302,7 @@ function displayPaymentDetails() {
 		document.getElementById('bankdetails').style.display = 'table-row';
 		document.getElementById('instrumentTypeCashOrCard').value = "bankchallan";
 		document.getElementById('cashdetails').style.display = "none";
+		document.getElementById('onlinedetails').style.display = "none";
 		// document.getElementById('carddetails').style.display="none";
 	}
 	if (document.getElementById("instrHeaderCard.instrumentAmount") != null
@@ -305,6 +311,7 @@ function displayPaymentDetails() {
 		document.getElementById('carddetails').style.display = 'table-row';
 		document.getElementById('instrumentTypeCashOrCard').value = "card";
 		document.getElementById('cashdetails').style.display = "none";
+		document.getElementById('onlinedetails').style.display = "none";
 	}
 
 	var chequetable = document.getElementById('chequegrid');
@@ -317,6 +324,7 @@ function displayPaymentDetails() {
 			document.getElementById('chequeDDdetails').style.display = 'table-row';
 			document.getElementById('instrumentTypeCashOrCard').value = "";
 			document.getElementById('cashdetails').style.display = "none";
+			document.getElementById('onlinedetails').style.display = "none";
 		}
 	}
 
@@ -345,6 +353,7 @@ function displayPaytModes() {
 	// var ddAllowed=document.getElementById("ddAllowed").value;
 	var chequeDDAllowed = isChequeDDAllowed();
 	var bankAllowed = document.getElementById("bankAllowed").value;
+	var onlineAllowed = document.getElementById("onlineAllowed").value;
 	clearPaytModes();
 
 	if (cashAllowed == 'true') {
@@ -359,10 +368,12 @@ function displayPaytModes() {
 		document.getElementById('cashradiobuttonspan').style.display = "none";
 		document.getElementById('cashdetails').style.display = 'table-row';
 	}
-	if (cardAllowed == 'true') {
+	if (cardAllowed == 'true' ) {
 		// display card radio button
 		document.getElementById('cardradiobuttonspan').style.display = "block";
-		document.getElementById('instrumentTypeCashOrCard').value = "card";
+		if(cashAllowed == 'false'){  
+			document.getElementById('instrumentTypeCashOrCard').value = "card";  
+		}
 	} else {
 		// do not display card radio button
 		document.getElementById('cardradiobuttonspan').style.display = "none";
@@ -381,6 +392,15 @@ function displayPaytModes() {
 	} else {
 		// do not display card radio button
 		document.getElementById('bankradiobuttonspan').style.display = "none";
+	}
+	
+	if (onlineAllowed == 'true') {
+		// display bank radio button
+		document.getElementById('onlineradiobuttonspan').style.display = "block";
+		document.getElementById('instrumentTypeCashOrCard').value = "online";
+	} else {
+		// do not display card radio button
+		document.getElementById('onlineradiobuttonspan').style.display = "none";
 	}
 	// if cash is not allowed and cheque is allowed, set cheque as the default
 	// payt
@@ -406,6 +426,15 @@ function displayPaytModes() {
 		document.getElementById('bankdetails').style.display = 'table-row';
 		document.getElementById('instrumentTypeCashOrCard').value = "bankchallan";
 	}
+	if (onlineAllowed == 'true' && cashAllowed == 'false'
+		&& chequeDDAllowed == 'false' && cardAllowed == 'false' && bankAllowed=='false') {
+		// display online radio button, set it as checked and display online details
+		document.getElementById('onlineradiobuttonspan').style.display = "block";
+
+		document.getElementById('onlineradiobutton').checked = true;
+		document.getElementById('onlinedetails').style.display = 'table-row';
+		document.getElementById('instrumentTypeCashOrCard').value = "online";
+	} 
 }
 
 function isChequeDDAllowed() {
@@ -431,6 +460,9 @@ function clearPaytModes() {
 
 	document.getElementById('bankradiobuttonspan').style.display = "none";
 	document.getElementById('bankdetails').style.display = "none";
+	
+	document.getElementById('onlineradiobuttonspan').style.display = "none";
+	document.getElementById('onlinedetails').style.display = "none";
 }
 
 function process(date){

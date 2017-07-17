@@ -164,7 +164,7 @@ function getBankAccountList(branch)
 		</tr>	
 		<tr>
 		<egov:ajaxdropdown id="branchIdDropdown" fields="['Text','Value']" dropdownId='branchId'
-                url='/receipts/ajaxBankRemittance-bankBranchList.action' /> 
+                url='receipts/ajaxBankRemittance-bankBranchList.action' /> 
 			<td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox"><s:text
 				name="collectionReport.bank.name" /></td>
@@ -173,7 +173,7 @@ function getBankAccountList(branch)
 				list="dropdownData.bankList" listKey="id" listValue="name"
 				value="%{branchId}" onchange="getBankAccountList(this)"/></td>
 			<egov:ajaxdropdown id="bankaccountIdDropdown" fields="['Text','Value']" dropdownId='bankaccountId'
-                url='/receipts/ajaxBankRemittance-accountList.action' /> 
+                url='receipts/ajaxBankRemittance-accountList.action' /> 
 			<td width="21%" class="bluebox"><s:text
 				name="collectionReport.criteria.bankaccount" /></td>
 			<td width="30%" class="bluebox"><s:select headerKey="-1"
@@ -198,10 +198,31 @@ function getBankAccountList(branch)
 				name="deptId" id="deptId" cssClass="selectwk" 
 				list="dropdownData.boundaryList" value="%{deptId}"  listKey="id" listValue="name"/> </td>
 		</tr>
-	
-	
+		<tr>
+					<td>
+						<div class="subheadsmallnew"><span class="subheadnew">
+											<s:text name="bankcollection.title" />
+						</span>		
+						</div>
+					</td>
+		</tr>
+			
+		<tr>
+					<td width="4%" class="bluebox">&nbsp;</td>
+					<td width="21%" class="bluebox"><s:text name="searchreceipts.criteria.bankbranch"/></td>
+					<td width="24%" class="bluebox"><s:select headerKey="-1"
+										headerValue="%{getText('collectionReport.bankbranch.select')}"  name="bankCollBankBranchId" id="bankCollBankBranchId"
+										cssClass="selectwk" list="dropdownData.bankBranchList"
+										listKey="id" listValue="branchname"
+										value="%{bankCollBankBranchId}" /> </td>
+					<td width="21%" class="bluebox">&nbsp;</td>
+					<td width="30%" class="bluebox">&nbsp;</td>
+		</tr>		
 	</table>
-<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
+    <div align="left" class="mandatory1">
+		              <s:text name="report.bankbranch.note"/>
+	</div>
+	<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
 	</div>
 	
 	<div class="buttonbottom">

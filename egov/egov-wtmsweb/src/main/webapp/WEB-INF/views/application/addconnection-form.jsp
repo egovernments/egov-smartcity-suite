@@ -50,8 +50,8 @@
 			modelAttribute="addConnection" id="addWaterConnectionform"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}"> 
-			
+			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
+			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
@@ -62,6 +62,7 @@
 				<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>  
 				<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 				<form:hidden id="mode" path=""  value="${mode}"/>
+				<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
 				<form:hidden path="" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}"/> 
 				<form:hidden id="documentName" path="" value="${documentName}"/>
 				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>
@@ -87,3 +88,4 @@
 </div>
 
 <script src="<cdn:url value='/resources/js/app/additionalconnection.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>

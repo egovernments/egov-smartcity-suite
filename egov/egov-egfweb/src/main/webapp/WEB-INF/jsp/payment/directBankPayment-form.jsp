@@ -40,6 +40,8 @@
 
 
 <jsp:include page="../voucher/vouchertrans-filter-new.jsp" />
+<script type="text/javascript"
+	src="/egi/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}"></script>
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
 <tr>
 	<td class="greybox"></td>
@@ -92,8 +94,9 @@
 		id="modeOfPayment" list="%{modeOfPaymentMap}" /></td>
 <td class="greybox"><s:text name="paidto" /><span
 	class="mandatory1">*</span></td>
-<td class="greybox"><s:textfield name="commonBean.paidTo"
-		id="paidTo" maxlength="250" /></td>
+<td class="greybox"><s:textfield name="commonBean.paidTo" class = "patternvalidation"
+		id="paidTo" maxlength="250" data-pattern="alphanumericwithspaceanddot"
+			cssStyle="text-align:right"/></td>
 </tr>
 <tr>
 	<td class="bluebox"></td>

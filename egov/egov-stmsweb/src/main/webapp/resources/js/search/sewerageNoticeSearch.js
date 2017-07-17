@@ -173,51 +173,48 @@ function validateNoticeForm()
 		tableContainer = $("#sewerageNoticeSearchResults");
 		var noticetype=$('#noticetype').val();
 		$('#searchResultDiv').show();
-		$.post("/stms/reports/searchResult",$('#sewerageNoticeSearch').serialize())
+		/*$.post("/stms/reports/searchResult",$('#sewerageNoticeSearch').serialize())
 		.done(function(searchResult) {
-		console.log(JSON.stringify(searchResult));
-		tableContainer.dataTable({
-		destroy : true,
-		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 hidden col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-		"aLengthMenu" : [[10,25,50,-1 ],[10,25,50,"All" ] ],
-		"autoWidth" : false,
-		searchable : true,
-		data : searchResult,
-		columns : [{title : 'Applicant Name',data : 'resource.searchable.consumername'},
-		           {title : 'Notice No',class : 'row-detail',
-		           "render": function ( data, type, full, meta ) {
-		        	   var data;
-		        	   if(full!=null && full.resource!= undefined && full.resource.searchable.estimationnumber != undefined && noticetype =='EM') {
-		        			   data = full.resource.searchable.estimationnumber;
-		        		   
-		           } else if(full!=null && full.resource!= undefined && full.resource.searchable.workordernumber != undefined && noticetype =='WO') {
-		        		   data = full.resource.searchable.workordernumber;
-		        	   }
-		           else if(full!=null && full.resource!= undefined && full.resource.searchable.shscnumber != undefined && noticetype =='CC') {
-		        	      data = full.resource.searchable.closurenoticenumber;
-		           }
-		        			   
-		        	   
-			            return '<a target="_blank" href="/stms/reports/searchNotices-showSewerageNotice/'+data+'/'+noticetype+'">'+data+'</a>';} },
-		           {title : 'Notice Gen Date',
-			            	"render": function ( data, type, full, meta ) {
-			            		if(full.resource.clauses.workorderdate == undefined){
-			            			if(full!=null && full.resource!= undefined && full.resource.clauses.estimationdate != undefined) {
-	        							var regDateSplit = full.resource.clauses.estimationdate.split("T")[0].split("-");		
-	        							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-	        						}
-			            		}
-			            		else {
-			            			if(full!=null && full.resource!= undefined && full.resource.clauses.workorderdate != undefined) {
-	        							var regDateSplit = full.resource.clauses.workorderdate.split("T")[0].split("-");		
-	        							return regDateSplit[2] + "/" + regDateSplit[1] + "/" + regDateSplit[0];
-	        						}
-			            		}
-			            		
-			            	}},
-		           {title : 'S.H.S.C Number',data : 'resource.searchable.shscnumber'},
-		           {title : 'Door No',data : 'resource.clauses.doorno'},
-		           {title : 'Address',data : 'resource.searchable.address', width: "25%"}],
+		console.log(JSON.stringify(searchResult));*/
+		tableContainer.dataTable({ 
+		processing: true,
+        serverSide: true,
+        sort: true,
+        filter: true,
+        responsive: true,
+        destroy: true,
+        "autoWidth": false,
+        "order": [[1, 'asc']],
+		
+		ajax: {
+            url: "/stms/reports/searchResult",
+            type: "POST",
+            data: function (args) {
+                return {"args": JSON.stringify(args), 
+                	"shscNumber": $("#shscNumber").val(),
+                	"applicantName": $("#applicantName").val(),
+                	"mobileNumber": $("#mobileNumber").val(),
+                	"revenueWard": $("#app-mobno").val(),
+                	"doorNumber": $("#app-appcodo").val(),
+                	"noticeType": $("#noticetype").val(),
+                	"noticeGeneratedFrom": $("#noticeGeneratedFrom").val(),
+                	"noticeGeneratedTo": $("#noticeGeneratedTo").val(),
+                	
+                
+                
+                };
+            }
+        },
+		
+        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+		columns : [{title : 'Applicant Name',data : "applicantName"},
+		           {title : 'Notice No',class : 'row-detail', data : 'noticeNumber',
+		        	   "render": function ( data, type, row, meta ) {
+		        		   return '<a target="_blank" href="/stms/reports/searchNotices-showSewerageNotice/'+data+'/'+noticetype+'">'+data+'</a>';} },
+		           {title : 'Notice Gen Date',data : "noticeDate"},
+		           {title : 'S.H.S.C Number',data : "shscNumber"},
+		           {title : 'Door No',data :  "doorNumber"},
+		           {title : 'Address',data : "address", width: "25%"}],
 		           "aaSorting": [[2, 'asc']]
 		});
 		
@@ -229,5 +226,5 @@ function validateNoticeForm()
 			$('#search-exceed-msg').hide();
 			$('#searchResultDiv').show();
 		}
-		});
+		
 	}

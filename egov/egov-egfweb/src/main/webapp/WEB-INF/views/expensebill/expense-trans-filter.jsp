@@ -48,11 +48,12 @@
 		<c:when test="${headerFields.contains('fund')}">
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('fund')}">
+				<form:hidden path="" name="fundId" id="fundId" value="${egBillregister.egBillregistermis.fund.id }"/>
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="egBillregistermis.fund" data-first-option="false" id="fund" class="form-control" required="required">
+						<form:select path="egBillregistermis.fund" data-first-option="false" id="fund" class="form-control" required="required"  >
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<form:options items="${funds}" itemValue="id" itemLabel="name" />
 						</form:select>
@@ -60,10 +61,11 @@
 					</div>
 				</c:when>
 				<c:otherwise>
+				<form:hidden path="" name="fundId" id="fundId" value="${egBillregister.egBillregistermis.fund.id }"/>
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="egBillregistermis.fund" data-first-option="false" id="fund" class="form-control" >
+						<form:select path="egBillregistermis.fund" data-first-option="false" id="fund" class="form-control"  >
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<form:options items="${funds}" itemValue="id" itemLabel="name" />
 						</form:select>
@@ -81,6 +83,7 @@
 	
 	<c:choose>
 		<c:when test="${headerFields.contains('fundsource')}">
+		<form:hidden path="" name="fundSourceId" id="fundSourceId" value="${egBillregister.egBillregistermis.fundsource.id }"/>
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('fundsource')}">
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sourcefund" />
@@ -98,7 +101,7 @@
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sourcefund" />
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="egBillregistermis.fundsource" data-first-option="false" id="fundSource" class="form-control">
+						<form:select path="egBillregistermis.fundsource" data-first-option="false" id="fundSource" class="form-control" >
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<form:options items="${fundsources}" itemValue="id" itemLabel="name" />
 						</form:select>
@@ -118,28 +121,27 @@
 <div class="form-group">
 	<c:choose>
 		<c:when test="${headerFields.contains('scheme')}">
+			<form:hidden path="" name="schemeId" id="schemeId" value="${egBillregister.egBillregistermis.scheme.id }"/>
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('scheme')}">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="egBillregistermis.scheme.id" data-first-option="false" id="scheme" class="form-control" required="required">
+						<form:select path="egBillregistermis.schemeId" data-first-option="false" id="scheme" class="form-control" required="required">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
-							<form:options items="${schemes}" itemValue="id" itemLabel="name" />
 						</form:select>
-						<form:errors path="egBillregistermis.scheme.id" cssClass="add-margin error-msg" />
+						<form:errors path="egBillregistermis.schemeId" cssClass="add-margin error-msg" />
 					</div>
 				</c:when>
 				<c:otherwise>
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" />
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="egBillregistermis.scheme.id" data-first-option="false" id="scheme" class="form-control">
+						<form:select path="egBillregistermis.schemeId" data-first-option="false" id="scheme" class="form-control">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
-							<form:options items="${schemes}" itemValue="id" itemLabel="name" />
 						</form:select>
-						<form:errors path="egBillregistermis.scheme.id" cssClass="add-margin error-msg" />
+						<form:errors path="egBillregistermis.schemeId" cssClass="add-margin error-msg" />
 					</div>
 				</c:otherwise>
 			</c:choose>
@@ -153,28 +155,29 @@
 	
 	<c:choose>
 		<c:when test="${headerFields.contains('subscheme')}">
+		<form:hidden path="" name="subSchemeId" id="subSchemeId" value="${egBillregister.egBillregistermis.subScheme.id }"/>
 			<c:choose>
 				<c:when test="${mandatoryFields.contains('subscheme')}">
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" />
 						<span class="mandatory"></span>
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="egBillregistermis.subScheme.id" data-first-option="false" id="subScheme" class="form-control" required="required">
+						<form:select path="egBillregistermis.subSchemeId" data-first-option="false" id="subScheme" class="form-control" required="required">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<form:options items="${subschemes}" itemValue="id" itemLabel="name" />
 						</form:select>
-						<form:errors path="egBillregistermis.subScheme.id" cssClass="add-margin error-msg" />
+						<form:errors path="egBillregistermis.subSchemeId" cssClass="add-margin error-msg" />
 					</div>
 				</c:when>
 				<c:otherwise>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" />
 					</label>
 					<div class="col-sm-3 add-margin">
-						<form:select path="egBillregistermis.subScheme.id" data-first-option="false" id="subScheme" class="form-control">
+						<form:select path="egBillregistermis.subSchemeId" data-first-option="false" id="subScheme" class="form-control">
 							<form:option value=""><spring:message code="lbl.select" /></form:option>
 							<form:options items="${subschemes}" itemValue="id" itemLabel="name" />
 						</form:select>
-						<form:errors path="egBillregistermis.subScheme.id" cssClass="add-margin error-msg" />
+						<form:errors path="egBillregistermis.subSchemeId" cssClass="add-margin error-msg" />
 					</div>
 				</c:otherwise>
 			</c:choose>

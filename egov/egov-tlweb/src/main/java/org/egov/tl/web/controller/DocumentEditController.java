@@ -39,8 +39,6 @@
  */
 package org.egov.tl.web.controller;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.enums.ApplicationType;
 import org.egov.tl.service.DocumentTypeService;
@@ -53,6 +51,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping("/documenttype/edit/{id}")
@@ -68,38 +68,34 @@ public class DocumentEditController {
 
     @ModelAttribute
     public void getDocumentType(@PathVariable final Long id, final Model model) {
-        final LicenseDocumentType documenttype = documentTypeService.getDocumentTypeById(id);
-
-        model.addAttribute("documenttype", documenttype);
+        model.addAttribute("documenttype", documentTypeService.getDocumentTypeById(id));
         model.addAttribute("applicationTypes", ApplicationType.values());
     }
 
     @RequestMapping(method = RequestMethod.GET)
     public String documentTypeEdit(@PathVariable final Long id) {
-        
-         return "document-edit";
+        return "document-edit";
     }
 
     @RequestMapping(method = RequestMethod.POST)
     public String documentTypeEdit(@Valid @ModelAttribute("documenttype") final LicenseDocumentType documenttype,
-            final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
+                                   final BindingResult errors, final Model model, final RedirectAttributes redirectAttrs) {
+        if (errors.hasErrors()) {
+            model.addAttribute("message", "msg.edit.error");
+            return "document-edit";
+        }
+        documentTypeService.update(documenttype);
+        redirectAttrs.addFlashAttribute("documenttype", documenttype);
+        redirectAttrs.addFlashAttribute("message", "msg.update.success");
+        redirectAttrs.addFlashAttribute("heading", "msg.heading.success");
+        return "redirect:/documenttype/view/" + documenttype.getId();
+    }
 
-        if (errors.hasErrors()){
-          model.addAttribute("message", "msg.edit.error");
-          return "document-edit";
-        }
-           documentTypeService.update(documenttype);
-           redirectAttrs.addFlashAttribute("documenttype", documenttype);
-           redirectAttrs.addFlashAttribute("message", "msg.update.success");
-           redirectAttrs.addFlashAttribute("heading", "msg.heading.success");
-           return "redirect:/documenttype/view/" + documenttype.getId();
-        }
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String documentTypeView(@PathVariable("id") final Long id, final Model model) {
-        final LicenseDocumentType documenttype = documentTypeService.getDocumentTypeById(id);
-        model.addAttribute("documenttype", documenttype);
+        model.addAttribute("documenttype", documentTypeService.getDocumentTypeById(id));
         return "document-view";
     }
-    }
+}
 
 

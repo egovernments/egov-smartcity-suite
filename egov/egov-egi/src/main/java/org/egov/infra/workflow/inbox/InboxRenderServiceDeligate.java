@@ -1,45 +1,46 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) 2016  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.infra.workflow.inbox;
 
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -49,6 +50,7 @@ import org.egov.infra.workflow.service.StateService;
 import org.egov.infra.workflow.service.WorkflowActionService;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.infstr.services.EISServeable;
+import org.egov.pims.commons.Position;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -68,12 +70,14 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 
 @Service
 @Transactional(readOnly = true)
 public class InboxRenderServiceDeligate<T extends StateAware> {
     private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDeligate.class);
     private static final String INBOX_RENDER_SERVICE_SUFFIX = "InboxRenderService";
+    private static final Map<String, WorkflowTypes> WORKFLOWTYPE_CACHE = new ConcurrentHashMap<>();
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -91,43 +95,36 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     @Autowired
     private WorkflowActionService workflowActionService;
 
-    private static final Map<String, WorkflowTypes> WORKFLOWTYPE_CACHE = new ConcurrentHashMap<>();
-
-    public List<T> getInboxItems(final Long userId) {
-        return fetchInboxItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
-                .map(position -> position.getId()).collect(Collectors.toList()));
-    }
-
-    public List<T> getInboxDraftItems(final Long userId) {
-        return fetchInboxDraftItems(userId, this.eisService.getPositionsForUser(userId, new Date()).parallelStream()
-                .map(position -> position.getId()).collect(Collectors.toList()));
-    }
-
+    @ReadOnly
     public List<StateHistory> getWorkflowHistory(final Long stateId) {
         return new LinkedList<>(stateService.getStateById(stateId).getHistory());
     }
 
-    public List<T> fetchInboxItems(final Long userId, final List<Long> owners) {
+    @ReadOnly
+    public List<T> getInboxItems() {
         final List<T> assignedWFItems = new ArrayList<>();
-        if(!owners.isEmpty()){
-        	final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
+        List<Long> owners = currentUserPositionIds();
+        if (!owners.isEmpty()) {
+            final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
             for (final String wfType : wfTypes) {
                 final Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(wfType);
                 if (inboxRenderService.isPresent())
-                    assignedWFItems.addAll(inboxRenderService.get().getAssignedWorkflowItems(userId, owners));
+                    assignedWFItems.addAll(inboxRenderService.get().getAssignedWorkflowItems(getUserId(), owners));
             }
         }
         return assignedWFItems;
     }
 
-    public List<T> fetchInboxDraftItems(final Long userId, final List<Long> owners) {
+    @ReadOnly
+    public List<T> getInboxDraftItems() {
         final List<T> draftWfItems = new ArrayList<>();
-        if(!owners.isEmpty()){
-        	final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
+        List<Long> owners = currentUserPositionIds();
+        if (!owners.isEmpty()) {
+            final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
             for (final String wfType : wfTypes) {
                 final Optional<InboxRenderService<T>> inboxRenderService = getInboxRenderService(wfType);
                 if (inboxRenderService.isPresent())
-                    draftWfItems.addAll(inboxRenderService.get().getDraftWorkflowItems(userId, owners));
+                    draftWfItems.addAll(inboxRenderService.get().getDraftWorkflowItems(getUserId(), owners));
             }
         }
         return draftWfItems;
@@ -166,4 +163,8 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
         return nextAction;
     }
 
+    private List<Long> currentUserPositionIds() {
+        return this.eisService.getPositionsForUser(getUserId(), new Date()).parallelStream()
+                .map(Position::getId).collect(Collectors.toList());
+    }
 }

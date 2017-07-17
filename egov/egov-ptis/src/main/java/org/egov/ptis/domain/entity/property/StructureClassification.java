@@ -38,54 +38,97 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.ptis.domain.entity.property;
-
-import org.egov.commons.Installment;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infstr.models.BaseModel;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.commons.Installment;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.exception.ValidationError;
+
 /**
  * <p>
- * Each deployment groups number of CostructionTypeSets and gives a common name.
- * a For example: A particular ConstructionTypeSet might be composed of the
- * following ConstructionType objects: TeakWood, MarbleFloor, RCCRoof. A name is
- * given to the StructuralClassification. For example the name given to the
- * above grouping can be Pucca. RoseWood, GraniteFloor and RCCRoof might also
- * share the same name. A factor is normally associated with the Structural
- * Classification which is used to calculate the demand of the Property.
+ * Each deployment groups number of CostructionTypeSets and gives a common name. a For example: A particular ConstructionTypeSet
+ * might be composed of the following ConstructionType objects: TeakWood, MarbleFloor, RCCRoof. A name is given to the
+ * StructuralClassification. For example the name given to the above grouping can be Pucca. RoseWood, GraniteFloor and RCCRoof
+ * might also share the same name. A factor is normally associated with the Structural Classification which is used to calculate
+ * the demand of the Property.
  * </p>
- * 
+ *
  * @author Gayathri Joshi
  * @version 2.00
  * @see org.egov.ptis.domain.entity.property.ConstructionType
  * @since 2.00
- * @author srikanth Change Log : Added additional field
- *         constrTypeCode,orderId,fromDate,todate
+ * @author srikanth Change Log : Added additional field constrTypeCode,orderId,fromDate,todate
  */
-public class StructureClassification extends BaseModel {
+@Entity
+@Table(name = "EGPT_STRUC_CL")
+@Unique(columnName = { "CODE" }, fields = { "constrTypeCode" }, enableDfltMsg = true)
+@SequenceGenerator(name = StructureClassification.SEQ_STRUCTURE_CLASSIFICATION, sequenceName = StructureClassification.SEQ_STRUCTURE_CLASSIFICATION, allocationSize = 1)
+public class StructureClassification extends AbstractAuditable {
 
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_STRUCTURE_CLASSIFICATION = "SEQ_EGPT_STRUC_CL";
+
+    @Id
+    @GeneratedValue(generator = SEQ_STRUCTURE_CLASSIFICATION, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @Column(name = "CONSTR_TYPE")
     private String typeName;
+
+    @Column(name = "CONSTR_DESCR")
     private String description;
+
+    @Column(name = "CODE")
     private String constrTypeCode;
+
+    @Column(name = "ORDER_ID")
     private Integer orderId;
+
+    @Column(name = "FLOOR_NUM")
     private Integer floorNum;
+
+    @Column(name = "CONSTR_NUM")
     private Integer number;
+
+    @Column(name = "CONSTR_FACTOR")
     private Float factor;
+
+    @ManyToOne
+    @JoinColumn(name = "ID_INSTALLMENT")
     private Installment startInstallment;
+
+    @Column(name = "IS_HISTORY")
     private char isHistory;
+
+    @Column(name = "FROM_DATE")
     private Date fromDate;
+
+    @Column(name = "TO_DATE")
     private Date toDate;
+
+    @Column(name = "ISACTIVE")
     private Boolean isActive;
 
     /**
      * @return Returns if the given Object is equal to PropertyStatus
      */
-    public boolean equals(Object that) {
+    @Override
+    public boolean equals(final Object that) {
 
         if (that == null)
             return false;
@@ -97,39 +140,39 @@ public class StructureClassification extends BaseModel {
             return false;
         final StructureClassification thatStrCls = (StructureClassification) that;
 
-        if (this.getId() != null && thatStrCls.getId() != null) {
+        if (getId() != null && thatStrCls.getId() != null) {
             if (getId().equals(thatStrCls.getId()))
                 return true;
             else
                 return false;
-        } else if (this.getTypeName() != null && thatStrCls.getTypeName() != null) {
+        } else if (getTypeName() != null && thatStrCls.getTypeName() != null) {
             if (getTypeName().equals(thatStrCls.getTypeName()))
                 return true;
             else
                 return false;
-        } else if (this.getNumber() != null && thatStrCls.getNumber() != null) {
+        } else if (getNumber() != null && thatStrCls.getNumber() != null) {
             if (getNumber().equals(thatStrCls.getNumber()))
                 return true;
             else
                 return false;
-        } else {
+        } else
             return false;
-        }
     }
 
     /**
      * @return Returns the hashCode
      */
+    @Override
     public int hashCode() {
         int hashCode = 0;
-        if (this.getId() != null)
-            hashCode += this.getId().hashCode();
+        if (getId() != null)
+            hashCode += getId().hashCode();
 
-        if (this.getTypeName() != null)
-            hashCode += this.getTypeName().hashCode();
+        if (getTypeName() != null)
+            hashCode += getTypeName().hashCode();
 
-        if (this.getNumber() != null)
-            hashCode += this.getNumber().hashCode();
+        if (getNumber() != null)
+            hashCode += getNumber().hashCode();
         return hashCode;
     }
 
@@ -137,14 +180,14 @@ public class StructureClassification extends BaseModel {
      * @return Returns the boolean after validating the current object
      */
     public List<ValidationError> validate() {
-        List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
         if (getTypeName() == null) {
-            ValidationError ve = new ValidationError("StrucClass.TypeName.Null",
+            final ValidationError ve = new ValidationError("StrucClass.TypeName.Null",
                     "In StructureClassification Attribute 'Type Name' is Not Set, Please Check !!");
             validationErrors.add(ve);
         }
         if (getNumber() == null || getNumber() == 0) {
-            ValidationError ve = new ValidationError("StrucClass.Number.Null",
+            final ValidationError ve = new ValidationError("StrucClass.Number.Null",
                     "In StructureClassification Attribute 'Number' is Not Set OR is Zero, Please Check !!");
             validationErrors.add(ve);
         }
@@ -154,7 +197,7 @@ public class StructureClassification extends BaseModel {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
+        final StringBuilder sb = new StringBuilder();
         sb.append("").append(id).append("|").append(constrTypeCode).append("|").append(factor);
         return sb.toString();
     }
@@ -163,7 +206,7 @@ public class StructureClassification extends BaseModel {
         return typeName;
     }
 
-    public void setTypeName(String typeName) {
+    public void setTypeName(final String typeName) {
         this.typeName = typeName;
     }
 
@@ -171,7 +214,7 @@ public class StructureClassification extends BaseModel {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -179,15 +222,15 @@ public class StructureClassification extends BaseModel {
         return constrTypeCode;
     }
 
-    public void setConstrTypeCode(String constrTypeCode) {
-        this.constrTypeCode = constrTypeCode;
+    public void setConstrTypeCode(final String constrTypeCode) {
+        this.constrTypeCode = constrTypeCode.toUpperCase();
     }
 
     public Integer getOrderId() {
         return orderId;
     }
 
-    public void setOrderId(Integer orderId) {
+    public void setOrderId(final Integer orderId) {
         this.orderId = orderId;
     }
 
@@ -195,7 +238,7 @@ public class StructureClassification extends BaseModel {
         return floorNum;
     }
 
-    public void setFloorNum(Integer floorNum) {
+    public void setFloorNum(final Integer floorNum) {
         this.floorNum = floorNum;
     }
 
@@ -203,7 +246,7 @@ public class StructureClassification extends BaseModel {
         return number;
     }
 
-    public void setNumber(Integer number) {
+    public void setNumber(final Integer number) {
         this.number = number;
     }
 
@@ -211,7 +254,7 @@ public class StructureClassification extends BaseModel {
         return factor;
     }
 
-    public void setFactor(Float factor) {
+    public void setFactor(final Float factor) {
         this.factor = factor;
     }
 
@@ -219,7 +262,7 @@ public class StructureClassification extends BaseModel {
         return startInstallment;
     }
 
-    public void setStartInstallment(Installment startInstallment) {
+    public void setStartInstallment(final Installment startInstallment) {
         this.startInstallment = startInstallment;
     }
 
@@ -227,7 +270,7 @@ public class StructureClassification extends BaseModel {
         return isHistory;
     }
 
-    public void setIsHistory(char isHistory) {
+    public void setIsHistory(final char isHistory) {
         this.isHistory = isHistory;
     }
 
@@ -235,7 +278,7 @@ public class StructureClassification extends BaseModel {
         return fromDate;
     }
 
-    public void setFromDate(Date fromDate) {
+    public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
     }
 
@@ -243,7 +286,7 @@ public class StructureClassification extends BaseModel {
         return toDate;
     }
 
-    public void setToDate(Date toDate) {
+    public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
 
@@ -251,8 +294,18 @@ public class StructureClassification extends BaseModel {
         return isActive;
     }
 
-    public void setIsActive(Boolean isActive) {
+    public void setIsActive(final Boolean isActive) {
         this.isActive = isActive;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
     }
 
 }

@@ -39,13 +39,20 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	validateDemand(this);
+	propertyID=$('#propertyIdentifier').val()
+	if(propertyID != '')
+		validateSewerageConnection();
 	$('#propertyIdentifier').blur(function(){
 		validateSewerageConnection();
 	});
 	
+	if($('#executionDate').val() != ''){
+		$("#legacyDemandDetails").show();	
+	}
+			
 	$("#executionDate" ).datepicker({
 		format: "dd/mm/yyyy",
-		startDate: new Date(2005, 03, 1),
+		startDate: new Date(1998, 03, 1),
 		autoclose: true 
 	}).on('changeDate', function(ev) {
 		if(isValidDate($('#executionDate').val())){
@@ -494,6 +501,25 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
     cell4.appendChild(demandReasonId); 
     patternvalidation();
 }
+
+$("#amountCollected,#feesDetail1amount")
+.blur(
+	function() {
+		var amountCollected = $('#amountCollected').val();
+		var donationCharge = $('#feesDetail1amount').val();
+		if(amountCollected){
+		if (parseFloat(amountCollected) > parseFloat(donationCharge)) {
+			alert("Collected Donation Charge should not be greater than the actual donation charge");
+			$('#amountCollected').val('');
+			$('#pendingAmtForCollection').val('');
+		}
+		else{
+			$("#pendingAmtForCollection").val( parseFloat(donationCharge)
+					- parseFloat(amountCollected));
+		}
+		
+	}
+});
 
 function validateDemand(obj) {
 	$( "input[name$='actualAmount']" ).on("keyup", function(){

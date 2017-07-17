@@ -44,7 +44,12 @@
 	<tr>
 		<td colspan="5">
 			<div class="headingsmallbg">
+			    <s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+			    <s:text name="recordGRP.title"></s:text>
+			    </s:if>
+			    <s:else>
 				<s:text name="recordObjection.title"></s:text>
+				</s:else>
 			</div>
 		</td>
 	</tr>
@@ -53,38 +58,62 @@
 			 <table width="100%" border="0" cellspacing="0" cellpadding="0">
 			<tr>
 				<td class="bluebox">&nbsp;</td>
-				<td class="bluebox" width="25%"><s:text name="objection.received.date" /></td>
-			    <td class="bluebox" width="20%"><s:date name="recievedOn" var="recievedOnId" format="dd/MM/yyyy" />
+				<td class="bluebox" width="25%">
+				<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+				<s:text name="objection.grp.received.date" />
+				</s:if>
+				<s:else>
+				<s:text name="objection.received.date" />
+				</s:else>
+				</td>
+			    <td class="bluebox" width="20%">
+			    <s:date name="recievedOn" var="recievedOnId" format="dd/MM/yyyy" />
 				<div align="left">
 							<s:property default="N/A" value="%{recievedOnId}" />
 						</div>
 				</td>
 			
-				<td class="bluebox" width="30%"><s:text name="objection.received.by"/></td>
+				<td class="bluebox" width="30%">
+								<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+				<s:text name="objection.grp.received.by"/>
+				</s:if>
+				<s:else>
+				<s:text name="objection.received.by"/>
+				</s:else>
+				</td>
 				<td class="bluebox" width="25%"><div align="left"><s:property default="N/A" value="%{recievedBy}" /></div></td>
 			</tr>
 			<tr>
 				<td class="greybox">&nbsp;</td>
-				<td class="greybox" width="25%"><s:text name="objection.details"/><span class="mandatory1">*</span></td>
-				<td class="greybox" width="25%"><s:textarea name="details" id="details" cols="40" rows="2"  onblur="checkLength(this)" ></s:textarea></td>
-			<%-- 
-				<td class="greybox" width="25%"><s:text name="objection.upload.document"/></td>
+				<td class="greybox" width="25%">
+				<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+				<s:text name="objection.grp.details"/>
+				</s:if>
+				<s:else>
+				<s:text name="objection.details"/>
+				</s:else>
+				<span class="mandatory1">*</span></td>
+
+				<td class="greybox" width="25%"><s:textarea cssClass="form-control" name="details" id="details" cols="40" rows="2"  onblur="checkLength(this)" >
+				</s:textarea></td>
+				<%-- <td class="greybox" width="25%"><s:text name="objection.upload.document"/></td>
 				<td class="greybox" width="25%"><input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();" /></td>
-				<s:hidden name="docNumberObjection" id="docNumber" />
- --%>
+				<s:hidden name="docNumberObjection" id="docNumber" /> --%>
+ 
 			</tr>
 		</table>
 		</td>
 	</tr>
-
 </table>
+<s:if test="%{!documentTypes.isEmpty()}">
+		<%@ include file="../common/DocumentUploadForm.jsp"%>
+</s:if>
 <script>
-function chkReceivedByLen(obj){
-	if(obj.value.length>256)
-	{
-		bootbox.alert('Max 256 characters are allowed for received by text. Remaining characters are truncated.')
-		obj.value = obj.value.substring(1,256);
+	function chkReceivedByLen(obj) {
+		if (obj.value.length > 256) {
+			bootbox
+					.alert('Max 256 characters are allowed for received by text. Remaining characters are truncated.')
+			obj.value = obj.value.substring(1, 256);
+		}
 	}
-}
-
 </script>

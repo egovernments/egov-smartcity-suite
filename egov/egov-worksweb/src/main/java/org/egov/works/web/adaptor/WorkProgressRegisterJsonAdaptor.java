@@ -73,7 +73,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                     jsonObject.addProperty("ward", workProgressRegister.getWard().getBoundaryNum());
             } else
                 jsonObject.addProperty("ward", "");
-            
+
             if (workProgressRegister.getLocation() != null)
                 jsonObject.addProperty("location", workProgressRegister.getLocation().getName());
             else
@@ -83,7 +83,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("workCategory", "NA");
             if (workProgressRegister.getBeneficiary() != null)
-                jsonObject.addProperty("beneficiaries", workProgressRegister.getBeneficiary().toString().replaceAll("_C", " /C").replace("_", " "));
+                jsonObject.addProperty("beneficiaries",
+                        workProgressRegister.getBeneficiary().toString().replaceAll("_C", " /C").replace("_", " "));
             else
                 jsonObject.addProperty("beneficiaries", "NA");
             if (workProgressRegister.getNameOfWork() != null)
@@ -119,8 +120,7 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             if (workProgressRegister.getAdminSanctionBy() != null)
                 jsonObject.addProperty(
                         "adminSanctionAuthorityDate",
-                        worksUtils.getUserDesignation(workProgressRegister.getAdminSanctionBy()) + " - "
-                                + workProgressRegister.getAdminSanctionBy().getName() + ", "
+                        workProgressRegister.getAdminSanctionBy() + " , "
                                 + DateUtils.getFormattedDate(workProgressRegister.getAdminSanctionDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("adminSanctionAuthorityDate", "");
@@ -145,7 +145,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("modeOfAllotment", "");
             if (workProgressRegister.getAgreementNumber() != null)
                 jsonObject.addProperty("agreementNumberDate",
-                        workProgressRegister.getAgreementNumber() + " - " + DateUtils.getFormattedDate(workProgressRegister.getAgreementDate(), "dd/MM/yyyy"));
+                        workProgressRegister.getAgreementNumber() + " - "
+                                + DateUtils.getFormattedDate(workProgressRegister.getAgreementDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("agreementNumberDate", "");
             if (workProgressRegister.getContractor() != null)
@@ -159,7 +160,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
                 jsonObject.addProperty("agreementAmount", "");
             if (workProgressRegister.getLatestBillNumber() != null && workProgressRegister.getLatestBillDate() != null)
                 jsonObject.addProperty("latestMbNumberDate",
-                        workProgressRegister.getLatestMbNumber() + ", " + DateUtils.getFormattedDate(workProgressRegister.getLatestMbDate(), "dd/MM/yyyy"));
+                        workProgressRegister.getLatestMbNumber() + ", "
+                                + DateUtils.getFormattedDate(workProgressRegister.getLatestMbDate(), "dd/MM/yyyy"));
             else
                 jsonObject.addProperty("latestMbNumberDate", "NA");
             if (workProgressRegister.getLatestBillNumber() != null)
@@ -197,7 +199,8 @@ public class WorkProgressRegisterJsonAdaptor implements JsonSerializer<WorkProgr
             else
                 jsonObject.addProperty("milestonePercentageCompleted", "NA");
 
-            jsonObject.addProperty("createdDate", DateUtils.getFormattedDate(workProgressRegister.getCreatedDate(),"dd/MM/yyyy hh:mm a"));
+            jsonObject.addProperty("createdDate",
+                    DateUtils.getFormattedDate(workProgressRegister.getCreatedDate(), "dd/MM/yyyy hh:mm a"));
         }
         return jsonObject;
     }

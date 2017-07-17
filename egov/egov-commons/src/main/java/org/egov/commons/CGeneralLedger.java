@@ -42,172 +42,186 @@ package org.egov.commons;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+
+import javax.persistence.Transient;
+
 public class CGeneralLedger {
-	
-	private Long id = null;
-	private Integer voucherlineId;
-	private Date effectiveDate;
-	private CChartOfAccounts glcodeId;
-	private String glcode;
-	private Double debitAmount;
-	private Double creditAmount;
-	private String description;
-	private CVoucherHeader voucherHeaderId;
-	private Integer functionId;
-	private Set<CGeneralLedgerDetail> generalLedgerDetails = new HashSet<CGeneralLedgerDetail>();
 
-	/**
-	 * @return Returns the glcode.
-	 */
-	public String getGlcode() {
-		return glcode;
-	}
+    private Long id = null;
+    private Integer voucherlineId;
+    private Date effectiveDate;
+    private CChartOfAccounts glcodeId;
+    private String glcode;
+    private Double debitAmount;
+    private Double creditAmount;
+    private String description;
+    private CVoucherHeader voucherHeaderId;
+    private Integer functionId;
+    private Set<CGeneralLedgerDetail> generalLedgerDetails = new HashSet<CGeneralLedgerDetail>();
 
-	/**
-	 * @param glcode The glcode to set.
-	 */
-	public void setGlcode(String glcode) {
-		this.glcode = glcode;
-	}
+    @Transient
+    private Boolean isSubLedger;
 
-	/**
-	 * @return Returns the id.
-	 */
-	public Long getId() {
-		return id;
-	}
+    /**
+     * @return Returns the glcode.
+     */
+    public String getGlcode() {
+        return glcode;
+    }
 
-	/**
-	 * @param id The id to set.
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * @param glcode The glcode to set.
+     */
+    public void setGlcode(final String glcode) {
+        this.glcode = glcode;
+    }
 
-	/**
-	 * @return Returns the description.
-	 */
-	public String getDescription() {
-		return description;
-	}
+    /**
+     * @return Returns the id.
+     */
+    public Long getId() {
+        return id;
+    }
 
-	/**
-	 * @param description The description to set.
-	 */
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    /**
+     * @param id The id to set.
+     */
+    public void setId(final Long id) {
+        this.id = id;
+    }
 
-	/**
-	 * @return Returns the effectiveDate.
-	 */
-	public Date getEffectiveDate() {
-		return effectiveDate;
-	}
+    /**
+     * @return Returns the description.
+     */
+    public String getDescription() {
+        return description;
+    }
 
-	/**
-	 * @param effectiveDate The effectiveDate to set.
-	 */
-	public void setEffectiveDate(Date effectiveDate) {
-		this.effectiveDate = effectiveDate;
-	}
+    /**
+     * @param description The description to set.
+     */
+    public void setDescription(final String description) {
+        this.description = description;
+    }
 
-	/**
-	 * @return Returns the voucherlineId.
-	 */
+    /**
+     * @return Returns the effectiveDate.
+     */
+    public Date getEffectiveDate() {
+        return effectiveDate;
+    }
 
-	public Integer getVoucherlineId() {
-		return voucherlineId;
-	}
+    /**
+     * @param effectiveDate The effectiveDate to set.
+     */
+    public void setEffectiveDate(final Date effectiveDate) {
+        this.effectiveDate = effectiveDate;
+    }
 
-	/**
-	 * @param voucherlineId The voucherlineId to set.
-	 */
-	public void setVoucherlineId(Integer voucherlineId) {
-		this.voucherlineId = voucherlineId;
-	}
+    /**
+     * @return Returns the voucherlineId.
+     */
 
-	/**
-	 * @return Returns the glcodeId.
-	 */
+    public Integer getVoucherlineId() {
+        return voucherlineId;
+    }
 
-	public CChartOfAccounts getGlcodeId() {
-		return glcodeId;
-	}
+    /**
+     * @param voucherlineId The voucherlineId to set.
+     */
+    public void setVoucherlineId(final Integer voucherlineId) {
+        this.voucherlineId = voucherlineId;
+    }
 
-	/**
-	 * @param glcodeId The glcodeId to set.
-	 */
-	public void setGlcodeId(CChartOfAccounts glcodeId) {
-		this.glcodeId = glcodeId;
-	}
+    /**
+     * @return Returns the glcodeId.
+     */
 
-	/**
-	 * @return Returns the voucherHeaderId.
-	 */
+    public CChartOfAccounts getGlcodeId() {
+        return glcodeId;
+    }
 
-	public CVoucherHeader getVoucherHeaderId() {
-		return voucherHeaderId;
-	}
+    /**
+     * @param glcodeId The glcodeId to set.
+     */
+    public void setGlcodeId(final CChartOfAccounts glcodeId) {
+        this.glcodeId = glcodeId;
+    }
 
-	/**
-	 * @param voucherHeaderId The voucherHeaderId to set.
-	 */
-	public void setVoucherHeaderId(CVoucherHeader voucherHeaderId) {
-		this.voucherHeaderId = voucherHeaderId;
-	}
+    /**
+     * @return Returns the voucherHeaderId.
+     */
 
-	/**
-	 * @return Returns the functionId.
-	 */
+    public CVoucherHeader getVoucherHeaderId() {
+        return voucherHeaderId;
+    }
 
-	public Integer getFunctionId() {
-		return functionId;
-	}
+    /**
+     * @param voucherHeaderId The voucherHeaderId to set.
+     */
+    public void setVoucherHeaderId(final CVoucherHeader voucherHeaderId) {
+        this.voucherHeaderId = voucherHeaderId;
+    }
 
-	/**
-	 * @param functionId The functionId to set.
-	 */
-	public void setFunctionId(Integer functionId) {
-		this.functionId = functionId;
-	}
+    /**
+     * @return Returns the functionId.
+     */
 
-	/**
-	 * @return Returns the debitAmount.
-	 */
+    public Integer getFunctionId() {
+        return functionId;
+    }
 
-	public Double getDebitAmount() {
-		return debitAmount;
-	}
+    /**
+     * @param functionId The functionId to set.
+     */
+    public void setFunctionId(final Integer functionId) {
+        this.functionId = functionId;
+    }
 
-	/**
-	 * @param debitAmount The debitAmount to set.
-	 */
-	public void setDebitAmount(Double debitAmount) {
-		this.debitAmount = debitAmount;
-	}
+    /**
+     * @return Returns the debitAmount.
+     */
 
-	/**
-	 * @return Returns the creditAmount.
-	 */
+    public Double getDebitAmount() {
+        return debitAmount;
+    }
 
-	public Double getCreditAmount() {
-		return creditAmount;
-	}
+    /**
+     * @param debitAmount The debitAmount to set.
+     */
+    public void setDebitAmount(final Double debitAmount) {
+        this.debitAmount = debitAmount;
+    }
 
-	/**
-	 * @param creditAmount The creditAmount to set.
-	 */
-	public void setCreditAmount(Double creditAmount) {
-		this.creditAmount = creditAmount;
-	}
+    /**
+     * @return Returns the creditAmount.
+     */
 
-	public Set<CGeneralLedgerDetail> getGeneralLedgerDetails() {
-		return generalLedgerDetails;
-	}
+    public Double getCreditAmount() {
+        return creditAmount;
+    }
 
-	public void setGeneralLedgerDetails(Set<CGeneralLedgerDetail> generalLedgerDetails) {
-		this.generalLedgerDetails = generalLedgerDetails;
-	}
+    /**
+     * @param creditAmount The creditAmount to set.
+     */
+    public void setCreditAmount(final Double creditAmount) {
+        this.creditAmount = creditAmount;
+    }
+
+    public Set<CGeneralLedgerDetail> getGeneralLedgerDetails() {
+        return generalLedgerDetails;
+    }
+
+    public void setGeneralLedgerDetails(final Set<CGeneralLedgerDetail> generalLedgerDetails) {
+        this.generalLedgerDetails = generalLedgerDetails;
+    }
+
+    public Boolean getIsSubLedger() {
+        return isSubLedger;
+    }
+
+    public void setIsSubLedger(final Boolean isSubLedger) {
+        this.isSubLedger = isSubLedger;
+    }
 
 }

@@ -44,37 +44,33 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-
 <div class="form-group">
 	<label class="col-sm-2 control-label text-right"> <spring:message
 			code="lbl.fromDate" />:<span class="mandatory"></span>
 	</label>
 	<div class="col-sm-3 add-margin">
-		<input type="text" name="caseFromDate" required="required"
-			class="form-control datepicker" data-date-end-date="0d"
-			id="caseFromDate" data-inputmask="'mask': 'd/m/y'" onblur="onchnageofDate()"/>
+		<input type="text" name="caseFromDate"
+			class="form-control datepicker" 
+			id="caseFromDate" data-inputmask="'mask': 'd/m/y'"
+			onblur="onchnageofDate()" required="required"/>
 	</div>
 	<label class="col-sm-2 control-label text-right"> <spring:message
-			code="lbl.toDate" />:<span class="mandatory">
-	</label>
+			code="lbl.toDate" />:<span class="mandatory"></label>
 	<div class="col-sm-3 add-margin">
 		<input type="text" name="caseToDate"
-			class="form-control datepicker today" data-date-end-date="0d"
-			id="caseToDate" data-inputmask="'mask': 'd/m/y'" />
+			class="form-control datepicker today" 
+			id="caseToDate" data-inputmask="'mask': 'd/m/y'" required="required" />
 	</div>
 </div>
 <div class="form-group">
-<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.officerincharge" />:</label>
-						<div class="col-sm-3 add-margin">
-							<input type="text"  class="form-control" maxlength="50"
-								id="officialIncharge" name="officialIncharge" />
-						</div>
-						<div class="col-sm-3 add-margin"></div>
-						</div>
-						
-
-
+	<label class="col-sm-2 control-label text-right"><spring:message
+			code="lbl.officerincharge" />:</label>
+	<div class="col-sm-3 add-margin">
+			  <input id="positionName" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+               <input type="hidden" name="officerIncharge" id="officerIncharge"/>
+	</div>
+	<div class="col-sm-3 add-margin"></div>
+</div>
 
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
@@ -82,5 +78,3 @@
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-
-

@@ -73,7 +73,7 @@
 	                    	 						</div>
 	                 							</s:if>
 												<table width="100%">
-													<%@ include file='../common/view.jsp'%>
+													<%@ include file='../common/license-detail-view.jsp'%>
 												</table>
 											</s:push>
 										</s:form>
@@ -84,6 +84,12 @@
 		<div align="center" class="buttonbottom" id="buttondiv">
 			<table>
 				<tr>
+					<s:if test="%{enableViewDcb()==true}">
+						<td>
+							<input name="viewdcb" type="button" class="buttonsubmit" id="button" value="View DCB"
+								   onclick="window.open('/tl/dcb/view/'+ <s:property value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+						</td>
+					</s:if>
 					<td>
 						<input name="button1" type="button" class="buttonsubmit printbtn" id="button" value="Print" />
 					</td>

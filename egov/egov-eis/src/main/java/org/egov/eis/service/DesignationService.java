@@ -100,6 +100,10 @@ public class DesignationService {
         return designationRepository.getAllDesignationsByDepartment(id, givenDate);
     }
 
+    public List<Designation> getAllDesignationByDepartment(final Long departmentId) {
+        return designationRepository.getAllDesignationsByDepartment(departmentId, new Date());
+    }
+
     public Set<Role> getRolesByDesignation(final String designationName) {
         return designationRepository.getRolesByDesignation(designationName);
     }

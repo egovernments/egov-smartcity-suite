@@ -61,7 +61,7 @@ body
 			</div>
 			<div class="panel-body" style="text-align: center">
 				<div class="mandatory">
-					<c:out value="${errorMsg}" />
+					<spring:message code="${errorMsg}" />
 				</div>
 			</div>
 			<div class="buttonbottom" align="center">

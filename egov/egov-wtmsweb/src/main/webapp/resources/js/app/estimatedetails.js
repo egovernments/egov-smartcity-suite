@@ -51,6 +51,8 @@ $(document).ready(function()
 		loadConnectionCategories();
     });
 	
+	
+	
 	function loadConnectionCategories(){
 	    if ($('#connectionCategorie :selected').text().localeCompare("BPL") == 0)  {
 	    	$("#cardHolderDiv").show();
@@ -69,10 +71,6 @@ $(document).ready(function()
 	function addRow() {
         var table = document.getElementById('estimateDetails');
         var rowCount = table.rows.length;
-        if((rowCount-2) >= 5) {
-        	bootbox.alert("Maximum of only 5 rows are allowed!!");
-        	return;
-        }
         var row = table.insertRow(rowCount-1);
         var counts = rowCount - 1;
 
@@ -217,4 +215,6 @@ function calculateTotalAmount() {
     	}
     }
     $('#grandTotal').val(grandTotal);
+    $('#supervisionCharges').val(Math.round(0.15*grandTotal).toFixed(2));
+    $('#estimationCharges').val(0.0);
 }

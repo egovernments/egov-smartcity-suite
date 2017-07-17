@@ -90,7 +90,7 @@ public class LineEstimateJsonAdaptor implements JsonSerializer<LineEstimate> {
             else
                 jsonObject.addProperty("createdBy", "");
             if (lineEstimate.getAdminSanctionBy() != null)
-                jsonObject.addProperty("approvedBy", lineEstimate.getAdminSanctionBy().getName());
+                jsonObject.addProperty("approvedBy", lineEstimate.getAdminSanctionBy());
             else
                 jsonObject.addProperty("approvedBy", "");
             if (lineEstimate.getStatus() != null)

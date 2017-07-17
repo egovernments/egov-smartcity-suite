@@ -39,19 +39,20 @@
  */
 package org.egov.commons.dao;
 
+import java.io.Serializable;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.utils.DateUtils;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.io.Serializable;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 @Repository
 public class InstallmentHibDao<T, id extends Serializable> implements InstallmentDao {
@@ -128,6 +129,30 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
         qry.setString("installmentType", installmentType);
         return (Installment) qry.uniqueResult();
     }
+    
+    @Override
+    public List<Installment> getInstallmentsByModuleForGivenDateAndInstallmentType(final Module module, final Date installmentDate,
+            final String installmentType) {
+        final Query qry = getCurrentSession().createQuery(
+                "from Installment I where I.module=:module and I.toDate >=:fromDate and I.toDate<=:tillDate and I.installmentType = :installmentType");
+        qry.setEntity("module", module);
+        qry.setDate("fromDate", installmentDate);
+        qry.setDate("tillDate", new Date());
+        qry.setString("installmentType", installmentType);
+        return qry.list();
+    }
+    
+    @Override
+    public List<Installment> getInstallmentsByModuleBetweenFromDateAndToDateAndInstallmentType(final Module module,
+            final Date fromDate, final Date toDate, final String installmentType) {
+        final Query qry = getCurrentSession().createQuery(
+                "from Installment I where I.module=:module and I.toDate >=:fromDate and I.toDate<=:tillDate and I.installmentType = :installmentType");
+        qry.setEntity("module", module);
+        qry.setDate("fromDate", fromDate);
+        qry.setDate("tillDate", toDate);
+        qry.setString("installmentType", installmentType);
+        return qry.list();
+    }
 
     @Override
     public List<Installment> fetchInstallments(final Module module, final Date toInstallmentDate, final int noOfInstallmentToFetch) {
@@ -177,5 +202,33 @@ public class InstallmentHibDao<T, id extends Serializable> implements Installmen
         qry.setDate("installmentDate", installmentDate);
         qry.setMaxResults(noOfInstallmentToFetch);
         return qry.list();
+    }
+    
+    @Override
+    public List<Installment> fetchNextInstallmentsByModuleAndDate(final Module module, final Date date)
+    {
+
+        final Query qry = getCurrentSession()
+                .createQuery(
+                        "from Installment I where I.module=:module and I.fromDate>= :installmentDate order by fromDate desc");
+        qry.setEntity("module", module);
+        qry.setDate("installmentDate", date);
+
+        return qry.list();
+
+    }
+    
+    @Override
+    public List<Installment> getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(final Module module,
+            final int year) {
+
+        final Query qry = getCurrentSession()
+                .createQuery(
+                        "from Installment I where I.module=:module and extract(year from I.installmentYear)=:year order by installment_year desc");
+        qry.setEntity("module", module);
+        qry.setInteger("year", year);
+
+        return qry.list();
+
     }
 }

@@ -45,12 +45,16 @@
 <head>
 <script>
 function refreshInbox() {
+    try {
         var x=opener.top.opener;
         if(x==null){
             x=opener.top;
         }
         x.document.getElementById('inboxframe').contentWindow.egovInbox.from = 'Inbox';
 	    x.document.getElementById('inboxframe').contentWindow.egovInbox.refresh();
+    } catch (e) {
+        //do nothing
+	}
 }
 </script>
 <title><s:text name="billreceipt.pagetitle" /></title>

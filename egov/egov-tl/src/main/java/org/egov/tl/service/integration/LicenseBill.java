@@ -40,90 +40,91 @@
 
 package org.egov.tl.service.integration;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
-import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.LatePayPenaltyCalculator;
 import org.egov.demand.model.AbstractBillable;
 import org.egov.demand.model.EgBillType;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseUtils;
-import org.joda.time.Days;
 import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang.StringUtils.defaultString;
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.defaultIfBlank;
 import static org.apache.commons.lang.StringUtils.isBlank;
 
-@Transactional(readOnly = true)
 public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalculator {
 
-    private static final Logger LOG = LoggerFactory.getLogger(LicenseBill.class);
+    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
 
     private License license;
     private String moduleName;
     private String serviceCode;
     private String referenceNumber;
+    private String departmentCode;
     private Boolean isCallbackForApportion = Boolean.FALSE;
-    public static final String DEFAULT_FUNCTIONARY_CODE = "1";
-    private String transanctionReferenceNumber;
-
-    @Autowired
-    private LicenseUtils licenseUtils;
-    @Autowired
+    private Long userId;
+    private Module module;
+    private EgBillType billType;
     private PenaltyRatesService penaltyRatesService;
-    @Autowired
-    private EgBillDao egBillDao;
 
     public License getLicense() {
         return license;
     }
 
-    public void setLicense(final License license) {
+    public void setLicense(License license) {
         this.license = license;
     }
 
-    public void setModuleName(final String moduleName) {
+    public void setPenaltyRatesService(PenaltyRatesService penaltyRatesService) {
+        this.penaltyRatesService = penaltyRatesService;
+    }
+
+    public void setModuleName(String moduleName) {
         this.moduleName = moduleName;
     }
 
     @Override
+    public String getConsumerType() {
+        return moduleName;
+    }
+
+    @Override
     public Module getModule() {
-        return licenseUtils.getModule(moduleName);
+        return module;
+    }
+
+    public void setModule(Module module) {
+        this.module = module;
     }
 
     @Override
     public String getBillPayee() {
         return license.getLicensee().getApplicantName();
     }
-    
+
     @Override
     public String getEmailId() {
-        return "";
+        return EMPTY;
     }
 
     @Override
     public String getBillAddress() {
-        return license.getLicensee().getAddress() + (StringUtils.isNotBlank(license.getLicensee().getMobilePhoneNumber())
-                ? "\nPh : " + license.getLicensee().getMobilePhoneNumber() : "");
+        return new StringBuilder().
+                append(license.getLicensee().getAddress()).
+                append("\nPh : ").
+                append(defaultIfBlank(license.getLicensee().getMobilePhoneNumber(), "NA"))
+                .toString();
     }
 
     @Override
@@ -133,26 +134,23 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public List<EgDemand> getAllDemands() {
-        final List<EgDemand> demands = new ArrayList<>();
-        demands.add(license.getLicenseDemand());
-        return demands;
+        return Arrays.asList(license.getLicenseDemand());
 
     }
 
     @Override
     public EgBillType getBillType() {
-        return egBillDao.getBillTypeByCode("AUTO");
+        return billType;
 
+    }
+
+    public void setBillType(EgBillType billType) {
+        this.billType = billType;
     }
 
     @Override
     public Date getBillLastDueDate() {
-        Date dueDate = new Date();
-        final Calendar cal = Calendar.getInstance();
-        cal.setTime(dueDate);
-        cal.get(Calendar.MONTH + 1);
-        dueDate = cal.getTime();
-        return dueDate;
+        return new LocalDate().plusMonths(1).toDate();
 
     }
 
@@ -168,7 +166,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getDepartmentCode() {
-        return licenseUtils.getDepartmentCodeForBillGenerate();
+        return departmentCode;
+    }
+
+    public void setDepartmentCode(String departmentCode) {
+        this.departmentCode = departmentCode;
     }
 
     @Override
@@ -206,13 +208,13 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return false;
     }
 
-    public void setServiceCode(final String serviceCode) {
-        this.serviceCode = serviceCode;
-    }
-
     @Override
     public String getServiceCode() {
         return serviceCode;
+    }
+
+    public void setServiceCode(String serviceCode) {
+        this.serviceCode = serviceCode;
     }
 
     @Override
@@ -222,7 +224,11 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public Long getUserId() {
-        return ApplicationThreadLocals.getUserId();
+        return userId;
+    }
+
+    public void setUserId(final Long userId) {
+        this.userId = userId;
     }
 
     @Override
@@ -238,11 +244,7 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
 
     @Override
     public String getCollModesNotAllowed() {
-        return "";
-    }
-
-    public String getPropertyId() {
-        return defaultString(license.getLicenseNumber(), license.getApplicationNumber());
+        return EMPTY;
     }
 
     @Override
@@ -266,37 +268,23 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
     }
 
     @Override
-    public void setPenaltyCalcType(final LPPenaltyCalcType penaltyType) {
-
+    public void setPenaltyCalcType(LPPenaltyCalcType penaltyType) {
+        // not used
     }
 
     @Override
     public String getConsumerId() {
+        return defaultIfBlank(license.getLicenseNumber(), license.getApplicationNumber());
+    }
+
+    @Override
+    public BigDecimal calculateLPPenaltyForPeriod(Date fromDate, Date toDate, BigDecimal amount) {
         return null;
     }
 
     @Override
-    public BigDecimal calculateLPPenaltyForPeriod(final Date fromDate, final Date toDate, final BigDecimal amount) {
-        return null;
-    }
-
-    @Override
-    public BigDecimal calculatePenalty(final Date commencementDate, final Date collectionDate, final BigDecimal amount) {
-        if (commencementDate != null) {
-            final int paymentDueDays = Days
-                    .daysBetween(new LocalDate(commencementDate.getTime()), new LocalDate(collectionDate.getTime()))
-                    .getDays();
-            final PenaltyRates penaltyRates = penaltyRatesService.findByDaysAndLicenseAppType(Long.valueOf(paymentDueDays),
-                    license.getLicenseAppType());
-            if (penaltyRates == null) {
-                LOG.warn("License payment due since {} days, There is no penatlity rate definied for License Type {}",
-                        paymentDueDays,
-                        license.getLicenseAppType().getName());
-                return BigDecimal.ZERO;
-            }
-            return amount.multiply(BigDecimal.valueOf(penaltyRates.getRate() / 100));
-        }
-        return BigDecimal.ZERO;
+    public BigDecimal calculatePenalty(Date commencementDate, Date collectionDate, BigDecimal amount) {
+        return penaltyRatesService.calculatePenalty(license, commencementDate, collectionDate, amount);
     }
 
     @Override
@@ -304,25 +292,22 @@ public class LicenseBill extends AbstractBillable implements LatePayPenaltyCalcu
         return referenceNumber;
     }
 
-    public void setReferenceNumber(final String referenceNumber) {
+    public void setReferenceNumber(String referenceNumber) {
         this.referenceNumber = referenceNumber;
     }
 
     @Override
     public String getTransanctionReferenceNumber() {
-        return transanctionReferenceNumber;
+        return EMPTY;
     }
 
-    public void setTransanctionReferenceNumber(final String transanctionReferenceNumber) {
-        this.transanctionReferenceNumber = transanctionReferenceNumber;
-    }
 
-    public Map<Installment, BigDecimal> getCalculatedPenalty(final Date fromDate, final Date collectionDate,
-            final EgDemand demand) {
-        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<Installment, BigDecimal>();
+    public Map<Installment, BigDecimal> getCalculatedPenalty(Date fromDate, Date collectionDate,
+                                                             EgDemand demand) {
+        final Map<Installment, BigDecimal> installmentPenalty = new HashMap<>();
         for (final EgDemandDetails demandDetails : demand.getEgDemandDetails())
             if (!demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode().equals(Constants.PENALTY_DMD_REASON_CODE)
-                    && demandDetails.getAmtCollected().signum() == 0)
+                    && demandDetails.getAmount().subtract(demandDetails.getAmtCollected()).signum() == 1)
                 if (fromDate != null)
                     installmentPenalty.put(demandDetails.getEgDemandReason().getEgInstallmentMaster(),
                             calculatePenalty(fromDate, collectionDate, demandDetails.getAmount()));

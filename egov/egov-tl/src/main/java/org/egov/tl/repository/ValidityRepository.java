@@ -49,9 +49,11 @@ import java.util.List;
 @Repository
 public interface ValidityRepository extends JpaRepository<Validity, Long> {
 
-    List<Validity> findByNatureOfBusinessIdAndLicenseCategoryId(Long natureOfBusiness, Long licenseCategory);
+    Validity findByNatureOfBusinessIdAndLicenseCategoryId(Long natureOfBusiness, Long licenseCategory);
 
     List<Validity> findByNatureOfBusinessId(Long natureOfBusiness);
 
     List<Validity> findByLicenseCategoryId(Long licenseCategory);
+
+    Validity findByNatureOfBusinessIdAndLicenseCategoryIsNull(Long natureOfBusiness);
 }

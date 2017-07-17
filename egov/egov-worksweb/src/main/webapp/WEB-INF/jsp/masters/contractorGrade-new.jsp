@@ -47,7 +47,12 @@
 	<body>
 	
 		<div class="new-page-header">
-			<s:text name="contractor.grade.header" />
+			<s:if test="%{mode=='NEW'}">
+				<s:text name="contractor.grade.header.create" />
+			</s:if>
+			<s:if test="%{mode == 'view' }">
+				<s:text name="contractor.grade.header.view" />
+			</s:if>				
 		</div>
 		
     	<s:if test="%{hasErrors()}">
@@ -73,7 +78,7 @@
 							<s:submit value="Save" method="save" cssClass="btn btn-primary" id="saveButton" name="button" onclick="return validateContractorGradeFormAndSubmit();"/>&nbsp;
 						</s:if>
 						<s:if test="%{model.id==null}" >
-							<input type="button" value="Clear" class="btn btn-default" onclick="clearForm(this.form.id)"/>&nbsp;
+							<input type="button" class="btn btn-default" value="Clear" id="clear" name="clear" onclick="this.form.reset();">&nbsp;
 						</s:if>
 						<input type="button" class="btn btn-default" value="Close" id="closeButton" name="closeButton" onclick="window.close();" />
 				     </div>

@@ -40,6 +40,7 @@
 
 package org.egov.collection.entity.es;
 
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 
 import java.util.Date;
@@ -77,8 +78,8 @@ public class CollectionDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String paymentGateway;
 
-    @Field(type = FieldType.Long)
-    private Long billNumber;
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String billNumber;
 
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String cityName;
@@ -98,7 +99,7 @@ public class CollectionDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String receiptCreator;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date receiptDate;
 
@@ -144,9 +145,15 @@ public class CollectionDocument {
     @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
     private String revenueWard;
 
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = ES_DATE_FORMAT, timezone = DEFAULT_TIMEZONE)
     @Field(type = FieldType.Date, format = DateFormat.date_optional_time, pattern = ES_DATE_FORMAT)
     private Date createdDate;
+    
+    @Field(type = FieldType.String, index = FieldIndex.not_analyzed)
+    private String consumerType;
+    
+    @Field(type = FieldType.Integer)
+    private Integer conflict;
 
     public String getId() {
         return id;
@@ -204,11 +211,11 @@ public class CollectionDocument {
         this.paymentGateway = paymentGateway;
     }
 
-    public Long getBillNumber() {
+    public String getBillNumber() {
         return billNumber;
     }
 
-    public void setBillNumber(final Long billNumber) {
+    public void setBillNumber(final String billNumber) {
         this.billNumber = billNumber;
     }
 
@@ -386,5 +393,21 @@ public class CollectionDocument {
 
     public void setCreatedDate(final Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public String getConsumerType() {
+        return consumerType;
+    }
+
+    public void setConsumerType(String consumerType) {
+        this.consumerType = consumerType;
+    }
+
+    public Integer getConflict() {
+        return conflict;
+    }
+
+    public void setConflict(Integer conflict) {
+        this.conflict = conflict;
     }
 }

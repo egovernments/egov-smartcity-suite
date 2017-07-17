@@ -40,139 +40,143 @@
 
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				<div class="panel-title text-center no-float">
-					<strong><spring:message code="msg.complaint.reg.success"/> : <strong>${complaint.crn}</strong> </strong>
-				</div>
-			</div>
-			<div class="panel-body">
-				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.complaintDate"/>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
-						<fmt:formatDate value="${complaint.createdDate}" pattern="dd-MM-yyyy hh:mm:ss" var="complaintDate"/>
-						${complaintDate}
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.complainant.name"/>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
-						<c:choose>
-							<c:when test="${not empty complaint.complainant.name}">
-							${complaint.complainant.name}
-							</c:when>
-							<c:otherwise>
-							${complaint.complainant.userDetail.name}
-							</c:otherwise>
-						</c:choose>
-						
-					</div>
-				</div>
-				<div class="row">
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.phoneNumber" />
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
-						${complaint.complainant.mobile}
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.email"/>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
-						${complaint.complainant.email}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<div id="main" class="printable">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title text-center no-float">
+                        <strong><spring:message code="msg.complaint.reg.success"/> : <strong>${complaint.crn}</strong> </strong>
+                    </div>
+                </div>
+                <div class="panel-body">
+                    <div class="row add-border">
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.complaintDate"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
+                            <fmt:formatDate value="${complaint.createdDate}" pattern="dd-MM-yyyy hh:mm:ss" var="complaintDate"/>
+                            ${complaintDate}
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.complainant.name"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-name">
+                            <c:choose>
+                                <c:when test="${not empty complaint.complainant.name}">
+                                    ${complaint.complainant.name}
+                                </c:when>
+                                <c:otherwise>
+                                    ${complaint.complainant.userDetail.name}
+                                </c:otherwise>
+                            </c:choose>
+
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.phoneNumber"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+                            ${complaint.complainant.mobile}
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.email"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-email">
+                            ${complaint.complainant.email}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-body">
+                    <div class="row add-border">
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.complaintType"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-type">
+                            ${complaint.complaintType.name}
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.compDetails"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-details">
+                            ${complaint.details}
+                        </div>
+                    </div>
+                    <div class="row add-border">
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.complaintLocation"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-location">
+                            <span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker"></i></span>
+                            <span id="address_locate">${complaint.childLocation.name} - ${complaint.location.name}</span>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin">
+                            <spring:message code="lbl.landmark"/>
+                        </div>
+                        <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-landmark">
+                            ${complaint.landmarkDetails}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
-		
-<div class="row">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-body">
-				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.complaintType"/>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-type">
-						${complaint.complaintType.name}
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.compDetails"/>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-details">
-						${complaint.details}
-					</div>
-				</div>
-				<div class="row add-border">
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.complaintLocation"/>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-location">
-						<span class="map-tool-class btn-secondary" data-toggle="tooltip" title="Locate on map" data-work="Locate on map" onclick="jQuery('#complaint-locate').modal('show', {backdrop: 'static'});"><i class="fa fa-map-marker"></i></span>
-						<span id="address_locate">${complaint.childLocation.name} - ${complaint.location.name}</span>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin">
-						<spring:message code="lbl.landmark"/>
-					</div>
-					<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-landmark">
-						${complaint.landmarkDetails}
-					</div>
-				</div>
-			</div>
-		</div>
-	</div>
-</div>
-		
 <div class="row text-center">
-	<div class="add-margin">
-		<button type="submit" class="btn btn-default"><spring:message code="lbl.print"/></button>
-		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-	</div>
+    <div class="add-margin">
+        <button type="submit" class="btn btn-default printbtn"><spring:message code="lbl.print"/></button>
+        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+    </div>
 </div>
+
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+
 <!-- Modal 6 (Long Modal)-->
 <div class="modal fade" id="complaint-locate">
-	<div class="modal-dialog">
-		<div class="modal-content">
-			
-			<div class="modal-body">
-				
-				<div class="row">
-					
-					<div class="col-md-12">
-						<div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
-							<!-- panel head -->
-							<div class="panel-heading">
-								<div class="panel-title" id="show_address_in_map"><spring:message code="lbl.complaintLocation"/></div>
-								
-							</div>
-							
-							<!-- panel body -->
-							<div class="panel-body no-padding">
-								
-								<script src="https://maps.googleapis.com/maps/api/js"></script>
-								
-								<div id="normal" class="img-prop"></div>
-								
-							</div>
-							
-						</div>
-					</div>
-					
-				</div>
-				
-				
-			</div>
-			
-			<div class="modal-footer">
-				<button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
-			</div>
-		</div>
-	</div>
+    <div class="modal-dialog">
+        <div class="modal-content">
+
+            <div class="modal-body">
+
+                <div class="row">
+
+                    <div class="col-md-12">
+                        <div class="panel panel-primary" data-collapsed="0"><!-- to apply shadow add class "panel-shadow" -->
+                            <!-- panel head -->
+                            <div class="panel-heading">
+                                <div class="panel-title" id="show_address_in_map"><spring:message code="lbl.complaintLocation"/></div>
+
+                            </div>
+
+                            <!-- panel body -->
+                            <div class="panel-body no-padding">
+
+                                <script src="https://maps.googleapis.com/maps/api/js"></script>
+
+                                <div id="normal" class="img-prop"></div>
+
+                            </div>
+
+                        </div>
+                    </div>
+
+                </div>
+
+
+            </div>
+
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal"><spring:message code="lbl.close"/></button>
+            </div>
+        </div>
+    </div>
 </div>

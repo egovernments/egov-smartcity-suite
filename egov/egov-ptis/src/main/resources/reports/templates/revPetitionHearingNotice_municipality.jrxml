@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2016>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.2.2.final using JasperReports Library version 6.2.2  -->
-<!-- 2016-11-03T17:05:32 -->
+<!-- 2016-12-27T17:38:32 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionHearingNotice_municipality" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="bfa584a8-aba2-402c-aa8b-d9cf2f66bfb3">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -52,6 +52,7 @@
 	<parameter name="hearingNoticeDate" class="java.lang.String"/>
 	<parameter name="recievedBy" class="java.lang.String"/>
 	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="natureOfWork" class="java.lang.String"/>
 	<parameter name="currentDate" class="java.lang.String"/>
 	<parameter name="houseNo" class="java.lang.String"/>
 	<parameter name="locality" class="java.lang.String"/>
@@ -119,7 +120,7 @@
 				<textElement textAlignment="Justified" verticalAlignment="Middle" markup="styled">
 					<paragraph lineSpacing="1_1_2" lineSpacingSize="1.0"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\n\tWith reference to the Revision Petition submitted by you on <style forecolor=\"#000000\" isBold=\"true\">"+$P{recievedOn}+"</style> , you are hereby requested to appear in person or by an authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{hearingNoticeDate}+"</style>  at <style forecolor=\"#000000\" isBold=\"true\">"+$P{hearingTime}+"</style>  in Municipal Office, for hearing your submissions, by the undersigned, for reduction of property tax in respect of building bearing Door.No:<style forecolor=\"#000000\" isBold=\"true\"> "+$P{houseNo}+"</style>, Assessment No:<style forecolor=\"#000000\" isBold=\"true\"> "+$P{assessmentNo}+"</style> at <style forecolor=\"#000000\" isBold=\"true\">"+$P{locality}+"</style> , failing which your revision petition will be disposed off,basing on the available information in this office."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\n\tWith reference to the <style forecolor=\"#000000\" isBold=\"true\">"+$P{natureOfWork}+"</style>  submitted by you on <style forecolor=\"#000000\" isBold=\"true\">"+$P{recievedOn}+"</style> , you are hereby requested to appear in person or by an authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{hearingNoticeDate}+"</style>  at <style forecolor=\"#000000\" isBold=\"true\">"+$P{hearingTime}+"</style>  in Municipal Office, for hearing your submissions, by the undersigned, for reduction of property tax in respect of building bearing Door.No:<style forecolor=\"#000000\" isBold=\"true\"> "+$P{houseNo}+"</style>, Assessment No:<style forecolor=\"#000000\" isBold=\"true\"> "+$P{assessmentNo}+"</style> at <style forecolor=\"#000000\" isBold=\"true\">"+$P{locality}+"</style> , failing which your "+$P{natureOfWork}+" will be disposed off,basing on the available information in this office."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="348" y="339" width="193" height="20" uuid="3f6d3253-579f-4f60-9a93-2a0e1fd54959"/>

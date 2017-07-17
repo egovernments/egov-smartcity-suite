@@ -53,13 +53,14 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.service.CollectionReportHeadWiseService;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.commons.Bankbranch;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
-import org.egov.infra.reporting.engine.ReportRequest.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -81,6 +82,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     private static final String EGOV_STATUS = "EGOV_STATUS";
     private static final String EGOV_GLCODE_NAME = "EGOV_GLCODE_NAME";
     private static final String EGOV_GLCODE_ID = "EGOV_GLCODE_ID";
+    private static final String EGOV_BRANCH_NAME = "EGOV_BRANCH_NAME";
 
     private Integer statusId;
     private Long revenueId;
@@ -94,6 +96,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     private EntityManager entityManager;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+    private Integer branchId = -1;
 
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -104,6 +107,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD,
                 CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
         paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_ONLINE, CollectionConstants.INSTRUMENTTYPE_ONLINE);
+        paymentModesMap.put(CollectionConstants.INSTRUMENTTYPE_CARD, CollectionConstants.INSTRUMENTTYPE_CARD);
         return paymentModesMap;
     }
 
@@ -122,8 +126,9 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
      */
     @Override
     public void prepare() {
-        setReportFormat(FileFormat.PDF);
+        setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.JAVABEAN);
+        addDropdownData("bankBranchList", collectionsUtil.getBankCollectionBankBranchList());
     }
 
     /**
@@ -153,10 +158,8 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     @Action(value = "/reports/collectionSummaryHeadWise-report")
     public String report() {
         /*
-         * if (getServiceId() != null && getServiceId() != -1) { ServiceDetails
-         * serviceDets = (ServiceDetails)
-         * entityManager.find(ServiceDetails.class, getServiceId());
-         * setServiceName(serviceDets.getName()); }
+         * if (getServiceId() != null && getServiceId() != -1) { ServiceDetails serviceDets = (ServiceDetails)
+         * entityManager.find(ServiceDetails.class, getServiceId()); setServiceName(serviceDets.getName()); }
          */
         if (getStatusId() != -1) {
             final EgwStatus statusObj = entityManager.find(EgwStatus.class, getStatusId());
@@ -168,8 +171,15 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
             setGlCodeName(statusObj.getName());
             setGlCode(statusObj.getGlcode());
         }
+        if (getBranchId() != null && getBranchId() != -1) {
+            final Bankbranch bankbranch = entityManager.find(Bankbranch.class, getBranchId());
+            String brankname = bankbranch.getBank().getName() + "-" + bankbranch.getBranchname();
+            setBranchName(brankname);
+        } else {
+            setBranchName("All Bank Branch");
+        }
         setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(),
-                getSource(), getGlCode(), getStatusId()));
+                getSource(), getGlCode(), getStatusId(), getBranchId()));
         return super.report();
     }
 
@@ -185,8 +195,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     }
 
     /**
-     * @param fromDate
-     *            the from date to set
+     * @param fromDate the from date to set
      */
     public void setFromDate(final Date fromDate) {
         setReportParam(EGOV_FROM_DATE, fromDate);
@@ -200,8 +209,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     }
 
     /**
-     * @param toDate
-     *            the to date to set
+     * @param toDate the to date to set
      */
     public void setToDate(final Date toDate) {
         setReportParam(EGOV_TO_DATE, toDate);
@@ -215,8 +223,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     }
 
     /**
-     * @param paymentMode
-     *            the payment mode to set (cash/cheque)
+     * @param paymentMode the payment mode to set (cash/cheque)
      */
     public void setPaymentMode(final String paymentMode) {
         setReportParam(EGOV_PAYMENT_MODE, paymentMode);
@@ -295,6 +302,18 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
 
     public void setRevenueId(final Long revenueId) {
         this.revenueId = revenueId;
+    }
+
+    public Integer getBranchId() {
+        return branchId;
+    }
+
+    public void setBranchId(Integer branchId) {
+        this.branchId = branchId;
+    }
+
+    public void setBranchName(final String branchName) {
+        setReportParam(EGOV_BRANCH_NAME, branchName);
     }
 
 }

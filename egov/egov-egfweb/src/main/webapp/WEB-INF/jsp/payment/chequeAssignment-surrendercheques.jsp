@@ -65,6 +65,7 @@
 			<!--<s:hidden name="department" />
 			-->
 			<s:hidden name="bankaccount" id="bankaccount" />
+			
 			<s:hidden name="bank_branch" />
 			<s:hidden name="fromDate" />
 			<s:hidden name="toDate" />
@@ -113,17 +114,22 @@
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
 									value="%{serialNo.finYearRange}" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
-									value="%{instrumentNumber}" /></td>
-							<td style="text-align: center" class="blueborderfortdnew"><s:property
+									value="%{instrumentNumber}" /><s:hidden name="instrumentHeaderList[%{#stat.index}].instrumentNumber"
+								value="%{instrumentNumber}" /></td>
+							<td style="text-align: center" class="blueborderfortdnew"><s:hidden name="instrumentHeaderList[%{#stat.index}].transactionNumber"
+								value="%{transactionNumber}" /><s:property
 									value="%{transactionNumber}" /></td>
-							<td style="text-align: right" class="blueborderfortdnew"><s:text
+							<td style="text-align: right" class="blueborderfortdnew"><s:hidden name="instrumentHeaderList[%{#stat.index}].instrumentAmount"
+								value="%{instrumentAmount}" /><s:text
 									name="format.number">
 									<s:param value="%{instrumentAmount}" />
 								</s:text></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:date
-									name="%{instrumentDate}" format="dd/MM/yyyy" /></td>
+									name="%{instrumentDate}" format="dd/MM/yyyy" /><s:hidden name="instrumentHeaderList[%{#stat.index}].instrumentDate"
+								value="%{instrumentDate}" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:property
-									value="%{payTo}" /></td>
+									value="%{payTo}" /><s:hidden name="instrumentHeaderList[%{#stat.index}].payTo"
+								value="%{payTo}" /></td>
 
 							<td style="text-align: center" class="blueborderfortdnew"><s:iterator
 									var="v" value="instrumentVouchers" status="st">
@@ -132,8 +138,8 @@
 										<s:property value="%{voucherHeaderId.voucherNumber}" />
 									</A>
 								</s:iterator></td>
-							<td style="text-align: center" class="blueborderfortdnew"><s:checkbox
-									name="surrender"
+							<td style="text-align: center" class="blueborderfortdnew">
+								<s:checkbox name="surrender" id="surrender%{#stat.index}"
 									value='%{surrender[#stat.index]!=null?true:false}'
 									fieldValue="%{id}" /></td>
 							<td style="text-align: center" class="blueborderfortdnew"><s:select
@@ -181,12 +187,14 @@
 			<s:if test="%{instrumentHeaderList.size()>0}">
 				<div class="buttonbottom">
 					<s:hidden name="button" id="button" />
-					<s:hidden name="containsRTGS" id="containsRTGS"
+					<s:hidden name="selectedRowsId" id="selectedRowsId"
+						value="%{selectedRowsId}" />
+						<s:hidden name="containsRTGS" id="containsRTGS"
 						value="%{containsRTGS}" />
-					<s:submit type="submit" cssClass="buttonsubmit" name="Surrender"
+					<input type="button" Class="buttonsubmit" name="Surrender"
 						value="Surrender" onclick="return surrenderChq();" method="save" />
 					<s:if test="%{containsRTGS==false}">
-						<s:submit type="submit" cssClass="buttonsubmit"
+						<input type="submit" Class="buttonsubmit"
 							name="SurrenderAndReassign" value="Surrender & Reassign"
 							onclick="return Reassign();" method="save" />
 					</s:if>
@@ -254,14 +262,18 @@
  	window.open("/EGF/voucher/preApprovedVoucher-loadvoucherview.action?vhid="+val+"&showMode="+mode,"","height=650,width=900,scrollbars=yes,left=30,top=30,status=yes");
  	}
  	function surrenderChq(){
-		
+ 		resetSelectedRowsId();
+ 		disableAll();
  		document.getElementById('button').value='surrender';
- 		document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action?containsRTGS='+document.getElementById('containsRTGS').value;
+ 		document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action';
 		document.chequeAssignment.submit();
-		return true;
+		 return true;
+		
+		 
  	}
   	function Reassign()
  	{
+  		resetSelectedRowsId();
 	 	document.getElementById('button').value='surrenderAndReassign';
 	 	var chqGenMode='<s:property value="isChequeNoGenerationAuto()"/>';
 	 	var alertNumber='<s:text name="chq.number.missing.alert"/>';
@@ -309,7 +321,7 @@
 	 		}
 	 	
  		}
-
+	 	disableAll();
 	 	document.chequeAssignment.action = '/EGF/payment/chequeAssignment-save.action?containsRTGS='+document.getElementById('containsRTGS').value;
 		document.chequeAssignment.submit();
 		
@@ -341,7 +353,50 @@
 		});
 
     }
- 		
+  	var selectedRowsId = new Array();
+  	function resetSelectedRowsId(){
+  		
+  		var newSurrendarReasonsObj=document.getElementsByName('surrendarReasons');
+ 		var newSerialNoObj=document.getElementsByName('newSerialNo');
+ 		var newChqNoObj=document.getElementsByName('newInstrumentNumber');
+ 		var newChqDateObj=document.getElementsByName('newInstrumentDate');
+		var chequeSize='<s:property value ="%{instrumentHeaderList.size()}"/>';
+		   selectedRowsId = new Array();
+			for(var index=0;index<chequeSize;index++){
+				var obj = document.getElementById('surrender'+index);
+				if(obj.checked == true){
+				selectedRowsId.push(document.getElementsByName("instrumentHeaderId")[index].value+"~"+
+							newChqNoObj[index].value+"~"+
+							newChqDateObj[index].value+"~"+
+							newSerialNoObj[index].value+"~"+
+							newSurrendarReasonsObj[index].value+";"				
+							);
+					
+					
+				}
+			}
+			document.getElementById('selectedRowsId').value = selectedRowsId;
+	}
+  	function disableAll()
+	{
+		var frmIndex=0;
+		for(var i=0;i<document.forms[frmIndex].length;i++)
+			{
+				for(var i=0;i<document.forms[0].length;i++)
+					{
+						if(document.forms[0].elements[i].name != 'bankaccount' && document.forms[0].elements[i].name != 'bank_branch'
+							&& document.forms[0].elements[i].name != 'fromDate' && document.forms[0].elements[i].name != 'toDate' &&
+							document.forms[0].elements[i].name != 'button' && document.forms[0].elements[i].name != 'selectedRowsId'
+							&& document.forms[0].elements[i].name != 'containsRTGS' && document.forms[0].elements[i].name != 'voucherNumber'
+							&& document.forms[0].elements[i].name != 'instrumentNumber' && document.forms[0].elements[i].name != 'surrender'
+							&& document.forms[0].elements[i].name != 'department' && document.forms[0].elements[i].name != 'newInstrumentNumber' 
+							&& document.forms[0].elements[i].name != 'newInstrumentDate' && document.forms[0].elements[i].name != 'surrendarReasons' 
+							&& document.forms[0].elements[i].name != 'newInstrumentDate' && document.forms[0].elements[i].name != 'newSerialNo'){
+							document.forms[frmIndex].elements[i].disabled =true;
+						}						
+					}	
+			}
+	}
 	</script>
 </body>
 

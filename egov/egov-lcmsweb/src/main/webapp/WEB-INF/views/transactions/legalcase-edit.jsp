@@ -62,10 +62,9 @@
 				<div class="panel-body custom-form ">
 					<%@ include file="legalcasedetails.jsp"%>
 					<%@ include file="legalcase-edit-petitiondetails.jsp"%>
-					<jsp:include page="documentdetails-view.jsp"></jsp:include>
-
-				</div>
+					</div>
 			</div>
+			<jsp:include page="documentdetails-view.jsp"></jsp:include>
 
 			<div class="buttonbottom" align="center">
 				<div class="form-group text-center">
@@ -81,14 +80,11 @@
 		</div>
 	</div>
 </form:form>
-<link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/js/app/legalcase-ajax.js?rnd=${app_release_no}'/>"></script>
 <script

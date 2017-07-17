@@ -49,14 +49,15 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.bpms.scraps.controller.workflow.GenericWorkFlowScrapController;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
-import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.eis.web.contract.WorkflowContainer;
+import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.model.bills.EgBilldetails;
+import org.egov.works.config.properties.WorksApplicationProperties;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.contractorbill.service.ContractorBillRegisterService;
@@ -82,12 +83,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/contractorbill")
-public class UpdateContractorBillController extends GenericWorkFlowScrapController {
+public class UpdateContractorBillController extends GenericWorkFlowController {
     @Autowired
     private LineEstimateService lineEstimateService;
-
-    @Autowired
-    private DepartmentService departmentService;
 
     @Autowired
     private WorksUtils worksUtils;
@@ -100,6 +98,9 @@ public class UpdateContractorBillController extends GenericWorkFlowScrapControll
 
     @Autowired
     private MBHeaderService mbHeaderService;
+    
+    @Autowired
+    private WorksApplicationProperties worksApplicationProperties;
 
     @ModelAttribute
     public ContractorBillRegister getContractorBillRegister(@PathVariable final String contractorBillRegisterId) {
@@ -316,9 +317,9 @@ public class UpdateContractorBillController extends GenericWorkFlowScrapControll
         model.addAttribute("stateType", contractorBillRegister.getClass().getSimpleName());
 
         if (contractorBillRegister.getState() != null)
-            model.addAttribute("currentState", contractorBillRegister.getProcessInstanceId());
+            model.addAttribute("currentState", contractorBillRegister.getState().getValue());
 
-        prepareActivitiWorkflow(model, contractorBillRegister.getProcessInstanceId(), WorksConstants.CBR_PROCESS_DEFINITION_KEY);
+        prepareWorkflow(model, contractorBillRegister, new WorkflowContainer());
         if (contractorBillRegister.getState() != null
                 && contractorBillRegister.getState().getValue().equals(WorksConstants.WF_STATE_REJECTED))
             model.addAttribute("mode", "edit");
@@ -345,6 +346,10 @@ public class UpdateContractorBillController extends GenericWorkFlowScrapControll
         final List<MBHeader> mbHeaders = mbHeaderService.getMBHeadersByContractorBill(newcontractorBillRegister);
         if (mbHeaders != null && !mbHeaders.isEmpty())
             newcontractorBillRegister.setMbHeader(mbHeaders.get(0));
+
+        contractorBillRegister.setApprovalDepartment(worksUtils.getDefaultDepartmentId());
+        model.addAttribute("defaultCutOffDate", worksApplicationProperties.getContractorBillCutOffDate());
+
         return "contractorBill-update";
     }
 
@@ -396,7 +401,7 @@ public class UpdateContractorBillController extends GenericWorkFlowScrapControll
         if (StringUtils.isNotBlank(netPayableAccountCodeId) && StringUtils.isNotBlank(netPayableAccountCodeId)
                 && StringUtils.isNotBlank(netPayableAmount)) {
             final EgBilldetails billdetails = new EgBilldetails();
-            billdetails.setId(new Integer(netPayableAccountId));
+            billdetails.setId(Integer.valueOf(netPayableAccountId));
             billdetails.setGlcodeid(new BigDecimal(netPayableAccountCodeId));
             billdetails.setCreditamount(new BigDecimal(netPayableAmount));
             contractorBillRegister.addEgBilldetailes(

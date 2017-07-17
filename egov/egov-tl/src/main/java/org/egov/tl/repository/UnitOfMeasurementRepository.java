@@ -51,8 +51,6 @@ import java.util.List;
 @Repository
 public interface UnitOfMeasurementRepository extends JpaRepository<UnitOfMeasurement, Long> {
 
-    UnitOfMeasurement findByNameIgnoreCase(String name);
-
     UnitOfMeasurement findByCodeIgnoreCase(String code);
 
     List<UnitOfMeasurement> findAllByActiveTrue();

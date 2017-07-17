@@ -40,31 +40,33 @@
 
 package org.egov.pgr.entity;
 
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.egov.pgr.entity.enums.CitizenFeedback;
-import org.egov.pgr.entity.enums.ReceivingMode;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
 import java.text.SimpleDateFormat;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Stream;
 
 import static org.egov.pgr.entity.Complaint.SEQ_COMPLAINT;
+import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 
 @Entity
 @Table(name = "egpgr_complaint")
@@ -98,8 +100,12 @@ public class Complaint extends StateAware {
     @JoinColumn(name = "assignee")
     private Position assignee;
 
-    @ManyToOne(optional = true)
-    @JoinColumn(name = "location", nullable = true)
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currentOwner")
+    private User currentOwner;
+
+    @ManyToOne
+    @JoinColumn(name = "location")
     private Boundary location;
 
     @ManyToOne
@@ -115,12 +121,17 @@ public class Complaint extends StateAware {
     @SafeHtml
     private String landmarkDetails;
 
-    @Enumerated(EnumType.ORDINAL)
+    @ManyToOne
+    @JoinColumn(name = "receivingMode")
     @NotNull
-    private ReceivingMode receivingMode = ReceivingMode.WEBSITE;
+    private ReceivingMode receivingMode;
 
     @ManyToOne
-    @JoinColumn(name = "receivingCenter", nullable = true)
+    @JoinColumn(name = "priority")
+    private Priority priority;
+
+    @ManyToOne
+    @JoinColumn(name = "receivingCenter")
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
@@ -142,17 +153,23 @@ public class Complaint extends StateAware {
     private CitizenFeedback citizenFeedback;
 
     @ManyToOne
-    @JoinColumn(name = "childLocation", nullable = true)
+    @JoinColumn(name = "childLocation")
     private Boundary childLocation;
 
     @Transient
     private String latlngAddress;
 
-    /*
-     * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
-     */
     @Transient
     private Long crossHierarchyId;
+
+    @Transient
+    private Long nextOwnerId;
+
+    @Transient
+    private String approverComment;
+
+    @Transient
+    private boolean sendToPreviousOwner;
 
     @Override
     public Long getId() {
@@ -196,6 +213,14 @@ public class Complaint extends StateAware {
         this.assignee = assignee;
     }
 
+    public User getCurrentOwner() {
+        return currentOwner;
+    }
+
+    public void setCurrentOwner(User currentOwner) {
+        this.currentOwner = currentOwner;
+    }
+
     public ComplaintStatus getStatus() {
         return this.status;
     }
@@ -218,6 +243,14 @@ public class Complaint extends StateAware {
 
     public void setReceivingMode(ReceivingMode receivingMode) {
         this.receivingMode = receivingMode;
+    }
+
+    public Priority getPriority() {
+        return this.priority;
+    }
+
+    public void setPriority(Priority priority) {
+        this.priority = priority;
     }
 
     public ReceivingCenter getReceivingCenter() {
@@ -316,6 +349,52 @@ public class Complaint extends StateAware {
         this.latlngAddress = latlngAddress;
     }
 
+    public Long nextOwnerId() {
+        return nextOwnerId;
+    }
+
+    public void nextOwnerId(Long nextOwnerId) {
+        this.nextOwnerId = nextOwnerId;
+    }
+
+    public String approverComment() {
+        return approverComment;
+    }
+
+    public void approverComment(String approverComment) {
+        this.approverComment = approverComment;
+    }
+
+    public boolean sendToPreviousOwner() {
+        return sendToPreviousOwner;
+    }
+
+    public void sendToPreviousOwner(boolean sendToPreviousOwner) {
+        this.sendToPreviousOwner = sendToPreviousOwner;
+    }
+
+    public boolean completed() {
+        return Stream
+                .of(WITHDRAWN, COMPLETED, REJECTED)
+                .anyMatch(status -> status.toString().equalsIgnoreCase(getStatus().getName()));
+    }
+
+    public boolean inprogress() {
+        return !transitionCompleted();
+    }
+
+    public boolean hasNextOwner() {
+        return nextOwnerId() != null && !nextOwnerId().equals(0L);
+    }
+
+    public boolean reopened() {
+        return transitionCompleted() && REOPENED.toString().equalsIgnoreCase(getStatus().getName());
+    }
+
+    public boolean hasGeoCoordinates() {
+        return getLat() > 0 && getLng() > 0;
+    }
+
     @Override
     public String myLinkId() {
         return this.crn;
@@ -324,14 +403,15 @@ public class Complaint extends StateAware {
     @Override
     public String getStateDetails() {
         SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
-        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s", this.getCrn(),
+        return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s. Priority is %s", this.getCrn(),
                 this.getComplaintType().getName(), formatter.format(this.getCreatedDate()),
-                formatter.format(this.getEscalationDate()));
+                formatter.format(this.getEscalationDate()), this.getPriority() != null ? this.getPriority().getName() : "-");
     }
 
     @Override
     protected StateInfoBuilder buildStateInfo() {
-        return super.buildStateInfo().citizenName(this.getComplainant().getName()).refDate(this.getCreatedDate()).citizenPhoneno(this.getComplainant().getMobile())
-                .citizenAddress(this.getComplainant().getAddress()).refNum(this.getCrn()).location(this.getLocation().getName()).task("Grievance").status(this.getStatus().getName());
+        return super.buildStateInfo().citizenName(this.getComplainant().getName()).refDate(this.getCreatedDate()).
+                citizenPhoneno(this.getComplainant().getMobile()).citizenAddress(this.getComplainant().getAddress()).
+                refNum(this.getCrn()).location(this.getLocation().getName()).task("Grievance").status(this.getStatus().getName());
     }
 }

@@ -46,10 +46,11 @@ import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Calendar;
@@ -58,11 +59,16 @@ import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-@Transactional(readOnly = true)
+@Service
 public class SchedularService {
 
     private static final Logger LOGGER = Logger.getLogger(SchedularService.class);
+
+    @Autowired
+    @Qualifier("persistenceService")
     private PersistenceService persistenceService;
+
+    @Autowired
     private ReconciliationService reconciliationService;
 
     @Autowired
@@ -79,7 +85,7 @@ public class SchedularService {
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
                                 + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
-                                .setMaxResults(50);
+                .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_AXIS);
         qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
@@ -87,12 +93,10 @@ public class SchedularService {
 
         LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
         if (!reconcileList.isEmpty()) {
-            final ServiceDetails paymentService = (ServiceDetails) persistenceService.findByNamedQuery(
-                    CollectionConstants.QUERY_SERVICE_BY_CODE, CollectionConstants.SERVICECODE_AXIS);
             for (final OnlinePayment onlinePaymentObj : reconcileList) {
                 final long startTimeInMilis = System.currentTimeMillis();
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
-                PaymentResponse paymentResponse = axisAdaptor.createOfflinePaymentRequest(paymentService, onlinePaymentObj);
+                PaymentResponse paymentResponse = axisAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
 
                 if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
@@ -110,19 +114,10 @@ public class SchedularService {
                     LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
                             + onlinePaymentReceiptHeader.getReceiptnumber()
                             + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                                    + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
-                                    + elapsedTimeInMillis);
+                            + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
+                            + elapsedTimeInMillis);
                 }
             }
         }
     }
-
-    public void setPersistenceService(final PersistenceService persistenceService) {
-        this.persistenceService = persistenceService;
-    }
-
-    public void setReconciliationService(final ReconciliationService reconciliationService) {
-        this.reconciliationService = reconciliationService;
-    }
-
 }

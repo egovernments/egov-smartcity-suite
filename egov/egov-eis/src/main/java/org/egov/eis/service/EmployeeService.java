@@ -70,6 +70,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.properties.ApplicationProperties;
@@ -78,12 +79,8 @@ import org.egov.infra.workflow.service.StateHistoryService;
 import org.egov.infra.workflow.service.StateService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
-import org.hibernate.Criteria;
+import org.hibernate.Query;
 import org.hibernate.Session;
-import org.hibernate.criterion.CriteriaSpecification;
-import org.hibernate.criterion.ProjectionList;
-import org.hibernate.criterion.Projections;
-import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -135,6 +132,9 @@ public class EmployeeService implements EntityTypeService {
     private PositionMasterService positionMasterService;
 
     @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
     public EmployeeService(final EmployeeRepository employeeRepository) {
         this.employeeRepository = employeeRepository;
     }
@@ -166,8 +166,7 @@ public class EmployeeService implements EntityTypeService {
     }
 
     /**
-     * since it is mapped to only one AccountDetailType -creditor it ignores the
-     * input parameter
+     * since it is mapped to only one AccountDetailType -creditor it ignores the input parameter
      */
     @Override
     @SuppressWarnings("unchecked")
@@ -231,18 +230,26 @@ public class EmployeeService implements EntityTypeService {
         // objects getting persisted
 
         for (final Assignment assign : employee.getAssignments()) {
+
+            assign.getDeptSet().clear();
+            for (final HeadOfDepartments hod : assign.getHodList()) {
+                hod.setAssignment(assign);
+                hod.setHod(departmentService.getDepartmentById(hod.getHod().getId()));
+                assign.getDeptSet().add(hod);
+            }
             assign.setEmployee(employee);
             assign.setDepartment(assign.getDepartment());
-
-            for (final HeadOfDepartments hod : assign.getDeptSet())
-                hod.setAssignment(assign);
         }
-
         for (final Jurisdiction jurisdiction : employee.getJurisdictions()) {
             jurisdiction.setEmployee(employee);
             jurisdiction.setBoundaryType(jurisdiction.getBoundaryType());
             jurisdiction.setBoundary(jurisdiction.getBoundary());
         }
+        employeeRepository.saveAndFlush(employee);
+    }
+
+    @Transactional
+    public void updateEmployeeDetails(final Employee employee) {
         employeeRepository.saveAndFlush(employee);
     }
 
@@ -275,50 +282,71 @@ public class EmployeeService implements EntityTypeService {
 
     public List<Employee> searchEmployees(final EmployeeSearchDTO searchParams) {
 
-        final Criteria criteria = getCurrentSession().createCriteria(Assignment.class, "assignment")
-                .createAlias("assignment.employee", "employee");
-        if (null != searchParams.getCode() && !searchParams.getCode().isEmpty())
-            criteria.add(Restrictions.eq("employee.code", searchParams.getCode()));
-        if (null != searchParams.getName() && !searchParams.getName().isEmpty())
-            criteria.add(Restrictions.eq("employee.name", searchParams.getName()));
-        if (null != searchParams.getAadhaar() && !searchParams.getAadhaar().isEmpty())
-            criteria.add(Restrictions.eq("employee.aadhaar", searchParams.getAadhaar()));
-        if (null != searchParams.getMobileNumber() && !searchParams.getMobileNumber().isEmpty())
-            criteria.add(Restrictions.eq("employee.mobileNumber", searchParams.getMobileNumber()));
-        if (null != searchParams.getPan() && !searchParams.getPan().isEmpty())
-            criteria.add(Restrictions.eq("employee.pan", searchParams.getPan()));
-        if (null != searchParams.getEmail() && !searchParams.getEmail().isEmpty())
-            criteria.add(Restrictions.eq("employee.emailId", searchParams.getEmail()));
-        if (null != searchParams.getStatus() && !searchParams.getStatus().isEmpty())
-            criteria.add(Restrictions.eq("employee.employeeStatus", EmployeeStatus.valueOf(searchParams.getStatus())));
-        if (null != searchParams.getEmployeeType() && !searchParams.getEmployeeType().isEmpty()) {
-            criteria.createAlias("employee.employeeType", "employeeType");
-            criteria.add(Restrictions.eq("employeeType.name", searchParams.getEmployeeType()));
-        }
-        if (null != searchParams.getDepartment() && !searchParams.getDepartment().isEmpty()) {
-            criteria.createAlias("assignment.department", "department");
-            criteria.add(Restrictions.eq("department.name", searchParams.getDepartment()));
-        }
-        if (null != searchParams.getDesignation() && !searchParams.getDesignation().isEmpty()) {
-            criteria.createAlias("assignment.designation", "designation");
-            criteria.add(Restrictions.eq("designation.name", searchParams.getDesignation()));
-        }
-        if (null != searchParams.getFunctionary() && !searchParams.getFunctionary().isEmpty()) {
-            criteria.createAlias("assignment.functionary", "functionary");
-            criteria.add(Restrictions.eq("functionary.name", searchParams.getFunctionary()));
-        }
-        if (null != searchParams.getFunction() && !searchParams.getFunction().isEmpty()) {
-            criteria.createAlias("assignment.function", "function");
-            criteria.add(Restrictions.eq("function.name", searchParams.getFunction()));
-        }
+        final StringBuilder queryString = new StringBuilder();
+        queryString.append("select distinct(assign.employee) from Assignment assign where assign.id is not null ");
+        if (StringUtils.isNotBlank(searchParams.getCode()))
+            queryString.append(" AND assign.employee.code =:code ");
+        if (StringUtils.isNotBlank(searchParams.getName()))
+            queryString.append(" AND assign.employee.name like :name ");
+        if (StringUtils.isNotBlank(searchParams.getAadhaar()))
+            queryString.append(" AND assign.employee.aadhaar = :aadhaar");
+        if (StringUtils.isNotBlank(searchParams.getMobileNumber()))
+            queryString.append(" AND assign.employee.mobileNumber = :mobileNumber");
+        if (StringUtils.isNotBlank(searchParams.getPan()))
+            queryString.append(" AND assign.employee.pan = :pan");
+        if (StringUtils.isNotBlank(searchParams.getEmail()))
+            queryString.append(" AND assign.employee.emailId = :email");
+        if (StringUtils.isNotBlank(searchParams.getStatus()))
+            queryString.append(" AND assign.employee.employeeStatus = :status");
+        if (StringUtils.isNotBlank(searchParams.getEmployeeType()))
+            queryString.append(" AND assign.employee.employeeType.name = :type");
+        if (searchParams.getDepartment() != null)
+            queryString.append(" AND assign.department.name =:department ");
+        if (searchParams.getDesignation() != null)
+            queryString.append(" AND assign.designation.name =:designation ");
+        if (searchParams.getFunctionary() != null)
+            queryString.append(" AND assign.functionary.name =:functionary ");
+        if (searchParams.getFunction() != null)
+            queryString.append(" AND assign.function.name =:function ");
+        if (searchParams.getIsHOD())
+            queryString.append(" and assign.id  in (select assignment.id from HeadOfDepartments )");
+        queryString.append(" Order by assign.employee.code, assign.employee.name ");
+        Query query = entityManager.unwrap(Session.class).createQuery(queryString.toString());
+        query = setParametersToQuery(searchParams, query);
+        final List<Employee> employees = query.list();
+        return employees;
+    }
 
-        final ProjectionList projections = Projections.projectionList()
-                .add(Projections.property("assignment.employee"));
-        criteria.setProjection(projections);
-        criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+    public Query setParametersToQuery(final EmployeeSearchDTO searchParams, final Query query) {
+        if (StringUtils.isNotBlank(searchParams.getCode()))
+            query.setParameter("code", searchParams.getCode());
+        if (StringUtils.isNotBlank(searchParams.getName()))
+            query.setParameter("name", searchParams.getName());
+        if (StringUtils.isNotBlank(searchParams.getAadhaar()))
+            query.setParameter("aadhaar", searchParams.getAadhaar());
+        if (StringUtils.isNotBlank(searchParams.getMobileNumber()))
+            query.setParameter("mobileNumber", searchParams.getMobileNumber());
+        if (StringUtils.isNotBlank(searchParams.getPan()))
+            query.setParameter("pan", searchParams.getPan());
+        if (StringUtils.isNotBlank(searchParams.getEmail()))
+            query.setParameter("email", searchParams.getEmail());
+        if (StringUtils.isNotBlank(searchParams.getStatus()))
+            query.setParameter("status", searchParams.getStatus());
+        if (StringUtils.isNotBlank(searchParams.getEmployeeType()))
+            query.setParameter("aadhaar", searchParams.getEmployeeType());
+        return setAssignmentParameter(searchParams, query);
+    }
 
-        return criteria.list();
-
+    public Query setAssignmentParameter(final EmployeeSearchDTO searchParams, final Query assignQuery) {
+        if (searchParams.getDepartment() != null)
+            assignQuery.setParameter("department", searchParams.getDepartment());
+        if (searchParams.getDesignation() != null)
+            assignQuery.setParameter("designation", searchParams.getDesignation());
+        if (searchParams.getFunctionary() != null)
+            assignQuery.setParameter("functionary", searchParams.getFunctionary());
+        if (searchParams.getFunction() != null)
+            assignQuery.setParameter("function", searchParams.getFunction());
+        return assignQuery;
     }
 
     @Transactional
@@ -470,47 +498,42 @@ public class EmployeeService implements EntityTypeService {
         boolean positionExistsInWF = false;
         boolean positionExistsInWFHistory = false;
         final List<Position> updatedPositionList = positionMasterService.getPositionsForEmployee(employee.getId());
+
         if (StringUtils.isNotBlank(removedassignIds)) {
             final String[] deletedAssignIds = removedassignIds.split(",");
             for (final String assignId : deletedAssignIds) {
                 final Assignment assignment = assignmentService.getAssignmentById(Long.valueOf(assignId));
                 if (assignment != null && !assignment.equals("")) {
-                    positionExistsInWF = stateService.isPositionUnderWorkflow(assignment.getPosition().getId());
+                    positionExistsInWF = stateService.isPositionUnderWorkflow(assignment.getPosition().getId(),
+                            assignment.getFromDate());
                     positionExistsInWFHistory = stateHistoryService
-                            .isPositionUnderWorkflowHistory(assignment.getPosition().getId());
+                            .isPositionUnderWorkflowHistory(assignment.getPosition().getId(), assignment.getFromDate());
                 }
                 if (positionExistsInWF || positionExistsInWFHistory)
                     return assignment.getPosition().getName();
             }
         }
         assignmentService.removeDeletedAssignments(employee, removedassignIds);
-        // user role mapping based on designation
         employee.setAssignments(employee.getAssignments().parallelStream()
                 .filter(assignment -> assignment.getPosition() != null).collect(Collectors.toList()));
-        List<User> user = new ArrayList<User>();
-        for (final Assignment assign : employee.getAssignments()) {
-            final Set<Role> roles = designationService.getRolesByDesignation(assign.getDesignation().getName());
-            for (final Role role : roles) {
-                user = userService.getUsersByUsernameAndRolename(employee.getUsername(),
-                        roleService.getRoleByName(role.getName()).getName());
-                if (assign.getFromDate().before(new Date()) && assign.getToDate().after(new Date()) && user.isEmpty())
-                    employee.addRole(roleService.getRoleByName(role.getName()));
-            }
-        }
+
         employee.setJurisdictions(employee.getJurisdictions().parallelStream()
                 .filter(Jurisdictions -> Jurisdictions.getBoundaryType() != null && Jurisdictions.getBoundary() != null)
                 .collect(Collectors.toList()));
 
         getCurrentSession().evict(employee);
         final Employee updatedEmployee = getEmployeeById(employee.getId());
+        final List<Assignment> oldAssignmentList = assignmentService.getAllAssignmentsByEmpId(updatedEmployee.getId());
         final List<Position> oldPositionList = positionMasterService.getPositionsForEmployee(updatedEmployee.getId());
         oldPositionList.removeAll(updatedPositionList);
-        for (final Position position : oldPositionList) {
-            positionExistsInWF = stateService.isPositionUnderWorkflow(position.getId());
-            positionExistsInWFHistory = stateHistoryService.isPositionUnderWorkflowHistory(position.getId());
-            if (positionExistsInWF || positionExistsInWFHistory)
-                return position.getName();
-        }
+        for (final Assignment assign : oldAssignmentList)
+            if (oldPositionList.contains(assign.getPosition())) {
+                positionExistsInWF = stateService.isPositionUnderWorkflow(assign.getPosition().getId(), assign.getFromDate());
+                positionExistsInWFHistory = stateHistoryService.isPositionUnderWorkflowHistory(assign.getPosition().getId(),
+                        assign.getFromDate());
+                if (positionExistsInWF || positionExistsInWFHistory)
+                    return assign.getPosition().getName();
+            }
         return StringUtils.EMPTY;
     }
 
@@ -528,6 +551,24 @@ public class EmployeeService implements EntityTypeService {
 
             }
         return false;
+    }
+
+    public Boolean primaryAssignmentExists(final Employee employee) {
+        for (final Assignment assignment : employee.getAssignments())
+            if (assignment.getPrimary())
+                return true;
+        return false;
+    }
+
+    public Boolean primaryAssignExistsForSamePeriod(final Employee employee) {
+        int count = 0;
+        Date currentDate = new Date();
+        for (Assignment assign : employee.getAssignments()) {
+            if (assign.getFromDate() != null && currentDate.after(assign.getFromDate()) && currentDate.before(assign.getToDate())
+                    && assign.getPrimary())
+                count++;
+        }
+        return count > 1 ? true : false;
     }
 
 }

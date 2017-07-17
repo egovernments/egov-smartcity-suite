@@ -42,6 +42,7 @@ package org.egov.wtms.entity.es;
 public class ConnectionSearchRequest {
     private String searchText;
     private String consumerCode;
+    private String oldConsumerNumber;
     private String applicantName;
     private String locality;
     private String mobileNumber;
@@ -424,6 +425,14 @@ public class ConnectionSearchRequest {
 
     public void setPropertyTaxDue(final Long propertyTaxDue) {
         this.propertyTaxDue = propertyTaxDue;
+    }
+
+    public String getOldConsumerNumber() {
+        return oldConsumerNumber;
+    }
+
+    public void setOldConsumerNumber(String oldConsumerNumber) {
+        this.oldConsumerNumber = oldConsumerNumber;
     }
 
 }

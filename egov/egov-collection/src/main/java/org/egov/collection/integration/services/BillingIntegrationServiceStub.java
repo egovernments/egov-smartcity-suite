@@ -39,8 +39,11 @@
  */
 package org.egov.collection.integration.services;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -51,16 +54,17 @@ import org.egov.collection.xml.converter.ReceiptAccountInfoConverter;
 import org.egov.collection.xml.converter.ReceiptInstrumentInfoConverter;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 
 /**
- * This interface needs to be implemented by any billing application that integrates with the eGov collection system. For internal
- * applications, the methods can use direct API calls. For external applications, the integration can be through web-service/REST
- * calls. The convention to be followed: a bean named "<servicename>collectionsInterface" needs to be available in the spring
- * context. Service name is the name provided for the billing service in <ServiceDetails> class.
+ * This interface needs to be implemented by any billing application that
+ * integrates with the eGov collection system. For internal applications, the
+ * methods can use direct API calls. For external applications, the integration
+ * can be through web-service/REST calls. The convention to be followed: a bean
+ * named "<servicename>collectionsInterface" needs to be available in the spring
+ * context. Service name is the name provided for the billing service in
+ * <ServiceDetails> class.
  */
 public class BillingIntegrationServiceStub implements BillingIntegrationService {
 
@@ -69,13 +73,12 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
     @Override
     public void updateReceiptDetails(final Set<BillReceiptInfo> billReceipts) throws ApplicationRuntimeException {
         try {
-            String xml = null;
-            xml = convertToXML(billReceipts);
+            final String xml = convertToXML(billReceipts);
             LOGGER.debug("Written bill details to file successfully " + xml);
 
         } catch (final Exception e) {
-            LOGGER.error("Error occrured while updating dishonored cheque status to billing system : " + e.getMessage());
-            throw new ApplicationRuntimeException("Exception Occured");
+            LOGGER.error("Error occrured while updating dishonored cheque status to billing system : " + e);
+            throw new ApplicationRuntimeException("Exception Occured" + e);
         }
 
     }
@@ -89,8 +92,10 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
     /**
      * This method converts the given bill receipt object into an XML
      *
-     * @param billReceipt an instance of <code>BillReceiptInfo</code>
-     * @return a <code>String</code> representing the XML format of the <code>BillReceiptInfo</code> object
+     * @param billReceipt
+     *            an instance of <code>BillReceiptInfo</code>
+     * @return a <code>String</code> representing the XML format of the
+     *         <code>BillReceiptInfo</code> object
      */
     private String convertToXML(final Set<BillReceiptInfo> billReceipts) {
         final XStream xStream = new XStream(new DomDriver());
@@ -102,8 +107,8 @@ public class BillingIntegrationServiceStub implements BillingIntegrationService 
     }
 
     @Override
-    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber, final BigDecimal actualAmountPaid,
-            final List<ReceiptDetail> receiptDetailList) {
+    public List<ReceiptDetail> reconstructReceiptDetail(final String billReferenceNumber,
+            final BigDecimal actualAmountPaid, final List<ReceiptDetail> receiptDetailList) {
         return receiptDetailList;
     }
 

@@ -52,7 +52,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -70,8 +70,9 @@ import org.springframework.validation.BindingResult;
 
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 
+    private static final String FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER = "From User where name = ? and mobileNumber = ? and gender = ? ";
     private static final Logger LOGGER = Logger.getLogger(PropertyPersistenceService.class);
-    private static final String CREATE_ACK_TEMPLATE = "createProperty_ack";
+    private static final String CREATE_ACK_TEMPLATE = "mainCreatePropertyAck";
     @Autowired
     private UserService userService;
     @Autowired
@@ -83,7 +84,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         super(BasicProperty.class);
     }
 
-    public PropertyPersistenceService(Class<BasicProperty> type) {
+    public PropertyPersistenceService(final Class<BasicProperty> type) {
         super(type);
     }
 
@@ -96,31 +97,20 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
             orderNo++;
             if (ownerInfo != null) {
-                User user = null;
+                User user;
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 else
-                    user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo
+                    user = (User) find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
                             .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                            .getGender());
+                                    .getGender());
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
-                    newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                    newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
-                    newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
-                    newOwner.setGender(ownerInfo.getOwner().getGender());
-                    newOwner.setGuardian(ownerInfo.getOwner().getGuardian());
-                    newOwner.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
-                    newOwner.setName(ownerInfo.getOwner().getName());
-                    newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
-                    newOwner.setPassword("NOT SET");
-                    newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
-                    userService.createUser(newOwner);
+                    user = createNewOwner(ownerInfo, newOwner);
                     persistUponPaymentResponse(basicProperty);
                     ownerInfo.setBasicProperty(basicProperty);
-                    ownerInfo.setOwner(newOwner);
+                    ownerInfo.setOwner(user);
                     ownerInfo.setOrderNo(orderNo);
-                    LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(ownerAddress);
                 } else {
                     // If existing user, then do not add correspondence address
@@ -136,17 +126,74 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
             basicProperty.addPropertyOwners(ownerInfo);
         }
     }
+    
+    public void createOwnersForAppurTenant(final Property property, final BasicProperty basicProperty,
+            final Address ownerAddress) {
+        int orderNo = 0;
+        basicProperty.getPropertyOwnerInfo().clear();
+        for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
+            PropertyOwnerInfo owner = new PropertyOwnerInfo();
+            orderNo++;
+            if (ownerInfo != null) {
+                User user;
+                if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
+                    user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                else
+                    user = (User) find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
+                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
+                                    .getGender());
+                if (user == null) {
+                    final Citizen newOwner = new Citizen();
+                    user = createNewOwner(ownerInfo, newOwner);
+                    persistUponPaymentResponse(basicProperty);
+                    owner.setBasicProperty(basicProperty);
+                    owner.setOwner(user);
+                    owner.setOrderNo(orderNo);
+                    owner.setOwnerType(ownerInfo.getOwnerType());
+                    owner.setSource(ownerInfo.getSource());
+                    LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
+                    owner.getOwner().addAddress(ownerAddress);
+                } else {
+                    // If existing user, then do not add correspondence address
+                    user.setEmailId(ownerInfo.getOwner().getEmailId());
+                    user.setGuardian(ownerInfo.getOwner().getGuardian());
+                    user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
+                    owner.setOwner(user);
+                    owner.setOrderNo(orderNo);
+                    owner.setBasicProperty(basicProperty);
+                    owner.setOwnerType(ownerInfo.getOwnerType());
+                    owner.setSource(ownerInfo.getSource());
+                }
+            }
 
-    public BasicProperty persistUponPaymentResponse(BasicProperty basicProperty) {
+            basicProperty.addPropertyOwners(owner);
+        }
+    }
+
+    private User createNewOwner(final PropertyOwnerInfo ownerInfo, final Citizen newOwner) {
+        newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+        newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+        newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
+        newOwner.setGender(ownerInfo.getOwner().getGender());
+        newOwner.setGuardian(ownerInfo.getOwner().getGuardian());
+        newOwner.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
+        newOwner.setName(ownerInfo.getOwner().getName());
+        newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
+        newOwner.setPassword("NOTSET");
+        newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
+        return userService.createUser(newOwner);
+    }
+
+    public BasicProperty persistUponPaymentResponse(final BasicProperty basicProperty) {
         return basicProperty;
     }
 
-    public BasicProperty createBasicProperty(BasicProperty basicProperty, HashMap meesevaParams) {
+    public BasicProperty createBasicProperty(final BasicProperty basicProperty, final HashMap meesevaParams) {
         return persist(basicProperty);
     }
 
-    public ReportOutput propertyAcknowledgement(PropertyImpl property, String cityLogo, String cityName) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+    public ReportOutput propertyAcknowledgement(final PropertyImpl property, final String cityLogo, final String cityName) {
+        final Map<String, Object> reportParams = new HashMap<>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setOwnerName(property.getBasicProperty().getFullOwnerName());
         ackBean.setOwnerAddress(property.getBasicProperty().getAddress().toString());
@@ -160,28 +207,28 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         reportParams.put("cityName", cityName);
         reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
         final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
-        reportInput.setReportFormat(FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.PDF);
         return reportService.createReport(reportInput);
     }
 
-    public String updateOwners(Property property, BasicProperty basicProperty, String doorNumber,
+    public String updateOwners(final Property property, final BasicProperty basicProperty, final String doorNumber,
             final BindingResult errors) {
         LOGGER.debug("Update Owner and door number for property: " + property + ", basicProperty: " + basicProperty
                 + ", doorNumber: " + doorNumber);
         basicProperty.getAddress().setHouseNoBldgApt(doorNumber);
-        StringBuilder errorMesg = new StringBuilder();
-        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
+        final StringBuilder errorMesg = new StringBuilder();
+        for (final PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo())
             if (ownerInfo != null) {
                 User user = null;
-                for (Address address : ownerInfo.getOwner().getAddress()) {
+                for (final Address address : ownerInfo.getOwner().getAddress())
                     address.setHouseNoBldgApt(doorNumber);
-                }
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                if (user == null || user.getId().equals(ownerInfo.getOwner().getId())) {
+                if (user == null || user.getId().equals(ownerInfo.getOwner().getId()))
                     userService.updateUser(ownerInfo.getOwner());
-                } else {
-                    BasicProperty basicProp = find("select basicProperty from PropertyOwnerInfo where owner = ?",user.getId());
+                else {
+                    final BasicProperty basicProp = find("select basicProperty from PropertyOwnerInfo where owner = ?",
+                            user.getId());
                     errorMesg.append("With entered aadhar number - ").append(ownerInfo.getOwner().getAadhaarNumber())
                             .append(" there is already owner present with owner name: ")
                             .append(user.getName()).append(" for assessment number : ")
@@ -189,56 +236,45 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     break;
                 }
             }
-        }
         persist(basicProperty);
         LOGGER.debug("Exit from updateOwners");
         return errorMesg.toString();
     }
-    
+
     /**
      * Update the owners for a property
      * @param property
      * @param basicProp
      * @param ownerAddress
      */
-    public void updateOwners(Property property, BasicProperty basicProp, Address ownerAddress) {
-		int orderNo = 0;
-		basicProp.getPropertyOwnerInfo().clear();
+    public void updateOwners(final Property property, final BasicProperty basicProp, final Address ownerAddress) {
+        int orderNo = 0;
+        basicProp.getPropertyOwnerInfo().clear();
         for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfoProxy()) {
-            
+
             if (ownerInfo != null) {
-                User user = null;
+                User user;
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 else
-                    user = (User) find("From User where name = ? and mobileNumber = ? and gender = ? ", ownerInfo
+                    user = (User) find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
                             .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                            .getGender());
+                                    .getGender());
                 if (user == null) {
-                	orderNo++;
-                    final Citizen newOwner = new Citizen();
-                    newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                    newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
-                    newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
-                    newOwner.setGender(ownerInfo.getOwner().getGender());
-                    newOwner.setGuardian(ownerInfo.getOwner().getGuardian());
-                    newOwner.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
-                    newOwner.setName(ownerInfo.getOwner().getName());
-                    newOwner.setSalutation(ownerInfo.getOwner().getSalutation());
-                    newOwner.setPassword("NOT SET");
-                    newOwner.setUsername(propertyTaxUtil.generateUserName(ownerInfo.getOwner().getName()));
-                    userService.createUser(newOwner);
+                    orderNo++;
+                    Citizen newOwner = new Citizen();
+                    user = createNewOwner(ownerInfo, newOwner);
                     ownerInfo.setBasicProperty(basicProp);
-                    ownerInfo.setOwner(newOwner);
+                    ownerInfo.setOwner(user);
                     ownerInfo.setOrderNo(orderNo);
                     LOGGER.debug("createOwners: OwnerAddress: " + ownerAddress);
                     ownerInfo.getOwner().addAddress(ownerAddress);
                 } else {
                     // If existing user, then update the address
-                	user.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
-                	user.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
-                	user.setName(ownerInfo.getOwner().getName());
-                	user.setGender(ownerInfo.getOwner().getGender());
+                    user.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+                    user.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
+                    user.setName(ownerInfo.getOwner().getName());
+                    user.setGender(ownerInfo.getOwner().getGender());
                     user.setEmailId(ownerInfo.getOwner().getEmailId());
                     user.setGuardian(ownerInfo.getOwner().getGuardian());
                     user.setGuardianRelation(ownerInfo.getOwner().getGuardianRelation());
@@ -248,8 +284,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
             }
             basicProp.addPropertyOwners(ownerInfo);
         }
-	}
-    public BasicProperty updateBasicProperty(BasicProperty basicProperty, HashMap<String, String> meesevaParams) {
+    }
+
+    public BasicProperty updateBasicProperty(final BasicProperty basicProperty, final HashMap<String, String> meesevaParams) {
         return update(basicProperty);
     }
 }

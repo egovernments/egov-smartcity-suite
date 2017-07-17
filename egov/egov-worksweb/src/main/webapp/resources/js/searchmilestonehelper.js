@@ -282,7 +282,15 @@ $('#btntrackmilestone').click(function() {
 			});
 			$.each(json['trackMilestoneActivities'], function(key, value) {
 				$.each(value, function(id, val) {
-					$('#' + id + "_" + key).val(val);
+					if (id == 'completionDate') {
+						if (val != '' || val != null) {
+							var array = val.split('/');
+							var myDate = new Date(array[2] + "," + array[1] + "," + array[0]);
+							$('#' + id + "_" + key).datepicker("setDate", myDate).datepicker('update');
+						}
+					}
+					else
+						$('#' + id + "_" + key).val(val);
 				});
 				$('#completedPercentage_' + key).trigger('blur');
 				$('#currentStatus_' + key).trigger('change');

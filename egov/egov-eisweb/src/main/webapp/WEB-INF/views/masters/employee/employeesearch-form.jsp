@@ -149,8 +149,18 @@
 											<form:input type="text" name="code" id="code" cssClass="form-control" path="code" placeholder="Code"/>
 										</div>
 										
+									</div>
+									
+									<div class="form-group advanced-forms">
+								    
+									 <label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.hod"/> :</label>
+								
+									<div class="col-sm-4 add-margin">
+									<form:checkbox path="isHOD"/>
+					                <form:errors path="isHOD" />
+									</div>
 									</div> 
-
+		                            <input type="hidden" id="mode" name="mode" value="${mode}" />
 										<div class="text-center">
 											<button type="button"  class="btn btn-primary" id="searchbtn">Search Employee</button>
 											<button class="btn btn-danger" type="reset">Reset</button>
@@ -180,7 +190,6 @@
 									<th>Designation</th>
 									<th>Position</th>
 									<th>Date Range</th>
-									<th>Actions</th>
 								</tr>
 							</thead>
 							<tbody>

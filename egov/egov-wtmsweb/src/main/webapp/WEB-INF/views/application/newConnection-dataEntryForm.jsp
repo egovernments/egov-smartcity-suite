@@ -75,9 +75,9 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.consumerno" /><span class="mandatory"></span></label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="connection.consumerCode" id="consumerCodeData"
+							<form:input path="connection.oldConsumerNumber" id="consumerCodeData"
 								class="form-control text-left patternvalidation" data-pattern="number" maxlength="15" required="required" />
-								<form:errors path="connection.consumerCode" cssClass="add-margin error-msg" />	
+								<form:errors path="connection.oldConsumerNumber" cssClass="add-margin error-msg" />	
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message
 								code="lbl.connectiondate" /><span class="mandatory"></span></label>
@@ -109,26 +109,19 @@
 		 if($('#connectionType').val()=='METERED')
 		 {
 		   $('#metereddetails').show();
-		  
+		   $('.showfields').show();
 		 }
 		
 			function validate(){
-				//bootbox.alert(document.forms[0].action);
+				
 				if($('#connectionType').val() !='METERED')
 					{
-						$('#monthlyFee').attr('required', 'required');
-						$('#existmeterCost').val('');
-						$('#existmeterName').val('');
-						$('#existmeterNo').val('');
-						$('#previousReading').val('');
-						$('#currentcurrentReading').val('');
-						$('#existreadingDate').val('');
-						$('#monthlyFee').attr('required', 'required');
+						$('#existmeterNo').removeAttr('required');
+						$('#previousReading').removeAttr('required');
+						$('#currentcurrentReading').removeAttr('required');
+						$('#existreadingDate').removeAttr('required');
 					}
 				else {
-					$('#monthlyFee').removeAttr('required');
-					$('#existmeterCost').attr('required', 'required');
-					$('#existmeterName').attr('required', 'required');
 					$('#existmeterNo').attr('required', 'required');
 					$('#previousReading').attr('required', 'required');
 					$('#currentcurrentReading').attr('required', 'required');
@@ -176,5 +169,6 @@
 	</div>
 </div>
 
+<script src="<cdn:url value='/resources/js/app/connectiondetails.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/newconnection.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/newconnection-dataentry.js?rnd=${app_release_no}'/>"></script>

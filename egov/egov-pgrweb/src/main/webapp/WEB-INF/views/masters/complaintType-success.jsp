@@ -65,6 +65,12 @@
 								value="<c:out value="${complaintType.code}" />" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
+							<spring:message code="lbl.local.name" />
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin view-content">
+							<c:out value="${complaintType.localName}"></c:out>
+						</div>
+						<div class="col-md-3 col-xs-6 add-margin">
 							<spring:message code="lbl.complaintTypeCode" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-code">
@@ -100,7 +106,7 @@
 							</c:choose>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<spring:message code="lbl.complaintTypeDesc" />
+							<spring:message code="lbl.complaintTypeDesc"/>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-isactive">
 							<c:choose>

@@ -190,7 +190,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		// Position position =
 		// eisCommonsManager.getPositionByUserId(Integer.valueOf(ApplicationThreadLocals.getUserId()));
 		Position position = null;
-		recovery.transition(true).start().withOwner(position);
+		recovery.transition().start().withOwner(position);
 		updateWfstate("Notice 155");
 		addActionMessage(getText("notice155.success"));
 		LOGGER.debug("RecoveryAction | startRecovery | end" + recovery);
@@ -412,7 +412,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 		// Position position =
 		// eisCommonsManager.getPositionByUserId(Integer.valueOf(ApplicationThreadLocals.getUserId()));
 		Position position = null;
-		recovery.transition(true).transition().withNextAction("END").withStateValue("END").withOwner(position)
+		recovery.transition().progress().withNextAction("END").withStateValue("END").withOwner(position)
 				.withComments(workflowBean.getComments());
 
 		Map<String, Object> paramMap = getNotice159Param(recovery);
@@ -457,7 +457,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 			// Position position =
 			// eisCommonsManager.getPositionByUserId(Integer.valueOf(ApplicationThreadLocals.getUserId()));
 			Position position = null;
-			recovery.transition(true).transition().withNextAction("Saved : " + value).withOwner(position)
+			recovery.transition().progress().withNextAction("Saved : " + value).withOwner(position)
 					.withComments(workflowBean.getComments());
 			addActionMessage(getText("file.save"));
 
@@ -467,7 +467,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 			// eisCommonsManager.getPositionByUserId(workflowBean.getApproverUserId());
 			Position position = null;
 			User approverUser = userService.getUserById(workflowBean.getApproverUserId().longValue());
-			recovery.transition(true).transition().withNextAction("Forwarded : " + value)
+			recovery.transition().progress().withNextAction("Forwarded : " + value)
 					.withStateValue("Forward/Approve").withOwner(position).withComments(workflowBean.getComments());
 			addActionMessage(getText("recovery.forward", new String[] { approverUser.getUsername() }));
 
@@ -477,7 +477,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 			Position position = null;
 			User approverUser = userService.getUserById(recovery.getCreatedBy().getId());
 
-			recovery.transition(true).transition().withNextAction("Approved : " + value)
+			recovery.transition().progress().withNextAction("Approved : " + value)
 					.withStateValue(getNextState(recovery.getStatus().getCode())).withOwner(position)
 					.withComments(workflowBean.getComments());
 			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUsername() }));
@@ -489,7 +489,7 @@ public class RecoveryAction extends BaseRecoveryAction {
 			Position position = null;
 			User approverUser = userService.getUserById(workflowBean.getApproverUserId().longValue());
 
-			recovery.transition(true).start().withNextAction(value).withStateValue(recovery.getStatus().getCode())
+			recovery.transition().start().withNextAction(value).withStateValue(recovery.getStatus().getCode())
 					.withOwner(position).withComments(workflowBean.getComments());
 			addActionMessage(getText("recovery.approve", new String[] { approverUser.getUsername() }));
 

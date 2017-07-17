@@ -110,13 +110,15 @@ $('#save').click(function() {
 	else {
 		if($('#trackMilestoneForm').valid()) {
 			var milestoneId = $('#id').val();
-			$('.loader-class').modal('show', {backdrop: 'static'});
 			$.ajax({
 				type: "POST",
 				url: "/egworks/milestone/track/" + milestoneId,
 				cache: true,
 				dataType: "json",
 				"data": getFormData(jQuery('form')),
+				beforeSend : function(){
+					$('.loader-class').modal('show', {backdrop: 'static'});
+				},
 				success: function (message) {
 					$('#trackMilestoneDiv').remove();
 					$('#successMessage').html(message);
@@ -130,9 +132,11 @@ $('#save').click(function() {
 						$('#errorMessage').append(value + '</br>');
 					});
 					$('#errorMessage').show();
+				},
+				complete : function(){
+					$('.loader-class').modal('hide');
 				}
 			});
-			$('.loader-class').modal('hide');
 		}
 		else
 			return false;

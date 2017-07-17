@@ -162,9 +162,9 @@
         <put-attribute name="page-title" value="title.editdataentry" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/newConnection-dataEntryEditForm.jsp"/>
     </definition>
-    <definition name="chairperson-details" extends="base_layout">
+    <definition name="chairperson-create" extends="base_layout">
         <put-attribute name="page-title" value="title.chair.person.master" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/application/chairperson-details.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/chairperson-create.jsp"/>
     </definition>
     <definition name="donation-master" extends="base_layout">
         <put-attribute name="page-title" value="title.donation.master" cascade="true"/>
@@ -361,6 +361,92 @@
      <definition name="mobilePayment-form" extends="base_layout">
         <put-attribute name="page-title" value="title.mobilepayment" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/mobile/mobilepayment-form.jsp"/> 
+    </definition>
+    
+     <definition name="arrearRegister-report" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.arrear.register" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/arrearRegister-report.jsp"/>
+    </definition>
+        <definition name="activate-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/activate-consumercode.jsp"/> 
+    </definition>
+    <definition name="connection-rectification" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/connection-rectification.jsp"/> 
+    </definition>
+    
+       <definition name="duplicate-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/duplicate-connection.jsp"/> 
+    </definition>
+           <definition name="closed-consumercode" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/closed-connection.jsp"/> 
+    </definition>
+     <definition name="linked-assessment" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/linked-assessment.jsp"/> 
+    </definition>
+    <definition name="closedconnection-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/closedconnection-success.jsp"/> 
+    </definition>
+     <definition name="activateconnection-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/activateconnection-success.jsp"/> 
+    </definition>
+    <definition name="duplicateconnection-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/deactivateconnection-success.jsp"/> 
+    </definition>
+       <definition name="linkedassessment-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.connectionrectification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/linkedassessment-success.jsp"/> 
+    </definition>
+    <definition name="chairperson-view" extends="base_layout">
+    	<put-attribute name="page-title" value="title.chairpersonmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/chairperson-view.jsp"></put-attribute>
+    </definition>
+       <definition name="chairpersondetails-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="title.chairpersonmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/chairpersondetails-edit.jsp"></put-attribute>
+    </definition>
+     <definition name="chairperson-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.chairpersonmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/chairperson-success.jsp"></put-attribute>
+    </definition>
+     <definition name="usageslab-create" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-create.jsp"></put-attribute>
+    </definition>
+     <definition name="usageslab-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-success.jsp"></put-attribute>
+    </definition>
+     <definition name="usageslab-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-search.jsp"></put-attribute>
+    </definition>
+     <definition name="usageslab-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="title.usageslabmaster" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/usageslab-edit.jsp"></put-attribute>
+    </definition>
+     <definition name="metered-rate-create" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-create.jsp"></put-attribute>
+    </definition>
+     <definition name="metered-rate-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-success.jsp"></put-attribute>
+    </definition>
+    <definition name="metered-rate-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-search.jsp"></put-attribute>
+    </definition>
+    <definition name="metered-rate-edit" extends="base_layout">
+    	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-edit.jsp"></put-attribute>
     </definition>
     
 </tiles-definitions>

@@ -60,9 +60,8 @@ import javax.validation.constraints.NotNull;
 @SequenceGenerator(name = ComplaintStatusMapping.SEQ_STATUSMAP, sequenceName = ComplaintStatusMapping.SEQ_STATUSMAP, allocationSize = 1)
 public class ComplaintStatusMapping extends AbstractPersistable<Long> {
 
-    private static final long serialVersionUID = -1671713502661376820L;
     public static final String SEQ_STATUSMAP = "SEQ_EGPGR_COMPLAINTSTATUS_MAPPING";
-
+    private static final long serialVersionUID = -1671713502661376820L;
     @Id
     @GeneratedValue(generator = SEQ_STATUSMAP, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -86,10 +85,12 @@ public class ComplaintStatusMapping extends AbstractPersistable<Long> {
     @NotNull
     private Integer orderNo;
 
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     protected void setId(final Long id) {
         this.id = id;
     }

@@ -54,6 +54,7 @@
 <input type="hidden" id="errorSpilloverNoRefund" value="<spring:message code='error.contractorBill.spillover.norefund' />" /> 
 <input type="hidden" id="errorNonSpilloverNoRefund" value="<spring:message code='error.contractorBill.nonspillover.norefund' />" /> 
 <input type="hidden" id="hiddenbilldate" value='<fmt:formatDate value="${contractorBillRegister.billdate }"/>'/>
+<input type="hidden" id="errorBillCutOffDate" value="<spring:message code='error.billdate.cutoff' />" />
 <div class="form-group">
 	<!-- TODO: remove this condition to make billdate editable after user finishes data entry -->
 	<c:choose>

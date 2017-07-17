@@ -1,10 +1,51 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~ accountability and the service delivery of the government  organizations.
+  ~
+  ~  Copyright (C) 2016  eGovernments Foundation
+  ~
+  ~  The updated version of eGov suite of products as by eGovernments Foundation
+  ~  is available at http://www.egovernments.org
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~  http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~  In addition to the terms of the GPL license to be adhered to in using this
+  ~  program, the following additional terms are to be complied with:
+  ~
+  ~      1) All versions of this program, verbatim or modified must carry this
+  ~         Legal Notice.
+  ~
+  ~      2) Any misrepresentation of the origin of the material is prohibited. It
+  ~         is required that all modified versions of this material be marked in
+  ~         reasonable ways as different from the original version.
+  ~
+  ~      3) This license does not grant any rights to any user of the program
+  ~         with regards to rights under trademark law for use of the trade names
+  ~         or trademarks of eGovernments Foundation.
+  ~
+  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+
+<project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>org.egov</groupId>
     <artifactId>egov-erp</artifactId>
-    <version>2.1.0-SNAPSHOT</version>
+    <version>3.0.0-SNAPSHOT</version>
 
     <packaging>pom</packaging>
 
@@ -74,6 +115,10 @@
             <id>JBoss Repository</id>
             <url>https://repository.jboss.org/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>JSPRESSO</id>
+            <url>http://repository.jspresso.org/maven2/</url>
+        </repository>
     </repositories>
 
     <pluginRepositories>
@@ -96,11 +141,11 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <build.number>${timestamp}</build.number>
         <app.version>${project.version}</app.version>
-        <versioneye.key />
-        <db.driver />
-        <db.url />
-        <db.user />
-        <db.password />
+        <versioneye.key/>
+        <db.driver/>
+        <db.url/>
+        <db.user/>
+        <db.password/>
         <disable.drop.db>true</disable.drop.db>
         <!-- Sonar properties -->
         <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
@@ -108,93 +153,93 @@
         <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
 
         <!-- Application server provided dependency versions -->
-        <hibernate-version>5.0.7.Final</hibernate-version>
-        <hibernate-search-version>5.5.1.Final</hibernate-search-version>
-        <hibernate-validator-version>5.2.3.Final</hibernate-validator-version>
+        <hibernate-version>5.0.10.Final</hibernate-version>
+        <hibernate-search-version>5.5.4.Final</hibernate-search-version>
+        <hibernate-validator-version>5.2.4.Final</hibernate-validator-version>
         <javax-validation-version>1.1.0.Final</javax-validation-version>
         <javax-servlet-api-version>1.0.0.Final</javax-servlet-api-version>
-        <javax-servlet-jstl-version>1.1.2.Final</javax-servlet-jstl-version>
+        <javax-servlet-jstl-version>1.1.3.Final</javax-servlet-jstl-version>
         <javax-servlet-jsp-version>1.0.1.Final</javax-servlet-jsp-version>
         <javax-jms-version>1.0.0.Final</javax-jms-version>
         <javax-mail-version>1.5.5</javax-mail-version>
-        <javax-el-version>3.0.1-b05</javax-el-version>
+        <javax-el-version>3.0.1-b08</javax-el-version>
         <xerces-version>2.11.0.SP4</xerces-version>
-        <postgres-version>9.4.1211</postgres-version>
+        <postgres-version>42.1.1</postgres-version>
 
         <!-- Other application dependency versions -->
-        <struts2-version>2.5.2</struts2-version>
-        <struts2-jquery-version>3.7.1</struts2-jquery-version>
-        <xstream-version>1.4.9</xstream-version>
-        <xpp3-version>1.1.4c</xpp3-version>
-        <spring-version>4.3.3.RELEASE</spring-version>
-        <spring-session-version>1.2.2.RELEASE</spring-session-version>
-        <spring-data-jpa-version>1.10.4.RELEASE</spring-data-jpa-version>
-        <spring-data-jpa-envers-version>1.0.4.RELEASE</spring-data-jpa-envers-version>
-        <spring-security-version>4.0.3.RELEASE</spring-security-version>
-        <spring-security-oauth2-version>2.0.11.RELEASE</spring-security-oauth2-version>
-        <spring-data-elasticsearch>2.0.5.RELEASE</spring-data-elasticsearch>
+        <struts2-version>2.5.10.1</struts2-version>
+        <struts2-jquery-version>4.0.2</struts2-jquery-version>
+        <xstream-version>1.4.10</xstream-version>
+        <spring-version>4.3.9.RELEASE</spring-version>
+        <spring-session-version>1.3.0.RELEASE</spring-session-version>
+        <spring-data-jpa-version>1.10.6.RELEASE</spring-data-jpa-version>
+        <spring-data-jpa-envers-version>1.0.6.RELEASE</spring-data-jpa-envers-version>
+        <spring-security-version>4.2.3.RELEASE</spring-security-version>
+        <spring-security-oauth2-version>2.1.1.RELEASE</spring-security-oauth2-version>
+        <spring-data-elasticsearch>2.0.6.RELEASE</spring-data-elasticsearch>
         <elastic-search-version>2.4.1</elastic-search-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
-        <quartz-version>2.2.3</quartz-version>
+        <quartz-version>2.3.0</quartz-version>
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
         <jackson-version>2.8.2</jackson-version>
-        <orika-core.version>1.4.5</orika-core.version>
-        <gson-version>2.7</gson-version>
-        <antisamy-version>1.5.3</antisamy-version>
+        <orika-core.version>1.5.1</orika-core.version>
+        <gson-version>2.8.0</gson-version>
+        <antisamy-version>1.5.5</antisamy-version>
         <jasypt-version>1.9.2</jasypt-version>
         <display-tag-version>1.2</display-tag-version>
         <jfreechart-version>1.0.19</jfreechart-version>
-        <groovy-all-version>2.4.7</groovy-all-version>
+        <groovy-all-version>2.4.12</groovy-all-version>
         <itext-version>2.1.7</itext-version>
         <commons-javaflow-version>20060411</commons-javaflow-version>
         <jexcelapi-version>2.6.12</jexcelapi-version>
         <commons-beanutils-version>1.9.3</commons-beanutils-version>
         <commons-config-version>1.10</commons-config-version>
         <commons-lang-version>2.6</commons-lang-version>
+        <commons-lang3-version>3.6</commons-lang3-version>
         <commons-email-version>1.4</commons-email-version>
         <commons-collections-version>3.2.2</commons-collections-version>
         <commons-codec-version>1.10</commons-codec-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
         <commons-io-version>2.5</commons-io-version>
-        <commons-fileupload-version>1.3.2</commons-fileupload-version>
-        <httpclient-version>4.5.2</httpclient-version>
+        <commons-fileupload-version>1.3.3</commons-fileupload-version>
+        <httpclient-version>4.5.3</httpclient-version>
         <sitemesh-version>2.4.2</sitemesh-version>
         <ehcache-web-version>2.0.4</ehcache-web-version>
-        <cglib-version>3.2.4</cglib-version>
-        <asm-all-version>3.3.1</asm-all-version>
-        <joda-time-version>2.9.4</joda-time-version>
+        <joda-time-version>2.9.9</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
-        <jsoup-version>1.9.2</jsoup-version>
+        <jsoup-version>1.10.3</jsoup-version>
         <jython-version>2.5.2</jython-version>
-        <flyway-core-version>4.0.3</flyway-core-version>
+        <flyway-core-version>4.2.0</flyway-core-version>
         <junit-version>4.12</junit-version>
         <mockito-all-version>1.10.19</mockito-all-version>
         <springockito-version>1.0.9</springockito-version>
         <easymock-version>3.4</easymock-version>
         <easymockclassextension-version>3.2</easymockclassextension-version>
         <hamcrest-all-version>1.3</hamcrest-all-version>
-        <slf4j-version>1.7.21</slf4j-version>
+        <slf4j-version>1.7.25</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
-        <google-guava-version>19.0</google-guava-version>
+        <google-guava-version>22.0</google-guava-version>
+        <google.zxing.version>3.3.0</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
-
+        <javaxt.core.version>1.7.8</javaxt.core.version>
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
         <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
-        <mvn.jacoco.plugin.version>0.7.7.201606060606</mvn.jacoco.plugin.version>
+        <mvn.jacoco.plugin.version>0.7.9</mvn.jacoco.plugin.version>
         <mvn.ear.plugin.version>2.10.1</mvn.ear.plugin.version>
-        <mvn.war.plugin.version>3.0.0</mvn.war.plugin.version>
+        <mvn.war.plugin.version>3.1.0</mvn.war.plugin.version>
         <mvn.jar.plugin.version>3.0.2</mvn.jar.plugin.version>
-        <mvn.compiler.plugin.version>3.6.0</mvn.compiler.plugin.version>
-        <mvn.dependency.plugin.version>2.10</mvn.dependency.plugin.version>
+        <mvn.compiler.plugin.version>3.6.1</mvn.compiler.plugin.version>
+        <mvn.dependency.plugin.version>3.0.1</mvn.dependency.plugin.version>
         <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
-        <mvn.sonar.plugin.version>3.2</mvn.sonar.plugin.version>
-        <mvn.wildfly.plugin.version>1.0.2.Final</mvn.wildfly.plugin.version>
-        <mvn.versioneye.plugin.version>3.11.0</mvn.versioneye.plugin.version>
-        <mvn.surefire.plugin.version>2.19.1</mvn.surefire.plugin.version>
+        <mvn.sonar.plugin.version>3.3.0.603</mvn.sonar.plugin.version>
+        <mvn.wildfly.plugin.version>1.1.0.Final</mvn.wildfly.plugin.version>
+        <mvn.versioneye.plugin.version>3.11.4</mvn.versioneye.plugin.version>
+        <mvn.surefire.plugin.version>2.20</mvn.surefire.plugin.version>
         <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
+        <mvn.clean.plugin.version>3.0.0</mvn.clean.plugin.version>
     </properties>
 
     <modules>
@@ -215,6 +260,7 @@
         <module>egov-adtax</module>
         <module>egov-wtms</module>
         <module>egov-tl</module>
+        <!-- <module>egov-bpa</module> -->
         <module>egov-commonsweb</module>
         <module>egov-eisweb</module>
         <module>egov-egiweb</module>
@@ -231,6 +277,7 @@
         <module>egov-wtmsweb</module>
         <module>egov-dashboardweb</module>
         <module>egov-tlweb</module>
+        <!-- <module>egov-bpaweb</module> -->
         <module>egov-ear</module>
         <module>egov-restapi</module>
         <module>egov-council</module>
@@ -239,6 +286,9 @@
              <module>egov-inventoryweb</module> -->
         <module>egov-stms</module>
         <module>egov-stmsweb</module>
+        <module>egov-mrs</module>
+        <module>egov-mrsweb</module>
+        <module>egov-services</module>
         <module>egov-bpms</module>
     </modules>
 
@@ -248,16 +298,6 @@
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
                 <version>${elastic-search-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>com.jayway.jsonpath</groupId>
-                        <artifactId>json-path</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>*</artifactId>
-                    </exclusion>
-                </exclusions>
             </dependency>
 
             <!-- HIBERNATE DEPENDENCIES START -->
@@ -348,16 +388,11 @@
                 <version>${struts2-version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>javassist</groupId>
+                        <groupId>org.javassist</groupId>
                         <artifactId>javassist</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>asm</groupId>
-                        <artifactId>*</artifactId>
                     </exclusion>
                 </exclusions>
             </dependency>
-
             <dependency>
                 <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-json-plugin</artifactId>
@@ -370,27 +405,7 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-rest-plugin</artifactId>
-                <version>${struts2-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>jackson-core-asl</artifactId>
-                    </exclusion>
-                    <exclusion>
-                        <groupId>org.codehaus.jackson</groupId>
-                        <artifactId>jackson-mapper-asl</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
                 <artifactId>struts2-convention-plugin</artifactId>
-                <version>${struts2-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.struts</groupId>
-                <artifactId>struts2-jasperreports-plugin</artifactId>
                 <version>${struts2-version}</version>
             </dependency>
             <dependency>
@@ -402,11 +417,6 @@
                 <groupId>com.thoughtworks.xstream</groupId>
                 <artifactId>xstream</artifactId>
                 <version>${xstream-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>xpp3</groupId>
-                <artifactId>xpp3_min</artifactId>
-                <version>${xpp3-version}</version>
             </dependency>
             <!-- STRUTS2 DEPENDENCIES END -->
 
@@ -438,7 +448,7 @@
             </dependency>
             <dependency>
                 <groupId>com.fasterxml.jackson.datatype</groupId>
-                <artifactId>jackson-datatype-hibernate4</artifactId>
+                <artifactId>jackson-datatype-hibernate5</artifactId>
                 <version>${jackson-version}</version>
             </dependency>
             <dependency>
@@ -480,7 +490,7 @@
                 <version>${orika-core.version}</version>
                 <exclusions>
                     <exclusion>
-                        <groupId>javassist</groupId>
+                        <groupId>org.javassist</groupId>
                         <artifactId>javassist</artifactId>
                     </exclusion>
                 </exclusions>
@@ -708,6 +718,11 @@
             </dependency>
             <dependency>
                 <groupId>org.apache.commons</groupId>
+                <artifactId>commons-lang3</artifactId>
+                <version>${commons-lang3-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
                 <artifactId>commons-email</artifactId>
                 <version>${commons-email-version}</version>
                 <exclusions>
@@ -761,6 +776,11 @@
                 <version>${google-guava-version}</version>
             </dependency>
             <dependency>
+                <groupId>com.google.zxing</groupId>
+                <artifactId>core</artifactId>
+                <version>${google.zxing.version}</version>
+            </dependency>
+            <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${httpclient-version}</version>
@@ -774,22 +794,6 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-web</artifactId>
                 <version>${ehcache-web-version}</version>
-            </dependency>
-            <dependency>
-                <groupId>cglib</groupId>
-                <artifactId>cglib</artifactId>
-                <version>${cglib-version}</version>
-                <exclusions>
-                    <exclusion>
-                        <groupId>org.ow2.asm</groupId>
-                        <artifactId>asm</artifactId>
-                    </exclusion>
-                </exclusions>
-            </dependency>
-            <dependency>
-                <groupId>asm</groupId>
-                <artifactId>asm-all</artifactId>
-                <version>${asm-all-version}</version>
             </dependency>
             <dependency>
                 <groupId>joda-time</groupId>
@@ -810,6 +814,11 @@
                 <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
                 <artifactId>recaptcha4j</artifactId>
                 <version>${recaptcha.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>javaxt</groupId>
+                <artifactId>javaxt-core</artifactId>
+                <version>${javaxt.core.version}</version>
             </dependency>
             <!-- MISC END -->
 
@@ -1000,6 +1009,10 @@
             <groupId>commons-fileupload</groupId>
             <artifactId>commons-fileupload</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-lang3</artifactId>
+        </dependency>
         <!-- COMMONS END -->
 
         <!-- SPRING DEPENDENCIES START -->
@@ -1074,6 +1087,13 @@
         </dependency>
         <!-- EMBEDDED REDIS SERVER END -->
 
+        <!-- ELASTICSEARCH DEPENDANCY STARTS -->
+        <dependency>
+            <groupId>org.elasticsearch</groupId>
+            <artifactId>elasticsearch</artifactId>
+        </dependency>
+        <!-- ELASTICSEARCH DEPENDANCY ENDS -->
+
         <!-- MISC STARTS -->
         <dependency>
             <groupId>com.google.guava</groupId>
@@ -1090,6 +1110,10 @@
             </exclusions>
         </dependency>
         <dependency>
+            <groupId>com.google.zxing</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+        <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
         </dependency>
@@ -1100,10 +1124,6 @@
         <dependency>
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>asm</groupId>
-            <artifactId>asm-all</artifactId>
         </dependency>
         <dependency>
             <groupId>ma.glasnost.orika</groupId>
@@ -1124,6 +1144,10 @@
         <dependency>
             <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
             <artifactId>recaptcha4j</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javaxt</groupId>
+            <artifactId>javaxt-core</artifactId>
         </dependency>
         <!-- MISC ENDS -->
 
@@ -1193,6 +1217,12 @@
         </dependency>
         <!-- DATABASE END -->
 
+        <!-- https://mvnrepository.com/artifact/com.netflix.zuul/zuul-core -->
+        <dependency>
+            <groupId>com.netflix.zuul</groupId>
+            <artifactId>zuul-core</artifactId>
+            <version>1.3.0</version>
+        </dependency>
     </dependencies>
 
     <build>
@@ -1226,7 +1256,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore />
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
@@ -1364,18 +1394,18 @@
                 <version>${mvn.surefire.plugin.version}</version>
             </plugin>
             <plugin>
-                 <groupId>org.flywaydb</groupId>
-                 <artifactId>flyway-maven-plugin</artifactId>
-                 <version>${flyway-core-version}</version>
-                 <configuration>
-                     <driver>${db.driver}</driver>
-                     <url>${db.url}</url>
-                     <user>${db.user}</user>
-                     <password>${db.password}</password>
-                     <skip>true</skip>
-                 </configuration>
+                <groupId>org.flywaydb</groupId>
+                <artifactId>flyway-maven-plugin</artifactId>
+                <version>${flyway-core-version}</version>
+                <configuration>
+                    <driver>${db.driver}</driver>
+                    <url>${db.url}</url>
+                    <user>${db.user}</user>
+                    <password>${db.password}</password>
+                    <skip>true</skip>
+                </configuration>
             </plugin>
-	        <plugin>
+            <plugin>
                 <groupId>com.versioneye</groupId>
                 <artifactId>versioneye-maven-plugin</artifactId>
                 <version>${mvn.versioneye.plugin.version}</version>

@@ -206,16 +206,6 @@
 		<td class="greybox apartmentRow">
 			<span class="bold"><s:property value="%{propertyDetail.apartment.name}" default="N/A"/></span>
 		</td>
-		<td class="greybox" colspan="2">
-			&nbsp;			
-		</td>
-	</tr>
-	
-	<tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> : </td>
-		<td class="bluebox"><s:checkbox name="propertyDetail.appurtenantLandChecked" disabled="true" id="appurtenantLandChecked"/>
-		</td>
 		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="greybox">
 			<span class="bold">
@@ -224,15 +214,15 @@
 			</span>
 		</td>
 	</tr>
-	<tr id="appurtenantRow">
+	<tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text> :</td>
+		<td class="greybox"><s:text name="Zone"></s:text>:</td>
 		<td class="greybox">
-			<span class="bold"><s:property value="%{propertyDetail.extentAppartenauntLand}" default="N/A"/></span>
+			<span class="bold">
+				<s:property value="%{zoneName}" default="N/A"/>
+			</span>
 		</td>
-		<td class="bluebox" colspan="2">
-			&nbsp;
-		</td>
+		<td class="greybox" colspan=2>&nbsp;</td>
 	</tr>
 	
 	<!-- Amenities section -->

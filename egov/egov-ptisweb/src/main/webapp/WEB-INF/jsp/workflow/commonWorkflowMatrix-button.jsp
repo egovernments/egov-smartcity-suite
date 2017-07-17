@@ -1,4 +1,4 @@
-<%@ include file="/includes/taglibs.jsp" %>
+<%@ include file="/includes/taglibs.jsp"%>
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -38,8 +38,16 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <script>
+jQuery.noConflict();
+jQuery(document).on('change', ".applicationcheckbox", function () {
+	var applicationCheckVal = jQuery('#applicationCheck').prop("checked");
+	 if(applicationCheckVal)
+		 jQuery('#Forward').removeAttr("disabled");
+	 else
+		 jQuery('#Forward').attr('disabled', 'disabled');
+});
+    
 	function validateWorkFlowApprover(name,errorDivId) {
 		document.getElementById("workFlowAction").value=name;
 	    var approverPosId = document.getElementById("approverPositionId");
@@ -59,31 +67,71 @@
 		}   
 		<s:if test="%{getNextAction()!='END'}">
 	    if((name=="Forward" || name=="forward") && approverPosId && (approverPosId.value == -1 || approverPosId.value == "")) {
-	        bootbox.alert("Please Select the Approver ");
+	        bootbox.alert("Please Select the Employee ");
 			return false;
 	    }
 	    if ((name=="Reject" || name=="reject")) {
 	    	var approverComments = document.getElementById("approverComments").value;
 	    	if (approverComments == null || approverComments == "") {
-	    		bootbox.alert("Please Enter Approver Remarks ");
+	    		bootbox.alert("Please Enter Remarks ");
 				return false;
 	    	}
 		}
 	    </s:if>
 	    return  onSubmit();
 	}
+
+	jQuery(document).ready(function(e){
+		if(jQuery('#applicationCheck').length == 0)
+			jQuery('#Forward').removeAttr('disabled');
+	});
+	
+	var popupWindow=null;
+	
+	function openReassignWindow()
+	{ 
+		var modelIdAndAppTypeParam = '<s:property value="%{transactionType}"/>'+"&"+'<s:property value="%{stateAwareId}"/>';
+		popupWindow = window.open('/ptis/reassign/'
+				+ modelIdAndAppTypeParam,
+				'_blank', 'width=650, height=500, scrollbars=yes', false);
+		jQuery('.loader-class').modal('show', {backdrop: ''});
+	}
+	
+	function closeAllWindows(){
+		popupWindow.close();
+		self.close();
+	}
+
+	function closeChildWindow(){
+		jQuery('.loader-class').modal('hide');
+		popupWindow.close();
+	}
+	
 </script>
 <div class="buttonbottom" align="center">
-	<s:hidden id="workFlowAction" name="workFlowAction"/>
+	<s:hidden id="workFlowAction" name="workFlowAction" />
 	<table style="width: 100%; text-align: center;">
 		<tr>
 			<td><s:iterator value="%{getValidActions()}" var="name">
 					<s:if test="%{name!=''}">
-						<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
-							id="%{name}" name="%{name}"
-							onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+						<s:if test="%{#name.equalsIgnoreCase('Forward')}">
+							<s:submit type="submit" value="%{name}" cssClass="buttonsubmit"
+								id="%{name}" name="%{name}" disabled="true"
+								onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+						</s:if>
+						<s:else>
+							<s:submit type="submit" cssClass="buttonsubmit" value="%{name}"
+								id="%{name}" name="%{name}"
+								onclick="return validateWorkFlowApprover('%{name}','jsValidationErrors');" />
+						</s:else>
 					</s:if>
-				</s:iterator> <input type="button" name="button2" id="button2" value="Close"
+				</s:iterator> <s:if test="%{(model.currentState.value).endsWith('NEW')}">
+					<s:if test="%{isReassignEnabled}">
+						<input type="button" value="Reassign" class="buttonsubmit"
+							id="Reassign" name="Reassign"
+							onclick="return openReassignWindow();" />
+					</s:if>
+				</s:if> <input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" /></td>
 		</tr>
 	</table>

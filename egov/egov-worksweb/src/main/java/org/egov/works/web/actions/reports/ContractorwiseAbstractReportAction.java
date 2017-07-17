@@ -52,7 +52,7 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.eis.service.AssignmentService;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -309,7 +309,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         reportParams.put("mainHeader", getText("contractorwiseAbstractReport.showTakenUpEst") + getContractorName());
         final ReportRequest reportRequest = new ReportRequest("contractorwiseReport_Estimates", commonBeanList,
                 reportParams);
-        reportRequest.setReportFormat(FileFormat.XLS);
+        reportRequest.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportRequest);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             reportInputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -632,7 +632,7 @@ public class ContractorwiseAbstractReportAction extends BaseFormAction {
         searchType = "report";
         search();
         final ReportRequest reportRequest = new ReportRequest(JASPER_NAME, resultList, getParamMap());
-        reportRequest.setReportFormat(FileFormat.XLS);
+        reportRequest.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportRequest);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             reportInputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

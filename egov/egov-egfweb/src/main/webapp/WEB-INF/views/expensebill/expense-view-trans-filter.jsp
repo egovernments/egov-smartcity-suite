@@ -41,201 +41,124 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%> 
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
-
-<div class="form-group">
+<div class="row add-border">
 	<c:choose>
 		<c:when test="${headerFields.contains('fund')}">
-			<c:choose>
-				<c:when test="${mandatoryFields.contains('fund')}">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.fund.name }" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.fund" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.fund.name }" />
-					</div>
-				</c:otherwise>
-			</c:choose>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.fund" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.fund.name }" />
+			</div>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-3 control-label text-right"></label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-md-3 col-xs-6 add-margin">
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 			</div>
 		</c:otherwise>
 	</c:choose>
 	
 	<c:choose>
 		<c:when test="${headerFields.contains('fundsource')}">
-			<c:choose>
-				<c:when test="${mandatoryFields.contains('fundsource')}">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sourcefund" />
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.fundsource.name }" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.sourcefund" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.fundsource.name }" />
-					</div>
-				</c:otherwise>
-			</c:choose>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.sourcefund" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.fundsource.name }" />
+			</div>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-2 control-label text-right"></label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-md-3 col-xs-6 add-margin">
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 			</div>
 		</c:otherwise>
 	</c:choose>
 </div>
 
-<div class="form-group">
+<div class="row add-border">
 	<c:choose>
 		<c:when test="${headerFields.contains('scheme')}">
-			<c:choose>
-				<c:when test="${mandatoryFields.contains('scheme')}">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" />
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.scheme.name }" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.scheme" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.scheme.name }" />
-					</div>
-				</c:otherwise>
-			</c:choose>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.scheme" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.scheme.name }" />
+			</div>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-3 control-label text-right"></label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-md-3 col-xs-6 add-margin"></div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 			</div>
 		</c:otherwise>
 	</c:choose>
 	
 	<c:choose>
 		<c:when test="${headerFields.contains('subscheme')}">
-			<c:choose>
-				<c:when test="${mandatoryFields.contains('subscheme')}">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" />
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.subScheme.name }" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.subscheme" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.subScheme.name }" />
-					</div>
-				</c:otherwise>
-			</c:choose>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.subscheme" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.subScheme.name }" />
+			</div>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-2 control-label text-right"></label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-md-3 col-xs-6 add-margin"></div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 			</div>
 		</c:otherwise>
 	</c:choose>
 </div>
 
-<div class="form-group">
+<div class="row add-border">
 	<c:choose>
 		<c:when test="${headerFields.contains('department')}">
-			<c:choose>
-				<c:when test="${mandatoryFields.contains('department')}">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" />
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.egDepartment.name }" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.department" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.egDepartment.name }" />
-					</div>
-				</c:otherwise>
-			</c:choose>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.department" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.egDepartment.name }" />
+			</div>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-3 control-label text-right"></label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-md-3 col-xs-6 add-margin"></div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 			</div>
 		</c:otherwise>
 	</c:choose>
 	
 	<c:choose>
 		<c:when test="${headerFields.contains('field')}">
-			<c:choose>
-				<c:when test="${mandatoryFields.contains('field')}">
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.field" />
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.fieldid.name }" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.functionary" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.fieldid.name }" />
-					</div>
-				</c:otherwise>
-			</c:choose>
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.field" />
+				<span class="mandatory"></span>
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.fieldid.name }" />
+			</div>
 		</c:when>
 		<c:otherwise>
-			<label class="col-sm-2 control-label text-right"></label>
-			<div class="col-sm-3 add-margin">
+			<div class="col-md-3 col-xs-6 add-margin"></div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
 			</div>
 		</c:otherwise>
 	</c:choose>
 </div>
-
-<div class="form-group">
-	<c:choose>
-		<c:when test="${headerFields.contains('functionary')}">
-			<c:choose>
-				<c:when test="${mandatoryFields.contains('functionary')}">
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.functionaryid" />
-						<span class="mandatory"></span>
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.functionaryid.name }" />
-					</div>
-				</c:when>
-				<c:otherwise>
-					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.functionaryid" />
-					</label>
-					<div class="col-sm-3 add-margin">
-						<c:out default="N/A" value="${egBillregister.egBillregistermis.functionaryid.name }" />
-					</div>
-				</c:otherwise>
-			</c:choose>
-		</c:when>
-		<c:otherwise>
-			<label class="col-sm-3 control-label text-right"></label>
-			<div class="col-sm-3 add-margin">
+<c:choose>
+	<c:when test="${headerFields.contains('functionary')}">
+		<div class="row add-border">
+			<div class="col-md-3 col-xs-6 add-margin">
+				<spring:message code="lbl.functionaryid" />
 			</div>
-		</c:otherwise>
-	</c:choose>
-</div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+				<c:out default="N/A" value="${egBillregister.egBillregistermis.functionaryid.name }" />
+			</div>
+			<div class="col-md-3 col-xs-6 add-margin"></div>
+			<div class="col-md-3 col-xs-6 add-margin view-content" id="ct-mobno">
+			</div>
+		</div>
+	</c:when>
+	<c:otherwise>
+	</c:otherwise>
+</c:choose>

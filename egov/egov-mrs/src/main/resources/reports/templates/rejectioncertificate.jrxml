@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
+<!-- 2016-12-19T16:40:28 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="report1" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="02afdd73-b1f8-4b82-bdec-843293ab245b">
+	<property name="ireport.zoom" value="1.2418426461183105"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="164"/>
+	<import value="org.egov.infstr.utils.*"/>
+	<import value="org.egov.infra.reporting.util.ReportUtil"/>
+	<parameter name="zoneName" class="java.lang.String"/>
+	<parameter name="placeOfMarriage" class="java.lang.String"/>
+	<parameter name="userName" class="java.lang.String"/>
+	<parameter name="rejectionDate" class="java.lang.String"/>
+	<parameter name="logoPath" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="registrationcenter" class="java.lang.String"/>
+	<parameter name="certificateDate" class="java.lang.String"/>
+	<parameter name="registrationNumber" class="java.lang.String"/>
+	<parameter name="applicationNumber" class="java.lang.String"/>
+	<parameter name="certificateno" class="java.lang.String"/>
+	<field name="rejectionReason" class="java.lang.String"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="86" splitType="Stretch">
+			<image onErrorType="Blank">
+				<reportElement x="32" y="15" width="60" height="60" uuid="998d0fba-5974-4e1c-8375-50f24b5b9731"/>
+				<imageExpression><![CDATA[$P{logoPath}]]></imageExpression>
+			</image>
+			<textField>
+				<reportElement x="127" y="6" width="341" height="29" uuid="ad5c5440-7048-45ae-b63e-32db641fd6a5"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="144" y="61" width="292" height="20" uuid="7574df15-41c7-4ecb-836e-e785c1c742a9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{zoneName}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="144" y="35" width="292" height="26" uuid="21166f1c-73cc-40a8-9cfa-d02a47aff64c"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Marriage Registration"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<detail>
+		<band height="194" splitType="Stretch">
+			<textField>
+				<reportElement x="0" y="3" width="555" height="26" uuid="fdcb1087-a58f-446e-9b4a-65ea370411d3"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Form - F"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="47" width="555" height="26" uuid="fdcb1087-a58f-446e-9b4a-65ea370411d3"/>
+				<textElement textAlignment="Center">
+					<font size="18" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Order on Rejection for Marriage Registration"]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="0" y="80" width="555" height="26" uuid="fdcb1087-a58f-446e-9b4a-65ea370411d3"/>
+				<textElement textAlignment="Center">
+					<font size="14" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["(See Section 7 and rule 6(6))"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="0" y="129" width="555" height="42" uuid="a6a3a340-d82c-43f9-a590-a28a152fbaa5"/>
+				<textElement markup="styled">
+					<font size="11" isItalic="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["I, Registrar of marriage <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">" + $P{userName} + " </style> after analysing the application and scrutinizing the documents on date <style forecolor=\"#000000\" isBold=\"true\" pdfFontName=\"Times-Bold\" pdfEncoding=\"Cp1252\" isPdfEmbedded=\"true\">"+ $P{rejectionDate} +", </style> rejects this application due to the following reason, "]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="50">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="0" y="0" width="555" height="42" uuid="7f14009b-634c-4304-a123-e0d3cafce3b5"/>
+				<box leftPadding="15"/>
+				<textElement verticalAlignment="Middle" markup="styled"/>
+				<textFieldExpression><![CDATA[$F{rejectionReason}]]></textFieldExpression>
+			</textField>
+		</band>
+		<band height="135">
+			<staticText>
+				<reportElement x="14" y="33" width="113" height="20" uuid="558c62af-5119-479d-a647-0821b3eadfaa"/>
+				<text><![CDATA[Center :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="127" y="33" width="191" height="20" uuid="369fb1da-a923-4933-b290-567f18d1ffe7"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{registrationcenter}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="127" y="104" width="145" height="20" uuid="a6e66122-7344-447b-9cac-29c1a609e2ae"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{certificateDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="103" width="43" height="20" uuid="94fd93da-ee7f-4601-876c-ed6792f671df"/>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="412" y="45" width="124" height="20" uuid="1cb4d697-fd0e-4d1f-81d4-221a3a0acc75"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Registrar of Marriage,]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="412" y="65" width="124" height="31" uuid="0e89869e-8cd9-439e-bf81-9dc2f029a709"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{zoneName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="56" width="113" height="20" uuid="9d85bbf6-c969-498b-9ba5-350d7e5be909"/>
+				<text><![CDATA[Registration Number:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="14" y="78" width="113" height="20" uuid="a79857e5-b9dd-4b6e-a70e-d8c59addf5ba"/>
+				<text><![CDATA[Application Number:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="127" y="78" width="159" height="20" uuid="2fe4b3f4-f1bb-40ff-b34f-d375f3fe4066"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{applicationNumber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="127" y="56" width="159" height="20" uuid="c81db8d3-d7d0-49de-9ce7-c20d88800961"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{registrationNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="14" y="13" width="113" height="20" uuid="c79f8d14-7a62-49e9-9ac5-3e8ecc653375"/>
+				<text><![CDATA[Certificate No :]]></text>
+			</staticText>
+			<textField isBlankWhenNull="true">
+				<reportElement x="127" y="15" width="191" height="18" uuid="eddd8d0e-8a4d-4d7b-ba84-f51490ba2054"/>
+				<textElement>
+					<font isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{certificateno}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<summary>
+		<band height="42" splitType="Stretch"/>
+	</summary>
+</jasperReport>

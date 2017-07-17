@@ -40,41 +40,65 @@
 
 package org.egov.adtax.service;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.adtax.entity.Advertisement;
+import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
-import org.egov.adtax.exception.HoardingValidationError;
 import org.egov.adtax.repository.AdvertisementRepository;
 import org.egov.collection.integration.services.CollectionIntegrationService;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.DateUtils;
+import org.hibernate.Criteria;
 import org.hibernate.Session;
+import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementService {
 
     @Autowired
-    private  AdvertisementRepository advertisementRepository;
-   
+    private AdvertisementRepository advertisementRepository;
+
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    protected CollectionIntegrationService collectionIntegrationService;
+
+    @Autowired
+    private AdvertisementDemandService advertisementDemandService;
+
+    @Autowired
+    @Qualifier("parentMessageSource")
+    private MessageSource advertisementMessageSource;
+
+    @Autowired
+    private ReportService reportService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
-    @Autowired
-    protected CollectionIntegrationService collectionIntegrationService;
-    
-    @Autowired
-    private AdvertisementDemandService advertisementDemandService;
 
     @Transactional
     public Advertisement createAdvertisement(final Advertisement hoarding) {
@@ -84,105 +108,112 @@ public class AdvertisementService {
         return advertisementRepository.save(hoarding);
     }
 
-    @Transactional
-    public Advertisement updateAdvertisement(final Advertisement advertisement) throws HoardingValidationError {
+    public Advertisement updateAdvertisement(final Advertisement advertisement) {
 
-        getCurrentSession().evict(advertisement);
-
-        final Advertisement actualHoarding = getHoardingByAdvertisementNumber(advertisement.getAdvertisementNumber());
-        final boolean anyDemandPendingForCollection = advertisementDemandService
-                .anyDemandPendingForCollection(actualHoarding);
-
-     /*    if (!actualHoarding.getAgency().equals(hoarding.getAgency()) && anyDemandPendingForCollection)
-            throw new HoardingValidationError("agency", "ADTAX.001");
-     */   // If demand already collected for the current year, fee updated from
-        // UI, do not update demand details. Update only fee details of hoarding.
-        // We should not allow user to update demand if any collection happened in
-        // the current year.
-
-     /*   if (advertisementDemandService.collectionDoneForThisYear(actualHoarding) && anyDemandPendingForCollection
-                && (!actualHoarding.getCurrentTaxAmount().equals(hoarding.getCurrentTaxAmount())
-                        || checkEncroachmentFeeChanged(hoarding, actualHoarding) || checkPendingTaxChanged(hoarding,
-                            actualHoarding)))
-            throw new HoardingValidationError("taxAmount", "ADTAX.002");
-     */   if (!actualHoarding.getStatus().equals(advertisement.getStatus())
-                && advertisement.getStatus().equals(AdvertisementStatus.CANCELLED) && anyDemandPendingForCollection)
-            throw new HoardingValidationError("status", "ADTAX.003");
-
-        // If demand pending for collection, then only update demand details.
-        // If demand fully paid and user changed tax details, then no need to
-        // update demand details.
-        if (anyDemandPendingForCollection)
-            advertisementDemandService.updateDemand(advertisement, actualHoarding.getDemandId());
-        roundOfAllTaxAmount(advertisement);
-        return advertisementRepository.save(advertisement);
+        return advertisementRepository.saveAndFlush(advertisement);
     }
 
     private void roundOfAllTaxAmount(final Advertisement hoarding) {
-/*        if(hoarding.getCurrentEncroachmentFee()!=null)
-            hoarding.setCurrentEncroachmentFee(hoarding.getCurrentEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
-        
-        if(hoarding.getCurrentTaxAmount()!=null)
-            hoarding.setCurrentTaxAmount( hoarding.getCurrentTaxAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
-            
-        if(hoarding.getPendingTax()!=null)
-            hoarding.setPendingTax( hoarding.getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP)); 
-*/    }
-
-    private boolean checkPendingTaxChanged(Advertisement hoarding, Advertisement actualHoarding) {
-        if (actualHoarding.getPendingTax()== null && hoarding.getPendingTax() != null)
-            return true;
-        else if (hoarding.getPendingTax() == null && actualHoarding.getPendingTax() != null)
-            return true;
-        else if (actualHoarding.getPendingTax() != null && hoarding.getPendingTax() != null
-                && !actualHoarding.getPendingTax().equals(hoarding.getPendingTax()))
-            return true;
-
-        return false;
-    }
-
-    private boolean checkEncroachmentFeeChanged(final Advertisement hoarding, final Advertisement actualHoarding) {
-
-      /*  if (actualHoarding.getCurrentEncroachmentFee() == null && hoarding.getCurrentEncroachmentFee() != null)
-            return true;
-        else if (hoarding.getCurrentEncroachmentFee() == null && actualHoarding.getCurrentEncroachmentFee() != null)
-            return true;
-        else if (actualHoarding.getCurrentEncroachmentFee() != null && hoarding.getCurrentEncroachmentFee() != null
-                && !actualHoarding.getCurrentEncroachmentFee().equals(hoarding.getCurrentEncroachmentFee()))
-            return true;
-*/
-        return false;
-    }
+        /*
+         * if(hoarding.getCurrentEncroachmentFee()!=null)
+         * hoarding.setCurrentEncroachmentFee(hoarding.getCurrentEncroachmentFee().setScale(2, BigDecimal.ROUND_HALF_UP));
+         * if(hoarding.getCurrentTaxAmount()!=null) hoarding.setCurrentTaxAmount( hoarding.getCurrentTaxAmount().setScale(2,
+         * BigDecimal.ROUND_HALF_UP)); if(hoarding.getPendingTax()!=null) hoarding.setPendingTax(
+         * hoarding.getPendingTax().setScale(2, BigDecimal.ROUND_HALF_UP));
+         */ }
 
     public List<Object[]> searchBySearchType(final Advertisement hoarding, final String searchType) {
         return advertisementRepository.fetchAdvertisementBySearchType(hoarding, searchType);
     }
-    
-    public int getActivePermanentAdvertisementsByCurrentInstallment(Installment installment) {
+
+    public int getActivePermanentAdvertisementsByCurrentInstallment(final Installment installment) {
         return advertisementRepository.findActivePermanentAdvertisementsByCurrentInstallment(installment);
     }
+
     @Transactional
     public List<Advertisement> findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
-            Installment installment, int noOfResultToFetch) {
+            final Installment installment, final int noOfResultToFetch) {
         return advertisementRepository.findActivePermanentAdvertisementsByCurrentInstallmentAndNumberOfResultToFetch(
                 installment, noOfResultToFetch);
     }
-    
+
     @Transactional(readOnly = true, propagation = Propagation.REQUIRES_NEW)
     public Advertisement getHoardingByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
-    
+
     public Advertisement findByAdvertisementNumber(final String hoardingNumber) {
         return advertisementRepository.findByAdvertisementNumber(hoardingNumber);
     }
-    
+
     public Advertisement findBy(final Long hoardingId) {
         return advertisementRepository.findOne(hoardingId);
     }
-    
+
     public Advertisement getAdvertisementByDemand(final EgDemand demand) {
         return advertisementRepository.findByDemandId(demand);
     }
-    
+
+    public ReportOutput getReportParamsForAcknowdgement(final AdvertisementPermitDetail permitDetail,
+            final String municipalityName, final String cityName) {
+        String applicantName;
+        final Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("municipality", municipalityName);
+        reportParams.put("cityname", cityName);
+        reportParams.put("wardName", permitDetail.getAdvertisement().getElectionWard().getName());
+        if (permitDetail.getAgency() != null && permitDetail.getAgency().getName() != null
+                && permitDetail.getAdvertiser() != null) {
+            applicantName = permitDetail.getAgency().getName().concat(" / ").concat(permitDetail.getOwnerDetail());
+        } else if (permitDetail.getOwnerDetail() == null) {
+            applicantName = permitDetail.getAgency().getName();
+        } else {
+            applicantName = permitDetail.getOwnerDetail();
+        }
+        reportParams.put("applicantName", applicantName);
+        reportParams.put("acknowledgementNo", permitDetail.getApplicationNumber());
+        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+        reportParams.put("currentDate", formatter.format(new Date()));
+        reportParams.put("licenceAddress", permitDetail.getAdvertisement().getAddress());
+        reportParams.put("dueDate", formatter.format(calculateDueDate(permitDetail)));
+        reportParams.put("Party's Copy", "Party's Copy");
+        reportParams.put("Office's Copy", "Office's Copy");
+        reportParams.put("ApplicationCentre", advertisementMessageSource.getMessage("msg.application.centre",
+                new String[] {}, Locale.getDefault()));
+        reportParams.put("appType",
+                permitDetail.getPreviousapplicationid() == null ? "New Advertisement" : "Renewal Advertisement");
+
+        final ReportRequest reportInput = new ReportRequest("adtax_hoarding_acknowledgement", permitDetail, reportParams);
+
+        return reportService.createReport(reportInput);
+
     }
+
+    public Date calculateDueDate(AdvertisementPermitDetail permitDetail) {
+        Date dueDate;
+        Date currentDate = new Date();
+        String slaNewAdvertisement = advertisementMessageSource.getMessage("msg.newAdvertisement.sla",
+                new String[] {}, Locale.getDefault());
+        String slaRenewAdvertisement = advertisementMessageSource.getMessage("msg.renewAdvertisement.sla",
+                new String[] {}, Locale.getDefault());
+        if (permitDetail.getPreviousapplicationid() == null)
+            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaNewAdvertisement));
+        else
+            dueDate = DateUtils.addDays(currentDate, Integer.parseInt(slaRenewAdvertisement));
+        return dueDate;
+
+    }
+
+    public List<Advertisement> getAdvertisement(Long wardno, String advertisementNo) {
+        final Criteria criteria = getCurrentSession().createCriteria(Advertisement.class, "advertisement");
+        if (wardno != null) {
+            criteria.createAlias("advertisement.ward", "ward");
+            criteria.add(Restrictions.eq("ward.boundaryNum", wardno));
+        }
+        if (advertisementNo != null)
+            criteria.add(Restrictions.eq("advertisementNumber", advertisementNo));
+        criteria.add(Restrictions.eq("status", AdvertisementStatus.ACTIVE));
+        return criteria.list();
+
+    }
+
+}

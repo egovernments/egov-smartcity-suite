@@ -63,7 +63,7 @@ import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.reporting.engine.ReportConstants.FileFormat;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -257,7 +257,7 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
         final AbstractEstimate estimate = abstractEstimateService.findById(id, false);
         final ReportRequest reportRequest = new ReportRequest("BillOfQuantities", estimate.getSORActivities(),
                 createHeaderParams(estimate, BOQ));
-        reportRequest.setReportFormat(FileFormat.XLS);
+        reportRequest.setReportFormat(ReportFormat.XLS);
         final ReportOutput reportOutput = reportService.createReport(reportRequest);
         if (reportOutput != null && reportOutput.getReportOutputData() != null)
             xlsInputStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -415,14 +415,14 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
 
         if (CANCEL_ACTION.equals(workFlowAction)) {
             if (wfInitiator.equals(userAssignment)) {
-                abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                abstractEstimate.transition().end().withSenderName(user.getName()).withComments(approverComments)
                         .withStateValue(AbstractEstimate.EstimateStatus.CANCELLED.toString()).withDateInfo(currentDate.toDate())
                         .withNextAction("END");
                 abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
                         AbstractEstimate.EstimateStatus.CANCELLED.toString()));
             }
         } else if (REJECT_ACTION.equals(workFlowAction)) {
-            abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
+            abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
                     .withStateValue(AbstractEstimate.EstimateStatus.REJECTED.toString()).withDateInfo(currentDate.toDate())
                     .withOwner(wfInitiator.getPosition()).withNextAction("");
             abstractEstimate.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(ABSTRACTESTIMATE,
@@ -453,11 +453,11 @@ public class AbstractEstimateAction extends GenericWorkFlowAction {
                 final WorkFlowMatrix wfmatrix = abstractEstimateWorkflowService.getWfMatrix(abstractEstimate.getStateType(), null,
                         null, getAdditionalRule(), abstractEstimate.getCurrentState().getValue(), null);
                 if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
-                    abstractEstimate.transition(true).end().withSenderName(user.getName()).withComments(approverComments)
+                    abstractEstimate.transition().end().withSenderName(user.getName()).withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withNextAction(wfmatrix.getNextAction());
                 else
-                    abstractEstimate.transition(true).withSenderName(user.getName()).withComments(approverComments)
+                    abstractEstimate.transition().progressWithStateCopy().withSenderName(user.getName()).withComments(approverComments)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(position)
                             .withNextAction(wfmatrix.getNextAction());
                 abstractEstimate

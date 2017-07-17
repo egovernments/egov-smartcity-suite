@@ -49,6 +49,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.StringUtils;
@@ -61,10 +62,10 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionBankRemittanceReport;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.service.ReceiptHeaderService;
 import org.egov.collection.service.RemittanceServiceImpl;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.Bankaccount;
+import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
@@ -95,7 +96,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
     private List<HashMap<String, Object>> paramList = null;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
-    private List<ReceiptHeader> voucherHeaderValues = new ArrayList<ReceiptHeader>(0);
+    private List<ReceiptHeader> voucherHeaderValues = new ArrayList<>(0);
     private String[] serviceNameArray;
     private String[] totalCashAmountArray;
     private String[] totalChequeAmountArray;
@@ -130,15 +131,17 @@ public class BankRemittanceAction extends BaseFormAction {
     private Long finYearId;
     private RemittanceServiceImpl remittanceService;
     private String voucherNumber;
-    private TreeMap<String, String> paymentModesMap = new TreeMap<String, String>();
+    private SortedMap<String, String> paymentModesMap = new TreeMap<>();
     private String paymentMode;
     private Date fromDate;
     private Date toDate;
     private Integer pageSize;
+    private String remittanceAmount;
+    private static final String REMITTANCE_LIST = "REMITTANCE_LIST";
+    private Boolean isBankCollectionRemitter;
 
     /**
-     * @param collectionsUtil
-     *            the collectionsUtil to set
+     * @param collectionsUtil the collectionsUtil to set
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -154,39 +157,49 @@ public class BankRemittanceAction extends BaseFormAction {
     private void populateRemittanceList() {
         final AjaxBankRemittanceAction ajaxBankRemittanceAction = new AjaxBankRemittanceAction();
         ajaxBankRemittanceAction.setPersistenceService(getPersistenceService());
+        ajaxBankRemittanceAction.setCollectionsUtil(collectionsUtil);
         ajaxBankRemittanceAction.bankBranchListOfService();
         addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
+        if (collectionsUtil.isBankCollectionRemitter(collectionsUtil.getLoggedInUser())) {
+            if (ajaxBankRemittanceAction.getBankBranchArrayList().isEmpty())
+                throw new ValidationException(Arrays.asList(new ValidationError(
+                        "The user is not mapped to any bank branch, please contact system administrator.",
+                        "bankremittance.error.bankcollectionoperator")));
+            else
+                branchId = ((Bankbranch) ajaxBankRemittanceAction.getBankBranchArrayList().get(0)).getId();
+        }
+
         if (branchId != null) {
             ajaxBankRemittanceAction.setBranchId(branchId);
             ajaxBankRemittanceAction.accountListOfService();
             addDropdownData(ACCOUNT_NUMBER_LIST, ajaxBankRemittanceAction.getBankAccountArrayList());
         } else
-            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.EMPTY_LIST);
-        addDropdownData("financialYearList", financialYearDAO.getAllPriorFinancialYears(new Date()));
-        final TreeMap<String, String> paymentModes = new TreeMap<String, String>() {
-            {
-                put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
-                put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
-            }
-        };
+            addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
+        addDropdownData("financialYearList", financialYearDAO.getAllActivePostingAndNotClosedFinancialYears());
+        final TreeMap<String, String> paymentModes = new TreeMap<>();
+        paymentModes.put(CollectionConstants.INSTRUMENTTYPE_CASH, CollectionConstants.INSTRUMENTTYPE_CASH);
+        paymentModes.put(CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD, CollectionConstants.INSTRUMENTTYPE_CHEQUEORDD);
         paymentModesMap.putAll(paymentModes);
     }
 
     public String getJurisdictionBoundary() {
         final User user = collectionsUtil.getLoggedInUser();
-        final Employee employee = employeeService.getEmployeeById(user.getId());
-        final StringBuilder jurValuesId = new StringBuilder();
-        for (final Jurisdiction element : employee.getJurisdictions()) {
-            if (jurValuesId.length() > 0)
-                jurValuesId.append(',');
-            jurValuesId.append(element.getBoundary().getId());
+        if (!collectionsUtil.isBankCollectionRemitter(user)) {
+            final Employee employee = employeeService.getEmployeeById(user.getId());
+            final StringBuilder jurValuesId = new StringBuilder();
+            for (final Jurisdiction element : employee.getJurisdictions()) {
+                if (jurValuesId.length() > 0)
+                    jurValuesId.append(',');
+                jurValuesId.append(element.getBoundary().getId());
 
-            for (final Boundary boundary : element.getBoundary().getChildren()) {
-                jurValuesId.append(',');
-                jurValuesId.append(boundary.getId());
+                for (final Boundary boundary : element.getBoundary().getChildren()) {
+                    jurValuesId.append(',');
+                    jurValuesId.append(boundary.getId());
+                }
             }
-        }
-        return jurValuesId.toString();
+            return jurValuesId.toString();
+        } else
+            return "";
     }
 
     @Action(value = "/receipts/bankRemittance-listData")
@@ -194,10 +207,6 @@ public class BankRemittanceAction extends BaseFormAction {
     public String listData() {
         isListData = true;
         populateRemittanceList();
-        if (fromDate != null && fromDate.before(financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
-            addActionError(getText("bankremittance.error.fromdate.lessthan.financialyear"));
-        if (toDate != null && toDate.before(financialYearDAO.getFinancialYearByDate(new Date()).getStartingDate()))
-            addActionError(getText("bankremittance.error.todate.lessthan.financialyear"));
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
         if (!hasErrors()) {
@@ -208,8 +217,8 @@ public class BankRemittanceAction extends BaseFormAction {
             final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(serviceFundQueryStr);
             final List<Object[]> queryResults = serviceFundQuery.list();
 
-            final List serviceCodeList = new ArrayList<String>(0);
-            final List fundCodeList = new ArrayList<String>(0);
+            final List<String> serviceCodeList = new ArrayList<>(0);
+            final List<String> fundCodeList = new ArrayList<>(0);
             for (int i = 0; i < queryResults.size(); i++) {
                 final Object[] arrayObjectInitialIndex = queryResults.get(i);
                 serviceCodeList.add(arrayObjectInitialIndex[0].toString());
@@ -256,15 +265,16 @@ public class BankRemittanceAction extends BaseFormAction {
         if (!showRemitDate.isEmpty() && showRemitDate.equals(CollectionConstants.YES))
             showRemittanceDate = true;
 
-        addDropdownData("bankBranchList", Collections.EMPTY_LIST);
-        addDropdownData("accountNumberList", Collections.EMPTY_LIST);
+        isBankCollectionRemitter = collectionsUtil.isBankCollectionOperator(collectionsUtil.getLoggedInUser());
+        addDropdownData("bankBranchList", Collections.emptyList());
+        addDropdownData("accountNumberList", Collections.emptyList());
     }
 
     @Action(value = "/receipts/bankRemittance-create")
     @ValidationErrorPage(value = NEW)
     public String create() throws InstantiationException, IllegalAccessException {
         final long startTimeMillis = System.currentTimeMillis();
-        BigInteger accountNumber = null;
+        BigInteger accountNumber;
         String serviceName = "";
         String fundCode = "";
 
@@ -287,8 +297,7 @@ public class BankRemittanceAction extends BaseFormAction {
         final Object queryResults = bankAccountQry.uniqueResult();
         accountNumber = (BigInteger) queryResults;
         accountNumberId = accountNumber != null ? accountNumber.intValue() : accountNumberId;
-        if (accountNumber == null || accountNumber.equals(-1) || accountNumber != null
-                && accountNumber.intValue() != accountNumberId)
+        if (accountNumber == null || accountNumber.intValue() == -1 && accountNumber.intValue() != accountNumberId)
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "Bank Account for the Service and Fund is not mapped", "bankremittance.error.bankaccounterror")));
         voucherHeaderValues = remittanceService.createBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
@@ -297,9 +306,9 @@ public class BankRemittanceAction extends BaseFormAction {
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
         LOGGER.info("$$$$$$ Time taken to persist the remittance list (ms) = " + elapsedTimeMillis);
         bankRemittanceList = remittanceService.prepareBankRemittanceReport(voucherHeaderValues);
-        if (getSession().get("REMITTANCE_LIST") != null)
-            getSession().remove("REMITTANCE_LIST");
-        getSession().put("REMITTANCE_LIST", bankRemittanceList);
+        if (getSession().get(REMITTANCE_LIST) != null)
+            getSession().remove(REMITTANCE_LIST);
+        getSession().put(REMITTANCE_LIST, bankRemittanceList);
         final Bankaccount bankAcc = bankaccountHibernateDAO.findById(Long.valueOf(accountNumberId), false);
         bankAccount = bankAcc.getAccountnumber();
         bank = bankAcc.getBankbranch().getBank().getName();
@@ -325,32 +334,28 @@ public class BankRemittanceAction extends BaseFormAction {
         if (receiptDateArray != null) {
             final String[] filterReceiptDateArray = removeNullValue(receiptDateArray);
             final String receiptEndDate = filterReceiptDateArray[filterReceiptDateArray.length - 1];
-            if (!receiptEndDate.isEmpty())
-                try {
-                    if (remittanceDate != null && remittanceDate.before(dateFomatter.parse(receiptEndDate)))
-                        addActionError(getText("bankremittance.before.receiptdate"));
-                } catch (final ParseException e) {
-                    LOGGER.debug("Exception in parsing date  " + receiptEndDate + " - " + e.getMessage());
-                    throw new ApplicationRuntimeException("Exception while parsing receiptEndDate date", e);
-                }
+            try {
+                if (!receiptEndDate.isEmpty() && remittanceDate != null
+                        && remittanceDate.before(dateFomatter.parse(receiptEndDate)))
+                    addActionError(getText("bankremittance.before.receiptdate"));
+            } catch (final ParseException e) {
+                LOGGER.debug("Exception in parsing date  " + receiptEndDate + " - " + e.getMessage());
+                throw new ApplicationRuntimeException("Exception while parsing receiptEndDate date", e);
+            }
         }
     }
 
     private String[] removeNullValue(String[] receiptDateArray) {
-        final List<String> list = new ArrayList<String>();
+        final List<String> list = new ArrayList<>();
         for (final String s : receiptDateArray)
             if (s != null && s.length() > 0)
                 list.add(s);
-        receiptDateArray = list.toArray(new String[list.size()]);
-        return receiptDateArray;
+        return list.toArray(new String[list.size()]);
     }
 
     @Override
     public Object getModel() {
         return receiptHeaderIntsance;
-    }
-
-    public void setReceiptHeaderService(final ReceiptHeaderService receiptHeaderService) {
     }
 
     /**
@@ -361,8 +366,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param paramList
-     *            the paramList to set
+     * @param paramList the paramList to set
      */
     public void setParamList(final List<HashMap<String, Object>> paramList) {
         this.paramList = paramList;
@@ -376,8 +380,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param serviceName
-     *            the serviceName to set
+     * @param serviceName the serviceName to set
      */
     public void setServiceNameArray(final String[] serviceNameArray) {
         this.serviceNameArray = serviceNameArray;
@@ -391,8 +394,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalCashAmount
-     *            the totalCashAmount to set
+     * @param totalCashAmount the totalCashAmount to set
      */
     public void setTotalCashAmountArray(final String[] totalCashAmountArray) {
         this.totalCashAmountArray = totalCashAmountArray;
@@ -406,8 +408,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalChequeAmount
-     *            the totalChequeAmount to set
+     * @param totalChequeAmount the totalChequeAmount to set
      */
     public void setTotalChequeAmountArray(final String[] totalChequeAmountArray) {
         this.totalChequeAmountArray = totalChequeAmountArray;
@@ -421,8 +422,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param receiptDate
-     *            the receiptDate to set
+     * @param receiptDate the receiptDate to set
      */
     public void setReceiptDateArray(final String[] receiptDateArray) {
         this.receiptDateArray = receiptDateArray;
@@ -436,8 +436,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param voucherHeaderValues
-     *            the voucherHeaderValues to set
+     * @param voucherHeaderValues the voucherHeaderValues to set
      */
     public void setVoucherHeaderValues(final List<ReceiptHeader> voucherHeaderValues) {
         this.voucherHeaderValues = voucherHeaderValues;
@@ -451,8 +450,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param fundCodeArray
-     *            the fundCodeArray to set
+     * @param fundCodeArray the fundCodeArray to set
      */
     public void setFundCodeArray(final String[] fundCodeArray) {
         this.fundCodeArray = fundCodeArray;
@@ -466,8 +464,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param departmentCodeArray
-     *            the departmentCodeArray to set
+     * @param departmentCodeArray the departmentCodeArray to set
      */
     public void setDepartmentCodeArray(final String[] departmentCodeArray) {
         this.departmentCodeArray = departmentCodeArray;
@@ -481,8 +478,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param totalCardAmountArray
-     *            the totalCardAmountArray to set
+     * @param totalCardAmountArray the totalCardAmountArray to set
      */
     public void setTotalCardAmountArray(final String[] totalCardAmountArray) {
         this.totalCardAmountArray = totalCardAmountArray;
@@ -496,8 +492,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param positionUser
-     *            the positionUser to set
+     * @param positionUser the positionUser to set
      */
     public void setPositionUser(final Integer positionUser) {
         this.positionUser = positionUser;
@@ -511,8 +506,7 @@ public class BankRemittanceAction extends BaseFormAction {
     }
 
     /**
-     * @param designationId
-     *            the designationId to set
+     * @param designationId the designationId to set
      */
     public void setDesignationId(final Integer designationId) {
         this.designationId = designationId;
@@ -634,11 +628,11 @@ public class BankRemittanceAction extends BaseFormAction {
         this.voucherNumber = voucherNumber;
     }
 
-    public TreeMap<String, String> getPaymentModesMap() {
+    public SortedMap<String, String> getPaymentModesMap() {
         return paymentModesMap;
     }
 
-    public void setPaymentModesMap(final TreeMap<String, String> paymentModesMap) {
+    public void setPaymentModesMap(final SortedMap<String, String> paymentModesMap) {
         this.paymentModesMap = paymentModesMap;
     }
 
@@ -673,4 +667,21 @@ public class BankRemittanceAction extends BaseFormAction {
     public void setPageSize(Integer pageSize) {
         this.pageSize = pageSize;
     }
+
+    public String getRemittanceAmount() {
+        return remittanceAmount;
+    }
+
+    public void setRemittanceAmount(String remittanceAmount) {
+        this.remittanceAmount = remittanceAmount;
+    }
+
+    public Boolean getIsBankCollectionRemitter() {
+        return isBankCollectionRemitter;
+    }
+
+    public void setIsBankCollectionRemitter(Boolean isBankCollectionRemitter) {
+        this.isBankCollectionRemitter = isBankCollectionRemitter;
+    }
+
 }

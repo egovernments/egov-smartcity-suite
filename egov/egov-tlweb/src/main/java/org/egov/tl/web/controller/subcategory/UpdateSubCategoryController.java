@@ -1,4 +1,3 @@
-
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
@@ -41,13 +40,11 @@
 
 package org.egov.tl.web.controller.subcategory;
 
-import javax.validation.Valid;
-
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.FeeTypeService;
-import org.egov.tl.service.masters.LicenseCategoryService;
-import org.egov.tl.service.masters.LicenseSubCategoryService;
-import org.egov.tl.service.masters.UnitOfMeasurementService;
+import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.LicenseSubCategoryService;
+import org.egov.tl.service.UnitOfMeasurementService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -55,14 +52,19 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/licensesubcategory")
 public class UpdateSubCategoryController {
 
-    private final LicenseSubCategoryService licenseSubCategoryService;
+    @Autowired
+    private LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
     private LicenseCategoryService licenseCategoryService;
@@ -73,42 +75,32 @@ public class UpdateSubCategoryController {
     @Autowired
     private FeeTypeService feeTypeService;
 
-    @Autowired
-    public UpdateSubCategoryController(final LicenseSubCategoryService licenseSubCategoryService) {
-        this.licenseSubCategoryService = licenseSubCategoryService;
-    }
-
     @ModelAttribute
-    public LicenseSubCategory licenseSubCategoryModel(@PathVariable final String code) {
-        return licenseSubCategoryService.findSubCategoryByCode(code);
+    public LicenseSubCategory licenseSubCategory(@PathVariable String code) {
+        return licenseSubCategoryService.getSubCategoryByCode(code);
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.GET)
-    public String subCategoryUpdateForm(@ModelAttribute @Valid final LicenseSubCategory licenseSubCategory,
-            final Model model) {
-        populateDropdownData(model);
+    @RequestMapping(value = "/update/{code}", method = GET)
+    public String showSubCategoryUpdateForm(Model model) {
+        prepareSubCategoryAssociations(model);
         return "subcategory-update";
     }
 
-    @RequestMapping(value = "/update/{code}", method = RequestMethod.POST)
-    public String updateSubCategory(@ModelAttribute @Valid final LicenseSubCategory licenseSubCategory,
-            final BindingResult errors,
-            final RedirectAttributes additionalAttr, final Model model) {
-
-        if (errors.hasErrors()) {
-            populateDropdownData(model);
+    @RequestMapping(value = "/update/{code}", method = POST)
+    public String updateSubCategory(@ModelAttribute @Valid LicenseSubCategory licenseSubCategory,
+                                    BindingResult bindingResult, RedirectAttributes responseAttrbs, Model model) {
+        if (bindingResult.hasErrors()) {
+            prepareSubCategoryAssociations(model);
             return "subcategory-update";
         }
-
-        licenseSubCategoryService.updateLicenseSubCategory(licenseSubCategory);
-        additionalAttr.addFlashAttribute("message", "msg.success.subcategory.update");
+        licenseSubCategoryService.updateSubCategory(licenseSubCategory);
+        responseAttrbs.addFlashAttribute("message", "msg.success.subcategory.update");
         return "redirect:/licensesubcategory/view/" + licenseSubCategory.getCode();
     }
 
-    private void populateDropdownData(final Model model) {
-        model.addAttribute("licenseCategories", licenseCategoryService.findAll());
+    private void prepareSubCategoryAssociations(Model model) {
+        model.addAttribute("licenseCategories", licenseCategoryService.getCategories());
         model.addAttribute("licenseFeeTypes", feeTypeService.findAll());
-        model.addAttribute("licenseUomTypes", unitOfMeasurementService.findAll());
+        model.addAttribute("licenseUomTypes", unitOfMeasurementService.getAllUOM());
     }
-
 }

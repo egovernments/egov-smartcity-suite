@@ -97,6 +97,7 @@ public class ContractorGradeAction extends SearchFormAction {
 
     @Action(value = "/masters/contractorGrade-newform")
     public String newform() {
+        mode = WorksConstants.NEW;
         return NEW;
     }
 

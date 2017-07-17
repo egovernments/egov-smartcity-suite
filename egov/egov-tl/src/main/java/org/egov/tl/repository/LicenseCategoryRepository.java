@@ -49,8 +49,6 @@ import java.util.List;
 @Repository
 public interface LicenseCategoryRepository extends JpaRepository<LicenseCategory, Long> {
 
-    LicenseCategory findByNameIgnoreCase(String name);
-
     LicenseCategory findByCodeIgnoreCase(String code);
 
     List<LicenseCategory> findAllByOrderByNameAsc();

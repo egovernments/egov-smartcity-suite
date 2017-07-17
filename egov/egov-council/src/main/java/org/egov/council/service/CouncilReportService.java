@@ -39,8 +39,6 @@
  */
 package org.egov.council.service;
 
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -49,7 +47,7 @@ import org.apache.commons.lang.WordUtils;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingMOM;
-import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -63,66 +61,51 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class CouncilReportService {
 
-    private final String AGENDA = "agenda";
-    private final String MEETINGMOM = "meetingMom";
-    private final String subReportPath = "agendaDetails.jasper";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
+    private static final String AGENDA = "agenda";
+    private static final String MEETINGMOM = "meetingMom";
 
     @Autowired
     private ReportService reportService;
 
-    public byte[] generatePDFForAgendaDetails(CouncilMeeting councilMeeting, String logoPath) {
+    public byte[] generatePDFForAgendaDetails(final CouncilMeeting councilMeeting, final String logoPath) {
+        ReportRequest reportInput = null;
         if (councilMeeting != null) {
-            final Map<String, Object> agendaDetails = new HashMap<String, Object>();
-            List<CouncilAgendaDetails> agendaDetailsList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
+            final Map<String, Object> agendaDetails = new HashMap<>();
+            final List<CouncilAgendaDetails> agendaDetailsList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
                     .getAgendaDetails();
-
-            Collections.sort(agendaDetailsList, new Comparator<CouncilAgendaDetails>() {
-                @Override
-                public int compare(CouncilAgendaDetails f1, CouncilAgendaDetails f2) {
-                    return f1.getItemNumber().compareTo(f2.getItemNumber());
-                }
-            });
-
+            agendaDetailsList.sort((final CouncilAgendaDetails f1, final CouncilAgendaDetails f2) -> f1.getItemNumber()
+                    .compareTo(f2.getItemNumber()));
             agendaDetails.put("agendaList", agendaDetailsList);
             reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting, logoPath));
         }
-        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.RTF);
         reportInput.setPrintDialogOnOpenReport(false);
-      return createReport(reportInput).getReportOutputData();
+        return createReport(reportInput).getReportOutputData();
 
     }
-    public byte[] generatePDFForMom(CouncilMeeting councilMeeting, String logoPath) {
+
+    public byte[] generatePDFForMom(final CouncilMeeting councilMeeting, final String logoPath) {
+        ReportRequest reportInput = null;
         if (councilMeeting != null) {
-            final Map<String, Object> momDetails = new HashMap<String, Object>();
-            List<MeetingMOM> meetingMomList = councilMeeting.getMeetingMOMs();
-
-            Collections.sort(meetingMomList, new Comparator<MeetingMOM>() {
-                @Override
-                public int compare(MeetingMOM f1, MeetingMOM f2) {
-                    return f1.getItemNumber().compareTo(f2.getItemNumber());
-                }
-            });
-
+            final Map<String, Object> momDetails = new HashMap<>();
+            final List<MeetingMOM> meetingMomList = councilMeeting.getMeetingMOMs();
+            meetingMomList.sort((final MeetingMOM f1, final MeetingMOM f2) -> f1.getItemNumber().compareTo(f2.getItemNumber()));
             momDetails.put("meetingMOMList", meetingMomList);
-            //momDetails.put("meetingAttendenceList", councilMeeting.getMeetingAttendence());
             reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
         }
-        reportInput.setReportFormat(ReportConstants.FileFormat.PDF);
+        reportInput.setReportFormat(ReportFormat.RTF);
         reportInput.setPrintDialogOnOpenReport(false);
-      return createReport(reportInput).getReportOutputData();
+        return createReport(reportInput).getReportOutputData();
 
     }
 
+    private Map<String, Object> buildReportParameters(final CouncilMeeting councilMeeting, final String logoPath) {
 
-    private Map<String, Object> buildReportParameters(CouncilMeeting councilMeeting, String logoPath) {
-
-        StringBuffer meetingDateTimeLocation = new StringBuffer();
-
+        final StringBuilder meetingDateTimeLocation = new StringBuilder();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("logoPath", logoPath);
-        reportParams.put("commiteeType", WordUtils.capitalize(councilMeeting.getCommitteeType().getName()).toString());
-        reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()).toString());
+        reportParams.put("commiteeType", WordUtils.capitalize(councilMeeting.getCommitteeType().getName()));
+        reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()));
         meetingDateTimeLocation.append(DateUtils.getDefaultFormattedDate(councilMeeting.getMeetingDate()));
         if (null != councilMeeting.getMeetingTime()) {
             meetingDateTimeLocation.append(' ');
@@ -132,12 +115,12 @@ public class CouncilReportService {
             meetingDateTimeLocation.append(' ');
             meetingDateTimeLocation.append(councilMeeting.getMeetingLocation());
         }
-        reportParams.put("meetingDate", councilMeeting.getMeetingDate().toString() != null ?councilMeeting.getMeetingDate().toString():" " );
-        reportParams.put("meetingTime", councilMeeting.getMeetingTime() != null ? councilMeeting.getMeetingTime():" ");
-        reportParams.put("meetingPlace", councilMeeting.getMeetingLocation() != null ? councilMeeting.getMeetingLocation():" ");
+        reportParams.put("meetingDate",
+                councilMeeting.getMeetingDate().toString() != null ? councilMeeting.getMeetingDate().toString() : " ");
+        reportParams.put("meetingTime", councilMeeting.getMeetingTime() != null ? councilMeeting.getMeetingTime() : " ");
+        reportParams.put("meetingPlace", councilMeeting.getMeetingLocation() != null ? councilMeeting.getMeetingLocation() : " ");
         reportParams.put("meetingDateTimePlace", meetingDateTimeLocation.toString());
         reportParams.put("cityName", ReportUtil.getCityName());
-        //reportParams.put("agendaSubReportPath", ReportUtil.getTemplateAsStream(subReportPath));
         return reportParams;
     }
 

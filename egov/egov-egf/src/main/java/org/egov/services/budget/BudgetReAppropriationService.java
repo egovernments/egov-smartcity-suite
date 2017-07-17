@@ -159,7 +159,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
         final BudgetDetail savedBudgetDetail = budgetDetailService.createBudgetDetail(detail, position, persistenceService);
         budgetDetailService.applyAuditing(savedBudgetDetail);
         budgetDetailService.persist(savedBudgetDetail);
-        // detail.transition(true).end().withOwner(position);
+        // detail.transition().end().withOwner(position);
         return savedBudgetDetail;
     }
 
@@ -571,8 +571,7 @@ public class BudgetReAppropriationService extends PersistenceService<BudgetReApp
                 for (final BudgetReAppropriationView appropriation : newBudgetReAppropriationList) {
                     if (budgetDetailService.getBudgetDetail(appropriation.getBudgetDetail().getFund().getId(), appropriation
                             .getBudgetDetail().getFunction().getId(), appropriation.getBudgetDetail().getExecutingDepartment()
-                            .getId(), appropriation.getBudgetDetail().getBudgetGroup().getId(), appropriation.getBudgetDetail()
-                            .getBudget().getId()) == null) {
+                            .getId(), appropriation.getBudgetDetail().getBudgetGroup().getId()) == null) {
                         detail = createApprovedBudgetDetail(appropriation, position);
                         if (!checkRowEmpty(appropriation)) {
                             validateMandatoryFields(newBudgetReAppropriationList);

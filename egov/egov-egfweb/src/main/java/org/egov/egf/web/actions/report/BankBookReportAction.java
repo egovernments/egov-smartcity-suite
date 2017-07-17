@@ -63,6 +63,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
@@ -234,6 +235,7 @@ public class BankBookReportAction extends BaseFormAction {
         return headerFields.contains(fieldName);
     }
 
+    @ReadOnly
     @Action(value = "/report/bankBookReport-ajaxLoadBankBook")
     public String ajaxLoadBankBook() {
         if (parameters.containsKey("bankAccount.id") && parameters.get("bankAccount.id")[0] != null) {

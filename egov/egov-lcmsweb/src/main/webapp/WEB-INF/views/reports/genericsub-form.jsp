@@ -46,20 +46,21 @@
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<form:form class="form-horizontal form-groups-bordered"
-			id="genericSubregisterform" name="genericSubregisterform" modelAttribute="genericSubReportResult"
-			method="get">
+			id="genericSubregisterform" name="genericSubregisterform"
+			modelAttribute="legalSubReportResult" method="get">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Generic Report</div>
+					<div class="panel-title">Generic Sub Report</div>
 				</div>
 				<div class="panel-body custom-form">
+				<div class="form-group" id="aggregated">
 					<div class="form-group">
 						<label for="field-1" class="col-sm-4 control-label"><spring:message
 								code="lbl.aggregatedby" /> :</span></label>
 						<div class="col-sm-3 add-margin">
 							<div class="col-sm-12 add-margin">
-								<form:select id="aggregatedBy" name="aggregatedBy" path="aggregatedBy"
-									cssClass="form-control" cssErrorClass="form-control error" required="required">
+								<form:select id="aggregatedBy" name="aggregatedBy"
+									path="aggregatedBy" cssClass="form-control">
 									<form:option value="">
 										<spring:message code="lbl.select" />
 									</form:option>
@@ -70,138 +71,150 @@
 							</div>
 						</div>
 					</div>
+					</div>
 				</div>
 				<div class="panel-heading">
 					<div class="panel-title">Reports Criteria</div>
 				</div>
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label class="col-sm-2 control-label"><spring:message
-								code="lbl.casecatagory" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="caseCategory" path="caseCategory"
-								data-first-option="false" id="caseCategory"
-								cssClass="form-control">
-								<form:option value="">
-									<spring:message code="lbls.select" />
-								</form:option>
-								<form:options items="${caseTypeList}" itemValue="id"
-									itemLabel="caseType" />
-							</form:select>
-						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.standingcons" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:input class="form-control" maxlength="50"
-								id="standingCounsel" path="standingCounsel" />
-							<form:errors path="standingCounsel"
-								cssClass="add-margin error-msg" />
-						</div>
+				<div class="form-group" id="reportscriteria">
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><spring:message
+							code="lbl.casecatagory" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:select name="caseCategory" path="caseCategory"
+							data-first-option="false" id="caseCategory"
+							cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbls.select" />
+							</form:option>
+							<form:options items="${caseTypeList}" itemValue="caseType"
+								itemLabel="caseType" />
+						</form:select>
+					</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.standingcons" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:input class="form-control" maxlength="50" name="standingCounsel"
+							id="standingCounsel" path="" />
 					</div>
 				</div>
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label class="col-sm-2 control-label"><spring:message
-								code="lbl.courttype" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="courtType" path="courtType" data-first-option="false"
-								id="courtType" cssClass="form-control">
-								<form:option value="">
-									<spring:message code="lbls.select" />
-								</form:option>
-								<form:options items="${courtTypeList}" itemValue="courtType"
-									itemLabel="courtType" />
-							</form:select>
-						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.courttype" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="courtName" path="courtName" data-first-option="false"
-								id="courtName" cssClass="form-control">
-								<form:option value="">
-									<spring:message code="lbls.select" />
-								</form:option>
-								<form:options items="${courtsList}" itemValue="id"
-									itemLabel="name" />
-							</form:select>
-						</div>
-					</div>
-				</div>
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label class="col-sm-2 control-label"><spring:message
-								code="lbl.judgmentype" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="judgmentType" path="judgmentType"
-								data-first-option="false" id="judgmentType"
-								cssClass="form-control">
-								<form:option value="">
-									<spring:message code="lbls.select" />
-								</form:option>
-								<form:options items="${judgmentTypeList}" itemValue="name"
-									itemLabel="name" />
-							</form:select>
-						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.petitiontype" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="petitionType" path="petitionType"
-								data-first-option="false" id="petitiontype"
-								cssClass="form-control">
-								<form:option value="">
-									<spring:message code="lbls.select" />
-								</form:option>
-								<form:options items="${petitiontypeList}" itemValue="id"
-									itemLabel="petitionType" />
-							</form:select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.casestatus" /> :</label>
-						<div class="col-sm-3 add-margin">
-							<form:select name="casestatus" path="caseStatus" data-first-option="false"
-								id="casestatus" cssClass="form-control">
-								<form:option value="">
-									<spring:message code="lbls.select" />
-								</form:option>
-								<form:options items="${statusList}" itemValue="id"
-									itemLabel="description" />
-							</form:select>
-						</div>
-						<label class="col-sm-2 control-label text-right"><spring:message
-								code="lbl.officerincharge" />:</label>
-						<div class="col-sm-3 add-margin">
-							<form:input class="form-control" maxlength="50"
-								id="officerIncharge" path="officerIncharge" />
-							<form:errors path="officerIncharge"
-								cssClass="add-margin error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.fromDate" /> :
-						</label>
-						<div class="col-sm-3 add-margin">
-							<input type="text" name="fromDate" path="fromDate"
-								class="form-control datepicker" data-date-end-date="0d"
-								id="fromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
-						</div>
-						<label class="col-sm-2 control-label text-right"> <spring:message
-								code="lbl.toDate" /> :
-						</label>
-						<div class="col-sm-3 add-margin">
-							<input type="text" name="toDate" path="toDate"
-								class="form-control datepicker today" data-date-end-date="0d"
-								id="toDate" data-inputmask="'mask': 'd/m/y'" />
-						</div>
-					</div>
 
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><spring:message
+							code="lbl.courttype" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:select name="courtType" path="courtType"
+							data-first-option="false" id="courtType" cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbls.select" />
+							</form:option>
+							<form:options items="${courtTypeList}" itemValue="courtType"
+								itemLabel="courtType" />
+						</form:select>
+					</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.court" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:select name="courtName" path="courtName"
+							data-first-option="false" id="courtName" cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbls.select" />
+							</form:option>
+							<form:options items="${courtsList}" itemValue="name"
+								itemLabel="name" />
+						</form:select>
+					</div>
 				</div>
+
+				<div class="form-group">
+					<label class="col-sm-2 control-label"><spring:message
+							code="lbl.judgmentype" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:select name="judgmentType" path="judgmentType"
+							data-first-option="false" id="judgmentType"
+							cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbls.select" />
+							</form:option>
+							<form:options items="${judgmentTypeList}" itemValue="name"
+								itemLabel="name" />
+						</form:select>
+					</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.petitiontype" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:select name="petitionType" path="petitionType"
+							data-first-option="false" id="petitionType"
+							cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbls.select" />
+							</form:option>
+							<form:options items="${petitiontypeList}" itemValue="petitionType"
+								itemLabel="petitionType" />
+						</form:select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.casestatus" /> :</label>
+					<div class="col-sm-3 add-margin">
+						<form:select name="caseStatus" path="caseStatus"
+							data-first-option="false" id="caseStatus" cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbls.select" />
+							</form:option>
+							<form:options items="${statusList}" itemValue="description"
+								itemLabel="description" />
+						</form:select>
+					</div>
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.officerincharge" />:</label>
+					<div class="col-sm-3 add-margin">
+					     <input id="positionName" type="text" class="form-control typeahead" placeholder="" autocomplete="off" />
+                       		 <form:hidden path="officerIncharge" id="positionId"/>
+                        	<form:errors path="officerIncharge" cssClass="add-margin error-msg" />		
+					</div>
+				</div>
+				<div class="form-group" id="reportstatus">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.reportstatus" />:</label>
+					<div class="col-sm-3 add-margin">
+						<form:select name="reportStatus" path="reportStatus"
+							data-first-option="false" id="reportStatus"
+							cssClass="form-control">
+							<form:option value="">
+								<spring:message code="lbls.select" />
+							</form:option>
+							<form:options items="${reportStatusList}" itemValue="name"
+								itemLabel="name" />
+						</form:select>
+					</div>
+				</div>
+				<div class="form-group">
+					<label class="col-sm-2 control-label text-right"> <spring:message
+							code="lbl.fromDate" /> :
+					</label>
+					<div class="col-sm-3 add-margin">
+						<input type="text" name="caseFromDate" path=""
+							class="form-control datepicker" data-date-end-date="0d"
+							id="caseFromDate" data-inputmask="'mask': 'd/m/y' onblur=" onchnageofDate()"/>
+					</div>
+					<label class="col-sm-2 control-label text-right"> <spring:message
+							code="lbl.toDate" /> :
+					</label>
+					<div class="col-sm-3 add-margin">
+						<input type="text" name="caseToDate" path=""
+							class="form-control datepicker today" data-date-end-date="0d"
+							id="caseToDate" data-inputmask="'mask': 'd/m/y'" />
+					</div>
+				</div>
+				</div>
+
+
 				<div class="row">
 					<div class="text-center">
 						<button type="button" class="btn btn-primary"
-							id="genericSubReportSearch">
+							id="searchid">
 							<spring:message code="lbl.search" />
 						</button>
 						<a href="javascript:void(0)" class="btn btn-default"
@@ -210,41 +223,53 @@
 					</div>
 				</div>
 			</div>
+
 		</form:form>
+
+		<div id="reportgeneration-header"
+			class="col-md-12 table-header text-left">
+			<fmt:formatDate value="${currDate}" var="currDate"
+				pattern="dd-MM-yyyy" />
+			<spring:message code="lbl.reportgeneration" />
+			:
+			<c:out value="${currDate}"></c:out>
+		</div>
+		<div id="tabledata">
+			<table class="table table-bordered table-hover multiheadertbl"
+				id="genericSubReport-table">
+			</table>
+		</div>
+		
 	</div>
 </div>
-<div id="reportgeneration-header"
-	class="col-md-12 table-header text-left">
-	<fmt:formatDate value="${currDate}" var="currDate" pattern="dd-MM-yyyy" />
-	<spring:message code="lbl.reportgeneration" /> :
-	<c:out value="${currDate}"></c:out>
-</div>
-<table class="table table-bordered table-hover multiheadertbl"
-	id="genericSubReport-table" width="200%">
-</table>
 
 <link rel="stylesheet"
-	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"
-	type="text/javascript"></script>
-<script type="text/javascript"
-	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script
-	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
-	type="text/javascript"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+	<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"
 	src="<cdn:url value='/resources/js/app/genericSubReport.js?rnd=${app_release_no}'/>"></script>

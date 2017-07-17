@@ -47,7 +47,6 @@
 	enctype="multipart/form-data">
 	<%@ include file="councilmember-form.jsp"%>
 
-	<div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
 				<spring:message code='lbl.create' />
@@ -55,7 +54,6 @@
 			<a href='javascript:void(0)' class='btn btn-default'
 				onclick='self.close()'><spring:message code='lbl.close' /></a>
 		</div>
-	</div>
 </form:form>
 
 <script

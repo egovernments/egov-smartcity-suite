@@ -45,6 +45,7 @@ import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.works.reports.entity.EstimateAppropriationRegisterSearchRequest;
+import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -66,23 +67,27 @@ public class EstimateAppropriationRegisterReportController {
     private FunctionHibernateDAO functionHibernateDAO;
 
     @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;   
-    
+    private FinancialYearHibernateDAO financialYearHibernateDAO;
+
+    @Autowired
+    private WorksUtils worksUtils;
+
     @RequestMapping(value = "/searchform", method = RequestMethod.GET)
     public String showEstimateAppropriationRegister(
             @ModelAttribute final EstimateAppropriationRegisterSearchRequest estimateAppropriationRegisterSearchRequest,
             final Model model) throws ApplicationException {
         setDropDownValues(model);
         model.addAttribute("estimateAppropriationRegisterSearchRequest", estimateAppropriationRegisterSearchRequest);
+        estimateAppropriationRegisterSearchRequest.setDepartment(worksUtils.getDefaultDepartmentId());
         return "estimateAppropriationRegister-search";
     }
 
     private void setDropDownValues(final Model model) {
-         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-         model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
-         model.addAttribute("financialYear", financialYearHibernateDAO.getAllActiveFinancialYearList());
-         model.addAttribute("departments", departmentService.getAllDepartments());
-         
+        model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
+        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        model.addAttribute("financialYear", financialYearHibernateDAO.getAllActiveFinancialYearList());
+        model.addAttribute("departments", departmentService.getAllDepartments());
+
     }
 
 }

@@ -51,7 +51,12 @@ import org.springframework.stereotype.Repository;
 public interface AdvocateMasterRepository extends JpaRepository<AdvocateMaster, java.lang.Long> {
 
     AdvocateMaster findByName(String name);
-    @Query("select a from AdvocateMaster a where (upper(a.name)) like  :name||'%' and a.isSenioradvocate =:isSeniorAdvocate")
-    List<AdvocateMaster> findByNameContainingIgnoreCaseAndIsSeniorAdvocate(@Param("name") String name,@Param("isSeniorAdvocate") Boolean isSeniorAdvocate);
 
+    @Query("select a from AdvocateMaster a where (upper(a.name)) like  :name||'%' and a.isSenioradvocate =:isSeniorAdvocate")
+    List<AdvocateMaster> findByNameContainingIgnoreCaseAndIsSeniorAdvocate(@Param("name") String name,
+            @Param("isSeniorAdvocate") Boolean isSeniorAdvocate);
+
+    List<AdvocateMaster> findByIsActiveTrueOrderByNameAsc();
+
+    public List<AdvocateMaster> findByNameLike(String name);
 }

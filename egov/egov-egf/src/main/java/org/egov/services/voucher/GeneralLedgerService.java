@@ -40,13 +40,16 @@
 
 package org.egov.services.voucher;
 
+import java.util.List;
+
 import org.egov.commons.CGeneralLedger;
 import org.egov.infstr.services.PersistenceService;
+import org.hibernate.Query;
 import org.springframework.transaction.annotation.Transactional;
 
 @Transactional(readOnly = true)
 public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Long> {
-    
+
     public GeneralLedgerService() {
         super(CGeneralLedger.class);
     }
@@ -54,4 +57,20 @@ public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Lon
     public GeneralLedgerService(final Class<CGeneralLedger> type) {
         super(type);
     }
+
+    public List<CGeneralLedger> getGeneralLedgerByGlCode(final String glcode) {
+
+        final Query query = getSession()
+                .createQuery(" from CGeneralLedger gl where gl.glcodeId.glcode=:glcode and gl.voucherHeaderId.status not in (4)");
+        query.setString("glcode", glcode);
+        return query.list();
+    }
+
+    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
+        final Query qry = getSession().createQuery(
+                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
+        qry.setLong("voucherHeaderId", voucherHeaderId);
+        return qry.list();
+    }
+
 }

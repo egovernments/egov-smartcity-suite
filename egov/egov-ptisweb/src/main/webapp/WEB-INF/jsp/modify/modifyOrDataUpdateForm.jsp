@@ -169,7 +169,7 @@
 	    </td>
 	    <td class="bluebox">
 	    	<s:textfield name="propertyAddr.houseNo" value="%{propertyAddr.houseNo}"
-				maxlength="50" onblur="return checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');" />
+				maxlength="50" onblur="checkHouseNoStartsWithNo(this); validatePlotNo(this,'Plot No/House No');" />
 		</td>
 	    <td class="bluebox" width="10%">
 	    	<s:text name="OldNo"/> : </td>

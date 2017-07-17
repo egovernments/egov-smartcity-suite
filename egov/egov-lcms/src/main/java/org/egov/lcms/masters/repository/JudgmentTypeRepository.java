@@ -45,12 +45,11 @@ import org.egov.lcms.masters.entity.JudgmentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
+@Repository
+public interface JudgmentTypeRepository extends JpaRepository<JudgmentType, java.lang.Long> {
 
-@Repository 
-public interface JudgmentTypeRepository extends JpaRepository<JudgmentType,java.lang.Long> {
+    JudgmentType findByCode(String code);
 
-	JudgmentType findByCode(String code);
-
-    List<JudgmentType> findByActiveTrueOrderByNameAsc();
+    List<JudgmentType> findByActiveTrueOrderByOrderNumberAsc();
 
 }

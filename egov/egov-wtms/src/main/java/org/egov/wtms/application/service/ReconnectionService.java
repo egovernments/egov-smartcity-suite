@@ -39,9 +39,13 @@
  */
 package org.egov.wtms.application.service;
 
+import org.egov.commons.entity.Source;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.utils.WaterTaxUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +60,12 @@ public class ReconnectionService {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
     /**
@@ -64,22 +74,33 @@ public class ReconnectionService {
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as
-     * "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New
+     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
+     *         "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final Long approvalPosition, final String approvalComent,  String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "", sourceChannel);
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
+                sourceChannel);
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .save(waterConnectionDetails);
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
+        additionalRule=WaterTaxConstants.RECONNECTIONCONNECTION;
+
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
+        if (waterConnectionDetails.getSource() != null
+                && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+                && waterConnectionDetailsService.getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null) {
+            waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
+        }else if(waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser())){
+            waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
+        }
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
     }

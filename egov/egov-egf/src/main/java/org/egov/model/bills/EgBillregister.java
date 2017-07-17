@@ -67,15 +67,14 @@ import javax.validation.constraints.NotNull;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
-import org.egov.utils.CheckListHelper;
-import org.egov.infra.workflow.entity.WorkflowAware;
+import org.egov.infstr.models.EgChecklists;
 import org.hibernate.validator.constraints.Length;
 
 @Entity
 @Table(name = "EG_BILLREGISTER")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
-public class EgBillregister extends WorkflowAware implements java.io.Serializable {
+public class EgBillregister extends StateAware implements java.io.Serializable {
 
     public enum BillStatus {
         CREATED, APPROVED, REJECTED, CANCELLED
@@ -155,7 +154,7 @@ public class EgBillregister extends WorkflowAware implements java.io.Serializabl
     private List<EgBillPayeedetails> billPayeedetails = new ArrayList<EgBillPayeedetails>(0);
 
     @Transient
-    private List<CheckListHelper> checkLists = new ArrayList<CheckListHelper>(0);
+    private List<EgChecklists> checkLists = new ArrayList<EgChecklists>(0);
 
     @Transient
     private Long approvalDepartment;
@@ -402,7 +401,7 @@ public class EgBillregister extends WorkflowAware implements java.io.Serializabl
 
     @Override
     public String getStateDetails() {
-        return getBillnumber();
+        return getState().getComments().isEmpty() ? billnumber : billnumber + "-" + getState().getComments();
     }
 
     public User getApprover() {
@@ -466,11 +465,11 @@ public class EgBillregister extends WorkflowAware implements java.io.Serializabl
         this.billPayeedetails = billPayeedetails;
     }
 
-    public List<CheckListHelper> getCheckLists() {
+    public List<EgChecklists> getCheckLists() {
         return checkLists;
     }
 
-    public void setCheckLists(final List<CheckListHelper> checkLists) {
+    public void setCheckLists(final List<EgChecklists> checkLists) {
         this.checkLists = checkLists;
     }
 

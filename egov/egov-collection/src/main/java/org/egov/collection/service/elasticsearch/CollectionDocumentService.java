@@ -54,12 +54,12 @@ public class CollectionDocumentService {
     private final CollectionDocumentRepository collectionDocumentRepository;
 
     @Autowired
+    private BeanMapperConfiguration beanMapperConfiguration;
+
+    @Autowired
     public CollectionDocumentService(final CollectionDocumentRepository collectionDocumentRepository) {
         this.collectionDocumentRepository = collectionDocumentRepository;
     }
-
-    @Autowired
-    private BeanMapperConfiguration beanMapperConfiguration;
 
     @Transactional
     public CollectionDocument persistCollectionDocument(final CollectionIndex collectionIndex) {

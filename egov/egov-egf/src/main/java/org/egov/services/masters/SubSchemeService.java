@@ -61,4 +61,16 @@ public class SubSchemeService extends PersistenceService<SubScheme, Integer> {
         query.setInteger("schemeId", schemeId);
         return query.list();
     }
+
+    public SubScheme findByCode(final String code) {
+        final Query query = getSession().createQuery(" from Scheme where code = :code ");
+
+        query.setString("code", code);
+        return (SubScheme) query.uniqueResult();
+    }
+    
+    public List<SubScheme> getByIsActive() {
+        final Query query = getSession().createQuery(" from SubScheme where isactive = true");
+        return query.list();
+    }
 }

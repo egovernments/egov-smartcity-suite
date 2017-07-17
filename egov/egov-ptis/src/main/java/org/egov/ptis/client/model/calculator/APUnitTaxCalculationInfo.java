@@ -39,21 +39,31 @@
  */
 package org.egov.ptis.client.model.calculator;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import java.math.BigDecimal;
+
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 
-import java.math.BigDecimal;
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 
 @XStreamAlias("unitinfo")
 public class APUnitTaxCalculationInfo extends UnitTaxCalculationInfo {
-	private BigDecimal capitalValue;
+    private BigDecimal capitalValue;
+    private BigDecimal marketValue;
 
-	public BigDecimal getCapitalValue() {
-		return capitalValue;
-	}
+    public BigDecimal getCapitalValue() {
+        return capitalValue;
+    }
 
-	public void setCapitalValue(BigDecimal capitalValue) {
-		this.capitalValue = capitalValue;
-	}
+    public void setCapitalValue(BigDecimal capitalValue) {
+        this.capitalValue = capitalValue;
+    }
+
+    public BigDecimal getMarketValue() {
+        return marketValue;
+    }
+
+    public void setMarketValue(BigDecimal marketValue) {
+        this.marketValue = marketValue;
+    }
 
 }

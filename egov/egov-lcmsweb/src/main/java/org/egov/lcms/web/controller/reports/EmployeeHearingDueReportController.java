@@ -39,16 +39,12 @@
  */
 package org.egov.lcms.web.controller.reports;
 
+import java.text.ParseException;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-
-import org.egov.infra.web.utils.WebUtils;
-import org.egov.lcms.reports.entity.DueReportResult;
-import org.egov.lcms.transactions.service.DueLegalCaseReportService;
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
+import org.egov.lcms.transactions.service.LegalCommonReportService;
 import org.egov.lcms.utils.constants.LcmsConstants;
-import org.egov.lcms.web.adaptor.DueReportResultJsonAdaptor;
-import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -59,26 +55,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/reports")
-public class EmployeeHearingDueReportController extends GenericLegalCaseController {
+public class EmployeeHearingDueReportController {
 
-	@Autowired
-	private DueLegalCaseReportService dueLegalCaseReportService;
+    @Autowired
+    private LegalCommonReportService legalCommonReportService;
 
-	@ModelAttribute
-	private DueReportResult getDueReportResult() {
-		return new DueReportResult();
-	}
+    @RequestMapping(value = "/employeehearingDueReportResult", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LegalCommonReportResult> getEmployeeHearingReport(@ModelAttribute final LegalCommonReportResult searchRequest)
+            throws ParseException {
+        return legalCommonReportService.getEmployeeHearingResult(searchRequest, LcmsConstants.DUEEMPLOYEEHEARINGREPORT);
 
-	@RequestMapping(value = "/employeehearingDueReportResult", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
-	public @ResponseBody String getDailyBoardReportResult(
-			final @ModelAttribute("dueReportResult") DueReportResult dueReportResult,
-			final HttpServletRequest request) {
-
-		final List<DueReportResult> pwrDueSearchList = dueLegalCaseReportService.getLegalCaseReport(dueReportResult,
-				LcmsConstants.DUEEMPLOYEEHEARINGREPORT);
-		final String result = new StringBuilder("{ \"data\":")
-				.append(WebUtils.toJSON(pwrDueSearchList, DueReportResult.class, DueReportResultJsonAdaptor.class))
-				.append("}").toString();
-		return result;
-	}
+    }
 }

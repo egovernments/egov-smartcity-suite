@@ -94,8 +94,7 @@
 				</tr>
 				<tr>
 					<td class="greybox"></td>
-					<td class="greybox"><s:text name="recovery.code" /><span
-						class="mandatory"></span></td>
+					<td class="greybox"><s:text name="recovery.code" /></td>
 					<td class="greybox"><s:select name="recoveryId"
 							id="recoveryId" list="dropdownData.recoveryList" listKey="id"
 							listValue="type+'-'+recoveryName" headerKey="" headerValue="----Choose----" /></td>
@@ -150,12 +149,12 @@
 		var date = '<s:date name="currentDate" format="dd/MM/yyyy"/>';
 		function loadBank(obj) {
 			if (document.getElementById("recoveryId").value == "") {
-				bootbox.alert("Please Select Recovery");
-				obj.value = "-1";
-				return false;
+				var revocery = 0;
+			}else{
+				var revocery = document.getElementById("recoveryId").value;
 			}
 			var vTypeOfAccount = '<s:property value="%{typeOfAccount}"/>';
-			var revocery = document.getElementById("recoveryId").value;
+			
 			if (obj.options[obj.selectedIndex].value != -1)
 				populatebank_branch({
 					fundId : obj.options[obj.selectedIndex].value
@@ -168,7 +167,11 @@
 			if (obj.options[obj.selectedIndex].value != -1) {
 				var x = obj.options[obj.selectedIndex].value.split("-");
 				document.getElementById("bankbranch").value = x[1];
-				var revocery = document.getElementById("recoveryId").value;
+				if (document.getElementById("recoveryId").value == "") {
+					var revocery = 0;
+				}else{
+					var revocery = document.getElementById("recoveryId").value;
+				}
 				populatebankaccount({
 					branchId : x[1] + '&asOnDate=' + date,
 					fundId : fund.options[fund.selectedIndex].value

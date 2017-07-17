@@ -55,6 +55,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 @Entity
 @Table(name = "egtl_demandgenerationlogdetail")
@@ -123,4 +124,19 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
         this.demandGenerationLog = demandGenerationLog;
     }
 
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof DemandGenerationLogDetail))
+            return false;
+        DemandGenerationLogDetail that = (DemandGenerationLogDetail) other;
+        return Objects.equals(license, that.license) &&
+                Objects.equals(demandGenerationLog, that.demandGenerationLog);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(license, demandGenerationLog);
+    }
 }

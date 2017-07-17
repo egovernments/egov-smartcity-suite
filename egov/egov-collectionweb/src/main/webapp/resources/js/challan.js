@@ -1,43 +1,3 @@
-  /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
- *
- *     Copyright (C) <2015>  eGovernments Foundation
- *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
- *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
- *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
- *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
- *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
- *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */
-
 /**
    * eGov suite of products aim to improve the internal efficiency,transparency, 
      accountability and the service delivery of the government  organizations.
@@ -121,7 +81,7 @@ function resetTables(fYearId){
 				{
 					if(document.getElementById('subLedgerlist['+j+'].glcode.id')!=null){
 						document.getElementById('subLedgerlist['+j+'].amount').value=0;
-						document.getElementById('subLedgerlist['+j+'].detailCode').value=codeTextMessage;
+						document.getElementById('subLedgerlist['+j+'].detailCode').placeholder=codeTextMessage;
 						document.getElementById('subLedgerlist['+j+'].detailCode').style.color='DarkGray';
 						document.getElementById('subLedgerlist['+j+'].glcode.id').value=0;
 						document.getElementById('subLedgerlist['+j+'].detailType.id').value=0;
@@ -446,7 +406,7 @@ function updateGrid(prefix,field,index,value){
 
 function updateSLGrid(field,index,value){
 	if(field=='detailCode' && value==''){
-		document.getElementById('subLedgerlist['+index+'].'+field).value=codeTextMessage;
+		document.getElementById('subLedgerlist['+index+'].'+field).placeholder=codeTextMessage;
 		document.getElementById('subLedgerlist['+index+'].'+field).style.color='DarkGray';
 	}
 	else{
@@ -715,7 +675,7 @@ function createDropdownFormatterDetail(prefix){
 
 var selecteddetailcode;
 var onDropdownDetailChange = function(index,obj) {
-	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailCode').value=codeTextMessage;
+	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailCode').placeholder=codeTextMessage;
 	document.getElementById('subLedgerlist['+obj.value+'].detailCode').style.color='DarkGray';
 	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailKeyId').value='';
 	document.getElementById(SUBLEDGERLIST+'['+obj.value+']'+'.detailKey').value='';
@@ -856,7 +816,7 @@ success: function(o) {
 
 	if(onload=='false')
 	{
-		document.getElementById('subLedgerlist['+rowid+'].detailCode').value=codeTextMessage;
+		document.getElementById('subLedgerlist['+rowid+'].detailCode').placeholder=codeTextMessage;
 		document.getElementById('subLedgerlist['+rowid+'].detailCode').style.color='DarkGray';
 		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailKeyId').value='';
 		document.getElementById(SUBLEDGERLIST+'['+rowid+']'+'.detailKey').value='';
@@ -1047,7 +1007,7 @@ function getDetailType(val){
 			else{
 				var detailCodeObj = document.getElementById('subLedgerlist['+val+'].detailCode');
 				if(detailCodeObj!=null){
-					detailCodeObj.value=codeTextMessage;
+					detailCodeObj.placeholder=codeTextMessage;
 					detailCodeObj.style.color='DarkGray';
 					document.getElementById(SUBLEDGERLIST+'['+val+']'+'.detailKeyId').value='';
 					document.getElementById(SUBLEDGERLIST+'['+val+']'+'.detailKey').value='';
@@ -1171,7 +1131,7 @@ success: function(o) {
 					{
 						detailCode.remove(k);
 					}*/
-					document.getElementById('subLedgerlist['+j+'].detailCode').value=codeTextMessage;
+					document.getElementById('subLedgerlist['+j+'].detailCode').placeholder=codeTextMessage;
 					document.getElementById('subLedgerlist['+j+'].detailCode').style.color='DarkGray';
 					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailKeyId').value='';
 					document.getElementById(SUBLEDGERLIST+'['+j+']'+'.detailKey').value='';

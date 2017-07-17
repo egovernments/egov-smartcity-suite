@@ -54,6 +54,9 @@ public class SewerageSearchResult {
     private String address;
     private String applicationStatus;
     private String applicantName;
+    private String doorNumber;
+    private String noticeNumber;
+    private String noticeDate;
 
     private Map<String, String> actions;
 
@@ -143,6 +146,30 @@ public class SewerageSearchResult {
 
     public void setShscNumber(final String shscNumber) {
         this.shscNumber = shscNumber;
+    }
+
+    public String getDoorNumber() {
+        return doorNumber;
+    }
+
+    public void setDoorNumber(String doorNumber) {
+        this.doorNumber = doorNumber;
+    }
+
+    public String getNoticeNumber() {
+        return noticeNumber;
+    }
+
+    public void setNoticeNumber(String noticeNumber) {
+        this.noticeNumber = noticeNumber;
+    }
+
+    public String getNoticeDate() {
+        return noticeDate;
+    }
+
+    public void setNoticeDate(String noticeDate) {
+        this.noticeDate = noticeDate;
     }
 
 }

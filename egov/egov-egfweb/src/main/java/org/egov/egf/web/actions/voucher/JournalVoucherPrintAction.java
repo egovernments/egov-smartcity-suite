@@ -39,7 +39,21 @@
  */
 package org.egov.egf.web.actions.voucher;
 
-import net.sf.jasperreports.engine.JRException;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -67,19 +81,7 @@ import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.infra.utils.DateUtils.getFormattedDate;
+import net.sf.jasperreports.engine.JRException;
 
 @Results(value = {
         @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream",
@@ -232,7 +234,7 @@ public class JournalVoucherPrintAction extends BaseFormAction {
         paramMap.put("voucherDate", getVoucherDate());
         paramMap.put("voucherDescription", getVoucherDescription());
         if (voucher != null && voucher.getState() != null)
-            loadInboxHistoryData(voucher.getStateHistory());
+            loadInboxHistoryData(voucher);
         paramMap.put("workFlowHistory", inboxHistory);
         paramMap.put("workFlowJasper",
                 reportHelper.getClass().getResourceAsStream("/reports/templates/workFlowHistoryReport.jasper"));
@@ -296,21 +298,29 @@ public class JournalVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    private void loadInboxHistoryData(final List<StateHistory> stateHistory) throws ApplicationRuntimeException {
-        Collections.reverse(stateHistory);
-        
-        
-        for (final StateHistory historyState : stateHistory) {
-            final String pos = historyState.getSenderName().concat(" / ").concat(historyState.getSenderName());
-            final String nextAction = historyState.getNextAction();
+    private void loadInboxHistoryData(final CVoucherHeader voucher) throws ApplicationRuntimeException {
+        Collections.reverse(voucher.getStateHistory());
+        WorkFlowHistoryItem inboxHistoryItem;
+        String pos;
+        String nextAction;
+
+        for (final StateHistory historyState : voucher.getStateHistory()) {
+            pos = historyState.getSenderName().concat(" / ").concat(historyState.getSenderName());
+            nextAction = historyState.getNextAction();
             if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
-                final WorkFlowHistoryItem inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(
+                inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(
                         historyState.getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction, historyState.getValue(),
                         historyState.getComments() != null ? removeSpecialCharacters(historyState.getComments()) : "");
                 inboxHistory.add(inboxHistoryItem);
             }
-            
+
         }
+        pos = voucher.getState().getSenderName().concat(" / ").concat(voucher.getState().getSenderName());
+        nextAction = voucher.getState().getNextAction();
+        inboxHistoryItem = new WorkFlowHistoryItem(getFormattedDate(
+                voucher.getState().getCreatedDate(), "dd/MM/yyyy hh:mm a"), pos, nextAction, voucher.getState().getValue(),
+                voucher.getState().getComments() != null ? removeSpecialCharacters(voucher.getState().getComments()) : "");
+        inboxHistory.add(inboxHistoryItem);
 
     }
 

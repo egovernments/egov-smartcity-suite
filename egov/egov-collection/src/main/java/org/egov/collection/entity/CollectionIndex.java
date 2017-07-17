@@ -146,6 +146,11 @@ public class CollectionIndex extends AbstractAuditable {
 
     private String revenueWard;
 
+    @Length(max = 100)
+    private String consumerType;
+
+    private Integer conflict;
+
     @Override
     public Long getId() {
         return id;
@@ -422,6 +427,22 @@ public class CollectionIndex extends AbstractAuditable {
         this.revenueWard = revenueWard;
     }
 
+    public String getConsumerType() {
+        return consumerType;
+    }
+
+    public void setConsumerType(final String consumerType) {
+        this.consumerType = consumerType;
+    }
+
+    public Integer getConflict() {
+        return conflict;
+    }
+
+    public void setConflict(final Integer conflict) {
+        this.conflict = conflict;
+    }
+
     public static CollectionIndexBuilder builder() {
         return new CollectionIndexBuilder();
     }
@@ -450,6 +471,8 @@ public class CollectionIndex extends AbstractAuditable {
         private String revenueward;
         private String status;
         private String consumercode;
+        private String consumerType;
+        private Integer conflict;
 
         public CollectionIndex build() throws ApplicationRuntimeException {
             final CollectionIndex collectionIndex = new CollectionIndex();
@@ -476,6 +499,8 @@ public class CollectionIndex extends AbstractAuditable {
             collectionIndex.setRevenueWard(revenueward);
             collectionIndex.setChannel(channel);
             collectionIndex.setStatus(status);
+            collectionIndex.setConsumerType(consumerType);
+            collectionIndex.setConflict(conflict);
             collectionIndex.validate();
             return collectionIndex;
         }
@@ -595,6 +620,16 @@ public class CollectionIndex extends AbstractAuditable {
 
         public CollectionIndexBuilder withChannel(final String channel) {
             this.channel = channel;
+            return this;
+        }
+
+        public CollectionIndexBuilder withConsumerType(final String consumerType) {
+            this.consumerType = consumerType;
+            return this;
+        }
+        
+        public CollectionIndexBuilder withConflict(final Integer conflict) {
+            this.conflict = conflict;
             return this;
         }
     }

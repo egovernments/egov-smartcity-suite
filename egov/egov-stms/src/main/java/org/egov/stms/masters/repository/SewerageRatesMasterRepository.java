@@ -58,13 +58,18 @@ public interface SewerageRatesMasterRepository extends JpaRepository<SewerageRat
 
     SewerageRatesMaster findByPropertyTypeAndActive(PropertyType propertyType, boolean active);
 
+    @Query("select srm.amount from SewerageRatesMasterDetails srm where srm.sewerageratemaster.propertyType =:propertyType and srm.noOfClosets =:noofclosets and srm.sewerageratemaster.active = true and srm.sewerageratemaster.fromDate <=current_date and (srm.sewerageratemaster.toDate >= current_date or srm.sewerageratemaster.toDate is null)")
+    Double getSewerageMonthlyRatesBytNoOfClosetsAndPropertytype(@Param("noofclosets") Integer noofclosets,
+            @Param("propertyType") PropertyType propertyType);
+
     @Query("select srm.monthlyRate from SewerageRatesMaster srm where srm.propertyType =:propertyType and srm.active = true and srm.fromDate <=current_date and (srm.toDate >= current_date or srm.toDate is null)")
     Double getSewerageMonthlyRatesByPropertytype(@Param("propertyType") PropertyType propertyType);
-    
+
     @Query("select S from SewerageRatesMaster S where S.propertyType=:propertyType and S.active=:active and (S.fromDate<=:date or (S.toDate is null or S.toDate<=:date)) order by S.fromDate desc")
-    List<SewerageRatesMaster> getLatestActiveRecord(@Param("propertyType") PropertyType propertyType, @Param("active") boolean active, @Param("date") Date date);
-    
-    //TODO : rename to findAllFromDateByPropertyType
+    List<SewerageRatesMaster> getLatestActiveRecord(@Param("propertyType") PropertyType propertyType,
+            @Param("active") boolean active, @Param("date") Date date);
+
+    // TODO : rename to findAllFromDateByPropertyType
     @Query("select distinct(S.fromDate) from SewerageRatesMaster S where S.propertyType=:propertyType order by S.fromDate asc")
     List<Date> findFromDateByPropertyType(@Param("propertyType") PropertyType propertyType);
 

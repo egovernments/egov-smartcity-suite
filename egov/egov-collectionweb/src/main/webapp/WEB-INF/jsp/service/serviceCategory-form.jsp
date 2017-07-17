@@ -38,25 +38,57 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
+<script>
+	function onSubmit(obj) {
+		var serviceName = jQuery("#serviceName").val();
+		if (serviceName != null && serviceName != ''
+				&& !serviceName.match(/[a-z]/i)) {
+			dom.get("error_area").innerHTML = '<s:text name="masters.serviceCategory.serviceCategoryNameValidation" />'
+					+ '<br>';
+			dom.get("error_area").style.display = "block";
+			dom.get("remerror").style.display = "none";
+			return false;
+		} else {
+			document.forms[0].action = obj;
+			document.forms[0].submit;
+		}
+	}
+
+	function resetValues() {
+		jQuery(":text").val("");
+		jQuery('input[type=checkbox]').attr('checked', false);
+	}
+</script>
+
 <fieldset>
-<br/>
-<table width="100%" border="0" cellspacing="0" cellpadding="0" style="max-width:960px;margin:0 auto;border-collapse: separate;	border-spacing: 10px;">
-<s:token />
-	 	<tr>
+	<br />
+	<table width="100%" border="0" cellspacing="0" cellpadding="0"
+		style="max-width: 960px; margin: 0 auto; border-collapse: separate; border-spacing: 10px;">
+		<s:token />
+		<tr>
 			<td class="greybox">&nbsp;</td>
-		    <td class="greybox"><label for="serviceCategoryName"><s:text name="masters.serviceCategory.serviceCategoryName"/><span class="mandatory1">*</span> :</label></td>
-		    <td class="greybox"><s:textfield label="serviceCategoryName" name="model.name"/></td>
-		  </tr>		
-		 <tr>
+			<td class="greybox"><label for="serviceCategoryName"><s:text
+						name="masters.serviceCategory.serviceCategoryName" /><span
+					class="mandatory1">*</span> :</label></td>
+			<td class="greybox"><s:textfield label="serviceCategoryName"
+					id="serviceName" name="model.name" /></td>
+		</tr>
+		<tr>
 			<td class="greybox">&nbsp;</td>
-		    <td class="greybox"><label for="serviceCode"><s:text name="masters.serviceCategory.servicCategoryeCode"/><span class="mandatory1">*</span> :</label></td>
-		    <td class="greybox"><s:textfield label="servicCategoryeCode" cssClass="form-control patternvalidation" data-pattern="alphanumericwithspace"  name="model.code"/></td>
-		 </tr>	
-		 <tr>
+			<td class="greybox"><label for="serviceCode"><s:text
+						name="masters.serviceCategory.servicCategoryeCode" /><span
+					class="mandatory1">*</span> :</label></td>
+			<td class="greybox"><s:textfield label="servicCategoryeCode"
+					cssClass="form-control patternvalidation"
+					data-pattern="alphanumericwithspace" name="model.code" /></td>
+		</tr>
+		<tr>
 			<td class="greybox">&nbsp;</td>
-		    <td class="greybox"><label for="isActive"><s:text name="masters.serviceCategory.serviceIsEnable/Disable"/> :</label></td>
-		    <td class="greybox"><s:checkbox label="ischecked" name="model.isActive" id="isActive"/></td>
-		 </tr>
+			<td class="greybox"><label for="isActive"><s:text
+						name="masters.serviceCategory.serviceIsEnable/Disable" /> :</label></td>
+			<td class="greybox"><s:checkbox label="ischecked"
+					name="model.isActive" id="isActive" /></td>
+		</tr>
 	</table>
-</fieldset>			    
+</fieldset>
 

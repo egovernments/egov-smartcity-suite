@@ -65,6 +65,7 @@ import javax.validation.Valid;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
+import org.egov.lcms.utils.constants.LcmsConstants;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -104,11 +105,11 @@ public class Hearings extends AbstractAuditable {
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "hearing", orphanRemoval = true)
     @Audited
-    Set<EmployeeHearing> employeeHearingList = new HashSet<EmployeeHearing>(0);
+    private Set<EmployeeHearing> employeeHearingList = new HashSet<EmployeeHearing>(0);
 
     @Transient
     @Audited
-    List<EmployeeHearing> positionTemplList = new ArrayList<EmployeeHearing>();
+    private  List<EmployeeHearing> positionTemplList = new ArrayList<EmployeeHearing>();
 
     @Length(max = 1024)
     @Audited
@@ -253,6 +254,17 @@ public class Hearings extends AbstractAuditable {
 
         }
         return errors;
+    }
+    
+    public String getEmployeeHearing() {
+        final StringBuilder tempStr = new StringBuilder();
+        for (final EmployeeHearing temp : employeeHearingList)
+            if (temp.getEmployee().getName() != null)
+                if (tempStr.length() == 0)
+                    tempStr.append(temp.getEmployee().getName());
+                else
+                    tempStr.append(LcmsConstants.APPENDSEPERATE).append(temp.getEmployee().getName());
+        return tempStr.toString();
     }
 
 }

@@ -39,6 +39,7 @@
 --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib uri="/WEB-INF/tags/cdn.tld" prefix="cdn" %>
 <form:form role="form" action="search" modelAttribute="budgetDetail"
 	id="budgetapprovalsearchform"
 	cssClass="form-horizontal form-groups-bordered"
@@ -87,26 +88,44 @@
 			</div>
 		</div>
 	</div>
- <input type="hidden" id="financialYear"
-						value="${budget.financialYear.id}" />
+	<input type="hidden" id="financialYear"
+		value="${budget.financialYear.id}" />
+
 
 	<div class="row display-hide report-section">
-		<div class="col-md-12 table-header text-left">List of Budgets
-			pending for Administrative Approval</div>
-		<div class="col-md-12 form-group report-table-container">
-			<table class="table table-bordered table-hover multiheadertbl"
-				id="resultTable">
-				<thead>
-					<tr>
-						<th><spring:message code="lbl.select" /></th>
-						<th><spring:message code="lbl.department" /></th>
-						<th><spring:message code="lbl.rebudget" /></th>
-						<th><spring:message code="lbl.bebudget" /></th>
-						<th><spring:message code="lbl.reamount" /></th>
-						<th><spring:message code="lbl.beamount" /></th>
-					</tr>
-				</thead>
-			</table>
+		<div class="form-group">
+			<div id="approvedBudget" class="col-md-6 table-header"></div>
+			<div id="verifiedBudget" class="col-md-6 table-header"></div>
+			<div id="notInitiated" class="col-md-6 table-header"></div>
+		</div>
+		<div class="row display-hide report-section">
+
+			<div class="col-md-12 table-header text-left">List of Budgets
+				pending for Administrative Approval</div>
+			<div class="col-md-12 form-group report-table-container">
+				<table class="table table-bordered table-hover multiheadertbl"
+					id="resultTable">
+					<thead>
+						<tr>
+							<th><spring:message code="lbl.select" /></th>
+							<th><spring:message code="lbl.department" /></th>
+							<th><spring:message code="lbl.rebudget" /></th>
+							<th><spring:message code="lbl.bebudget" /></th>
+							<th><spring:message code="lbl.reamount" /></th>
+							<th><spring:message code="lbl.beamount" /></th>
+							<th><spring:message code="lbl.budgetdetail.count" /></th>
+						</tr>
+					</thead>
+				</table>
+				<div class="row">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.comments" /></label>
+					<div class="col-sm-3 add-margin">
+						<textarea class="form-control" id="comments" name="comments"></textarea>
+					</div>
+				</div>
+
+			</div>
 			<div>
 				<div class="col-sm-11 add-margin">
 					<div class="text-center">
@@ -132,23 +151,23 @@
 	});
 </script>
 <link rel="stylesheet"
-	href="<c:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
+	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+	src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script
-	src="<c:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
+	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"
 	type="text/javascript"></script>
 <script type="text/javascript"
-	src="<c:url value='/resources/app/js/budgetApprovalHelper.js'/>"></script>
+	src="<cdn:url value='/resources/app/js/budgetApprovalHelper.js'/>"></script>

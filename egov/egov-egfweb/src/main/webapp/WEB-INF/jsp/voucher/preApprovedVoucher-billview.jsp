@@ -156,12 +156,7 @@ jQuery("#voucherDate").datepicker().datepicker("setDate", new Date());
 										<s:date name="voucherDate" var="voucherDateId"
 											format="dd/MM/yyyy" />
 										<s:textfield id="voucherDate" name="voucherDate"
-											data-date-end-date="0d" value="%{voucherDateId}"
-											onkeyup="DateFormat(this,this.value,event,false,'3')"
-											placeholder="DD/MM/YYYY"
-											class="form-control
-											datepicker"
-											data-inputmask="'mask': 'd/m/y'" />
+											class="form-control datepicker" data-date-end-date="0d" />
 									</div>
 								</td>
 								<td class="greybox" width="25%" />

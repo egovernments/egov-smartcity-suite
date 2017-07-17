@@ -243,6 +243,7 @@ function submitButton()
     {title : 'H.S.C Number',class : 'row-detail',data : 'consumerCode',               
      "render": function ( data, type, full, meta ) {
          return '<div style="font-style: italic;text-decoration: underline;" class="view-content">'+data+'</div>';} },
+    {title : 'Assessment Number',data : 'propertyid'}, 
     {title : 'Address',data : 'address'},
     {title : 'apptype',data : 'applicationcode',"bVisible" : false},
     {title : 'legacy',data : 'islegacy',"bVisible" : false},
@@ -548,3 +549,11 @@ function submitButton()
 	
 	})
 }
+jQuery('.patternvalidationclass').on("input", function(){
+	//This will allow you to enter alphabet with space, dot(.), and comma(,).  (eg. datapattern="alphabetwithspaceanddotandcomma")
+	var regexp_alphabetdotcomma = /[^a-zA-Z1-9 .,]/g;
+	if(jQuery($(this)).val().match(regexp_alphabetdotcomma)){
+	jQuery($(this)).val( jQuery($(this)).val().replace(regexp_alphabetdotcomma,'') );
+	}
+
+	});

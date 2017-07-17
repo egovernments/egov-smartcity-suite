@@ -39,20 +39,121 @@
  */
 package org.egov.lcms.reports.entity;
 
-import java.util.Date;
-
-import org.egov.lcms.transactions.entity.LegalCase;
-
 public class TimeSeriesReportResult {
 
     private String aggregatedBy;
     private String period;
-    private Date fromDate;
-    private Date toDate;
-    private Integer year;
+    private String year;
     private String month;
     private Long count;
-    private LegalCase legalCase;
+    private String caseNumber;
+    private String lcNumber;
+    private String caseFromDate;
+    private String caseToDate;
+    private String standingCouncil;
+    private String petitionType;
+    private String courtName;
+    private String caseTitle;
+    private String petName;
+    private String resName;
+    private String caseStatus;
+    private String aggregatedByValue;
+
+    public String getAggregatedByValue() {
+        return aggregatedByValue;
+    }
+
+    public void setAggregatedByValue(final String aggregatedByValue) {
+        this.aggregatedByValue = aggregatedByValue;
+    }
+
+    public String getStandingCouncil() {
+        return standingCouncil;
+    }
+
+    public void setStandingCouncil(final String standingCouncil) {
+        this.standingCouncil = standingCouncil;
+    }
+
+    public String getCaseNumber() {
+        return caseNumber;
+    }
+
+    public void setCaseNumber(final String caseNumber) {
+        this.caseNumber = caseNumber;
+    }
+
+    public String getLcNumber() {
+        return lcNumber;
+    }
+
+    public String getCaseFromDate() {
+        return caseFromDate;
+    }
+
+    public void setCaseFromDate(final String caseFromDate) {
+        this.caseFromDate = caseFromDate;
+    }
+
+    public String getCaseToDate() {
+        return caseToDate;
+    }
+
+    public void setCaseToDate(final String caseToDate) {
+        this.caseToDate = caseToDate;
+    }
+
+    public void setLcNumber(final String lcNumber) {
+        this.lcNumber = lcNumber;
+    }
+
+    public String getPetitionType() {
+        return petitionType;
+    }
+
+    public void setPetitionType(final String petitionType) {
+        this.petitionType = petitionType;
+    }
+
+    public String getCourtName() {
+        return courtName;
+    }
+
+    public void setCourtName(final String courtName) {
+        this.courtName = courtName;
+    }
+
+    public String getPetName() {
+        return petName;
+    }
+
+    public void setPetName(final String petName) {
+        this.petName = petName;
+    }
+
+    public String getCaseStatus() {
+        return caseStatus;
+    }
+
+    public void setCaseStatus(final String caseStatus) {
+        this.caseStatus = caseStatus;
+    }
+
+    public String getCaseTitle() {
+        return caseTitle;
+    }
+
+    public void setCaseTitle(final String caseTitle) {
+        this.caseTitle = caseTitle;
+    }
+
+    public String getResName() {
+        return resName;
+    }
+
+    public void setResName(final String resName) {
+        this.resName = resName;
+    }
 
     public Long getCount() {
         return count;
@@ -78,22 +179,6 @@ public class TimeSeriesReportResult {
         this.period = period;
     }
 
-    public Date getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(final Date fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public Date getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(final Date toDate) {
-        this.toDate = toDate;
-    }
-
     public String getMonth() {
         return month;
     }
@@ -102,20 +187,12 @@ public class TimeSeriesReportResult {
         this.month = month;
     }
 
-    public LegalCase getLegalCase() {
-        return legalCase;
-    }
-
-    public Integer getYear() {
+    public String getYear() {
         return year;
     }
 
-    public void setYear(final Integer year) {
+    public void setYear(final String year) {
         this.year = year;
-    }
-
-    public void setLegalCase(final LegalCase legalCase) {
-        this.legalCase = legalCase;
     }
 
 }

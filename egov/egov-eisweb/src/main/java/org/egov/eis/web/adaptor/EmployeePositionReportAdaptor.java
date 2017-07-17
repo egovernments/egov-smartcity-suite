@@ -57,13 +57,13 @@ public class EmployeePositionReportAdaptor implements JsonSerializer<EmployeePos
         final JsonObject jsonObject = new JsonObject();
         final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         jsonObject.addProperty("name", empAssignment.getName());
-        jsonObject.addProperty("code", empAssignment.getCode());
+        jsonObject.addProperty("employeeCode", empAssignment.getCode());
         jsonObject.addProperty("department", empAssignment.getDepartment().getName());
         jsonObject.addProperty("designation", empAssignment.getDesignation().getName());
         jsonObject.addProperty("position", empAssignment.getPosition().getName());
         jsonObject.addProperty("isPrimary", empAssignment.getIsPrimary().toString());
-        jsonObject.addProperty("fromDate", formatter.format(empAssignment.getFromDate()));
-        jsonObject.addProperty("toDate", formatter.format(empAssignment.getToDate()));
+        jsonObject.addProperty("date",
+                formatter.format(empAssignment.getFromDate()).concat(" - ").concat(formatter.format(empAssignment.getToDate())));
         return jsonObject;
     }
 }

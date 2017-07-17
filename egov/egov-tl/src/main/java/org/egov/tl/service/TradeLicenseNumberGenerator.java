@@ -50,13 +50,16 @@ import java.io.Serializable;
 @Service
 public class TradeLicenseNumberGenerator implements LicenseNumberGenerator {
 
+    private static final String LICENSE_NUMBER_SEQ_NAME = "egtl_license_number";
+    private static final String LICENSE_NUMBER_FORMAT = "TL/%05d/%s";
+
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
 
     @Override
     public String generateLicenseNumber() {
-        Serializable nextSequence = this.sequenceNumberGenerator.getNextSequence("egtl_license_number");
-        return String.format("TL/%05d/%s", nextSequence, DateUtils.currentDateToYearFormat());
+        Serializable nextSequence = this.sequenceNumberGenerator.getNextSequence(LICENSE_NUMBER_SEQ_NAME);
+        return String.format(LICENSE_NUMBER_FORMAT, nextSequence, DateUtils.currentDateToYearFormat());
     }
 
 }

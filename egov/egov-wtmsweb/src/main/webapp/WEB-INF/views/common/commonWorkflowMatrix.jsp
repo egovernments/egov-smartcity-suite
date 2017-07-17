@@ -58,13 +58,14 @@
 	<form:hidden path="" id="currentState" name="currentState" value=""/>
 </c:if> 
 																																																									
-
+<form:hidden path="" id="ownerPosition" name="ownerPosition" value="${ownerPosition}"/>
 <form:hidden path="" id="currentDesignation" name="currentDesignation" value="${currentDesignation}"/>
 <form:hidden path="" id="additionalRule" name="additionalRule" value="${additionalRule}"/>
 <form:hidden  path="" id="amountRule" name="amountRule" value="${amountRule}"/>
 <form:hidden path="" id="workFlowDepartment" name="workFlowDepartment" value="${workFlowDepartment}"/>
 <form:hidden path="" id="pendingActions" name="pendingActions" value="${pendingActions}"/>
 <%-- <form:hidden path="" id="approverName" name="approverName" /> --%>
+<form:hidden path="" name="workFlowAction" id="workFlowAction" />
 
 <form:hidden path="" name="stateType" id="stateType" value="${stateType}"/>	
 	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>		
@@ -111,7 +112,7 @@
 				<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-8 add-margin">
-						<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent" />
+						<form:textarea class="form-control" path="approvalComent"  id="approvalComent" name="approvalComent" maxlength="1024" />
 					</div>
 				</div>
 				

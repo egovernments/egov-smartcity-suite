@@ -39,6 +39,9 @@
  */
 package org.egov.works.models.masters;
 
+import java.util.LinkedList;
+import java.util.List;
+
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
@@ -51,18 +54,12 @@ import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
 
-import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
-
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_CONTRACTOR", columnName = {
         "CODE" }, message = "contractor.code.isunique")
 public class Contractor extends BaseModel implements EntityType {
 
     private static final long serialVersionUID = 6858362239507609219L;
 
-    @Required(message = "contractor.code.null")
     @Length(max = 50, message = "contractor.code.length")
     @OptionalPattern(regex = WorksConstants.alphaNumericwithspecialchar, message = "contractor.code.alphaNumeric")
     private String code;
@@ -73,9 +70,11 @@ public class Contractor extends BaseModel implements EntityType {
     private String name;
 
     @Length(max = 250, message = "contractor.correspondenceAddress.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.correspondenceAddress.alphaNumeric")
     private String correspondenceAddress;
 
     @Length(max = 250, message = "contractor.paymentAddress.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.paymentAddress.alphaNumeric")
     private String paymentAddress;
 
     @Length(max = 100, message = "contractor.contactPerson.length")
@@ -87,6 +86,7 @@ public class Contractor extends BaseModel implements EntityType {
     private String email;
 
     @Length(max = 1024, message = "contractor.narration.length")
+    @OptionalPattern(regex = WorksConstants.ALPHANUMERICWITHALLSPECIALCHAR, message = "contractor.narration.alphaNumeric")
     private String narration;
 
     @Length(max = 10, message = "contractor.panNumber.length")
@@ -113,8 +113,11 @@ public class Contractor extends BaseModel implements EntityType {
 
     private ExemptionForm exemptionForm;
 
-    @Valid
     private List<ContractorDetail> contractorDetails = new LinkedList<ContractorDetail>();
+
+    @Length(max = 10)
+    @OptionalPattern(regex = Constants.MOBILE_NUM, message = "depositworks.roadcut.invalid.mobileno")
+    private String mobileNumber;
 
     @Override
     public String getCode() {
@@ -245,9 +248,7 @@ public class Contractor extends BaseModel implements EntityType {
     @Override
     public List<ValidationError> validate() {
         List<ValidationError> errorList = null;
-        if (contractorDetails != null && contractorDetails.isEmpty())
-            return Arrays.asList(new ValidationError("contractorDetails", "contractor.details.altleastone_details_needed"));
-        else if (contractorDetails != null && !contractorDetails.isEmpty())
+        if (contractorDetails != null && !contractorDetails.isEmpty())
             for (final ContractorDetail contractorDetail : contractorDetails) {
                 errorList = contractorDetail.validate();
                 if (errorList != null)
@@ -311,4 +312,13 @@ public class Contractor extends BaseModel implements EntityType {
 
         return null;
     }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
 }

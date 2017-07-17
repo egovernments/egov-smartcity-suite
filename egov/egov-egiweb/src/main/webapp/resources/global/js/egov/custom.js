@@ -1,42 +1,43 @@
 /*
  * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) 2016  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+var openedWindows = [];
 $(document).ready(function()
 {
 	// jQuery plugin to prevent double submission of forms
@@ -125,6 +126,22 @@ $(document).ready(function()
 		}catch(e){
 		//console.warn("No tooltip");
 	}
+		
+	try{
+		
+		$('.select2').select2({
+			placeholder: "Select",
+			minimumResultsForSearch: 1,
+			width:'100%'
+		});
+		
+		$('select').on('select2:close', function (evt) {
+		  	$(this).focus();
+		});
+		
+	}catch(e){
+		//console.log('No select2');
+	}
 	
 	$("a.open-popup").click(function(e) {
 		window.open(this.href, ''+$(this).attr('data-strwindname')+'', 'width=900, height=700, top=300, left=260,scrollbars=yes'); 
@@ -142,8 +159,8 @@ $(document).ready(function()
 	
 	//fade out success message
 	$(".alert-success").fadeTo(2000, 500).slideUp(500, function(){
-       		$(".alert-success").alert('close');
-    	});
+   		$(".alert-success").alert('close');
+	});
 
 	var elements = document.querySelectorAll('input,select,textarea');
 
@@ -201,7 +218,7 @@ $(document).ready(function()
 	        },
 	        error: function (xhr, ajaxOptions, thrownError) {
 	        	//generic error message with error code
-	            var errormsg = 'Error '+xhr.status+' '+ thrownError +'. please, try again!'
+	            var errormsg = 'Error '+xhr.status+' '+ thrownError +'. please, try again!';
 	            //add error alert in current page  
 	            $('.main-content').prepend('<div id="notifyerror" class="alert alert-danger" role="alert"> <div> <span class="glyphicon glyphicon-exclamation-sign" aria-hidden="true"></span> <span class="sr-only">Error:</span> '+ errormsg +' </div> ');	            
 	        },
@@ -212,6 +229,13 @@ $(document).ready(function()
 
 	    return false;
 		
+	});
+	
+	$('.signout').click(function(){
+		$.each( openedWindows, function( i, val ) {
+			var window = val;
+			window.close();
+		});
 	});
 	
 });
@@ -272,67 +296,6 @@ $.fn.getCursorPosition = function() {
     return [pos, posEnd];
 };
 
-function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid)
-{
-	  typeaheadobj.on('typeahead:selected', function(event, data){
-		//setting hidden value
-		$(hiddeneleid).val(data.value);    
-	    }).on('keydown', this, function (event) {
-	    	var e = event;
-	    	
-	    	var position = $(this).getCursorPosition();
-	        var deleted = '';
-	        var val = $(this).val();
-	        if (e.which == 8) {
-	            if (position[0] == position[1]) {
-	                if (position[0] == 0)
-	                    deleted = '';
-	                else
-	                    deleted = val.substr(position[0] - 1, 1);
-	            }
-	            else {
-	                deleted = val.substring(position[0], position[1]);
-	            }
-	        }
-	        else if (e.which == 46) {
-	            var val = $(this).val();
-	            if (position[0] == position[1]) {
-	                
-	                if (position[0] === val.length)
-	                    deleted = '';
-	                else
-	                    deleted = val.substr(position[0], 1);
-	            }
-	            else {
-	                deleted = val.substring(position[0], position[1]);
-	            }
-	        }
-	        
-	        if(deleted){ 
-	        	$(hiddeneleid).val(''); 
-        	}
-
-        }).on('keypress', this, function (event) {
-        	//getting charcode by independent browser
-        	var evt = (evt) ? evt : event;
-        	var charCode = (evt.which) ? evt.which : 
-                ((evt.charCode) ? evt.charCode : 
-                  ((evt.keyCode) ? evt.keyCode : 0));
-        	//only characters keys condition
-	    	if((charCode >= 32 && charCode <= 127)){
-	    		//clearing input hidden value on keyup
-	    	    $(hiddeneleid).val('');
-	    	    $(dependentfield).empty();
-	    	}
-        }).on('focusout', this, function (event) { 
-    	    //focus out clear textbox, when no values selected from suggestion list
-    	    if(!$(hiddeneleid).val())
-    	    {	
-    	    	$(this).typeahead('val', '');
-    	    }
-       });
-}
-
 function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield)
 {
 	  typeaheadobj.on('typeahead:selected', function(event, data){
@@ -391,12 +354,15 @@ function typeaheadWithEventsHandling(typeaheadobj, hiddeneleid, dependentfield)
     	    if(!$(hiddeneleid).val())
     	    {	
     	    	$(this).typeahead('val', '');
-    	    	cleardependentfield(dependentfield);
+        		cleardependentfield(dependentfield);
     	    }
        });
 }
 
 function cleardependentfield(dependentfield){
+	if(!dependentfield){
+		return;
+	}
 	console.log($(dependentfield).prop("type"));
 	if($(dependentfield).prop("type") == 'select-one' || $(dependentfield).prop("type") == 'select-multiple'){
 		$(dependentfield).empty();
@@ -405,11 +371,39 @@ function cleardependentfield(dependentfield){
 	}
 }
 
-function disableRefreshAndBack(e) {
+function disableRefresh(e) {
 	var key = (e.which || e.keyCode);
-	if (key == 116 || (key == 8 && !$(':focus').length))//F5 and Backspace
-		e.preventDefault();
-	if (e.ctrlKey)
-		if (key == 82)
+	if (e.ctrlKey){
+		if (key == 82 || key == 116)
 			e.preventDefault();
+	}
+	else if(key == 116){
+		e.preventDefault();
+	}
+			
+}
+
+function preventBack(){
+	history.pushState(null, null, document.URL);
+    window.addEventListener('popstate', function () {
+        history.pushState(null, null, document.URL);
+    });
+}
+
+function select2initialize(obj,data,multiple){
+	
+	obj.empty();
+	
+	if(!multiple)
+		obj.append("<option value=''>Select</option>");
+	
+	$('.select2').select2({
+		allowClear: true,
+        placeholder: "Select",
+        minimumResultsForSearch: 1,
+		data : data,
+		multiple : multiple,
+		width:'100%'
+	});
+	
 }

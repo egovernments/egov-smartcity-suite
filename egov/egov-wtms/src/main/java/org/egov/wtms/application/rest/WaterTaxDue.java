@@ -54,6 +54,17 @@ public class WaterTaxDue {
     private String errorCode;
     private String errorMessage;
     private Boolean isSuccess;
+    private Boolean isInWorkFlow;
+    private BigDecimal currentInstDemand;
+
+
+    public Boolean getIsInWorkFlow() {
+        return isInWorkFlow;
+    }
+
+    public void setIsInWorkFlow(Boolean isInWorkFlow) {
+        this.isInWorkFlow = isInWorkFlow;
+    }
 
     public String getPropertyID() {
         return org.apache.commons.lang.StringUtils.defaultIfEmpty(propertyID, "");
@@ -141,6 +152,14 @@ public class WaterTaxDue {
 
     public void setErrorMessage(final String errorMessage) {
         this.errorMessage = errorMessage;
+    }
+
+    public BigDecimal getCurrentInstDemand() {
+        return currentInstDemand;
+    }
+
+    public void setCurrentInstDemand(BigDecimal currentInstDemand) {
+        this.currentInstDemand = currentInstDemand;
     }
 
 }

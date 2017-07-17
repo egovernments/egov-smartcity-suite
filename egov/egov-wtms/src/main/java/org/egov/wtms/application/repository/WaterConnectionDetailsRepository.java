@@ -39,6 +39,9 @@
  */
 package org.egov.wtms.application.repository;
 
+import java.util.Date;
+import java.util.List;
+
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -52,9 +55,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
-
-import java.util.Date;
-import java.util.List;
 
 @Repository
 public interface WaterConnectionDetailsRepository extends JpaRepository<WaterConnectionDetails, Long> {
@@ -74,14 +74,22 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     List<WaterConnectionDetails> findAllByApplicationTypeAndConnectionStatusOrderByApplicationNumberAsc(
             ApplicationType applicationType, ConnectionStatus connectionStatus);
 
-    WaterConnectionDetails findByApplicationNumberOrConnection_ConsumerCodeAndConnectionStatus(String applicationNumber,
-            String consumerCode ,ConnectionStatus connectionStatus );
-    
-    WaterConnectionDetails findByApplicationNumberOrConnection_ConsumerCode(String applicationNumber,
-            String consumerCode  );
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationNumber =:applicationNumber or (wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus)")
+    WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCodeAndConnectionStatus(
+            @Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber,
+            @Param("connectionStatus") ConnectionStatus connectionStatus);
 
-    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatus(String consumerCode,
-            ConnectionStatus connectionStatus);
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode or wcd.applicationNumber =:applicationNumber")
+    WaterConnectionDetails findConnectionDetailsByApplicationNumberOrConsumerCode(
+            @Param("consumerCode") String consumerCode, @Param("applicationNumber") String applicationNumber);
+
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus")
+    WaterConnectionDetails findConnectionDetailsByConsumerCodeAndConnectionStatus(
+            @Param("consumerCode") String consumerCode, @Param("connectionStatus") ConnectionStatus connectionStatus);
+
+    @Query("select wcd from WaterConnectionDetails wcd where  wcd.connection.parentConnection is null and wcd.connection.consumerCode =:consumerCode and wcd.connectionStatus =:connectionStatus")
+    WaterConnectionDetails findParentConnectionDetailsByConsumerCodeAndConnectionStatus(
+            @Param("consumerCode") String consumerCode, @Param("connectionStatus") ConnectionStatus connectionStatus);
 
     WaterConnectionDetails findByConnection(WaterConnection waterConnection);
 
@@ -97,9 +105,22 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     // TODO - .. connections also when closure of Primary connection happens.
     // Fixme Later : We are assuming that there will be only one primary
     // connection for given property ID other than INACTIVE and CLOSED status
-    //removed "CLOSED" cos not allowing to create NEW Connection if any records with closed Connectionstatus 
+    // removed "CLOSED" cos not allowing to create NEW Connection if any records
+    // with closed Connectionstatus
     @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
     WaterConnectionDetails getPrimaryConnectionDetailsByPropertyID(
+            @Param("propertyIdentifier") String propertyIdentifier);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connection.parentConnection is null and wcd.connectionStatus in ('ACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier) order by wcd.applicationDate asc ")
+    WaterConnectionDetails getPrimaryConnectionDetailsByPropertyAssessmentNumber(
+            @Param("propertyIdentifier") String propertyIdentifier);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.applicationType.code not in ('NEWCONNECTION') and  wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
+    List<WaterConnectionDetails> getChildConnectionDetailsByPropertyID(
+            @Param("propertyIdentifier") String propertyIdentifier);
+    
+    @Query("select wcd from WaterConnectionDetails wcd where wcd.connectionStatus not in ('INACTIVE') and wcd.connection.propertyIdentifier =:propertyIdentifier")
+    List<WaterConnectionDetails> getAllConnectionDetailsExceptInactiveStatusByPropertyID(
             @Param("propertyIdentifier") String propertyIdentifier);
 
     @Query(" from WaterConnectionDetails WCD where WCD.connectionStatus in(:status)"
@@ -109,14 +130,14 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
 
     WaterConnectionDetails findByConnection_PropertyIdentifierAndConnectionStatusAndConnection_ParentConnectionIsNull(
             String propertyIdentifier, ConnectionStatus connectionStatus);
-    
-    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndAndConnection_ParentConnectionIsNotNull(
+
+    WaterConnectionDetails findByConnection_ConsumerCodeAndConnectionStatusAndConnection_ParentConnectionIsNotNull(
             String consumercode, ConnectionStatus connectionStatus);
 
     @Query("select wcd.waterConnectionDetails from org.egov.wtms.application.entity.WaterDemandConnection wcd where wcd.demand=:demand")
     WaterConnectionDetails findByDemand(@Param("demand") EgDemand demand);
 
-    @Query("select wcd from MeterReadingConnectionDetails wcd where wcd.waterConnectionDetails.id=:waterConnDetId order by currentReadingDate desc")
+    @Query("select wcd from MeterReadingConnectionDetails wcd where wcd.waterConnectionDetails.id=:waterConnDetId order by wcd.id desc")
     List<MeterReadingConnectionDetails> findPreviousMeterReadingReading(@Param("waterConnDetId") Long waterConnDetId);
 
     @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.id  in (select wc.id from WaterConnection wc where wc.parentConnection.id = :parentId) ")
@@ -128,9 +149,12 @@ public interface WaterConnectionDetailsRepository extends JpaRepository<WaterCon
     @Query("select dr from org.egov.demand.model.EgDemandReason dr where dr.egDemandReasonMaster.code =:code")
     List<EgDemandReason> findDemandReasonByCode(@Param("code") String code);
 
-    @Query("select I from Installment I where I.module.name=:module and I.description =:description")
-    Installment findInstallmentByDescription(@Param("module") String code, @Param("description") String description);
-
     @Query("select D from EgDemandDetails D where D.id =:detId")
     EgDemandDetails findEgDemandDetailById(@Param("detId") Long detId);
+
+    WaterConnectionDetails findByConnectionOldConsumerNumberAndConnectionStatus(String oldConsumerNumber,
+            ConnectionStatus connectionStatus);
+
+    @Query("select wcd from WaterConnectionDetails wcd  where wcd.connection.id  in (select wc.id from WaterConnection wc where wc.propertyIdentifier = :propertyId) ")
+    List<WaterConnectionDetails> getAllConnectionDetailsByPropertyID(@Param("propertyId") String propertyId);
 }

@@ -46,10 +46,6 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
  */
 public class ApplicationWorkflowCustomDefaultImpl extends ApplicationWorkflowCustomImpl {
 
-    public ApplicationWorkflowCustomDefaultImpl() {
-
-    }
-
     @Override
     public void createCommonWorkflowTransition(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String additionalRule,

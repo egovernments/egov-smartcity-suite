@@ -1,41 +1,41 @@
 <%--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~    accountability and the service delivery of the government  organizations.
+  ~      accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~       Copyright (C) 2016  eGovernments Foundation
   ~
-  ~     The updated version of eGov suite of products as by eGovernments Foundation
-  ~     is available at http://www.egovernments.org
+  ~       The updated version of eGov suite of products as by eGovernments Foundation
+  ~       is available at http://www.egovernments.org
   ~
-  ~     This program is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     any later version.
+  ~       This program is free software: you can redistribute it and/or modify
+  ~       it under the terms of the GNU General Public License as published by
+  ~       the Free Software Foundation, either version 3 of the License, or
+  ~       any later version.
   ~
-  ~     This program is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
+  ~       This program is distributed in the hope that it will be useful,
+  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~       GNU General Public License for more details.
   ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~     http://www.gnu.org/licenses/gpl.html .
+  ~       You should have received a copy of the GNU General Public License
+  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~       http://www.gnu.org/licenses/gpl.html .
   ~
-  ~     In addition to the terms of the GPL license to be adhered to in using this
-  ~     program, the following additional terms are to be complied with:
+  ~       In addition to the terms of the GPL license to be adhered to in using this
+  ~       program, the following additional terms are to be complied with:
   ~
-  ~         1) All versions of this program, verbatim or modified must carry this
-  ~            Legal Notice.
+  ~           1) All versions of this program, verbatim or modified must carry this
+  ~              Legal Notice.
   ~
-  ~         2) Any misrepresentation of the origin of the material is prohibited. It
-  ~            is required that all modified versions of this material be marked in
-  ~            reasonable ways as different from the original version.
+  ~           2) Any misrepresentation of the origin of the material is prohibited. It
+  ~              is required that all modified versions of this material be marked in
+  ~              reasonable ways as different from the original version.
   ~
-  ~         3) This license does not grant any rights to any user of the program
-  ~            with regards to rights under trademark law for use of the trade names
-  ~            or trademarks of eGovernments Foundation.
+  ~           3) This license does not grant any rights to any user of the program
+  ~              with regards to rights under trademark law for use of the trade names
+  ~              or trademarks of eGovernments Foundation.
   ~
-  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
@@ -44,8 +44,15 @@
 
 <html>
 	<head>
-		<script src="<cdn:url value='/resources/javascript/objection.js' context='/ptis'/>"></script>
-		<title><s:text name="recordObjection.title"></s:text></title>
+		<script src="<cdn:url value='/resources/javascript/objection.js?rnd=${app_release_no}' context='/ptis'/>"></script>
+		<title>
+		<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="recordGRP.title"></s:text>
+			    </s:if>
+			    <s:else>
+		<s:text name="recordObjection.title"></s:text>
+		</s:else>
+		</title>
 		<script type="text/javascript">
 			jQuery.noConflict();
 			jQuery("#loadingMask").remove();
@@ -79,12 +86,12 @@
 			}
 	
 		</script>
-		<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+        <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 		<link href="<cdn:url value='/resources/css/headertab.css'/>" rel="stylesheet" type="text/css" />
 	
 	</head>
 	<body  class="yui-skin-sam" onload="loadOnStartup(); ">
-	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple">
+	<s:form action="revPetition" method="post" name="objectionViewForm" theme="simple" enctype="multipart/form-data">
 	<s:push value="model">
 	<s:token />
 		<s:if test="%{hasActionMessages()}">
@@ -98,7 +105,13 @@
             <td><div id="header">
 				<ul id="Tabs">
 					<li id="propertyHeaderTab" class="First Active"><a id="header_1" href="javascript:void(0);" onclick="showPropertyHeaderTab();"><s:text name="propDet"></s:text></a></li>
-					<li id="objectionDetailTab" class=""><a id="header_2" href="javascript:void(0);" onclick="showObjectionHeaderTab();"><s:text name="objection.details.heading"></s:text></a></li>
+					<li id="objectionDetailTab" class=""><a id="header_2" href="javascript:void(0);" onclick="showObjectionHeaderTab();">
+					<s:if test="%{wfType.equals(@org.egov.ptis.constants.PropertyTaxConstants@WFLOW_ACTION_NAME_GRP)}">
+					<s:text name="objection.grp.details.heading"></s:text>
+			    </s:if>
+			    <s:else><s:text name="objection.details.heading"></s:text></s:else>
+					
+					</a></li>
 		<%-- 			<li id="approvalTab" class="Last"><a id="header_3" href="javascript:void(0);" onclick="showApprovalTab();"><s:text name="approval.details.title"></s:text></a></li>
  --%>				</ul>
             </div></td>
@@ -123,7 +136,7 @@
             </div>
             </td>
           </tr>
-         <s:if test="%{loggedUserIsEmployee == true}">
+         <s:if test="%{loggedUserIsEmployee == true  && applicationSource != 'online' && !citizenPortalUser}">
           <tr>
             <td>
             <div class="formmainbox"> 
@@ -146,8 +159,9 @@
 		</tr>             
 		</table> --%></div>
 		<s:hidden name="model.id" id="model.id"/>    
+		<s:hidden name="applicationSource" value="%{applicationSource}" />
 		<s:hidden name="egwStatus.code" id="egwStatuscode" value="%{egwStatus.code}"/>      
-		
+		<s:hidden name="wfType" id="wfType" value="%{wfType}" />
 		</s:push>
 	</s:form>
 </body>

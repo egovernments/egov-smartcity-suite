@@ -2315,6 +2315,14 @@ var callbackProjectCodes = {
     	bootbox.alert('Failed to Load Project Codes');
     }
 }
-
+function disableForm() {
+	var frmIndex = 0;
+		for (var i = 0; i < document.forms[frmIndex].length; i++) {
+			for (var i = 0; i < document.forms[0].length; i++) {
+				if (document.forms[0].elements[i].name != 'button2')
+					document.forms[frmIndex].elements[i].disabled = true;
+			}
+		}
+} 
 
 

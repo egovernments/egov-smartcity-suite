@@ -38,8 +38,27 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.ptis.domain.entity.property;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_AMALGAMATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
@@ -50,24 +69,6 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-
-import javax.validation.Valid;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
 public class PropertyImpl extends StateAware implements Property {
 
@@ -83,7 +84,7 @@ public class PropertyImpl extends StateAware implements Property {
 
     private Boolean vacant;
 
-    private BasicProperty basicProperty;
+    private transient BasicProperty basicProperty;
 
     private AbstractProperty abstractProperty;
 
@@ -93,7 +94,7 @@ public class PropertyImpl extends StateAware implements Property {
 
     private Character status = 'N';
 
-    private Set<Ptdemand> ptDemandSet = new HashSet<Ptdemand>();
+    private Set<Ptdemand> ptDemandSet = new HashSet<>();
 
     private Character isChecked = 'N';
 
@@ -101,13 +102,13 @@ public class PropertyImpl extends StateAware implements Property {
 
     private Date effectiveDate;
 
-    private PropertyDetail propertyDetail;
+    private transient PropertyDetail propertyDetail;
     private String propertyModifyReason;
     private Installment installment;
     private BigDecimal manualAlv;
     private String occupierName;
     private Boolean isExemptedFromTax = false;
-    private TaxExeptionReason taxExemptedReason;
+    private TaxExemptionReason taxExemptedReason;
     private String docNumber;
     private Boundary areaBndry;
     private BigDecimal alv;
@@ -117,7 +118,7 @@ public class PropertyImpl extends StateAware implements Property {
     private String meesevaApplicationNumber;// Temporary number for meeseva
                                             // integration.
     private String meesevaServiceCode;
-    private Character source = 'A';
+    private String source;
 
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is
@@ -126,7 +127,12 @@ public class PropertyImpl extends StateAware implements Property {
      *              property will not be having the unitCalculationDetails
      */
     @Valid
-    private Set<UnitCalculationDetail> unitCalculationDetails = new HashSet<UnitCalculationDetail>();
+    private Set<UnitCalculationDetail> unitCalculationDetails = new HashSet<>();
+    private List<AmalgamationOwner> amalgamationOwners = new ArrayList<>();
+    private List<AmalgamationOwner> amalgamationOwnersProxy = new ArrayList<>();
+    private List<Document> assessmentDocuments = new ArrayList<>();
+    private List<Document> taxExemptionDocuments = new ArrayList<>();
+    private List<Document> taxExemptionDocumentsProxy = new ArrayList<>();
 
     @Override
     public String getDocNumber() {
@@ -373,12 +379,12 @@ public class PropertyImpl extends StateAware implements Property {
     }
 
     @Override
-    public TaxExeptionReason getTaxExemptedReason() {
+    public TaxExemptionReason getTaxExemptedReason() {
         return taxExemptedReason;
     }
 
     @Override
-    public void setTaxExemptedReason(final TaxExeptionReason taxExemptedReason) {
+    public void setTaxExemptedReason(final TaxExemptionReason taxExemptedReason) {
         this.taxExemptedReason = taxExemptedReason;
     }
 
@@ -432,7 +438,8 @@ public class PropertyImpl extends StateAware implements Property {
         for (final Ptdemand demand : getPtDemandSet())
             newdemandSet.add((Ptdemand) demand.clone());
         for (Ptdemand clonedDemand : newdemandSet) {
-            for (FloorwiseDemandCalculations floorDmdCalc : clonedDemand.getDmdCalculations().getFlrwiseDmdCalculations()) {
+            for (FloorwiseDemandCalculations floorDmdCalc : clonedDemand.getDmdCalculations()
+                    .getFlrwiseDmdCalculations()) {
                 Floor oldFloor = floorDmdCalc.getFloor();
                 for (Floor newFloor : floors) {
                     if (newFloor.getFloorUid().equals(oldFloor.getFloorUid())) {
@@ -452,54 +459,63 @@ public class PropertyImpl extends StateAware implements Property {
         PropertyDetail propDetails = null;
         if (getPropertyDetail().getPropertyType().toString().equals(BUILT_UP_PROPERTY)) {
             final BuiltUpProperty bup = (BuiltUpProperty) getPropertyDetail();
-            propDetails = new BuiltUpProperty(getPropertyDetail().getSitalArea(), getPropertyDetail()
-                    .getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(), getPropertyDetail()
-                    .getPlinthArea(), getPropertyDetail().getCommVacantLand(), getPropertyDetail().getNonResPlotArea(),
-                    bup.isIrregular(), getPropertyDetail().getSurveyNumber(), getPropertyDetail().getFieldVerified(),
-                    getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null, getPropertyDetail()
-                            .getWater_Meter_Num(), getPropertyDetail().getElec_Meter_Num(), getPropertyDetail()
-                            .getNoofFloors(), getPropertyDetail().getFieldIrregular(), newProperty, getPropertyDetail()
-                            .getDateOfCompletion(), getPropertyDetail().getPropertyUsage(), getPropertyDetail()
-                            .getUpdatedTime(), bup.getCreationReason(), getPropertyDetail().getPropertyTypeMaster(),
+            propDetails = new BuiltUpProperty(getPropertyDetail().getSitalArea(),
+                    getPropertyDetail().getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(),
+                    getPropertyDetail().getPlinthArea(), getPropertyDetail().getCommVacantLand(),
+                    getPropertyDetail().getNonResPlotArea(), bup.isIrregular(), getPropertyDetail().getSurveyNumber(),
+                    getPropertyDetail().getFieldVerified(), getPropertyDetail().getFieldVerificationDate(),
+                    cloneFlrDtls(), null, getPropertyDetail().getWater_Meter_Num(),
+                    getPropertyDetail().getElec_Meter_Num(), getPropertyDetail().getNoofFloors(),
+                    getPropertyDetail().getFieldIrregular(), newProperty, getPropertyDetail().getUpdatedTime(),
+                    getPropertyDetail().getPropertyUsage(), getPropertyDetail().getDateOfCompletion(),
+                    bup.getCreationReason(), getPropertyDetail().getPropertyTypeMaster(),
                     getPropertyDetail().getPropertyType(), getPropertyDetail().getPropertyMutationMaster(),
-                    getPropertyDetail().getComZone(), getPropertyDetail().getCornerPlot(), getPropertyDetail()
-                            .getPropertyOccupation(), getPropertyDetail().getExtentSite(), getPropertyDetail()
-                            .getExtentAppartenauntLand(), getPropertyDetail().getFloorType(), getPropertyDetail()
-                            .getRoofType(), getPropertyDetail().getWallType(), getPropertyDetail().getWoodType(),
-                    getPropertyDetail().isLift(), getPropertyDetail().isToilets(), getPropertyDetail().isWaterTap(),
-                    getPropertyDetail().isStructure(), getPropertyDetail().isElectricity(), getPropertyDetail()
-                            .isAttachedBathRoom(), getPropertyDetail().isWaterHarvesting(), getPropertyDetail()
-                            .isCable(), getPropertyDetail().getSiteOwner(), getPropertyDetail().getApartment(),
+                    getPropertyDetail().getComZone(), getPropertyDetail().getCornerPlot(),
+                    getPropertyDetail().getPropertyOccupation(), getPropertyDetail().getExtentSite(),
+                    getPropertyDetail().getExtentAppartenauntLand(), getPropertyDetail().getFloorType(),
+                    getPropertyDetail().getRoofType(), getPropertyDetail().getWallType(),
+                    getPropertyDetail().getWoodType(), getPropertyDetail().isLift(), getPropertyDetail().isToilets(),
+                    getPropertyDetail().isWaterTap(), getPropertyDetail().isStructure(),
+                    getPropertyDetail().isElectricity(), getPropertyDetail().isAttachedBathRoom(),
+                    getPropertyDetail().isWaterHarvesting(), getPropertyDetail().isCable(),
+                    getPropertyDetail().getSiteOwner(), getPropertyDetail().getApartment(),
                     getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
                     getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(), getPropertyDetail()
 
-                    .getOccupancyCertificationNo(), getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail()
-                            .isCorrAddressDiff());
+                            .getOccupancyCertificationNo(),
+                    getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail().isCorrAddressDiff(),
+                    getPropertyDetail().getPropertyDepartment(), getPropertyDetail().getVacantLandPlotArea(),
+                    getPropertyDetail().getLayoutApprovalAuthority(), getPropertyDetail().getLayoutPermitNo(),
+                    getPropertyDetail().getLayoutPermitDate());
 
         } else if (getPropertyDetail().getPropertyType().toString().equals(VACANT_PROPERTY)) {
             final VacantProperty vcp = (VacantProperty) getPropertyDetail();
-            propDetails = new VacantProperty(getPropertyDetail().getSitalArea(), getPropertyDetail()
-                    .getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(), getPropertyDetail()
-                    .getPlinthArea(), getPropertyDetail().getCommVacantLand(), getPropertyDetail().getNonResPlotArea(),
-                    vcp.getIrregular(), getPropertyDetail().getSurveyNumber(), getPropertyDetail().getFieldVerified(),
-                    getPropertyDetail().getFieldVerificationDate(), cloneFlrDtls(), null, getPropertyDetail()
-                            .getWater_Meter_Num(), getPropertyDetail().getElec_Meter_Num(), getPropertyDetail()
-                            .getNoofFloors(), getPropertyDetail().getFieldIrregular(), getPropertyDetail()
-                            .getDateOfCompletion(), newProperty, getPropertyDetail().getUpdatedTime(),
-                    getPropertyDetail().getPropertyUsage(), vcp.getCreationReason(), getPropertyDetail()
-                            .getPropertyTypeMaster(), getPropertyDetail().getPropertyType(), getPropertyDetail()
-                            .getInstallment(), getPropertyDetail().getPropertyOccupation(), getPropertyDetail()
-                            .getPropertyMutationMaster(), getPropertyDetail().getComZone(), getPropertyDetail()
-                            .getCornerPlot(), getPropertyDetail().getExtentSite(), getPropertyDetail()
-                            .getExtentAppartenauntLand(), getPropertyDetail().getFloorType(), getPropertyDetail()
-                            .getRoofType(), getPropertyDetail().getWallType(), getPropertyDetail().getWoodType(),
-                    getPropertyDetail().isLift(), getPropertyDetail().isToilets(), getPropertyDetail().isWaterTap(),
-                    getPropertyDetail().isStructure(), getPropertyDetail().isElectricity(), getPropertyDetail()
-                            .isAttachedBathRoom(), getPropertyDetail().isWaterHarvesting(), getPropertyDetail()
-                            .isCable(), getPropertyDetail().getSiteOwner(), getPropertyDetail().getPattaNumber(),
-                    getPropertyDetail().getCurrentCapitalValue(), getPropertyDetail().getMarketValue(),
-                    getPropertyDetail().getCategoryType(), getPropertyDetail().getOccupancyCertificationNo(),
-                    getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail().isCorrAddressDiff());
+            propDetails = new VacantProperty(getPropertyDetail().getSitalArea(),
+                    getPropertyDetail().getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(),
+                    getPropertyDetail().getPlinthArea(), getPropertyDetail().getCommVacantLand(),
+                    getPropertyDetail().getNonResPlotArea(), vcp.getIrregular(), getPropertyDetail().getSurveyNumber(),
+                    getPropertyDetail().getFieldVerified(), getPropertyDetail().getFieldVerificationDate(),
+                    cloneFlrDtls(), null, getPropertyDetail().getWater_Meter_Num(),
+                    getPropertyDetail().getElec_Meter_Num(), getPropertyDetail().getNoofFloors(),
+                    getPropertyDetail().getFieldIrregular(), getPropertyDetail().getDateOfCompletion(), newProperty,
+                    getPropertyDetail().getUpdatedTime(), getPropertyDetail().getPropertyUsage(),
+                    vcp.getCreationReason(), getPropertyDetail().getPropertyTypeMaster(),
+                    getPropertyDetail().getPropertyType(), getPropertyDetail().getInstallment(),
+                    getPropertyDetail().getPropertyOccupation(), getPropertyDetail().getPropertyMutationMaster(),
+                    getPropertyDetail().getComZone(), getPropertyDetail().getCornerPlot(),
+                    getPropertyDetail().getExtentSite(), getPropertyDetail().getExtentAppartenauntLand(),
+                    getPropertyDetail().getFloorType(), getPropertyDetail().getRoofType(),
+                    getPropertyDetail().getWallType(), getPropertyDetail().getWoodType(), getPropertyDetail().isLift(),
+                    getPropertyDetail().isToilets(), getPropertyDetail().isWaterTap(),
+                    getPropertyDetail().isStructure(), getPropertyDetail().isElectricity(),
+                    getPropertyDetail().isAttachedBathRoom(), getPropertyDetail().isWaterHarvesting(),
+                    getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner(),
+                    getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
+                    getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(),
+                    getPropertyDetail().getOccupancyCertificationNo(), getPropertyDetail().isAppurtenantLandChecked(),
+                    getPropertyDetail().isCorrAddressDiff(), getPropertyDetail().getPropertyDepartment(),
+                    getPropertyDetail().getVacantLandPlotArea(), getPropertyDetail().getLayoutApprovalAuthority(),
+                    getPropertyDetail().getLayoutPermitNo(), getPropertyDetail().getLayoutPermitDate());
         }
         return propDetails;
     }
@@ -540,8 +556,8 @@ public class PropertyImpl extends StateAware implements Property {
     @Override
     public String getStateDetails() {
         final StringBuffer stateDetails = new StringBuffer("");
-        final String upicNo = getBasicProperty().getUpicNo() != null && !getBasicProperty().getUpicNo().isEmpty() ? getBasicProperty()
-                .getUpicNo() : "";
+        final String upicNo = getBasicProperty().getUpicNo() != null && !getBasicProperty().getUpicNo().isEmpty()
+                ? getBasicProperty().getUpicNo() : "";
         final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
                 : "";
         stateDetails.append(upicNo.isEmpty() ? applicationNo : upicNo).append(", ")
@@ -626,11 +642,10 @@ public class PropertyImpl extends StateAware implements Property {
     @Override
     public String myLinkId() {
         String url = "";
-        if (getState() != null
-                && getState().getValue() != null
+        if (getState() != null && getState().getValue() != null
                 && (getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER)
-                        || getState().getValue().startsWith(WFLOW_ACTION_NAME_BIFURCATE) || getState().getValue()
-                        .startsWith(WFLOW_ACTION_NAME_GRP)))
+                        || getState().getValue().startsWith(WFLOW_ACTION_NAME_BIFURCATE)
+                        || getState().getValue().startsWith(WFLOW_ACTION_NAME_GRP)))
             url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_STEP_CREATE))
@@ -641,6 +656,9 @@ public class PropertyImpl extends StateAware implements Property {
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_NAME_EXEMPTION))
             url = "/ptis/exemption/update/" + getId();
+        else if (getState() != null && getState().getValue() != null
+                && getState().getValue().startsWith(WFLOW_ACTION_NAME_AMALGAMATE))
+            url = "/ptis/amalgamation/amalgamation-view.action?modelId=" + getId();
         return url;
     }
 
@@ -691,13 +709,73 @@ public class PropertyImpl extends StateAware implements Property {
     }
 
     @Override
-    public Character getSource() {
+    public String getSource() {
         return source;
     }
 
     @Override
-    public void setSource(final Character source) {
+    public void setSource(final String source) {
         this.source = source;
+    }
+
+    @Override
+    public List<AmalgamationOwner> getAmalgamationOwners() {
+        return amalgamationOwners;
+    }
+
+    @Override
+    public void setAmalgamationOwners(List<AmalgamationOwner> amalgamationOwners) {
+        this.amalgamationOwners = amalgamationOwners;
+    }
+
+    @Override
+    public List<AmalgamationOwner> getAmalgamationOwnersProxy() {
+        return amalgamationOwnersProxy;
+    }
+
+    @Override
+    public void setAmalgamationOwnersProxy(List<AmalgamationOwner> amalgamationOwnersProxy) {
+        this.amalgamationOwnersProxy = amalgamationOwnersProxy;
+    }
+
+    @Override
+    public void addAmalgamationOwners(AmalgamationOwner ownerInfo) {
+        getAmalgamationOwners().add(ownerInfo);
+    }
+
+    @Override
+    public List<Document> getAssessmentDocuments() {
+        return assessmentDocuments;
+    }
+
+    @Override
+    public void setAssessmentDocuments(List<Document> assessmentDocuments) {
+        this.assessmentDocuments = assessmentDocuments;
+    }
+
+    @Override
+    public List<Document> getTaxExemptionDocuments() {
+        return taxExemptionDocuments;
+    }
+
+    @Override
+    public void setTaxExemptionDocuments(List<Document> taxExemptionDocuments) {
+        this.taxExemptionDocuments = taxExemptionDocuments;
+    }
+
+    @Override
+    public List<Document> getTaxExemptionDocumentsProxy() {
+        return taxExemptionDocumentsProxy;
+    }
+
+    @Override
+    public void setTaxExemptionDocumentsProxy(List<Document> taxExemptionDocumentsProxy) {
+        this.taxExemptionDocumentsProxy = taxExemptionDocumentsProxy;
+    }
+    
+    @Override
+    public void addTaxExemptionDocuments(Document exemptionDocument) {
+        getTaxExemptionDocuments().add(exemptionDocument);
     }
 
 }

@@ -41,10 +41,6 @@ package org.egov.ptis.actions.common;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
-import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
-import org.springframework.beans.factory.annotation.Autowired;
-
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -55,17 +51,20 @@ import java.util.TreeMap;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_FULL;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_NIL;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_PARTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_BILL;
+import static org.egov.ptis.constants.PropertyTaxConstants.INTEGRATED_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_DEMAND_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ESD;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OC;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTIONPROCEEDINGS;
+
 
 public class CommonServices {
-
-	@Autowired
-	private static PropertyUsageDAO propertyUsageDAO;
-	@Autowired
-	private static PropertyTypeMasterDAO propertyTypeMasterDAO;
 
 	public static Map<String, Integer> getWaterMeterRateMstr() {
 		Map<String, Integer> waterMeterMap = new HashMap<String, Integer>();
@@ -93,9 +92,15 @@ public class CommonServices {
 
 	public static Map<String, String> getNoticeTypeMstr() {
 		Map<String, String> noticeTypeMap = new HashMap<String, String>();
-		noticeTypeMap.put(NOTICE_TYPE_BILL, NOTICE_TYPE_DEMAND_BILL);
+		noticeTypeMap.put(INTEGRATED_BILL, NOTICE_TYPE_DEMAND_BILL);
 		noticeTypeMap.put(NOTICE_TYPE_SPECIAL_NOTICE, NOTICE_TYPE_SPECIAL_NOTICE);
 		noticeTypeMap.put(NOTICE_TYPE_MUTATION_CERTIFICATE, NOTICE_TYPE_MUTATION_CERTIFICATE);
+		noticeTypeMap.put(NOTICE_TYPE_ESD, NOTICE_TYPE_ESD);
+	        noticeTypeMap.put(NOTICE_TYPE_OC, NOTICE_TYPE_OC);
+                noticeTypeMap.put(NOTICE_TYPE_GRPPROCEEDINGS, NOTICE_TYPE_GRPPROCEEDINGS);
+                noticeTypeMap.put(NOTICE_TYPE_RPPROCEEDINGS, NOTICE_TYPE_RPPROCEEDINGS);
+                noticeTypeMap.put(NOTICE_TYPE_VRPROCEEDINGS, NOTICE_TYPE_VRPROCEEDINGS);
+                noticeTypeMap.put(NOTICE_TYPE_EXEMPTION, NOTICE_TYPE_EXEMPTIONPROCEEDINGS);
 		return noticeTypeMap;
 	}
 
@@ -129,12 +134,13 @@ public class CommonServices {
 				"School and Hostels for the physically challenged", "Synagogues", "Temple");
 	}
 
-	public static final LinkedHashMap<String, String> outstandingAmountRanges = new LinkedHashMap<String, String>() {
-		{
-			put("5000 25000", "5000-25000");
-			put("25001 50000", "25001-50000");
-			put("50001 100000", "50001-100000");
-			put("100001", "100001 & Above");
-		}
-	};
+	@SuppressWarnings("serial")
+    public static final LinkedHashMap<String, String> outstandingAmountRanges = new LinkedHashMap<String, String>() {
+        {
+            put("5000 25000", "5000-25000");
+            put("25001 50000", "25001-50000");
+            put("50001 100000", "50001-100000");
+            put("100001", "100001 & Above");
+        }
+    };
 }

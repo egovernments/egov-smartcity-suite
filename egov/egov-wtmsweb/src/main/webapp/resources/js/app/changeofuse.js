@@ -40,10 +40,38 @@
 $(document).ready(function(){
 	loadPropertyDetails();
 	
+	if($("#connectionType").val()=="METERED"){
+		$(".showfields").show();
+	}
+	
+	$('#connectionType').change(function(){
+			if($('#connectionType').val()==='METERED')
+			{
+				
+				$('.showfields').show();
+				$('#waterSupplyType').attr('required', 'required');
+				$("#buildingName").attr('required','required');
+			}
+			else
+			{
+				
+				$('.showfields').hide();
+				$('#waterSupplyType').removeAttr('required');
+				$('#buildingName').removeAttr('required');
+				$("#waterSupplyType").val('');
+				$("#buildingName").val('');
+			}
+	});
+	
+	if($('#noJAORSAMessage').val()!='')
+		bootbox.alert($('#noJAORSAMessage').val());
+
 	var mode =$('#mode').val();
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
-	if((currentloggedInUser=='true' && mode=='changeOfUse' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false'))
+    var citizenPortal=$('#citizenPortalUser').val();
+	if((currentloggedInUser=='true' && mode=='changeOfUse' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
+	|| (citizenPortal=='true' && mode=='changeOfUse' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false'))
 		{
 		$(".show-row").hide(); 
 		$('#approvalDepartment').removeAttr('required');

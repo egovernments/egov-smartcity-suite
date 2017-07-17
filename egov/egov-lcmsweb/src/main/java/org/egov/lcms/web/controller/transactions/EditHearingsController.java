@@ -39,6 +39,8 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
+import java.text.ParseException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -63,11 +65,8 @@ public class EditHearingsController {
     private HearingsService hearingsService;
 
     @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.GET)
-    public String edit(@PathVariable("hearingsId") final String hearingsId,
-            final Model model) {
-
+    public String edit(@PathVariable("hearingsId") final String hearingsId, final Model model) {
         final Hearings hearings = hearingsService.findById(Long.parseLong(hearingsId));
-
         model.addAttribute("legalCase", hearings.getLegalCase());
         model.addAttribute("hearings", hearings);
         model.addAttribute("mode", "edit");
@@ -75,9 +74,9 @@ public class EditHearingsController {
     }
 
     @RequestMapping(value = "/edit/{hearingsId}", method = RequestMethod.POST)
-    public String update(@PathVariable("hearingsId") final String hearingsId, @Valid @ModelAttribute final Hearings hearings,
-            final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
+    public String update(@PathVariable("hearingsId") final String hearingsId,
+            @Valid @ModelAttribute final Hearings hearings, final BindingResult errors, final Model model,
+            final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws ParseException {
         final LegalCase legalcase = hearings.getLegalCase();
 
         if (!DateUtils.compareDates(hearings.getHearingDate(), hearings.getLegalCase().getCaseDate()))

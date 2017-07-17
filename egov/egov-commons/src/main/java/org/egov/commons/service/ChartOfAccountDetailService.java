@@ -39,6 +39,8 @@
  */
 package org.egov.commons.service;
 
+import java.util.List;
+
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.stereotype.Service;
@@ -54,4 +56,11 @@ public class ChartOfAccountDetailService extends PersistenceService<CChartOfAcco
         super(type);
     }
 
+    public List<CChartOfAccountDetail> getByGlcodeId(Long glcodeId) {
+        return findAllBy("from CChartOfAccountDetail where glCodeId.id=?", glcodeId);
+    }
+    
+    public CChartOfAccountDetail getByGlcodeIdAndDetailTypeId(Long glcodeId,Integer accountDetailTypeId) {
+        return find("from CChartOfAccountDetail where glCodeId.id=? and detailTypeId.id=?", glcodeId,accountDetailTypeId);
+    }
 }

@@ -1,0 +1,121 @@
+---
+# file: tasks/install.yml
+# Top-level installer for Oracle JDK.
+#
+
+
+- name: fetch .rpm or .tar.gz files from Oracle site
+  include: fetch.yml
+  when: java_download_from_oracle
+
+- block:
+
+    - name: copy RPM from local
+      copy:
+        src: "{{ playbook_dir }}/files/{{ jdk_tarball_file }}.rpm"
+        dest: "{{ java_download_path }}/{{ jdk_tarball_file }}.rpm"
+      when: ansible_pkg_mgr == "yum" or ansible_pkg_mgr == "zypper"
+
+    - name: copy tarball from local
+      copy:
+        src: "{{ playbook_dir }}/files/{{ jdk_tarball_file }}.tar.gz"
+        dest: "{{ java_download_path }}/{{ jdk_tarball_file }}.tar.gz"
+      when: ansible_pkg_mgr != "yum" and ansible_pkg_mgr != "zypper"
+
+    - name: copy JCE zip from local
+      copy:
+        src: "{{ playbook_dir }}/files/{{ jce_zip_file }}"
+        dest: "{{ java_download_path }}/{{ jce_zip_file }}"
+      when: java_install_jce
+
+  when: not java_download_from_oracle
+
+
+
+- name: delegate to RPM installation process
+  include: use-rpm.yml
+  when: (ansible_pkg_mgr == "yum" or ansible_pkg_mgr == "zypper") and ansible_os_family != 'Darwin'
+
+- name: delegate to raw tarball installation process
+  include: use-tarball.yml
+  when: ansible_pkg_mgr != "yum" and ansible_pkg_mgr != "zypper" and ansible_os_family != 'Darwin'
+
+- name: delegate to Mac OS X dmg installation
+  include: use-dmg.yml
+  when: ansible_os_family == 'Darwin'
+
+- name: delegate to JCE zip installation process
+  include: install_jce.yml
+  when: java_install_jce
+
+
+- block:
+
+    - name: make sure /etc/profile.d exists
+      file: path=/etc/profile.d  state=directory
+
+    - name: export JAVA_HOME
+      template:
+        src:  ../templates/java_home.sh.j2
+        dest: /etc/profile.d/java_home.sh
+        mode: "a+x"
+
+  when: java_set_javahome
+
+
+
+- block:
+
+    # No link creation is necessary on Mac OS X -- 
+    # the package installer automatically creates symlinks in /usr/bin.
+
+    - name: link "{{ java_install_dir }}/{{ java_default_link_name }}"
+      file:
+        dest: "{{ java_install_dir }}/{{ java_default_link_name }}"
+        src: "{{ java_install_dir }}/jdk{{ jdk_version }}"
+        state: link
+
+    - name: alternatives link for "java"
+      alternatives:
+        name: java
+        link: /usr/bin/java
+        path: "{{ java_install_dir }}/{{ java_default_link_name }}/bin/java"
+
+    - name: alternatives link for "javac"
+      alternatives:
+        name: javac
+        link: /usr/bin/javac
+        path: "{{ java_install_dir }}/{{ java_default_link_name }}/bin/javac"
+
+    - name: alternatives link for "jar"
+      alternatives:
+        name: jar
+        link: /usr/bin/jar
+        path: "{{ java_install_dir }}/{{ java_default_link_name }}/bin/jar"
+
+    - name: check if "java_sdk" target exists
+      stat: path=/usr/lib/jvm/java
+      register: filecheck
+
+    - name: alternatives link for "java_sdk"
+      alternatives:
+        name: java_sdk
+        link: /usr/lib/jvm/java
+        path: "{{ java_install_dir }}/{{ java_default_link_name }}"
+      when: filecheck and filecheck.stat.exists
+
+  when: ansible_os_family != "Darwin"
+
+
+
+- name: remove temporary downloaded files, if requested
+  file: path={{ item }} state=absent
+  with_items:
+    - "{{ java_download_path }}/{{ jdk_tarball_file }}.rpm"
+    - "{{ java_download_path }}/{{ jdk_tarball_file }}.tar.gz"
+    - "{{ java_download_path }}/{{ jdk_tarball_file }}.dmg"
+    - "{{ java_download_path }}/check-tarball-installed.sh"
+    - "{{ java_download_path }}/{{ jce_zip_file }}"
+    - "{{ java_download_path }}/{{ jce_zip_folder }}"
+  ignore_errors: true
+  when: java_remove_download

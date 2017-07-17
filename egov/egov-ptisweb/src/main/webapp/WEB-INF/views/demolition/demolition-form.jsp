@@ -58,7 +58,13 @@ body
 	class="form-horizontal form-groups-bordered" modelAttribute="property">
 	<div class="page-container" id="page-container">
 		<div class="main-content">
-
+			<div>
+				<spring:hasBindErrors name="property"> 
+		 			<div class="alert alert-danger col-md-10 col-md-offset-1">
+		  				<form:errors path="*" cssClass="error-msg add-margin" /><br/>
+		      		</div>
+				</spring:hasBindErrors>
+			</div>
 			<jsp:include page="../common/commonPropertyDetailsView.jsp"></jsp:include>
 			<jsp:include page="../common/ownerDetailsView.jsp"></jsp:include>
 
@@ -156,9 +162,8 @@ body
 											path="propertyDetail.currentCapitalValue" maxlength="15"
 											value="" id="currentCapitalValue"
 											cssClass="form-control"
-											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');"
-											readonly="true" /> <form:errors
-											path="propertyDetail.currentCapitalValue"
+											onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');"/> 	
+										<form:errors path="propertyDetail.currentCapitalValue"
 											cssClass="add-margin error-msg" />
 									</td>
 
@@ -214,19 +219,11 @@ body
 					</div>
 				</div>
 			</div>
-			<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+			<c:if test="${isEmployee}">
+				<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+			</c:if>
 			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 
 		</div>
 	</div>
 </form:form>
-<script type="text/javascript">
-	jQuery("#marketValue").blur(function() {
-		var vacantLandArea = jQuery("#vacantLandArea").val();
-		var marketValue = jQuery("#marketValue").val();
-		var capitalValue = vacantLandArea * marketValue;
-		jQuery("#currentCapitalValue").val(roundoff(capitalValue));
-	});
-</script>
-
-

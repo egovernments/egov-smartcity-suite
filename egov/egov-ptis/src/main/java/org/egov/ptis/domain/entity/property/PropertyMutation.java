@@ -42,6 +42,7 @@ package org.egov.ptis.domain.entity.property;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.workflow.entity.StateAware;
 
 import java.math.BigDecimal;
@@ -49,9 +50,6 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_FATHER;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_HUSBAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_MOTHER;
 import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION_WIFE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
@@ -84,12 +82,15 @@ public class PropertyMutation extends StateAware {
     private String saleDetail;
     private List<Document> documents = new ArrayList<>();
     private String meesevaApplicationNumber;//Temporary number for meeseva integration.
-    private Character source = 'A';
+    private String source;
     private BigDecimal partyValue;
     private BigDecimal departmentValue;
     private boolean partialMutation;
     private boolean registrationDone;
     private String type;
+    private String decreeNumber;
+    private Date decreeDate;
+    private String courtName;
     private MutationRegistrationDetails mutationRegistrationDetails = new MutationRegistrationDetails();
 
     
@@ -323,13 +324,13 @@ public class PropertyMutation extends StateAware {
         for (final PropertyMutationTransferee owner : userInfo){
             if (StringUtils.isNotBlank(owner.getTransferee().getGuardian())){
             	ownerGuardianRelation.append(owner.getTransferee().getName());
-            	if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_FATHER) || owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_MOTHER)){
+            	if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GuardianRelation.Father.toString()) || owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GuardianRelation.Mother.toString())){
             		if(owner.getTransferee().getGender().equals(Gender.FEMALE))
             			relation = " D/O ";
             		else if(owner.getTransferee().getGender().equals(Gender.MALE))
                 		relation = " S/O ";
             	}
-            	else if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_HUSBAND))
+            	else if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GuardianRelation.Husband.toString()))
             		relation = " W/O ";
             	else if(owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_WIFE))
             		relation = " H/O ";
@@ -370,11 +371,11 @@ public class PropertyMutation extends StateAware {
         this.meesevaApplicationNumber = meesevaApplicationNumber;
     }
 
-    public Character getSource() {
+    public String getSource() {
         return source;
     }
 
-    public void setSource(Character source) {
+    public void setSource(String source) {
         this.source = source;
     }
 
@@ -448,6 +449,30 @@ public class PropertyMutation extends StateAware {
 
     public void setMutationRegistrationDetails(MutationRegistrationDetails mutationRegistrationDetails) {
         this.mutationRegistrationDetails = mutationRegistrationDetails;
+    }
+    
+    public String getDecreeNumber() {
+        return decreeNumber;
+    }
+
+    public void setDecreeNumber(String decreeNumber) {
+        this.decreeNumber = decreeNumber;
+    }
+
+    public Date getDecreeDate() {
+        return decreeDate;
+    }
+
+    public void setDecreeDate(Date decreeDate) {
+        this.decreeDate = decreeDate;
+    }
+
+    public String getCourtName() {
+        return courtName;
+    }
+
+    public void setCourtName(String courtName) {
+        this.courtName = courtName;
     }
    
 }

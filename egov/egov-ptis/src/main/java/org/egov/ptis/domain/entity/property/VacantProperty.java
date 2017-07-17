@@ -39,14 +39,18 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import org.apache.log4j.Logger;
-import org.egov.commons.Area;
-import org.egov.commons.Installment;
-import org.egov.exceptions.InvalidPropertyException;
+import static java.lang.Boolean.FALSE;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
+import org.apache.log4j.Logger;
+import org.egov.commons.Area;
+import org.egov.commons.Installment;
+import org.egov.exceptions.InvalidPropertyException;
+import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
+import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 
 /**
  * The Implementation Class for the VacantProperty
@@ -58,32 +62,32 @@ public class VacantProperty extends AbstractProperty {
 
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(VacantProperty.class);
-    private Area sitalArea;
-    private Area totalBuiltupArea;
-    private Area commBuiltUpArea;
-    private Area plinthArea;
-    private Area commVacantLand;
-    private Area nonResPlotArea;
+    private transient Area sitalArea;
+    private transient Area totalBuiltupArea;
+    private transient Area commBuiltUpArea;
+    private transient Area plinthArea;
+    private transient Area commVacantLand;
+    private transient Area nonResPlotArea;
     private Boolean irregular;
     private String surveyNumber;
     private Character fieldVerified;
     private java.util.Date fieldVerificationDate;
-    private java.util.List<Floor> floorDetails = new ArrayList<Floor>();
-    private java.util.List<Floor> floorDetailsProxy = new ArrayList<Floor>();
+    private java.util.List<Floor> floorDetails = new ArrayList<>();
+    private java.util.List<Floor> floorDetailsProxy = new ArrayList<>();
     private Integer propertyDetailsID;
     private String water_Meter_Num;
     private String elec_Meter_Num;
     private Integer noofFloors;
     private char fieldIrregular = 'N';
     private Date dateOfCompletion;
-    private Property property;
+    private transient Property property;
     private Date updatedTime;
     private PropertyUsage propertyUsage;
     private PropertyCreationReason creationReason;
     private PropertyTypeMaster propertyTypeMaster;
     private String propertyType;
     private PropertyOccupation propertyOccupation;
-    private PropertyMutationMaster propertyMutationMaster;
+    private transient PropertyMutationMaster propertyMutationMaster;
     private Character comZone = 'N';
     private Character cornerPlot = 'N';
     private boolean lift = false;
@@ -107,8 +111,14 @@ public class VacantProperty extends AbstractProperty {
     private Double marketValue;
     private String categoryType;
     private String occupancyCertificationNo;
-    private Boolean appurtenantLandChecked;
+    private transient Boolean appurtenantLandChecked = FALSE;
     private Boolean corrAddressDiff;
+    private PropertyDepartment propertyDepartment;
+    private VacantLandPlotArea vacantLandPlotArea;
+    private LayoutApprovalAuthority layoutApprovalAuthority;
+    private String layoutPermitNo;
+    private Date layoutPermitDate;
+    private String exemptionDetails;
 
     public VacantProperty(Area sitalArea, Area totalBuiltupArea, Area commBuiltUpArea, Area plinthArea,
             Area commVacantLand, Area nonResPlotArea, Boolean irregular, String surveyNumber, Character fieldVerified,
@@ -121,8 +131,9 @@ public class VacantProperty extends AbstractProperty {
             RoofType roofType, WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
             boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
             String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
-            String occupancyCertificationNo, Boolean appurtenantLandChecked,
-            Boolean corrAddressDiff) {
+            String occupancyCertificationNo, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
+            PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
+            LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
         super();
         this.sitalArea = sitalArea;
         this.totalBuiltupArea = totalBuiltupArea;
@@ -173,16 +184,24 @@ public class VacantProperty extends AbstractProperty {
         this.occupancyCertificationNo = occupancyCertificationNo;
         this.appurtenantLandChecked = appurtenantLandChecked;
         this.corrAddressDiff = corrAddressDiff;
+        this.propertyDepartment = propertyDepartment;
+        this.vacantLandPlotArea = vacantLandPlotArea;
+        this.layoutApprovalAuthority = layoutApprovalAuthority;
+        this.layoutPermitNo = layoutPermitNo;
+        this.layoutPermitDate = layoutPermitDate;
     }
 
+    @Override
     public Date getDateOfCompletion() {
         return dateOfCompletion;
     }
 
+    @Override
     public void setDateOfCompletion(Date dateOfCompletion) {
         this.dateOfCompletion = dateOfCompletion;
     }
 
+    @Override
     public void addFloor(Floor floor) {
         LOGGER.debug("BuildUpFloor.addFloor");
         if (floor != null) {
@@ -197,6 +216,7 @@ public class VacantProperty extends AbstractProperty {
      * @param floor
      *            The floor to set .
      */
+    @Override
     public void removeFloor(Floor floor) {
         LOGGER.debug("BuildUpFloor.removeFloor");
         getFloorDetails().remove(floor);
@@ -206,6 +226,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the commBuiltUpArea.
      */
+    @Override
     public Area getCommBuiltUpArea() {
         return commBuiltUpArea;
     }
@@ -214,6 +235,7 @@ public class VacantProperty extends AbstractProperty {
      * @param commBuiltUpArea
      *            The commBuiltUpArea to set.
      */
+    @Override
     public void setCommBuiltUpArea(Area commBuiltUpArea) {
         this.commBuiltUpArea = commBuiltUpArea;
     }
@@ -221,6 +243,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the commVacantLand.
      */
+    @Override
     public Area getCommVacantLand() {
         return commVacantLand;
     }
@@ -229,6 +252,7 @@ public class VacantProperty extends AbstractProperty {
      * @param commVacantLand
      *            The commVacantLand to set.
      */
+    @Override
     public void setCommVacantLand(Area commVacantLand) {
         this.commVacantLand = commVacantLand;
     }
@@ -251,6 +275,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the elec_Meter_Num.
      */
+    @Override
     public String getElec_Meter_Num() {
         return elec_Meter_Num;
     }
@@ -259,6 +284,7 @@ public class VacantProperty extends AbstractProperty {
      * @param elec_Meter_Num
      *            The elec_Meter_Num to set.
      */
+    @Override
     public void setElec_Meter_Num(String elec_Meter_Num) {
         this.elec_Meter_Num = elec_Meter_Num;
     }
@@ -266,6 +292,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the fieldIrregular.
      */
+    @Override
     public char getFieldIrregular() {
         return fieldIrregular;
     }
@@ -274,6 +301,7 @@ public class VacantProperty extends AbstractProperty {
      * @param fieldIrregular
      *            The fieldIrregular to set.
      */
+    @Override
     public void setFieldIrregular(char fieldIrregular) {
         this.fieldIrregular = fieldIrregular;
     }
@@ -281,6 +309,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the fieldVerificationDate.
      */
+    @Override
     public java.util.Date getFieldVerificationDate() {
         return fieldVerificationDate;
     }
@@ -289,6 +318,7 @@ public class VacantProperty extends AbstractProperty {
      * @param fieldVerificationDate
      *            The fieldVerificationDate to set.
      */
+    @Override
     public void setFieldVerificationDate(java.util.Date fieldVerificationDate) {
         this.fieldVerificationDate = fieldVerificationDate;
     }
@@ -296,6 +326,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the fieldVerified.
      */
+    @Override
     public Character getFieldVerified() {
         return fieldVerified;
     }
@@ -304,6 +335,7 @@ public class VacantProperty extends AbstractProperty {
      * @param fieldVerified
      *            The fieldVerified to set.
      */
+    @Override
     public void setFieldVerified(Character fieldVerified) {
         this.fieldVerified = fieldVerified;
     }
@@ -311,6 +343,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the floorDetails.
      */
+    @Override
     public java.util.List<Floor> getFloorDetails() {
         return floorDetails;
     }
@@ -319,6 +352,7 @@ public class VacantProperty extends AbstractProperty {
      * @param floorDetails
      *            The floorDetails to set.
      */
+    @Override
     public void setFloorDetails(java.util.List<Floor> floorDetails) {
         this.floorDetails = floorDetails;
     }
@@ -351,6 +385,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the plinthArea.
      */
+    @Override
     public Area getPlinthArea() {
         return plinthArea;
     }
@@ -359,6 +394,7 @@ public class VacantProperty extends AbstractProperty {
      * @param plinthArea
      *            The plinthArea to set.
      */
+    @Override
     public void setPlinthArea(Area plinthArea) {
         this.plinthArea = plinthArea;
     }
@@ -366,6 +402,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the property.
      */
+    @Override
     public Property getProperty() {
         return property;
     }
@@ -374,6 +411,7 @@ public class VacantProperty extends AbstractProperty {
      * @param property
      *            The property to set.
      */
+    @Override
     public void setProperty(Property property) {
         this.property = property;
     }
@@ -381,6 +419,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the propertyDetailsID.
      */
+    @Override
     public Integer getPropertyDetailsID() {
         return propertyDetailsID;
     }
@@ -389,6 +428,7 @@ public class VacantProperty extends AbstractProperty {
      * @param propertyDetailsID
      *            The propertyDetailsID to set.
      */
+    @Override
     public void setPropertyDetailsID(Integer propertyDetailsID) {
         this.propertyDetailsID = propertyDetailsID;
     }
@@ -396,6 +436,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the propertyTypeMaster.
      */
+    @Override
     public PropertyTypeMaster getPropertyTypeMaster() {
         return propertyTypeMaster;
     }
@@ -404,6 +445,7 @@ public class VacantProperty extends AbstractProperty {
      * @param propertyTypeMaster
      *            The propertyTypeMaster to set.
      */
+    @Override
     public void setPropertyTypeMaster(PropertyTypeMaster propertyTypeMaster) {
         this.propertyTypeMaster = propertyTypeMaster;
     }
@@ -411,6 +453,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the propertyUsage.
      */
+    @Override
     public PropertyUsage getPropertyUsage() {
         return propertyUsage;
     }
@@ -419,6 +462,7 @@ public class VacantProperty extends AbstractProperty {
      * @param propertyUsage
      *            The propertyUsage to set.
      */
+    @Override
     public void setPropertyUsage(PropertyUsage propertyUsage) {
         this.propertyUsage = propertyUsage;
     }
@@ -426,6 +470,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the sitalArea.
      */
+    @Override
     public Area getSitalArea() {
         return sitalArea;
     }
@@ -434,6 +479,7 @@ public class VacantProperty extends AbstractProperty {
      * @param sitalArea
      *            The sitalArea to set.
      */
+    @Override
     public void setSitalArea(Area sitalArea) {
         this.sitalArea = sitalArea;
     }
@@ -441,6 +487,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the surveyNumber.
      */
+    @Override
     public String getSurveyNumber() {
         return surveyNumber;
     }
@@ -449,6 +496,7 @@ public class VacantProperty extends AbstractProperty {
      * @param surveyNumber
      *            The surveyNumber to set.
      */
+    @Override
     public void setSurveyNumber(String surveyNumber) {
         this.surveyNumber = surveyNumber;
     }
@@ -456,6 +504,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the totalBuiltupArea.
      */
+    @Override
     public Area getTotalBuiltupArea() {
         return totalBuiltupArea;
     }
@@ -464,6 +513,7 @@ public class VacantProperty extends AbstractProperty {
      * @param totalBuiltupArea
      *            The totalBuiltupArea to set.
      */
+    @Override
     public void setTotalBuiltupArea(Area totalBuiltupArea) {
         this.totalBuiltupArea = totalBuiltupArea;
     }
@@ -471,6 +521,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the updatedTime.
      */
+    @Override
     public Date getUpdatedTime() {
         return updatedTime;
     }
@@ -479,6 +530,7 @@ public class VacantProperty extends AbstractProperty {
      * @param updatedTime
      *            The updatedTime to set.
      */
+    @Override
     public void setUpdatedTime(Date updatedTime) {
         this.updatedTime = updatedTime;
     }
@@ -486,6 +538,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the water_Meter_Num.
      */
+    @Override
     public String getWater_Meter_Num() {
         return water_Meter_Num;
     }
@@ -494,6 +547,7 @@ public class VacantProperty extends AbstractProperty {
      * @param water_Meter_Num
      *            The water_Meter_Num to set.
      */
+    @Override
     public void setWater_Meter_Num(String water_Meter_Num) {
         this.water_Meter_Num = water_Meter_Num;
     }
@@ -501,6 +555,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the propertyType.
      */
+    @Override
     public String getPropertyType() {
         return propertyType;
     }
@@ -509,6 +564,7 @@ public class VacantProperty extends AbstractProperty {
      * @param propertyType
      *            The propertyType to set.
      */
+    @Override
     public void setPropertyType(String propertyType) {
         this.propertyType = propertyType;
     }
@@ -516,6 +572,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns if the given Object is equal to PropertyImpl
      */
+    @Override
     public boolean equals(Object obj) {
         if (obj == null)
             return false;
@@ -545,6 +602,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the hashCode
      */
+    @Override
     public int hashCode() {
         int hashCode = 0;
         if (getId() != null) {
@@ -608,6 +666,7 @@ public class VacantProperty extends AbstractProperty {
     /**
      * @return Returns the propertyMutationMaster.
      */
+    @Override
     public PropertyMutationMaster getPropertyMutationMaster() {
         return propertyMutationMaster;
     }
@@ -616,30 +675,37 @@ public class VacantProperty extends AbstractProperty {
      * @param propertyMutationMaster
      *            The propertyMutationMaster to set.
      */
+    @Override
     public void setPropertyMutationMaster(PropertyMutationMaster propertyMutationMaster) {
         this.propertyMutationMaster = propertyMutationMaster;
     }
 
+    @Override
     public Character getComZone() {
         return comZone;
     }
 
+    @Override
     public void setComZone(Character comZone) {
         this.comZone = comZone;
     }
 
+    @Override
     public Character getCornerPlot() {
         return cornerPlot;
     }
 
+    @Override
     public void setCornerPlot(Character cornerPlot) {
         this.cornerPlot = cornerPlot;
     }
 
+    @Override
     public PropertyOccupation getPropertyOccupation() {
         return propertyOccupation;
     }
 
+    @Override
     public void setPropertyOccupation(PropertyOccupation propertyOccupation) {
         this.propertyOccupation = propertyOccupation;
     }
@@ -906,6 +972,64 @@ public class VacantProperty extends AbstractProperty {
     @Override
     public void setCorrAddressDiff(Boolean corrAddressDiff) {
         this.corrAddressDiff = corrAddressDiff;
+    }
+
+    @Override
+    public PropertyDepartment getPropertyDepartment() {
+        return propertyDepartment;
+    }
+
+    @Override
+    public void setPropertyDepartment(PropertyDepartment propertyDepartment) {
+        this.propertyDepartment = propertyDepartment;
+    }
+
+    @Override
+    public VacantLandPlotArea getVacantLandPlotArea() {
+        return vacantLandPlotArea;
+    }
+
+    @Override
+    public void setVacantLandPlotArea(VacantLandPlotArea vacantLandPlotArea) {
+        this.vacantLandPlotArea = vacantLandPlotArea;
+    }
+
+    @Override
+    public LayoutApprovalAuthority getLayoutApprovalAuthority() {
+        return layoutApprovalAuthority;
+    }
+
+    @Override
+    public void setLayoutApprovalAuthority(LayoutApprovalAuthority layoutApprovalAuthority) {
+        this.layoutApprovalAuthority = layoutApprovalAuthority;
+    }
+
+    @Override
+    public String getLayoutPermitNo() {
+        return layoutPermitNo;
+    }
+
+    @Override
+    public void setLayoutPermitNo(String layoutPermitNo) {
+        this.layoutPermitNo = layoutPermitNo;
+    }
+
+    @Override
+    public Date getLayoutPermitDate() {
+        return layoutPermitDate;
+    }
+
+    @Override
+    public void setLayoutPermitDate(Date layoutPermitDate) {
+        this.layoutPermitDate = layoutPermitDate;
+    }
+
+    public String getExemptionDetails() {
+        return exemptionDetails;
+    }
+
+    public void setExemptionDetails(String exemptionDetails) {
+        this.exemptionDetails = exemptionDetails;
     }
 
 }

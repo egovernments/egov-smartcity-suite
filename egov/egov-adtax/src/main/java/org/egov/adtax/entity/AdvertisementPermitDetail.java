@@ -40,18 +40,32 @@
 
 package org.egov.adtax.entity;
 
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
+import org.egov.adtax.entity.enums.AdvertisementApplicationType;
 import org.egov.adtax.entity.enums.AdvertisementDuration;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 
 @Entity
 @Table(name = "EGADTAX_PERMITDETAILS")
@@ -84,7 +98,6 @@ public class AdvertisementPermitDetail extends StateAware {
     private String permissionNumber;
 
     @NotNull
-    @Temporal(value = TemporalType.DATE)
     private Date applicationDate;
 
     @Enumerated(EnumType.ORDINAL)
@@ -106,11 +119,9 @@ public class AdvertisementPermitDetail extends StateAware {
     private Boolean isActive = false;
 
     // @NotNull
-    @Temporal(value = TemporalType.DATE)
     private Date permissionstartdate;
 
     // @NotNull
-    @Temporal(value = TemporalType.DATE)
     private Date permissionenddate;
 
     @SafeHtml
@@ -139,11 +150,17 @@ public class AdvertisementPermitDetail extends StateAware {
     private Double width;
     private Double breadth;
     private Double totalHeight;
-    
+
     private String deactivation_remarks;
-    
+
     private Date deactivation_date;
+
+    private String Source;
     
+    
+    @Enumerated(EnumType.ORDINAL)
+    private  AdvertisementApplicationType applicationtype;
+
     @Transient
     private Long approvalDepartment;
 
@@ -375,6 +392,24 @@ public class AdvertisementPermitDetail extends StateAware {
         this.deactivation_date = deactivation_date;
     }
 
- 
+    public String getSource() {
+        return Source;
+    }
 
+    public void setSource(String source) {
+        Source = source;
+    }
+
+    public AdvertisementApplicationType getApplicationtype() {
+        return applicationtype;
+    }
+
+    public void setApplicationtype(AdvertisementApplicationType applicationtype) {
+        this.applicationtype = applicationtype;
+    }
+
+    
+
+    
+    
 }

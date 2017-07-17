@@ -38,7 +38,10 @@
 #   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
 #-------------------------------------------------------------------------------*/
 $(document).ready(function()
-{	
+{	if($('#inspectionDate').val()!=''){
+		$('#inspectionDate').val($('#inspectionDate').val());
+	}
+	
 	if($('#sewerageInspectionDate').val()!=null && $('#sewerageInspectionDate').val()!="")
 		$("#inspectionDate").datepicker("update", new Date($('#sewerageInspectionDate').val().split("/").reverse().join("/")));
 	calculateGrandTotal(); 

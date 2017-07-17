@@ -131,6 +131,16 @@
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-form.jsp"/>
     </definition>
     
+    <definition name="vacancy-remission-spcl-notice" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancy-remission-spcl-notice.jsp"/>
+    </definition>
+    
+    <definition name="vacancyremission-dig-sign" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyremission-dig-sign.jsp"/>
+    </definition>
+    
     <definition name="vacancyRemission-edit" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.vacancyremission" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/vacancyremission/vacancyRemission-edit.jsp"/>
@@ -261,6 +271,21 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxRates-view.jsp"/>
     </definition>
     
+    <definition name="taxrates-edit" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.taxRates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxrates-edit.jsp"/>
+    </definition>
+    
+    <definition name="taxrates-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.taxRates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxrates-view.jsp"/>
+    </definition>
+    
+    <definition name="taxrates-editview" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.taxRates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/taxrates/taxrates-editview.jsp"/>
+    </definition>
+    
     <definition name="curretInstDCB-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.hdr.currInstDCB" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/curretInstDCB-form.jsp"/>
@@ -321,4 +346,160 @@
     	<put-attribute name="page-title" value="lbl.dailyCollectionvlt.report" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/dailyCollectionVLT-form.jsp"/>
     </definition>    
+    
+    <definition name="dcbVLT-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.dcbReportVLT.report" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/dcbreportvlt-form.jsp"/>
+    </definition>    
+    <definition name="deactivation-form" extends="base_layout">
+	<put-attribute name="page-title" value="lbl.deactivation.title"
+		cascade="true" />
+	<put-attribute name="body"
+		value="/WEB-INF/views/transactions/deactivation/deactivation-form.jsp" />
+</definition>
+
+	<definition name="deactivation-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.deactivation.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/deactivation/deactivation-success.jsp" />
+	</definition>
+
+	<definition name="deactivation-docupload" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.deactivation.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/jsp/common/documents-upload.jsp" />
+	</definition>
+	
+	<definition name="defaultersPT-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.defaultersReportPT.report" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/defaultersReport-form.jsp"/>
+    </definition> 
+    
+    <definition name="defaultersVLT-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.defaultersReportVLT.report" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/defaultersReport-form.jsp"/>
+    </definition>  
+    
+    <definition name="esdnotice-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.esd.notice" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/esdnotice-form.jsp"/>
+    </definition>
+	<definition name="tax-exemption-reason" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.hdr.taxExemption" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/exemptionreason/tax-exemption-reason-view.jsp" />
+	</definition>
+	
+	<definition name="structureclassification-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-view.jsp"/>
+    </definition>
+    
+    <definition name="structureclassification-create" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-create.jsp"/>
+    </definition>
+    
+    <definition name="inventorynotice-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.inventory.notice" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/inventorynotice-form.jsp"/>
+    </definition>
+    
+    <definition name="distressnotice-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.distress.notice" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/distressnotice-form.jsp"/>
+    </definition>
+    <definition name="add-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.hdr.addMutation" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/add-mutationfee.jsp" />
+	</definition>
+	<definition name="search-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.search" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/search-mutationfee.jsp" />
+	</definition>
+	<definition name="modify-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.modify" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/modify-mutationfee.jsp" />
+	</definition>
+	<definition name="view-mutation-fee-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.mutationfee.modify" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/masters/mutationfee/view-mutationfee.jsp" />
+	</definition>
+	
+	<definition name="recovery-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.recovery.notices" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/notice/recoveryNotices-form.jsp"/>
+    </definition>
+
+	<definition name="recovery-ack" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.recovery.notices" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/notice/recoveryNotices-ack.jsp"/>
+    </definition>
+    
+    <definition name="apartment-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-search.jsp"/>
+    </definition>
+    
+    <definition name="apartment-view" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.apartment.view" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-view.jsp"/>
+    </definition>
+     
+    <definition name="apartment-create" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.apartment.create" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-create.jsp"/>
+    </definition>
+    
+    <definition name="apartment-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.apartment.success" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/masters/apartment/apartment-success.jsp"/>
+    </definition>
+    
+    <definition name="valuationcertificate-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.valuation.certificate" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/valuationcertificate-form.jsp"/>
+    </definition>
+    
+     <definition name="ownershipcertificate-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.title.ownership.certificate" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/ownershipcertificate-form.jsp"/>
+    </definition>
+    
+    <definition name="depreciationrate-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.hdr.depreciationrate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/depreciationrate/depreciationrate-view.jsp"/>
+    </definition>
+    
+    <definition name="occupiernotice-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.title.occupier.notice"  cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/reports/occupierNotice.jsp" />
+	</definition>
+	
+    <definition name="integrateddemandbill-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.title.integrated.demand.bill"  cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/reports/integrateddemandbill-form.jsp" />
+	</definition>
+	
+	<definition name="arrdmdrgstr-pt-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.arrear.dmd.register" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/arreardmdregister-form.jsp"/>
+    </definition>
+    
+    <definition name="arrdmdrgstr-vlt-form" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.arrear.dmd.register" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/arreardmdregister-form.jsp"/>
+    </definition>
+    
+    <definition name="reassign" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/reassign.jsp"/>
+    </definition>
+    
+     <definition name="reassign-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/reassign-success.jsp"/>
+    </definition> 
+    
 </tiles-definitions> 

@@ -45,8 +45,9 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 
 @Configuration
-@PropertySource(name = "collectionApplicationProperties", 
-value = { "classpath:config/payment-gateway.properties",
+@PropertySource(name = "collectionApplicationProperties", value = {
+        "classpath:config/application-config-collection.properties",
+        "classpath:config/payment-gateway.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
         "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
@@ -98,17 +99,32 @@ public class CollectionApplicationProperties {
     public String axisSecureSecret() {
         return environment.getProperty("axis.secure.secret");
     }
-    
+
     public String getEmailSubject() {
         return environment.getProperty("email.subject.message");
     }
-    
+
     public String getEmailBody() {
         return environment.getProperty("email.body.message");
     }
-    
-    public String getValue(String key) {
+
+    public String getValue(final String key) {
         return environment.getProperty(key);
     }
-    
+
+    public String sbimopsDdocode(final String cityCode) {
+        return environment.getProperty(cityCode.concat(".sbimops.ddocode"));
+    }
+
+    public String sbimopsHoa(final String cityCode) {
+        return environment.getProperty(cityCode.concat(".sbimops.hoa"));
+    }
+
+    public String getUpdateDemandUrl(final String serviceCode) {
+        return environment.getProperty(serviceCode.concat(".updatedemand.url"));
+    }
+
+    public String getLamsServiceUrl() {
+        return environment.getProperty("egov.services.lams.hostname");
+    }
 }

@@ -41,6 +41,21 @@ jQuery('#btnsearch').click(function(e) {
 		
 		callAjaxSearch();
 	});
+
+$('#buttonSubmit').click(function(e) {
+	if ($('form').valid()) {
+	} else {
+		e.preventDefault();
+	}
+});
+
+var alphanumericwithspace= /[^a-zA-Z0-9 ()]/g ;
+
+jQuery('.pattern').on("input", function(e){
+	if(jQuery(this).val().match(alphanumericwithspace)){
+		jQuery(this).val( jQuery(this).val().replace(alphanumericwithspace,'') );
+	}
+});
 	
 	function getFormData($form){
     var unindexed_array = $form.serializeArray();

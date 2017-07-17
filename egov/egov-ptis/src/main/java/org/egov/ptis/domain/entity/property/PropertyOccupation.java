@@ -38,144 +38,183 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-
 package org.egov.ptis.domain.entity.property;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.models.BaseModel;
 
 import java.util.Date;
 
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 /**
  * <p>
- * This class defines Property Occupation i.e how is a Property been occupied
- * PropertyOccupation can be Self Occupied, Tenanted etc.
+ * This class defines Property Occupation i.e how is a Property been occupied PropertyOccupation can be Self Occupied, Tenanted
+ * etc.
  * </p>
  * 
  * @author Gayathri Joshi
  * @version 2.00
  * @since 2.00
  */
-public class PropertyOccupation extends BaseModel {
+@Entity
+@Table(name = "EGPT_OCCUPATION_TYPE_MASTER")
+@SequenceGenerator(name = PropertyOccupation.SEQ_PROPERTY_OCCUPATION, sequenceName = PropertyOccupation.SEQ_PROPERTY_OCCUPATION, allocationSize = 1)
+public class PropertyOccupation extends AbstractAuditable {
 
-	private String occupation;
-	private Float occupancyFactor;
-	private String occupancyCode;
-	private Date fromDate;
-	private Date toDate;
-	private PropertyUsage propertyUsage;
+    private static final long serialVersionUID = 1L;
+    public static final String SEQ_PROPERTY_OCCUPATION = "SEQ_OCCUPATION_TYPE_MASTER";
 
-	/**
-	 * @return Returns if the given Object is equal to PropertyOccupation
-	 */
-	public boolean equals(Object that) {
-		if (that == null)
-			return false;
+    @Id
+    @GeneratedValue(generator = SEQ_PROPERTY_OCCUPATION, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-		if (this == that)
-			return true;
-		if (that.getClass() != this.getClass())
-			return false;
-		final PropertyOccupation thatPropOcc = (PropertyOccupation) that;
+    private String occupation;
 
-		if (this.getId() != null && thatPropOcc.getId() != null) {
-			if (getId().equals(thatPropOcc.getId())) {
-				return true;
-			} else
-				return false;
-		} else if (this.getOccupation() != null && thatPropOcc.getOccupation() != null) {
-			if (getOccupation().equals(thatPropOcc.getOccupation())) {
-				return true;
-			} else
-				return false;
-		} else
-			return false;
-	}
+    @Column(name = "OCCUPANY_FACTOR")
+    private Float occupancyFactor;
 
-	/**
-	 * @return Returns the hashCode
-	 */
-	public int hashCode() {
-		int hashCode = 0;
-		if (this.getId() != null) {
-			hashCode += this.getId().hashCode();
-		} else if (this.getOccupation() != null) {
-			hashCode += this.getOccupation().hashCode();
-		}
+    @Column(name = "CODE")
+    private String occupancyCode;
 
-		return hashCode;
-	}
+    @Column(name = "FROM_DATE")
+    private Date fromDate;
 
-	/**
-	 * @return Returns the boolean after validating the current object
-	 */
-	public boolean validatePropOccupation() {
-		if (getOccupation() == null)
-			throw new ApplicationRuntimeException(
-					"In PropertyOccupation Validate :'Occupation' Attribute is no set, Please Check !!");
-		if (getOccupancyFactor() == null)
-			throw new ApplicationRuntimeException(
-					"In PropertyOccupation Validate :'Occupancy Factor' Attribute is no set, Please Check !!");
+    @Column(name = "TO_DATE")
+    private Date toDate;
 
-		return true;
-	}
+    @ManyToOne
+    @JoinColumn(name = "ID_USG_MSTR")
+    private PropertyUsage propertyUsage;
 
-	@Override
-	public String toString() {
-		StringBuilder sb = new StringBuilder();
+    /**
+     * @return Returns if the given Object is equal to PropertyOccupation
+     */
+    public boolean equals(Object that) {
+        if (that == null)
+            return false;
 
-		sb.append("Id: ").append(getId()).append("Occupation: ").append(occupation).append("|OccupFactor").append(
-				occupancyFactor).append("|PropertyUsage").append(propertyUsage);
+        if (this == that)
+            return true;
+        if (that.getClass() != this.getClass())
+            return false;
+        final PropertyOccupation thatPropOcc = (PropertyOccupation) that;
 
-		return sb.toString();
-	}
+        if (this.getId() != null && thatPropOcc.getId() != null) {
+            if (getId().equals(thatPropOcc.getId())) {
+                return true;
+            } else
+                return false;
+        } else if (this.getOccupation() != null && thatPropOcc.getOccupation() != null) {
+            if (getOccupation().equals(thatPropOcc.getOccupation())) {
+                return true;
+            } else
+                return false;
+        } else
+            return false;
+    }
 
-	public String getOccupation() {
-		return occupation;
-	}
+    /**
+     * @return Returns the hashCode
+     */
+    public int hashCode() {
+        int hashCode = 0;
+        if (this.getId() != null) {
+            hashCode += this.getId().hashCode();
+        } else if (this.getOccupation() != null) {
+            hashCode += this.getOccupation().hashCode();
+        }
 
-	public void setOccupation(String occupation) {
-		this.occupation = occupation;
-	}
+        return hashCode;
+    }
 
-	public Float getOccupancyFactor() {
-		return occupancyFactor;
-	}
+    /**
+     * @return Returns the boolean after validating the current object
+     */
+    public boolean validatePropOccupation() {
+        if (getOccupation() == null)
+            throw new ApplicationRuntimeException(
+                    "In PropertyOccupation Validate :'Occupation' Attribute is no set, Please Check !!");
+        if (getOccupancyFactor() == null)
+            throw new ApplicationRuntimeException(
+                    "In PropertyOccupation Validate :'Occupancy Factor' Attribute is no set, Please Check !!");
 
-	public void setOccupancyFactor(Float occupancyFactor) {
-		this.occupancyFactor = occupancyFactor;
-	}
+        return true;
+    }
 
-	public String getOccupancyCode() {
-		return occupancyCode;
-	}
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
 
-	public void setOccupancyCode(String occupancyCode) {
-		this.occupancyCode = occupancyCode;
-	}
+        sb.append("Id: ").append(getId()).append("Occupation: ").append(occupation).append("|OccupFactor").append(
+                occupancyFactor).append("|PropertyUsage").append(propertyUsage);
 
-	public Date getFromDate() {
-		return fromDate;
-	}
+        return sb.toString();
+    }
 
-	public void setFromDate(Date fromDate) {
-		this.fromDate = fromDate;
-	}
+    public String getOccupation() {
+        return occupation;
+    }
 
-	public Date getToDate() {
-		return toDate;
-	}
+    public void setOccupation(String occupation) {
+        this.occupation = occupation;
+    }
 
-	public void setToDate(Date toDate) {
-		this.toDate = toDate;
-	}
+    public Float getOccupancyFactor() {
+        return occupancyFactor;
+    }
 
-	public PropertyUsage getPropertyUsage() {
-		return propertyUsage;
-	}
+    public void setOccupancyFactor(Float occupancyFactor) {
+        this.occupancyFactor = occupancyFactor;
+    }
 
-	public void setPropertyUsage(PropertyUsage propertyUsage) {
-		this.propertyUsage = propertyUsage;
-	}
+    public String getOccupancyCode() {
+        return occupancyCode;
+    }
 
+    public void setOccupancyCode(String occupancyCode) {
+        this.occupancyCode = occupancyCode;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public PropertyUsage getPropertyUsage() {
+        return propertyUsage;
+    }
+
+    public void setPropertyUsage(PropertyUsage propertyUsage) {
+        this.propertyUsage = propertyUsage;
+    }
+
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
 }

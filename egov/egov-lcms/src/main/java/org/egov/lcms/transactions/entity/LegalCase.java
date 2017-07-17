@@ -39,6 +39,31 @@
  */
 package org.egov.lcms.transactions.entity;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Hashtable;
+import java.util.List;
+import java.util.Set;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+import javax.validation.constraints.NotNull;
+
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -52,16 +77,8 @@ import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.NotAudited;
+import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
-
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Set;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE")
@@ -135,7 +152,7 @@ public class LegalCase extends AbstractAuditable {
     private Date caseReceivingDate;
 
     @Audited
-    private Boolean isfiledbycorporation;
+    private Boolean isFiledByCorporation;
 
     @Length(max = 50)
     @Column(name = "lcnumber")
@@ -143,7 +160,7 @@ public class LegalCase extends AbstractAuditable {
     private String lcNumber;
 
     @NotNull
-    @Length(max = 1024)
+    @Length(max = 10000)
     @Audited
     private String prayer;
 
@@ -174,10 +191,10 @@ public class LegalCase extends AbstractAuditable {
     @Audited
     private String stampNumber;
 
-    @Length(max = 50)
-    @Column(name = "officerincharge")
-    @Audited
-    private String officerIncharge;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "officerincharge")
+    @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
+    private Position officerIncharge;
 
     @NotNull
     @Temporal(TemporalType.DATE)
@@ -201,13 +218,18 @@ public class LegalCase extends AbstractAuditable {
     @Audited
     private String oldReferenceNumber;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "reportstatus")
+    @Audited
+    private ReportStatus reportStatus;
+
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
     private List<Judgment> judgment = new ArrayList<Judgment>(0);
 
-    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY)
     @NotAudited
-    private List<LegalCaseDocuments> legalCaseDocuments = new ArrayList<LegalCaseDocuments>();
+    private List<LegalCaseUploadDocuments> legalCaseUploadDocuments = new ArrayList<LegalCaseUploadDocuments>();
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     @Audited
@@ -249,12 +271,10 @@ public class LegalCase extends AbstractAuditable {
     // TODO:need to enable when we start work on PaperBook and ProcessRegister
     // object
     /*
-     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private List<PaperBook>
-     * paperBookSet = new ArrayList<PaperBook>(0);
-     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade =
-     * CascadeType.ALL, orphanRemoval = true) private List<ProcessRegister>
-     * processRegisterSet = new ArrayList<ProcessRegister>(0);
+     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) private
+     * List<PaperBook> paperBookSet = new ArrayList<PaperBook>(0);
+     * @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true) private
+     * List<ProcessRegister> processRegisterSet = new ArrayList<ProcessRegister>(0);
      */
 
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
@@ -275,7 +295,7 @@ public class LegalCase extends AbstractAuditable {
 
     public List<ValidationError> validate() {
         final List<ValidationError> errors = new ArrayList<ValidationError>();
-        if (getIsfiledbycorporation() == true && getStampNumber().length() == 0)
+        if (getIsFiledByCorporation() == true && getStampNumber().length() == 0)
             errors.add(new ValidationError("stampNumber", "case.stampNumber.invalid"));
         for (final BipartisanDetails bipartisanDetails2 : getBipartisanDetails()) {
             final BipartisanDetails element = bipartisanDetails2;
@@ -344,16 +364,14 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /**
-     * @param errors
-     *            Validation Check for Batch case:
+     * @param errors Validation Check for Batch case:
      */
     protected void batchCaseValidation(final List<ValidationError> errors) {
         Boolean duplicateCaseNumberCheck = false;
         int i = 0;
         for (final BatchCase batchcase : getBatchCaseSet()) {
             /*
-             * Both the batch case number and primary case number should not be
-             * same
+             * Both the batch case number and primary case number should not be same
              */
             if (StringUtils.isNotBlank(getCaseNumber()) && StringUtils.isNotBlank(batchcase.getCasenumber())
                     && getCaseNumber().equals(batchcase.getCasenumber())) {
@@ -536,14 +554,6 @@ public class LegalCase extends AbstractAuditable {
         caseTitle = casetitle;
     }
 
-    public String getAppealnum() {
-        return appealNum;
-    }
-
-    public void setAppealnum(final String appealnum) {
-        appealNum = appealnum;
-    }
-
     public String getRemarks() {
         return remarks;
     }
@@ -558,14 +568,6 @@ public class LegalCase extends AbstractAuditable {
 
     public void setCaseReceivingDate(final Date caseReceivingDate) {
         this.caseReceivingDate = caseReceivingDate;
-    }
-
-    public String getLcnumber() {
-        return lcNumber;
-    }
-
-    public void setLcnumber(final String lcnumber) {
-        lcNumber = lcnumber;
     }
 
     public String getPrayer() {
@@ -649,18 +651,15 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public List<PaperBook> getPaperBookSet() { return paperBookSet; } public
-     * void setPaperBookSet(final List<PaperBook> paperBookSet) {
-     * this.paperBookSet = paperBookSet; } public List<ProcessRegister>
-     * getProcessRegisterSet() { return processRegisterSet; } public void
-     * setProcessRegisterSet(final List<ProcessRegister> processRegisterSet) {
+     * public List<PaperBook> getPaperBookSet() { return paperBookSet; } public void setPaperBookSet(final List<PaperBook>
+     * paperBookSet) { this.paperBookSet = paperBookSet; } public List<ProcessRegister> getProcessRegisterSet() { return
+     * processRegisterSet; } public void setProcessRegisterSet(final List<ProcessRegister> processRegisterSet) {
      * this.processRegisterSet = processRegisterSet; }
      */
 
     /*
-     * public Long getDocumentNum() { return documentNum; } public void
-     * setDocumentNum(final Long documentNum) { this.documentNum = documentNum;
-     * }
+     * public Long getDocumentNum() { return documentNum; } public void setDocumentNum(final Long documentNum) { this.documentNum
+     * = documentNum; }
      */
 
     public List<BipartisanDetails> getBipartisanDetails() {
@@ -688,9 +687,8 @@ public class LegalCase extends AbstractAuditable {
     }
 
     /*
-     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void
-     * setPetFirstAppDate(final Date petFirstAppDate) { this.petFirstAppDate =
-     * petFirstAppDate; }
+     * public Date getPetFirstAppDate() { return petFirstAppDate; } public void setPetFirstAppDate(final Date petFirstAppDate) {
+     * this.petFirstAppDate = petFirstAppDate; }
      */
 
     public String getStampNumber() {
@@ -823,12 +821,12 @@ public class LegalCase extends AbstractAuditable {
         this.judgmentsBeanList = judgmentsBeanList;
     }
 
-    public List<LegalCaseDocuments> getLegalCaseDocuments() {
-        return legalCaseDocuments;
+    public List<LegalCaseUploadDocuments> getLegalCaseUploadDocuments() {
+        return legalCaseUploadDocuments;
     }
 
-    public void setLegalCaseDocuments(final List<LegalCaseDocuments> legalCaseDocuments) {
-        this.legalCaseDocuments = legalCaseDocuments;
+    public void setLegalCaseUploadDocuments(final List<LegalCaseUploadDocuments> legalCaseUploadDocuments) {
+        this.legalCaseUploadDocuments = legalCaseUploadDocuments;
     }
 
     public List<LegalCaseDisposal> getLegalCaseDisposal() {
@@ -889,14 +887,6 @@ public class LegalCase extends AbstractAuditable {
         this.bipartisanPetitionerDetailsList = bipartisanPetitionerDetailsList;
     }
 
-    public String getOfficerIncharge() {
-        return officerIncharge;
-    }
-
-    public void setOfficerIncharge(final String officerIncharge) {
-        this.officerIncharge = officerIncharge;
-    }
-
     public Date getNoticeDate() {
         return noticeDate;
     }
@@ -905,12 +895,12 @@ public class LegalCase extends AbstractAuditable {
         this.noticeDate = noticeDate;
     }
 
-    public Boolean getIsfiledbycorporation() {
-        return isfiledbycorporation;
+    public Boolean getIsFiledByCorporation() {
+        return isFiledByCorporation;
     }
 
-    public void setIsfiledbycorporation(final Boolean isfiledbycorporation) {
-        this.isfiledbycorporation = isfiledbycorporation;
+    public void setIsFiledByCorporation(final Boolean isFiledByCorporation) {
+        this.isFiledByCorporation = isFiledByCorporation;
     }
 
     public List<LegalCaseAdvocate> getLegalCaseAdvocates() {
@@ -927,6 +917,22 @@ public class LegalCase extends AbstractAuditable {
 
     public void setOldReferenceNumber(final String oldReferenceNumber) {
         this.oldReferenceNumber = oldReferenceNumber;
+    }
+
+    public ReportStatus getReportStatus() {
+        return reportStatus;
+    }
+
+    public void setReportStatus(final ReportStatus reportStatus) {
+        this.reportStatus = reportStatus;
+    }
+
+    public Position getOfficerIncharge() {
+        return officerIncharge;
+    }
+
+    public void setOfficerIncharge(Position officerIncharge) {
+        this.officerIncharge = officerIncharge;
     }
 
 }

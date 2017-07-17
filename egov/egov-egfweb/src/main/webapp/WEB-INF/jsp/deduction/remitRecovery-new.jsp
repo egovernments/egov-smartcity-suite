@@ -50,15 +50,11 @@
 	src="/EGF/resources/javascript/calender.js?rnd=${app_release_no}"></script>
 <script type="text/javascript"
 	src="/EGF/resources/javascript/dateValidation.js?rnd=${app_release_no}"></script>
+<script type="text/javascript"
+	src="/EGF/resources/javascript/remitrecovery-helper.js?rnd=${app_release_no}"></script>
 <meta http-equiv="Content-Type"
 	content="text/html; charset=windows-1252">
 <title><s:text name="remit.recovery.create.title" /></title>
-<script>
-function loadBank(obj)
-{
-
-}
-</script>
 </head>
 <body>
 	<s:form action="remitRecovery" theme="simple" name="remitRecoveryForm">
@@ -112,7 +108,26 @@ function loadBank(obj)
 							placeholder="DD/MM/YYYY" cssClass="form-control datepicker"
 							data-inputmask="'mask': 'd/m/y'" /></td>
 				</tr>
-
+				<tr>
+					<td class="greybox"></td>
+					<td class="greybox"><s:text name="remit.recovery.search.bank" /></td>
+					<td class="greybox"><s:select name="remittanceBean.bank"
+							id="bank" list="dropdownData.bankList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Choose----"
+							value="%{remittanceBean.bank}" /></td>
+					<td class="greybox"><s:text name="remit.recovery.search.bankbranch" /></td>
+					<td class="greybox"><s:select name="remittanceBean.bankBranchId"
+							id="bankBranch" list="dropdownData.branchList" listKey="id"
+							listValue="name" headerKey="" headerValue="----Choose----"
+							value="%{remittanceBean.bankBranchId}" /></td>
+					</tr>
+					<tr>
+					<td class="greybox"></td>		
+					<td class="greybox"><s:text name="remit.recovery.search.bankaccount" /></td>
+					<td class="greybox"><s:select name="remittanceBean.bankAccountId"
+							id="bankAccount" list="dropdownData.accNumList" listKey="id"
+							listValue="accountnumber" headerKey="" headerValue="----Choose----"
+							value="%{remittanceBean.bankAccountId}" /></td>
 				</tr>
 				<%@ include file="../payment/paymenttrans-filter.jsp"%>
 

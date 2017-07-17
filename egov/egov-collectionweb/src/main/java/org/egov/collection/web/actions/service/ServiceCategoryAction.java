@@ -53,7 +53,8 @@ import org.egov.infstr.services.PersistenceService;
 @ParentPackage("egov")
 @Results({ @Result(name = ServiceCategoryAction.NEW, location = "serviceCategory-new.jsp"),
         @Result(name = ServiceCategoryAction.EDIT, location = "serviceCategory-edit.jsp"),
-        @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp") })
+        @Result(name = ServiceCategoryAction.INDEX, location = "serviceCategory-index.jsp"),
+        @Result(name = ServiceCategoryAction.MESSAGE, location = "serviceCategory-message.jsp") })
 public class ServiceCategoryAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -61,6 +62,7 @@ public class ServiceCategoryAction extends BaseFormAction {
     private Collection<ServiceCategory> serviceCategoryList = null;
     private ServiceCategory serviceCategoryInstance = new ServiceCategory();
     private String code;
+    protected static final String MESSAGE = "message";
 
     @Action(value = "/service/serviceCategory-newform")
     public String newform() {
@@ -75,8 +77,8 @@ public class ServiceCategoryAction extends BaseFormAction {
 
     @Action(value = "/service/serviceCategory-edit")
     public String edit() {
-        serviceCategoryInstance = serviceCategoryService.findByNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_BY_CODE,
-                code);
+        serviceCategoryInstance = serviceCategoryService
+                .findByNamedQuery(CollectionConstants.QUERY_SERVICE_CATEGORY_BY_CODE, code);
         return EDIT;
     }
 
@@ -89,7 +91,10 @@ public class ServiceCategoryAction extends BaseFormAction {
     @Action(value = "/service/serviceCategory-create")
     public String create() {
         serviceCategoryService.create(serviceCategoryInstance);
-        return list();
+        addActionMessage(getText("service.create.success.msg",
+                new String[] { serviceCategoryInstance.getCode(), serviceCategoryInstance.getName() }));
+        return MESSAGE;
+
     }
 
     @Override

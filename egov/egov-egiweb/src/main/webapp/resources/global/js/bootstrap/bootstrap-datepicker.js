@@ -1081,7 +1081,7 @@
 		// Check if "de-DE" style date is available, if not language should
 		// fallback to 2 letter code eg "de"
 		if (!dates[lang]) {
-			lang = lang.split('-')[0]
+			lang = lang.split('-')[0];
 			if (!dates[lang])
 				return;
 		}

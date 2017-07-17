@@ -54,6 +54,7 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
@@ -213,6 +214,7 @@ public class TrialBalanceAction extends BaseFormAction {
 
     @SkipValidation
     @Action(value = "/report/trialBalance-search")
+    @ReadOnly
     public String search()
     {
         if (rb.getReportType().equalsIgnoreCase("daterange"))

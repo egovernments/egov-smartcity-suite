@@ -48,22 +48,33 @@ public class AgencyWiseCollectionSearch {
     private String agencyName;
     private BigDecimal pendingDemandAmount;
     private BigDecimal penaltyAmount;
+    private BigDecimal additionalTaxAmount;
     private BigDecimal totalAmount;
-    
-    
+    private String ownerDetail;
     private String advertisementNumber;
     private String applicationNumber;
     private Long advertisementPermitId;
     private List<AgencyWiseCollectionSearch> agencyWiseCollectionList = new ArrayList<AgencyWiseCollectionSearch>();
-    private boolean selectedForCollection=false; 
-    
-    
-    public BigDecimal getTotalAmount() {
-        return (penaltyAmount!=null? (pendingDemandAmount!=null? penaltyAmount.add(pendingDemandAmount):penaltyAmount):
-            (pendingDemandAmount!=null? pendingDemandAmount:BigDecimal.ZERO) );
+    private boolean selectedForCollection = false;
+
+    public String getOwnerDetail() {
+        return ownerDetail;
     }
 
-    public void setTotalAmount(BigDecimal totalAmount) {
+    public void setOwnerDetail(final String ownerDetail) {
+        this.ownerDetail = ownerDetail;
+    }
+
+    public BigDecimal getTotalAmount() {
+        final BigDecimal additionalAmt = additionalTaxAmount != null ? additionalTaxAmount : BigDecimal.ZERO;
+        final BigDecimal penaltyAmt = penaltyAmount != null ? penaltyAmount : BigDecimal.ZERO;
+
+        // return (penaltyAmount!=null? (pendingDemandAmount!=null? penaltyAmount.add(pendingDemandAmount):penaltyAmount):
+        return pendingDemandAmount != null ? pendingDemandAmount.add(additionalAmt).add(penaltyAmt)
+                : additionalAmt.add(penaltyAmt);
+    }
+
+    public void setTotalAmount(final BigDecimal totalAmount) {
         this.totalAmount = totalAmount;
     }
 
@@ -71,7 +82,7 @@ public class AgencyWiseCollectionSearch {
         return selectedForCollection;
     }
 
-    public void setSelectedForCollection(boolean selectedForCollection) {
+    public void setSelectedForCollection(final boolean selectedForCollection) {
         this.selectedForCollection = selectedForCollection;
     }
 
@@ -79,7 +90,7 @@ public class AgencyWiseCollectionSearch {
         return agencyName;
     }
 
-    public void setAgencyName(String agencyName) {
+    public void setAgencyName(final String agencyName) {
         this.agencyName = agencyName;
     }
 
@@ -87,7 +98,7 @@ public class AgencyWiseCollectionSearch {
         return pendingDemandAmount;
     }
 
-    public void setPendingDemandAmount(BigDecimal pendingDemandAmount) {
+    public void setPendingDemandAmount(final BigDecimal pendingDemandAmount) {
         this.pendingDemandAmount = pendingDemandAmount;
     }
 
@@ -95,7 +106,7 @@ public class AgencyWiseCollectionSearch {
         return penaltyAmount;
     }
 
-    public void setPenaltyAmount(BigDecimal penaltyAmount) {
+    public void setPenaltyAmount(final BigDecimal penaltyAmount) {
         this.penaltyAmount = penaltyAmount;
     }
 
@@ -103,7 +114,7 @@ public class AgencyWiseCollectionSearch {
         return advertisementNumber;
     }
 
-    public void setAdvertisementNumber(String advertisementNumber) {
+    public void setAdvertisementNumber(final String advertisementNumber) {
         this.advertisementNumber = advertisementNumber;
     }
 
@@ -111,7 +122,7 @@ public class AgencyWiseCollectionSearch {
         return applicationNumber;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
+    public void setApplicationNumber(final String applicationNumber) {
         this.applicationNumber = applicationNumber;
     }
 
@@ -119,7 +130,7 @@ public class AgencyWiseCollectionSearch {
         return advertisementPermitId;
     }
 
-    public void setAdvertisementPermitId(Long advertisementPermitId) {
+    public void setAdvertisementPermitId(final Long advertisementPermitId) {
         this.advertisementPermitId = advertisementPermitId;
     }
 
@@ -127,8 +138,16 @@ public class AgencyWiseCollectionSearch {
         return agencyWiseCollectionList;
     }
 
-    public void setAgencyWiseCollectionList(List<AgencyWiseCollectionSearch> agencyWiseCollectionList) {
+    public void setAgencyWiseCollectionList(final List<AgencyWiseCollectionSearch> agencyWiseCollectionList) {
         this.agencyWiseCollectionList = agencyWiseCollectionList;
+    }
+
+    public BigDecimal getAdditionalTaxAmount() {
+        return additionalTaxAmount;
+    }
+
+    public void setAdditionalTaxAmount(final BigDecimal additionalTaxAmount) {
+        this.additionalTaxAmount = additionalTaxAmount;
     }
 
 }

@@ -40,9 +40,17 @@
 
 package org.egov.council.web.adaptor;
 
-import java.lang.reflect.Type;
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.CouncilMemberStatus;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.infra.utils.StringUtils;
 
@@ -58,6 +66,7 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
             final JsonObject jsonObject = new JsonObject();
             int noOfMembersPresent = 0;
             int noOfMembersAbsent = 0;
+            int totCommitteMemCount = 0;
             if (councilMeeting != null) {
             if (councilMeeting.getMeetingNumber() != null)
                 jsonObject.addProperty("meetingNumber", councilMeeting.getMeetingNumber());
@@ -88,35 +97,40 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
                 jsonObject.addProperty("meetingCreatedDate", councilMeeting.getCreatedDate().toString());
             else
                 jsonObject.addProperty("meetingCreatedDate", StringUtils.EMPTY);
-            
-          /*  if (councilMeeting.getMeetingMOMs() != null)
-                for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
-                    if (meetingMOM.getResolutionDetail() != null)
-                        jsonObject.addProperty("resolutionDetail", meetingMOM.getResolutionDetail());
-                    else
-                        jsonObject.addProperty("resolutionDetail", StringUtils.EMPTY);
-                    if (meetingMOM.getResolutionStatus() != null)
-                        jsonObject.addProperty("resolutionStatus", meetingMOM.getResolutionStatus().getCode());
-                    else
-                        jsonObject.addProperty("resolutionStatus", StringUtils.EMPTY);
-                    if (meetingMOM.getPreamble().getDepartment() != null)
-                        jsonObject.addProperty("department", meetingMOM.getPreamble().getDepartment().getName());
-                    else
-                        jsonObject.addProperty("department", StringUtils.EMPTY);
-                }*/
-            if (councilMeeting.getMeetingAttendence() != null)
-                jsonObject.addProperty("totCommitteMemCount", councilMeeting.getCommitteeType().getCommiteemembers().size());
-            else
-                jsonObject.addProperty("totCommitteMemCount", StringUtils.EMPTY);
-            if(councilMeeting.getMeetingAttendence() != null){
+            List<Long> committeeMembersId=new ArrayList<>();
+            if (ATTENDANCEFINALIZED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
+                    || MOM_FINALISED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
+                    || MEETINGUSEDINRMOM.equalsIgnoreCase(councilMeeting.getStatus().getCode())) {
+                totCommitteMemCount = councilMeeting.getMeetingAttendence().size();
+                jsonObject.addProperty("totCommitteMemCount", councilMeeting.getMeetingAttendence().size());
+            } else if (councilMeeting.getMeetingAttendence() != null) {
+                for (CommitteeMembers committeeMembers : councilMeeting.getCommitteeType().getCommiteemembers()) {
+                    if (CouncilMemberStatus.ACTIVE.equals(committeeMembers.getCouncilMember().getStatus())) {
+                        totCommitteMemCount++;
+                        committeeMembersId.add(committeeMembers.getCouncilMember().getId());
+                    }
+                }
+                if (!ATTENDANCEFINALIZED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
+                        && !MOM_FINALISED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
+                        && !MEETINGUSEDINRMOM.equalsIgnoreCase(councilMeeting.getStatus().getCode()))
+                    jsonObject.addProperty("totCommitteMemCount", totCommitteMemCount);
+            }
+
+            if (councilMeeting.getMeetingAttendence() != null) {
                 for (MeetingAttendence attendence : councilMeeting.getMeetingAttendence()) {
-                    if (attendence.getAttendedMeeting() == true) {
-                        noOfMembersPresent++;
-                    } else {
-                        noOfMembersAbsent++;
+                    if (attendence.getAttendedMeeting()) {
+                        if (ATTENDANCEFINALIZED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
+                                || MOM_FINALISED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
+                                || MEETINGUSEDINRMOM.equalsIgnoreCase(councilMeeting.getStatus().getCode())) {
+                            noOfMembersPresent++;
+                        }else if(committeeMembersId.indexOf(attendence.getCouncilMember().getId())>-1){
+                            noOfMembersPresent++;
+                        }
                     }
                 }
             }
+            noOfMembersAbsent = totCommitteMemCount - noOfMembersPresent;
+
             if (councilMeeting.getMeetingAttendence() != null)
                 jsonObject.addProperty("noOfMembersPresent", noOfMembersPresent);
             else

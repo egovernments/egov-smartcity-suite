@@ -45,13 +45,13 @@
 <form:form method="post" action="create"
 	class="form-horizontal form-groups-bordered" modelAttribute="legalCase"
 	id="legalCasecaForm">
+	<c:if test="${not empty message}">
+		<div class=role="alert">${message}</div>
+	</c:if>
 	<div class="row">
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-body">
-					<c:if test="${not empty message}">
-						<div class=role="alert">${message}</div>
-					</c:if>
 					<div class="panel-heading">
 						<div class="panel-title" align="left">Pwr Details</div>
 					</div>
@@ -87,10 +87,10 @@
 								var="caduedate" />
 							<c:out value="${caduedate}" />
 						</div>
-						<div class="col-xs-3 add-margin">
+						<div class="col-xs-2 add-margin">
 							<spring:message code="lbl.dateofapprovalca" />
 						</div>
-						<div class="col-xs-2 add-margin view-content">
+						<div class="col-xs-3 add-margin view-content">
 							<fmt:formatDate pattern="dd/MM/yyyy"
 								value="${legalCase.counterAffidavits[0].counterAffidavitApprovalDate}"
 								var="caappdate" />
@@ -103,17 +103,21 @@
 						</div>
 						<div class="col-sm-3 add-margin view-content">
 							${legalCase.counterAffidavits[0].eOfficeComputerNumber}</div>
+						<div class="col-xs-2 add-margin">
+							<spring:message code="lbl.cafillingdate" />
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<fmt:formatDate pattern="dd/MM/yyyy"
+								value="${legalCase.pwrList[0].caFilingDate}" var="cafilingdate" />
+							<c:out value="${cafilingdate}" />
+						</div>
 					</div>
 				</div>
 			</div>
 		</div>
 	</div>
+	<jsp:include page="pwrdocumentdetails-view.jsp"></jsp:include>
 
-	<c:if test="${not empty pwrDocList}">
-
-		<jsp:include page="pwrDocumentdetails-view.jsp"></jsp:include>
-
-	</c:if>
 	<div class="form-group">
 		<div class="text-center">
 			<a href="javascript:void(0)" class="btn btn-default"

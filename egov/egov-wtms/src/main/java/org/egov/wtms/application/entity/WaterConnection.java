@@ -39,12 +39,6 @@
  */
 package org.egov.wtms.application.entity;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.wtms.masters.entity.MeterCost;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,10 +50,16 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.wtms.masters.entity.MeterCost;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 @Entity
 @Table(name = "egwtr_connection")
 @Unique(id = "id", tableName = "egwtr_connection", columnName = { "meterSerialNumber" }, fields = {
-"meterSerialNumber" }, enableDfltMsg = true)
+        "meterSerialNumber" }, enableDfltMsg = true)
 @SequenceGenerator(name = WaterConnection.SEQ_CONNECTION, sequenceName = WaterConnection.SEQ_CONNECTION, allocationSize = 1)
 public class WaterConnection extends AbstractAuditable {
 
@@ -73,6 +73,10 @@ public class WaterConnection extends AbstractAuditable {
     @SafeHtml
     @Length(min = 3, max = 50)
     private String consumerCode;
+
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    private String oldConsumerNumber;
 
     @NotNull
     @SafeHtml
@@ -96,6 +100,15 @@ public class WaterConnection extends AbstractAuditable {
 
     private Long initialReading;
 
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    private String duplicateConsumerNumber;
+
+    
+    @SafeHtml
+    @Length(min = 3, max = 50)
+    private String oldPropertyIdentifier;
+    
     @Override
     public Long getId() {
         return id;
@@ -160,6 +173,30 @@ public class WaterConnection extends AbstractAuditable {
 
     public void setInitialReading(final Long initialReading) {
         this.initialReading = initialReading;
+    }
+
+    public String getOldConsumerNumber() {
+        return oldConsumerNumber;
+    }
+
+    public void setOldConsumerNumber(final String oldConsumerNumber) {
+        this.oldConsumerNumber = oldConsumerNumber;
+    }
+
+    public String getDuplicateConsumerNumber() {
+        return duplicateConsumerNumber;
+    }
+
+    public void setDuplicateConsumerNumber(final String duplicateConsumerNumber) {
+        this.duplicateConsumerNumber = duplicateConsumerNumber;
+    }
+
+    public String getOldPropertyIdentifier() {
+        return oldPropertyIdentifier;
+    }
+
+    public void setOldPropertyIdentifier(String oldPropertyIdentifier) {
+        this.oldPropertyIdentifier = oldPropertyIdentifier;
     }
 
 }

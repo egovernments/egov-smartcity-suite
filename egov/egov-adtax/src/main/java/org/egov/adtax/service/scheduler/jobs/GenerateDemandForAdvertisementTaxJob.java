@@ -43,10 +43,10 @@ package org.egov.adtax.service.scheduler.jobs;
 import org.apache.log4j.Logger;
 import org.egov.adtax.service.AdvertisementBatchDemandGenService;
 import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
+import org.quartz.DisallowConcurrentExecution;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
-@Transactional
+@DisallowConcurrentExecution
 public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
 
     private static final long serialVersionUID = 603128245038844916L;
@@ -58,13 +58,13 @@ public class GenerateDemandForAdvertisementTaxJob extends AbstractQuartzJob {
 
     @Override
     public void executeJob() {
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
 
-        LOGGER.info("*************************************** GenerateDemandForAdvertisementTaxJob started ");
-
-        int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
-
-        LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
-                + totalRecordsProcessed);
+        final int totalRecordsProcessed = advertisementBatchDemandGenService.generateDemandForNextFinYear();
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("*************************************** End GenerateDemandForAdvertisementTaxJob. Total records "
+                    + totalRecordsProcessed);
 
     }
 

@@ -45,24 +45,25 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <form:form role="form" method="post" modelAttribute="legalCase"
-	id="legalCaseAdvocateform"
+	id="legalcasecaform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<input type="hidden" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="mode" name="mode" value="${mode}" />
-	<jsp:include page="../transactions/viewSummarizedCase.jsp" />
+	<jsp:include page="../transactions/view-summarizedcase.jsp" />
 	<%-- <%@ include file="legalcase-assignedDeptDet.jsp"%> --%>
 	<%@ include file="legalcase-caaffidavit-form.jsp"%>
 	</div>
 	</div>
 	</div>
 	</div>
+	<jsp:include page="pwrdocumentdetails-view.jsp"></jsp:include>
+	
 	<div class="form-group">
 		<div class="text-center">
-			<button type="submit" name="submit" class="btn btn-default"
-				id="buttonsubmitid" value="Save">
+			<form:button type="button" id="buttonid" class="btn btn-primary">
 				<spring:message code="lbl.submit" />
-			</button>
+			</form:button>
 			<button type='button' class='btn btn-default' id="btnclose">
 				<spring:message code='lbl.close' />
 		</div>

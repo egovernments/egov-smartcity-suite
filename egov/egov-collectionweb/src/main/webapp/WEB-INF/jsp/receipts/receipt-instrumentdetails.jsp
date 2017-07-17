@@ -179,6 +179,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="cash";
+		document.getElementById('onlinedetails').style.display='none';
  		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
  		clearCardDetails();
 		clearChequeDDDetails();
@@ -189,6 +190,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='table-row';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
 		clearCashDetails();
 		clearCardDetails();
@@ -199,6 +201,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='table-row';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="";
 		clearCashDetails();
 		clearCardDetails();
@@ -209,6 +212,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='table-row';
 		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="card";
 		clearCashDetails();
 		clearBankDetails();
@@ -219,6 +223,7 @@ function showInstrumentDetails(obj){
 		document.getElementById('chequeDDdetails').style.display='none';
 		document.getElementById('carddetails').style.display='none';
 		document.getElementById('bankdetails').style.display='table-row';
+		document.getElementById('onlinedetails').style.display='none';
 		document.getElementById('instrumentTypeCashOrCard').value="bankchallan";
 		clearCashDetails();
 		clearCardDetails();
@@ -229,6 +234,42 @@ function showInstrumentDetails(obj){
 			}
 		</s:if>
 	}
+	else if(obj.id=='onlineradiobutton'){
+		document.getElementById('onlinedetails').style.display='table-row';
+		document.getElementById('cashdetails').style.display='none';
+		document.getElementById('chequeDDdetails').style.display='none';
+		document.getElementById('carddetails').style.display='none';
+		document.getElementById('bankdetails').style.display='none';
+		document.getElementById('instrumentTypeCashOrCard').value="cash";
+ 		document.getElementById('instrHeaderCash.instrumentAmount').value=document.getElementById('totalamountdisplay').value;
+ 		clearCardDetails();
+		clearChequeDDDetails();
+		clearBankDetails();
+	}
+}
+function validateTransactionNumber()
+{
+	document.getElementById("receipt_error_area").innerHTML="";    
+	document.getElementById("receipt_error_area").style.display="none";
+	 if(document.getElementById("cardradiobutton").checked)
+		 {    
+		 	 var instrumentNum="";
+		 	 var confirmInstrumentNo="";
+			 if(document.getElementById("instrHeaderCard.transactionNumber")!=null)
+			 	 instrumentNum = document.getElementById("instrHeaderCard.transactionNumber").value;
+			 if(document.getElementById("confirmtransactionNumber")!=null)
+			 	 confirmInstrumentNo =  document.getElementById("confirmtransactionNumber").value;
+			 if(confirmInstrumentNo!=null && confirmInstrumentNo !="" && confirmInstrumentNo !=null && confirmInstrumentNo !=""){
+					 if (instrumentNum !=confirmInstrumentNo)	
+			        {		
+				         document.getElementById("confirmtransactionNumber").value="";
+				         document.getElementById("receipt_error_area").style.display="block";
+				         document.getElementById("receipt_error_area").innerHTML+=
+				 			'<s:text name="billreceipt.missingcard.confirmtransactionno.validationmessage" />'+ '<br>';
+				 		 return(false);
+					}
+			}
+		 }
 }
 </script>
 <tr>
@@ -251,10 +292,15 @@ function showInstrumentDetails(obj){
 			name="paytradiobutton" value="dd" /> DD &nbsp;
 	</span> <span style="float: left;" id="cardradiobuttonspan"> <input
 			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
-			id="cardradiobutton" name="paytradiobutton" /> Credit card &nbsp;
+			id="cardradiobutton" name="paytradiobutton" /> Credit/Debit card
+			&nbsp;
 	</span> <span style="float: left;" id="bankradiobuttonspan"> <input
 			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
 			id="bankradiobutton" name="paytradiobutton" /> Direct Bank &nbsp;
+	</span> </span> <span style="float: left;" id="onlineradiobuttonspan"> <input
+			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
+			id="onlineradiobutton" name="paytradiobutton" /> SBI MOPS Bank
+			challan &nbsp;
 	</span></td>
 </tr>
 
@@ -314,7 +360,7 @@ function showInstrumentDetails(obj){
 									class="mandatory1">*</span></td>
 								<td class="bluebox"><s:textfield id="bankName" type="text"
 										name="instrumentProxyList[0].bankId.name"
-										onkeyup='autocompletecodeBank(this,event)'
+										onfocus='autocompletecodeBank(this,event)'
 										onblur='fillAfterSplitBank(this)' /> <s:hidden id="bankID"
 										name="instrumentProxyList[0].bankId.id" />
 									<div id="bankcodescontainer"></div></td>
@@ -477,7 +523,12 @@ function showInstrumentDetails(obj){
 									label="instrHeaderCard.transactionNumber"
 									id="instrHeaderCard.transactionNumber" maxlength="14"
 									name="instrHeaderCard.transactionNumber" size="18"
-									value="%{instrHeaderCard.transactionNumber}" /></td>
+									value="%{instrHeaderCard.transactionNumber}" onblur="validateTransactionNumber();" /></td>
+								<td class="bluebox"><s:text
+									name="billreceipt.payment.reenter.transactionnumber" /><span
+								class="mandatory1">*</span></td>									
+							<td class="bluebos"> <s:password id="confirmtransactionNumber"  maxlength="14"
+							                   name ="confirmtransactionNumber"  size="18" onblur="validateTransactionNumber();" /></td>		
 						</tr>
 
 						<tr id="carddetailsrow">
@@ -576,6 +627,28 @@ function showInstrumentDetails(obj){
 									onkeyup="callpopulateapportioningamountforbills();setBankInstrumentDetails(this);" /></td>
 						</tr>
 					</table> <!-- End of bank grid table -->
+				</td>
+			</tr>
+			<tr id="onlinedetails" style="display: none">
+				<td class="bluebox2cheque" width="11%">
+					<table width="100%" border="0" cellspacing="0" cellpadding="0"
+						name="onlinegrid" id="onlinegrid"
+						style="padding: 0px; margin: 0px;">
+						<tr id="onlinedetailsrow">
+							<td class="bluebox" width="3%"></td>
+							<td class="bluebox" width="22%"><s:text
+									name="billreceipt.payment.instrumentAmount" /><span
+								class="mandatory1">*</span></td>
+							<td class="bluebox" ><s:textfield
+									label="instrumentAmount"
+									id="instrHeaderOnline.instrumentAmount"
+									name="instrHeaderOnline.instrumentAmount" maxlength="14"
+									size="18" cssClass="form-control patternvalidation text-right"
+									data-pattern="number" placeholder="0"
+									onblur="callpopulateapportioningamountforbills();setOnlineInstrumentDetails(this);"
+									onkeyup="callpopulateapportioningamountforbills();setOnlineInstrumentDetails(this);" /></td>
+						</tr>
+					</table>
 				</td>
 			</tr>
 		</table>

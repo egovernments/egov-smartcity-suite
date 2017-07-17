@@ -52,13 +52,7 @@
 			<param name="sequence_name">SEQ_EG_DEMAND</param>
 		</generator>
         </id>
-   	   <timestamp
-		column="MODIFIED_DATE"
-		name="modifiedDate"
-		access="property"
-		unsaved-value="null"
-	   />
-		  
+        <version name="version" type="long"/>
         <many-to-one name="egInstallmentMaster" class="org.egov.commons.Installment" >
             <column name="ID_INSTALLMENT"  not-null="true" />
         </many-to-one> 
@@ -71,6 +65,9 @@
        
         <property name="createDate" type="java.util.Date">
             <column name="CREATE_DATE"  not-null="true" />
+        </property>
+        <property name="modifiedDate" type="java.util.Date">
+            <column name="MODIFIED_DATE"  not-null="false" />
         </property>
         
         <property name="status" type="java.lang.Character">

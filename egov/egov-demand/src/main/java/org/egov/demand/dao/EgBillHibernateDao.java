@@ -43,8 +43,6 @@ import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillType;
 import org.hibernate.Query;
 import org.hibernate.Session;
-import org.springframework.beans.factory.config.ConfigurableBeanFactory;
-import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,7 +52,6 @@ import java.util.List;
 
 @Repository(value = "egBillDAO")
 @Transactional(readOnly = true)
-@Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class EgBillHibernateDao implements EgBillDao {
 
     @PersistenceContext
@@ -66,8 +63,7 @@ public class EgBillHibernateDao implements EgBillDao {
 
     @Override
     public EgBillType getBillTypeByCode(String code) {
-        final Query qry = this.getCurrentSession().createQuery(
-                "from EgBillType bt where bt.code =:BTCODE");
+        final Query qry = this.getCurrentSession().createQuery("from EgBillType bt where bt.code =:BTCODE");
         qry.setString("BTCODE", code);
         qry.setMaxResults(1);
         return (EgBillType) qry.uniqueResult();
@@ -75,31 +71,31 @@ public class EgBillHibernateDao implements EgBillDao {
 
     @Override
     public EgBill findById(Long id, boolean lock) {
-        return (EgBill) getCurrentSession().get(EgBill.class, id);
+        return getCurrentSession().get(EgBill.class, id);
     }
 
-    @SuppressWarnings("unchecked")
     @Override
     public List<EgBill> findAll() {
         return getCurrentSession().createQuery("from EgBill").list();
     }
 
+    @Transactional
     @Override
     public EgBill create(EgBill egBill) {
-        getCurrentSession().saveOrUpdate(egBill);
-        getCurrentSession().flush();
+        getCurrentSession().persist(egBill);
         return egBill;
     }
 
+    @Transactional
     @Override
     public void delete(EgBill egBill) {
         getCurrentSession().delete(egBill);
     }
 
+    @Transactional
     @Override
     public EgBill update(EgBill egBill) {
-        getCurrentSession().saveOrUpdate(egBill);
-        getCurrentSession().flush();
+        getCurrentSession().update(egBill);
         return egBill;
     }
 }

@@ -39,9 +39,20 @@
  */
 $(document).ready(function()
 {	
+	
+	$('.btn-primary').click(function() {
+		var button = $(this).attr('id');
+		if (button != null && (button == 'Approve' || button == 'Sign' || button == 'Preview')) {
+			$('#approvalDepartment').removeAttr('required');
+			$('#approvalDesignation').removeAttr('required');
+			$('#approvalPosition').removeAttr('required');
+		}
+		
+	});
+	
 	$('#approvalDepartment').change(function(){
 		$.ajax({
-			url: "/eis/ajaxWorkFlow-getDesignationsByObjectType",     
+			url: "/eis/ajaxWorkFlow-getDesignationsByObjectTypeAndDesignation",     
 			type: "GET",
 			data: {
 				approvalDepartment : $('#approvalDepartment').val(),
@@ -50,11 +61,11 @@ $(document).ready(function()
 				currentState : $('#currentState').val(),
 				amountRule : $('#amountRule').val(),
 				additionalRule : $('#additionalRule').val(),
-				pendingAction : $('#pendingActions').val()
+				pendingAction : $('#pendingActions').val(),
+				currentDesignation : $('#currentDesignation').val()
 			},
 			dataType: "json",
 			success: function (response) {
-				console.log("success"+response);
 				$('#approvalDesignation').empty();
 				$('#approvalDesignation').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
@@ -64,7 +75,6 @@ $(document).ready(function()
 			}, 
 			error: function (response) {
 				bootbox.alert('json fail');
-				console.log("failed");
 			}
 		});
 	});
@@ -80,7 +90,6 @@ $(document).ready(function()
 			},
 			dataType: "json",
 			success: function (response) {
-				console.log("success"+response);
 				$('#approvalPosition').empty();
 				$('#approvalPosition').append($("<option value=''>Select from below</option>"));
 				$.each(response, function(index, value) {
@@ -89,7 +98,6 @@ $(document).ready(function()
 				
 			}, 
 			error: function (response) {
-				console.log("failed");
 			}
 		});
 	});
@@ -99,7 +107,7 @@ $(document).ready(function()
 function callAlertForDepartment() {
     var value=$('#approvalDepartment').val();
 	if(value=="" ||  value=="-1") {
-		bootbox.alert("Please select the Approver Department");
+		bootbox.alert("Please select the Department");
 		return false;
 	}
 }
@@ -107,7 +115,7 @@ function callAlertForDepartment() {
 function callAlertForDesignation() {
 	var value=$('#approvalDesignation').val();
 	if(value=="" || value=="-1") {
-		bootbox.alert("Please select the approver designation");
+		bootbox.alert("Please select the Designation");
 		return false;
 	}
 }

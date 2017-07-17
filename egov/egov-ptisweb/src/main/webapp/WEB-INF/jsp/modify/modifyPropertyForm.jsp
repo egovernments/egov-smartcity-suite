@@ -143,53 +143,38 @@
 				name="propertyDetail.apartment" id="apartment" listKey="id"
 				listValue="name" value="%{propertyDetail.apartment.id}"
 				list="dropdownData.apartments" cssClass="selectnew" /></td>
-		<td class="greybox" colspan="2">&nbsp;</td>
-	</tr>
-	<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
-	<tr> 
-	<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="Door No"></s:text> :</td>
-		<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
-		<td class="greybox"><s:textfield name="houseNo" id="houseNo" value="%{houseNo}" readonly="true" />
-		</td>
-		</s:if>
-		<s:else>
-		<td class="greybox"><s:textfield name="houseNo" id="houseNo" size="12" maxlength="15" value="%{houseNo}" /></td>
-		</s:else>
-	      </td>
-		<td class="greybox" width="25%"></td>
-		<td class="greybox"></td>
-		</tr>
-		</s:if>
-	
-	<tr class="appurtenant">
-		<td class="greybox">&nbsp;</td>
-		<td class="bluebox"><s:text name="isextent.appurtntland" /> :
-		<td class="bluebox"><s:checkbox
-				name="propertyDetail.appurtenantLandChecked"
-				id="appurtenantLandChecked"
-				value="%{propertyDetail.appurtenantLandChecked}"
-				onclick="enableAppartnaumtLandDetails();"
-				onfocus="makePropertyTypeMandatory();" /></td>
 		<td class="bluebox"><s:text name="certificationNumber"></s:text>:</td>
 		<td class="bluebox"><s:textfield maxlength="64"
 				name="propertyDetail.occupancyCertificationNo"
 				id="certificationNumber"
 				value="%{propertyDetail.occupancyCertificationNo}" /></td>
 	</tr>
-	<tr id="appurtenantRow">
-		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="extent.appurtntland"></s:text>
-			<span class="mandatory1">*</span> :</td>
-		<td class="greybox"><s:textfield
-				name="propertyDetail.extentAppartenauntLand"
-				id="extentAppartenauntLand"
-				value="%{propertyDetail.extentAppartenauntLand}" size="12"
-				maxlength="12" onchange="trim(this,this.value);"
-				onblur="validNumber(this);checkZero(this);"></s:textfield></td>
-		<td class="greybox" colspan="2">&nbsp;</td>
-	</tr>
-	
+	<tr>
+			<td class="greybox">&nbsp;</td>
+			<td class="greybox"><s:text name="Zone No"></s:text> <span
+				class="mandatory1">*</span> :</td>
+			<s:if test="%{zoneName !=null && !zoneName.isEmpty()}">
+				<td class="greybox"><s:textfield name="zoneName" id="zoneName"
+						value="%{zoneName}" /></td>
+			</s:if>
+			<s:else>
+				<td class="bluebox"><s:select list="dropdownData.zones"
+						name="zoneId" value="%{zoneId}" headerKey="-1" id="zoneId"
+						headerValue="%{getText('default.select')}" listKey="id"
+						listValue="name" /></td>
+			</s:else>
+			<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
+			<td class="greybox"><s:text name="Door No"></s:text> :</td>
+			<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
+				<td class="greybox"><s:textfield name="houseNo" id="houseNo"
+						value="%{houseNo}" /></td>
+			</s:if>
+			<s:else>
+				<td class="greybox"><s:textfield name="houseNo" id="houseNo"
+						size="12" maxlength="15" value="%{houseNo}" /></td>
+			</s:else>
+			</s:if>
+	</tr>	
 	<!-- Amenities section -->
 
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -296,5 +281,32 @@
 	jQuery('td.siteowner').hide();
 	jQuery('tr.bpddetails').hide();
 	jQuery('tr.vacantlanddetaills').hide();
+	jQuery(document).ready(function() {
+		var propType = jQuery('#propTypeId :selected').text();
+		var doorno = jQuery("#houseNo").val() != '';
+		var zoneName= jQuery("#zoneName").val !='' ;
+		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
+			jQuery("#houseNo").prop("readonly", true);
+		}
+		else{
+			jQuery("#houseNo").prop("readonly", false);
+		}
+		if(zoneName){
+			jQuery("#zoneName").prop("readonly", true);
+		}
+	});
+	jQuery(function() {
+		jQuery("#propTypeId").change(function(){
+			var propType = jQuery('#propTypeId :selected').text();
+			var doorno = jQuery("#houseNo").val() != '';
+			if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
+				jQuery("#houseNo").prop("readonly", true);
+			}
+			else{
+				jQuery("#houseNo").prop("readonly", false);
+			}
+        });
+    });
+	
 	
 </script>
