@@ -183,6 +183,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     private SubCategoryDetailsService subCategoryDetailsService;
+
     @Autowired
     private FeeTypeService feeTypeService;
 
@@ -441,17 +442,10 @@ public abstract class AbstractLicenseService<T extends License> {
     public void transitionWorkFlow(final T license, final WorkflowBean workflowBean) {
         DateTime currentDate = new DateTime();
         User user = this.securityUtils.getCurrentUser();
-        List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
-        List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
-        Position pos = null;
-        Position wfInitiator = null;
-        final String natureOfWork = license.isReNewApplication()
-                ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
-        if (null != license.getId())
-            wfInitiator = this.getWorkflowInitiator(license);
-
-        if (wfInitiator != null && BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            if (userPositions.contains(wfInitiator) && ("Rejected".equals(license.getState().getValue())
+        if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            Position initiatorPosition = license.getCurrentState().getInitiatorPosition();
+            List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
+            if (userPositions.contains(initiatorPosition) && ("Rejected".equals(license.getState().getValue())
                     || "License Created".equals(license.getState().getValue())))
                 license.transition().end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(workflowBean.getApproverComments())
@@ -459,72 +453,78 @@ public abstract class AbstractLicenseService<T extends License> {
             else {
                 final String stateValue = WORKFLOW_STATE_REJECTED;
                 license.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                        .withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator).withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
+                        .withOwner(initiatorPosition)
+                        .withNextAction(WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING);
             }
 
         } else if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
             license.transition().end().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withComments(workflowBean.getApproverComments())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
-                    .withOwner(wfInitiator)
+                    .withOwner(license.getCurrentState().getInitiatorPosition())
                     .withNextAction(wfmatrix.getNextAction());
         } else {
-            if (null != workflowBean.getApproverPositionId() && workflowBean.getApproverPositionId() != -1)
-                pos = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
-            if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-                pos = getCommissionerPosition();
-            }
-            if (null == license.getState()) {
+            if (!license.hasState()) {
+                Position wfInitiator;
+                List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
                 if (!assignments.isEmpty())
                     wfInitiator = assignments.get(0).getPosition();
                 else
-                    throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
+                    throw new ValidationException("wf.initiator.not.found", "No employees are assigned to process this application");
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                        .withComments(workflowBean.getApproverComments())
+                        .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator);
                 license.setEgwStatus(
                         egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-            } else if ("END".equalsIgnoreCase(license.getCurrentState().getNextAction()))
-                license.transition().end().withSenderName(user.getName()).withComments(workflowBean.getApproverComments())
-                        .withNatureOfTask(natureOfWork)
-                        .withDateInfo(currentDate.toDate());
-            else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
-                    && license.getEgwStatus().getCode().equals(APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
+            } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                Position commissioner = getCommissionerPosition();
+                if (APPLICATION_STATUS_APPROVED_CODE.equals(license.getEgwStatus().getCode())) {
+                    if (licenseUtils.isDigitalSignEnabled())
+                        license.transition().progressWithStateCopy()
+                                .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                                .withComments(workflowBean.getApproverComments())
+                                .withStateValue(WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION)
+                                .withDateInfo(currentDate.toDate())
+                                .withOwner(commissioner)
+                                .withNextAction(WF_ACTION_DIGI_PENDING);
+                    else
+                        license.transition().progressWithStateCopy()
+                                .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                                .withComments(workflowBean.getApproverComments())
+                                .withStateValue(WF_COMMISSIONER_APPRVD_WITHOUT_COLLECTION)
+                                .withDateInfo(currentDate.toDate())
+                                .withOwner(license.getCurrentState().getInitiatorPosition())
+                                .withNextAction(WF_CERTIFICATE_GEN_PENDING);
+                } else if (APPLICATION_STATUS_SECONDCOLLECTION_CODE.equals(license.getEgwStatus().getCode())) {
+                    final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
+                            null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
+                    license.transition().progressWithStateCopy()
+                            .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                            .withComments(workflowBean.getApproverComments())
+                            .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
+                            .withOwner(commissioner)
+                            .withNextAction(wfmatrix.getNextAction());
+                }
+
+            } else {
+                Position pos = null;
+                if (workflowBean.getApproverPositionId() != null && workflowBean.getApproverPositionId() > 0)
+                    pos = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
-                license.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(wfmatrix.getNextAction());
-            } else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
-                    && license.getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE)
-                    && !licenseUtils.isDigitalSignEnabled())
-                license.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(WF_COMMISSIONER_APPRVD_WITHOUT_COLLECTION).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator)
-                        .withNextAction(WF_CERTIFICATE_GEN_PENDING);
-            else if (BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction())
-                    && license.getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE)
-                    && licenseUtils.isDigitalSignEnabled())
-                license.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION).withDateInfo(currentDate.toDate())
+                license.transition().progressWithStateCopy()
+                        .withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                        .withComments(workflowBean.getApproverComments())
+                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                         .withOwner(pos)
-                        .withNextAction(WF_ACTION_DIGI_PENDING);
-            else {
-                final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                        null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
-                license.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
-                        .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(pos)
                         .withNextAction(wfmatrix.getNextAction());
             }
 
@@ -532,32 +532,18 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private Position getCommissionerPosition() {
-        Position pos;
-        List<Position> loginuserpos = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
-        Optional<Position> commPos = loginuserpos.stream().filter(row -> row.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN)).findFirst();
-        if (commPos.isPresent())
-            pos = commPos.get();
-        else
-            throw new ValidationException("wf.comm.pos.not.found", "LoggedIn user doesn't have Commissioner assignment");
-        return pos;
+        return positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId())
+                .stream()
+                .filter(row -> row.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN))
+                .findFirst()
+                .orElseThrow(
+                        () -> new ValidationException("wf.comm.pos.not.found", "You are not authorized approve License"));
     }
 
     public WorkFlowMatrix getWorkFlowMatrixApi(License license, WorkflowBean workflowBean) {
         return this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
     }
-
-    protected Position getWorkflowInitiator(final T license) {
-        List<Assignment> assignments = Collections.emptyList();
-        if (license.getState().getInitiatorPosition() != null)
-            assignments = assignmentService.getAssignmentsForPosition(license.getState().getInitiatorPosition().getId(),
-                    license.getState().getCreatedDate());
-        if (assignments.isEmpty())
-            throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
-        else
-            return license.getState().getInitiatorPosition();
-    }
-
 
     public void processAndStoreDocument(final List<LicenseDocument> documents, final License license) {
         documents.forEach(document -> {
@@ -755,9 +741,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void cancelLicenseWorkflow(final T license, final WorkflowBean workflowBean) {
-
         final User currentUser = this.securityUtils.getCurrentUser();
-        final String natureOfWork = CLOSURE_NATUREOFTASK;
         Position owner = null;
         if (workflowBean.getApproverPositionId() != null)
             owner = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
@@ -779,7 +763,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 final String stateValue = WORKFLOW_STATE_REJECTED;
                 license.transition().progressWithStateCopy()
                         .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                        .withComments(workflowBean.getApproverComments())
                         .withStateValue(stateValue).withDateInfo(new DateTime().toDate())
                         .withOwner(license.getState().getInitiatorPosition()).withNextAction("SI/SS Approval Pending");
 
@@ -789,7 +773,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             license.transition().progressWithStateCopy()
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withComments(workflowBean.getApproverComments())
                     .withStateValue(newwfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
                     .withNextAction(newwfmatrix.getNextAction());
             licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
@@ -801,7 +785,7 @@ public abstract class AbstractLicenseService<T extends License> {
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_UNDERWORKFLOW));
             license.transition().progressWithStateCopy()
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withComments(workflowBean.getApproverComments())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
                     .withNextAction(wfmatrix.getNextAction());
         } else if ("SI/SS Approved".equals(license.getState().getValue())) {
@@ -813,7 +797,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
             license.transition().end()
                     .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withComments(workflowBean.getApproverComments())
                     .withStateValue(commWfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
                     .withOwner(owner)
                     .withNextAction(commWfmatrix.getNextAction());
@@ -825,7 +809,6 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private void closureWfWithOperator(final T license) {
-        final String natureOfWork = CLOSURE_NATUREOFTASK;
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
         String comment = "";
         if (currentUserRoles.contains(CSCOPERATOR))
@@ -841,7 +824,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition().startNext();
             license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
-                    .withComments(comment).withNatureOfTask(natureOfWork)
+                    .withComments(comment).withNatureOfTask(CLOSURE_NATUREOFTASK)
                     .withStateValue("NEW").withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
                     .withNextAction("SI/SS Approval Pending").withInitiator(wfAssignment.getPosition());
             license.setEgwStatus(

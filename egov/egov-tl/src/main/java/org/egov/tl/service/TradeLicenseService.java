@@ -180,7 +180,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public void updateStatusInWorkFlowProgress(TradeLicense license, final String workFlowAction) {
 
         List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
-        final Position wfInitiator = getWorkflowInitiator(license);
         if (BUTTONAPPROVE.equals(workFlowAction)) {
             if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
@@ -214,7 +213,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
         if (BUTTONREJECT.equals(workFlowAction))
-            if (license.getLicenseAppType() != null && userPositions.contains(wfInitiator)
+            if (license.getLicenseAppType() != null && userPositions.contains(license.getCurrentState().getInitiatorPosition())
                     && ("Rejected".equals(license.getState().getValue()))
                     || "License Created".equals(license.getState().getValue())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
