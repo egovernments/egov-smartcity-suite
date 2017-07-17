@@ -102,6 +102,11 @@ public class ComplaintIndexController {
         return complaintIndexService.getSourceWiseResponse(complaintRequest);
     }
 
+    @RequestMapping(value = "/citizenrating", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public Map<String, Object> getCitizenRatingResponse(@RequestBody final ComplaintDashBoardRequest complaintRequest) {
+        return complaintIndexService.findByAllCitizenRating(complaintRequest);
+    }
+
     @RequestMapping(value = "/departments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<JSONObject> getDepartments() {
         final List<Department> departments = departmentService.getAllDepartments();
@@ -202,7 +207,7 @@ public class ComplaintIndexController {
     // with existing filters
     @RequestMapping(value = "/complaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComplaintIndex> getFilteredComplaints(@RequestBody final ComplaintDashBoardRequest complaintRequest,
-            @RequestParam final String fieldName, @RequestParam final String fieldValue) {
+                                                      @RequestParam final String fieldName, @RequestParam final String fieldValue) {
         if (StringUtils.isEmpty(complaintRequest.getSortField()))
             complaintRequest.setSortField("createdDate");
         if (StringUtils.isEmpty(complaintRequest.getSortDirection()))
@@ -211,10 +216,11 @@ public class ComplaintIndexController {
             complaintRequest.setSize(10000);
         return complaintIndexService.getFilteredComplaints(complaintRequest, fieldName, fieldValue, null, null);
     }
-    
+
     /**
      * This is a common api where a fieldName, lowerLimit and upperLimit will be accepted additionally to return matching
      * complaints with existing filters for the SLA dashboard
+     *
      * @param complaintRequest
      * @param fieldName
      * @param lowerLimit
@@ -223,8 +229,8 @@ public class ComplaintIndexController {
      */
     @RequestMapping(value = "/slaComplaints", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<ComplaintIndex> getFilteredComplaintsForSLASlabs(@RequestBody final ComplaintDashBoardRequest complaintRequest,
-            @RequestParam final String fieldName, @RequestParam final Integer lowerLimit,
-            @RequestParam final Integer upperLimit) {
+                                                                 @RequestParam final String fieldName, @RequestParam final Integer lowerLimit,
+                                                                 @RequestParam final Integer upperLimit) {
         if (StringUtils.isEmpty(complaintRequest.getSortField()))
             complaintRequest.setSortField("createdDate");
         if (StringUtils.isEmpty(complaintRequest.getSortDirection()))

@@ -122,7 +122,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public Map<String, SearchResponse> findAllGrievanceByFilter(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final BoolQueryBuilder query, final String grouByField) {
+                                                                final BoolQueryBuilder query, final String grouByField) {
         /**
          * For Current day's complaint count if dates are sent in the request, consider the toDate, else take date range between
          * current date +1 day
@@ -171,59 +171,59 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .addAggregation(
                             getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
                                     complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                            .subAggregation(
-                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
-                                                            "satisfactionIndex"))
-                                            .subAggregation(
-                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
-                                                                            .field("complaintAgeingdaysFromDue")
-                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                            .addRange("3months", 32, 91)
-                                                                            .addUnboundedFrom("remainingMonths", 91))
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
-                                                                            .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("12hours", 0, 13)
-                                                                            .addRange("1day", 13, 25)
-                                                                            .addRange("1week", 25, 169)
-                                                                            .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                            .subAggregation(
-                                                                    getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
+                                    .subAggregation(
+                                            getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                    "satisfactionIndex"))
+                                    .subAggregation(
+                                            getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
+                                                    .subAggregation(
+                                                            AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                    .field("complaintAgeingdaysFromDue")
+                                                                    .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                    .addRange("3months", 32, 91)
+                                                                    .addUnboundedFrom("remainingMonths", 91))
+                                                    .subAggregation(
+                                                            AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
+                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                    .addRange("12hours", 0, 13)
+                                                                    .addRange("1day", 13, 25)
+                                                                    .addRange("1week", 25, 169)
+                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                    .subAggregation(
+                                                            getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
                     .addAggregation(AggregationBuilders.terms(ULBWISE).field(CITY_CODE).size(120)
                             .subAggregation(
                                     getCountWithGroupingAndOrder(GROUP_BY_FIELD, grouByField, size,
                                             complaintDashBoardRequest.getSortField(),
                                             complaintDashBoardRequest.getSortDirection())
-                                                    .subAggregation(
-                                                            getAverageWithExclusion("groupByFieldSatisfactionAverage",
-                                                                    "satisfactionIndex"))
-                                                    .subAggregation(
-                                                            AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
-                                                                    .addField(DISTRICT_NAME).addField(CITY_NAME)
-                                                                    .addField(WARD_NAME).setSize(1))
-                                                    .subAggregation(
-                                                            getCountWithGrouping("groupFieldWiseOpenAndClosedCount", IF_CLOSED,
-                                                                    2)
-                                                                            .subAggregation(
-                                                                                    AggregationBuilders
-                                                                                            .range("groupByFieldAgeing")
-                                                                                            .field("complaintAgeingdaysFromDue")
-                                                                                            .addRange("1week", 0, 8)
-                                                                                            .addRange("1month", 8, 32)
-                                                                                            .addRange("3months", 32, 91)
-                                                                                            .addUnboundedFrom("remainingMonths",
-                                                                                                    91))
-                                                                            .subAggregation(
-                                                                                    AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
-                                                                                            .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                                            .addRange("12hours", 0, 13)
-                                                                                            .addRange("1day", 13, 25)
-                                                                                            .addRange("1week", 25, 169)
-                                                                                            .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                                            .subAggregation(getCountWithGrouping(
-                                                                                    "groupByFieldSla", IF_SLA, 2)))))
+                                            .subAggregation(
+                                                    getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                            "satisfactionIndex"))
+                                            .subAggregation(
+                                                    AggregationBuilders.topHits("complaintrecord").addField(CITY_CODE)
+                                                            .addField(DISTRICT_NAME).addField(CITY_NAME)
+                                                            .addField(WARD_NAME).setSize(1))
+                                            .subAggregation(
+                                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount", IF_CLOSED,
+                                                            2)
+                                                            .subAggregation(
+                                                                    AggregationBuilders
+                                                                            .range("groupByFieldAgeing")
+                                                                            .field("complaintAgeingdaysFromDue")
+                                                                            .addRange("1week", 0, 8)
+                                                                            .addRange("1month", 8, 32)
+                                                                            .addRange("3months", 32, 91)
+                                                                            .addUnboundedFrom("remainingMonths",
+                                                                                    91))
+                                                            .subAggregation(
+                                                                    AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
+                                                                            .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                            .addRange("12hours", 0, 13)
+                                                                            .addRange("1day", 13, 25)
+                                                                            .addRange("1week", 25, 169)
+                                                                            .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                            .subAggregation(getCountWithGrouping(
+                                                                    "groupByFieldSla", IF_SLA, 2)))))
 
                     .execute().actionGet();
         else if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES))
@@ -235,61 +235,61 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .addAggregation(
                             getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
                                     complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                            .subAggregation(
-                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
-                                                            "satisfactionIndex"))
-                                            .subAggregation(
-                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
-                                                                            .field("complaintAgeingdaysFromDue")
-                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                            .addRange("3months", 32, 91)
-                                                                            .addUnboundedFrom("remainingMonths", 91))
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
-                                                                            .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("12hours", 0, 13)
-                                                                            .addRange("1day", 13, 25)
-                                                                            .addRange("1week", 25, 169)
-                                                                            .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                            .subAggregation(
-                                                                    getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
+                                    .subAggregation(
+                                            getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                    "satisfactionIndex"))
+                                    .subAggregation(
+                                            getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
+                                                    .subAggregation(
+                                                            AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                    .field("complaintAgeingdaysFromDue")
+                                                                    .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                    .addRange("3months", 32, 91)
+                                                                    .addUnboundedFrom("remainingMonths", 91))
+                                                    .subAggregation(
+                                                            AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
+                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                    .addRange("12hours", 0, 13)
+                                                                    .addRange("1day", 13, 25)
+                                                                    .addRange("1week", 25, 169)
+                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                    .subAggregation(
+                                                            getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
                     .addAggregation(AggregationBuilders.terms(ULBWISE).field(CITY_CODE).size(120)
                             .subAggregation(AggregationBuilders.terms(WARDWISE).field(WARD_NUMBER).size(size)
                                     .subAggregation(
                                             getCountWithGroupingAndOrder(GROUP_BY_FIELD, grouByField, size,
                                                     complaintDashBoardRequest.getSortField(),
                                                     complaintDashBoardRequest.getSortDirection())
-                                                            .subAggregation(
-                                                                    getAverageWithExclusion("groupByFieldSatisfactionAverage",
-                                                                            "satisfactionIndex"))
-                                                            .subAggregation(AggregationBuilders.topHits("complaintrecord")
-                                                                    .addField(CITY_CODE)
-                                                                    .addField(CITY_DISTRICT_NAME).addField(CITY_NAME)
-                                                                    .addField(WARD_NAME).addField(LOCALITY_NAME).setSize(1))
-                                                            .subAggregation(
-                                                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount",
-                                                                            IF_CLOSED, 2)
-                                                                                    .subAggregation(
-                                                                                            AggregationBuilders
-                                                                                                    .range("groupByFieldAgeing")
-                                                                                                    .field("complaintAgeingdaysFromDue")
-                                                                                                    .addRange("1week", 0, 8)
-                                                                                                    .addRange("1month", 8, 32)
-                                                                                                    .addRange("3months", 32, 91)
-                                                                                                    .addUnboundedFrom(
-                                                                                                            "remainingMonths",
-                                                                                                            91))
-                                                                                    .subAggregation(
-                                                                                            AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
-                                                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                                                    .addRange("12hours", 0, 13)
-                                                                                                    .addRange("1day", 13, 25)
-                                                                                                    .addRange("1week", 25, 169)
-                                                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                                                    .subAggregation(getCountWithGrouping(
-                                                                                            "groupByFieldSla", IF_SLA, 2))))))
+                                                    .subAggregation(
+                                                            getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                                    "satisfactionIndex"))
+                                                    .subAggregation(AggregationBuilders.topHits("complaintrecord")
+                                                            .addField(CITY_CODE)
+                                                            .addField(CITY_DISTRICT_NAME).addField(CITY_NAME)
+                                                            .addField(WARD_NAME).addField(LOCALITY_NAME).setSize(1))
+                                                    .subAggregation(
+                                                            getCountWithGrouping("groupFieldWiseOpenAndClosedCount",
+                                                                    IF_CLOSED, 2)
+                                                                    .subAggregation(
+                                                                            AggregationBuilders
+                                                                                    .range("groupByFieldAgeing")
+                                                                                    .field("complaintAgeingdaysFromDue")
+                                                                                    .addRange("1week", 0, 8)
+                                                                                    .addRange("1month", 8, 32)
+                                                                                    .addRange("3months", 32, 91)
+                                                                                    .addUnboundedFrom(
+                                                                                            "remainingMonths",
+                                                                                            91))
+                                                                    .subAggregation(
+                                                                            AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
+                                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                                    .addRange("12hours", 0, 13)
+                                                                                    .addRange("1day", 13, 25)
+                                                                                    .addRange("1week", 25, 169)
+                                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                                    .subAggregation(getCountWithGrouping(
+                                                                            "groupByFieldSla", IF_SLA, 2))))))
                     .execute().actionGet();
         else if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY))
             tableResponse = elasticsearchTemplate
@@ -300,62 +300,62 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .addAggregation(
                             getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
                                     complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                            .subAggregation(
-                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
-                                                            "satisfactionIndex"))
-                                            .subAggregation(
-                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
-                                                                            .field("complaintAgeingdaysFromDue")
-                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                            .addRange("3months", 32, 91)
-                                                                            .addUnboundedFrom("remainingMonths", 91))
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
-                                                                            .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("12hours", 0, 13)
-                                                                            .addRange("1day", 13, 25)
-                                                                            .addRange("1week", 25, 169)
-                                                                            .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                            .subAggregation(
-                                                                    getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
+                                    .subAggregation(
+                                            getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                    "satisfactionIndex"))
+                                    .subAggregation(
+                                            getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
+                                                    .subAggregation(
+                                                            AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                    .field("complaintAgeingdaysFromDue")
+                                                                    .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                    .addRange("3months", 32, 91)
+                                                                    .addUnboundedFrom("remainingMonths", 91))
+                                                    .subAggregation(
+                                                            AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
+                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                    .addRange("12hours", 0, 13)
+                                                                    .addRange("1day", 13, 25)
+                                                                    .addRange("1week", 25, 169)
+                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                    .subAggregation(
+                                                            getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
                     .addAggregation(AggregationBuilders.terms(ULBWISE).field(CITY_CODE).size(120)
                             .subAggregation(AggregationBuilders.terms(DEPARTMENTWISE).field(DEPARTMENT_CODE).size(size)
                                     .subAggregation(
                                             getCountWithGroupingAndOrder(GROUP_BY_FIELD, grouByField, size,
                                                     complaintDashBoardRequest.getSortField(),
                                                     complaintDashBoardRequest.getSortDirection())
-                                                            .subAggregation(
-                                                                    getAverageWithExclusion("groupByFieldSatisfactionAverage",
-                                                                            "satisfactionIndex"))
-                                                            .subAggregation(AggregationBuilders.topHits("complaintrecord")
-                                                                    .addField(CITY_CODE)
-                                                                    .addField(CITY_DISTRICT_NAME).addField(CITY_NAME)
-                                                                    .addField("departmentName")
-                                                                    .addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER).setSize(1))
-                                                            .subAggregation(
-                                                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount",
-                                                                            IF_CLOSED, 2)
-                                                                                    .subAggregation(
-                                                                                            AggregationBuilders
-                                                                                                    .range("groupByFieldAgeing")
-                                                                                                    .field("complaintAgeingdaysFromDue")
-                                                                                                    .addRange("1week", 0, 8)
-                                                                                                    .addRange("1month", 8, 32)
-                                                                                                    .addRange("3months", 32, 91)
-                                                                                                    .addUnboundedFrom(
-                                                                                                            "remainingMonths",
-                                                                                                            91))
-                                                                                    .subAggregation(
-                                                                                            AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
-                                                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                                                    .addRange("12hours", 0, 13)
-                                                                                                    .addRange("1day", 13, 25)
-                                                                                                    .addRange("1week", 25, 169)
-                                                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                                                    .subAggregation(getCountWithGrouping(
-                                                                                            "groupByFieldSla", IF_SLA, 2))))))
+                                                    .subAggregation(
+                                                            getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                                    "satisfactionIndex"))
+                                                    .subAggregation(AggregationBuilders.topHits("complaintrecord")
+                                                            .addField(CITY_CODE)
+                                                            .addField(CITY_DISTRICT_NAME).addField(CITY_NAME)
+                                                            .addField("departmentName")
+                                                            .addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER).setSize(1))
+                                                    .subAggregation(
+                                                            getCountWithGrouping("groupFieldWiseOpenAndClosedCount",
+                                                                    IF_CLOSED, 2)
+                                                                    .subAggregation(
+                                                                            AggregationBuilders
+                                                                                    .range("groupByFieldAgeing")
+                                                                                    .field("complaintAgeingdaysFromDue")
+                                                                                    .addRange("1week", 0, 8)
+                                                                                    .addRange("1month", 8, 32)
+                                                                                    .addRange("3months", 32, 91)
+                                                                                    .addUnboundedFrom(
+                                                                                            "remainingMonths",
+                                                                                            91))
+                                                                    .subAggregation(
+                                                                            AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
+                                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                                    .addRange("12hours", 0, 13)
+                                                                                    .addRange("1day", 13, 25)
+                                                                                    .addRange("1week", 25, 169)
+                                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                                    .subAggregation(getCountWithGrouping(
+                                                                            "groupByFieldSla", IF_SLA, 2))))))
                     .execute().actionGet();
         else
             tableResponse = elasticsearchTemplate
@@ -366,48 +366,48 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                     .addAggregation(
                             getCountWithGroupingAndOrder("complaintTypeWise", "complaintTypeName", size,
                                     complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                            .subAggregation(
-                                                    getAverageWithExclusion("complaintTypeSatisfactionAverage",
-                                                            "satisfactionIndex"))
-                                            .subAggregation(
-                                                    getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range("ComplaintTypeAgeing")
-                                                                            .field("complaintAgeingdaysFromDue")
-                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                            .addRange("3months", 32, 91)
-                                                                            .addUnboundedFrom("remainingMonths", 91))
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
-                                                                            .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("12hours", 0, 13)
-                                                                            .addRange("1day", 13, 25)
-                                                                            .addRange("1week", 25, 169)
-                                                                            .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                            .subAggregation(
-                                                                    getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
+                                    .subAggregation(
+                                            getAverageWithExclusion("complaintTypeSatisfactionAverage",
+                                                    "satisfactionIndex"))
+                                    .subAggregation(
+                                            getCountWithGrouping("complaintTypeWiseOpenAndClosedCount", IF_CLOSED, 2)
+                                                    .subAggregation(
+                                                            AggregationBuilders.range("ComplaintTypeAgeing")
+                                                                    .field("complaintAgeingdaysFromDue")
+                                                                    .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                    .addRange("3months", 32, 91)
+                                                                    .addUnboundedFrom("remainingMonths", 91))
+                                                    .subAggregation(
+                                                            AggregationBuilders.range(HOURWISE_COMPLAINT_TYPE_AGEING)
+                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                    .addRange("12hours", 0, 13)
+                                                                    .addRange("1day", 13, 25)
+                                                                    .addRange("1week", 25, 169)
+                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                    .subAggregation(
+                                                            getCountWithGrouping("complaintTypeSla", IF_SLA, 2))))
                     .addAggregation(
                             getCountWithGroupingAndOrder(GROUP_BY_FIELD, grouByField, size,
                                     complaintDashBoardRequest.getSortField(), complaintDashBoardRequest.getSortDirection())
-                                            .subAggregation(
-                                                    getAverageWithExclusion("groupByFieldSatisfactionAverage",
-                                                            "satisfactionIndex"))
-                                            .subAggregation(
-                                                    getCountWithGrouping("groupFieldWiseOpenAndClosedCount", IF_CLOSED, 2)
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range("groupByFieldAgeing")
-                                                                            .field("complaintAgeingdaysFromDue")
-                                                                            .addRange("1week", 0, 8).addRange("1month", 8, 32)
-                                                                            .addRange("3months", 32, 91)
-                                                                            .addUnboundedFrom("remainingMonths", 91))
-                                                            .subAggregation(
-                                                                    AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
-                                                                            .field(COMPLAINT_AGEING_FROM_DUE)
-                                                                            .addRange("12hours", 0, 13)
-                                                                            .addRange("1day", 13, 25)
-                                                                            .addRange("1week", 25, 169)
-                                                                            .addUnboundedFrom(REMAINING_HOURS, 169))
-                                                            .subAggregation(getCountWithGrouping("groupByFieldSla", IF_SLA, 2))))
+                                    .subAggregation(
+                                            getAverageWithExclusion("groupByFieldSatisfactionAverage",
+                                                    "satisfactionIndex"))
+                                    .subAggregation(
+                                            getCountWithGrouping("groupFieldWiseOpenAndClosedCount", IF_CLOSED, 2)
+                                                    .subAggregation(
+                                                            AggregationBuilders.range("groupByFieldAgeing")
+                                                                    .field("complaintAgeingdaysFromDue")
+                                                                    .addRange("1week", 0, 8).addRange("1month", 8, 32)
+                                                                    .addRange("3months", 32, 91)
+                                                                    .addUnboundedFrom("remainingMonths", 91))
+                                                    .subAggregation(
+                                                            AggregationBuilders.range(GROUP_BY_FIELD_AGEING_FOR_HOURS)
+                                                                    .field(COMPLAINT_AGEING_FROM_DUE)
+                                                                    .addRange("12hours", 0, 13)
+                                                                    .addRange("1day", 13, 25)
+                                                                    .addRange("1week", 25, 169)
+                                                                    .addUnboundedFrom(REMAINING_HOURS, 169))
+                                                    .subAggregation(getCountWithGrouping("groupByFieldSla", IF_SLA, 2))))
                     .execute().actionGet();
 
         final HashMap<String, SearchResponse> result = new HashMap<>();
@@ -462,11 +462,11 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public Map<String,SearchResponse> findAllGrievanceByComplaintType(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final BoolQueryBuilder query, final String grouByField) {
+    public Map<String, SearchResponse> findAllGrievanceByComplaintType(final ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                                       final BoolQueryBuilder query, final String grouByField) {
 
-        Map<String,SearchResponse> response = new HashMap<>();
-        SearchResponse tableResponse =  elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+        Map<String, SearchResponse> response = new HashMap<>();
+        SearchResponse tableResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setQuery(query).setSize(0)
                 .addAggregation(getCountWithGrouping(GROUP_BY_FIELD, grouByField, 120)
                         .subAggregation(getCountWithGrouping("closedComplaintCount", IF_CLOSED, 2))
@@ -476,7 +476,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
         //This is in case of drill down to show other localities information
         if (grouByField.equals(LOCALITY_NAME)) {
-            SearchResponse otherLocalitiesResponse =  elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+            SearchResponse otherLocalitiesResponse = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                     .setQuery(query).setSize(0)
                     .addAggregation(AggregationBuilders.missing("nolocality").field(LOCALITY_NAME)
                             .subAggregation(getCountWithGrouping("closedComplaintCount", IF_CLOSED, 2))
@@ -489,7 +489,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public SearchResponse findAllGrievanceBySource(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final BoolQueryBuilder query, final String grouByField) {
+                                                   final BoolQueryBuilder query, final String grouByField) {
 
         SearchResponse tableResponse;
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS))
@@ -572,14 +572,14 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
         for (final SearchHit hit : response.getHits()) {
             final Map<String, Object> fields = hit.getSource();
-            return (String)fields.get(INITIAL_FUNCTIONARY_MOBILE_NUMBER);
+            return (String) fields.get(INITIAL_FUNCTIONARY_MOBILE_NUMBER);
         }
         return StringUtils.EMPTY;
     }
 
     @Override
     public SearchResponse findByAllFunctionary(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final BoolQueryBuilder query) {
+                                               final BoolQueryBuilder query) {
         int size = 1000;
         if (complaintDashBoardRequest.getSize() >= 0)
             size = complaintDashBoardRequest.getSize();
@@ -654,7 +654,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public SearchResponse findBYAllWards(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final BoolQueryBuilder query) {
+                                         final BoolQueryBuilder query) {
         int size = 1000;
         if (complaintDashBoardRequest.getSize() >= 0)
             size = complaintDashBoardRequest.getSize();
@@ -671,7 +671,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public SearchResponse findBYAllLocalities(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final BoolQueryBuilder query) {
+                                              final BoolQueryBuilder query) {
         int size = 1000;
         if (complaintDashBoardRequest.getSize() >= 0)
             size = complaintDashBoardRequest.getSize();
@@ -700,12 +700,39 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     @Override
     public List<ComplaintIndex> findAllComplaintsByField(final ComplaintDashBoardRequest complaintDashBoardRequest,
-            final BoolQueryBuilder query) {
+                                                         final BoolQueryBuilder query) {
         final SortOrder sortOrder = complaintDashBoardRequest.getSortDirection().equals("ASC") ? SortOrder.ASC : SortOrder.DESC;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withQuery(query)
                 .withSort(new FieldSortBuilder(complaintDashBoardRequest.getSortField()).order(sortOrder))
                 .withPageable(new PageRequest(0, complaintDashBoardRequest.getSize()))
                 .build();
         return elasticsearchTemplate.queryForList(searchQuery, ComplaintIndex.class);
+    }
+
+    @Override
+    public SearchResponse findByAllCitizenRating(final ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                 final BoolQueryBuilder query) {
+        return elasticsearchTemplate
+                .getClient()
+                .prepareSearch(PGR_INDEX_NAME)
+                .setQuery(query).setSize(0)
+                .addAggregation(
+                        AggregationBuilders
+                                .terms("functionarywise")
+                                .field("initialFunctionaryName")
+                                .size(10000)
+                                .subAggregation(AggregationBuilders.topHits("complaintrecord")
+                                        .addField(CITY_CODE)
+                                        .addField(CITY_DISTRICT_NAME)
+                                        .addField(CITY_NAME)
+                                        .addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER)
+                                        .setSize(1))
+                                .subAggregation(getCountWithGrouping("closedcount", IF_CLOSED, 2)
+                                        .subAggregation(getAverageWithExclusion("satisfactionAverage", "satisfactionIndex")))
+
+
+                )
+                .execute().actionGet();
+
     }
 }

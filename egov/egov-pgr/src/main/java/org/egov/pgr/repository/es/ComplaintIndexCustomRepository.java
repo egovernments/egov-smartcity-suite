@@ -51,17 +51,17 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 public interface ComplaintIndexCustomRepository {
 
     Map<String, SearchResponse> findAllGrievanceByFilter(ComplaintDashBoardRequest complaintDashBoardRequest,
-            BoolQueryBuilder query, String grouByField);
+                                                         BoolQueryBuilder query, String grouByField);
 
-    Map<String,SearchResponse> findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest,
-            BoolQueryBuilder query, String grouByField);
+    Map<String, SearchResponse> findAllGrievanceByComplaintType(ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                                BoolQueryBuilder query, String grouByField);
 
     String getWardName(String wardNo);
 
     String getFunctionryMobileNumber(String functionaryName);
 
     SearchResponse findAllGrievanceBySource(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query,
-            String grouByField);
+                                            String grouByField);
 
     SearchResponse findByAllFunctionary(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
 
@@ -74,5 +74,7 @@ public interface ComplaintIndexCustomRepository {
     List<ComplaintIndex> findAllComplaintsBySource(String fieldName, String paramValue);
 
     List<ComplaintIndex> findAllComplaintsByField(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+
+    SearchResponse findByAllCitizenRating(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
 
 }

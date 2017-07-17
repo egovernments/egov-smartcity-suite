@@ -113,7 +113,7 @@ import static org.elasticsearch.index.query.QueryBuilders.termsQuery;
 @Service
 @Transactional(readOnly = true)
 public class ComplaintIndexService {
-    
+
     private static final Logger LOGGER = LoggerFactory.getLogger(ComplaintIndexService.class);
 
     private static final String SOURCE = "source";
@@ -438,10 +438,10 @@ public class ComplaintIndexService {
             complaintIndex.setComplaintAgeingdaysFromDue(ageingDueDays);
             complaintIndex.setIsSLA("N");
             complaintIndex.setIfSLA(0);
-            
+
             //Logger only for some time
             LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-            LOGGER.info("CRN -"+ complaintIndex.getCrn() + "created date -"+ complaintIndex.getCreatedDate() + 
+            LOGGER.info("CRN -" + complaintIndex.getCrn() + "created date -" + complaintIndex.getCreatedDate() +
                     "SLA HOURS -" + complaintIndex.getComplaintSLADays() + "last date -" + lastDateToResolve +
                     "current date " + currentDate + "Time Difference : " + timeDifference + "END");
             LOGGER.info(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
@@ -1301,7 +1301,7 @@ public class ComplaintIndexService {
                     && !complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
                 complaintSouce.setFunctionaryName(bucket.getKeyAsString());
                 final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
-                complaintSouce.setFunctionaryMobileNumber(defaultString(mobileNumber,NA));
+                complaintSouce.setFunctionaryMobileNumber(defaultString(mobileNumber, NA));
             }
             final List<HashMap<String, Long>> list = new ArrayList<>();
             final Terms sourceTerms = bucket.getAggregations().get("groupByFieldSource");
@@ -1484,4 +1484,45 @@ public class ComplaintIndexService {
                 complaint.setUrl(format(PGR_COMPLAINT_VIEW_URL, city.getDomainurl(), complaint.getCrn()));
             }
     }
+
+    public Map<String, Object> findByAllCitizenRating(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        final SearchResponse citizenRatingResponse = complaintIndexRepository.findByAllCitizenRating(complaintDashBoardRequest,
+                getFilterQuery(complaintDashBoardRequest));
+        List<ComplaintDashBoardResponse> complaintDashBoardResponses = new ArrayList<>();
+        final Terms functionaryWise = citizenRatingResponse.getAggregations().get("functionarywise");
+        final HashMap<String, Object> result = new HashMap<>();
+        for (final Bucket fnBucket : functionaryWise.getBuckets()) {
+            ComplaintDashBoardResponse complaintDashBoardResponse = new ComplaintDashBoardResponse();
+            complaintDashBoardResponse.setFunctionaryName(fnBucket.getKeyAsString());
+            final TopHits topHits = fnBucket.getAggregations().get(COMPLAINTRECORD);
+            final SearchHit[] hit = topHits.getHits().getHits();
+            complaintDashBoardResponse.setUlbCode(hit[0].field(CITY_CODE).getValue());
+            complaintDashBoardResponse.setUlbName(hit[0].field(CITY_NAME).getValue());
+            complaintDashBoardResponse.setDistrictName(hit[0].field(CITY_DISTRICT_NAME).getValue());
+            String initialFunctionaryNumber;
+            if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null)
+                initialFunctionaryNumber = NA;
+            else
+                initialFunctionaryNumber = hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
+            complaintDashBoardResponse.setFunctionaryMobileNumber(initialFunctionaryNumber);
+            Terms closedCount = fnBucket.getAggregations().get("closedcount");
+            for (Bucket bucket : closedCount.getBuckets()) {
+                if (bucket.getKeyAsNumber().intValue() == 1)
+                    complaintDashBoardResponse.setClosedComplaintCount(bucket.getDocCount());
+                Range satisfactionAverage = bucket.getAggregations().get(EXCLUDE_ZERO);
+
+                final Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
+                if (Double.isNaN(averageSatisfaction.getValue()))
+                    complaintDashBoardResponse.setAvgSatisfactionIndex(0);
+                else
+                    complaintDashBoardResponse.setAvgSatisfactionIndex(averageSatisfaction.getValue());
+
+            }
+            complaintDashBoardResponses.add(complaintDashBoardResponse);
+        }
+        result.put(COMPLAINTS, complaintDashBoardResponses);
+        return result;
+    }
+
+
 }
