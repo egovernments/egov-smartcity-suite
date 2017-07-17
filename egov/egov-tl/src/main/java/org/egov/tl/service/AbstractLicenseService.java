@@ -379,7 +379,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 if (!assignments.isEmpty())
                     wfInitiator = assignments.get(0).getPosition();
                 else
-                    throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
+                    throw new ValidationException("wf.initiator.not.found", "No employee assigned to process Renewal application");
             }
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
@@ -388,7 +388,7 @@ public abstract class AbstractLicenseService<T extends License> {
             else if (license.transitionCompleted())
                 license.transition().startNext();
             else
-                throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Renewal process, Application under processing");
+                throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Renewal process, application under processing");
             license.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
@@ -474,7 +474,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 if (!assignments.isEmpty())
                     wfInitiator = assignments.get(0).getPosition();
                 else
-                    throw new ValidationException("wf.initiator.not.found", "No employees are assigned to process this application");
+                    throw new ValidationException("wf.initiator.not.found", "No employee assigned to process this application");
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
@@ -534,10 +534,10 @@ public abstract class AbstractLicenseService<T extends License> {
     private Position getCommissionerPosition() {
         return positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId())
                 .stream()
-                .filter(row -> row.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN))
+                .filter(position -> position.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN))
                 .findFirst()
                 .orElseThrow(
-                        () -> new ValidationException("wf.comm.pos.not.found", "You are not authorized approve License"));
+                        () -> new ValidationException("wf.comm.pos.not.found", "You are not authorized approve this application"));
     }
 
     public WorkFlowMatrix getWorkFlowMatrixApi(License license, WorkflowBean workflowBean) {
@@ -700,7 +700,7 @@ public abstract class AbstractLicenseService<T extends License> {
         final User currentUser = this.securityUtils.getCurrentUser();
         final String natureOfWork = CLOSURE_NATUREOFTASK;
         if (license.hasState() && !license.getState().isEnded())
-            throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, Application under processing");
+            throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, application under processing");
         Position position = null;
         if (workflowBean.getApproverPositionId() != null) {
             position = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
@@ -716,7 +716,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     if (!assignments.isEmpty())
                         wfInitiator = assignments.get(0).getPosition();
                     else
-                        throw new ValidationException("wf.initiator.not.found", "No employee exist for creator's position");
+                        throw new ValidationException("wf.initiator.not.found", "No employee assigned to process Closure application");
                 }
                 if (!license.hasState())
                     license.transition().start();
