@@ -82,7 +82,7 @@ public class CloserConnectionService {
     @Autowired
     private SecurityUtils securityUtils;
 
-    public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
+    public static final String CLOSUREALLOWEDIFWTDUE = "CLOSUREALLOWEDIFWTDUE";
 
     public String validateChangeOfUseConnection(final WaterConnectionDetails parentWaterConnectionDetail) {
         String validationMessage = "";
@@ -103,14 +103,14 @@ public class CloserConnectionService {
         else if (null != assessmentDetails.getPropertyDetails()
                 && null != assessmentDetails.getPropertyDetails().getTaxDue()
                 && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0) {
-            if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CLOSUREALLOWEDIFWTDUE))
                 validationMessage = wcmsMessageSource
                         .getMessage("err.validate.property.taxdue",
                                 new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(),
                                         parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
                                         "Closure" },
                                 null);
-        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
+        } else if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CLOSUREALLOWEDIFWTDUE)) {
             final BigDecimal waterTaxDueforParent = waterConnectionDetailsService
                     .getCurrentDue(parentWaterConnectionDetail);
             if (waterTaxDueforParent.doubleValue() > 0)
@@ -129,13 +129,12 @@ public class CloserConnectionService {
      * @param approvalComent
      * @param additionalRule
      * @param workFlowAction
-     * @return Update Old Connection Object And Creates New
-     *         WaterConnectionDetails with INPROGRESS of ApplicationType as
-     *         "CHNAGEOFUSE"
+     * @return Update Old Connection Object And Creates New WaterConnectionDetails with INPROGRESS of ApplicationType as
+     * "CHNAGEOFUSE"
      */
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent,  String additionalRule,
+            final Long approvalPosition, final String approvalComent, String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
         waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
@@ -145,17 +144,16 @@ public class CloserConnectionService {
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        additionalRule=WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
+        additionalRule = WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
 
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
-                && waterConnectionDetailsService.getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null) {
+                && waterConnectionDetailsService.getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null)
             waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
-        }else if(waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser())){
+        else if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
             waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
-        }
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
     }
