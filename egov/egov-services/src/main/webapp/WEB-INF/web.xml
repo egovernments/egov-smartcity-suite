@@ -228,6 +228,7 @@
         <url-pattern>/hr-web/*</url-pattern>
         <url-pattern>/lams-services/*</url-pattern>
         <url-pattern>/lams-web/*</url-pattern>
+	<url-pattern>/hr-employee-movement/*</url-pattern>
 	</servlet-mapping>
 	
     <!-- Servlet Declaration Ends -->  
@@ -260,6 +261,7 @@
         <url-pattern>/hr-web/*</url-pattern>
         <url-pattern>/lams-services/*</url-pattern>
         <url-pattern>/lams-web/*</url-pattern>
+	<url-pattern>/hr-employee-movement/*</url-pattern>
     </filter-mapping>
     
    <welcome-file-list> 
