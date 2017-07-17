@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-05-11T11:00:12 -->
+<!-- 2017-07-14T17:59:42 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_receipt" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoPages" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" resourceBundle="custom" uuid="97372054-cc7e-41ed-9c4d-7a7a1652d8c6">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -226,7 +226,7 @@
 				</reportElement>
 			</line>
 			<subreport>
-				<reportElement x="293" y="134" width="257" height="90" uuid="f2e8543e-44d8-4983-85a5-9a3b4ede9d74">
+				<reportElement x="293" y="133" width="257" height="90" uuid="f2e8543e-44d8-4983-85a5-9a3b4ede9d74">
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 				</reportElement>
@@ -353,13 +353,13 @@
 				</reportElement>
 			</line>
 			<staticText>
-				<reportElement positionType="Float" x="450" y="364" width="100" height="20" uuid="29b3dc40-6242-4f7a-b35a-3057ae8c6470">
+				<reportElement positionType="Float" x="88" y="364" width="417" height="20" uuid="29b3dc40-6242-4f7a-b35a-3057ae8c6470">
 					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
 				</reportElement>
 				<textElement textAlignment="Left" verticalAlignment="Middle">
 					<font size="11" isBold="true"/>
 				</textElement>
-				<text><![CDATA[Signature]]></text>
+				<text><![CDATA[This is a computer generated receipt ,signature is not required]]></text>
 			</staticText>
 			<subreport>
 				<reportElement x="0" y="75" width="550" height="53" uuid="ef8e514c-6dfa-47c1-9e54-4a3a99203927"/>
