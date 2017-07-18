@@ -668,7 +668,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             }
         }
         digitalSignEnabled = propertyTaxCommonUtils.isDigitalSignatureEnabled();
-        if (propertyByEmployee || SecurityUtils.userAnonymouslyAuthenticated() || citizenPortalUser){
+        if (SecurityUtils.userAnonymouslyAuthenticated() || citizenPortalUser){
             showPayBtn = Boolean.TRUE;
         }
     }

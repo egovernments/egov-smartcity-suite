@@ -88,10 +88,10 @@
 					<div class="buttonbottom" align="center">
 					<s:if test="%{showAckBtn}">
 						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
+                        <s:if test="%{showPayBtn}">
+                            <input type="button" name="button2" id="button2" value="Pay Mutation Fee" class="buttonsubmit" onclick="payment()" />
+                        </s:if>
                     </s:if>
-					<s:if test="%{showPayBtn}">
-						<input type="button" name="button2" id="button2" value="Pay Mutation Fee" class="buttonsubmit" onclick="payment()" />
-					</s:if>
 						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 					</div>
 				</div>
