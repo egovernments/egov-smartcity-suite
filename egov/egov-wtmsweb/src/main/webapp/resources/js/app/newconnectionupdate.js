@@ -72,18 +72,12 @@ $(document)
 							$("#Forward").hide();
 							return false;
 						}
-						else
+						else {
 							$("#Forward").hide();
+							$("#Reject").hide();
+							
+						}
 					}
-					if (currentstate == 'Rejected'
-						&& status == 'ESTIMATIONNOTICEGENERATED') {
-					$('#approvalDepartment').removeAttr('required');
-					$('#approvalDesignation').removeAttr('required');
-					$(".show-row").hide();
-					$("#Forward").hide();
-					return false;
-
-				}
 
 					if (status == 'DIGITALSIGNATUREPENDING' || status=='CLOSUREDIGSIGNPENDING' || status=='RECONNDIGSIGNPENDING') {
 						$("#Approve").hide();
