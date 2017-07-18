@@ -448,5 +448,8 @@
     	<put-attribute name="page-title" value="title.meteredrates" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/masters/metered-rate-edit.jsp"></put-attribute>
     </definition>
-    
+    <definition name="search-donation" extends="base_layout">
+    	<put-attribute name="page-title" value="title.search.donation" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/reports/search-donation.jsp"></put-attribute>
+    </definition>
 </tiles-definitions>
