@@ -492,8 +492,8 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
         if (isEarlyPayRebateActive(receiptDate != null ? receiptDate : new Date())) {
             BigDecimal rebateAmount = propertyTaxUtil.getRebateAmount(currentDemand);
             Map<String, Installment> currInstallments = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-            BigDecimal currentannualtax = instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).add(
-                    instWiseDmdMap.get(currInstallments.get(CURRENTYEAR_SECOND_HALF)));
+            BigDecimal currentannualtax = propertyTaxUtil.getCurrentDemandForRebateCalculation(basicProperty);
+
             if (rebateAmount.compareTo(BigDecimal.ZERO) == 0) {
                 if (installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)) != null) {
                     installmentPenaltyAndRebate.get(currInstallments.get(CURRENTYEAR_FIRST_HALF)).setRebate(
@@ -510,11 +510,7 @@ public class PropertyTaxBillable extends AbstractBillable implements Billable, L
 
     @Override
     public BigDecimal calculateEarlyPayRebate(final BigDecimal tax) {
-        if (isEarlyPayRebateActive(receiptDate != null ? receiptDate : new Date()))
-            return (tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100)).setScale(0,
-                    BigDecimal.ROUND_HALF_UP);
-        else
-            return BigDecimal.ZERO;
+        return rebateService.calculateEarlyPayRebate(tax, receiptDate != null ? receiptDate : new Date());
     }
 
     @Override

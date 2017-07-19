@@ -65,8 +65,8 @@ public class RebateService {
     @Autowired
     private RebatePeriodService rebatePeriodService;
 
-    public BigDecimal calculateEarlyPayRebate(final BigDecimal tax) {
-        if (isEarlyPayRebateActive(new Date()))
+    public BigDecimal calculateEarlyPayRebate(final BigDecimal tax, Date date) {
+        if (isEarlyPayRebateActive(date))
             return tax.multiply(PropertyTaxConstants.ADVANCE_REBATE_PERCENTAGE).divide(BIGDECIMAL_100).setScale(0,
                     BigDecimal.ROUND_HALF_UP);
         else
