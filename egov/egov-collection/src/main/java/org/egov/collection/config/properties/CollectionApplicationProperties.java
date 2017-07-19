@@ -50,7 +50,7 @@ import org.springframework.core.env.Environment;
         "classpath:config/payment-gateway.properties",
         "classpath:config/egov-erp-${user.name}.properties",
         "classpath:config/application-config-${client.id}.properties",
-        "classpath:config/egov-erp-override.properties"}, ignoreResourceNotFound = true)
+        "classpath:config/egov-erp-override.properties" }, ignoreResourceNotFound = true)
 public class CollectionApplicationProperties {
 
     @Autowired
@@ -126,5 +126,49 @@ public class CollectionApplicationProperties {
 
     public String getLamsServiceUrl() {
         return environment.getProperty("egov.services.lams.hostname");
+    }
+
+    public String atomProdid() {
+        return environment.getProperty("atom.prodid", String.class);
+    }
+
+    public String atomPass() {
+        return environment.getProperty("atom.pass", String.class);
+    }
+
+    public String atomTtype() {
+        return environment.getProperty("atom.ttype", String.class);
+    }
+
+    public String atomClientcode() {
+        return environment.getProperty("atom.clientcode", String.class);
+    }
+
+    public String atomCustacc() {
+        return environment.getProperty("atom.custacc", String.class);
+    }
+
+    public String atomMdd() {
+        return environment.getProperty("atom.mdd", String.class);
+    }
+
+    public String atomTxncurr() {
+        return environment.getProperty("atom.txncurr", String.class);
+    }
+
+    public String atomLogin() {
+        return environment.getProperty("atom.login", String.class);
+    }
+
+    public String atomTxnscamt() {
+        return environment.getProperty("atom.txnscamt", String.class);
+    }
+
+    public String atomTransactionMessage() {
+        return environment.getProperty("ATOM.transactionmessage");
+    }
+
+    public String atomReconcileUrl() {
+        return environment.getProperty("atom.reconcile.url");
     }
 }
