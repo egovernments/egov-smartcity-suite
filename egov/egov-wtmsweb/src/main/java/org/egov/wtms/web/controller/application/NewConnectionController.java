@@ -190,16 +190,17 @@ public class NewConnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             final BindingResult errors) {
+        final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
         final boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        if (!isCSCOperator && !citizenPortalUser) {
+        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
                 throw new ValidationException("err.creator.application");
         }
-        final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
+        
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
         String sourceChannel = request.getParameter("Source");
