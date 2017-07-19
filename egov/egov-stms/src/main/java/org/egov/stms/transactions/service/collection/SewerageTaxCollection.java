@@ -337,19 +337,18 @@ public class SewerageTaxCollection extends TaxCollection {
                     .getSewerageDemandConnectionByDemand(demand).getApplicationDetails();
 
             if (sewerageApplicationDetails != null
-                    && sewerageApplicationDetails.getState() != null
                     && sewerageApplicationDetails.getStatus() != null) {
 
                 if (sewerageApplicationDetails.getStatus().getCode()
                         .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE)) {
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID, SewerageTaxConstants.MODULETYPE));
-
-                    sewerageApplicationDetailsService.updateStateTransition(sewerageApplicationDetails,
-                            sewerageApplicationDetails.getState().getOwnerPosition().getId(),
-                            SewerageTaxConstants.COLLECTION_REMARKS,
-                            sewerageApplicationDetails.getApplicationType().getCode(),
-                            SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD);
+                    if (sewerageApplicationDetails.getState() != null)
+                        sewerageApplicationDetailsService.updateStateTransition(sewerageApplicationDetails,
+                                sewerageApplicationDetails.getState().getOwnerPosition().getId(),
+                                SewerageTaxConstants.COLLECTION_REMARKS,
+                                sewerageApplicationDetails.getApplicationType().getCode(),
+                                SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD);
                 } else if (sewerageApplicationDetails.getStatus().getCode()
                         .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN))
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
@@ -357,7 +356,7 @@ public class SewerageTaxCollection extends TaxCollection {
                 sewerageApplicationDetailsService.save(sewerageApplicationDetails);
                 sewerageApplicationDetailsService.updateIndexes(sewerageApplicationDetails);
 
-                //  Sms and email not sending after doing demand collection,later must be fix
+                // Sms and email not sending after doing demand collection,later must be fix
 
                 /*
                  * if(sewerageApplicationDetails.getStatus().getCode().equals( SewerageTaxConstants.APPLICATION_STATUS_FEEPAID)){
@@ -415,7 +414,7 @@ public class SewerageTaxCollection extends TaxCollection {
         receiptAmountInfo.setCurrentInstallmentAmount(currentInstallmentAmount);
         return receiptAmountInfo;
     }
-  
+
     @Override
     @Transactional
     public void apportionCollection(final String billRefNo, final BigDecimal amtPaid,
