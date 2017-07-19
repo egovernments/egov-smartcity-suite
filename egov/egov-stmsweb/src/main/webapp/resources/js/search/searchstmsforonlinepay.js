@@ -90,7 +90,7 @@ function submitButton() {
 	
 		 ajax : {
 
-				url : "/stms/public/search/onlinepayment",
+				url : "/stms/citizen/search/onlinepayment",
 				type : 'POST',
 				data : function(args) {
 					return {
@@ -115,13 +115,13 @@ function submitButton() {
 	$("#aplicationSearchResults").on('click','tbody tr td .fa-demandCollection',function(e) {
 		var consumerno = oTable.fnGetData($(this).parent().parent(),0);
 		var assessmentno = oTable.fnGetData($(this).parent().parent(),1);
-		window.open("/stms/public/search/sewerageRateReportView/"+consumerno +'/'+assessmentno+'','_blank', 'width=900, height=700, top=300, left=150,scrollbars=yes')
+		window.open("/stms/citizen/search/sewerageRateReportView/"+consumerno +'/'+assessmentno+'','_blank', 'width=900, height=700, top=300, left=150,scrollbars=yes')
 	});
 	
 	$("#aplicationSearchResults").on('click','tbody tr td .paynow',function(e) {
 		var consumerno = oTable.fnGetData($(this).parent().parent(),0);
 		var assessmentno = oTable.fnGetData($(this).parent().parent(),1);
-		var url = '/stms/public/search/sewerageGenerateonlinebill/';
+		var url = '/stms/citizen/search/sewerageGenerateonlinebill/';
 		openPopupPage(url+consumerno+'/'+assessmentno);
 	});
 	

@@ -87,7 +87,6 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
-@RequestMapping("/public")
 public class SewerageCitizenSupportController {
 
     private static final String SEARCH_STMS_ONLINE_PAYMENT = "search-sewerage-online-payment";
@@ -123,13 +122,13 @@ public class SewerageCitizenSupportController {
     @Autowired
     private SewerageDCBReporService sewerageDCBReporService;
 
-    @RequestMapping(value = "/search/search-sewerage", method = GET)
+    @RequestMapping(value = "/citizen/search/search-sewerage", method = GET)
     public String newSearchForm(final Model model) {
         model.addAttribute("sewerage", new SewerageConnSearchRequest());
         return SEARCH_STMS_ONLINE_PAYMENT;
     }
 
-    @RequestMapping(value = "/search/onlinepayment", method = RequestMethod.POST)
+    @RequestMapping(value = "/citizen/search/onlinepayment", method = RequestMethod.POST)
     @ResponseBody
     public DataTable<SewerageSearchResult> searchApplication(
             @ModelAttribute final SewerageConnSearchRequest sewerageConnSearchRequest) {
@@ -156,7 +155,7 @@ public class SewerageCitizenSupportController {
 
     }
 
-    @RequestMapping(value = "/search/sewerageRateReportView/{consumerno}/{assessmentno}", method = RequestMethod.GET)
+    @RequestMapping(value = "/citizen/search/sewerageRateReportView/{consumerno}/{assessmentno}", method = RequestMethod.GET)
     public ModelAndView getSewerageRateReport(@PathVariable final String consumerno,
             @PathVariable final String assessmentno, final Model model,
             final HttpServletRequest request) {
@@ -179,7 +178,7 @@ public class SewerageCitizenSupportController {
         return new ModelAndView(SEWERAGE_CITIZEN_ONLINE_DCBVIEW, "sewerageApplicationDetails", sewerageApplicationDetails);
     }
 
-    @RequestMapping(value = "/search/sewerageGenerateonlinebill/{consumerno}/{assessmentno}", method = POST)
+    @RequestMapping(value = "/citizen/search/sewerageGenerateonlinebill/{consumerno}/{assessmentno}", method = POST)
     public String payTax(@PathVariable final String consumerno, @PathVariable final String assessmentno,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request) {
         SewerageApplicationDetails sewerageApplicationDetails = new SewerageApplicationDetails();
