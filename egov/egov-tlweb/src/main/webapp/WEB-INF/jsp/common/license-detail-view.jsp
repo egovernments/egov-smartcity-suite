@@ -195,6 +195,6 @@
         <%@ include file="supportdocs-view.jsp" %>
     </div>
 </div>
-<s:if test="%{hasState()== true}">
-    <%@ include file='workflowhistory.jsp' %>
+<s:if test="%{transitionInprogress()}">
+    <%@ include file='license-workflow-history.jsp' %>
 </s:if>

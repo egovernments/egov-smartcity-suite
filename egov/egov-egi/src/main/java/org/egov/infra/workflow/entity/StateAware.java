@@ -130,7 +130,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final boolean transitionInprogress() {
-        return hasState() && getCurrentState().isInprogress();
+        return hasState() && (transitionInitialized() || getCurrentState().isInprogress());
     }
 
     public final boolean hasState() {

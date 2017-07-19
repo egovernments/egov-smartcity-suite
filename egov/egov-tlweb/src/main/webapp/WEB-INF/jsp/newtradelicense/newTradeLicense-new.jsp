@@ -396,8 +396,8 @@
                             </div>
                         </div>
                     </div>
-                    <s:if test="%{hasState()== true}">
-                        <%@ include file='../common/workflowhistory.jsp' %>
+                    <s:if test="%{transitionInprogress()}">
+                        <%@ include file='../common/license-workflow-history.jsp' %>
                     </s:if>
                 </div>
                 <div style="text-align: center;" hidden="true" id="closeDiv">
