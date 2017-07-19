@@ -69,4 +69,8 @@ public class PgrApplicationProperties {
     public boolean complaintTypeAutoComplete() {
         return environment.getProperty("complainttype.autocomplete", Boolean.class);
     }
+
+    public boolean reopenWithRouterAssignee() {
+        return environment.getProperty("reopen.with.router", Boolean.class);
+    }
 }

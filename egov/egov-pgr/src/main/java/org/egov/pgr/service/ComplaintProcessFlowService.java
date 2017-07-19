@@ -46,6 +46,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,6 +84,9 @@ public class ComplaintProcessFlowService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PgrApplicationProperties pgrApplicationProperties;
 
     public void onRegistration(Complaint complaint) {
         Position assignee = complaintRouterService.getAssignee(complaint);
@@ -136,7 +140,11 @@ public class ComplaintProcessFlowService {
                     .withStateValue(complaint.getStatus().getName()).withOwner(nextAssignee).withDateInfo(new Date());
 
         } else if (complaint.reopened()) {
-            complaint.transition().reopen().withComments(complaint.approverComment()).withSenderName(userName)
+            Position nextAssignee = complaint.getState().getOwnerPosition();
+            if (pgrApplicationProperties.reopenWithRouterAssignee())
+                nextAssignee = complaintRouterService.getAssignee(complaint);
+            complaint.transition().reopen().withComments(complaint.approverComment())
+                    .withSenderName(userName).withOwner(nextAssignee)
                     .withStateValue(complaint.getStatus().getName()).withDateInfo(new Date());
         } else if (complaint.inprogress()) {
             complaint.transition().progressWithStateCopy().withComments(complaint.approverComment()).withSenderName(userName)
