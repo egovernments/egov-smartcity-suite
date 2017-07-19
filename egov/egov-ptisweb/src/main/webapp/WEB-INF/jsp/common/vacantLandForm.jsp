@@ -80,18 +80,43 @@
 					value="%{propertyDetail.sitalArea.area}"
 					onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.sitalArea.area');checkZero(this,'propertyDetail.sitalArea.area');" />
 			</td>
-			<td class="blueborderfortd" align="center"><s:textfield
-					name="propertyDetail.marketValue" id="marketValue"
+			<td class="blueborderfortd" align="center">
+				<s:if test="propertyDetail.marketValue!=null">
+					<s:text name="format.money" var="marketval">
+						<s:param name="value" value="propertyDetail.marketValue" />
+					</s:text>
+					<s:textfield name="propertyDetail.marketValue" id="marketValue"
 					title="Market value of the vacant land" maxlength="10"
-					value="%{propertyDetail.marketValue}"
+					value="%{#marketval}"
 					onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
+
+				</s:if>
+				<s:else>
+					<s:textfield name="propertyDetail.marketValue" id="marketValue"
+						title="Market value of the vacant land" maxlength="10"
+						value="%{propertyDetail.marketValue}"
+						onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.marketValue');checkZero(this,'propertyDetail.marketValue');" />
+
+				</s:else>
 			</td>
 
-			<td class="blueborderfortd"><s:textfield
-					name="propertyDetail.currentCapitalValue" id="currentCapitalValue"
-					maxlength="15" value="%{propertyDetail.currentCapitalValue}"
-					title="Current capital value of Land"
-					onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
+			<td class="blueborderfortd">
+				<s:if test="propertyDetail.currentCapitalValue!=null">
+					<s:text name="format.money" var="capitalval">
+						<s:param name="value" value="propertyDetail.currentCapitalValue" />
+					</s:text>
+						<s:textfield name="propertyDetail.currentCapitalValue" id="currentCapitalValue"
+							maxlength="15" value="%{#capitalval}"
+							title="Current capital value of Land"
+							onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
+				</s:if>
+				<s:else>
+					<s:textfield name="propertyDetail.currentCapitalValue" id="currentCapitalValue"
+							maxlength="15" value="%{propertyDetail.currentCapitalValue}"
+							title="Current capital value of Land"
+							onblur="trim(this,this.value);checkForTwoDecimals(this,'propertyDetail.currentCapitalValue');checkZero(this,'propertyDetail.currentCapitalValue');" />
+
+				</s:else>
 			</td>
 
 			<td class="blueborderfortd"><s:date
