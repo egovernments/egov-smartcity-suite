@@ -331,4 +331,23 @@
 		<put-attribute name="body" 
 			value="/WEB-INF/views/reports/baseRegisterSearch-form.jsp" />	
 	</definition>
+	<definition name="search-sewerage-online-payment" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageTaxSearch"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/citizen/search-sewearge-online-payment.jsp" />
+	</definition>	
+	<definition name="sewerage-onlinepayment-redirection" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageTaxSearch"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/citizen/sewerage-onlinepayment-redirection.jsp" />
+	</definition>
+	
+	<definition name="citizen/sewerage-citizen-dcbview" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageTaxSearch"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/citizen/sewerage-citizen-dcbview.jsp" />
+	</definition>
 </tiles-definitions>

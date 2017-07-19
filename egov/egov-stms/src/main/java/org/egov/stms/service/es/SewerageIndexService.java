@@ -675,5 +675,17 @@ public class SewerageIndexService {
         return totalValues;
 
     }
+    
+    public Page<SewerageIndex> getOnlinePaymentSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
+            final SewerageConnSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+                        searchRequest.orderDir(), searchRequest.orderBy()))
+                .withSort(sort).build();
+
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
+        return resultList;
+    }
 
 }

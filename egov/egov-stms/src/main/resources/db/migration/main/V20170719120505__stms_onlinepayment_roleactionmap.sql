@@ -1,0 +1,15 @@
+
+---------------------------------------- Actions for online payment----------------------------------------------------------------------------------------
+
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'SewerageCitizenSupport', '/public/search/search-sewearge', NULL,(select id from eg_module where name='SewerageTransactions'), 1, 'Sewerage Citizen Support', false, 'stms', 0, 1, now(), 1, now(),(select id from eg_module where name='Sewerage Tax Management'));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'SewerageCitizenOnlinePayment', '/public/search/onlinepayment', NULL,(select id from eg_module where name='SewerageTransactions'), 2, 'Sewerage Citizen OnlinePayment', false, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name='Sewerage Tax Management'));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'SewerageCitizenOnlineBill', '/public/search/sewerageGenerateonlinebill/', NULL,(select id from eg_module where name='SewerageTransactions'), 3, 'Sewerage Citizen OnlineBill', false, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name='Sewerage Tax Management'));
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, version, createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'), 'SewerageCitizenOnlineDCB', '/public/search/sewerageRateReportView/', NULL,(select id from eg_module where name='SewerageTransactions'), 4, 'Sewerage Citizen OnlineDCB', false, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name='Sewerage Tax Management'));
+
+
+------------------------------feature action for base register report----------------------------------------------------
+
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'Sewerage base register report') ,(select id FROM eg_feature WHERE name = 'Sewerage Tax Reports'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'Sewerage base register report result') ,(select id FROM eg_feature WHERE name = 'Sewerage Tax Reports'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'Sewerage base register report download') ,(select id FROM eg_feature WHERE name = 'Sewerage Tax Reports'));
+INSERT INTO eg_feature_action (ACTION, FEATURE) VALUES ((select id FROM eg_action  WHERE name = 'Sewerage base register Grand Total') ,(select id FROM eg_feature WHERE name = 'Sewerage Tax Reports'));

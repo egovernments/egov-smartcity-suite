@@ -54,6 +54,7 @@
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/transactions/application-success**" filters="none"/>
 				<security:filter-chain pattern="/existing/sewerage" filters="anonymousAuthenticationFilter" />
+				<security:filter-chain pattern="/public/**" filters="none"/>
 				<security:filter-chain pattern="/**"  filters="concurrentSessionFilter,securityContextPersistenceFilter,logoutFilter,authenticationProcessingFilter,securityContextHolderAwareRequestFilter,rememberMeAuthenticationFilter,anonymousAuthenticationFilter,exceptionTranslationFilter,filterSecurityInterceptor" />
 			</list>
 		</constructor-arg>
