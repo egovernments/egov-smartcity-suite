@@ -64,12 +64,12 @@ import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
+import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 @Service
 public class LicenseApplicationIndexService {
@@ -118,7 +118,9 @@ public class LicenseApplicationIndexService {
     }
 
     private String getChannel() {
-        return securityUtils.currentUserIsEmployee() ? SYSTEM.toString() : securityUtils.getCurrentUser().getRoles().contains("CSC Operator") ? CSC.toString() : "ONLINE";
+        return securityUtils.currentUserIsEmployee() ?
+                SYSTEM.toString() :
+                securityUtils.getCurrentUser().hasRole(CSCOPERATOR) ? CSC.toString() : "ONLINE";
     }
 
     private Integer getSlaForAppType(LicenseAppType licenseAppType) {

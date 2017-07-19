@@ -106,10 +106,11 @@ import static org.egov.tl.utils.Constants.*;
 @Transactional(readOnly = true)
 public abstract class AbstractLicenseService<T extends License> {
 
-    public static final String ARREAR = "arrear";
-    public static final String LICENSE_WF_INITIATOR_NOT_DEFINED = "license.wf.initiator.not.defined";
+    private static final String ARREAR = "arrear";
+    private static final String LICENSE_WF_INITIATOR_NOT_DEFINED = "license.wf.initiator.not.defined";
     private static final String CURRENT = "current";
     private static final String PENALTY = "penalty";
+
     @Autowired
     @Qualifier("entityQueryService")
     protected PersistenceService entityQueryService;
@@ -175,6 +176,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Autowired
     private DepartmentService departmentService;
+
     @Autowired
     private DesignationService designationService;
 
@@ -235,7 +237,6 @@ public abstract class AbstractLicenseService<T extends License> {
         List<Assignment> assignmentList = getAssignments();
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
-            final String natureOfWork = license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), PUBLIC_HEALTH_DEPT,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
             if (!license.hasState())
@@ -244,7 +245,8 @@ public abstract class AbstractLicenseService<T extends License> {
                 license.transition().startNext();
             license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withComments(workflowBean.getApproverComments())
+                    .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
                     .withNextAction(wfmatrix.getNextAction()).withInitiator(wfAssignment.getPosition());
             license.setEgwStatus(
@@ -363,8 +365,6 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void renew(final T license, final WorkflowBean workflowBean) {
         license.setLicenseAppType(getLicenseApplicationTypeForRenew());
-        final String natureOfWork = license.isReNewApplication()
-                ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
         final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
         license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
@@ -390,7 +390,7 @@ public abstract class AbstractLicenseService<T extends License> {
             else
                 throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Renewal process, application under processing");
             license.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(RENEWAL_NATUREOFWORK)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
                     .withOwner(wfInitiator)
                     .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator);
@@ -698,7 +698,6 @@ public abstract class AbstractLicenseService<T extends License> {
     @Transactional
     public void saveClosure(final T license, final WorkflowBean workflowBean) {
         final User currentUser = this.securityUtils.getCurrentUser();
-        final String natureOfWork = CLOSURE_NATUREOFTASK;
         if (license.hasState() && !license.getState().isEnded())
             throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, application under processing");
         Position position = null;
@@ -724,7 +723,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     license.transition().startNext();
                 license.transition()
                         .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(natureOfWork)
+                        .withComments(workflowBean.getApproverComments()).withNatureOfTask(CLOSURE_NATUREOFTASK)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(position)
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(license.getLicenseAppType().getName());
             } else
