@@ -629,7 +629,7 @@ function onLoad(){
 
 								<table class="table-payment">									
 		                             <tr>
-		                               	<td class="blueborderfortd">
+		                               	<td class="blueborderfortd" colspan="2">
 		                                   <s:text name ='onlineReceipts.payusing'/>
 		                                </td>
 		                             </tr>
