@@ -198,7 +198,8 @@ function submitButton() {
 				"applicantName" : $('#applicantName').val(),
 				"mobileNumber":$('#mobileNumber').val(),
 			 	"revenueWard": $('#app-mobno').val(),
-			 	"doorNumber" : $('#app-appcodo').val()
+			 	"doorNumber" : $('#app-appcodo').val(),
+			 	"legacy" : $('#legacy').val()
 				
 				
 			};
