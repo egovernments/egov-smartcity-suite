@@ -81,7 +81,7 @@ public class RouterEscalationSpec implements Specification<RouterEscalationForm>
         if (routerEscalationRequest.getPosition() != null)
             predicate.getExpressions()
                     .add(builder.equal(root.get("position"), routerEscalationRequest.getPosition()));
-        if (routerEscalationRequest.getActive().equals(Boolean.TRUE))
+        if (routerEscalationRequest.getActive())
             predicate.getExpressions().add(builder.equal(root.get("active"), true));
 
         return predicate;
