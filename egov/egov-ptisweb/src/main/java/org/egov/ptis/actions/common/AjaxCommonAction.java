@@ -573,7 +573,7 @@ public class AjaxCommonAction extends BaseFormAction implements ServletResponseA
             final BigDecimal permissableArea = triplePlingthArea.compareTo(BigDecimal.valueOf(1000)) < 0 ? triplePlingthArea
                     : BigDecimal.valueOf(1000);
             final BigDecimal landArea = extentOfSite.subtract(permissableArea);
-            jsonObject.put("isAppurTenantLand", extentOfSite.compareTo(triplePlingthArea) < 0 && landArea.compareTo(ZERO) > 0);
+            jsonObject.put("isAppurTenantLand", extentOfSite.compareTo(triplePlingthArea) > 0 && landArea.compareTo(ZERO) > 0);
             jsonObject.put("extentAppartenauntLand", permissableArea);
             jsonObject.put("vacantLandArea", landArea);
         } else
