@@ -60,6 +60,7 @@ public class OnlineSearchForm {
     private BigDecimal arrDmd;
     private BigDecimal currDmd;
     private BigDecimal totColl;
+    private String status;
 
     public OnlineSearchForm() {
         // For form binding
@@ -71,6 +72,7 @@ public class OnlineSearchForm {
         setLicenseNumber(license.getLicenseNumber());
         setTradeOwnerName(license.getLicensee().getApplicantName());
         setMobileNo(license.getLicensee().getMobilePhoneNumber());
+        setStatus(license.getStatus().getName());
         setPropertyAssessmentNo(license.getAssessmentNo() != null ? license.getAssessmentNo() : "");
         setArrDmd(dmdColl[0]);
         setCurrDmd(dmdColl[1]);
@@ -170,4 +172,11 @@ public class OnlineSearchForm {
         this.totColl = totColl;
     }
 
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
 }

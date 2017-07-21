@@ -94,6 +94,7 @@
 					<th>TL Number</th>
 					<th>Trade Owner</th>
 					<th>Mobile Number</th>
+                    <th>Status</th>
 					<th>PT Assessment No.</th>
 					<th>Arrears Demand</th>
 					<th>Current Demand</th>

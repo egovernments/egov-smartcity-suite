@@ -172,6 +172,9 @@ $(document).ready(function () {
                             "data": "mobileNumber",
                             "sTitle": "Mobile Number"
                         }, {
+                            "data": "status",
+                            "sTitle": "Status"
+                        }, {
                             "data": "propertyAssmntNo",
                             "sTitle": "PT Assessment No."
                         }, {
