@@ -46,7 +46,6 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -86,7 +85,7 @@ public class ComplaintProcessFlowService {
     private UserService userService;
 
     @Autowired
-    private PgrApplicationProperties pgrApplicationProperties;
+    private ConfigurationService configurationService;
 
     public void onRegistration(Complaint complaint) {
         Position assignee = complaintRouterService.getAssignee(complaint);
@@ -141,7 +140,7 @@ public class ComplaintProcessFlowService {
 
         } else if (complaint.reopened()) {
             Position nextAssignee = complaint.getState().getOwnerPosition();
-            if (pgrApplicationProperties.reopenWithRouterAssignee())
+            if (configurationService.assignReopenedComplaintBasedOnRouterPosition())
                 nextAssignee = complaintRouterService.getAssignee(complaint);
             complaint.transition().reopen().withComments(complaint.approverComment())
                     .withSenderName(userName).withOwner(nextAssignee)

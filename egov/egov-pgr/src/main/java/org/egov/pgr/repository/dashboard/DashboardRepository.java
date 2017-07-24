@@ -56,7 +56,6 @@ import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
 
 @Repository
-@SuppressWarnings("all")
 public class DashboardRepository {
 
     @PersistenceContext

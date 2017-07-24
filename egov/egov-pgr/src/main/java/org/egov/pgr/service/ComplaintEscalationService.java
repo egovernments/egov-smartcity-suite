@@ -52,7 +52,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
@@ -114,7 +113,7 @@ public class ComplaintEscalationService {
     private ComplaintRepository complaintRepository;
 
     @Autowired
-    private PgrApplicationProperties pgrApplicationProperties;
+    private ConfigurationService configurationService;
 
     @Autowired
     private PositionHierarchyService positionHierarchyService;
@@ -235,7 +234,7 @@ public class ComplaintEscalationService {
 
     public Integer getHrsToResolve(Long designationId, Long complaintTypeId) {
         Escalation escalation = escalationRepository.findByDesignationAndComplaintType(designationId, complaintTypeId);
-        return escalation != null ? escalation.getNoOfHrs() : pgrApplicationProperties.defaultResolutionTime();
+        return escalation != null ? escalation.getNoOfHrs() : configurationService.getDefaultComplaintResolutionTime();
     }
 
     @Transactional

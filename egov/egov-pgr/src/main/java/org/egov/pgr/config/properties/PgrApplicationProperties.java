@@ -54,23 +54,8 @@ public class PgrApplicationProperties {
     @Autowired
     private Environment environment;
 
-    public Integer defaultResolutionTime() {
-        return environment.getProperty("default.resolution.time", Integer.class);
-    }
-
     public String getValue(String key) {
         return environment.getProperty(key);
     }
 
-    public String defaultComplaintPriority() {
-        return environment.getProperty("complaint.default.priority");
-    }
-
-    public boolean complaintTypeAutoComplete() {
-        return environment.getProperty("complainttype.autocomplete", Boolean.class);
-    }
-
-    public boolean reopenWithRouterAssignee() {
-        return environment.getProperty("reopen.with.router", Boolean.class);
-    }
 }

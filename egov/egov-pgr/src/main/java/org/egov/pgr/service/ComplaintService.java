@@ -54,7 +54,6 @@ import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -87,9 +86,6 @@ import static org.egov.pgr.utils.constants.PGRConstants.RESOLVED_STATUS;
 @Transactional(readOnly = true)
 public class ComplaintService {
 
-    @Value("${complaint.default.priority}")
-    private String defaultComplaintPriority;
-
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -115,7 +111,7 @@ public class ComplaintService {
     private ComplaintIndexService complaintIndexService;
 
     @Autowired
-    private PriorityService priorityService;
+    private ConfigurationService configurationService;
 
     @Autowired
     private ComplaintMessagingService complaintMessagingService;
@@ -151,7 +147,7 @@ public class ComplaintService {
         else
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         if (complaint.getPriority() == null)
-            complaint.setPriority(priorityService.getPriorityByCode(defaultComplaintPriority));
+            complaint.setPriority(configurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.createComplaintIndex(complaint);
