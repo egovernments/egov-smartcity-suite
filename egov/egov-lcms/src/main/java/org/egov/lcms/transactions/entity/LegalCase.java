@@ -434,8 +434,7 @@ public class LegalCase extends AbstractAuditable {
         for (final BipartisanDetails temp : bipartisanDetails)
             if (temp.getIsRepondent())
                 tempList.add(temp);
-        final Set<BipartisanDetails> tempset = new HashSet<BipartisanDetails>(tempList);
-        bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(tempset);
+        bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(tempList);
         return bipartisanRespondentDetailsList;
     }
 
