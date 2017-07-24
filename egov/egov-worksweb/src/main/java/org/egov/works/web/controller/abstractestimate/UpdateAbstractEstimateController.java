@@ -367,6 +367,7 @@ public class UpdateAbstractEstimateController extends GenericWorkFlowController 
         model.addAttribute("measurementsPresent", measurementSheetService.existsByEstimate(abstractEstimate.getId()));
         model.addAttribute("amountRule", abstractEstimate.getEstimateValue());
         model.addAttribute("lineEstimateRequired", worksApplicationProperties.lineEstimateRequired());
+        model.addAttribute("budgetControlType",budgetControlTypeService.getConfigValue());
 
         if (abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.NEW.toString())
                 || abstractEstimate.getEgwStatus().getCode().equals(EstimateStatus.REJECTED.toString())) {

@@ -309,7 +309,8 @@ public class CreateContractorBillController extends BaseContractorBillController
 
             model.addAttribute("billDetailsMap",
                     contractorBillRegisterService.getBillDetailsMap(contractorBillRegister, model));
-            model.addAttribute("cutOffDate", worksApplicationProperties.getContractorBillCutOffDate());
+            model.addAttribute("cutOffDate", worksUtils.getCutOffDate() != null ? worksUtils.getCutOffDate() : StringUtils.EMPTY);
+	    model.addAttribute("defaultCutOffDate", worksApplicationProperties.getContractorBillCutOffDate());
             
             return "contractorBill-form";
         } else {

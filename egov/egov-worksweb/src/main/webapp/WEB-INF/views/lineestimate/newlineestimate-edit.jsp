@@ -58,6 +58,7 @@
 			<input type="hidden" id="errorgovernmentapprovaldate" value="<spring:message code='error.governmentApprovalDate.lessthan.budgetappropriation' />" />
 			<input type="hidden" id="nominationLimit" value="${nominationLimit}">
 			<input type="hidden" id="nominationName" value="${nominationName}">
+			<input type="hidden" id="budgetControlType" value='${budgetControlType }'/>
 			<input type="hidden" value="${hiddenfields}" id="hiddenfields" />
 			<div class="row">
 				<div class="col-md-12">

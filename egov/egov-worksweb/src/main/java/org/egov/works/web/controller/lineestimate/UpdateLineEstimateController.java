@@ -55,6 +55,7 @@ import org.egov.commons.dao.FunctionHibernateDAO;
 import org.egov.commons.dao.FundHibernateDAO;
 import org.egov.commons.service.TypeOfWorkService;
 import org.egov.dao.budget.BudgetDetailsDAO;
+import org.egov.dao.budget.BudgetGroupDAO;
 import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.eis.service.AssignmentService;
@@ -157,6 +158,9 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<LineEstimate> lineEstimateWorkflowService;
+    
+    @Autowired
+    private BudgetGroupDAO budgetGroupDAO;
 
     @ModelAttribute
     public LineEstimate getLineEstimate(@PathVariable final String lineEstimateId) {
@@ -369,7 +373,11 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
 
     private void setDropDownValues(final Model model) {
         model.addAttribute("funds", fundHibernateDAO.findAllActiveFunds());
-        model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+        if (BudgetControlType.BudgetCheckOption.NONE.toString()
+                .equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            model.addAttribute("functions", functionHibernateDAO.getAllActiveFunctions());
+            model.addAttribute("budgetHeads", budgetGroupDAO.getBudgetGroupList());
+        }
         model.addAttribute("schemes", schemeService.findAll());
         model.addAttribute("departments", worksUtils.getUserDepartments(securityUtils.getCurrentUser()));
         model.addAttribute("beneficiary", Beneficiary.values());
@@ -380,6 +388,7 @@ public class UpdateLineEstimateController extends GenericWorkFlowController {
         model.addAttribute("workCategory", WorkCategory.values());
         model.addAttribute("locations", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 WorksConstants.LOCATION_BOUNDARYTYPE, WorksConstants.LOCATION_HIERARCHYTYPE));
+        model.addAttribute("budgetControlType",budgetControlTypeService.getConfigValue());
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
