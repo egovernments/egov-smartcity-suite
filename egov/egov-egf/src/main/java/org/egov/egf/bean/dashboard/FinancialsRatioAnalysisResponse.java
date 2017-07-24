@@ -49,6 +49,8 @@ package org.egov.egf.bean.dashboard;
 
 import org.egov.infra.utils.StringUtils;
 
+import java.util.Map;
+
 public class FinancialsRatioAnalysisResponse {
 
     private String region = StringUtils.EMPTY;
@@ -66,18 +68,37 @@ public class FinancialsRatioAnalysisResponse {
     private String functionCode = StringUtils.EMPTY;
     private String functionName = StringUtils.EMPTY;
     private String financialYear = StringUtils.EMPTY;
+    private String fromDate = StringUtils.EMPTY;
+    private String toDate = StringUtils.EMPTY;
     private String month = StringUtils.EMPTY;
-    private Double taxRevenueToTotalIncomeRatio = 0.0;
-    private Double assignedRevenuesToTotalIncomeRatio = 0.0;
-    private Double revenueGrantsToTotalIncomeRatio = 0.0;
-    private Double rentalIncomeToTotalIncomeRatio = 0.0;
-    private Double feeUserChargesToTotalIncomeRatio = 0.0;
-    private Double incomeRatio = 0.0;
-    private Double establishmentExpensesToTotalReRatio = 0.0;
-    private Double administrativeExpensesToTotalReRatio = 0.0;
-    private Double omExpensesToTotalReRatio = 0.0;
-    private Double expenseRatio = 0.0;
-    private Double capitalRatio = 0.0;
+    private Double cyTaxRevenueToTotalIncomeRatio = 0.0;
+    private Double lyTaxRevenueToTotalIncomeRatio = 0.0;
+    private Double cyAssignedRevenuesToTotalIncomeRatio = 0.0;
+    private Double lyAssignedRevenuesToTotalIncomeRatio = 0.0;
+    private Double cyRevenueGrantsToTotalIncomeRatio = 0.0;
+    private Double lyRevenueGrantsToTotalIncomeRatio = 0.0;
+    private Double cyRentalIncomeToTotalIncomeRatio = 0.0;
+    private Double lyRentalIncomeToTotalIncomeRatio = 0.0;
+    private Double cyFeeUserChargesToTotalIncomeRatio = 0.0;
+    private Double lyFeeUserChargesToTotalIncomeRatio = 0.0;
+    private Double cyIncomeRatio = 0.0;
+    private Double lyIncomeRatio = 0.0;
+    private Double cyEstablishmentExpensesToTotalReRatio = 0.0;
+    private Double lyEstablishmentExpensesToTotalReRatio = 0.0;
+    private Double cyAdministrativeExpensesToTotalReRatio = 0.0;
+    private Double lyAdministrativeExpensesToTotalReRatio = 0.0;
+    private Double cyOmExpensesToTotalReRatio = 0.0;
+    private Double lyOmExpensesToTotalReRatio = 0.0;
+    private Double cyExpenseRatio = 0.0;
+    private Double lyExpenseRatio = 0.0;
+    private Double cyGrantsReceiptsToTotalReceipts = 0.0;
+    private Double lyGrantsReceiptsToTotalReceipts = 0.0;
+    private Double cyCapitalExpenditureToTotalExpenditure = 0.0;
+    private Double lyCapitalExpenditureToTotalExpenditure = 0.0;
+    private Double cyCapitalRatio = 0.0;
+    private Double lyCapitalRatio = 0.0;
+    private Map<String, Double> cyDepartmentWiseRevenueExpenses;
+    private Map<String, Double> lyDepartmentWiseRevenueExpenses;
 
 
     public String getRegion() {
@@ -118,6 +139,14 @@ public class FinancialsRatioAnalysisResponse {
 
     public void setUlbName(String ulbName) {
         this.ulbName = ulbName;
+    }
+
+    public String getUlbGrade() {
+        return ulbGrade;
+    }
+
+    public void setUlbGrade(String ulbGrade) {
+        this.ulbGrade = ulbGrade;
     }
 
     public String getAdmZoneName() {
@@ -184,94 +213,6 @@ public class FinancialsRatioAnalysisResponse {
         this.functionName = functionName;
     }
 
-    public Double getTaxRevenueToTotalIncomeRatio() {
-        return taxRevenueToTotalIncomeRatio;
-    }
-
-    public void setTaxRevenueToTotalIncomeRatio(Double taxRevenueToTotalIncomeRatio) {
-        this.taxRevenueToTotalIncomeRatio = taxRevenueToTotalIncomeRatio;
-    }
-
-    public Double getAssignedRevenuesToTotalIncomeRatio() {
-        return assignedRevenuesToTotalIncomeRatio;
-    }
-
-    public void setAssignedRevenuesToTotalIncomeRatio(Double assignedRevenuesToTotalIncomeRatio) {
-        this.assignedRevenuesToTotalIncomeRatio = assignedRevenuesToTotalIncomeRatio;
-    }
-
-    public Double getRevenueGrantsToTotalIncomeRatio() {
-        return revenueGrantsToTotalIncomeRatio;
-    }
-
-    public void setRevenueGrantsToTotalIncomeRatio(Double revenueGrantsToTotalIncomeRatio) {
-        this.revenueGrantsToTotalIncomeRatio = revenueGrantsToTotalIncomeRatio;
-    }
-
-    public Double getRentalIncomeToTotalIncomeRatio() {
-        return rentalIncomeToTotalIncomeRatio;
-    }
-
-    public void setRentalIncomeToTotalIncomeRatio(Double rentalIncomeToTotalIncomeRatio) {
-        this.rentalIncomeToTotalIncomeRatio = rentalIncomeToTotalIncomeRatio;
-    }
-
-    public Double getFeeUserChargesToTotalIncomeRatio() {
-        return feeUserChargesToTotalIncomeRatio;
-    }
-
-    public void setFeeUserChargesToTotalIncomeRatio(Double feeUserChargesToTotalIncomeRatio) {
-        this.feeUserChargesToTotalIncomeRatio = feeUserChargesToTotalIncomeRatio;
-    }
-
-    public Double getIncomeRatio() {
-        return incomeRatio;
-    }
-
-    public void setIncomeRatio(Double incomeRatio) {
-        this.incomeRatio = incomeRatio;
-    }
-
-    public Double getEstablishmentExpensesToTotalReRatio() {
-        return establishmentExpensesToTotalReRatio;
-    }
-
-    public void setEstablishmentExpensesToTotalReRatio(Double establishmentExpensesToTotalReRatio) {
-        this.establishmentExpensesToTotalReRatio = establishmentExpensesToTotalReRatio;
-    }
-
-    public Double getAdministrativeExpensesToTotalReRatio() {
-        return administrativeExpensesToTotalReRatio;
-    }
-
-    public void setAdministrativeExpensesToTotalReRatio(Double administrativeExpensesToTotalReRatio) {
-        this.administrativeExpensesToTotalReRatio = administrativeExpensesToTotalReRatio;
-    }
-
-    public Double getOmExpensesToTotalReRatio() {
-        return omExpensesToTotalReRatio;
-    }
-
-    public void setOmExpensesToTotalReRatio(Double omExpensesToTotalReRatio) {
-        this.omExpensesToTotalReRatio = omExpensesToTotalReRatio;
-    }
-
-    public Double getCapitalRatio() {
-        return capitalRatio;
-    }
-
-    public void setCapitalRatio(Double capitalRatio) {
-        this.capitalRatio = capitalRatio;
-    }
-
-    public String getUlbGrade() {
-        return ulbGrade;
-    }
-
-    public void setUlbGrade(String ulbGrade) {
-        this.ulbGrade = ulbGrade;
-    }
-
     public String getFinancialYear() {
         return financialYear;
     }
@@ -280,19 +221,251 @@ public class FinancialsRatioAnalysisResponse {
         this.financialYear = financialYear;
     }
 
-    public Double getExpenseRatio() {
-        return expenseRatio;
-    }
-
-    public void setExpenseRatio(Double expenseRatio) {
-        this.expenseRatio = expenseRatio;
-    }
-
     public String getMonth() {
         return month;
     }
 
     public void setMonth(String month) {
         this.month = month;
+    }
+
+    public Double getCyTaxRevenueToTotalIncomeRatio() {
+        return cyTaxRevenueToTotalIncomeRatio;
+    }
+
+    public void setCyTaxRevenueToTotalIncomeRatio(Double cyTaxRevenueToTotalIncomeRatio) {
+        this.cyTaxRevenueToTotalIncomeRatio = cyTaxRevenueToTotalIncomeRatio;
+    }
+
+    public Double getLyTaxRevenueToTotalIncomeRatio() {
+        return lyTaxRevenueToTotalIncomeRatio;
+    }
+
+    public void setLyTaxRevenueToTotalIncomeRatio(Double lyTaxRevenueToTotalIncomeRatio) {
+        this.lyTaxRevenueToTotalIncomeRatio = lyTaxRevenueToTotalIncomeRatio;
+    }
+
+    public Double getCyAssignedRevenuesToTotalIncomeRatio() {
+        return cyAssignedRevenuesToTotalIncomeRatio;
+    }
+
+    public void setCyAssignedRevenuesToTotalIncomeRatio(Double cyAssignedRevenuesToTotalIncomeRatio) {
+        this.cyAssignedRevenuesToTotalIncomeRatio = cyAssignedRevenuesToTotalIncomeRatio;
+    }
+
+    public Double getLyAssignedRevenuesToTotalIncomeRatio() {
+        return lyAssignedRevenuesToTotalIncomeRatio;
+    }
+
+    public void setLyAssignedRevenuesToTotalIncomeRatio(Double lyAssignedRevenuesToTotalIncomeRatio) {
+        this.lyAssignedRevenuesToTotalIncomeRatio = lyAssignedRevenuesToTotalIncomeRatio;
+    }
+
+    public Double getCyRevenueGrantsToTotalIncomeRatio() {
+        return cyRevenueGrantsToTotalIncomeRatio;
+    }
+
+    public void setCyRevenueGrantsToTotalIncomeRatio(Double cyRevenueGrantsToTotalIncomeRatio) {
+        this.cyRevenueGrantsToTotalIncomeRatio = cyRevenueGrantsToTotalIncomeRatio;
+    }
+
+    public Double getLyRevenueGrantsToTotalIncomeRatio() {
+        return lyRevenueGrantsToTotalIncomeRatio;
+    }
+
+    public void setLyRevenueGrantsToTotalIncomeRatio(Double lyRevenueGrantsToTotalIncomeRatio) {
+        this.lyRevenueGrantsToTotalIncomeRatio = lyRevenueGrantsToTotalIncomeRatio;
+    }
+
+    public Double getCyRentalIncomeToTotalIncomeRatio() {
+        return cyRentalIncomeToTotalIncomeRatio;
+    }
+
+    public void setCyRentalIncomeToTotalIncomeRatio(Double cyRentalIncomeToTotalIncomeRatio) {
+        this.cyRentalIncomeToTotalIncomeRatio = cyRentalIncomeToTotalIncomeRatio;
+    }
+
+    public Double getLyRentalIncomeToTotalIncomeRatio() {
+        return lyRentalIncomeToTotalIncomeRatio;
+    }
+
+    public void setLyRentalIncomeToTotalIncomeRatio(Double lyRentalIncomeToTotalIncomeRatio) {
+        this.lyRentalIncomeToTotalIncomeRatio = lyRentalIncomeToTotalIncomeRatio;
+    }
+
+    public Double getCyFeeUserChargesToTotalIncomeRatio() {
+        return cyFeeUserChargesToTotalIncomeRatio;
+    }
+
+    public void setCyFeeUserChargesToTotalIncomeRatio(Double cyFeeUserChargesToTotalIncomeRatio) {
+        this.cyFeeUserChargesToTotalIncomeRatio = cyFeeUserChargesToTotalIncomeRatio;
+    }
+
+    public Double getLyFeeUserChargesToTotalIncomeRatio() {
+        return lyFeeUserChargesToTotalIncomeRatio;
+    }
+
+    public void setLyFeeUserChargesToTotalIncomeRatio(Double lyFeeUserChargesToTotalIncomeRatio) {
+        this.lyFeeUserChargesToTotalIncomeRatio = lyFeeUserChargesToTotalIncomeRatio;
+    }
+
+    public Double getCyIncomeRatio() {
+        return cyIncomeRatio;
+    }
+
+    public void setCyIncomeRatio(Double cyIncomeRatio) {
+        this.cyIncomeRatio = cyIncomeRatio;
+    }
+
+    public Double getLyIncomeRatio() {
+        return lyIncomeRatio;
+    }
+
+    public void setLyIncomeRatio(Double lyIncomeRatio) {
+        this.lyIncomeRatio = lyIncomeRatio;
+    }
+
+    public Double getCyEstablishmentExpensesToTotalReRatio() {
+        return cyEstablishmentExpensesToTotalReRatio;
+    }
+
+    public void setCyEstablishmentExpensesToTotalReRatio(Double cyEstablishmentExpensesToTotalReRatio) {
+        this.cyEstablishmentExpensesToTotalReRatio = cyEstablishmentExpensesToTotalReRatio;
+    }
+
+    public Double getLyEstablishmentExpensesToTotalReRatio() {
+        return lyEstablishmentExpensesToTotalReRatio;
+    }
+
+    public void setLyEstablishmentExpensesToTotalReRatio(Double lyEstablishmentExpensesToTotalReRatio) {
+        this.lyEstablishmentExpensesToTotalReRatio = lyEstablishmentExpensesToTotalReRatio;
+    }
+
+    public Double getCyAdministrativeExpensesToTotalReRatio() {
+        return cyAdministrativeExpensesToTotalReRatio;
+    }
+
+    public void setCyAdministrativeExpensesToTotalReRatio(Double cyAdministrativeExpensesToTotalReRatio) {
+        this.cyAdministrativeExpensesToTotalReRatio = cyAdministrativeExpensesToTotalReRatio;
+    }
+
+    public Double getLyAdministrativeExpensesToTotalReRatio() {
+        return lyAdministrativeExpensesToTotalReRatio;
+    }
+
+    public void setLyAdministrativeExpensesToTotalReRatio(Double lyAdministrativeExpensesToTotalReRatio) {
+        this.lyAdministrativeExpensesToTotalReRatio = lyAdministrativeExpensesToTotalReRatio;
+    }
+
+    public Double getCyOmExpensesToTotalReRatio() {
+        return cyOmExpensesToTotalReRatio;
+    }
+
+    public void setCyOmExpensesToTotalReRatio(Double cyOmExpensesToTotalReRatio) {
+        this.cyOmExpensesToTotalReRatio = cyOmExpensesToTotalReRatio;
+    }
+
+    public Double getLyOmExpensesToTotalReRatio() {
+        return lyOmExpensesToTotalReRatio;
+    }
+
+    public void setLyOmExpensesToTotalReRatio(Double lyOmExpensesToTotalReRatio) {
+        this.lyOmExpensesToTotalReRatio = lyOmExpensesToTotalReRatio;
+    }
+
+    public Double getCyExpenseRatio() {
+        return cyExpenseRatio;
+    }
+
+    public void setCyExpenseRatio(Double cyExpenseRatio) {
+        this.cyExpenseRatio = cyExpenseRatio;
+    }
+
+    public Double getLyExpenseRatio() {
+        return lyExpenseRatio;
+    }
+
+    public void setLyExpenseRatio(Double lyExpenseRatio) {
+        this.lyExpenseRatio = lyExpenseRatio;
+    }
+
+    public String getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(String fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public String getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(String toDate) {
+        this.toDate = toDate;
+    }
+
+    public Double getCyGrantsReceiptsToTotalReceipts() {
+        return cyGrantsReceiptsToTotalReceipts;
+    }
+
+    public void setCyGrantsReceiptsToTotalReceipts(Double cyGrantsReceiptsToTotalReceipts) {
+        this.cyGrantsReceiptsToTotalReceipts = cyGrantsReceiptsToTotalReceipts;
+    }
+
+    public Double getLyGrantsReceiptsToTotalReceipts() {
+        return lyGrantsReceiptsToTotalReceipts;
+    }
+
+    public void setLyGrantsReceiptsToTotalReceipts(Double lyGrantsReceiptsToTotalReceipts) {
+        this.lyGrantsReceiptsToTotalReceipts = lyGrantsReceiptsToTotalReceipts;
+    }
+
+    public Double getCyCapitalExpenditureToTotalExpenditure() {
+        return cyCapitalExpenditureToTotalExpenditure;
+    }
+
+    public void setCyCapitalExpenditureToTotalExpenditure(Double cyCapitalExpenditureToTotalExpenditure) {
+        this.cyCapitalExpenditureToTotalExpenditure = cyCapitalExpenditureToTotalExpenditure;
+    }
+
+    public Double getLyCapitalExpenditureToTotalExpenditure() {
+        return lyCapitalExpenditureToTotalExpenditure;
+    }
+
+    public void setLyCapitalExpenditureToTotalExpenditure(Double lyCapitalExpenditureToTotalExpenditure) {
+        this.lyCapitalExpenditureToTotalExpenditure = lyCapitalExpenditureToTotalExpenditure;
+    }
+
+    public Double getCyCapitalRatio() {
+        return cyCapitalRatio;
+    }
+
+    public void setCyCapitalRatio(Double cyCapitalRatio) {
+        this.cyCapitalRatio = cyCapitalRatio;
+    }
+
+    public Double getLyCapitalRatio() {
+        return lyCapitalRatio;
+    }
+
+    public void setLyCapitalRatio(Double lyCapitalRatio) {
+        this.lyCapitalRatio = lyCapitalRatio;
+    }
+
+    public Map<String, Double> getCyDepartmentWiseRevenueExpenses() {
+        return cyDepartmentWiseRevenueExpenses;
+    }
+
+    public void setCyDepartmentWiseRevenueExpenses(Map<String, Double> cyDepartmentWiseRevenueExpenses) {
+        this.cyDepartmentWiseRevenueExpenses = cyDepartmentWiseRevenueExpenses;
+    }
+
+    public Map<String, Double> getLyDepartmentWiseRevenueExpenses() {
+        return lyDepartmentWiseRevenueExpenses;
+    }
+
+    public void setLyDepartmentWiseRevenueExpenses(Map<String, Double> lyDepartmentWiseRevenueExpenses) {
+        this.lyDepartmentWiseRevenueExpenses = lyDepartmentWiseRevenueExpenses;
     }
 }

@@ -49,7 +49,10 @@ package org.egov.egf.web.controller.es.dashboard;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
-import org.egov.egf.bean.dashboard.*;
+import org.egov.egf.bean.dashboard.FinancialsBudgetDetailResponse;
+import org.egov.egf.bean.dashboard.FinancialsDetailResponse;
+import org.egov.egf.bean.dashboard.FinancialsDetailsRequest;
+import org.egov.egf.bean.dashboard.FinancialsRatioAnalysisResponse;
 import org.egov.egf.es.utils.FinancialsDashBoardUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.services.es.dashboard.FinancialsDashboardService;
@@ -107,11 +110,19 @@ public class FinancialsDashboardController {
     private void setAsOnDate(final FinancialsDetailsRequest financialsDetailsRequest) {
 
         CFinancialYear financialYear;
-        if (financialsDetailsRequest.getToDate() != null) {
+        if (financialsDetailsRequest.getToDate() != null && financialsDetailsRequest.getFromDate() == null) {
             financialYear = cFinancialYearService
                     .getFinancialYearByDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"));
             financialsDetailsRequest
                     .setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()));
+            financialsDetailsRequest.setCurrentFinancialYear(financialYear.getFinYearRange());
+            financialsDetailsRequest.setLastFinancialYear(cFinancialYearService
+                    .getPreviousFinancialYearForDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"))
+                    .getFinYearRange());
+        } else if (financialsDetailsRequest.getToDate() != null && financialsDetailsRequest.getFromDate() != null) {
+
+            financialYear = cFinancialYearService
+                    .getFinancialYearByDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"));
             financialsDetailsRequest.setCurrentFinancialYear(financialYear.getFinYearRange());
             financialsDetailsRequest.setLastFinancialYear(cFinancialYearService
                     .getPreviousFinancialYearForDate(DateUtils.getDate(financialsDetailsRequest.getToDate(), "yyyy-MM-dd"))
@@ -140,10 +151,30 @@ public class FinancialsDashboardController {
     @RequestMapping(value = "/ratios", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public List<FinancialsRatioAnalysisResponse> getRatioAnalysisReport(final FinancialsDetailsRequest financialsDetailsRequest)
             throws IOException {
-
+        setAsOnDate(financialsDetailsRequest);
+        setFinancialYear(financialsDetailsRequest);
         final BoolQueryBuilder boolQuery = FinancialsDashBoardUtils.prepareWhereClause(financialsDetailsRequest);
         final String aggrField = FinancialsDashBoardUtils.getAggregationGroupingField(financialsDetailsRequest);
-        return ratioAnalysisDashboardService.getRatios(new FinancialsRatioAnalysisRequest(financialsDetailsRequest), boolQuery, aggrField);
+        return ratioAnalysisDashboardService.getRatios(financialsDetailsRequest, boolQuery, aggrField);
+    }
+
+    private void setFinancialYear(final FinancialsDetailsRequest financialsDetailsRequest) {
+
+        CFinancialYear financialYear;
+        if (financialsDetailsRequest.getFinancialYear() != null) {
+            financialYear = cFinancialYearService
+                    .getFinacialYearByYearRange(financialsDetailsRequest.getFinancialYear());
+            financialsDetailsRequest
+                    .setFromDate(FinancialConstants.DATEFORMATTER_YYYY_MM_DD.format(financialYear.getStartingDate()));
+            financialsDetailsRequest.setLastFinancialYear(cFinancialYearService
+                    .getPreviousFinancialYearForDate(financialYear.getStartingDate()).getFinYearRange());
+        } else {
+            financialYear = cFinancialYearService.getFinancialYearByDate(DateUtils.now());
+            financialsDetailsRequest.setCurrentFinancialYear(financialYear.getFinYearRange());
+            financialsDetailsRequest.setFinancialYear(financialYear.getFinYearRange());
+            financialsDetailsRequest.setLastFinancialYear(cFinancialYearService
+                    .getPreviousFinancialYearForDate(DateUtils.now()).getFinYearRange());
+        }
     }
 
 }
