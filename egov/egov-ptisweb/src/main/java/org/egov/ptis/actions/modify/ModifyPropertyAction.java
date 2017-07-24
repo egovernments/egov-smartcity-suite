@@ -851,7 +851,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 
 		setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
 
-		propertyService.adjustCollection(oldProperty, propertyModel);
+		propertyService.copyCollection(oldProperty, propertyModel);
 		updatePropertyStatus();
 		processAndStoreDocumentsWithReason(basicProp, getReason(modifyRsn));
 		if (PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn) || PROPERTY_MODIFY_REASON_BIFURCATE.equals(modifyRsn)

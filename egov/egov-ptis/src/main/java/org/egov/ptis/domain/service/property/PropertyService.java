@@ -4021,43 +4021,56 @@ public class PropertyService {
 		this.totalAlv = totalAlv;
 	}
 
-	public void adjustCollection(final PropertyImpl oldProperty, final PropertyImpl newProperty) {
+	public void copyCollection(final PropertyImpl oldProperty, final PropertyImpl newProperty) {
 		BigDecimal totalColl = BigDecimal.ZERO;
-		final Installment currInstall = propertyTaxCommonUtils.getCurrentInstallment();
-		Ptdemand ptDemandOld = null;
-		for (final Ptdemand demand : oldProperty.getPtDemandSet())
-			if ("N".equalsIgnoreCase(demand.getIsHistory()))
-				if (demand.getEgInstallmentMaster().equals(currInstall)) {
-					ptDemandOld = demand;
-					break;
-				}
-		Ptdemand ptDemandNew = null;
-		for (final Ptdemand demand : newProperty.getPtDemandSet())
-			if ("N".equalsIgnoreCase(demand.getIsHistory()))
-				if (demand.getEgInstallmentMaster().equals(currInstall)) {
-					ptDemandNew = demand;
-					break;
-				}
-		totalColl = totalColl.add(ptDemandOld.getAmtCollected());
 
-		if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
-			for (final EgDemandDetails dmdDtls : ptDemandNew.getEgDemandDetails())
-				if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
-					dmdDtls.setAmtCollected(dmdDtls.getAmount());
-					totalColl = totalColl.subtract(dmdDtls.getAmount());
+		final Ptdemand ptDemandOld = getCurrrentDemand(oldProperty);
+		Ptdemand ptDemandNew = getCurrrentDemand(newProperty);
 
-				}
-		// If still some Collection amount, then we will adjust it to advance
-			if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
-				EgDemandDetails newDtls;
-				final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
-				final Installment installment = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
-				newDtls = ptBillServiceImpl.insertDemandDetails(ADVANCE_DMD_RSN_CODE, totalColl, installment);
-				ptDemandNew.addEgDemandDetails(newDtls);
-			}
-
+		for (EgDemandDetails demandDetails : ptDemandOld.getEgDemandDetails()) {
+			totalColl = totalColl.add(demandDetails.getAmtCollected());
 		}
 
+		final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+				DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
+				DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+
+		Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(ptDemandNew.getEgDemandDetails());
+		List<Installment> installments = new ArrayList<>(installmentWiseDemandDetails.keySet());
+		Collections.sort(installments);
+
+		for (final Installment installment : installments) {
+			for (final String demandReason : demandReasons) {
+				final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(installmentWiseDemandDetails.get(installment), demandReason);
+
+				if (newDemandDetail != null) {
+						if (totalColl.compareTo(BigDecimal.ZERO) > 0)
+							if (totalColl.compareTo(newDemandDetail.getAmount()) <= 0) {
+								newDemandDetail.setAmtCollected(totalColl);
+								newDemandDetail.setModifiedDate(new Date());
+								totalColl = BigDecimal.ZERO;
+							} else {
+								newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
+								newDemandDetail.setModifiedDate(new Date());
+								totalColl = totalColl.subtract(newDemandDetail.getAmount());
+							}
+				}
+				if (totalColl.compareTo(BigDecimal.ZERO) == 0)
+					break;
+			}
+			if (totalColl.compareTo(BigDecimal.ZERO) == 0)
+				break;
+		}
+
+		if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
+			final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+			EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf, DEMANDRSN_CODE_ADVANCE);
+			if (advanceDemandDetails == null) {
+				final EgDemandDetails demandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,totalColl, currSecondHalf);
+				ptDemandNew.getEgDemandDetails().add(demandDetails);
+			} else
+				advanceDemandDetails.getAmtCollected().add(totalColl);
+		}
 	}
 
 	/**
