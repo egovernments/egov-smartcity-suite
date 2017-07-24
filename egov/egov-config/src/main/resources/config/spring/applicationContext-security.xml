@@ -117,9 +117,13 @@
         <property name="useForward" value="false"/>
     </bean>
 
-    <bean id="authenticationSuccessHandler" class="org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler">
+    <bean id="authenticationSuccessHandler"
+          class="org.egov.infra.config.security.handler.LastAccessedUrlAwareAuthenticationSuccessHandler">
         <property name="alwaysUseDefaultTargetUrl" value="false"/>
         <property name="defaultTargetUrl" value="/home"/>
+        <property name="excludedUrlRegex">
+            <value>^https?://[^/]+/egi/(home/(.*)|inbox($|/.*))</value>
+        </property>
     </bean>
 
     <bean id="securityContextHolderAwareRequestFilter"
