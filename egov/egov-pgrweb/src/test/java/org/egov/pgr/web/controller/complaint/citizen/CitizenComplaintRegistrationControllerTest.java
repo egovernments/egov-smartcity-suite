@@ -41,10 +41,10 @@ package org.egov.pgr.web.controller.complaint.citizen;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ConfigurationService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
 import org.junit.Before;
@@ -75,7 +75,8 @@ public class CitizenComplaintRegistrationControllerTest extends AbstractContextC
     @Mock
     private SecurityUtils securityUtils;
     @Mock
-    private PgrApplicationProperties pgrApplicationProperties;
+    private ConfigurationService configurationService;
+
     @InjectMocks
     private CitizenComplaintRegistrationController controller;
 
