@@ -47,7 +47,6 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.portal.entity.PortalInboxBuilder;
 import org.egov.portal.service.PortalInboxService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -70,8 +69,8 @@ public class CitizenComplaintDataPublisher {
     @Autowired
     private SecurityUtils securityUtils;
 
-    @Value("${default.resolution.time}")
-    private Integer defaultSLAHours;
+    @Autowired
+    private ConfigurationService configurationService;
 
     public void onRegistration(Complaint complaint) {
         Integer slaHours = complaint.getComplaintType().getSlaHours();
@@ -88,7 +87,8 @@ public class CitizenComplaintDataPublisher {
                 complaint.getStateType(), complaint.getCrn(), complaint.getCrn(), complaint.getId(),
                 messageHeader, detailedMessage.toString(), String.format(COMPLAINT_UPDATE_URL, complaint.getCrn()),
                 false, complaint.getStatus().getName(),
-                DateUtils.addHours(new Date(), slaHours == null ? defaultSLAHours : slaHours), complaint.getState(),
+                DateUtils.addHours(new Date(), slaHours == null ?
+                        configurationService.getDefaultComplaintResolutionTime() : slaHours), complaint.getState(),
                 Arrays.asList(securityUtils.getCurrentUser()));
 
         portalInboxService.pushInboxMessage(portalInboxBuilder.build());
