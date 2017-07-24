@@ -246,7 +246,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private static final String PREVIEW = "Preview";
 	public static final String NOTICE = "notice";
 	public static final String MEESEVA_ERROR = "error";
-	public static final String MEESEVA_RESULT_ACK = "meesevaAck";
 	public static final String OBJECTION_FORWARD = "objection.forward";
 	public static final String REJECT_INSPECTION = "objection.inspection.rejection";
 

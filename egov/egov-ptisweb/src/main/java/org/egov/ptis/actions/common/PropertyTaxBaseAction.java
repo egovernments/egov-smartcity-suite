@@ -168,6 +168,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private static final String END = "END";
     private static final String UNAUTHORISED_PENALTY = "unauthorisedPenalty";
     private static final String TOTAL_TAX = "totalTax";
+    public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     protected Boolean isReassignEnabled = Boolean.FALSE;
     protected Long stateAwareId;
     protected String transactionType;

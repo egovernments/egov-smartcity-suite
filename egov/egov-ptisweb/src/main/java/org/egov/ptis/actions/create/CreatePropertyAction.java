@@ -207,7 +207,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private static final String CREATE = "create";
     private static final String RESULT_DATAENTRY = "dataEntry";
     public static final String PRINT_ACK = "printAck";
-    public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     protected static final String EDIT_DATA_ENTRY = "editDataEntry";
     private static final String MEESEVA_SERVICE_CODE_NEWPROPERTY = "PT01";
     private static final String MEESEVA_SERVICE_CODE_SUBDIVISION = "PT04";

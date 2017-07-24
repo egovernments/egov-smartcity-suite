@@ -135,8 +135,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER",
-                "applicationType",
+                "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "applicationType",
                 "${applicationType}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
@@ -168,7 +168,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_ADD_DEMAND, type = "redirectAction", location = "addDemand-newAddForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
-        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}"),
+        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}", params = {
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}"}),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp"),
         @Result(name = APPLICATION_TYPE_MODIFY_DATA_ENTRY, type = "redirectAction", location = "createProperty-editDataEntryForm", params = {
@@ -183,7 +184,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
                 "${applicationType}", "wfType", "RP" }),
         @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirectAction", location = "amalgamation-newForm", params = {
-                "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "applicationType", "${applicationType}",
+                "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "applicationType", "${applicationType}",
                 "modifyRsn", "AMALG" }) })
 
 // @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirect", location = "../amalgamation/new/${assessmentNum}")})

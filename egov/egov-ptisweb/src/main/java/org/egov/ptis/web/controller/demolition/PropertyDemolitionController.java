@@ -39,11 +39,13 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -62,17 +64,21 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.FlashMap;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @Controller
-@RequestMapping(value = {"/property/demolition/{assessmentNo}/{applicationSource}"})
+@RequestMapping(value = {"/property/demolition"})
 public class PropertyDemolitionController extends GenericWorkFlowController {
 
     protected static final String COMMON_FORM = "commonForm";
@@ -100,6 +106,9 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private PropertyService propertyService;
 
     @ModelAttribute
     public PropertyImpl property(@PathVariable("assessmentNo") String assessmentNo) {
@@ -108,16 +117,15 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             return (PropertyImpl) basicProperty.get().getActiveProperty().createPropertyclone();
         return null;
     }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String newForm(@ModelAttribute PropertyImpl property, final Model model, @PathVariable("applicationSource") String applicationSource) {
+    
+    @RequestMapping(value = "/{assessmentNo}/{applicationSource}", method = RequestMethod.GET)
+    public String newForm(@ModelAttribute PropertyImpl property, final Model model, @RequestParam(required = false) final String meesevaApplicationNumber ,@PathVariable("applicationSource") String applicationSource) {
         BasicProperty basicProperty = property.getBasicProperty();
         if (basicProperty.isUnderWorkflow()) {
             model.addAttribute("wfPendingMsg", "Could not do " + APPLICATION_TYPE_DEMOLITION
                     + " now, property is undergoing some work flow.");
             return TARGET_WORKFLOW_ERROR;
         }
-
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
         User loggedInUser = securityUtils.getCurrentUser();
         if (hasChildPropertyUnderWorkflow) {
@@ -133,6 +141,11 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
             model.addAttribute(ERROR_MSG, "error.superstruc.prop.notallowed");
             return PROPERTY_VALIDATION;
         }
+        if (propertyService.isMeesevaUser(loggedInUser))
+            if (meesevaApplicationNumber == null)
+                throw new ApplicationRuntimeException("MEESEVA.005");
+            else
+                property.setMeesevaApplicationNumber(meesevaApplicationNumber);
         model.addAttribute("property", property);
         final Map<String, BigDecimal> propertyTaxDetails = ptDemandDAO.getDemandCollMap(property
                 .getBasicProperty().getActiveProperty());
@@ -173,13 +186,12 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
 
 
     @Transactional
-    @RequestMapping(method = RequestMethod.POST)
+    @RequestMapping(value = "/{assessmentNo}/{applicationSource}", method = RequestMethod.POST)
     public String demoltionFormSubmit(@ModelAttribute PropertyImpl property, final BindingResult errors, final Model model, final HttpServletRequest request,
                                       @RequestParam String workFlowAction) throws TaxCalculatorExeption {
-
+        String target;
         User loggedInUser = securityUtils.getCurrentUser();
         propertyDemolitionService.validateProperty(property, errors, request);
-
         if (errors.hasErrors()) {
             prepareWorkflow(model, (PropertyImpl) property, new WorkflowContainer());
             model.addAttribute("stateType", property.getClass().getSimpleName());
@@ -198,7 +210,17 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                 workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
                 approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
-
+            if (propertyService.isMeesevaUser(loggedInUser)) {
+                final HashMap<String, String> meesevaParams = new HashMap<>();
+                meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
+                if (StringUtils.isBlank(property.getApplicationNo())) {
+                    property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
+                    property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
+                }
+                propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property, status,
+                        approvalComent, workFlowAction,
+                        approvalPosition, DEMOLITION, meesevaParams);
+            } else
             propertyDemolitionService.saveProperty(property.getBasicProperty().getActiveProperty(), property, status, approvalComent, workFlowAction,
                     approvalPosition, DEMOLITION);
 
@@ -214,7 +236,23 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
                     "successMessage",
                     "Property demolition data saved successfully in the system and forwarded to "
                             + propertyTaxUtil.getApproverUserName(approvalPosition));
-            return DEMOLITION_SUCCESS;
+            if (propertyService.isMeesevaUser(loggedInUser))
+                target = "redirect:/property/demolition/generate-meesevareceipt/"
+                        + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+                        + ((PropertyImpl) property).getApplicationNo();
+            else
+                target = DEMOLITION_SUCCESS;
+        return target;
         }
+    }
+    
+    @RequestMapping(value = "/generate-meesevareceipt/{assessmentNo}", method = RequestMethod.GET)
+    public RedirectView generateMeesevaReceipt(final HttpServletRequest request, final Model model) {
+        final String keyNameArray = request.getParameter("transactionServiceNumber");
+        final RedirectView redirect = new RedirectView(PropertyTaxConstants.MEESEVA_REDIRECT_URL + keyNameArray, false);
+        final FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
+        if (outputFlashMap != null)
+            outputFlashMap.put("url", request.getRequestURL());
+        return redirect;
     }
 }
