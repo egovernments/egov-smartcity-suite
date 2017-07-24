@@ -39,7 +39,6 @@
  */
 package org.egov.stms.web.controller.transactions;
 
-
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.util.ArrayList;
@@ -107,6 +106,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 public class SewerageConnectionController extends GenericWorkFlowController {
 
     private static final String CSCUSER = "CSCUSER";
+    private static final String INSPECTIONFEEREQUIRED = "inspectionFeesCollectionRequired";
     private static final Logger LOG = LoggerFactory.getLogger(SewerageConnectionController.class);
     private final SewerageTaxUtils sewerageTaxUtils;
 
@@ -180,27 +180,13 @@ public class SewerageConnectionController extends GenericWorkFlowController {
     public String showNewApplicationForm(@ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             final Model model, final HttpServletRequest request) {
         LOG.debug("Inside showNewApplicationForm method");
-        final SewerageApplicationType applicationType = sewerageApplicationTypeService
-                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
-        sewerageApplicationDetails.setApplicationType(applicationType);
-        sewerageApplicationDetails.setApplicationDate(new Date());
         final SewerageConnection connection = new SewerageConnection();
+        sewerageApplicationDetails.setApplicationDate(new Date());
         connection.setStatus(SewerageConnectionStatus.INPROGRESS);
         sewerageApplicationDetails.setConnection(connection);
-        Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
-
-        model.addAttribute("allowIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-        model.addAttribute("propertyTypes", PropertyType.values());
-        model.addAttribute("isEmployee", isEmployee);
-        model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
-        final WorkflowContainer workFlowContainer = new WorkflowContainer();
-        workFlowContainer.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
-        prepareWorkflow(model, sewerageApplicationDetails, workFlowContainer);
-        model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
-        model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
+        prepareNewForm(sewerageApplicationDetails, model);
         final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
-        model.addAttribute("inspectionFeesCollectionRequired", inspectionFeeCollectionRequired);
+        model.addAttribute(INSPECTIONFEEREQUIRED, inspectionFeeCollectionRequired);
         if (inspectionFeeCollectionRequired)
             createSewerageConnectionFee(sewerageApplicationDetails, SewerageTaxConstants.FEE_INSPECTIONCHARGE);
         model.addAttribute("mode", null);
@@ -226,7 +212,7 @@ public class SewerageConnectionController extends GenericWorkFlowController {
             final HttpServletRequest request, final Model model, @RequestParam String workFlowAction,
             @RequestParam("files") final MultipartFile[] files) {
         sewerageApplicationValidator.validateSewerageNewApplication(sewerageApplicationDetails, resultBinder, request);
-        Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
+        final Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
         final List<SewerageApplicationDetailsDocument> applicationDocs = new ArrayList<>();
         int i = 0;
         if (!sewerageApplicationDetails.getAppDetailsDocument().isEmpty())
@@ -241,14 +227,11 @@ public class SewerageConnectionController extends GenericWorkFlowController {
 
         if (resultBinder.hasErrors()) {
             sewerageApplicationDetails.setApplicationDate(new Date());
-            model.addAttribute("validateIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-            model.addAttribute("propertyTypes", PropertyType.values());
-            model.addAttribute("isEmployee", isEmployee);
-            prepareWorkflow(model, sewerageApplicationDetails, new WorkflowContainer());
-            model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
-            model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            prepareNewForm(sewerageApplicationDetails, model);
             model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
-            model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
+            final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
+            model.addAttribute(INSPECTIONFEEREQUIRED, inspectionFeeCollectionRequired);
+            model.addAttribute("mode", null);
             return "newconnection-form";
         }
 
@@ -433,6 +416,25 @@ public class SewerageConnectionController extends GenericWorkFlowController {
         }
 
         return null;
+
+    }
+
+    public void prepareNewForm(final SewerageApplicationDetails sewerageApplicationDetails,
+            final Model model) {
+        final Boolean isEmployee = sewerageWorkflowService.isEmployee(securityUtils.getCurrentUser());
+        final SewerageApplicationType applicationType = sewerageApplicationTypeService
+                .findByCode(SewerageTaxConstants.NEWSEWERAGECONNECTION);
+        sewerageApplicationDetails.setApplicationType(applicationType);
+        model.addAttribute("allowIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
+        model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute("isEmployee", isEmployee);
+        model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
+        prepareWorkflow(model, sewerageApplicationDetails, workFlowContainer);
+        model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+        model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
+        model.addAttribute("typeOfConnection", SewerageTaxConstants.NEWSEWERAGECONNECTION);
 
     }
 
