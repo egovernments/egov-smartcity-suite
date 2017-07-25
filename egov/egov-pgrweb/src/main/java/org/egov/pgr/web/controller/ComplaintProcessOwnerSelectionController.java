@@ -52,6 +52,7 @@ import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.JsonUtils;
 import org.egov.infstr.services.EISServeable;
 import org.egov.pgr.web.contract.ProcessOwnerAdaptor;
@@ -85,6 +86,9 @@ public class ComplaintProcessOwnerSelectionController {
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
+    @Autowired
+    private SecurityUtils securityUtils;
+
     @GetMapping(value = "/ajax-getChildLocation", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Boundary> getChildBoundariesById(@RequestParam Long id) {
@@ -117,9 +121,9 @@ public class ComplaintProcessOwnerSelectionController {
             List<EmployeeView> employeeViewData = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
             Set<EmployeeView> processOwners = employeeViewData
                     .stream()
-                    .filter(employeeView -> employeeView.getEmployee().hasRole("Redressal Officer")
+                    .filter(employeeView -> (employeeView.getEmployee().hasRole("Redressal Officer")
                             || employeeView.getEmployee().hasRole("Grievance Officer")
-                            || employeeView.getEmployee().hasRole("Grievance Routing Officer"))
+                            || employeeView.getEmployee().hasRole("Grievance Routing Officer")) && !securityUtils.getCurrentUser().getName().equals(employeeView.getName()))
                     .collect(Collectors.toSet());
             return JsonUtils.toJSON(processOwners, EmployeeView.class, ProcessOwnerAdaptor.class);
         }
