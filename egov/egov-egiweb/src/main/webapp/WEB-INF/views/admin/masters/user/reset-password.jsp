@@ -42,48 +42,79 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <div class="row">
-	<div class="col-md-12">
-		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert"><spring:message code="${message}" arguments="${name}"/></div>
-		</c:if>
-		<div class="panel panel-primary" data-collapsed="0">
-			<div class="panel-heading">
-				&nbsp;
-			</div>
-			<div class="panel-body custom-form">
-				<form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
-                	<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.user.name" /> <span class="mandatory"></span> 
-						</label>
-						<div class="col-sm-6 add-margin">
-						<select name="username" class="form-control" required="required">
-							<option value="">
-								<spring:message code="lbl.select" />
-							</option>
-							<c:forEach items="${users}" var="user">
-								<option value="${user.username}">${user.name}</option>
-							</c:forEach>
-							</select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.new.pwd"/><span class="mandatory"></span> 
-						</label>
-						<div class="col-sm-6 add-margin" >
-							<input type="password" name="password" class="form-control" id="password" value="demo" required="required" maxlength="32"/>
-						</div>
-					</div>
-					<div class="form-group text-center">
-						<div class="col-md-12 add-margin">
-							<button type="submit" class="btn btn-primary"><spring:message code="title.reset.password"/></button>
-							<button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></button>
-						</div>
-					</div>
-					</form:form>
-					<span class="mandatory"></span> <spring:message code="lbl.user.reset.pwd.info"/>
-			</div>
-		</div>
-	</div>
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}" arguments="${name}"/></div>
+        </c:if>
+        <div class="panel panel-primary" data-collapsed="0">
+            <div class="panel-heading">
+                &nbsp;
+            </div>
+            <div class="panel-body custom-form">
+                <form:form id="password-form" cssClass="form-horizontal form-groups-bordered">
+                    <input style="display:none" type="text">
+                    <input style="display:none" type="password"/>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.employee.name"/> <span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <input name="username" placeholder="Start typing employee name" class="form-control" id="username" required="required" maxlength="200" autocomplete="off"/>
+                            <input name="userId" id="userId" type="hidden" required="required">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.new.pwd"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6 add-margin">
+                            <input type="password" name="password" class="form-control" id="password" value="demo" autocomplete="off" required="required" maxlength="32"/>
+                        </div>
+                    </div>
+                    <div class="form-group text-center">
+                        <div class="col-md-12 add-margin">
+                            <button type="submit" class="btn btn-primary"><spring:message code="title.reset.password"/></button>
+                            <button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></button>
+                        </div>
+                    </div>
+                </form:form>
+                <span class="mandatory"></span> <spring:message code="lbl.user.reset.pwd.info"/>
+            </div>
+        </div>
+    </div>
 </div>
+<script>
+    $(document).ready(function () {
+        var usernameautocomplete = new Bloodhound({
+            datumTokenizer: function (datum) {
+                return Bloodhound.tokenizers.whitespace(datum.value);
+            },
+            queryTokenizer: Bloodhound.tokenizers.whitespace,
+            remote: {
+                url: 'names?name=%QUERY',
+                filter: function (data) {
+                    return $.map(data, function (user) {
+                        return {
+                            name: user.name,
+                            value: user.id
+                        };
+                    });
+                }
+            }
+        });
+
+        usernameautocomplete.initialize();
+        $('#username').typeahead({
+            hint: false,
+            highlight: false,
+            minLength: 3
+        }, {
+            displayKey: 'name',
+            source: usernameautocomplete.ttAdapter()
+        }).on('typeahead:selected', function (e, data) {
+            $('#userId').val(data.value);
+        });
+
+    });
+
+</script>

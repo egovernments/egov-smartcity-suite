@@ -46,13 +46,16 @@ import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
 @RequestMapping("/user")
@@ -67,19 +70,20 @@ public class ResetPasswordController {
     @Autowired
     private ApplicationProperties applicationProperties;
 
-    @ModelAttribute("users")
-    public List<User> users() {
-        return userService.getAllEmployeeUsers();
+    @GetMapping(value = "names", produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<User> users(@RequestParam String name) {
+        return userService.getAllEmployeeNameLike(name);
     }
 
-    @RequestMapping(value = "/reset-password")
+    @GetMapping("reset-password")
     public String showResetPassword() {
         return "reset-password";
     }
 
-    @RequestMapping(value = "/reset-password", method = RequestMethod.POST)
-    public String resetPassword(@RequestParam final String username, @RequestParam final String password, final RedirectAttributes redirAttrib) {
-        final User user = userService.getUserByUsername(username);
+    @PostMapping("reset-password")
+    public String resetPassword(@RequestParam Long userId, @RequestParam String password, RedirectAttributes redirAttrib) {
+        User user = userService.getUserById(userId);
         user.setPassword(passwordEncoder.encode(password));
         user.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
         userService.updateUser(user);

@@ -71,7 +71,7 @@
 
     <definition name="password/reset" extends="base_layout">
         <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/home/password-reset.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/home/forgot-password.jsp"/>
     </definition>
 
     <definition name="profile-edit" extends="base_layout">

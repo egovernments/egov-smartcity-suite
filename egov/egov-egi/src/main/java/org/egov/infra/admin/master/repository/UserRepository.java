@@ -73,7 +73,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     List<User> findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(String username, UserType type);
 
-    List<User> findByTypeAndActiveTrueOrderByNameAsc(UserType type);
+    List<User> findByNameContainingIgnoreCaseAndTypeAndActiveTrue(String name, UserType type);
 
     @Query("select distinct usr from User usr, IN (usr.roles) role where role.name = :roleName ")
     Set<User> findUsersByRoleName(@Param("roleName") String roleName);

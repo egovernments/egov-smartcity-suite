@@ -66,26 +66,26 @@ public class UserService {
     private MicroserviceUtils microserviceUtils;
 
     @Transactional
-    public User updateUser(final User user) {
+    public User updateUser(User user) {
         return userRepository.saveAndFlush(user);
     }
 
     @Transactional
-    public User createUser(final User user) {
-        final User savedUser = userRepository.save(user);
+    public User createUser(User user) {
+        User savedUser = userRepository.save(user);
         microserviceUtils.createUserMicroservice(user);
         return savedUser;
     }
 
-    public Set<Role> getRolesByUsername(final String userName) {
+    public Set<Role> getRolesByUsername(String userName) {
         return userRepository.findUserRolesByUserName(userName);
     }
 
-    public User getUserById(final Long id) {
+    public User getUserById(Long id) {
         return userRepository.findOne(id);
     }
 
-    public User getUserRefById(final Long id) {
+    public User getUserRefById(Long id) {
         return userRepository.getOne(id);
     }
 
@@ -93,43 +93,43 @@ public class UserService {
         return userRepository.findOne(ApplicationThreadLocals.getUserId());
     }
 
-    public User getUserByUsername(final String userName) {
+    public User getUserByUsername(String userName) {
         return userRepository.findByUsername(userName);
     }
 
-    public User getUserByEmailId(final String emailId) {
+    public User getUserByEmailId(String emailId) {
         return userRepository.findByEmailId(emailId);
     }
 
-    public User getUserByAadhaarNumber(final String aadhaarNumber) {
+    public User getUserByAadhaarNumber(String aadhaarNumber) {
         return userRepository.findByAadhaarNumber(aadhaarNumber);
     }
 
-    public List<User> getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
+    public List<User> getUserByAadhaarNumberAndType(String aadhaarNumber, UserType type) {
         return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
     }
 
-    public Optional<User> checkUserWithIdentity(final String identity) {
+    public Optional<User> checkUserWithIdentity(String identity) {
         return Optional.ofNullable(getUserByUsername(identity));
     }
 
-    public List<User> findAllByMatchingUserNameForType(final String username, final UserType type) {
+    public List<User> findAllByMatchingUserNameForType(String username, UserType type) {
         return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(username, type);
     }
 
-    public Set<User> getUsersByRoleName(final String roleName) {
+    public Set<User> getUsersByRoleName(String roleName) {
         return userRepository.findUsersByRoleName(roleName);
     }
 
-    public List<User> getAllEmployeeUsers() {
-        return userRepository.findByTypeAndActiveTrueOrderByNameAsc(UserType.EMPLOYEE);
+    public List<User> getAllEmployeeNameLike(String name) {
+        return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, UserType.EMPLOYEE);
     }
 
-    public List<User> getUsersByUsernameAndRolename(final String userName, final String roleName) {
+    public List<User> getUsersByUsernameAndRolename(String userName, String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
 
-    public User getUserByNameAndMobileNumberForGender(final String name, final String mobileNumber, final Gender gender) {
+    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender) {
         return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
     }
 
