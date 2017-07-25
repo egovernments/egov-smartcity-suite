@@ -115,6 +115,7 @@ public class Complaint extends StateAware {
 
     @Length(min = 10, max = 500)
     @SafeHtml
+    @NotNull
     private String details;
 
     @Length(max = 200)
