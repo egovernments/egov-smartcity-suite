@@ -297,6 +297,9 @@ public class SewerageIndexService {
     // TODO: CHECK LIKE CASES WORKING OR NOT IN CASE OF SEARCH BY CONSUMER NAME
     public BoolQueryBuilder getQueryFilter(final SewerageConnSearchRequest searchRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("active", true));
+
+        if (StringUtils.isNotBlank(searchRequest.getUlbName()))
+            boolQuery.filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerNumber", searchRequest.getConsumerNumber()));
         if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
