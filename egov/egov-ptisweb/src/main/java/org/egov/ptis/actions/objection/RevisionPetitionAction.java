@@ -696,11 +696,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	 */
 	@ValidationErrorPage(value = "view")
 	@Action(value = "/revPetition-recordInspectionDetails")
-	public String recordInspectionDetails() throws TaxCalculatorExeption {
+	public String recordInspectionDetails() {
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | recordInspectionDetails | start "
 					+ objection.getInspections().get(objection.getInspections().size() - 1));
 		vaidatePropertyDetails();
+		try {
+			modifyBasicProp();
+		} catch (final TaxCalculatorExeption e) {
+			addActionError(getText("unitrate.error"));
+		}
 
 		if (hasErrors()) {
 			checkIfEligibleForDocEdit();
@@ -714,7 +719,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | recordInspectionDetails | End "
 					+ objection.getInspections().get(objection.getInspections().size() - 1));
-		modifyBasicProp();
 		if (wfType.equalsIgnoreCase(NATURE_OF_WORK_RP))
 			objection.getProperty().setPropertyModifyReason(NATURE_OF_WORK_RP);
 		else
@@ -1788,8 +1792,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			else
 				propService.changePropertyDetail(objection.getProperty(), new BuiltUpProperty(),
 						objection.getProperty().getPropertyDetail().getFloorDetails().size());
-
 		propService.modifyDemand(objection.getProperty(), (PropertyImpl) objection.getBasicProperty().getProperty());
+
 		if (objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority() != null && "No Approval"
 				.equals(objection.getProperty().getPropertyDetail().getLayoutApprovalAuthority().getName())) {
 			objection.getProperty().getPropertyDetail().setLayoutPermitNo(null);
