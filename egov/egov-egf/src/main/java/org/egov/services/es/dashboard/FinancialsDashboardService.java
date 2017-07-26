@@ -899,7 +899,6 @@ public class FinancialsDashboardService {
         final Sum aggrActualAmount = entry.getAggregations().get(FinancialConstants.ACTUALAMOUNT);
         final Sum aggrPreviousYearActualAmount = entry.getAggregations().get(FinancialConstants.PREVIOUYEARACTUALAMOUNT);
         final Sum aggrCommitedExpenditure = entry.getAggregations().get(FinancialConstants.COMMITTEDEXPENDITURE);
-        final Sum aggrBudgetVariance = entry.getAggregations().get(FinancialConstants.BUDGETVARIANCE);
         final TopHits topHits = entry.getAggregations().get("finRecordsBudget");
         financialsBudgetDetailResponse
                 .setBudgetApprovedAmount(BigDecimal.valueOf(aggrBudgetApprovedAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
@@ -914,7 +913,10 @@ public class FinancialsDashboardService {
         financialsBudgetDetailResponse.setCommittedExpenditure(
                 BigDecimal.valueOf(aggrCommitedExpenditure.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
         financialsBudgetDetailResponse
-                .setBudgetVariance(BigDecimal.valueOf(aggrBudgetVariance.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+                .setBudgetUsageVariance(financialsBudgetDetailResponse.getActualAmount().subtract(financialsBudgetDetailResponse.getAllocatedBudget()));
+
+        financialsBudgetDetailResponse.setBudgetVariance((financialsBudgetDetailResponse.getBudgetUsageVariance().doubleValue() /
+                financialsBudgetDetailResponse.getAllocatedBudget().doubleValue()) * 100);
 
         FinancialsDashBoardUtils.setValuesForBudget(entry.getKeyAsString(), financialsBudgetDetailResponse, aggrField,
                 setBudgetResponseDetails(topHits));
@@ -940,8 +942,6 @@ public class FinancialsDashboardService {
                                 .field(FinancialConstants.PREVIOUYEARACTUALAMOUNT))
                         .subAggregation(AggregationBuilders.sum(FinancialConstants.COMMITTEDEXPENDITURE)
                                 .field(FinancialConstants.COMMITTEDEXPENDITURE))
-                        .subAggregation(AggregationBuilders.sum(FinancialConstants.BUDGETVARIANCE)
-                                .field(FinancialConstants.BUDGETVARIANCE))
                         .subAggregation(AggregationBuilders.topHits("finRecordsBudget").addField(FinancialConstants.DISTNAME)
                                 .addField(FinancialConstants.ULBNAME)
                                 .addField(FinancialConstants.ULBGRADE).addField(FinancialConstants.REGNAME).addField(FinancialConstants.MAJORCODEDESCRIPTION.toLowerCase())

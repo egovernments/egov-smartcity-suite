@@ -85,7 +85,8 @@ public class FinancialsBudgetDetailResponse {
     private BigDecimal actualAmount = BigDecimal.ZERO;
     private BigDecimal previouYearActualAmount = BigDecimal.ZERO;
     private BigDecimal committedExpenditure = BigDecimal.ZERO;
-    private BigDecimal budgetVariance = BigDecimal.ZERO;
+    private BigDecimal budgetUsageVariance = BigDecimal.ZERO;
+    private Double budgetVariance = 0.0;
 
 
     public String getRegion() {
@@ -272,13 +273,6 @@ public class FinancialsBudgetDetailResponse {
         this.committedExpenditure = committedExpenditure;
     }
 
-    public BigDecimal getBudgetVariance() {
-        return budgetVariance;
-    }
-
-    public void setBudgetVariance(final BigDecimal budgetVariance) {
-        this.budgetVariance = budgetVariance;
-    }
 
     public BigDecimal getBudgetApprovedAmount() {
         return budgetApprovedAmount;
@@ -350,5 +344,21 @@ public class FinancialsBudgetDetailResponse {
 
     public void setSubschemeName(String subschemeName) {
         this.subschemeName = subschemeName;
+    }
+
+    public BigDecimal getBudgetUsageVariance() {
+        return budgetUsageVariance;
+    }
+
+    public void setBudgetUsageVariance(BigDecimal budgetUsageVariance) {
+        this.budgetUsageVariance = budgetUsageVariance;
+    }
+
+    public Double getBudgetVariance() {
+        return budgetVariance;
+    }
+
+    public void setBudgetVariance(Double budgetVariance) {
+        this.budgetVariance = budgetVariance;
     }
 }
