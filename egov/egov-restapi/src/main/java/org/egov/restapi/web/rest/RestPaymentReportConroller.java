@@ -62,6 +62,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infstr.models.ServiceCategory;
+import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
@@ -98,6 +99,9 @@ public class RestPaymentReportConroller {
 
     @Autowired
     ApplicationContext applicationContext;
+
+    @Autowired
+    private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
     @RequestMapping(value = "/reconciliation/paymentdetails/transaction", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public String searchPaymentByTransactionId(@RequestBody final PaymentInfoSearchRequest paymentInfoSearchRequest,
@@ -290,6 +294,30 @@ public class RestPaymentReportConroller {
 
         }
         return JsonConvertor.convert(serviceCategory);
+
+    }
+
+    @RequestMapping(value = "/services", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    public String servicedetailByType(@RequestParam String serviceType)
+            throws JsonGenerationException, JsonMappingException, IOException {
+
+        Map<String, String> service = null;
+        List<ServiceDetails> serviceDetailsList;
+        try {
+            serviceDetailsList = serviceDetailsService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICES_BY_TYPE,
+                    serviceType);
+            if (serviceDetailsList != null && serviceDetailsList.size() >= 0) {
+                service = new LinkedHashMap<String, String>();
+                for (final ServiceDetails serviceDetail : serviceDetailsList)
+                    service.put(serviceDetail.getCode(), serviceDetail.getName());
+            }
+        } catch (final Exception e) {
+            final ErrorDetails er = new ErrorDetails();
+            er.setErrorCode(e.getMessage());
+            er.setErrorMessage(e.getMessage());
+            return JsonConvertor.convert(er);
+        }
+        return JsonConvertor.convert(service);
 
     }
 }
