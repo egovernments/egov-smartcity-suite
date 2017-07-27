@@ -40,21 +40,25 @@
 
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.DuplicateConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -62,6 +66,8 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -77,7 +83,7 @@ public class DuplicateConnectionController {
     @RequestMapping(value = "/duplicateConsumerCode/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ACTIVE);
 
         if (waterConnectionDetails == null)
             throw new ValidationException("err.hsc.no.inactive");
@@ -86,7 +92,8 @@ public class DuplicateConnectionController {
                 .getAllConnectionDetailsByPropertyID(waterConnectionDetails.getConnection().getPropertyIdentifier());
         final List<String> consumerCodes = new ArrayList<>(0);
         for (final WaterConnectionDetails waterconnectionDetails : waterConnectionDetailsList)
-            if (!waterconnectionDetails.getConnection().getConsumerCode().equalsIgnoreCase(consumerCode))
+            if (waterconnectionDetails.getConnection().getConsumerCode() != null
+                    && !waterconnectionDetails.getConnection().getConsumerCode().equalsIgnoreCase(consumerCode))
                 consumerCodes.add(waterconnectionDetails.getConnection().getConsumerCode());
 
         final DuplicateConnection duplicateConnection = new DuplicateConnection();
@@ -102,13 +109,13 @@ public class DuplicateConnectionController {
             final RedirectAttributes redirectAttrs, final Model model) {
 
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ACTIVE);
 
         if (waterConnectionDetails == null)
             throw new ValidationException("err.hsc.no.inactive");
         waterConnectionDetails.setReferenceNumber(duplicateConnection.getReferenceNumber());
         waterConnectionDetails.setDeactivateReason(duplicateConnection.getDeactivateReason());
-        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
+        waterConnectionDetails.setConnectionStatus(INACTIVE);
         if (!duplicateConnection.getConsumerCodes().isEmpty())
             waterConnectionDetails.getConnection().setOldConsumerNumber(duplicateConnection.getConsumerCodes().get(0));
         waterConnectionDetailsService.save(waterConnectionDetails);
@@ -120,6 +127,25 @@ public class DuplicateConnectionController {
         model.addAttribute("consumerCode", consumerCode);
         return "duplicateconnection-success";
 
+    }
+
+    @RequestMapping(value = "/originalconnectionnumber-validate", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public Boolean validateConsumerNumber(@RequestParam final String originalConsumerNumber,
+            @RequestParam final String duplicateConsumerNo) {
+        WaterConnectionDetails waterConnectionDetails = null;
+        WaterConnectionDetails duplicateConnectionDetails = null;
+        if (StringUtils.isNotBlank(originalConsumerNumber))
+            waterConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumberOrConsumerCodeAndStatus(originalConsumerNumber, ACTIVE);
+        if (StringUtils.isNotBlank(duplicateConsumerNo))
+            duplicateConnectionDetails = waterConnectionDetailsService
+                    .findByApplicationNumberOrConsumerCodeAndStatus(duplicateConsumerNo, ACTIVE);
+        if (waterConnectionDetails != null && duplicateConnectionDetails != null &&
+                duplicateConnectionDetails.getConnection().getPropertyIdentifier()
+                        .equals(waterConnectionDetails.getConnection().getPropertyIdentifier()))
+            return true;
+        return false;
     }
 
 }
