@@ -297,7 +297,7 @@ public class RestPaymentReportConroller {
 
     }
 
-    @RequestMapping(value = "/services", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/servicedetail", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public String servicedetailByType(@RequestParam String serviceType)
             throws JsonGenerationException, JsonMappingException, IOException {
 
