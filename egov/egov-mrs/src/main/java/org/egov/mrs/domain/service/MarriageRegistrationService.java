@@ -199,7 +199,13 @@ public class MarriageRegistrationService {
 
     @Transactional
     public void create(final MarriageRegistration registration) {
-        registrationRepository.save(registration);
+         registrationRepository.save(registration);
+    }
+    
+    @Transactional
+    public MarriageRegistration createMeesevaMarriageReg(final MarriageRegistration marriageRegistration) {
+           registrationRepository.save(marriageRegistration);
+           return marriageRegistration;
     }
 
     @Transactional
@@ -261,22 +267,37 @@ public class MarriageRegistrationService {
     }
 
     @Transactional
-    public String createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer) {
+    public MarriageRegistration createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer,boolean loggedUserIsMeesevaUser) {
         if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
                     .getNextApplicationNumberForMarriageRegistration(registration));
+
         setMarriageRegData(registration);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
-        registration.setSource(Source.SYSTEM.toString());
-        create(registration);
+        if (loggedUserIsMeesevaUser){
+            createMeesevaMarriageReg(registration);
+        }
+        else
+        {
+            registration.setSource(Source.SYSTEM.toString());
+            create(registration);
+        }
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         marriageSmsAndEmailService.sendSMS(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
         marriageSmsAndEmailService.sendEmail(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
 
-        return registration.getApplicationNo();
+        return registration;
+    }
+    
+
+    @Transactional
+    public MarriageRegistration createMeesevaRegistration(final MarriageRegistration registration,
+            final WorkflowContainer workflowContainer, boolean loggedUserIsMeesevaUser) {
+        createRegistration(registration, workflowContainer, loggedUserIsMeesevaUser);
+        return registration;
     }
 
     @Transactional
@@ -445,7 +466,7 @@ public class MarriageRegistrationService {
                 MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
-        // TODO : send sms and email after digital sign is done
+        // FixMe : send sms and email after digital sign is done
         /*
          * marriageSmsAndEmailService.sendSMS(marriageRegistration,
          * MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());

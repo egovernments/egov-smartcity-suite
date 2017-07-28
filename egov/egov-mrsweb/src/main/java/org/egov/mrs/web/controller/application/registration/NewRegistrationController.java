@@ -52,6 +52,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageFeeCalculator;
@@ -72,7 +73,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.view.RedirectView;
 
 /**
  * Handles the Marriage Registration
@@ -109,11 +113,28 @@ public class NewRegistrationController extends MarriageRegistrationController {
          * assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue()); if (null == currentuser) {
          * model.addAttribute(MESSAGE, "msg.superuser"); return "marriagecommon-error"; }
          */
-
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
+
         User logedinUser = securityUtils.getCurrentUser();
-        model.addAttribute("isEmployee",
-                !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()) && registrationWorkFlowService.isEmployee(logedinUser));
+        boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
+        String meesevaApplicationNumber = null;
+        if (request.getParameter("applicationNo") != null)
+            meesevaApplicationNumber = request.getParameter("applicationNo").toString();
+
+        if (loggedUserIsMeesevaUser) {
+
+            if (meesevaApplicationNumber == null) {
+                throw new ApplicationRuntimeException("MEESEVA.005");
+            } else {
+                marriageRegistration.setApplicationNo(meesevaApplicationNumber);                
+            }
+
+        }
+
+        model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
+                && registrationWorkFlowService.isEmployee(logedinUser));
+        
+        
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
@@ -138,12 +159,12 @@ public class NewRegistrationController extends MarriageRegistrationController {
         User logedinUser = securityUtils.getCurrentUser();
         validateApplicationDate(marriageRegistration, errors, request);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
+        boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee, errors);
         if (errors.hasErrors()) {
-            model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
-                    && registrationWorkFlowService.isEmployee(securityUtils.getCurrentUser()));
+            model.addAttribute("isEmployee", isEmployee);
             model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
             prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
             return "registration-form";
@@ -171,18 +192,40 @@ public class NewRegistrationController extends MarriageRegistrationController {
          * assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue()); if (null == currentuser) {
          * model.addAttribute(MESSAGE, "msg.superuser"); return "marriagecommon-error"; }
          */
-
-        final String appNo = marriageRegistrationService.createRegistration(marriageRegistration, workflowContainer);
+        final String appNo;
+        if (loggedUserIsMeesevaUser) {
+            marriageRegistration.setSource(MarriageConstants.SOURCE_MEESEVA);
+            appNo = marriageRegistrationService
+                    .createMeesevaRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser)
+                    .getApplicationNo();
+        } else {
+            appNo = marriageRegistrationService
+                    .createRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser).getApplicationNo();
+        }
         message = messageSource.getMessage("msg.success.forward",
                 new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
         model.addAttribute(MESSAGE, message);
         model.addAttribute("applnNo", appNo);
         model.addAttribute("isEmployee", isEmployee);
-        if (!isEmployee) {
+        if (!isEmployee && !loggedUserIsMeesevaUser) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-                return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
+            return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
+        } else if (loggedUserIsMeesevaUser) {
+            return "redirect:/registration/generate-meesevareceipt?transactionServiceNumber="
+                    + marriageRegistration.getApplicationNo();
         } else
             return "registration-ack";
+    }
+    
+    @RequestMapping(value = "/generate-meesevareceipt", method = RequestMethod.GET)
+    public RedirectView generateMeesevaReceipt(final HttpServletRequest request, final Model model) {
+        final String keyNameArray = request.getParameter("transactionServiceNumber");
+
+        final RedirectView redirect = new RedirectView(MarriageConstants.MEESEVA_REDIRECT_URL + keyNameArray, false);
+        final FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
+        if (outputFlashMap != null)
+            outputFlashMap.put("url", request.getRequestURL());
+        return redirect;
     }
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)

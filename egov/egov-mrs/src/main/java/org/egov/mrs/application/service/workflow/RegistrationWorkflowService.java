@@ -131,8 +131,10 @@ public class RegistrationWorkflowService {
         Assignment assignment = getWorkFlowInitiator(registration);
 
         final Boolean isCscOperator = isCscOperator(user);
-        // In case of CSC Operator will execute this block or online user
-        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
+        boolean loggedUserIsMeesevaUser = isMeesevaUser(user);
+
+        // In case of CSC Operator or online user or meeseva  will execute this block 
+        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser) {
             currentState = MarriageConstants.CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -143,6 +145,7 @@ public class RegistrationWorkflowService {
                     REGISTRATION_ADDNL_RULE, currentState, null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
+            if(org.apache.commons.lang.StringUtils.isBlank(registration.getSource()) || !loggedUserIsMeesevaUser)
             registration.setSource(isCscOperator ? Source.CSC.toString() : MarriageConstants.SOURCE_ONLINE);
 
         }
@@ -484,6 +487,20 @@ public class RegistrationWorkflowService {
         if (!isEmployee && (marriageRegistration != null || reIssue != null)
                 && getUserPositionByZone(marriageRegistration, reIssue) == null)
             errors.reject("notexists.position", "notexists.position");
+    }
+    
+    
+    /**
+     * Checks whether user is meeseva user or not
+     *
+     * @param user
+     * @return
+     */
+    public Boolean isMeesevaUser(final User user) {
+            for (final Role role : user.getRoles())
+                    if (role != null && role.getName().equalsIgnoreCase(MarriageConstants.MEESEVA_OPERATOR_ROLE))
+                            return true;
+            return false;
     }
 
 }

@@ -152,6 +152,18 @@ public class MarriageConstants {
     public static final String SLAFORMARRIAGEREGISTRATION = "SLAFORMARRIAGEREGISTRATION";
     public static final String SLAFORMARRIAGEREISSUE = "SLAFORMARRIAGEREISSUE";
     
+    public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
+    public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
+    public static final String SOURCE_MEESEVA = "MEESEVA";
+    public static final String OPEN = "OPEN";
+    public static final String REJECTED = "REJECTED";
+    public static final String DIGITALSIGNED = "DIGITALSIGNED";
+    public static final String REGISTERED = "REGISTERED";
+    public static final String CANCELLED = "CANCELLED";
+
+
+
+    
     private MarriageConstants() {
         // To hide implicit public
     }
