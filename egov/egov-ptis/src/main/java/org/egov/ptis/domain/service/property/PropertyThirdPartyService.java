@@ -40,6 +40,33 @@
 
 package org.egov.ptis.domain.service.property;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_OPEN;
+import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_END;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_BILL_COLLECTOR_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITALLY_SIGNED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -47,7 +74,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -56,13 +82,6 @@ import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.notice.PtNotice;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyThirdPartyService {
 
@@ -76,9 +95,6 @@ public class PropertyThirdPartyService {
     @Autowired
     private PropertyTransferService transferOwnerService;
 
-    @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
-
     // For Exemption and vacancyremission is in progess
     public byte[] getSpecialNotice(String assessmentNo, String applicationNo, String applicationType)
             throws IOException {
@@ -90,7 +106,7 @@ public class PropertyThirdPartyService {
                 || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_DEMOLITION)
-                || applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
+                || applicationType.equals(APPLICATION_TYPE_AMALGAMATION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
                 ptNotice = (PtNotice) persistenceService.find(
                         "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
@@ -106,6 +122,10 @@ public class PropertyThirdPartyService {
                         NOTICE_TYPE_MUTATION_CERTIFICATE);
             }
 
+        } else if ((applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) && (StringUtils.isNotBlank(applicationNo))) {
+                ptNotice = (PtNotice) persistenceService.find(
+                        "from PtNotice where applicationNumber = ? and noticeType = ?", applicationNo,
+                        NOTICE_TYPE_EXEMPTION);
         }
 
         if (ptNotice != null && ptNotice.getFileStore() != null) {
@@ -132,7 +152,9 @@ public class PropertyThirdPartyService {
         if (applicationType.equals(APPLICATION_TYPE_NEW_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_ALTER_ASSESSENT)
                 || applicationType.equals(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
-                || applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
+                || applicationType.equals(APPLICATION_TYPE_TAX_EXEMTION)
+                || applicationType.equals(APPLICATION_TYPE_DEMOLITION)
+                || applicationType.equals(APPLICATION_TYPE_AMALGAMATION)) {
             if (StringUtils.isNotBlank(applicationNo)) {
                 property = (PropertyImpl) persistenceService.find("From PropertyImpl where applicationNo = ? ",
                         applicationNo);
