@@ -41,11 +41,11 @@
 package org.egov.ptis.domain.service.reassign;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_REASSIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 
 import java.util.List;
 
@@ -58,6 +58,7 @@ import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.bean.ReassignInfo;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,9 @@ public class ReassignService {
 
     @Autowired
     private RevisionPetitionService revisionPetitionService;
+    
+    @Autowired
+    private PropertyService propertyService;
 
     public User getLoggedInUser() {
         return securityUtils.getCurrentUser();
@@ -106,6 +110,7 @@ public class ReassignService {
             stateAware = persistenceService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(stateAwareId));
         }
         stateAware.transition().progressWithStateCopy().withOwner(position).withInitiator(position);
+        propertyService.updateIndexes(stateAware, transactionType);
         persistenceService.persist(stateAware);
         return true;
     }
