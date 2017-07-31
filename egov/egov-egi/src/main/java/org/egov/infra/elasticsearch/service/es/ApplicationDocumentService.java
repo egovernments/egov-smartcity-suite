@@ -1221,7 +1221,7 @@ public class ApplicationDocumentService {
                 .setQuery(boolQuery).setSize(size)
                 .addSort(APPLICATION_DATE, SortOrder.DESC)
                 .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
-                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME }, null)
+                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME,"url" }, null)
                 .execute().actionGet();
 
         for (SearchHit hit : response.getHits())
@@ -1242,6 +1242,7 @@ public class ApplicationDocumentService {
                 appInfo.setAge(details.get(SLA_GAP) == null ? 0 : (int) details.get(SLA_GAP));
                 appInfo.setPendingWith(details.get(OWNER_NAME).toString());
                 appInfo.setUlbName(details.get(CITY_NAME).toString());
+                appInfo.setUrl(details.get("url").toString());
                 applications.add(appInfo);
             }
         }

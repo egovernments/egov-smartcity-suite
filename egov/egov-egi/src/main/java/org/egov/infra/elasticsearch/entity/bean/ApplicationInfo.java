@@ -39,6 +39,8 @@
  */
 package org.egov.infra.elasticsearch.entity.bean;
 
+import org.apache.commons.lang3.StringUtils;
+
 public class ApplicationInfo {
 
     private String appDate;
@@ -53,6 +55,7 @@ public class ApplicationInfo {
     private String pendingWith;
     private int age;
     private String ulbName;
+    private String url = StringUtils.EMPTY;
 
     public String getAppDate() {
         return appDate;
@@ -149,5 +152,13 @@ public class ApplicationInfo {
     public void setUlbName(String ulbName) {
         this.ulbName = ulbName;
     }
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
 
 }
