@@ -725,7 +725,7 @@ public class ComplaintController extends ApiController {
             if ("COMPLETED".equals(complaint.getStatus().getName())) {
                 if (UNSATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.TWO.name();
-                else if (SATISFACTORY.equals(citizenfeedback))
+                else if (StringUtils.isBlank(citizenfeedback) || SATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.FIVE.name();
                 complaint.setCitizenFeedback(CitizenFeedback.valueOf(citizenfeedback));
             }
