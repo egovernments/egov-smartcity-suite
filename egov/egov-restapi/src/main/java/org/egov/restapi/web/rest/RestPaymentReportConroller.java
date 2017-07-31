@@ -83,6 +83,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.JsonObject;
+
 @RestController
 public class RestPaymentReportConroller {
 
@@ -303,13 +305,14 @@ public class RestPaymentReportConroller {
 
         Map<String, String> service = null;
         List<ServiceDetails> serviceDetailsList;
+        final JsonObject jsonObject = new JsonObject();
         try {
             serviceDetailsList = serviceDetailsService.findAllByNamedQuery(CollectionConstants.QUERY_ACTIVE_SERVICES_BY_TYPE,
                     serviceType);
             if (serviceDetailsList != null && serviceDetailsList.size() >= 0) {
                 service = new LinkedHashMap<String, String>();
                 for (final ServiceDetails serviceDetail : serviceDetailsList)
-                    service.put(serviceDetail.getCode(), serviceDetail.getName());
+                    jsonObject.addProperty(serviceDetail.getCode(), serviceDetail.getName());
             }
         } catch (final Exception e) {
             final ErrorDetails er = new ErrorDetails();
@@ -317,7 +320,6 @@ public class RestPaymentReportConroller {
             er.setErrorMessage(e.getMessage());
             return JsonConvertor.convert(er);
         }
-        return JsonConvertor.convert(service);
-
+        return jsonObject.toString();
     }
 }
