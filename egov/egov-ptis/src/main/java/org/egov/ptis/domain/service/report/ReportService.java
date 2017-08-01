@@ -196,14 +196,14 @@ public class ReportService {
                     propMatView.getPropTypeMstrID().getId());
         }
 
-        BigDecimal totalArrearPropertyTax = BigDecimal.ZERO;
-        BigDecimal totalArrearEduCess = BigDecimal.ZERO;
-        BigDecimal totalArreaLibCess = BigDecimal.ZERO;
-        BigDecimal arrearPenaltyFine = BigDecimal.ZERO;
-        BigDecimal totalCurrPropertyTax = BigDecimal.ZERO;
-        BigDecimal totalCurrEduCess = BigDecimal.ZERO;
-        BigDecimal totalCurrLibCess = BigDecimal.ZERO;
-        BigDecimal currPenaltyFine = BigDecimal.ZERO;
+        BigDecimal totalArrearPropertyTax = ZERO;
+        BigDecimal totalArrearEduCess = ZERO;
+        BigDecimal totalArreaLibCess = ZERO;
+        BigDecimal arrearPenaltyFine = ZERO;
+        BigDecimal totalCurrPropertyTax = ZERO;
+        BigDecimal totalCurrEduCess = ZERO;
+        BigDecimal totalCurrLibCess = ZERO;
+        BigDecimal currPenaltyFine = ZERO;
         BigDecimal arrColl;
         BigDecimal totalColl;
         BigDecimal currColl;
@@ -213,20 +213,20 @@ public class ReportService {
         Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
         for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
             if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))) {
-                totalCurrPropertyTax = totalCurrPropertyTax.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO);
-                totalCurrEduCess = totalCurrEduCess.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO);
-                totalCurrLibCess = totalCurrLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
-                currPenaltyFine = currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null ? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO);
+                totalCurrPropertyTax = totalCurrPropertyTax.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : ZERO);
+                totalCurrEduCess = totalCurrEduCess.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : ZERO);
+                totalCurrLibCess = totalCurrLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : ZERO);
+                currPenaltyFine = currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null ? instDmdCollObj.getPenaltyFinesTax() : ZERO);
             } else if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) {
-                totalCurrPropertyTax = totalCurrPropertyTax.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO);
-                totalCurrEduCess = totalCurrEduCess.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO);
-                totalCurrLibCess = totalCurrLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
-                currPenaltyFine = currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null ? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO);
+                totalCurrPropertyTax = totalCurrPropertyTax.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : ZERO);
+                totalCurrEduCess = totalCurrEduCess.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : ZERO);
+                totalCurrLibCess = totalCurrLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : ZERO);
+                currPenaltyFine = currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null ? instDmdCollObj.getPenaltyFinesTax() : ZERO);
             } else {
-                totalArrearPropertyTax = totalArrearPropertyTax.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO);
-                totalArrearEduCess = totalArrearEduCess.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO);
-                totalArreaLibCess = totalArreaLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
-                arrearPenaltyFine = arrearPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null ? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO);
+                totalArrearPropertyTax = totalArrearPropertyTax.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : ZERO);
+                totalArrearEduCess = totalArrearEduCess.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : ZERO);
+                totalArreaLibCess = totalArreaLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : ZERO);
+                arrearPenaltyFine = arrearPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null ? instDmdCollObj.getPenaltyFinesTax() : ZERO);
             }
         }
 
@@ -252,11 +252,11 @@ public class ReportService {
         baseRegisterResultObj.setArrearPenaltyFines(arrearPenaltyFine);
         baseRegisterResultObj.setPropertyType(propertyType.getCode());
 
-        arrColl = propMatView.getAggrArrColl() != null ? propMatView.getAggrArrColl() : BigDecimal.ZERO;
+        arrColl = propMatView.getAggrArrColl() != null ? propMatView.getAggrArrColl() : ZERO;
         baseRegisterResultObj.setArrearColl(arrColl);
 
         totalColl = arrColl;
-        currColl = (propMatView.getAggrCurrFirstHalfColl() != null ? propMatView.getAggrCurrFirstHalfColl() : BigDecimal.ZERO).add(propMatView.getAggrCurrSecondHalfColl() != null ? propMatView.getAggrCurrSecondHalfColl() : BigDecimal.ZERO);
+        currColl = (propMatView.getAggrCurrFirstHalfColl() != null ? propMatView.getAggrCurrFirstHalfColl() : ZERO).add(propMatView.getAggrCurrSecondHalfColl() != null ? propMatView.getAggrCurrSecondHalfColl() : ZERO);
         totalColl = totalColl.add(currColl);
         baseRegisterResultObj.setCurrentColl(currColl);
         baseRegisterResultObj.setTotalColl(totalColl);
@@ -345,8 +345,8 @@ public class ReportService {
             final Object[] object = (Object[]) objects;
             CollectionIndex collectionIndex = (CollectionIndex) object[0];
             BasicPropertyImpl basicProperty = (BasicPropertyImpl) object[1];
-            arrLibCess = BigDecimal.ZERO;
-            currLibCess = BigDecimal.ZERO;
+            arrLibCess = ZERO;
+            currLibCess = ZERO;
             result = new DailyCollectionReportResult();
             result.setReceiptNumber(collectionIndex.getReceiptNumber());
             result.setReceiptDate(collectionIndex.getReceiptDate());
@@ -368,9 +368,9 @@ public class ReportService {
             result.setCurrentAmount(collectionIndex.getCurrentAmount());
             result.setArrearLibCess(collectionIndex.getArrearCess());
             result.setCurrentLibCess(collectionIndex.getCurrentCess());
-            arrLibCess = collectionIndex.getCurrentCess() != null ? collectionIndex.getCurrentCess() : BigDecimal.ZERO;
-            currLibCess = collectionIndex.getArrearCess() != null ? collectionIndex.getArrearCess() : BigDecimal.ZERO;
-            rebateAmount = collectionIndex.getReductionAmount() != null ? collectionIndex.getReductionAmount() : BigDecimal.ZERO;
+            arrLibCess = collectionIndex.getCurrentCess() != null ? collectionIndex.getCurrentCess() : ZERO;
+            currLibCess = collectionIndex.getArrearCess() != null ? collectionIndex.getArrearCess() : ZERO;
+            rebateAmount = collectionIndex.getReductionAmount() != null ? collectionIndex.getReductionAmount() : ZERO;
             result.setTotalLibCess(arrLibCess.add(currLibCess));
             result.setTotalPenalty(collectionIndex.getLatePaymentCharges());
             result.setTotalRebate(rebateAmount);
@@ -586,7 +586,7 @@ public class ReportService {
                         .divide(BigDecimal.valueOf(noofDays), 4, RoundingMode.HALF_UP)
                         .setScale(2, RoundingMode.HALF_UP));
             } else
-                bcResult.setDay_target(BigDecimal.ZERO);
+                bcResult.setDay_target(ZERO);
 
             if (bcResult.getCummulative_total_Collection() > 0)
                 bcResult.setCummulative_currentYear_Percentage(((BigDecimal.valueOf(bcResult
@@ -613,7 +613,7 @@ public class ReportService {
                         BigDecimal.valueOf(bcResult.getLastyear_cummulative_collection()), 4, RoundingMode.HALF_UP))
                         .multiply(BigDecimal.valueOf(100)).setScale(2, RoundingMode.HALF_UP));
             else
-                bcResult.setGrowth((BigDecimal.ZERO));
+                bcResult.setGrowth((ZERO));
         }
 
         for (BillCollectorDailyCollectionReportResult bcResult : listBcPayment) {
@@ -813,8 +813,8 @@ public class ReportService {
                 percentage = ((bcResult.getCummulative_total_Collection() + bcResult.getCummulative_total_CollectionInterest()) * 100) / (bcResult.getTarget_total_demand());
                 bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.valueOf(percentage.isNaN() ? 0.0 : percentage));
             } else {
-                bcResult.setCummulative_total_CollectionPercentage(BigDecimal.ZERO);
-                bcResult.setCummulative_total_CollectionInterestPercentage(BigDecimal.ZERO);
+                bcResult.setCummulative_total_CollectionPercentage(ZERO);
+                bcResult.setCummulative_total_CollectionInterestPercentage(ZERO);
             }
 
             bcResult.setBalance_arrearTax(bcResult.getArrears_demand() - bcResult.getArrears_demand_collection());
@@ -974,9 +974,9 @@ public class ReportService {
         List<BaseRegisterVLTResult> baseRegisterVLTResultList = new LinkedList<>();
 
         for (PropertyMaterlizeView propMatView : properties) {
-            BigDecimal currFirstHalfLibCess = BigDecimal.ZERO;
-            BigDecimal currSecondHalfLibCess = BigDecimal.ZERO;
-            BigDecimal arrLibCess = BigDecimal.ZERO;
+            BigDecimal currFirstHalfLibCess = ZERO;
+            BigDecimal currSecondHalfLibCess = ZERO;
+            BigDecimal arrLibCess = ZERO;
             BasicProperty basicProperty;
             BaseRegisterVLTResult baseRegisterVLTResultObj;
             baseRegisterVLTResultObj = new BaseRegisterVLTResult();
@@ -987,11 +987,11 @@ public class ReportService {
 
             baseRegisterVLTResultObj.setSurveyNo(propMatView.getSurveyNo());
             baseRegisterVLTResultObj.setTaxationRate(taxRate);
-            baseRegisterVLTResultObj.setMarketValue(propMatView.getMarketValue() != null ? propMatView.getMarketValue().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
-            baseRegisterVLTResultObj.setDocumentValue(propMatView.getCapitalValue() != null ? propMatView.getCapitalValue().setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
+            baseRegisterVLTResultObj.setMarketValue(propMatView.getMarketValue() != null ? propMatView.getMarketValue().setScale(2, BigDecimal.ROUND_HALF_UP) : ZERO);
+            baseRegisterVLTResultObj.setDocumentValue(propMatView.getCapitalValue() != null ? propMatView.getCapitalValue().setScale(2, BigDecimal.ROUND_HALF_UP) : ZERO);
             basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propMatView.getPropertyId());
             baseRegisterVLTResultObj.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
-            baseRegisterVLTResultObj.setSitalArea(propMatView.getSitalArea() != null ? (propMatView.getSitalArea()).setScale(2, BigDecimal.ROUND_HALF_UP) : BigDecimal.ZERO);
+            baseRegisterVLTResultObj.setSitalArea(propMatView.getSitalArea() != null ? (propMatView.getSitalArea()).setScale(2, BigDecimal.ROUND_HALF_UP) : ZERO);
             if (propMatView.getMarketValue() != null && propMatView.getCapitalValue() != null)
                 baseRegisterVLTResultObj.setHigherValueForImposedtax(propMatView.getMarketValue().compareTo(propMatView.getCapitalValue()) > 0 ? propMatView.getMarketValue().setScale(2, BigDecimal.ROUND_HALF_UP) : propMatView.getCapitalValue().setScale(2, BigDecimal.ROUND_HALF_UP));
             baseRegisterVLTResultObj.setIsExempted(propMatView.getIsExempted() != null ? (propMatView.getIsExempted() ? "Yes" : "No") : "");
@@ -1000,21 +1000,21 @@ public class ReportService {
             Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
             for (InstDmdCollMaterializeView instDmdCollObj : instDemandCollList) {
                 if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF))) {
-                    currFirstHalfLibCess = instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO;
+                    currFirstHalfLibCess = instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : ZERO;
                     baseRegisterVLTResultObj.setLibraryCessTaxFirstHlf(currFirstHalfLibCess);
                 } else if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF))) {
-                    currSecondHalfLibCess = instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO;
+                    currSecondHalfLibCess = instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : ZERO;
                     baseRegisterVLTResultObj.setLibraryCessTaxSecondHlf(currSecondHalfLibCess);
                 } else {
-                    arrLibCess = arrLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
+                    arrLibCess = arrLibCess.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : ZERO);
                     baseRegisterVLTResultObj.setArrearLibraryTax(arrLibCess);
                 }
             }
-            baseRegisterVLTResultObj.setPropertyTaxFirstHlf((propMatView.getAggrCurrFirstHalfDmd() != null ? propMatView.getAggrCurrFirstHalfDmd() : BigDecimal.ZERO).subtract(currFirstHalfLibCess));
-            baseRegisterVLTResultObj.setPropertyTaxSecondHlf((propMatView.getAggrCurrSecondHalfDmd() != null ? propMatView.getAggrCurrSecondHalfDmd() : BigDecimal.ZERO).subtract(currSecondHalfLibCess));
-            baseRegisterVLTResultObj.setCurrTotal((propMatView.getAggrCurrFirstHalfDmd() != null ? propMatView.getAggrCurrFirstHalfDmd() : BigDecimal.ZERO).
-                    add((propMatView.getAggrCurrSecondHalfDmd() != null ? propMatView.getAggrCurrSecondHalfDmd() : BigDecimal.ZERO)));
-            BigDecimal currPenaltyFine = BigDecimal.ZERO;
+            baseRegisterVLTResultObj.setPropertyTaxFirstHlf((propMatView.getAggrCurrFirstHalfDmd() != null ? propMatView.getAggrCurrFirstHalfDmd() : ZERO).subtract(currFirstHalfLibCess));
+            baseRegisterVLTResultObj.setPropertyTaxSecondHlf((propMatView.getAggrCurrSecondHalfDmd() != null ? propMatView.getAggrCurrSecondHalfDmd() : ZERO).subtract(currSecondHalfLibCess));
+            baseRegisterVLTResultObj.setCurrTotal((propMatView.getAggrCurrFirstHalfDmd() != null ? propMatView.getAggrCurrFirstHalfDmd() : ZERO).
+                    add((propMatView.getAggrCurrSecondHalfDmd() != null ? propMatView.getAggrCurrSecondHalfDmd() : ZERO)));
+            BigDecimal currPenaltyFine = ZERO;
             if (propMatView.getAggrCurrFirstHalfPenaly() != null) {
                 currPenaltyFine = currPenaltyFine.add(propMatView.getAggrCurrFirstHalfPenaly());
             }
@@ -1022,27 +1022,27 @@ public class ReportService {
                 currPenaltyFine = currPenaltyFine.add(propMatView.getAggrCurrSecondHalfPenaly());
             }
             baseRegisterVLTResultObj.setPenaltyFines(currPenaltyFine);
-            baseRegisterVLTResultObj.setArrearPropertyTax(propMatView.getAggrArrDmd() != null && propMatView.getAggrArrDmd().compareTo(BigDecimal.ZERO) >= 1 ? (propMatView.getAggrArrDmd()).subtract(arrLibCess) : BigDecimal.ZERO);
-            baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly() != null ? propMatView.getAggrArrearPenaly() : BigDecimal.ZERO);
+            baseRegisterVLTResultObj.setArrearPropertyTax(propMatView.getAggrArrDmd() != null && propMatView.getAggrArrDmd().compareTo(ZERO) >= 1 ? (propMatView.getAggrArrDmd()).subtract(arrLibCess) : ZERO);
+            baseRegisterVLTResultObj.setArrearPenaltyFines(propMatView.getAggrArrearPenaly() != null ? propMatView.getAggrArrearPenaly() : ZERO);
             BigDecimal arrTotal;
             BigDecimal arrColl;
             BigDecimal totalColl;
             BigDecimal currColl;
-            arrTotal = propMatView.getAggrArrDmd() != null ? propMatView.getAggrArrDmd() : BigDecimal.ZERO;
+            arrTotal = propMatView.getAggrArrDmd() != null ? propMatView.getAggrArrDmd() : ZERO;
             baseRegisterVLTResultObj.setArrearTotal(arrTotal);
 
-            arrColl = propMatView.getAggrArrColl() != null ? propMatView.getAggrArrColl() : BigDecimal.ZERO;
+            arrColl = propMatView.getAggrArrColl() != null ? propMatView.getAggrArrColl() : ZERO;
             baseRegisterVLTResultObj.setArrearColl(arrColl);
 
             totalColl = arrColl;
-            currColl = (propMatView.getAggrCurrFirstHalfColl() != null ? propMatView.getAggrCurrFirstHalfColl() : BigDecimal.ZERO).add(propMatView.getAggrCurrSecondHalfColl() != null ? propMatView.getAggrCurrSecondHalfColl() : BigDecimal.ZERO);
+            currColl = (propMatView.getAggrCurrFirstHalfColl() != null ? propMatView.getAggrCurrFirstHalfColl() : ZERO).add(propMatView.getAggrCurrSecondHalfColl() != null ? propMatView.getAggrCurrSecondHalfColl() : ZERO);
             totalColl = totalColl.add(currColl);
             baseRegisterVLTResultObj.setCurrentColl(currColl);
             baseRegisterVLTResultObj.setTotalColl(totalColl);
 
             String arrearPerFrom;
             String arrearPerTo;
-            if (instDemandCollList.size() > 1 && ((arrTotal.subtract(arrColl).compareTo(BigDecimal.ZERO)) > 1)) {
+            if (instDemandCollList.size() > 1 && ((arrTotal.subtract(arrColl).compareTo(ZERO)) > 1)) {
                 arrearPerTo = dateFormatter.format(DateUtils.add(propertyTaxCommonUtils.getCurrentInstallment().getFromDate(), Calendar.DAY_OF_MONTH, -1));
                 arrearPerFrom = dateFormatter.format(instDemandCollList.get(0).getInstallment().getFromDate());
                 baseRegisterVLTResultObj.setArrearPeriod(arrearPerFrom + "-" + arrearPerTo);
@@ -1058,7 +1058,7 @@ public class ReportService {
 
     private BigDecimal getTaxRate(String taxHead) {
         taxRateProps = propertyTaxUtil.loadTaxRates();
-        BigDecimal taxRate = BigDecimal.ZERO;
+        BigDecimal taxRate = ZERO;
         if (taxRateProps != null) {
             taxRate = new BigDecimal(taxRateProps.getProperty(taxHead));
         }
@@ -1243,67 +1243,67 @@ public class ReportService {
         return inst==null?maxInstallment:inst;
     }
     private BigDecimal getVacLandTax(InstDmdCollMaterializeView idc) {
-        return idc.getVacantLandTax() != null ? idc.getVacantLandTax() : BigDecimal.ZERO;
+        return idc.getVacantLandTax() != null ? idc.getVacantLandTax() : ZERO;
     }
 
     private BigDecimal getUnaPenalty(InstDmdCollMaterializeView idc) {
-        return idc.getUnauthPenaltyTax() != null ? idc.getUnauthPenaltyTax() : BigDecimal.ZERO;
+        return idc.getUnauthPenaltyTax() != null ? idc.getUnauthPenaltyTax() : ZERO;
     }
 
     private BigDecimal getSewTax(InstDmdCollMaterializeView idc) {
-        return idc.getSewTax() != null ? idc.getSewTax() : BigDecimal.ZERO;
+        return idc.getSewTax() != null ? idc.getSewTax() : ZERO;
     }
 
     private BigDecimal getPubSerCharge(InstDmdCollMaterializeView idc) {
-        return idc.getPubSerChrgTax() != null ? idc.getPubSerChrgTax() : BigDecimal.ZERO;
+        return idc.getPubSerChrgTax() != null ? idc.getPubSerChrgTax() : ZERO;
     }
 
     private BigDecimal getPenaltyFines(InstDmdCollMaterializeView idc) {
-        return idc.getPenaltyFinesTax() != null ? idc.getPenaltyFinesTax() : BigDecimal.ZERO;
+        return idc.getPenaltyFinesTax() != null ? idc.getPenaltyFinesTax() : ZERO;
     }
 
     private BigDecimal getLibCess(InstDmdCollMaterializeView idc) {
-        return idc.getLibCessTax() != null ? idc.getLibCessTax() : BigDecimal.ZERO;
+        return idc.getLibCessTax() != null ? idc.getLibCessTax() : ZERO;
     }
 
     private BigDecimal getEduCess(InstDmdCollMaterializeView idc) {
-        return idc.getEduCessTax() != null ? idc.getEduCessTax() : BigDecimal.ZERO;
+        return idc.getEduCessTax() != null ? idc.getEduCessTax() : ZERO;
     }
 
     private BigDecimal getGenTax(InstDmdCollMaterializeView idc) {
-        return idc.getGeneralTax() != null ? idc.getGeneralTax() : BigDecimal.ZERO;
+        return idc.getGeneralTax() != null ? idc.getGeneralTax() : ZERO;
     }
 
     private BigDecimal getVacLColl(InstDmdCollMaterializeView idc) {
-        return idc.getVacantLandTaxColl() != null ? idc.getVacantLandTaxColl() : BigDecimal.ZERO;
+        return idc.getVacantLandTaxColl() != null ? idc.getVacantLandTaxColl() : ZERO;
     }
 
     private BigDecimal getUnauthPenColl(InstDmdCollMaterializeView idc) {
-        return idc.getUnauthPenaltyTaxColl() != null ? idc.getUnauthPenaltyTaxColl() : BigDecimal.ZERO;
+        return idc.getUnauthPenaltyTaxColl() != null ? idc.getUnauthPenaltyTaxColl() : ZERO;
     }
 
     private BigDecimal getSewColl(InstDmdCollMaterializeView idc) {
-        return idc.getSewTaxColl() != null ? idc.getSewTaxColl() : BigDecimal.ZERO;
+        return idc.getSewTaxColl() != null ? idc.getSewTaxColl() : ZERO;
     }
 
     private BigDecimal getPubServiceColl(InstDmdCollMaterializeView idc) {
-        return idc.getPubSerChrgTaxColl() != null ? idc.getPubSerChrgTaxColl() : BigDecimal.ZERO;
+        return idc.getPubSerChrgTaxColl() != null ? idc.getPubSerChrgTaxColl() : ZERO;
     }
 
     private BigDecimal getPenaltyFineColl(InstDmdCollMaterializeView idc) {
-        return idc.getPenaltyFinesTaxColl() != null ?  idc.getPenaltyFinesTaxColl() : BigDecimal.ZERO;
+        return idc.getPenaltyFinesTaxColl() != null ?  idc.getPenaltyFinesTaxColl() : ZERO;
     }
 
     private BigDecimal getLibCessColl(InstDmdCollMaterializeView idc) {
-        return idc.getLibCessTaxColl() != null ? idc.getLibCessTaxColl() : BigDecimal.ZERO;
+        return idc.getLibCessTaxColl() != null ? idc.getLibCessTaxColl() : ZERO;
     }
 
     private BigDecimal getEduCessColl(InstDmdCollMaterializeView idc) {
-        return idc.getEduCessTaxColl() != null ?  idc.getEduCessTaxColl() : BigDecimal.ZERO;
+        return idc.getEduCessTaxColl() != null ?  idc.getEduCessTaxColl() : ZERO;
     }
 
     private BigDecimal getGenTaxColl(InstDmdCollMaterializeView idc) {
-        return idc.getGeneralTaxColl() != null ? idc.getGeneralTaxColl() : BigDecimal.ZERO;
+        return idc.getGeneralTaxColl() != null ? idc.getGeneralTaxColl() : ZERO;
     }
     
     
