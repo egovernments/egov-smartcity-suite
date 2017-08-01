@@ -107,9 +107,10 @@ import static org.egov.tl.utils.Constants.*;
 public abstract class AbstractLicenseService<T extends License> {
 
     private static final String ARREAR = "arrear";
-    private static final String LICENSE_WF_INITIATOR_NOT_DEFINED = "license.wf.initiator.not.defined";
     private static final String CURRENT = "current";
     private static final String PENALTY = "penalty";
+    private static final String ERROR_KEY_WF_INITIATOR_NOT_DEFINED = "error.wf.initiator.not.defined";
+    private static final String ERROR_KEY_WF_NEXT_OWNER_NOT_FOUND = "error.wf.next.owner.not.found";
 
     @Autowired
     @Qualifier("entityQueryService")
@@ -252,7 +253,7 @@ public abstract class AbstractLicenseService<T extends License> {
             license.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         } else
-            throw new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED);
+            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
     }
 
     private List<Assignment> getAssignments() {
@@ -261,12 +262,12 @@ public abstract class AbstractLicenseService<T extends License> {
         List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         if (assignmentList.isEmpty()) {
             nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(SA_DESIGNATION)).
-                    orElseThrow(() -> new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED));
+                    orElseThrow(() -> new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED));
             assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         }
         if (assignmentList.isEmpty()) {
             nextAssigneeDesig = Optional.ofNullable(designationService.getDesignationByName(RC_DESIGNATION)).
-                    orElseThrow(() -> new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED));
+                    orElseThrow(() -> new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED));
             assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         }
         return assignmentList;
@@ -379,7 +380,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 if (!assignments.isEmpty())
                     wfInitiator = assignments.get(0).getPosition();
                 else
-                    throw new ValidationException("wf.initiator.not.found", "No employee assigned to process Renewal application");
+                    throw new ValidationException(ERROR_KEY_WF_NEXT_OWNER_NOT_FOUND, "No employee assigned to process Renewal application", "Renewal");
             }
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
@@ -388,7 +389,7 @@ public abstract class AbstractLicenseService<T extends License> {
             else if (license.transitionCompleted())
                 license.transition().startNext();
             else
-                throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Renewal process, application under processing");
+                throw new ValidationException("error.appl.under.workflow", "Cannot initiate Renewal process, application under processing");
             license.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withNatureOfTask(RENEWAL_NATUREOFWORK)
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
@@ -474,7 +475,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 if (!assignments.isEmpty())
                     wfInitiator = assignments.get(0).getPosition();
                 else
-                    throw new ValidationException("wf.initiator.not.found", "No employee assigned to process this application");
+                    throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
                 final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                         null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
                 license.transition().start().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
@@ -537,7 +538,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 .filter(position -> position.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN))
                 .findFirst()
                 .orElseThrow(
-                        () -> new ValidationException("wf.comm.pos.not.found", "You are not authorized approve this application"));
+                        () -> new ValidationException("error.wf.comm.pos.not.found", "You are not authorized approve this application"));
     }
 
     public WorkFlowMatrix getWorkFlowMatrixApi(License license, WorkflowBean workflowBean) {
@@ -715,7 +716,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     if (!assignments.isEmpty())
                         wfInitiator = assignments.get(0).getPosition();
                     else
-                        throw new ValidationException("wf.initiator.not.found", "No employee assigned to process Closure application");
+                        throw new ValidationException(ERROR_KEY_WF_NEXT_OWNER_NOT_FOUND, "No employee assigned to process Closure application", "Closure");
                 }
                 if (!license.hasState())
                     license.transition().start();
@@ -829,7 +830,7 @@ public abstract class AbstractLicenseService<T extends License> {
             license.setEgwStatus(
                     egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         } else
-            throw new ValidationException(LICENSE_WF_INITIATOR_NOT_DEFINED, LICENSE_WF_INITIATOR_NOT_DEFINED);
+            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
     }
 
     public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear) {
