@@ -71,6 +71,7 @@
 				<form:hidden path="connection.propertyIdentifier" value="${changeOfUse.connection.propertyIdentifier}"/>
 				<form:hidden path="waterSource" value="${changeOfUse.waterSource.id}"/>
 				<form:hidden path="category" value="${changeOfUse.category.id}"/>
+				<form:hidden path="meesevaApplicationNumber" value="${changeOfUse.meesevaApplicationNumber}" />
 				<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 			</div>	

@@ -40,6 +40,7 @@
 package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import org.egov.commons.entity.Source;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -156,5 +157,12 @@ public class CloserConnectionService {
             waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
+    }
+
+    public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails closeConnection,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction, final HashMap<String, String> meesevaParams, final String sourceChannel) {
+        return updatecloserConnection(closeConnection, approvalPosition, approvalComent, additionalRule, workFlowAction,
+                sourceChannel);
     }
 }

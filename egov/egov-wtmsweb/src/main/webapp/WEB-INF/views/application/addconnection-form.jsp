@@ -68,6 +68,7 @@
 				<form:hidden path="applicationType" id="applicationType.id" value="${addConnection.applicationType.id}"/>
 				<form:hidden path="connectionStatus" id="connectionStatus" value="${addConnection.connectionStatus}"/>
 				<form:hidden path="connection.parentConnection" value="${parentConnection.id}"/>
+				<form:hidden path="meesevaApplicationNumber" value="${addConnection.meesevaApplicationNumber}"/>
 				<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>
 				<form:hidden path="connection.propertyIdentifier" value="${waterConnectionDetails.connection.propertyIdentifier}"/>
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>

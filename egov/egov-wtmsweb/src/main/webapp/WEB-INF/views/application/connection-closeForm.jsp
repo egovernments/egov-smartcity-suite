@@ -63,7 +63,7 @@
 			<input type="hidden" name="loggedInCSCUser" id="loggedInCSCUser" value="${loggedInCSCUser}">
             <input type="hidden" name="citizenPortalUser" id="citizenPortalUser" value="${citizenPortalUser}">
 			<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
-			
+			<form:hidden path="meesevaApplicationNumber" value="${addConnection.meesevaApplicationNumber}"/>
 			<input type="hidden" id="previousApplicationType" value="${previousApplicationType}" name="previousApplicationType"/>
 			<input id="applicationCode" type="hidden" value="<c:out value="${waterConnectionDetails.applicationNumber}" />" />  						
 				<jsp:include page="commonappdetails-view.jsp"></jsp:include>

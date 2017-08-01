@@ -40,6 +40,7 @@
 package org.egov.wtms.application.service;
 
 import java.math.BigDecimal;
+import java.util.HashMap;
 
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -173,7 +174,8 @@ public class ChangeOfUseService {
         if (appProcessTime != null)
             changeOfUse.setDisposalDate(waterConnectionDetailsService.getDisposalDate(changeOfUse, appProcessTime));
         final WaterConnectionDetails savedChangeOfUse = waterConnectionDetailsRepository.save(changeOfUse);
-        if (userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername().equals(WaterTaxConstants.USERNAME_ANONYMOUS)) {
+        if (userService.getUserById(savedChangeOfUse.getCreatedBy().getId()).getUsername()
+                .equals(WaterTaxConstants.USERNAME_ANONYMOUS)) {
             ApplicationThreadLocals.setUserId(Long.valueOf("40"));
             savedChangeOfUse.setCreatedBy(userService.getUserById(ApplicationThreadLocals.getUserId()));
         }
@@ -181,11 +183,17 @@ public class ChangeOfUseService {
                 .getInitialisedWorkFlowBean();
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedChangeOfUse, approvalPosition,
                 approvalComent, additionalRule, workFlowAction);
-        if(waterTaxUtils.isCitizenPortalUser(userService.getUserById(savedChangeOfUse.getCreatedBy().getId()))){
+        if (waterTaxUtils.isCitizenPortalUser(userService.getUserById(savedChangeOfUse.getCreatedBy().getId())))
             waterConnectionDetailsService.pushPortalMessage(savedChangeOfUse);
-        }
         waterConnectionDetailsService.updateIndexes(savedChangeOfUse, sourceChannel);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(changeOfUse, workFlowAction);
         return savedChangeOfUse;
+    }
+
+    public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction, final HashMap<String, String> meesevaParams, final String sourceChannel) {
+        return createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, additionalRule, workFlowAction,
+                sourceChannel);
     }
 }
