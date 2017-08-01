@@ -56,6 +56,7 @@ public class ApplicationInfo {
     private int age;
     private String ulbName;
     private String url = StringUtils.EMPTY;
+    private String cityCode=StringUtils.EMPTY;
 
     public String getAppDate() {
         return appDate;
@@ -158,6 +159,14 @@ public class ApplicationInfo {
 
     public void setUrl(String url) {
         this.url = url;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
     }
 
 
