@@ -38,42 +38,73 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.workflow.service;
+package org.egov.eis.contract;
 
-import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.repository.StateRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
-import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
-public class StateService {
+public class EmployeeRequest {
 
-    private final StateRepository stateRepository;
+    @JsonProperty("RequestInfo")
+    private RequestInfo requestInfo;
 
-    @Autowired
-    public StateService(final StateRepository stateRepository) {
-        this.stateRepository = stateRepository;
+    private String code;
+
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private Date fromDate;
+
+    @DateTimeFormat(pattern = "dd/MM/yyyy")
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    private Date toDate;
+
+    private String positionName;
+
+    private Boolean isPositionChanged;
+
+    public String getCode() {
+        return code;
     }
 
-    public boolean isPositionUnderWorkflow(final Long posId, final Date givenDate) {
-        return stateRepository.countByOwnerPosition_IdAndCreatedDateGreaterThanEqual(posId, givenDate) > 0;
+    public void setCode(final String code) {
+        this.code = code;
     }
 
-    public List<String> getAssignedWorkflowTypeNames(final List<Long> ownerIds) {
-        return stateRepository.findAllTypeByOwnerAndStatus(ownerIds);
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public State getStateById(final Long id) {
-        return stateRepository.findOne(id);
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public Date getMaxCreatedDateByPositionId(final Long posId) {
-        return stateRepository.findMaxCreatedDateByOwnerPosId(posId);
+    public Date getToDate() {
+        return toDate;
     }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getPositionName() {
+        return positionName;
+    }
+
+    public void setPositionName(final String positionName) {
+        this.positionName = positionName;
+    }
+
+    public Boolean getIsPositionChanged() {
+        return isPositionChanged;
+    }
+
+    public void setIsPositionChanged(final Boolean isPositionChanged) {
+        this.isPositionChanged = isPositionChanged;
+    }
+
 
 }
+
