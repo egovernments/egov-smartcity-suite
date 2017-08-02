@@ -42,6 +42,8 @@ package org.egov.infra.workflow.entity;
 
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.annotations.Fetch;
+import org.hibernate.annotations.FetchMode;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -66,8 +68,9 @@ public class WorkflowTypes extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_WORKFLOWTYPES, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "module")
+    @Fetch(FetchMode.JOIN)
     private Module module;
 
     private String type;
