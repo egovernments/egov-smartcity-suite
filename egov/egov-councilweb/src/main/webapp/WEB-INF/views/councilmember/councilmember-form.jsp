@@ -154,7 +154,7 @@
 				<div class="col-sm-3 add-margin">
 					<form:input type="text" cssClass="form-control patternvalidation"
 						data-pattern="regexp_alphabetspecialcharacters" path="emailId"
-						id="emailId" maxlength="32" required="required" />
+						id="emailId" maxlength="52" required="required" />
 					<form:errors path="emailId" cssClass="error-msg" />
 				</div>
 				<label class="col-sm-2 control-label text-right"><spring:message
