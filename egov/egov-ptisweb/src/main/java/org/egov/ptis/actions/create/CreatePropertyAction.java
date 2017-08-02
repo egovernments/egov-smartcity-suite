@@ -1485,9 +1485,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(parentIndex)) {
                     final BasicProperty basicProperty = basicPropertyService
                             .find("From BasicPropertyImpl where upicNo = ? ", parentIndex);
-                    if (basicProperty != null && basicProperty.isUnderWorkflow())
-                        addActionError(getText("error.parent.underworkflow"));
-                    else if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
+                    if (areaOfPlot != null && !areaOfPlot.isEmpty()) {
                         final Area area = new Area();
                         area.setArea(new Float(areaOfPlot));
                         property.getPropertyDetail().setSitalArea(area);
