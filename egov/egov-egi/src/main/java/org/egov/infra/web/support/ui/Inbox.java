@@ -50,6 +50,7 @@ public class Inbox {
     private String status;
     private String details;
     private String link;
+    private String moduleName;
     private Date createdDate;
 
     public String getId() {
@@ -106,6 +107,14 @@ public class Inbox {
 
     public void setLink(final String link) {
         this.link = link;
+    }
+
+    public String getModuleName() {
+        return moduleName;
+    }
+
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
     }
 
     public Date getCreatedDate() {

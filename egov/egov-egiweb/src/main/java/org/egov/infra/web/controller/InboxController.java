@@ -109,6 +109,7 @@ public class InboxController {
             inboxItem.setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
             inboxItem.setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
             inboxItem.setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
+            inboxItem.setModuleName(workflowTypes.getModule().getDisplayName());
             inboxItem.setCreatedDate(state.getCreatedDate());
             inboxItems.add(inboxItem);
         }
