@@ -40,17 +40,20 @@
 
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.ptis.domain.model.enums.BasicPropertyStatus.ALL;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INACTIVE;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.ClosedConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.CloserConnectionService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -72,9 +75,18 @@ public class ClosedConnectionController {
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
+    @Autowired
+    private CloserConnectionService closerConnectionService;
+
     @RequestMapping(value = "/closedConsumerCode/{consumerCode}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request) {
+        String validationMessage = "";
         final ClosedConnection closedConnection = new ClosedConnection();
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ACTIVE);
+        if (waterConnectionDetails != null)
+            validationMessage = closerConnectionService.validateChangeOfUseConnection(waterConnectionDetails);
+        model.addAttribute("validationMessage", validationMessage);
         closedConnection.setConsumerNo(consumerCode);
         model.addAttribute("closedConnection", closedConnection);
         return "closed-consumercode";
@@ -85,17 +97,17 @@ public class ClosedConnectionController {
             @PathVariable final String consumerCode, final BindingResult resultBinder,
             final RedirectAttributes redirectAttrs, final Model model) {
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ACTIVE);
         if (waterConnectionDetails == null)
             throw new ValidationException("err.hsc.no.inactive");
         waterConnectionDetails.setCloseApprovalDate(closedConnection.getClosedDate());
         waterConnectionDetails.setReferenceNumber(closedConnection.getReferenceNo());
         waterConnectionDetails.setDeactivateReason(closedConnection.getDeactivateReason());
-        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
+        waterConnectionDetails.setConnectionStatus(INACTIVE);
         waterConnectionDetailsService.save(waterConnectionDetails);
         final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                 waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+                PropertyExternalService.FLAG_FULL_DETAILS, ALL);
         waterConnectionDetailsService.createWaterChargeIndex(waterConnectionDetails, assessmentDetails,
                 waterConnectionDetailsService.getTotalAmount(waterConnectionDetails));
         model.addAttribute("consumerCode", consumerCode);
