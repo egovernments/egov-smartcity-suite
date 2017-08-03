@@ -56,6 +56,7 @@
     <link rel="stylesheet" href="<cdn:url  value='/resources/global/css/jquery/plugins/select2/4.0.3/select2.min.css' context='/egi'/>">
 
     <script src="<cdn:url  value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+    <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
     <script type="text/javascript" src="<cdn:url  value='/resources/js/app/license-common.js?rnd=${app_release_no}'/>"></script>
     <script type="text/javascript" src="<cdn:url  value='/resources/js/app/trade-license.js?rnd=${app_release_no}'/>"></script>
 

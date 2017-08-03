@@ -42,7 +42,6 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <html>
 <head>
-    <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
     <title><s:text name="page.title.newtrade"/></title>
     <script>
 

@@ -105,7 +105,6 @@
         </s:push>
     </s:form>
 </div>
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
 <script>
     function onSubmitValidations() {
         return true;
