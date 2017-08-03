@@ -1,41 +1,48 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.tl.web.actions;
@@ -110,7 +117,9 @@ import static org.egov.tl.utils.Constants.*;
                 "namespace", "/viewtradelicense", "method", "generateCertificate"}),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
         @Result(name = "report", location = "newTradeLicense-report.jsp"),
-        @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp")})
+        @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp"),
+        @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect",
+                params = {"prependServletContext", "false", "transactionServiceNumber", "${applicationNo}"})})
 public abstract class BaseLicenseAction<T extends License> extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
 
@@ -120,6 +129,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient String reportId;
     protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
     protected transient boolean showAgreementDtl;
+    protected transient String applicationNo;
+
     @Autowired
     protected transient LicenseUtils licenseUtils;
     @Autowired
@@ -172,11 +183,16 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @ValidationErrorPage(NEW)
     public String create(final T license) {
         populateWorkflowBean();
-        licenseService().create(license, workflowBean);
-        addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-        setHasCscOperatorRole(
-                securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
-        return ACKNOWLEDGEMENT;
+        if (tradeLicenseService.currentUserIsMeeseva()) {
+            licenseService().createWithMeseva(license, workflowBean);
+            applicationNo = license.getApplicationNumber();
+        } else {
+            licenseService().create(license, workflowBean);
+            addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
+            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
+        }
+
+        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
 
     // sub class should get the object of the model and set to license()
@@ -261,11 +277,15 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @SkipValidation
     public String renew() {
         populateWorkflowBean();
-        licenseService().renew(license(), workflowBean);
-        addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
-        setHasCscOperatorRole(
-                securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
-        return ACKNOWLEDGEMENT_RENEW;
+        if (tradeLicenseService.currentUserIsMeeseva()) {
+            licenseService().renewWithMeeseva(license(), workflowBean);
+            applicationNo = license().getApplicationNumber();
+        } else {
+            licenseService().renew(license(), workflowBean);
+            addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
+            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
+        }
+        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
 
     @SkipValidation
@@ -488,6 +508,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void setTradeLicenseSmsAndEmailService(final TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
         this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
+    }
+
+    public String getApplicationNo() {
+        return applicationNo;
+    }
+
+    public void setApplicationNo(final String applicationNo) {
+        this.applicationNo = applicationNo;
     }
 
     public boolean isHasCscOperatorRole() {

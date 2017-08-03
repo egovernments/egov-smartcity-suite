@@ -1,41 +1,48 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.tl.service;
@@ -101,6 +108,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.tl.utils.Constants.*;
 
 @Transactional(readOnly = true)
@@ -212,7 +220,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void create(final T license, final WorkflowBean workflowBean) {
+    public License create(final T license, final WorkflowBean workflowBean) {
         final Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate())
                 .getFromDate();
         final Date toRange = installmentDao
@@ -223,7 +231,8 @@ public abstract class AbstractLicenseService<T extends License> {
         raiseNewDemand(license);
         license.getLicensee().setLicense(license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
+        if (isBlank(license.getApplicationNumber()))
+            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         processAndStoreDocument(license.getDocuments(), license);
         if (securityUtils.currentUserIsEmployee())
             transitionWorkFlow(license, workflowBean);
@@ -232,6 +241,7 @@ public abstract class AbstractLicenseService<T extends License> {
         licenseRepository.save(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
+        return license;
     }
 
     private void wfWithCscOperator(final T license, final WorkflowBean workflowBean) {
@@ -364,10 +374,11 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void renew(final T license, final WorkflowBean workflowBean) {
+    public License renew(final T license, final WorkflowBean workflowBean) {
         license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
-        license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
+        if (!currentUserIsMeeseva())
+            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
                 license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
@@ -400,6 +411,7 @@ public abstract class AbstractLicenseService<T extends License> {
         this.licenseRepository.save(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        return license;
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
@@ -697,7 +709,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void saveClosure(final T license, final WorkflowBean workflowBean) {
+    public License saveClosure(final T license, final WorkflowBean workflowBean) {
         final User currentUser = this.securityUtils.getCurrentUser();
         if (license.hasState() && !license.getState().isEnded())
             throw new ValidationException("lic.appl.wf.validation", "Cannot initiate Closure process, application under processing");
@@ -729,6 +741,8 @@ public abstract class AbstractLicenseService<T extends License> {
                         .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(license.getLicenseAppType().getName());
             } else
                 closureWfWithOperator(license);
+            if (!currentUserIsMeeseva())
+                license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
             licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CREATED_CODE);
             license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
             license.setLicenseAppType(getClosureLicenseApplicationType());
@@ -737,6 +751,7 @@ public abstract class AbstractLicenseService<T extends License> {
         }
         this.licenseRepository.save(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        return license;
     }
 
     @Transactional
@@ -815,6 +830,8 @@ public abstract class AbstractLicenseService<T extends License> {
             comment = "CSC Operator Initiated";
         else if (currentUserRoles.contains("PUBLIC"))
             comment = "Citizen applied for closure";
+        else if (currentUserRoles.contains(MEESEVAOPERATOR)) ;
+        comment = "Meeseva Operator Initiated";
         List<Assignment> assignmentList = getAssignments();
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
@@ -836,5 +853,24 @@ public abstract class AbstractLicenseService<T extends License> {
     public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear) {
         Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), installmentYear.getStartingDate());
         return licenseRepository.findByNatureOfBusinessNameAndStatusName(natureOfBusiness, LICENSE_STATUS_ACTIVE, installment.getFromDate());
+    }
+
+    @Transactional
+    public License createWithMeseva(T license, WorkflowBean wfBean) {
+        return create(license, wfBean);
+    }
+
+    @Transactional
+    public License renewWithMeeseva(T license, WorkflowBean wfBean) {
+        return renew(license, wfBean);
+    }
+
+    @Transactional
+    public License closureWithMeeseva(T license, WorkflowBean wfBean) {
+        return saveClosure(license, wfBean);
+    }
+
+    public Boolean currentUserIsMeeseva() {
+        return securityUtils.getCurrentUser().hasRole(MEESEVAOPERATOR);
     }
 }

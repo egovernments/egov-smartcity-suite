@@ -1,41 +1,48 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.tl.web.actions.viewtradelicense;
@@ -61,19 +68,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
-import static org.egov.tl.utils.Constants.BUTTONFORWARD;
+import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
+import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 
 @ParentPackage("egov")
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
         @Result(name = "message", location = "viewTradeLicense-message.jsp"),
-        @Result(name = "closure", location = "viewTradeLicense-closure.jsp")})
+        @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
+})
 public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
-
     protected TradeLicense tradeLicense = new TradeLicense();
-    private String applicationNo;
     private Long licenseid;
     private String url;
     private Boolean enableState;
@@ -155,14 +163,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.workflowBean = workflowBean;
     }
 
-    public String getApplicationNo() {
-        return applicationNo;
-    }
-
-    public void setApplicationNo(final String applicationNo) {
-        this.applicationNo = applicationNo;
-    }
-
     @Override
     public String getReportId() {
         return reportId;
@@ -200,8 +200,13 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String saveClosure() {
         populateWorkflowBean();
         if (getLicenseid() != null) {
+            applicationNo = license().getApplicationNumber();
             tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
-            tradeLicenseService.saveClosure(tradeLicense, workflowBean);
+            if (tradeLicenseService.currentUserIsMeeseva()) {
+                tradeLicense.setApplicationNumber(applicationNo);
+                tradeLicenseService.closureWithMeeseva(tradeLicense, workflowBean);
+            } else
+                tradeLicenseService.saveClosure(tradeLicense, workflowBean);
         }
         if (hasCSCPublicRole())
             addActionMessage(this.getText("license.closure.initiated"));
@@ -211,7 +216,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
             addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
         }
-        return "message";
+        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : "message";
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
@@ -257,7 +262,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public Boolean hasCSCPublicRole() {
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        return currentUserRoles.contains(CSCOPERATOR) || currentUserRoles.contains("PUBLIC") ? true : false;
+        return currentUserRoles.contains(CSCOPERATOR) || currentUserRoles.contains(MEESEVAOPERATOR) || currentUserRoles.contains("PUBLIC");
     }
 
     public String getUrl() {
