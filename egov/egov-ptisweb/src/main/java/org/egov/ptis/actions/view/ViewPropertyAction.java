@@ -73,6 +73,10 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TreeMap;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -82,6 +86,7 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
@@ -90,6 +95,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
+import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -98,27 +104,22 @@ import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
 
     private static final long serialVersionUID = 4609817011534083012L;
-    private final Logger LOGGER = Logger.getLogger(getClass());
+    private static final Logger LOGGER = Logger.getLogger(ViewPropertyAction.class);
     private String propertyId;
     private BasicProperty basicProperty;
     private PropertyImpl property;
-    private Map<String, Object> viewMap;
-    private PropertyTaxUtil propertyTaxUtil;
+    private transient Map<String, Object> viewMap;
+    private transient PropertyTaxUtil propertyTaxUtil;
     private String roleName;
     private boolean isDemandActive;
     private String applicationNo;
@@ -129,28 +130,28 @@ public class ViewPropertyAction extends BaseFormAction {
     private boolean citizenPortalUser;
 
     @Autowired
-    private BasicPropertyDAO basicPropertyDAO;
+    private transient BasicPropertyDAO basicPropertyDAO;
     @Autowired
-    private PtDemandDao ptDemandDAO;
+    private transient PtDemandDao ptDemandDAO;
     @Autowired
-    private UserService UserService;
+    private transient UserService userService;
     @Autowired
-    private PersistenceService<Property, Long> propertyImplService;
+    private transient PersistenceService<Property, Long> propertyImplService;
     @Autowired
-    private PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
+    private transient PersistenceService<RevisionPetition, Long> revisionPetitionPersistenceService;
     @Autowired
     @Qualifier("transferOwnerService")
-    private PropertyTransferService transferOwnerService;
+    private transient PropertyTransferService transferOwnerService;
     @Autowired
-    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
     @Autowired
-    private PersistenceService<VacancyRemission, Long> vacancyRemissionPersistenceService;
+    private transient PersistenceService<VacancyRemission, Long> vacancyRemissionPersistenceService;
     @Autowired
-    private PropertyService propService;
+    private transient PropertyService propService;
     @PersistenceContext
     private transient EntityManager entityManager;
 
-    private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<String, Map<String, BigDecimal>>();
+    private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
 
     @Override
     public StateAware getModel() {
@@ -163,7 +164,7 @@ public class ViewPropertyAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into viewForm method, propertyId : " + propertyId);
         try {
-            viewMap = new HashMap<String, Object>();
+            viewMap = new HashMap<>();
             if (propertyId != null && !propertyId.isEmpty())
                 setBasicProperty(basicPropertyDAO.getBasicPropertyByPropertyID(propertyId));
             else if (applicationNo != null && !applicationNo.isEmpty()) {
@@ -181,7 +182,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 setErrorMessage("No Tax details for current Demand period.");
                 return "view";
             }
-            if (property.getPropertyDetail().getFloorDetails().size() > 0)
+            if (!property.getPropertyDetail().getFloorDetails().isEmpty())
                 setFloorDetails(property);
             checkIsDemandActive(property);
             viewMap.put("doorNo", getBasicProperty().getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
@@ -263,7 +264,7 @@ public class ViewPropertyAction extends BaseFormAction {
             final Long userId = (Long) session().get(SESSIONLOGINID);
             if (userId != null){
                 setRoleName(getRolesForUserId(userId));
-                citizenPortalUser = propService.isCitizenPortalUser(UserService.getUserById(userId));
+                citizenPortalUser = propService.isCitizenPortalUser(userService.getUserById(userId));
             }
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("viewForm : viewMap : " + viewMap);
@@ -296,8 +297,8 @@ public class ViewPropertyAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("User id : " + userId);
         String roleName;
-        final List<String> roleNameList = new ArrayList<String>();
-        final User user = UserService.getUserById(userId);
+        final List<String> roleNameList = new ArrayList<>();
+        final User user = userService.getUserById(userId);
         for (final Role role : user.getRoles()) {
             roleName = role.getName() != null ? role.getName() : "";
             roleNameList.add(roleName);
@@ -317,13 +318,7 @@ public class ViewPropertyAction extends BaseFormAction {
                 property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
                 setBasicProperty(property.getBasicProperty());
                 if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
-                    final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
-                    query.setParameter(1, basicProperty.getId());
-                    DocumentTypeDetails documentTypeDetails = (DocumentTypeDetails) query.getSingleResult();
-                    viewMap.put("documentno", documentTypeDetails.getDocumentNo());
-                    viewMap.put("documentdate", documentTypeDetails.getDocumentDate());
-                    if (property.getStatus().equals('W'))
-                        viewMap.put("propertyWF", "WF");
+                    getDocumentDetails();
                 }
             } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
                     || appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
@@ -338,6 +333,23 @@ public class ViewPropertyAction extends BaseFormAction {
                 final VacancyRemission vacancyRemission = vacancyRemissionPersistenceService.find("from VacancyRemission where applicationNumber=?",appNo);
                 setBasicProperty(vacancyRemission.getBasicProperty());
             }
+    }
+
+    public void getDocumentDetails() {
+        try {
+            final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
+            query.setParameter(1, basicProperty.getId());
+            DocumentTypeDetails documentTypeDetails = (DocumentTypeDetails) query.getSingleResult();
+            viewMap.put("documentno", documentTypeDetails.getDocumentNo());
+            viewMap.put("documentdate", documentTypeDetails.getDocumentDate());
+        } catch (Exception e) {
+            LOGGER.error("No Document type details present for Basicproperty " + e);
+            viewMap.put("documentno",
+                    basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
+            viewMap.put("documentdate", basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
+        }
+        if (property.getStatus().equals('W'))
+            viewMap.put("propertyWF", "WF");
     }
 
     public void setFloorDetails(final Property property) {
@@ -360,7 +372,7 @@ public class ViewPropertyAction extends BaseFormAction {
     }
 
     public List<Floor> getFloorDetails() {
-        return new ArrayList<Floor>(property.getPropertyDetail().getFloorDetails());
+        return new ArrayList<>(property.getPropertyDetail().getFloorDetails());
     }
 
     public String getPropertyId() {
@@ -420,7 +432,7 @@ public class ViewPropertyAction extends BaseFormAction {
     }
 
     public void setUserService(final UserService userService) {
-        UserService = userService;
+        this.userService = userService;
     }
 
     public String getApplicationNo() {
