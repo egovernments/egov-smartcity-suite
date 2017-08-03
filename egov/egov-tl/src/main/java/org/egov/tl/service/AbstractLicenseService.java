@@ -830,8 +830,8 @@ public abstract class AbstractLicenseService<T extends License> {
             comment = "CSC Operator Initiated";
         else if (currentUserRoles.contains("PUBLIC"))
             comment = "Citizen applied for closure";
-        else if (currentUserRoles.contains(MEESEVAOPERATOR)) ;
-        comment = "Meeseva Operator Initiated";
+        else if (currentUserRoles.contains(MEESEVAOPERATOR))
+            comment = "Meeseva Operator Initiated";
         List<Assignment> assignmentList = getAssignments();
         if (!assignmentList.isEmpty()) {
             final Assignment wfAssignment = assignmentList.get(0);
