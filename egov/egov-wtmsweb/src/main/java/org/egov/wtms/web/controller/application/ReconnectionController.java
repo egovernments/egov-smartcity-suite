@@ -40,6 +40,8 @@
 package org.egov.wtms.web.controller.application;
 
 import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -193,6 +195,10 @@ public class ReconnectionController extends GenericConnectionController {
                 throw new ValidationException("err.creator.application");
         }
 
+        if (waterConnectionDetails != null
+                && CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            waterConnectionDetails.getApplicationType().setCode(RECONNECTIONCONNECTION);
+
         final String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
 
@@ -243,18 +249,15 @@ public class ReconnectionController extends GenericConnectionController {
         if (loggedUserIsMeesevaUser) {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
-            if (waterConnectionDetails.getApplicationNumber() == null) {
-                waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
-                waterConnectionDetails.setSource(MEESEVA);
-                savedWaterConnectionDetails = reconnectionService.updateReConnection(
-                        waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, meesevaParams,
-                        sourceChannel);
-            }
+            waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
+            waterConnectionDetails.setSource(MEESEVA);
+            savedWaterConnectionDetails = reconnectionService.updateReConnection(
+                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, meesevaParams,
+                    sourceChannel);
 
-        }
-
-        savedWaterConnectionDetails = reconnectionService.updateReConnection(
-                waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
+        } else
+            savedWaterConnectionDetails = reconnectionService.updateReConnection(
+                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
 
         if (loggedUserIsMeesevaUser)
