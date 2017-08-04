@@ -40,12 +40,14 @@
 package org.egov.egf.expensebill.service;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -53,9 +55,13 @@ import javax.script.ScriptContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFinancialYear;
+import org.egov.commons.service.CFinancialYearService;
 import org.egov.commons.service.ChartOfAccountDetailService;
 import org.egov.commons.service.CheckListService;
 import org.egov.commons.service.FundService;
+import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
 import org.egov.egf.autonumber.WorksBillNumberGenerator;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
@@ -63,9 +69,10 @@ import org.egov.egf.expensebill.repository.ExpenseBillRepository;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -75,10 +82,13 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.EgChecklists;
 import org.egov.model.bills.EgBillPayeedetails;
+import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
+import org.egov.model.budget.BudgetGroup;
 import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.services.voucher.VoucherService;
+import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
@@ -97,41 +107,28 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ExpenseBillService {
 
+
     private static final Logger LOG = LoggerFactory.getLogger(ExpenseBillService.class);
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
     private final ExpenseBillRepository expenseBillRepository;
-
-    @Autowired
-    private EgBillSubTypeService egBillSubTypeService;
-
-    @Autowired
-    private SchemeService schemeService;
-
-    @Autowired
-    private SubSchemeService subSchemeService;
-
-    @Autowired
-    private FinancialUtils financialUtils;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
+    private final ScriptService scriptExecutionService;
     @Autowired
     protected AppConfigValueService appConfigValuesService;
-
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private EgBillSubTypeService egBillSubTypeService;
+    @Autowired
+    private SchemeService schemeService;
+    @Autowired
+    private SubSchemeService subSchemeService;
+    @Autowired
+    private FinancialUtils financialUtils;
+    @Autowired
+    private AssignmentService assignmentService;
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;
-
-    private final ScriptService scriptExecutionService;
-
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    private PositionMasterService positionMasterService;
 
     @Autowired
     @Qualifier(value = "voucherService")
@@ -150,14 +147,23 @@ public class ExpenseBillService {
     @Autowired
     private ChartOfAccountDetailService chartOfAccountDetailService;
 
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
+    @Autowired
+    private AppConfigService appConfigService;
+
+    @Autowired
+    private BudgetDetailsHibernateDAO budgetDetailsHibernateDAO;
+
+    @Autowired
+    private CFinancialYearService cFinancialYearService;
 
     @Autowired
     public ExpenseBillService(final ExpenseBillRepository expenseBillRepository, final ScriptService scriptExecutionService) {
         this.expenseBillRepository = expenseBillRepository;
         this.scriptExecutionService = scriptExecutionService;
+    }
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
     }
 
     public EgBillregister getById(final Long id) {
@@ -175,7 +181,7 @@ public class ExpenseBillService {
 
     @Transactional
     public EgBillregister create(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
-            final String additionalRule, final String workFlowAction) {
+                                 final String additionalRule, final String workFlowAction) {
         if (StringUtils.isBlank(egBillregister.getBilltype()))
             egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
         if (StringUtils.isBlank(egBillregister.getExpendituretype()))
@@ -262,7 +268,7 @@ public class ExpenseBillService {
 
     @Transactional
     public EgBillregister update(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
-            final String additionalRule, final String workFlowAction, final String mode) throws ValidationException, IOException {
+                                 final String additionalRule, final String workFlowAction, final String mode) throws ValidationException, IOException {
         EgBillregister updatedegBillregister = null;
         if ("edit".equals(mode)) {
             egBillregister.setPassedamount(egBillregister.getBillamount());
@@ -383,8 +389,8 @@ public class ExpenseBillService {
     }
 
     public void createExpenseBillRegisterWorkflowTransition(final EgBillregister egBillregister,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction) {
+                                                            final Long approvalPosition, final String approvalComent, final String additionalRule,
+                                                            final String workFlowAction) {
         if (LOG.isDebugEnabled())
             LOG.debug(" Create WorkFlow Transition Started  ...");
         final User user = securityUtils.getCurrentUser();
@@ -479,7 +485,7 @@ public class ExpenseBillService {
     }
 
     public Long getApprovalPositionByMatrixDesignation(final EgBillregister egBillregister,
-            final String additionalRule, final String mode, final String workFlowAction) {
+                                                       final String additionalRule, final String mode, final String workFlowAction) {
         Long approvalPosition = null;
         final WorkFlowMatrix wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister
                 .getStateType(), null, null, additionalRule, egBillregister.getCurrentState().getValue(), null);
@@ -499,4 +505,129 @@ public class ExpenseBillService {
         final EgBillregister bill = getByBillnumber(billnumber);
         return bill == null;
     }
+
+
+    private Map<String, Object> getBudgetDetails(EgBillregister egBillregister, EgBilldetails billDetail,
+                                                 Map<String, Object> budgetDataMap, Map<String, Object> paramMap) {
+
+        Map<String, Object> budgetApprDetailsMap = new HashMap<>();
+        BigDecimal currentBillAmount;
+        BigDecimal soFarAppropriated;
+        BigDecimal actualAmount;
+
+
+        if (egBillregister.getEgBillregistermis().getVoucherHeader() != null) {
+            budgetDataMap.put(Constants.ASONDATE, egBillregister.getEgBillregistermis().getVoucherHeader().getVoucherDate());
+        } else {
+            budgetDataMap.put(Constants.ASONDATE, egBillregister.getBilldate());
+        }
+        CFinancialYear financialYearById = egBillregister.getEgBillregistermis().getFinancialyear();
+
+        budgetDataMap.put(Constants.FUNCTIONID, billDetail.getFunctionid().longValue());
+        budgetDataMap.put("fromdate", financialYearById.getStartingDate());
+        budgetDataMap.put("glcode", billDetail.getChartOfAccounts().getGlcode());
+        budgetDataMap.put("glcodeid", billDetail.getChartOfAccounts().getId());
+        List<BudgetGroup> budgetHeadByGlcode = budgetDetailsHibernateDAO.getBudgetHeadByGlcode(billDetail.getChartOfAccounts());
+        budgetDataMap.put("budgetheadid", budgetHeadByGlcode);
+        budgetDataMap.put("isReport", "true");
+        BigDecimal budgetedAmtForYear = budgetDetailsHibernateDAO.getBudgetedAmtForYear(budgetDataMap);
+        paramMap.put("budgetedAmtForYear", budgetedAmtForYear);
+        if (LOG.isDebugEnabled()) LOG.debug("budgetedAmtForYear .......... " + budgetedAmtForYear);
+
+        budgetDataMap.put("budgetApprNumber", egBillregister.getEgBillregistermis().getBudgetaryAppnumber());
+
+        if (LOG.isDebugEnabled()) LOG.debug("Getting actuals .............................");
+        BigDecimal actualAmtFromVoucher = budgetDetailsHibernateDAO.getActualBudgetUtilizedForBudgetaryCheck(budgetDataMap);
+        if (LOG.isDebugEnabled())
+            LOG.debug("actualAmtFromVoucher .............................. " + actualAmtFromVoucher);
+        budgetDataMap.put(Constants.ASONDATE, egBillregister.getBilldate());
+        BigDecimal actualAmtFromBill = budgetDetailsHibernateDAO.getBillAmountForBudgetCheck(budgetDataMap);
+        if (LOG.isDebugEnabled()) LOG.debug("actualAmtFromBill .............................. " + actualAmtFromBill);
+
+
+        actualAmount = actualAmtFromVoucher != null ? actualAmtFromVoucher : BigDecimal.ZERO;
+        actualAmount = actualAmtFromBill != null ? actualAmount.add(actualAmtFromBill) : actualAmount;
+        if (LOG.isDebugEnabled())
+            LOG.debug("actualAmount ...actualAmtFromVoucher+actualAmtFromBill........ " + actualAmount);
+
+        if (billDetail.getDebitamount() != null && billDetail.getDebitamount().compareTo(BigDecimal.ZERO) != 0) {
+            actualAmount = actualAmount.subtract(billDetail.getDebitamount());
+            currentBillAmount = billDetail.getDebitamount();
+
+        } else {
+            actualAmount = actualAmount.subtract(billDetail.getCreditamount());
+            currentBillAmount = billDetail.getCreditamount();
+        }
+        if (LOG.isDebugEnabled()) LOG.debug("actualAmount ...actualAmount-billamount........ " + actualAmount);
+        BigDecimal balance = budgetedAmtForYear;
+
+        balance = balance.subtract(actualAmount);
+        soFarAppropriated = actualAmount;
+        if (LOG.isDebugEnabled())
+            LOG.debug("soFarAppropriated ...actualAmount==soFarAppropriated........ " + soFarAppropriated);
+        if (LOG.isDebugEnabled()) LOG.debug("balance ...budgetedAmtForYear-actualAmount........ " + balance);
+        BigDecimal cumilativeIncludingCurrentBill = soFarAppropriated.add(currentBillAmount);
+        BigDecimal currentBalanceAvailable = balance.subtract(currentBillAmount);
+        budgetApprDetailsMap.put("allocatedBudgetForYear", budgetedAmtForYear);
+        budgetApprDetailsMap.put("actualAmount", soFarAppropriated);
+        budgetApprDetailsMap.put("balance", balance);
+        budgetApprDetailsMap.put("expenseIncurredIncludingCurrentBill", cumilativeIncludingCurrentBill);
+        budgetApprDetailsMap.put("currentBalanceAvailable", currentBalanceAvailable);
+        budgetApprDetailsMap.put("accountCode", billDetail.getChartOfAccounts().getGlcode());
+
+
+        return budgetApprDetailsMap;
+
+    }
+
+    public List<Map<String, Object>> getBudgetDetailsForBill(EgBillregister billregister) {
+
+        Map<String, Object> budgetDataMap = new HashMap<>();
+        Map<String, Object> paramMap = new HashMap<>();
+        List<Map<String, Object>> budgetDetailList = new ArrayList<>();
+        Set<EgBilldetails> egBillDetailes = billregister.getEgBilldetailes();
+        boolean budgetCheck = false;
+        CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(billregister.getBilldate());
+        billregister.getEgBillregistermis().setFinancialyear(financialYear);
+
+        AppConfig appConfig = appConfigService.getAppConfigByModuleNameAndKeyName(FinancialConstants.MODULE_NAME_APPCONFIG, "budgetCheckRequired");
+        if (appConfig != null && !appConfig.getConfValues().isEmpty()) {
+            if ("Y".equalsIgnoreCase(appConfig.getConfValues().get(0).getValue())) {
+                budgetCheck = true;
+            }
+            getRequiredDataForBudget(billregister, budgetDataMap);
+        }
+
+        for (EgBilldetails detail : egBillDetailes) {
+            if (detail.getDebitamount() != null && detail.getDebitamount().compareTo(BigDecimal.ZERO) != 0) {
+                Map<String, Object> budgetApprDetails;
+
+                CChartOfAccounts coa = detail.getChartOfAccounts();
+                if (budgetCheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
+                    budgetApprDetails = getBudgetDetails(billregister, detail, budgetDataMap, paramMap);
+                    budgetDetailList.add(budgetApprDetails);
+                }
+
+            }
+        }
+        return budgetDetailList;
+
+    }
+
+    private void getRequiredDataForBudget(EgBillregister egBillregister, Map<String, Object> budgetDataMap) {
+
+        budgetDataMap.put("financialyearid", egBillregister.getEgBillregistermis().getFinancialyear().getId());
+        budgetDataMap.put(Constants.DEPTID, egBillregister.getEgBillregistermis().getEgDepartment().getId());
+        if (egBillregister.getEgBillregistermis().getFunctionaryid() != null)
+            budgetDataMap.put(Constants.FUNCTIONARYID, egBillregister.getEgBillregistermis().getFunctionaryid().getId());
+        if (egBillregister.getEgBillregistermis().getScheme() != null)
+            budgetDataMap.put(Constants.SCHEMEID, egBillregister.getEgBillregistermis().getScheme().getId());
+        if (egBillregister.getEgBillregistermis().getSubScheme() != null)
+            budgetDataMap.put(Constants.SUBSCHEMEID, egBillregister.getEgBillregistermis().getSubScheme().getId());
+        budgetDataMap.put(Constants.FUNDID, egBillregister.getEgBillregistermis().getFund().getId());
+        budgetDataMap.put(Constants.BOUNDARYID, egBillregister.getDivision());
+
+    }
+
+
 }

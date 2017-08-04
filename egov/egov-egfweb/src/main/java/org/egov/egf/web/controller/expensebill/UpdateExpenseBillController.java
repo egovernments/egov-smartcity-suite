@@ -41,6 +41,7 @@ package org.egov.egf.web.controller.expensebill;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
 
@@ -109,8 +110,9 @@ public class UpdateExpenseBillController extends BaseBillController {
 
     @RequestMapping(value = "/update/{billId}", method = RequestMethod.GET)
     public String updateForm(final Model model, @PathVariable final String billId,
-            final HttpServletRequest request) throws ApplicationException {
+                             final HttpServletRequest request) throws ApplicationException {
         final EgBillregister egBillregister = expenseBillService.getById(Long.parseLong(billId));
+        List<Map<String, Object>> budgetDetails;
         setDropDownValues(model);
         model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
         if (egBillregister.getState() != null)
@@ -134,19 +136,21 @@ public class UpdateExpenseBillController extends BaseBillController {
         model.addAttribute(EG_BILLREGISTER, egBillregister);
         if (egBillregister.getState() != null
                 && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
-                        || financialUtils.isBillEditable(egBillregister.getState()))) {
+                || financialUtils.isBillEditable(egBillregister.getState()))) {
             model.addAttribute("mode", "edit");
             return "expensebill-update";
         } else {
             model.addAttribute("mode", "view");
+            budgetDetails = expenseBillService.getBudgetDetailsForBill(egBillregister);
+            model.addAttribute("budgetDetails", budgetDetails);
             return EXPENSEBILL_VIEW;
         }
     }
 
     @RequestMapping(value = "/update/{billId}", method = RequestMethod.POST)
     public String update(@ModelAttribute(EG_BILLREGISTER) final EgBillregister egBillregister,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
-            final HttpServletRequest request, @RequestParam final String workFlowAction)
+                         final BindingResult resultBinder, final RedirectAttributes redirectAttributes, final Model model,
+                         final HttpServletRequest request, @RequestParam final String workFlowAction)
             throws ApplicationException, IOException {
 
         String mode = "";
@@ -171,7 +175,7 @@ public class UpdateExpenseBillController extends BaseBillController {
 
         if (egBillregister.getState() != null
                 && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
-                        || financialUtils.isBillEditable(egBillregister.getState()))) {
+                || financialUtils.isBillEditable(egBillregister.getState()))) {
             populateBillDetails(egBillregister);
             validateBillNumber(egBillregister, resultBinder);
             validateLedgerAndSubledger(egBillregister, resultBinder);
@@ -187,7 +191,7 @@ public class UpdateExpenseBillController extends BaseBillController {
             model.addAttribute("designation", request.getParameter("designation"));
             if (egBillregister.getState() != null
                     && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
-                            || financialUtils.isBillEditable(egBillregister.getState()))) {
+                    || financialUtils.isBillEditable(egBillregister.getState()))) {
                 prepareValidActionListByCutOffDate(model);
                 model.addAttribute("mode", "edit");
                 return "expensebill-update";
@@ -211,7 +215,7 @@ public class UpdateExpenseBillController extends BaseBillController {
                 model.addAttribute("designation", request.getParameter("designation"));
                 if (egBillregister.getState() != null
                         && (FinancialConstants.WORKFLOW_STATE_REJECTED.equals(egBillregister.getState().getValue())
-                                || financialUtils.isBillEditable(egBillregister.getState()))) {
+                        || financialUtils.isBillEditable(egBillregister.getState()))) {
                     prepareValidActionListByCutOffDate(model);
                     model.addAttribute("mode", "edit");
                     return "expensebill-update";
@@ -238,7 +242,7 @@ public class UpdateExpenseBillController extends BaseBillController {
 
     @RequestMapping(value = "/view/{billId}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final String billId,
-            final HttpServletRequest request) throws ApplicationException {
+                       final HttpServletRequest request) throws ApplicationException {
         final EgBillregister egBillregister = expenseBillService.getById(Long.parseLong(billId));
         setDropDownValues(model);
         egBillregister.getBillDetails().addAll(egBillregister.getEgBilldetailes());
