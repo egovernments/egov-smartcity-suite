@@ -94,6 +94,7 @@ public class ZuulProxyFilter extends ZuulFilter {
     private static final String USER_SERVICE = "userService";
     private static final String ENVIRONMENT = "environment";
     private static final String TENANT_ID = "tenantId";
+    private static final String SESSION_ID = "sessionId";
     private ObjectMapper mapper;
 
     @Override
@@ -182,11 +183,22 @@ public class ZuulProxyFilter extends ZuulFilter {
             
             //Adding userInfo to Response header - to show or hide some of the UI components based on user roles 
             ctx.addZuulResponseHeader(USER_INFO_FIELD_NAME, userInfo);
-            
-            if (shouldPutUserInfoOnHeaders(ctx))
+
+            if (log.isInfoEnabled())
+                if(request.getSession() != null)
+                    log.info("SESSION ID " + request.getSession().getId());
+
+            if (shouldPutUserInfoOnHeaders(ctx)) {
                 ctx.addZuulRequestHeader(USER_INFO_FIELD_NAME, userInfo);
-            else
+                if(request.getSession() != null)
+                    ctx.addZuulRequestHeader(SESSION_ID, request.getSession().getId());
+
+            }
+            else {
+                if(request.getSession() != null)
+                    ctx.addZuulRequestHeader(SESSION_ID, request.getSession().getId());
                 appendUserInfoToRequestBody(ctx, userInfo);
+            }
 
         } catch (final MalformedURLException e) {
             throw new ApplicationRuntimeException("Could not form valid URL", e);
