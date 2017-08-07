@@ -40,6 +40,7 @@
 
 package org.egov.infra.security.audit.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractPersistable;
 
@@ -56,6 +57,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_TIME_PATTERN;
+import static org.egov.infra.config.core.GlobalSettings.DEFAULT_TIME_ZONE;
 import static org.egov.infra.security.audit.entity.SystemAudit.SEQ_SYSTEMAUDIT;
 
 @Entity
@@ -68,7 +71,7 @@ public class SystemAudit extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ_SYSTEMAUDIT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "userid")
     private User user;
 
@@ -77,9 +80,11 @@ public class SystemAudit extends AbstractPersistable<Long> {
     private String userAgentInfo;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_TIME_PATTERN, timezone = DEFAULT_TIME_ZONE)
     private Date loginTime;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_TIME_PATTERN, timezone = DEFAULT_TIME_ZONE)
     private Date logoutTime;
 
     @Override

@@ -241,4 +241,8 @@
         <put-attribute name="page-title" value="title.accesscontrol.grantrevoke" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/feature/feature-access-control.jsp"/>
     </definition>
+    <definition name="login-audit-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.login.audit.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/auditing/login-audit-report.jsp"/>
+    </definition>
 </tiles-definitions>

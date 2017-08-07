@@ -97,6 +97,10 @@ public class UserService {
         return userRepository.findByUsername(userName);
     }
 
+    public List<User> getUsersByNameLike(String userName) {
+        return userRepository.findByNameContainingIgnoreCase(userName);
+    }
+
     public User getUserByEmailId(String emailId) {
         return userRepository.findByEmailId(emailId);
     }

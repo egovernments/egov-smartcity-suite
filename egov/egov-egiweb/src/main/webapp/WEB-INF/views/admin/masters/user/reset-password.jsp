@@ -91,7 +91,7 @@
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace,
             remote: {
-                url: 'names?name=%QUERY',
+                url: 'employee-name-like/%QUERY',
                 filter: function (data) {
                     return $.map(data, function (user) {
                         return {

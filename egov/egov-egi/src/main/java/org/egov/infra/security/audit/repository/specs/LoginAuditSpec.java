@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,39 +38,42 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.security.audit.service;
+package org.egov.infra.security.audit.repository.specs;
 
 import org.egov.infra.security.audit.contract.LoginAuditReportRequest;
 import org.egov.infra.security.audit.entity.SystemAudit;
-import org.egov.infra.security.audit.repository.SystemAuditRepository;
-import org.egov.infra.security.audit.repository.specs.LoginAuditSpec;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.infra.utils.DateUtils;
+import org.springframework.data.jpa.domain.Specification;
 
-@Service
-@Transactional(readOnly = true)
-public class SystemAuditService {
+import javax.persistence.criteria.Predicate;
 
-    @Autowired
-    private SystemAuditRepository systemAuditRepository;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-    @Transactional
-    public SystemAudit createOrUpdateSystemAudit(final SystemAudit systemAudit) {
-        return systemAuditRepository.saveAndFlush(systemAudit);
+public class LoginAuditSpec {
+    private LoginAuditSpec() {
+        //need not to initialize
     }
 
-    public SystemAudit getSystemAuditById(final Long id) {
-        return systemAuditRepository.findOne(id);
-    }
-
-    public Page<SystemAudit> getAllSystemAudit(LoginAuditReportRequest loginAuditReportRequest) {
-        final Pageable pageable = new PageRequest(loginAuditReportRequest.pageNumber(),
-                loginAuditReportRequest.pageSize(),
-                loginAuditReportRequest.orderDir(), loginAuditReportRequest.orderBy());
-        return systemAuditRepository.findAll(LoginAuditSpec.loginAuditSearchSpec(loginAuditReportRequest), pageable);
+    public static final Specification<SystemAudit> loginAuditSearchSpec(LoginAuditReportRequest loginAuditReportRequest) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            if (isNotBlank(loginAuditReportRequest.getUserName()))
+                predicate.getExpressions()
+                        .add(builder.equal(root.get("user").get("name"), loginAuditReportRequest.getUserName()));
+            if (loginAuditReportRequest.getUserType() != null)
+                predicate.getExpressions().add(builder.equal(root.get("user").get("type"),
+                        loginAuditReportRequest.getUserType()));
+            if (isNotBlank(loginAuditReportRequest.getIpAddress()))
+                predicate.getExpressions()
+                        .add(builder.equal(root.get("ipAddress"), loginAuditReportRequest.getIpAddress()));
+            if (loginAuditReportRequest.getLoginFrom() != null)
+                predicate.getExpressions()
+                        .add(builder.greaterThanOrEqualTo(root.get("loginTime"), loginAuditReportRequest.getLoginFrom()));
+            if (loginAuditReportRequest.getLoginTo() != null)
+                predicate.getExpressions()
+                        .add(builder.lessThanOrEqualTo(root.get("loginTime"),
+                                DateUtils.endOfDay(loginAuditReportRequest.getLoginTo())));
+            return predicate;
+        };
     }
 }

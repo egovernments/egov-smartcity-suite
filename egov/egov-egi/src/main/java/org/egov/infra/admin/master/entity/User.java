@@ -41,6 +41,7 @@
 package org.egov.infra.admin.master.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.google.gson.annotations.Expose;
 import org.apache.commons.lang3.LocaleUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -76,6 +77,7 @@ import static org.hibernate.envers.RelationTargetAuditMode.NOT_AUDITED;
 @SequenceGenerator(name = User.SEQ_USER, sequenceName = User.SEQ_USER, allocationSize = 1)
 @Unique(fields = {"username", "pan", "aadhaarNumber", "emailId"}, enableDfltMsg = true, isSuperclass = true)
 @CompositeUnique(fields = {"type", "mobileNumber"}, enableDfltMsg = true, message = "{user.exist.with.same.mobileno}")
+@JsonIgnoreProperties({"createdBy", "lastModifiedBy"})
 public class User extends AbstractAuditable {
     public static final String SEQ_USER = "SEQ_EG_USER";
     private static final long serialVersionUID = -2415368058955783970L;

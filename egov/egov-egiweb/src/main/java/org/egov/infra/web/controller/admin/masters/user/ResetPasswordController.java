@@ -50,15 +50,10 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
 @Controller
-@RequestMapping("/user")
+@RequestMapping("user")
 public class ResetPasswordController {
 
     @Autowired
@@ -69,12 +64,6 @@ public class ResetPasswordController {
 
     @Autowired
     private ApplicationProperties applicationProperties;
-
-    @GetMapping(value = "names", produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<User> users(@RequestParam String name) {
-        return userService.getAllEmployeeNameLike(name);
-    }
 
     @GetMapping("reset-password")
     public String showResetPassword() {

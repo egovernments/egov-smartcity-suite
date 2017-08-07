@@ -62,6 +62,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
     User findByUsername(String userName);
 
+    List<User> findByNameContainingIgnoreCase(String userName);
+
     User findByEmailId(String emailId);
 
     User findByAadhaarNumber(String aadhaarNumber);

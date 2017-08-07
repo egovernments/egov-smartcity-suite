@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,54 +38,44 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.config;
+package org.egov.infra.web.contract.response;
 
-import org.egov.infra.admin.master.contracts.AppConfigSearchRequest;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
 import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.admin.master.service.AppConfigService;
-import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.web.contract.response.AppConfigJsonAdapter;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 
-@Controller
-@RequestMapping("/app/config")
-public class ViewAppConfigController {
+public class AppConfigJsonAdapter implements DataTableJsonAdapter<AppConfig> {
 
-    @Autowired
-    private AppConfigService appConfigService;
+    @Override
+    public JsonElement serialize(DataTable<AppConfig> appConfigTableData, Type type, JsonSerializationContext jsc) {
+        List<AppConfig> appConfigs = appConfigTableData.getData();
+        JsonArray appConfigData = new JsonArray();
+        appConfigs.forEach(appConfig -> {
+            JsonObject appConfigJSON = new JsonObject();
+            appConfigJSON.addProperty("keyName", appConfig.getKeyName());
+            appConfigJSON.addProperty("description", appConfig.getDescription());
+            appConfigJSON.addProperty("module", appConfig.getModule().getName());
+            appConfigJSON.addProperty("id", appConfig.getId());
+            JsonArray configValues = new JsonArray();
+            appConfig.getConfValues().forEach(configValue -> {
+                JsonObject configValueJSON = new JsonObject();
+                configValueJSON.addProperty("Effective Date", getDefaultFormattedDate(configValue.getEffectiveFrom()));
+                configValueJSON.addProperty("Value", configValue.getValue());
+                configValues.add(configValueJSON);
+            });
+            appConfigJSON.add("values", configValues);
+            appConfigData.add(appConfigJSON);
+        });
 
-    @Autowired
-    private ModuleService moduleService;
-
-    @GetMapping(value = "/formodule/{moduleName}", produces = APPLICATION_JSON_VALUE)
-    @ResponseBody
-    public List<AppConfig> getAppConfigsForModule(@PathVariable String moduleName) {
-        return appConfigService.getAllAppConfigByModuleName(moduleName);
+        return enhance(appConfigData, appConfigTableData);
     }
-
-    @GetMapping(value = "/view")
-    public String viewAppConfig(Model model) {
-        model.addAttribute("modules", moduleService.getAllTopModules());
-        return "app-config-view";
-    }
-
-    @GetMapping(value = "/list", produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String showAppConfigs(AppConfigSearchRequest searchRequest) {
-        return new DataTable<>(appConfigService.getAllAppConfig(searchRequest),
-                searchRequest.draw()).toJson(AppConfigJsonAdapter.class);
-    }
-
 }

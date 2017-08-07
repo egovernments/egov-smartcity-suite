@@ -38,44 +38,37 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.response.adapter;
+package org.egov.infra.web.controller.admin.masters.user;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import org.egov.infra.admin.master.entity.AppConfig;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.UserService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 
-public class AppConfigJsonAdapter implements DataTableJsonAdapter<AppConfig> {
+@Controller
+@RequestMapping("user")
+public class UserController {
 
-    @Override
-    public JsonElement serialize(DataTable<AppConfig> appConfigTableData, Type type, JsonSerializationContext jsc) {
-        List<AppConfig> appConfigs = appConfigTableData.getData();
-        JsonArray appConfigData = new JsonArray();
-        appConfigs.forEach(appConfig -> {
-            JsonObject appConfigJSON = new JsonObject();
-            appConfigJSON.addProperty("keyName", appConfig.getKeyName());
-            appConfigJSON.addProperty("description", appConfig.getDescription());
-            appConfigJSON.addProperty("module", appConfig.getModule().getName());
-            appConfigJSON.addProperty("id", appConfig.getId());
-            JsonArray configValues = new JsonArray();
-            appConfig.getConfValues().forEach(configValue -> {
-                JsonObject configValueJSON = new JsonObject();
-                configValueJSON.addProperty("Effective Date", getDefaultFormattedDate(configValue.getEffectiveFrom()));
-                configValueJSON.addProperty("Value", configValue.getValue());
-                configValues.add(configValueJSON);
-            });
-            appConfigJSON.add("values", configValues);
-            appConfigData.add(appConfigJSON);
-        });
+    @Autowired
+    private UserService userService;
 
-        return enhance(appConfigData, appConfigTableData);
+    @GetMapping(value = "username-like/{name}", produces = APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public List<User> userNames(@PathVariable String name) {
+        return userService.getUsersByNameLike(name);
+    }
+
+    @GetMapping(value = "employee-name-like/{employeeName}", produces = APPLICATION_JSON_UTF8_VALUE)
+    @ResponseBody
+    public List<User> users(@PathVariable String employeeName) {
+        return userService.getAllEmployeeNameLike(employeeName);
     }
 }
