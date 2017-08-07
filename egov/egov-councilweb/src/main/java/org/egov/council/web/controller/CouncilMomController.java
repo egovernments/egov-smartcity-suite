@@ -349,11 +349,15 @@ public class CouncilMomController {
         EgwStatus resolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
                 RESOLUTION_APPROVED_PREAMBLE);
 
-        Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
+        Long itemNumber = Long.valueOf(0);
+        for (final MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs())
+            if (meetingMOM.getId() != null)
+                itemNumber++;
+
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
             if (meetingMOM.getPreamble().getId() == null) {
-                meetingMOM.setItemNumber(itemNumber.toString());
                 itemNumber++;
+                meetingMOM.setItemNumber(itemNumber.toString());
                 meetingMOM.setPreamble(councilPreambleService
                         .buildSumotoPreamble(meetingMOM, resolutionApprovedStatus));
                 meetingMOM.setMeeting(councilMeeting);
