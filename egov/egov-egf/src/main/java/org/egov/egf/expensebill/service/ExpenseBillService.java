@@ -39,20 +39,6 @@
  */
 package org.egov.egf.expensebill.service;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.script.ScriptContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.commons.CChartOfAccounts;
@@ -98,6 +84,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.script.ScriptContext;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author venki
@@ -288,9 +287,6 @@ public class ExpenseBillService {
                         subSchemeService.findById(egBillregister.getEgBillregistermis().getSubSchemeId().intValue(), false));
             else
                 egBillregister.getEgBillregistermis().setSubScheme(null);
-
-            if (isBillNumberGenerationAuto())
-                egBillregister.setBillnumber(getNextBillNumber(egBillregister));
 
             final List<EgChecklists> checkLists = egBillregister.getCheckLists();
 
