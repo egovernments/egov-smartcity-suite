@@ -115,7 +115,7 @@ public class RatioAnalysisDashboardService {
                 StringTerms aggr = finSearchResponse.get(CURRENT_YEAR).getAggregations().get(AGGRFIELD);
                 StringTerms aggrDeaptWise = finSearchResponse.get(CYDEPTWISE).getAggregations().get(AGGRFIELD);
                 StringTerms aggrGrantReceipts = finSearchResponse.get(CYGRANTRECEIPT).getAggregations().get(AGGRFIELD);
-                FinancialsRatioAnalysisResponse response = new FinancialsRatioAnalysisResponse();
+                FinancialsRatioAnalysisResponse response;
                 finalRatioResponse = finRatioResponse;
                 for (final Terms.Bucket entry : aggr.getBuckets()) {
                     StringTerms aggr1 = entry.getAggregations().get(SUBAGGREGATION);
@@ -151,74 +151,31 @@ public class RatioAnalysisDashboardService {
                     }
                     totalGrantReceiptsForGlcode = getGrantReceiptAmountForGlcode(aggrGrantReceipts, totalGrantReceiptsForGlcode, keyName);
 
-                    if (!finRatioResponse.isEmpty())
-                        for (String ratioKey : finRatioResponse.keySet()) {
-                            if (ratioKey.equalsIgnoreCase(keyName) && !"financialyear".equalsIgnoreCase(aggrField))
-                                response = finRatioResponse.get(ratioKey) == null ? new FinancialsRatioAnalysisResponse() : finRatioResponse.get(ratioKey);
+                    if (!finRatioResponse.isEmpty()) {
+                        response = finRatioResponse.get(keyName) == null ? new FinancialsRatioAnalysisResponse() : finRatioResponse.get(keyName);
+                        Map<String, Double> departmentWiseExpense = new HashMap<>();
 
-                            Map<String, Double> departmentWiseExpense = new HashMap<>();
+                        getFinalResponse(ratioAnalysisGlcode, response, aggr1, totalIncomeIAmount,
+                                totalExpenseAmount, totalLiabilityAmount, totalCapitalExpenditure, totalGrantReceiptsForGlcode);
 
-                            for (final Terms.Bucket majorCodeEntry : aggr1.getBuckets()) {
-                                final Sum debit = majorCodeEntry.getAggregations().get(DEBITAMOUNT);
-                                final Sum credit = majorCodeEntry.getAggregations().get(CREDITAMOUNT);
-                                final TopHits topHits1 = majorCodeEntry.getAggregations().get(CY_RECORDS);
-                                final SearchHit[] hit = topHits1.getHits().getHits();
-
-                                String majorCode = hit[0].field(MAJOR_CODE).getValue();
-
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeTaxRevenue())) {
-                                    response.setCyTaxRevenueToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
-                                }
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeAssignedRevenues())) {
-                                    response.setCyAssignedRevenuesToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
-                                }
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeRental())) {
-                                    response.setCyRentalIncomeToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
-                                }
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeFeeAndUserCharges())) {
-                                    response.setCyFeeUserChargesToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
-                                }
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeRevenueGrants())) {
-                                    response.setCyRevenueGrantsToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
-                                }
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getExpenseEstablishment())) {
-                                    response.setCyEstablishmentExpensesToTotalReRatio(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / totalExpenseAmount) * 100);
-                                }
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getExpenseAdministrative())) {
-                                    response.setCyAdministrativeExpensesToTotalReRatio(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / totalExpenseAmount) * 100);
-                                }
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getExpenseOperationAndMaintenance())) {
-                                    response.setCyOmExpensesToTotalReRatio(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / totalExpenseAmount) * 100);
-                                }
-
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalGrantsReceiptsMajorCode()) ||
-                                        majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalGrantsReceiptsGlcode())) {
-                                    response.setCyGrantsReceiptsToTotalReceipts((((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) + totalGrantReceiptsForGlcode) /
-                                            (totalIncomeIAmount + totalGrantReceiptsForGlcode + totalLiabilityAmount)) * 100);
-
-                                }
-
-                                if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalExpenditureFourTen()) || majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalExpenditureFourTwelve())) {
-                                    response.setCyCapitalExpenditureToTotalExpenditure(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / (totalExpenseAmount + totalCapitalExpenditure)) * 100);
-
-                                }
-                            }
-
-
-                            response.setCyIncomeRatio(response.getCyTaxRevenueToTotalIncomeRatio() + response.getCyAssignedRevenuesToTotalIncomeRatio() +
-                                    response.getCyRentalIncomeToTotalIncomeRatio() + response.getCyFeeUserChargesToTotalIncomeRatio() + response.getCyRevenueGrantsToTotalIncomeRatio());
-                            response.setCyExpenseRatio(response.getCyEstablishmentExpensesToTotalReRatio() + response.getCyAdministrativeExpensesToTotalReRatio() +
-                                    response.getCyOmExpensesToTotalReRatio());
-                            response.setCyCapitalRatio(response.getCyGrantsReceiptsToTotalReceipts() + response.getCyCapitalExpenditureToTotalExpenditure());
-
-                            getDepartmentWiseExpenseData(aggrDeaptWise, totalExpenseAmount, totalCapitalExpenditure, keyName, departmentWiseExpense);
-                            response.setCyDepartmentWiseRevenueExpenses(departmentWiseExpense);
+                        getDepartmentWiseExpenseData(aggrDeaptWise, totalExpenseAmount, totalCapitalExpenditure, keyName, departmentWiseExpense);
+                        response.setCyDepartmentWiseRevenueExpenses(departmentWiseExpense);
+                        if (finalRatioResponse.containsKey(keyName)) {
+                            finalRatioResponse.remove(keyName);
+                            setValues(financialsDetailsRequest, response, topHits, aggrField, keyName);
+                            finalRatioResponse.put(keyName, response);
+                        } else {
+                            setValues(financialsDetailsRequest, response, topHits, aggrField, keyName);
+                            finalRatioResponse.put(keyName, response);
                         }
-                    if (!finalRatioResponse.isEmpty() && finalRatioResponse.containsKey(keyName)) {
-                        finalRatioResponse.remove(keyName);
-                        setValues(financialsDetailsRequest, response, topHits, aggrField, keyName);
-                        finalRatioResponse.put(keyName, response);
+
                     } else {
+                        Map<String, Double> departmentWiseExpense = new HashMap<>();
+                        response = new FinancialsRatioAnalysisResponse();
+                        getFinalResponse(ratioAnalysisGlcode, response, aggr1, totalIncomeIAmount,
+                                totalExpenseAmount, totalLiabilityAmount, totalCapitalExpenditure, totalGrantReceiptsForGlcode);
+                        getDepartmentWiseExpenseData(aggrDeaptWise, totalExpenseAmount, totalCapitalExpenditure, keyName, departmentWiseExpense);
+                        response.setCyDepartmentWiseRevenueExpenses(departmentWiseExpense);
                         setValues(financialsDetailsRequest, response, topHits, aggrField, keyName);
                         finalRatioResponse.put(keyName, response);
                     }
@@ -334,6 +291,61 @@ public class RatioAnalysisDashboardService {
                 ratioAnalysisResponses.add(response);
         return ratioAnalysisResponses;
 
+    }
+
+    private void getFinalResponse(RatioAnalysisGlcode ratioAnalysisGlcode, FinancialsRatioAnalysisResponse response, StringTerms aggr1, Double totalIncomeIAmount, Double totalExpenseAmount, Double totalLiabilityAmount, Double totalCapitalExpenditure, Double totalGrantReceiptsForGlcode) {
+        for (final Terms.Bucket majorCodeEntry : aggr1.getBuckets()) {
+            final Sum debit = majorCodeEntry.getAggregations().get(DEBITAMOUNT);
+            final Sum credit = majorCodeEntry.getAggregations().get(CREDITAMOUNT);
+            final TopHits topHits1 = majorCodeEntry.getAggregations().get(CY_RECORDS);
+            final SearchHit[] hit = topHits1.getHits().getHits();
+
+            String majorCode = hit[0].field(MAJOR_CODE).getValue();
+
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeTaxRevenue())) {
+                response.setCyTaxRevenueToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
+            }
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeAssignedRevenues())) {
+                response.setCyAssignedRevenuesToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
+            }
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeRental())) {
+                response.setCyRentalIncomeToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
+            }
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeFeeAndUserCharges())) {
+                response.setCyFeeUserChargesToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
+            }
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getIncomeRevenueGrants())) {
+                response.setCyRevenueGrantsToTotalIncomeRatio(((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) / totalIncomeIAmount) * 100);
+            }
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getExpenseEstablishment())) {
+                response.setCyEstablishmentExpensesToTotalReRatio(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / totalExpenseAmount) * 100);
+            }
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getExpenseAdministrative())) {
+                response.setCyAdministrativeExpensesToTotalReRatio(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / totalExpenseAmount) * 100);
+            }
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getExpenseOperationAndMaintenance())) {
+                response.setCyOmExpensesToTotalReRatio(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / totalExpenseAmount) * 100);
+            }
+
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalGrantsReceiptsMajorCode()) ||
+                    majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalGrantsReceiptsGlcode())) {
+                response.setCyGrantsReceiptsToTotalReceipts((((Double.valueOf(credit.getValue()) - Double.valueOf(debit.getValue())) + totalGrantReceiptsForGlcode) /
+                        (totalIncomeIAmount + totalGrantReceiptsForGlcode + totalLiabilityAmount)) * 100);
+
+            }
+
+            if (majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalExpenditureFourTen()) || majorCode.equalsIgnoreCase(ratioAnalysisGlcode.getCapitalExpenditureFourTwelve())) {
+                response.setCyCapitalExpenditureToTotalExpenditure(((Double.valueOf(debit.getValue()) - Double.valueOf(credit.getValue())) / (totalExpenseAmount + totalCapitalExpenditure)) * 100);
+
+            }
+        }
+
+
+        response.setCyIncomeRatio(response.getCyTaxRevenueToTotalIncomeRatio() + response.getCyAssignedRevenuesToTotalIncomeRatio() +
+                response.getCyRentalIncomeToTotalIncomeRatio() + response.getCyFeeUserChargesToTotalIncomeRatio() + response.getCyRevenueGrantsToTotalIncomeRatio());
+        response.setCyExpenseRatio(response.getCyEstablishmentExpensesToTotalReRatio() + response.getCyAdministrativeExpensesToTotalReRatio() +
+                response.getCyOmExpensesToTotalReRatio());
+        response.setCyCapitalRatio(response.getCyGrantsReceiptsToTotalReceipts() + response.getCyCapitalExpenditureToTotalExpenditure());
     }
 
     private Double getGrantReceiptAmountForGlcode(StringTerms aggrGrantReceipts, Double totalGrantReceiptsForGlcode, String keyName) {
