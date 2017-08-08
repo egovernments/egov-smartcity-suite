@@ -39,7 +39,11 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
@@ -49,12 +53,16 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -136,97 +144,116 @@ public class WorkOrderController {
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails connectionDetails,
             final HttpSession session, final String workFlowAction) {
         ReportRequest reportInput = null;
-        ReportOutput reportOutput;
-        if (null != connectionDetails) {
-            final Map<String, Object> reportParams = new HashMap<>();
-            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                    connectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
-            String ownerName = "";
-            double total;
-            String commissionerName = "";
-            final Designation desgn = designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
-            if (desgn != null) {
-                final List<Assignment> assignList = assignmentService.getAllActiveAssignments(desgn.getId());
-                commissionerName = !assignList.isEmpty() ? assignList.get(0).getEmployee().getName() : "";
-            }
-            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                ownerName = names.getOwnerName();
-                break;
+        ReportOutput reportOutput = null;
+        if (connectionDetails != null)
+            if (connectionDetails.getFileStore() != null) {
+                final FileStoreMapper fmp = connectionDetails.getFileStore();
+                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
+                reportOutput = new ReportOutput();
+                try {
+                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+                    reportOutput.setReportFormat(ReportFormat.PDF);
+                } catch (final IOException e) {
+                    throw new ApplicationRuntimeException("Exception in generating work order notice" + e);
+                }
+
+            } else {
+                final Map<String, Object> reportParams = new HashMap<>();
+                final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                        connectionDetails.getConnection().getPropertyIdentifier(),
+                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+                final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
+                String ownerName = "";
+                double total;
+                String commissionerName = "";
+                final Designation desgn = designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
+                if (desgn != null) {
+                    final List<Assignment> assignList = assignmentService.getAllActiveAssignments(desgn.getId());
+                    commissionerName = !assignList.isEmpty() ? assignList.get(0).getEmployee().getName() : "";
+                }
+                for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                    ownerName = names.getOwnerName();
+                    break;
+                }
+
+                if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
+                    reportParams.put("conntitle",
+                            WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+                    reportParams.put("applicationType", messageSource.getMessage("msg.new.watertap.conn", null, null));
+                } else if (WaterTaxConstants.ADDNLCONNECTION
+                        .equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
+                    reportParams.put("conntitle",
+                            WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+                    reportParams.put("applicationType", messageSource.getMessage("msg.add.watertap.conn", null, null));
+                } else {
+                    reportParams.put("conntitle",
+                            WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
+                    reportParams.put("applicationType",
+                            messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
+                }
+                reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
+                reportParams.put("district", session.getAttribute("districtName"));
+                reportParams.put("purpose", connectionDetails.getUsageType().getName());
+                final User user = securityUtils.getCurrentUser();
+                Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+                if (assignment == null) {
+                    final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(),
+                            new Date());
+                    if (!assignmentList.isEmpty())
+                        assignment = assignmentList.get(0);
+                }
+                String userDesignation = null;
+                if (assignment!=null && assignment.getDesignation().getName().equals(WaterTaxConstants.DESG_COMM_NAME))
+                    userDesignation = assignment.getDesignation().getName();
+                else
+                    userDesignation = null;
+                if (null != workFlowAction) {
+                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
+                        reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
+                        reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
+                    }
+                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
+                        reportParams.put("workOrderDate", "");
+                        reportParams.put("workOrderNo", "");
+                    }
+                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
+                        reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
+                        reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
+                        reportParams.put("userId", user.getId());
+                    }
+                }
+                reportParams.put("designation", userDesignation);
+                reportParams.put("workFlowAction", workFlowAction);
+                reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
+                reportParams.put("applicantName", WordUtils.capitalize(ownerName));
+                reportParams.put("applicantionDate", formatter.format(connectionDetails.getApplicationDate()));
+                reportParams.put("address", assessmentDetails.getPropertyAddress());
+                reportParams.put("doorno", doorno[0]);
+                reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
+                        ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
+                reportParams.put("applicationDate", formatter.format(connectionDetails.getApplicationDate()));
+                reportParams.put("donationCharges", connectionDetails.getDonationCharges());
+                reportParams.put("securityDeposit", connectionDetails.getFieldInspectionDetails().getSecurityDeposit());
+                reportParams.put("roadCuttingCharges",
+                        connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
+                reportParams.put("superVisionCharges",
+                        connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+                reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
+                reportParams.put("commissionerName", commissionerName);
+                total = connectionDetails.getDonationCharges()
+                        + connectionDetails.getFieldInspectionDetails().getSecurityDeposit()
+                        + connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
+                        + connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
+                reportParams.put("total", total);
+                reportInput = new ReportRequest(CONNECTIONWORKORDER, connectionDetails, reportParams);
+                reportOutput = reportService.createReport(reportInput);
             }
 
-            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                reportParams.put("conntitle",
-                        WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationType", messageSource.getMessage("msg.new.watertap.conn", null, null));
-            } else if (WaterTaxConstants.ADDNLCONNECTION
-                    .equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
-                reportParams.put("conntitle",
-                        WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationType", messageSource.getMessage("msg.add.watertap.conn", null, null));
-            } else {
-                reportParams.put("conntitle",
-                        WordUtils.capitalize(connectionDetails.getApplicationType().getName()).toString());
-                reportParams.put("applicationType",
-                        messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
-            }
-            reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
-            reportParams.put("district", session.getAttribute("districtName"));
-            reportParams.put("purpose", connectionDetails.getUsageType().getName());
-            final User user = securityUtils.getCurrentUser();
-            Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
-            if (assignment == null) {
-                final List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
-                if (!assignmentList.isEmpty())
-                    assignment = assignmentList.get(0);
-            }
-            final String userDesignation = assignment.getDesignation().getName();
-            if (null != workFlowAction) {
-                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
-                    reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
-                }
-                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
-                    reportParams.put("workOrderDate", "");
-                    reportParams.put("workOrderNo", "");
-                }
-                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                    reportParams.put("workOrderDate", formatter.format(connectionDetails.getWorkOrderDate()));
-                    reportParams.put("workOrderNo", connectionDetails.getWorkOrderNumber());
-                    reportParams.put("userId", user.getId());
-                }
-            }
-            reportParams.put("designation", userDesignation);
-            reportParams.put("workFlowAction", workFlowAction);
-            reportParams.put("consumerNumber", connectionDetails.getConnection().getConsumerCode());
-            reportParams.put("applicantName", WordUtils.capitalize(ownerName));
-            reportParams.put("applicantionDate", formatter.format(connectionDetails.getApplicationDate()));
-            reportParams.put("address", assessmentDetails.getPropertyAddress());
-            reportParams.put("doorno", doorno[0]);
-            reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
-                    ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
-            reportParams.put("applicationDate", formatter.format(connectionDetails.getApplicationDate()));
-            reportParams.put("donationCharges", connectionDetails.getDonationCharges());
-            reportParams.put("securityDeposit", connectionDetails.getFieldInspectionDetails().getSecurityDeposit());
-            reportParams.put("roadCuttingCharges",
-                    connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
-            reportParams.put("superVisionCharges",
-                    connectionDetails.getFieldInspectionDetails().getSupervisionCharges());
-            reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
-            reportParams.put("commissionerName", commissionerName);
-            total = connectionDetails.getDonationCharges()
-                    + connectionDetails.getFieldInspectionDetails().getSecurityDeposit()
-                    + connectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
-                    + connectionDetails.getFieldInspectionDetails().getSupervisionCharges();
-            reportParams.put("total", total);
-            reportInput = new ReportRequest(CONNECTIONWORKORDER, connectionDetails, reportParams);
-        }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=Work Order.pdf");
-        reportOutput = reportService.createReport(reportInput);
+
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 

@@ -213,7 +213,7 @@ public class ReconnectionController extends GenericConnectionController {
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || loggedUserIsMeesevaUser) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition == null) {
