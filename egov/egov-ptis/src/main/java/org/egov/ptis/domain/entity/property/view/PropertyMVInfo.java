@@ -87,6 +87,11 @@ public class PropertyMVInfo implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = "WARDID")
 	private Boundary ward;
+	
+	@ManyToOne
+	@JoinColumn(name = "ELECTIONWARDID")
+	private Boundary electionWard;
+	
 
 	@ManyToOne
 	@JoinColumn(name = "ZONEID")
@@ -655,6 +660,14 @@ public class PropertyMVInfo implements Serializable {
 
 	public void setAdjustment(final BigDecimal adjustment) {
 		this.adjustment = adjustment;
+	}
+	
+	public Boundary getElectionWard() {
+		return electionWard;
+	}
+
+	public void setElectionWard(Boundary electionWard) {
+		this.electionWard = electionWard;
 	}
 
 }

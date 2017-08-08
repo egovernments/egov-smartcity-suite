@@ -705,7 +705,8 @@ public interface PropertyTaxConstants {
     public static final List<String> modifyReasons = Arrays.asList(PROPERTY_MODIFY_REASON_AMALG,
             PROPERTY_MODIFY_REASON_BIFURCATE, PROPERTY_MODIFY_REASON_OBJ, PROPERTY_MODIFY_REASON_DATA_ENTRY,
             PROPERTY_MODIFY_REASON_DATA_UPDATE, PROPERTY_MODIFY_REASON_MODIFY);
-
+    public static final String PROPERTY_MODIFY_REASON_BULK_BOUNDARY = "BULK BOUNDARY UPDATION";
+    
     // Constants for Government Properties
     public static final Double STATEGOVT_BUILDING_ALV_PERCENTAGE = new Double(8.25d);
     public static final Double CENTRALGOVT_BUILDING_ALV_PERCENTAGE = new Double(9d);
