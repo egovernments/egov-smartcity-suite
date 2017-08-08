@@ -43,10 +43,8 @@ package org.egov.ptis.web.controller.transactions.bulkboundaryupdation;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.ptis.bean.BulkBoundaryUpdate;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.service.bulkboundaryupdatation.BulkBoundaryService;
@@ -57,7 +55,6 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -72,7 +69,14 @@ public class BulkBoundaryUpdateController {
 
 	@Autowired
 	private BulkBoundaryService bulkBoundaryService;
-
+	
+	private static final String PROPERTY_ID = "propertyId";
+	private static final String LOCALITY = "locality";
+	private static final String BLOCK = "block";
+	private static final String REVENUE_WARD = "ward";
+	private static final String ELECTION_WARD = "electionWard";
+	
+	
 	@RequestMapping(value = "/update", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
 	@ResponseBody
 	public String update(@RequestBody BulkBoundaryInfo mat, BindingResult errors, final Model model) {
@@ -84,15 +88,15 @@ public class BulkBoundaryUpdateController {
 
 			for (int i = 0; i < jsonArray.length(); ++i) {
 				final JSONObject jsonobj = jsonArray.getJSONObject(i);
-				basicProperty = bulkBoundaryService.getBasicPropertyByPropertyID(jsonobj.getString("propertyId"));
+				basicProperty = bulkBoundaryService.getBasicPropertyByPropertyID(jsonobj.getString(PROPERTY_ID));
 				basicProperty.getPropertyID()
-						.setLocality(boundaryService.getBoundaryById(new Long(jsonobj.getString("locality"))));
+						.setLocality(boundaryService.getBoundaryById(new Long(jsonobj.getString(LOCALITY))));
 				basicProperty.getPropertyID()
-						.setArea(boundaryService.getBoundaryById(new Long(jsonobj.getString("block"))));
+						.setArea(boundaryService.getBoundaryById(new Long(jsonobj.getString(BLOCK))));
 				basicProperty.getPropertyID()
-						.setWard(boundaryService.getBoundaryById(new Long(jsonobj.getString("ward"))));
+						.setWard(boundaryService.getBoundaryById(new Long(jsonobj.getString(REVENUE_WARD))));
 				basicProperty.getPropertyID().setElectionBoundary(
-						boundaryService.getBoundaryById(new Long(jsonobj.getString("electionWard"))));
+						boundaryService.getBoundaryById(new Long(jsonobj.getString(ELECTION_WARD))));
 				basicProperty.setBoundary(basicProperty.getPropertyID().getElectionBoundary());
 				basicProperties.add(basicProperty);
 			}

@@ -72,7 +72,7 @@ public class BulkBoundaryService {
 	private EntityManager entityManager;
 
 	@Autowired
-	transient PropertyPersistenceService basicPropertyService;
+	private PropertyPersistenceService basicPropertyService;
 
 	@Autowired
 	PropertyService propService;

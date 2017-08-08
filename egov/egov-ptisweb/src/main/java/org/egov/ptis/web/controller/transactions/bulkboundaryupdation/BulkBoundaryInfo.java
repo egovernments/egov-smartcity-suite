@@ -42,9 +42,11 @@ package org.egov.ptis.web.controller.transactions.bulkboundaryupdation;
 import org.egov.ptis.bean.BulkBoundaryUpdate;
 
 public class BulkBoundaryInfo {
+	
+	private String json;
 
-	BulkBoundaryUpdate[] info = new BulkBoundaryUpdate[100];
-	String json;
+	private BulkBoundaryUpdate[] info = new BulkBoundaryUpdate[100];
+	
 
 	public String getJson() {
 		return json;

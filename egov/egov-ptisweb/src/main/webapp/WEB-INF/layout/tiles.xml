@@ -502,11 +502,11 @@
     	<put-attribute name="body" value="/WEB-INF/views/common/reassign-success.jsp"/>
     </definition> 
     
-    <definition name="bulkBoundary-form" extends="base_layout">
+    <definition name="bulkboundary-form" extends="base_layout">
 		<put-attribute name="page-title" value="lbl.bulkBoundaryUpdation.title"
 			cascade="true" />
 		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/bulkBoundaryUpdation/bulkBoundary-form.jsp" />
+			value="/WEB-INF/views/transactions/bulkBoundaryUpdation/bulkboundary-form.jsp" />
 	</definition>
     
 </tiles-definitions> 

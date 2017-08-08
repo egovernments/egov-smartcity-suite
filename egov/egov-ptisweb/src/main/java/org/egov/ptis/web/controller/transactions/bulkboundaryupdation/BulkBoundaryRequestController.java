@@ -66,10 +66,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
-@RequestMapping(value = "/bulkBoundaryUpdation")
+@RequestMapping(value = "/bulkboundaryupdation")
 public class BulkBoundaryRequestController {
 
-	private static final String BULK_BOUNDARY_FORM = "bulkBoundary-form";
+	private static final String BULK_BOUNDARY_FORM = "bulkboundary-form";
 
 	@Autowired
 	private BoundaryService boundaryService;
