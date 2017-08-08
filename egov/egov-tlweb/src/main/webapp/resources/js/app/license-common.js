@@ -100,7 +100,7 @@ function downloadDigisignedLicenseCertificate(signedFileStoreId) {
         'width=' + screen.width,
         'fullscreen=yes'
     ].join(',');
-    window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?signedFileStoreId=' + signedFileStoreId, "NoticeWindow", params);
+    window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?file=' + signedFileStoreId, "NoticeWindow", params);
 }
 
 function showMessage(id, msg) {

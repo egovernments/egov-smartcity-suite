@@ -239,6 +239,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             licenseService().save(license());
             setFileStoreIds(fileStore.getFileStoreId());
             setUlbCode(ApplicationThreadLocals.getCityCode());
+
+            final Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<>();
+            fileStoreIdsApplicationNoMap.put(license().getDigiSignedCertFileStoreId(),
+                    license().getApplicationNumber());
+            getSession().put(FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
         }
         return "digitalSignatureRedirection";
     }

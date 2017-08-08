@@ -44,6 +44,16 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script>
+    function downloadDigisignedLicenseCertificate(signedFileStoreId) {
+        var params = [
+            'height=' + screen.height,
+            'width=' + screen.width,
+            'fullscreen=yes'
+        ].join(',');
+        window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?file=' + signedFileStoreId, "NoticeWindow", params);
+    }
+</script>
 <div class="row" id="page-content">
 	<div class="col-md-12">
 		<div class="panel" data-collapsed="0">
