@@ -208,9 +208,20 @@ $(document).ready(function () {
         if ($('#natureofwork ul li a[data-now=Reset]').length == 0) {
             $('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li>');
         }
-        now = unescape($(this).data('now'));
+
+        var taskName, moduleName;
+
+        if (!$(this).data('now')) {
+            taskName = $(this).data('task') ? unescape($(this).data('task')) : "";
+            moduleName = $(this).data('module') ? unescape($(this).data('module')) : "";
+        }
+        else
+            taskName = unescape($(this).data('now'));
+
         now_json = [];
-        refreshnow(now);
+        //console.log('Clicked item-->'+now);
+        refreshnow(taskName, moduleName);
+
         $('#inboxsearch').trigger('keyup');
     });
 
@@ -399,14 +410,14 @@ $(document).ready(function () {
 var response_json = [];
 var counts = {};
 var now_json = [];
-var now_name = [];
+var currentCondition;
 
 function clearnow() {
     $('#natureofwork').html('');
     response_json = [];
     counts = {};
     now_json = [];
-    now_name = [];
+    currentCondition = undefined;
 }
 
 //common ajax functions for worklist, drafts and notifications
@@ -437,7 +448,7 @@ function worklist() {
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
                 },
                 "targets": 4
             }
@@ -445,26 +456,68 @@ function worklist() {
         "fnInitComplete": function (oSettings, json) {
             response_json = JSON.stringify(json.data);
             if (JSON.parse(response_json).length != 0) {
-                $.each(JSON.parse(response_json), function (key, value) {
-                    if (!counts.hasOwnProperty(value.task)) {
-                        counts[value.task] = 1;
-                    } else {
-                        counts[value.task]++;
+
+                var groupByModule = JSON.parse(response_json).reduce(function (obj, item) {
+                    obj[item.moduleName] = obj[item.moduleName] || [];
+
+                    var taskItem;
+                    if (obj[item.moduleName].length > 0)
+                        taskItem = obj[item.moduleName].find((task) = > Object.keys(task)[0] == item.task);
+                    )
+
+                    if (taskItem) {
+                        taskItem[Object.keys(taskItem)[0]] += 1;
                     }
-                });
-                if (Object.keys(counts).length > 1) {
-                    $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"></ul>');
-                    for (var k in counts) {
-                        if (counts.hasOwnProperty(k)) {
-                            now_name.push(k);
-                            var key = escape(k);
-                            $('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now="' + key + '"><span><i class="fa fa-tags"></i></span>' + k + ' <span class="badge">' + counts[k] + '</span></a></li>');
-                        }
+                    else {
+                        obj[item.moduleName].push({[item.task]: 1});
                     }
-                }
+
+                    return obj;
+                }, {});
+
+                loadGroupMenusModuleWise(groupByModule);
+
+            } else {
+                //console.log('Response data is empty');
             }
         }
     });
+
+}
+
+function loadGroupMenusModuleWise(moduleArray) {
+    if (Object.keys(moduleArray).length > 1 ||
+        (Object.keys(moduleArray).length == 1 && Object.keys(moduleArray[Object.keys(moduleArray)[0]]).length > 1)) {
+        for (var moduleName in moduleArray) {
+            var key = escape(moduleName);
+            var count = 0;
+            var taskItems = "";
+            moduleArray[moduleName].map(function (item) {
+                count += item[Object.keys(item)];
+                taskItems = taskItems + '<li role="presentation"><a href="javascript:void(0)" data-module="' + escape(moduleName) + '" data-task="' + escape(Object.keys(item)[0]) + '"><span><i class="fa fa-tags"></i></span>' + Object.keys(item)[0] + ' <span class="badge">' + item[Object.keys(item)[0]] + '</span></a></li>';
+            });
+            //module append
+            $('#natureofwork').append('<div class="col-xs-3 col-sm-3 col-md-3"><ul class="nav nav-pills" role="tablist"><li role="presentation"><a href="javascript:void(0)" data-module="' + key + '"><span><i class="fa fa-circle"></i> </span>' + moduleName + ' <span class="badge">' + count + '</span></a></li></ul></div>');
+            //tasks append
+            $('#natureofwork').append('<div class="col-xs-9 col-sm-9 col-md-9 add-border"><ul class="nav nav-pills" role="tablist">' + taskItems + '</ul></div><hr/>');
+        }
+
+        if (currentCondition) {
+            var attrCondition = "";
+            if (currentCondition.moduleName)
+                attrCondition = '[data-module="' + escape(currentCondition.moduleName) + '"]';
+            if (currentCondition.taskName)
+                attrCondition += '[data-task="' + escape(currentCondition.taskName) + '"]';
+            else
+                attrCondition += ':not([data-task])';
+
+            if (attrCondition)
+                $('#natureofwork').find('li a' + attrCondition).parent().addClass('active');
+            refreshnow(currentCondition.taskName, currentCondition.moduleName);
+        }
+
+    }
+
 
 }
 
@@ -490,7 +543,7 @@ function drafts() {
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
                 },
                 "targets": 4
             }
@@ -537,7 +590,7 @@ function worklistwrtnow(json) {
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button</span>' : data;
+                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
                 },
                 "targets": 4
             }
@@ -545,16 +598,14 @@ function worklistwrtnow(json) {
     });
 }
 
-function refreshnow(now) {
-    if (now != 'Reset' && now != undefined) {
-        $.each(JSON.parse(response_json), function (key, value) {
-            if (value.task === now) {
-                now_json.push(value);
-            }
-        });
+function refreshnow(taskName, moduleName) {
+    if (taskName != 'Reset' && taskName != undefined) {
+        now_json = JSON.parse(response_json).filter((task) = > (taskName ? task.task == taskName : true) && (moduleName ? task.moduleName == moduleName : true));
         worklistwrtnow(now_json);
+        currentCondition = {taskName: taskName, moduleName: moduleName};
     } else {
-        $('#natureofwork ul li a[data-now="Reset"]').parent().remove();
+        currentCondition = undefined;
+        $('#natureofwork ul li a[data-now="Reset"]').parent().parent().remove();
         worklistwrtnow(JSON.parse(response_json));
     }
 }
@@ -563,18 +614,6 @@ function inboxloadmethod() {
     clearnow();
     if (focussedmenu == 'worklist') {
         worklist();
-        //nature of work make it stable
-        setTimeout(function () {
-            if (now_name.indexOf(now) > -1) {
-                refreshnow(now);
-                $('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li>');
-                var key = escape(now);
-                $('#natureofwork ul li a[data-now="' + key + '"]').parent().addClass('active');
-            } else {
-                refreshnow('Reset');
-            }
-            $('#inboxsearch').trigger('keyup');
-        }, 500);
     } else if (focussedmenu == 'drafts') {
         drafts();
     } else if (focussedmenu == 'notifications') {
