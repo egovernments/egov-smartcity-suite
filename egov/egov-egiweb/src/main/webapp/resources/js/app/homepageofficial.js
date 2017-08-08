@@ -206,7 +206,7 @@ $(document).ready(function () {
         $('#natureofwork ul li').removeClass('active');
         $(this).parent().addClass('active');
         if ($('#natureofwork ul li a[data-now=Reset]').length == 0) {
-            $('#natureofwork ul').append('<li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li>');
+            $('#natureofwork').append('<ul class="nav nav-pills" role="tablist"><li role="presentation"><a href="javascript:void(0)" data-now=Reset><span><i class="fa fa-refresh"></i></span>Reset / Clear</a></li></ul>');
         }
 
         var taskName, moduleName;
@@ -487,19 +487,22 @@ function worklist() {
 function loadGroupMenusModuleWise(moduleArray) {
     if (Object.keys(moduleArray).length > 1 ||
         (Object.keys(moduleArray).length == 1 && Object.keys(moduleArray[Object.keys(moduleArray)[0]]).length > 1)) {
-        for (var moduleName in moduleArray) {
-            var key = escape(moduleName);
-            var count = 0;
-            var taskItems = "";
-            moduleArray[moduleName].map(function (item) {
-                count += item[Object.keys(item)];
-                taskItems = taskItems + '<li role="presentation"><a href="javascript:void(0)" data-module="' + escape(moduleName) + '" data-task="' + escape(Object.keys(item)[0]) + '"><span><i class="fa fa-tags"></i></span>' + Object.keys(item)[0] + ' <span class="badge">' + item[Object.keys(item)[0]] + '</span></a></li>';
+
+        Object.keys(moduleArray)
+            .sort()
+            .forEach(function(moduleName, i) {
+                var key = escape(moduleName);
+                var count = 0;
+                var taskItems = "";
+                moduleArray[moduleName].map(function (item) {
+                    count += item[Object.keys(item)];
+                    taskItems = taskItems + '<li role="presentation"><a href="javascript:void(0)" data-module="' + escape(moduleName) + '" data-task="' + escape(Object.keys(item)[0]) + '"><span><i class="fa fa-tags"></i></span>' + Object.keys(item)[0] + ' <span class="badge">' + item[Object.keys(item)[0]] + '</span></a></li>';
+                });
+
+                var generatedHtml = '<div class="row"><div class="col-xs-3 col-sm-3 col-md-3"><ul class="nav nav-pills" role="tablist"><li role="presentation"><a href="javascript:void(0)" data-module="' + key + '"><span><i class="fa fa-circle"></i> </span>' + moduleName
+                    + ' <span class="badge">' + count + '</span></a></li></ul></div> <div class="col-xs-9 col-sm-9 col-md-9"><ul style="border-bottom:1px solid #d4d4d4;margin-bottom:5px;" class="nav nav-pills" role="tablist">' + taskItems + '</ul></div></div>';
+                $('#natureofwork').append(generatedHtml);
             });
-            //module append
-            $('#natureofwork').append('<div class="col-xs-3 col-sm-3 col-md-3"><ul class="nav nav-pills" role="tablist"><li role="presentation"><a href="javascript:void(0)" data-module="' + key + '"><span><i class="fa fa-circle"></i> </span>' + moduleName + ' <span class="badge">' + count + '</span></a></li></ul></div>');
-            //tasks append
-            $('#natureofwork').append('<div class="col-xs-9 col-sm-9 col-md-9 add-border"><ul class="nav nav-pills" role="tablist">' + taskItems + '</ul></div><hr/>');
-        }
 
         if (currentCondition) {
             var attrCondition = "";
