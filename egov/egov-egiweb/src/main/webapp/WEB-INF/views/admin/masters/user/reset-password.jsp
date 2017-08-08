@@ -90,8 +90,15 @@
                 return Bloodhound.tokenizers.whitespace(datum.value);
             },
             queryTokenizer: Bloodhound.tokenizers.whitespace,
+            limit: 10,
             remote: {
-                url: 'employee-name-like/%QUERY',
+                url: 'employee-name-like/?employeeName=',
+                replace: function (url, query) {
+                    if ($('#username').val()) {
+                        url += encodeURIComponent($('#username').val());
+                    }
+                    return url;
+                },
                 filter: function (data) {
                     return $.map(data, function (user) {
                         return {
@@ -107,7 +114,7 @@
         $('#username').typeahead({
             hint: false,
             highlight: false,
-            minLength: 3
+            minLength: 1
         }, {
             displayKey: 'name',
             source: usernameautocomplete.ttAdapter()

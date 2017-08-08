@@ -47,6 +47,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
@@ -66,9 +67,9 @@ public class UserController {
         return userService.getUsersByNameLike(name);
     }
 
-    @GetMapping(value = "employee-name-like/{employeeName}", produces = APPLICATION_JSON_UTF8_VALUE)
+    @GetMapping(value = "employee-name-like/", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public List<User> users(@PathVariable String employeeName) {
+    public List<User> users(@RequestParam String employeeName) {
         return userService.getAllEmployeeNameLike(employeeName);
     }
 }
