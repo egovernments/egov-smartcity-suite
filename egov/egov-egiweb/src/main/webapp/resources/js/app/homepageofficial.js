@@ -462,8 +462,7 @@ function worklist() {
 
                     var taskItem;
                     if (obj[item.moduleName].length > 0)
-                        taskItem = obj[item.moduleName].find((task) = > Object.keys(task)[0] == item.task);
-                    )
+                        taskItem = obj[item.moduleName].find((task) => Object.keys(task)[0] == item.task);
 
                     if (taskItem) {
                         taskItem[Object.keys(taskItem)[0]] += 1;
@@ -600,7 +599,7 @@ function worklistwrtnow(json) {
 
 function refreshnow(taskName, moduleName) {
     if (taskName != 'Reset' && taskName != undefined) {
-        now_json = JSON.parse(response_json).filter((task) = > (taskName ? task.task == taskName : true) && (moduleName ? task.moduleName == moduleName : true));
+        now_json = JSON.parse(response_json).filter((task) => (taskName ? task.task == taskName : true) && (moduleName ? task.moduleName == moduleName : true));
         worklistwrtnow(now_json);
         currentCondition = {taskName: taskName, moduleName: moduleName};
     } else {
