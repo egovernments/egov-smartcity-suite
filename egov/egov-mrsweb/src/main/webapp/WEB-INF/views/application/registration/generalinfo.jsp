@@ -225,14 +225,14 @@
 
 			<c:choose>
 				<c:when
-					test="${currentState != 'DATAENTRY'}">
+					test="${currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created'}">
 					<form:hidden path="marriagePhotoFileStore" />
 					<form:hidden class="encodedPhoto" path="encodedMarriagePhoto" />
 					<img id="marriage-photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="marriage-photo" name="marriagePhotoFile"
 						class="file-ellipsis upload-file validate-file"
-						data-fileto="marriage-photo">
+						data-fileto="marriage-photo" accept="image/*">
 					<form:errors path="marriagePhotoFile"
 						cssClass="add-margin error-msg" />
 				</c:when>
@@ -240,13 +240,13 @@
 					<img id="marriage-photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="marriage-photo" name="marriagePhotoFile"
-						class="file-ellipsis upload-file validate-file" required="true"
-						data-fileto="marriage-photo">
+						class="file-ellipsis upload-file validate-file" required="required"
+						data-fileto="marriage-photo" accept="image/*">
 					<form:errors path="marriagePhotoFile"
 						cssClass="add-margin error-msg" />
 				</c:otherwise>
 			</c:choose>
-		</div>
+		</div>	
 
 	</div>
 

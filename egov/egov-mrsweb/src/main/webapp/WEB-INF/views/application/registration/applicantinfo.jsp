@@ -184,7 +184,7 @@
 		<div class="col-sm-8 setimage">
 			<c:choose>
 				<c:when
-					test="${currentState != 'DATAENTRY'}">
+					test="${currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created'}">
 					<form:hidden path="${applicant}.photoFileStore" />
 					<form:hidden class="encodedPhoto" path="${applicant}.encodedPhoto" />
 					<img class="add-border marriage-img" 
@@ -192,7 +192,7 @@
 						name="${applicant}.photo">
 					<input type="file" data-fileto="${applicant}-photo"
 						id="${applicant}-photo" name="${applicant}.photoFile"
-						class="file-ellipsis upload-file">
+						class="file-ellipsis upload-file validate-file" accept="image/*">
 				</c:when>
 				<c:otherwise>
 					<img class="add-border marriage-img"
@@ -200,7 +200,7 @@
 						name="${applicant}.photo">
 					<input type="file" id="${applicant}-photo"
 						data-fileto="${applicant}-photo" name="${applicant}.photoFile"
-						class="file-ellipsis upload-file" required="required">
+						class="file-ellipsis upload-file validate-file" required="required" accept="image/*">
 				</c:otherwise>
 			</c:choose>
 

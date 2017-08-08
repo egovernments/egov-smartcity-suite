@@ -161,15 +161,15 @@
 					<img id="${witness}.photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="${witness}-photo"
-						name="${witness}.photoFile" class="file-ellipsis upload-file"
-						data-fileto="${witness}.photo">
+						name="${witness}.photoFile" class="file-ellipsis upload-file validate-file"
+						data-fileto="${witness}.photo" accept="image/*">
 				</c:when>
 				<c:otherwise>
 					<img id="${witness}.photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="${witness}-photo"
-						name="${witness}.photoFile" class="file-ellipsis upload-file"
-						data-fileto="${witness}.photo">
+						name="${witness}.photoFile" class="file-ellipsis upload-file validate-file"
+						data-fileto="${witness}.photo" accept="image/*">
 				</c:otherwise>
 			</c:choose>
 		</div>
