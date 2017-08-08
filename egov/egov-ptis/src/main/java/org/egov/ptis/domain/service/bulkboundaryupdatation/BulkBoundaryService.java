@@ -75,10 +75,10 @@ public class BulkBoundaryService {
 	private PropertyPersistenceService basicPropertyService;
 
 	@Autowired
-	PropertyService propService;
+	private PropertyService propService;
 
 	@Autowired
-	BulkBoundaryUpdationRepository bulkBoundaryUpdationRepository;
+	private BulkBoundaryUpdationRepository bulkBoundaryUpdationRepository;
 
 	public BasicProperty getBasicPropertyByPropertyID(String propertyId) {
 		Query qry = null;
