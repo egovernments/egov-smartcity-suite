@@ -42,6 +42,7 @@ package org.egov.ptis.service.utils;
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -69,9 +70,29 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHO
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSACTION_TYPE_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.math.BigDecimal;
@@ -83,13 +104,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.TreeMap;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-import java.util.TreeMap;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
@@ -109,7 +131,9 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.NumberUtil;
@@ -121,11 +145,13 @@ import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
+import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.DemandBill.DemandBillService;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -164,6 +190,9 @@ public class PropertyTaxCommonUtils {
 
     @Autowired
     private DepartmentService departmentService;
+        
+    @Autowired
+    private MessagingService messagingService;
 
     /**
      * Gives the first half of the current financial year
@@ -626,4 +655,94 @@ public class PropertyTaxCommonUtils {
         }
         return position;
     }
+    
+   
+    public void buildMailAndSMS(final Property property) {
+        String transactionType;
+        String modifyReason = property.getPropertyModifyReason();
+        if (modifyReason.equalsIgnoreCase(TRANSACTION_TYPE_CREATE))
+            transactionType = NATURE_NEW_ASSESSMENT;
+        else if (modifyReason.equalsIgnoreCase(PROPERTY_MODIFY_REASON_ADD_OR_ALTER))
+            transactionType = NATURE_ALTERATION;
+        else if (modifyReason.equalsIgnoreCase(PROPERTY_MODIFY_REASON_BIFURCATE))
+            transactionType = NATURE_BIFURCATION;
+        else if (modifyReason.equalsIgnoreCase(APPLICATION_TYPE_DEMOLITION))
+            transactionType = NATURE_DEMOLITION;
+        else if (modifyReason.equalsIgnoreCase(PROPERTY_MODIFY_REASON_AMALG))
+            transactionType = NATURE_AMALGAMATION;
+        else
+            transactionType = NATURE_TAX_EXEMPTION;
+        for (final PropertyOwnerInfo ownerInfo : property.getBasicProperty().getPropertyOwnerInfo())
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
+                buildSmsAndMail(property.getApplicationNo(), ownerInfo.getOwner(), transactionType);
+    }
+
+    public void buildMailAndSMS(final RevisionPetition revisionPetition) {
+        for (final PropertyOwnerInfo ownerInfo : revisionPetition.getBasicProperty().getPropertyOwnerInfo())
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
+                buildSmsAndMail(revisionPetition.getObjectionNumber(), ownerInfo.getOwner(),
+                        revisionPetition.getProperty().getPropertyModifyReason());
+    }
+
+    public void buildMailAndSMS(final PropertyMutation propertyMutation) {
+        for (final PropertyOwnerInfo ownerInfo : propertyMutation.getBasicProperty().getPropertyOwnerInfo())
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
+                buildSmsAndMail(propertyMutation.getApplicationNo(), ownerInfo.getOwner(), NATURE_TITLE_TRANSFER);
+    }
+
+    public void buildMailAndSMS(final VacancyRemission vacancyRemission) {
+        for (final PropertyOwnerInfo ownerInfo : vacancyRemission.getBasicProperty().getPropertyOwnerInfo())
+            if (StringUtils.isNotBlank(ownerInfo.getOwner().getMobileNumber()))
+                buildSmsAndMail(vacancyRemission.getApplicationNumber(), ownerInfo.getOwner(), NATURE_VACANCY_REMISSION);
+    }
+
+    private void buildSmsAndMail(final String applicationNumber, final User user, final String workFlowAction) {
+        final String mobileNumber = user.getMobileNumber();
+        String smsMsg = "";
+        final String emailid = user.getEmailId();
+        String emailSubject = "";
+        String emailBody = "";
+        String noticeNumber = getNoticeNumber(applicationNumber, workFlowAction);
+        if (mobileNumber != null)
+            smsMsg = "Your application " + applicationNumber + ", for " + workFlowAction
+                    + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
+                    + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
+                    + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
+                    + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.";
+        if (emailid != null) {
+            emailSubject = workFlowAction + " application request with acknowledgement No: " + applicationNumber
+                    + " is approved and digitally signed.";
+            emailBody = "Dear " + user.getName() + ",\n\n" + "Your application " + applicationNumber + ", for " + workFlowAction
+                    + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
+                    + ApplicationThreadLocals.getDomainURL() + "/egi/downloadfile?fileStoreId="
+                    + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
+                    + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.\n\nThanks,\n"
+                    + ApplicationThreadLocals.getMunicipalityName();
+        }
+        if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
+            messagingService.sendEmail(emailid, emailSubject, emailBody);
+        if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
+            messagingService.sendSMS(mobileNumber, smsMsg);
+    }
+
+    public String getNoticeNumber(final String applicationNo, final String workFlowAction) {
+        String noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
+        if (workFlowAction.equalsIgnoreCase(NATURE_OF_WORK_RP))
+            noticeType = NOTICE_TYPE_RPPROCEEDINGS;
+        else if (workFlowAction.equalsIgnoreCase(NATURE_OF_WORK_GRP))
+            noticeType = NOTICE_TYPE_GRPPROCEEDINGS;
+        else if (workFlowAction.equalsIgnoreCase(NATURE_TITLE_TRANSFER))
+            noticeType = NOTICE_TYPE_MUTATION_CERTIFICATE;
+        else if (workFlowAction.equalsIgnoreCase(NATURE_TAX_EXEMPTION))
+            noticeType = NOTICE_TYPE_EXEMPTION;
+        else if (workFlowAction.equalsIgnoreCase(NATURE_VACANCY_REMISSION))
+            noticeType = NOTICE_TYPE_VRPROCEEDINGS;
+        final javax.persistence.Query qry = entityManager
+                .createQuery("from PtNotice notice where applicationNumber=? and noticeType=?");
+        qry.setParameter(1, applicationNo);
+        qry.setParameter(2, noticeType);
+        PtNotice notice = (PtNotice) qry.getSingleResult();
+        return notice.getNoticeNo();
+    }
+
 }

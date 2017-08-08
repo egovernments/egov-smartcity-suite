@@ -97,6 +97,7 @@ import org.egov.ptis.domain.repository.vacancyremission.VacancyRemissionApproval
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -180,6 +181,9 @@ public class DigitalSignatureWorkflowController {
 
     @Autowired
     private VacancyRemissionApprovalRepository vacancyRemissionApprovalRepository;
+    
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @RequestMapping(value = "/propertyTax/transitionWorkflow")
     public String transitionWorkflow(final HttpServletRequest request, final Model model) {
@@ -220,6 +224,7 @@ public class DigitalSignatureWorkflowController {
             return Boolean.FALSE;
         propertyService.updateIndexes(property, getApplicationTypes().get(applicationType));
         basicPropertyService.update(basicProperty);
+        propertyTaxCommonUtils.buildMailAndSMS(property);
         return Boolean.TRUE;
     }
 
@@ -248,6 +253,7 @@ public class DigitalSignatureWorkflowController {
             propertyService.updatePortal(revisionPetition, "RP".equalsIgnoreCase(revisionPetition.getType())
                         ? PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION : APPLICATION_TYPE_GRP);
         }
+        propertyTaxCommonUtils.buildMailAndSMS(revisionPetition);
         return Boolean.TRUE;
     }
 
@@ -261,6 +267,7 @@ public class DigitalSignatureWorkflowController {
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(propertyMutation.getSource()))
             propertyService.updatePortal(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         basicPropertyService.persist(basicProperty);
+        propertyTaxCommonUtils.buildMailAndSMS(propertyMutation);
         return Boolean.TRUE;
     }
 
@@ -277,6 +284,7 @@ public class DigitalSignatureWorkflowController {
             if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()))
                 propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
             basicPropertyService.persist(basicProperty);
+            propertyTaxCommonUtils.buildMailAndSMS(getVacancyRemissionByApplicationNo(applicationNumber));
         }
         return Boolean.TRUE;
     }
