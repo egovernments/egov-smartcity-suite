@@ -427,6 +427,7 @@ public class PropertyTransferService {
             reportOutput.setReportFormat(ReportFormat.PDF);
             propertyMutation.transition().end().withNextAction(null);
             basicProperty.setUnderWorkflow(false);
+            propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         } else {
             final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
             noticeBean.setMunicipalityName(cityName);
