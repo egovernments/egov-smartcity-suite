@@ -47,6 +47,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
+import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
@@ -57,7 +58,7 @@ import java.util.Set;
 import static org.hibernate.jpa.QueryHints.HINT_CACHEABLE;
 
 @Repository
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface UserRepository extends JpaRepository<User, Long>, RevisionRepository<User, Long, Integer> {
 
     @QueryHints({@QueryHint(name = HINT_CACHEABLE, value = "true")})
     User findByUsername(String userName);

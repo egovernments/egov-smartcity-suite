@@ -245,4 +245,16 @@
         <put-attribute name="page-title" value="title.login.audit.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/auditing/login-audit-report.jsp"/>
     </definition>
+    <definition name="user-role-audit-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.user.role.audit.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/auditing/user-role-change-audit-report.jsp"/>
+    </definition>
+    <definition name="user-password-audit-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.user.password.audit.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/auditing/user-password-change-audit-report.jsp"/>
+    </definition>
+    <definition name="feature-role-audit-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.feature.role.audit.report" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/auditing/feature-role-change-audit-report.jsp"/>
+    </definition>
 </tiles-definitions>

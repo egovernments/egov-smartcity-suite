@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,21 +38,43 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.infra.web.controller.admin.auditing.report;
 
-import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.entity.Feature;
-import org.egov.infra.admin.master.entity.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.history.RevisionRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.admin.master.service.UserAuditService;
+import org.egov.infra.security.audit.contract.UserPasswordChangeAuditReportRequest;
+import org.egov.infra.web.contract.response.UserPasswordChangeAuditReportAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.List;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
-@Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long>, RevisionRepository<Feature, Long, Integer> {
+@Controller
+@RequestMapping("audit/report/user-password")
+public class UserPasswordChangeAuditReportController {
 
-    Long countByRolesInAndActionsIn(Role role, Action action);
+    @Autowired
+    private UserAuditService userAuditService;
 
-    List<Feature> findByModuleId(Long moduleId);
+    @Autowired
+    private UserPasswordChangeAuditReportAdapter userPasswordChangeAuditReportAdapter;
+
+    @GetMapping
+    public String userPasswordChangeAuditReportSearchView() {
+        return "user-password-audit-report";
+    }
+
+    @PostMapping(produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String userPasswordChangeAuditReportSearchResult(
+            @ModelAttribute UserPasswordChangeAuditReportRequest userPasswordChangeAuditReportRequest) {
+        return new DataTable<>(userAuditService
+                .getUserPasswordChangeAudit(userPasswordChangeAuditReportRequest), userPasswordChangeAuditReportRequest.draw())
+                .toJson(userPasswordChangeAuditReportAdapter);
+    }
 }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,21 +38,19 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.repository;
+package org.egov.infra.admin.master.contracts;
 
-import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.entity.Feature;
-import org.egov.infra.admin.master.entity.Role;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.history.RevisionRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import java.util.List;
+public class FeatureRoleChangeAuditReportRequest extends DataTableSearchRequest {
 
-@Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long>, RevisionRepository<Feature, Long, Integer> {
+    private Long featureId;
 
-    Long countByRolesInAndActionsIn(Role role, Action action);
+    public Long getFeatureId() {
+        return featureId;
+    }
 
-    List<Feature> findByModuleId(Long moduleId);
+    public void setFeatureId(final Long featureId) {
+        this.featureId = featureId;
+    }
 }

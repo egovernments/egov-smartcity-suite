@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,69 +38,39 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.support.ui;
+package org.egov.infra.admin.master.service;
 
-import com.google.gson.JsonSerializer;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.security.audit.contract.UserPasswordChangeAuditReportRequest;
+import org.egov.infra.security.audit.contract.UserRoleChangeAuditReportRequest;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
+import org.springframework.stereotype.Service;
 
-import java.util.List;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
+@Service
+public class UserAuditService {
 
-public class DataTable<T> {
+    @Autowired
+    private UserRepository userRepository;
 
-    private long draw;
-    private long recordsTotal;
-    private long totalDisplayRecords;
-    private long recordsFiltered;
-    private List<T> data;
-
-    public DataTable(Page<T> pages, long draw) {
-        this(draw, pages.getTotalElements(), pages.getNumber(), pages.getTotalElements(), pages.getContent());
+    public Page<Revision<Integer, User>> getUserRoleChangeAudit(UserRoleChangeAuditReportRequest userRoleAuditReportRequest) {
+        return getPagedUserRevision(userRoleAuditReportRequest.getUserId(), userRoleAuditReportRequest);
     }
 
-    public DataTable(org.egov.infstr.services.Page<T> pages, long draw) {
-        this(draw, pages.getRecordTotal(), pages.getPageSize(), pages.getRecordTotal(), pages.getList());
+    public Page<Revision<Integer, User>> getUserPasswordChangeAudit(UserPasswordChangeAuditReportRequest userPasswordChangeAuditReportRequest) {
+        return getPagedUserRevision(userPasswordChangeAuditReportRequest.getUserId(), userPasswordChangeAuditReportRequest);
     }
 
-    public DataTable(long draw, long recordsTotal, long totalDisplayRecords, long recordsFiltered, List<T> data) {
-        this.draw = draw;
-        this.recordsTotal = recordsTotal;
-        this.totalDisplayRecords = totalDisplayRecords;
-        this.recordsFiltered = recordsFiltered;
-        this.data = data;
-    }
-
-    public long getDraw() {
-        return draw;
-    }
-
-    public long getRecordsTotal() {
-        return recordsTotal;
-    }
-
-    public long getTotalDisplayRecords() {
-        return totalDisplayRecords;
-    }
-
-    public long getRecordsFiltered() {
-        return recordsFiltered;
-    }
-
-    public List<T> getData() {
-        return data;
-    }
-
-    public void setData(final List<T> data) {
-        this.data = data;
-    }
-
-    public String toJson(Class<? extends JsonSerializer<DataTable<T>>> jsonSerializerClazz) {
-        return toJSON(this, jsonSerializerClazz);
-    }
-
-    public String toJson(DataTableJsonAdapter jsonSerializer) {
-        return toJSON(this, jsonSerializer);
+    public Page<Revision<Integer, User>> getPagedUserRevision(Long userId, DataTableSearchRequest dataTableSearchRequest) {
+        final Pageable pageable = new PageRequest(dataTableSearchRequest.pageNumber(),
+                dataTableSearchRequest.pageSize(),
+                dataTableSearchRequest.orderDir(), dataTableSearchRequest.orderBy());
+        return userRepository.findRevisions(userId, pageable);
     }
 }
