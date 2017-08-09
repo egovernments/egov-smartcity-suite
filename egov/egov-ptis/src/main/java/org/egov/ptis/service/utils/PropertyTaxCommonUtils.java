@@ -714,7 +714,7 @@ public class PropertyTaxCommonUtils {
                     + " is approved and digitally signed.";
             emailBody = "Dear " + user.getName() + ",\n\n" + "Your application " + applicationNumber + ", for " + workFlowAction
                     + " is approved. Download your digitally signed copy of Special Notice/ Proceedings from the below "
-                    + ApplicationThreadLocals.getDomainURL() + "/egi/downloadfile?fileStoreId="
+                    + ApplicationThreadLocals.getDomainURL() + "/ptis/reports/searchNotices-showNotice.action?noticeNumber="
                     + noticeNumber + "&moduleName=PTIS   or approach to Puraseva Center "
                     + ApplicationThreadLocals.getMunicipalityName() + " to obtain the same.\n\nThanks,\n"
                     + ApplicationThreadLocals.getMunicipalityName();
