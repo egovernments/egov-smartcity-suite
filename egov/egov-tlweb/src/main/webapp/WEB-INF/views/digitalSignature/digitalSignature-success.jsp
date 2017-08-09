@@ -44,38 +44,32 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script>
-    function downloadDigisignedLicenseCertificate(signedFileStoreId) {
-        var params = [
-            'height=' + screen.height,
-            'width=' + screen.width,
-            'fullscreen=yes'
-        ].join(',');
-        window.open('/tl/digitalSignature/tradeLicense/downloadSignedLicenseCertificate?file=' + signedFileStoreId, "NoticeWindow", params);
-    }
-</script>
 <div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-		<div class="panel-body">
-		<form:form  method ="post" class="form-horizontal form-groups-bordered" id="DigitalSignatureAckForm" >
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading" align="center">
-					<div class="panel-title text-center" align="center">
-						<strong>${successMessage}</strong>
-					</div>
-				</div> 
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<c:if test='${fileStoreId != null && fileStoreId != ""}'>
-						<button type="button" id="previewButn" onclick="downloadDigisignedLicenseCertificate('${fileStoreId}')" class="btn btn-primary">Download</button>
-					</c:if>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
-				</div>
-			</div>
-		</form:form>
-		</div>
+    <div class="col-md-12">
+        <div class="panel" data-collapsed="0">
+            <div class="panel-body">
+                <form:form method="post" action="downloadSignedLicenseCertificate"
+                           class="form-horizontal form-groups-bordered" id="DigitalSignatureAckForm">
+                    <div class="panel panel-primary" data-collapsed="0">
+                        <div class="panel-heading" align="center">
+                            <div class="panel-title text-center" align="center">
+                                <input type="hidden" value="${applnum}" name="applnum"/>
+                                <input type="hidden" value="${fileStoreId}" name="file"/>
+                                <strong>${successMessage}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-center">
+                            <c:if test='${fileStoreId != null && fileStoreId != ""}'>
+                                <button id="previewButn" class="btn btn-primary">Download</button>
+                            </c:if>
+                            <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message
+                                    code="lbl.close"/></a>
+                        </div>
+                    </div>
+                </form:form>
+            </div>
         </div>
     </div>
 </div>

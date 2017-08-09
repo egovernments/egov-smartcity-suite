@@ -78,6 +78,7 @@ import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
         @Result(name = "message", location = "viewTradeLicense-message.jsp"),
         @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
+        @Result(name = "digisigncertificate", type = "redirect", location = "/digitalSignature/tradeLicense/downloadSignedLicenseCertificate", params = {"file", "${digiSignedFile}", "applnum", "${applNum}"})
 })
 public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
@@ -85,6 +86,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private Long licenseid;
     private String url;
     private Boolean enableState;
+    private String digiSignedFile;
+    private String applNum;
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -116,9 +119,15 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String generateCertificate() {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        reportId = reportViewerUtil
-                .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license()));
-        return "report";
+        if (tradeLicense.getDigiSignedCertFileStoreId() != null) {
+            setDigiSignedFile(license().getDigiSignedCertFileStoreId());
+            setApplNum(license().getApplicationNumber());
+            return "digisigncertificate";
+        } else {
+            reportId = reportViewerUtil
+                    .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license()));
+            return "report";
+        }
     }
 
     private void setLicenseIdIfServletRedirect() {
@@ -281,4 +290,19 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.enableState = enableState;
     }
 
+    public String getDigiSignedFile() {
+        return digiSignedFile;
+    }
+
+    public void setDigiSignedFile(String digiSignedFile) {
+        this.digiSignedFile = digiSignedFile;
+    }
+
+    public String getApplNum() {
+        return applNum;
+    }
+
+    public void setApplNum(String applNum) {
+        this.applNum = applNum;
+    }
 }

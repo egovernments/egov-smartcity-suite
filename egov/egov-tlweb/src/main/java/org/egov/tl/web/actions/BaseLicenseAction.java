@@ -113,8 +113,7 @@ import static org.egov.tl.utils.Constants.*;
                 "/viewtradelicense", "method", "showForApproval"}),
         @Result(name = "tl_generateRejCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
                 "namespace", "/viewtradelicense", "method", "generateRejCertificate"}),
-        @Result(name = "tl_generateCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense", "method", "generateCertificate"}),
+        @Result(name = "tl_generateCertificate", type = "redirectAction", location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
         @Result(name = "report", location = "newTradeLicense-report.jsp"),
         @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp"),
@@ -218,7 +217,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         processWorkflow(NEW);
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
         if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            return redirectToPrintCertificate();
+            return GENERATE_CERTIFICATE;
         else
             return "message";
 
