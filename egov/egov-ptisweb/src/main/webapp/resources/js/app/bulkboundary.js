@@ -99,7 +99,7 @@ jQuery(document).ready(function() {
 													"bDestroy" : true,
 													"order" : [ [ 1, 'asc' ] ],
 													ajax : {
-														url : "/ptis/bulkBoundaryUpdation/search",
+														url : "/ptis/bulkboundaryupdation/search",
 														type : "POST",
 														data : function(args) {
 															return {

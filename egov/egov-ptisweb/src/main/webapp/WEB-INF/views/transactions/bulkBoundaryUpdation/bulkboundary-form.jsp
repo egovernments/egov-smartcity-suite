@@ -150,10 +150,7 @@
 						id="bulkBoundarySearchBtn">
 						<spring:message code="lbl.button.search" />
 					</button>
-					<button type="button" class="btn btn-primary add-margin"
-						id="updateBtn">
-						<spring:message code="lbl.update" />
-					</button>
+					
 					<button type="button" onclick="self.close()"
 						class="btn btn-primary add-margin">
 						<spring:message code="lbl.close" />
@@ -192,6 +189,14 @@
 					</tr>
 				</thead>
 			</table>
+			<div class="row">
+				<div class="text-center">
+					<button type="button" class="btn btn-primary add-margin"
+						id="updateBtn">
+						<spring:message code="lbl.update" />
+					</button>
+				</div>
+			</div>
 		</div>
 	</div>
 </form:form>
