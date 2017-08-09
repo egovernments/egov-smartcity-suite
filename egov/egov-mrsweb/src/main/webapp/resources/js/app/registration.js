@@ -292,6 +292,10 @@ var fileformatsinclude = ['jpeg','jpg','png'];
 		}
 	});
 	
+	if($('#message').val()){
+		bootbox.alert($('#message').val());
+		return false; 
+	}
 });
 	
 	

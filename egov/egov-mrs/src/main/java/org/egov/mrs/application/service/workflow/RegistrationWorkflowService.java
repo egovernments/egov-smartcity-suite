@@ -74,7 +74,6 @@ import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-import org.springframework.validation.BindingResult;
 
 @Service
 public class RegistrationWorkflowService {
@@ -481,12 +480,10 @@ public class RegistrationWorkflowService {
         return assignment;
     }
 
-    public void validateAssignmentForCscUser(final MarriageRegistration marriageRegistration, final ReIssue reIssue,
-            final Boolean isEmployee,
-            final BindingResult errors) {
-        if (!isEmployee && (marriageRegistration != null || reIssue != null)
-                && getUserPositionByZone(marriageRegistration, reIssue) == null)
-            errors.reject("notexists.position", "notexists.position");
+    public boolean validateAssignmentForCscUser(final MarriageRegistration marriageRegistration, final ReIssue reIssue,
+            final Boolean isEmployee) {
+        return (!isEmployee && (marriageRegistration != null || reIssue != null)
+                && getUserPositionByZone(marriageRegistration, reIssue) == null) ? false : true;
     }
     
     

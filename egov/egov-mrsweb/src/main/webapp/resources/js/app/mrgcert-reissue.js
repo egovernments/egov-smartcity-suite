@@ -129,6 +129,11 @@ $(document).ready( function () {
 		
 	}
 	
+	if($('#message').val()){
+		bootbox.alert($('#message').val());
+		return false; 
+	}
+	
 })
 
 $('#txt-phoneNo').blur( function () {
@@ -194,6 +199,5 @@ $(".btn-primary").click(function() {
 	} else{
 		validateWorkFlowApprover(action);
 	}
-	
 	  
 });

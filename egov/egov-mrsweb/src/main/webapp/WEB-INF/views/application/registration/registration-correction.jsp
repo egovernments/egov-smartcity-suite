@@ -133,8 +133,13 @@
 				    	</div>
 				    </div>
 			</div>
+
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
-			 <jsp:include page="../../common/commonWorkflowMatrix.jsp"/>
+
+			<c:if test="${pendingActions ne 'Digital Signature Pending'}">
+				<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
+			</c:if>
+
 			<c:choose>
 				<c:when test="${marriageRegistration.status.code =='CREATED' && nextActn!=null && nextActn=='Junior/Senior Assistance approval pending'}">  
 							<div class="buttonbottom" align="center">

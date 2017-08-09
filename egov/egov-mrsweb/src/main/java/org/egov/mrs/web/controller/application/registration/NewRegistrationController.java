@@ -162,13 +162,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
-        registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee, errors);
+        boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null,
+                isEmployee);
+        if (!isAssignmentPresent) {
+            return buildFormOnValidation(marriageRegistration, isEmployee, model);
+        }
         if (errors.hasErrors()) {
-            model.addAttribute("isEmployee", isEmployee);
-            model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
-            prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
-            return "registration-form";
-
+            return buildFormOnValidation(marriageRegistration, isEmployee, model);
         }
         String message;
         String approverName = null;
@@ -215,6 +215,17 @@ public class NewRegistrationController extends MarriageRegistrationController {
                     + marriageRegistration.getApplicationNo();
         } else
             return "registration-ack";
+    }
+
+    private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
+            final Boolean isEmployee, final Model model) {
+        model.addAttribute("isEmployee", isEmployee);
+        model.addAttribute("message", messageSource.getMessage("notexists.position",
+                new String[] {}, null));
+        model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
+        registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
+        prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
+        return "registration-form";
     }
     
     @RequestMapping(value = "/generate-meesevareceipt", method = RequestMethod.GET)

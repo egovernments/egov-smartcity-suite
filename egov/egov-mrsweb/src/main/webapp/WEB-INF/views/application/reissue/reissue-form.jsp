@@ -49,8 +49,8 @@
  <div class="row" id="page-content">
 	<div class="col-md-12"> 
 		<div class="text-right error-msg" style="font-size:14px;"></div>
-			<c:set value="/mrs/reissue/create" var="actionUrl" />		
-			<c:if test="${reIssue.status.code == 'REJECTED'}">
+			<c:set value="/mrs/reissue/create" var="actionUrl" />
+		<c:if test="${reIssue.status.code == 'REJECTED'}">
 				 <c:set value="/mrs/reissue/workflow" var="actionUrl" />
 			</c:if>
 			<form:form role="form" action="${actionUrl}"
@@ -67,6 +67,8 @@
 				</spring:hasBindErrors>
 				<br />
 				</div>
+						<input type="hidden" id="message" value="${message}" />
+				
 				<input type="hidden" name="reIssue" id="reIssue" value="${reIssue.id}" /> 
 				<input type="hidden" id="reIssueId" value="${reIssue.id}" />
 				<input type="hidden" id="reIssueStatus" value="${reIssue.status.code}" />

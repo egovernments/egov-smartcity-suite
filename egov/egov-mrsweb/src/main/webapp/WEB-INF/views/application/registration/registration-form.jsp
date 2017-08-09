@@ -54,9 +54,10 @@
 
 <div class="row">
 	<div class="col-md-12">
+
 		<div class="text-right error-msg" style="font-size: 14px;"></div>		
 		<c:set value="/mrs/registration/register" var="actionUrl" />
-
+		<input type="hidden" id="message" value="${message}" />
 		<c:if test="${marriageRegistration.status == 'Rejected'}">
 			<c:set
 				value="/mrs/registration/workflow?id=${marriageRegistration.id}"
