@@ -39,107 +39,26 @@
  */
 package org.egov.egf.contract.model;
 
-import java.util.Date;
+public class Role {
 
-public class RequestInfo {
+    private long id;
 
-    private String apiId;
-
-    private String ver;
-
-    private Date ts;
-
-    private String action;
-
-    private String did;
-
-    private String key;
-
-    private String msgId;
-
-    private String authToken;
-
-    private String correlationId;
-
-    private UserInfo userInfo;
-
-    public String getApiId() {
-        return apiId;
+    public long getId() {
+        return id;
     }
 
-    public void setApiId(final String apiId) {
-        this.apiId = apiId;
+    public void setId(final long id) {
+        this.id = id;
     }
 
-    public String getVer() {
-        return ver;
+    public String getName() {
+        return name;
     }
 
-    public void setVer(final String ver) {
-        this.ver = ver;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public Date getTs() {
-        return ts;
-    }
+    private String name;
 
-    public void setTs(final Date ts) {
-        this.ts = ts;
-    }
-
-    public String getAction() {
-        return action;
-    }
-
-    public void setAction(final String action) {
-        this.action = action;
-    }
-
-    public String getDid() {
-        return did;
-    }
-
-    public void setDid(final String did) {
-        this.did = did;
-    }
-
-    public String getKey() {
-        return key;
-    }
-
-    public void setKey(final String key) {
-        this.key = key;
-    }
-
-    public String getMsgId() {
-        return msgId;
-    }
-
-    public void setMsgId(final String msgId) {
-        this.msgId = msgId;
-    }
-
-    public String getAuthToken() {
-        return authToken;
-    }
-
-    public void setAuthToken(final String authToken) {
-        this.authToken = authToken;
-    }
-
-    public String getCorrelationId() {
-        return correlationId;
-    }
-
-    public void setCorrelationId(final String correlationId) {
-        this.correlationId = correlationId;
-    }
-
-    public UserInfo getUserInfo() {
-        return userInfo;
-    }
-
-    public void setUserInfo(final UserInfo userInfo) {
-        this.userInfo = userInfo;
-    }
 }

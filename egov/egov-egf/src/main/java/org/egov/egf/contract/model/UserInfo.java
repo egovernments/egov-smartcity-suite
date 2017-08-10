@@ -39,107 +39,88 @@
  */
 package org.egov.egf.contract.model;
 
-import java.util.Date;
+import java.util.List;
 
-public class RequestInfo {
+public class UserInfo {
 
-    private String apiId;
+    private Long id;
 
-    private String ver;
+    private String userName;
 
-    private Date ts;
+    private String name;
 
-    private String action;
+    private String type;
 
-    private String did;
+    private String mobileNumber;
 
-    private String key;
+    private String emailId;
 
-    private String msgId;
+    private List<Role> roles;
 
-    private String authToken;
-
-    private String correlationId;
-
-    private UserInfo userInfo;
-
-    public String getApiId() {
-        return apiId;
+    public Long getId() {
+        return id;
     }
 
-    public void setApiId(final String apiId) {
-        this.apiId = apiId;
+    public void setId(final Long id) {
+        this.id = id;
     }
 
-    public String getVer() {
-        return ver;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setVer(final String ver) {
-        this.ver = ver;
+    public void setUserName(final String userName) {
+        this.userName = userName;
     }
 
-    public Date getTs() {
-        return ts;
+    public String getName() {
+        return name;
     }
 
-    public void setTs(final Date ts) {
-        this.ts = ts;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public String getAction() {
-        return action;
+    public String getType() {
+        return type;
     }
 
-    public void setAction(final String action) {
-        this.action = action;
+    public void setType(final String type) {
+        this.type = type;
     }
 
-    public String getDid() {
-        return did;
+    public String getMobileNumber() {
+        return mobileNumber;
     }
 
-    public void setDid(final String did) {
-        this.did = did;
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
     }
 
-    public String getKey() {
-        return key;
+    public String getEmailId() {
+        return emailId;
     }
 
-    public void setKey(final String key) {
-        this.key = key;
+    public void setEmailId(final String emailId) {
+        this.emailId = emailId;
     }
 
-    public String getMsgId() {
-        return msgId;
+    public List<Role> getRoles() {
+        return roles;
     }
 
-    public void setMsgId(final String msgId) {
-        this.msgId = msgId;
+    public void setRoles(final List<Role> roles) {
+        this.roles = roles;
     }
 
-    public String getAuthToken() {
-        return authToken;
+    public String getTenantId() {
+        return tenantId;
     }
 
-    public void setAuthToken(final String authToken) {
-        this.authToken = authToken;
+    public void setTenantId(final String tenantId) {
+        this.tenantId = tenantId;
     }
 
-    public String getCorrelationId() {
-        return correlationId;
-    }
+    private String tenantId;
 
-    public void setCorrelationId(final String correlationId) {
-        this.correlationId = correlationId;
-    }
-
-    public UserInfo getUserInfo() {
-        return userInfo;
-    }
-
-    public void setUserInfo(final UserInfo userInfo) {
-        this.userInfo = userInfo;
-    }
 }
