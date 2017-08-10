@@ -262,7 +262,7 @@ public class AjaxBankRemittanceAction extends BaseFormAction {
 
     @Action(value = "/receipts/ajaxBankRemittance-serviceListNotMappedToAccount")
     public String serviceListNotMappedToAccount() {
-        final String serviceAccountQueryString = "select distinct sd from ServiceDetails sd where sd.isEnabled='true' and sd.serviceCategory.id=? and sd.id not in (select asm.serviceDetails.id from BankAccountServiceMap asm)";
+        final String serviceAccountQueryString = "select distinct sd from ServiceDetails sd where sd.isEnabled='true' and sd.serviceCategory.id=? ";
         final Query serviceListQuery = persistenceService.getSession().createQuery(serviceAccountQueryString);
         serviceListQuery.setParameter(0, serviceId);
         serviceNameList = serviceListQuery.list();
