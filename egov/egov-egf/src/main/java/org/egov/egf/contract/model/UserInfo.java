@@ -57,6 +57,8 @@ public class UserInfo {
 
     private List<Role> roles;
 
+    private String tenantId;
+
     public Long getId() {
         return id;
     }
@@ -120,7 +122,5 @@ public class UserInfo {
     public void setTenantId(final String tenantId) {
         this.tenantId = tenantId;
     }
-
-    private String tenantId;
 
 }

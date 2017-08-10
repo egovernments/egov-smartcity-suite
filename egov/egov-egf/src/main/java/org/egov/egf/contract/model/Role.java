@@ -43,6 +43,8 @@ public class Role {
 
     private long id;
 
+    private String name;
+
     public long getId() {
         return id;
     }
@@ -58,7 +60,5 @@ public class Role {
     public void setName(final String name) {
         this.name = name;
     }
-
-    private String name;
 
 }
