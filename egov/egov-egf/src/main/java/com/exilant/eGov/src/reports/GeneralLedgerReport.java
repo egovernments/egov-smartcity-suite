@@ -529,7 +529,7 @@ public class GeneralLedgerReport {
                                 previousDebit = previousDebit + currentDebit;
                                 previousCredit = previousCredit + currentCredit;
                             }
-                            narration = element[9].toString();
+                            narration = element[9] != null ? element[9].toString() : StringUtils.EMPTY;
                         } else {
                             vcDate = element[4].toString();
                             vcNum = element[5].toString();
@@ -546,7 +546,7 @@ public class GeneralLedgerReport {
                                 txnCredit = Double.parseDouble(element[12].toString());
                                 previousCredit = txnCredit;
                             }
-                            narration = element[9].toString();
+                            narration = element[9] != null ? element[9].toString() : StringUtils.EMPTY;
                         }
                     } else if (vhId == VhidPrevious && accCode.equalsIgnoreCase(accCodePrevious)) {
                         double currentDebit = 0, currentCredit = 0, debit = 0, credit = 0;
@@ -605,7 +605,7 @@ public class GeneralLedgerReport {
                                 txnCredit = credit;
                             else
                                 txnCredit = 0;
-                            narration = element[9].toString();
+                            narration = element[9] != null ? element[9].toString() : StringUtils.EMPTY;
                             /*
                              * previousDebit=currentDebit;
                              * previousCredit=currentCredit;
@@ -630,7 +630,7 @@ public class GeneralLedgerReport {
                             previousDebit = txnDebit;
                             txnCredit = Double.parseDouble(element[12].toString());
                             previousCredit = txnCredit;
-                            narration = element[9].toString();
+                            narration = element[9] != null ? element[9].toString() : StringUtils.EMPTY;
                         }
                         /*
                          * else { detail= detail.append(" " +
@@ -683,6 +683,7 @@ public class GeneralLedgerReport {
                         arr[3] = "";
                         arr[4] = numberToString(((Double) txnDebit).toString()) + "";
                         arr[5] = "";
+
                         if (narration != null)
                             arr[6] = "" + narration;
                         else
