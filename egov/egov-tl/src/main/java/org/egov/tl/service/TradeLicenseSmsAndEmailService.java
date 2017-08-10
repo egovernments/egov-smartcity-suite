@@ -180,7 +180,7 @@ public class TradeLicenseSmsAndEmailService {
                         emailCode,
                         new String[]{license.getLicensee().getApplicantName(),
                                 license.getApplicationNumber(),
-                                license.getNameOfEstablishment(), license.getTotalBalance().toString(), ApplicationThreadLocals.getDomainURL(),
+                                license.getNameOfEstablishment(),license.getLicenseNumber(), license.getTotalBalance().toString(), ApplicationThreadLocals.getDomainURL(),
                                 getMunicipalityName()}, locale);
                 smsCode = "msg.digi.enabled.newTradeLicenseapprovalAmt.sms";
                 smsMsg = licenseMessageSource.getMessage(
