@@ -73,7 +73,7 @@
                     </div>
                     <div class="form-group text-center">
                         <div class="col-md-12 add-margin">
-                            <button type="submit" class="btn btn-primary"><spring:message code="title.reset.password"/></button>
+                            <button type="button" id="submitbtn" class="btn btn-primary"><spring:message code="title.reset.password"/></button>
                             <button type="button" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></button>
                         </div>
                     </div>
@@ -85,6 +85,13 @@
 </div>
 <script>
     $(document).ready(function () {
+        $("#submitbtn").click(function () {
+            if ($("#userId").val() !== '')
+                $("#password-form").submit();
+            else
+                bootbox.alert("Start typing the employee name and choose one from shown items.")
+
+        });
         var usernameautocomplete = new Bloodhound({
             datumTokenizer: function (datum) {
                 return Bloodhound.tokenizers.whitespace(datum.value);
