@@ -55,11 +55,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
 import java.util.Map;
+
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/digitalSignature")
@@ -91,7 +96,8 @@ public class DigitalSignatureTradeLicenseController {
     }
 
 
-    @RequestMapping(value = "/tradeLicense/downloadSignedLicenseCertificate")
+    @RequestMapping(value = "/tradeLicense/downloadSignedLicenseCertificate", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file, @RequestParam String applnum) {
         final File signedFile = fileStoreService.fetch(file, Constants.FILESTORE_MODULECODE);
         byte[] bytes;
