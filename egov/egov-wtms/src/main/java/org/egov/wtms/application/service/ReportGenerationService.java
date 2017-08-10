@@ -237,7 +237,6 @@ public class ReportGenerationService {
                     break;
                 }
                 List<Assignment> asignList = new ArrayList<>();
-                ;
                 final Position approverPos = waterTaxUtils.getCityLevelCommissionerPosition("Commissioner",
                         waterConnectionDetails.getConnection().getPropertyIdentifier());
                 if (approverPos != null) {

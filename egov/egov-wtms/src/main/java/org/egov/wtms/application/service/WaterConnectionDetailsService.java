@@ -68,8 +68,8 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.AssignmentAdaptor;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -271,9 +271,8 @@ public class WaterConnectionDetailsService {
             LOG.debug("applicationWorkflowCustomDefaultImpl initialization is done");
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedWaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
-        if(waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser())){
+        if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
             pushPortalMessage(savedWaterConnectionDetails);
-        }
         updateIndexes(savedWaterConnectionDetails, sourceChannel);
         waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, workFlowAction);
         if (LOG.isDebugEnabled())
@@ -556,9 +555,8 @@ public class WaterConnectionDetailsService {
         updateIndexes(waterConnectionDetails, sourceChannel);
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
-                && getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null) {
+                && getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null)
             updatePortalMessage(waterConnectionDetails);
-        }
 
         return updatedWaterConnectionDetails;
     }
@@ -658,7 +656,7 @@ public class WaterConnectionDetailsService {
                     updateIndexes(waterConnectionDetails, sourceChannel);
                 } else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                        && waterConnectionDetails.getCloseConnectionType()!=null  
+                        && waterConnectionDetails.getCloseConnectionType() != null
                         && waterConnectionDetails.getCloseConnectionType()
                                 .equals(WaterTaxConstants.TEMPERARYCLOSECODE)) {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
@@ -908,24 +906,26 @@ public class WaterConnectionDetailsService {
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
                 else
                     applicationIndex.setChannel(sourceChannel);
-                if (waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)
-                        || waterConnectionDetails.getStatus().getCode()
-                                .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)
-                        || waterConnectionDetails.getStatus().getCode()
-                                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)) {
-                    applicationIndex.setApproved(ApprovalStatus.APPROVED);
-                    applicationIndex.setClosed(ClosureStatus.YES);
-                }
-                if (waterConnectionDetails.getStatus().getCode()
-                        .equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)) {
-                    applicationIndex.setApproved(ApprovalStatus.REJECTED);
-                    applicationIndex.setClosed(ClosureStatus.YES);
-                }
-                if (waterConnectionDetails.getConnection().getConsumerCode() != null)
-                    applicationIndex.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
-                applicationIndexService.updateApplicationIndex(applicationIndex);
             }
+            if (waterConnectionDetails.getStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONSANCTIONED)
+                    || waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)
+                    || waterConnectionDetails.getStatus().getCode()
+                            .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED)) {
+                applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
+                applicationIndex.setApproved(ApprovalStatus.APPROVED);
+                applicationIndex.setClosed(ClosureStatus.YES);
+            }
+            if (waterConnectionDetails.getStatus().getCode()
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)) {
+                applicationIndex.setApproved(ApprovalStatus.REJECTED);
+                applicationIndex.setClosed(ClosureStatus.YES);
+            }
+            if (waterConnectionDetails.getConnection().getConsumerCode() != null)
+                applicationIndex.setConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+            applicationIndexService.updateApplicationIndex(applicationIndex);
+
             // Creating Consumer Index only on Sanction
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))
                 if (waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS)
@@ -1225,59 +1225,66 @@ public class WaterConnectionDetailsService {
         return waterConnectionDetailsRepository.getAllConnectionDetailsByPropertyID(propertyId);
     }
 
-/**
+    /**
      * Method to push data for citizen portal inbox
      */
 
     @Transactional
     public void pushPortalMessage(final WaterConnectionDetails waterConnectionDetails) {
-        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
-        WaterConnection waterConnection = waterConnectionDetails.getConnection();
-        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,waterConnectionDetails.getState().getNatureOfTask()+" : "+module.getDisplayName(),
-                waterConnectionDetails.getApplicationNumber(),waterConnection.getConsumerCode(),waterConnection.getId(),
-                waterConnectionDetails.getConnectionReason(),getDetailedMessage(waterConnectionDetails),String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()),
-                isResolved(waterConnectionDetails),waterConnectionDetails.getStatus().getDescription(),getSlaEndDate(waterConnectionDetails),waterConnectionDetails.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+        final Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        final WaterConnection waterConnection = waterConnectionDetails.getConnection();
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+                waterConnectionDetails.getState().getNatureOfTask() + " : " + module.getDisplayName(),
+                waterConnectionDetails.getApplicationNumber(), waterConnection.getConsumerCode(), waterConnection.getId(),
+                waterConnectionDetails.getConnectionReason(), getDetailedMessage(waterConnectionDetails),
+                String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()),
+                isResolved(waterConnectionDetails), waterConnectionDetails.getStatus().getDescription(),
+                getSlaEndDate(waterConnectionDetails), waterConnectionDetails.getState(),
+                Arrays.asList(securityUtils.getCurrentUser()));
         final PortalInbox portalInbox = portalInboxBuilder.build();
         portalInboxService.pushInboxMessage(portalInbox);
     }
 
-    private boolean isResolved(final WaterConnectionDetails waterConnectionDetails){
-        return "END".equalsIgnoreCase(waterConnectionDetails.getState().getValue())|| "CLOSED".equalsIgnoreCase(waterConnectionDetails.getState().getValue());
+    private boolean isResolved(final WaterConnectionDetails waterConnectionDetails) {
+        return "END".equalsIgnoreCase(waterConnectionDetails.getState().getValue())
+                || "CLOSED".equalsIgnoreCase(waterConnectionDetails.getState().getValue());
     }
 
-    private Date getSlaEndDate(final WaterConnectionDetails waterConnectionDetails){
+    private Date getSlaEndDate(final WaterConnectionDetails waterConnectionDetails) {
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                 waterConnectionDetails.getApplicationType(),
                 waterConnectionDetails.getCategory());
-        DateTime dt = new DateTime(new Date());
+        final DateTime dt = new DateTime(new Date());
         return dt.plusDays(appProcessTime).toDate();
     }
 
     private String getDetailedMessage(final WaterConnectionDetails waterConnectionDetails) {
-        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        final Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
         final StringBuilder detailedMessage = new StringBuilder();
-        if (waterConnectionDetails.getApplicationType() != null) {
+        if (waterConnectionDetails.getApplicationType() != null)
             detailedMessage.append(APPLICATION_NO).append(waterConnectionDetails.getApplicationNumber()).append(REGARDING)
                     .append(waterConnectionDetails.getState().getNatureOfTask() + " " + module.getDisplayName()).append(" in ")
                     .append(waterConnectionDetails.getStatus().getDescription()).append(STATUS);
-        }
         return detailedMessage.toString();
     }
 
-    public PortalInbox getPortalInbox(final String applicationNumber){
-        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
-        return portalInboxService.getPortalInboxByApplicationNo(applicationNumber,module.getId());
+    public PortalInbox getPortalInbox(final String applicationNumber) {
+        final Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        return portalInboxService.getPortalInboxByApplicationNo(applicationNumber, module.getId());
     }
 
-     /**
-             * Method to update data for citizen portal inbox
+    /**
+     * Method to update data for citizen portal inbox
      */
     @Transactional
-    public void updatePortalMessage(final WaterConnectionDetails waterConnectionDetails){
-        Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
-        WaterConnection waterConnection = waterConnectionDetails.getConnection();
-        portalInboxService.updateInboxMessage( waterConnectionDetails.getApplicationNumber(), module.getId(),waterConnectionDetails.getState().getValue(),
-                isResolved(waterConnectionDetails), getSlaEndDate(waterConnectionDetails), waterConnectionDetails.getState(), null,
-                waterConnection.getConsumerCode(),String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()));
+    public void updatePortalMessage(final WaterConnectionDetails waterConnectionDetails) {
+        final Module module = moduleDao.getModuleByName(WaterTaxConstants.MODULE_NAME);
+        final WaterConnection waterConnection = waterConnectionDetails.getConnection();
+        portalInboxService.updateInboxMessage(waterConnectionDetails.getApplicationNumber(), module.getId(),
+                waterConnectionDetails.getState().getValue(),
+                isResolved(waterConnectionDetails), getSlaEndDate(waterConnectionDetails), waterConnectionDetails.getState(),
+                null,
+                waterConnection.getConsumerCode(),
+                String.format(WTMS_APPLICATION_VIEW, waterConnectionDetails.getApplicationNumber()));
     }
 }
