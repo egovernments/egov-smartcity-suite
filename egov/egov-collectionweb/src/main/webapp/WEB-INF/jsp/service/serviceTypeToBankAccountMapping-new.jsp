@@ -101,6 +101,16 @@
 </head>
 
 <body>
+	<s:if test="%{hasErrors()}">
+		<div class="errorstyle">
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+	</s:if>
+	<s:if test="%{hasActionMessages()}">
+		<font style='color: green; font-weight: bold'> <s:actionmessage />
+		</font>
+	</s:if>
 	<s:form name="serviceBankMappingForm" method="post" theme="simple">
 		<s:push value="model">
 			<div class="errorstyle" id="error_area" style="display: none;"></div>

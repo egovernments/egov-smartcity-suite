@@ -51,6 +51,16 @@ function onSubmit(obj){
 </script> 
 </head>  
 	<body>  
+	<s:if test="%{hasErrors()}">
+		<div class="errorstyle">
+			<s:actionerror />
+			<s:fielderror />
+		</div>
+	</s:if>
+	<s:if test="%{hasActionMessages()}">
+		<font style='color: green; font-weight: bold'> <s:actionmessage />
+		</font>
+	</s:if>
 		<span>
 		              <font  style='color: red ; font-weight:bold ' size="2">
                                <s:actionerror/>  

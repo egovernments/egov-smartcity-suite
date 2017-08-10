@@ -56,6 +56,7 @@ import org.egov.commons.dao.BankHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
 import org.egov.commons.entity.BankAccountServiceMap;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infstr.models.ServiceDetails;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
@@ -107,7 +108,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
                     BANK_ACCOUNT_LIST,
                     bankAccountHibernateDAO.getBankAccountByBankBranchForReceiptsPayments(bankAccountServiceMap
                             .getBankAccountId().getBankbranch().getId(), bankAccountServiceMap.getServiceDetails()
-                            .getFund().getId()));
+                                    .getFund().getId()));
             setServiceCategory(bankAccountServiceMap.getServiceDetails().getServiceCategory().getId());
             setBankId(bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getId());
             setBranchId(bankAccountServiceMap.getBankAccountId().getBankbranch().getId());
@@ -195,6 +196,7 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
         return INDEX;
     }
 
+    @ValidationErrorPageExt(action = NEW, makeCall = true, toMethod = "newform")
     @Action(value = "/service/serviceTypeToBankAccountMapping-create")
     public String create() {
         if (bankAccountServiceMap.getId() != null) {
@@ -202,19 +204,54 @@ public class ServiceTypeToBankAccountMappingAction extends BaseFormAction {
                     bankAccountServiceMap.getId(), false);
             bankAccountServiceMapObj.setBankAccountId(bankAccountServiceMap.getBankAccountId());
             bankAccountServiceMapObj.setServiceDetails(bankAccountServiceMap.getServiceDetails());
-            bankAccountMappingService.persist(bankAccountServiceMapObj);
+            if (isMapExists()) {
+                addActionError(getText("service.master.bankmap.exist.error", new String[] {
+                        bankAccountServiceMap.getServiceDetails().getName(),
+                        bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getName(),
+                        bankAccountServiceMap.getBankAccountId().getAccountnumber() }));
+                return newform();
+            } else
+                bankAccountMappingService.persist(bankAccountServiceMapObj);
 
-        } else
-            bankAccountMappingService.persist(bankAccountServiceMap);
-        if (sourcePage != null && "modify".equals(sourcePage))
-            addActionMessage(getText("service.master.successmessage.modify", new String[] { bankAccountServiceMap
-                    .getServiceDetails().getName() }));
-        else
-            addActionMessage(getText("service.master.successmessage.create", new String[] {
-                    bankAccountServiceMap.getServiceDetails().getName(),
-                    bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getName(),
-                    bankAccountServiceMap.getBankAccountId().getAccountnumber() }));
+        } else {
+            if (isMapExists()) {
+                addActionError(getText("service.master.bankmap.exist.error", new String[] {
+                        bankAccountServiceMap.getServiceDetails().getName(),
+                        bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getName(),
+                        bankAccountServiceMap.getBankAccountId().getAccountnumber() }));
+                return newform();
+            } else
+                bankAccountMappingService.persist(bankAccountServiceMap);
+        }
+        if (!hasErrors()) {
+            if (sourcePage != null && "modify".equals(sourcePage))
+                addActionMessage(getText("service.master.successmessage.modify", new String[] { bankAccountServiceMap
+                        .getServiceDetails().getName() }));
+            else
+                addActionMessage(getText("service.master.successmessage.create", new String[] {
+                        bankAccountServiceMap.getServiceDetails().getName(),
+                        bankAccountServiceMap.getBankAccountId().getBankbranch().getBank().getName(),
+                        bankAccountServiceMap.getBankAccountId().getAccountnumber() }));
+        }
         return SUCCESS;
+    }
+
+    public Boolean isMapExists() {
+        if (bankAccountServiceMap.getServiceDetails().getId() != null
+                && bankAccountServiceMap.getBankAccountId().getId() != null) {
+            final BankAccountServiceMap bankAccountServiceMapObj = bankAccountMappingService.find(
+                    " from BankAccountServiceMap where serviceDetails.id=? and bankAccountId.id=?",
+                    bankAccountServiceMap.getServiceDetails().getId(), bankAccountServiceMap.getBankAccountId().getId());
+            if (bankAccountServiceMapObj != null) {
+                if (bankAccountServiceMap.getId() == null && bankAccountServiceMapObj.getId() != null) {
+                    return true;
+                } else if (bankAccountServiceMap.getId() != null
+                        && bankAccountServiceMapObj.getId() != bankAccountServiceMap.getId()) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     @Override
