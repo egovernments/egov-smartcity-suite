@@ -184,7 +184,7 @@
 		<div class="col-sm-8 setimage">
 			<c:choose>
 				<c:when
-					test="${currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created'}">
+					test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending') || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
 					<form:hidden path="${applicant}.photoFileStore" />
 					<form:hidden class="encodedPhoto" path="${applicant}.encodedPhoto" />
 					<img class="add-border marriage-img" 

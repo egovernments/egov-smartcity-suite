@@ -225,7 +225,7 @@
 
 			<c:choose>
 				<c:when
-					test="${currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created'}">
+					test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending') || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
 					<form:hidden path="marriagePhotoFileStore" />
 					<form:hidden class="encodedPhoto" path="encodedMarriagePhoto" />
 					<img id="marriage-photo" class="add-margin marriage-img"
