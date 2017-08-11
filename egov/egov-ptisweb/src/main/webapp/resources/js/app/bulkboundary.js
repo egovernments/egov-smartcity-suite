@@ -186,7 +186,7 @@ jQuery(document).ready(function() {
 																									"text" : v.blockName,
 																									"value" : v.blockId
 																								});
-																						if (full.selectedblock === v.bndryId) {
+																						if (full.selectedblock === v.blockId) {
 																							$option.attr("selected","selected")
 																						}
 																						$select.append($option);
@@ -208,7 +208,7 @@ jQuery(document).ready(function() {
 																									"text" : v.wardName,
 																									"value" : v.wardId
 																								});
-																						if (full.selectedrevward === v.bndryId) {
+																						if (full.selectedrevward === v.wardId) {
 																							$option.attr("selected","selected")
 																						}
 																						$select.append($option);
