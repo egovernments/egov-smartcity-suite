@@ -332,7 +332,7 @@ jQuery(document).ready(function() {
 							jQuery('.check_box:checked').each(function() {
 								var $tr = jQuery(this).closest('tr');
 								if($tr.find('.wardClass_tbl').val()==null || $tr.find('.blockClass_tbl').val()==null ){
-									bootbox.alert("Please select boundary(Block/Ward)......");
+									bootbox.alert("No boundary details mapped for selected locality......");
 									return;
 								}else{
 									status=true;
@@ -370,9 +370,12 @@ jQuery(document).ready(function() {
 										}
 									},
 									error : function(response) {
-										bootbox.alert("No boundary details mapped for locality");
+										bootbox.alert("Boundary Updated UnSuccessfully....");
 									}
 								});
+							}
+							else{
+								bootbox.alert("Please select boundary to update....");
 							}
 						});
 					});

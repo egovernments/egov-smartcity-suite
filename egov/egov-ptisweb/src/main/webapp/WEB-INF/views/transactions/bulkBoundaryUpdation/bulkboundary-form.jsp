@@ -78,7 +78,7 @@
 
 				<div class="col-sm-3 add-margin">
 					<form:input id="houseNo" path="houseNo" type="text"
-						cssClass="form-control " autocomplete="off" maxlength="10" />
+						cssClass="form-control " autocomplete="off" />
 				</div>
 			</div>
 
