@@ -351,11 +351,13 @@ public class MarriageRegistrationService {
         }
         marriageRegistration.getWitnesses().forEach(witness -> {
             try {
-                witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+                if (witness.getPhotoFile() != null && witness.getPhotoFile().getSize() > 0) {
+                    witness.setPhoto(FileCopyUtils.copyToByteArray(witness.getPhotoFile().getInputStream()));
+                    witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
+                }
             } catch (final IOException e) {
                 LOG.error(ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES, e);
             }
-            witness.setPhotoFileStore(addToFileStore(witness.getPhotoFile()));
 
         });
         if (marriageRegistration.getMarriagePhotoFile().getSize() != 0)
