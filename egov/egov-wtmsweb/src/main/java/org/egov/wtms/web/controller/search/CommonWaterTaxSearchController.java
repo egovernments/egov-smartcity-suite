@@ -184,8 +184,9 @@ public class CommonWaterTaxSearchController {
                 model.addAttribute("mode", "errorMode");
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "connection.closed");
                 return COMMON_FORM_SEARCH;
-            } else if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
-                    && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
+            } else if ((CHANGEOFUSE.equals(waterConnectionDetails.getApplicationType().getCode())
+                    || NEWCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode()))
+                    && ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
                 return "redirect:/application/addconnection/"
                         + waterConnectionDetails.getConnection().getConsumerCode();
             else {
