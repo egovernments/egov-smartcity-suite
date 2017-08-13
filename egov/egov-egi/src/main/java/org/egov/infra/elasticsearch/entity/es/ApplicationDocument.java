@@ -356,7 +356,9 @@ public class ApplicationDocument {
     }
 
     public Integer getSlaGap() {
-        return elapsedDays - sla;
+        if (sla != null)
+            return elapsedDays - sla;
+        return null;
     }
 
 }
