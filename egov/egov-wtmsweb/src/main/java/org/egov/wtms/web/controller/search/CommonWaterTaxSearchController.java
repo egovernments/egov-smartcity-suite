@@ -61,6 +61,7 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -283,7 +284,9 @@ public class CommonWaterTaxSearchController {
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
             if (assessmentDetails != null)
-                if ((amoutToBeCollected.doubleValue() > 0
+                if (amoutToBeCollected.doubleValue() == 0)
+                    throw new ApplicationRuntimeException("invalid.collecttax");
+                else if ((amoutToBeCollected.doubleValue() > 0
                         && waterConnectionDetails.getConnectionType().equals(ConnectionType.METERED)
                         || waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
                         && (waterConnectionDetails.getApplicationType().getCode()
