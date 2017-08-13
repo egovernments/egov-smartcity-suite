@@ -133,7 +133,10 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         User currentUser;
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
+        final List<Assignment> userAssignmentList = assignmentService.findByEmployeeAndGivenDate(user.getId(), new Date());
+        Assignment userAssignment = null;
+        if (userAssignmentList != null && !userAssignmentList.isEmpty())
+            userAssignment = userAssignmentList.get(0);
         Position pos = null;
         Assignment wfInitiator = null;
         final Boolean recordCreatedBYNonEmployee;
