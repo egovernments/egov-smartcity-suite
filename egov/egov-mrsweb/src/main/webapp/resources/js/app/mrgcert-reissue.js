@@ -50,6 +50,11 @@ $(document).ready( function () {
 		 $("[id='Print Certificate']").hide();
 	 }  
 	 
+	 if($('#txt-feepaid').val())
+	 {
+		 $('#txt-feepaid').val(Math.floor($('#txt-feepaid').val()));
+	 }
+	 
 	if($('#reIssueStatus').val()=='CREATED' || $('#reIssueStatus').val()=='APPROVED'){  
 		$(".show-row").hide(); 
 		$('#approverDetailHeading').hide();
