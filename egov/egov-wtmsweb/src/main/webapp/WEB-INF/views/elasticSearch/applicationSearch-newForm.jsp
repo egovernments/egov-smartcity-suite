@@ -96,7 +96,7 @@
 						
 						<c:if test="${ !citizenRole }">
 						<label for="field-1" class="col-sm-2 control-label"> <spring:message
-										code="lbl1.consumer.number" /></label>
+										code="lbl.identifier.number" /></label>
 						<div class="col-sm-3 add-margin">
 							<input type="text" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-mobno"
 								 />
