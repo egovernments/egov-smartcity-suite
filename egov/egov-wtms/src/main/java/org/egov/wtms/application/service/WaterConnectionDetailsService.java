@@ -707,17 +707,17 @@ public class WaterConnectionDetailsService {
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN)
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN)
                         || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.TAP_INSPPECTOR_DESIGN)
-                        || (loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
-                                || loggedInUserDesignation
-                                        .equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN))
-                                && (waterConnectionDetails.getStatus().getCode()
-                                        .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
-                                        || waterConnectionDetails.getStatus().getCode()
-                                                .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
-                                        || waterConnectionDetails.getStatus().getCode()
-                                                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
-                                        || waterConnectionDetails.getStatus().getCode()
-                                                .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS))))
+                        || loggedInUserDesignation.equalsIgnoreCase(WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN)
+                        || loggedInUserDesignation
+                                .equalsIgnoreCase(WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN))
+                && (waterConnectionDetails.getStatus().getCode()
+                        .equals(WaterTaxConstants.APPLICATION_STATUS_VERIFIED)
+                        || waterConnectionDetails.getStatus().getCode()
+                                .equals(WaterTaxConstants.APPLICATION_STATUS_WOGENERATED)
+                        || waterConnectionDetails.getStatus().getCode()
+                                .equals(WaterTaxConstants.APPLICATION_STATUS_CLOSERINPROGRESS)
+                        || waterConnectionDetails.getStatus().getCode()
+                                .equals(WaterTaxConstants.APPLICATION_STATUS__RECONNCTIONINPROGRESS)))
             wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                     additionalRule, waterConnectionDetails.getCurrentState().getValue(), null, null,
                     loggedInUserDesignation);
@@ -968,7 +968,7 @@ public class WaterConnectionDetailsService {
             final Query hql = getCurrentSession().createQuery(strQuery);
             hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME);
             if (waterConnectionDetails.getApplicationDate() == null)
-                waterConnectionDetails.setApplicationDate(new Date());
+                waterConnectionDetails.setApplicationDate(new DateTime().toDate());
             if (waterConnectionDetails.getApplicationNumber() == null)
                 waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
             if (applicationIndex == null) {
@@ -982,7 +982,7 @@ public class WaterConnectionDetailsService {
                     channel = WaterTaxConstants.SYSTEM;
                 applicationIndex = ApplicationIndex.builder().withModuleName(((EgModules) hql.uniqueResult()).getName())
                         .withApplicationNumber(waterConnectionDetails.getApplicationNumber())
-                        .withApplicationDate(waterConnectionDetails.getApplicationDate())
+                        .withApplicationDate(new DateTime(waterConnectionDetails.getApplicationDate()).toDate())
                         .withApplicationType(waterConnectionDetails.getApplicationType().getName())
                         .withApplicantName(consumerName.toString())
                         .withStatus(waterConnectionDetails.getStatus().getDescription())
