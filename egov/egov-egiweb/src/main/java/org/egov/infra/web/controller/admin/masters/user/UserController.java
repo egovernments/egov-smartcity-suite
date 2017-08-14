@@ -42,6 +42,8 @@ package org.egov.infra.web.controller.admin.masters.user;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,13 +65,26 @@ public class UserController {
 
     @GetMapping(value = "username-like/{name}", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public List<User> userNames(@PathVariable String name) {
-        return userService.getUsersByNameLike(name);
+    public String userNames(@PathVariable String name) {
+        return toJson(userService.getUsersByNameLike(name));
     }
 
     @GetMapping(value = "employee-name-like/", produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public List<User> users(@RequestParam String employeeName) {
-        return userService.getAllEmployeeNameLike(employeeName);
+    public String users(@RequestParam String employeeName) {
+        return toJson(userService.getAllEmployeeNameLike(employeeName));
+    }
+
+    private String toJson(List<User> users) {
+        JSONArray userInfos = new JSONArray();
+        users.forEach(user -> {
+            JSONObject userInfo = new JSONObject();
+            userInfo.put("name", user.getName());
+            userInfo.put("userName", user.getUsername());
+            userInfo.put("id", user.getId());
+            userInfos.add(userInfo);
+
+        });
+        return userInfos.toJSONString();
     }
 }

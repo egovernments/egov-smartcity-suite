@@ -107,7 +107,7 @@
                     return url;
                 },
                 filter: function (data) {
-                    return $.map(data, function (user) {
+                    return $.each(JSON.parse(data), function (user) {
                         return {
                             name: user.name,
                             value: user.id
@@ -119,16 +119,27 @@
 
         usernameautocomplete.initialize();
         $('#username').typeahead({
-            hint: false,
-            highlight: false,
+            hint: true,
+            highlight: true,
             minLength: 1
         }, {
+            name: "users",
             displayKey: 'name',
-            source: usernameautocomplete.ttAdapter()
+            templates: {
+                empty: [
+                    '<div class="alert-info">&nbsp;&nbsp;',
+                    'Unable to find the employee with given name',
+                    '&nbsp;</div>'
+                ].join('\n'),
+                suggestion: function (data) {
+                    return '&nbsp;&nbsp;<strong>' + data.name + '</strong> [ ' + data.userName + ' ]';
+                }
+            },
+            source: usernameautocomplete.ttAdapter(),
         }).on('typeahead:selected', function (e, data) {
-            $('#userId').val(data.value);
+            $('#userId').val(data.id);
         });
-
+        $("#username").focus();
     });
 
 </script>
