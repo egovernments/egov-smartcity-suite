@@ -52,20 +52,20 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class EmployeeViewService {
 
-    private final EmployeeViewRepository employeeViewwRepository;
+    private final EmployeeViewRepository employeeViewRepository;
 
     @Autowired
-    public EmployeeViewService(final EmployeeViewRepository employeeViewwRepository) {
-        this.employeeViewwRepository = employeeViewwRepository;
+    public EmployeeViewService(final EmployeeViewRepository employeeViewRepository) {
+        this.employeeViewRepository = employeeViewRepository;
     }
 
     public EmployeeView getEmployeeViewByAssignment(final Long id) {
-        return employeeViewwRepository.findByAssignment_Id(id);
+        return employeeViewRepository.findByAssignment_Id(id);
     }
 
-    public List<EmployeeView> findByUserNameLikeOrCodeLikeOrPosition_NameLike(final String userName, final String code,
-            final String positionName, final Date currentDate) {
-        return employeeViewwRepository.findByUserNameLikeOrCodeLikeOrPosition_NameLike(userName, code, positionName, currentDate);
+    public List<EmployeeView> getEmployeeByNameOrCodeOrPositionLike(String userName, String code,
+                                                                    String positionName, Date currentDate) {
+        return employeeViewRepository.findEmployeeByNameOrCodeOrPositionLike(userName, code, positionName, currentDate);
     }
 
 }

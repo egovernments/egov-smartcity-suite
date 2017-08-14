@@ -65,11 +65,12 @@ class CreateRouterController {
 
     private final BoundaryTypeService boundaryTypeService;
     private final ComplaintRouterService complaintRouterService;
-    @Autowired private MessageSource messageSource;
+    @Autowired
+    private MessageSource messageSource;
 
     @Autowired
     public CreateRouterController(final BoundaryTypeService boundaryTypeService,
-            final ComplaintRouterService complaintRouterService) {
+                                  final ComplaintRouterService complaintRouterService) {
         this.boundaryTypeService = boundaryTypeService;
         this.complaintRouterService = complaintRouterService;
     }
@@ -91,17 +92,17 @@ class CreateRouterController {
 
     @RequestMapping(method = POST)
     public String saveRouter(@Valid @ModelAttribute final ComplaintRouter complaintRouter, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+                             final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "router-create";
         if (complaintRouterService.validateRouter(complaintRouter)) {
-            model.addAttribute("warning", messageSource.getMessage("router.exists",null,null));
+            model.addAttribute("warning", messageSource.getMessage("router.exists", null, null));
             return "router-create";
         } else {
             complaintRouterService.createComplaintRouter(complaintRouter);
             redirectAttrs.addFlashAttribute("complaintRouter", complaintRouter);
-            model.addAttribute("message","msg.router.success");
-            model.addAttribute("routerHeading","msg.router.create.heading");
+            model.addAttribute("message", "msg.router.success");
+            model.addAttribute("routerHeading", "msg.router.create.heading");
             return "router-success";
         }
     }

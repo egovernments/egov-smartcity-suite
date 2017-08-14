@@ -40,13 +40,6 @@
 
 package org.egov.pgr.web.controller.masters;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.pgr.entity.ComplaintRouter;
@@ -60,6 +53,12 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Controller
 @RequestMapping(value = "/router")
 class UpdateRouterController {
@@ -69,7 +68,7 @@ class UpdateRouterController {
 
     @Autowired
     public UpdateRouterController(final BoundaryTypeService boundaryTypeService,
-            final ComplaintRouterService complaintRouterService) {
+                                  final ComplaintRouterService complaintRouterService) {
         this.boundaryTypeService = boundaryTypeService;
         this.complaintRouterService = complaintRouterService;
     }
@@ -85,23 +84,23 @@ class UpdateRouterController {
     }
 
     @RequestMapping(value = "/update/{id}", method = GET)
-    public String updateRouterForm(final Model model, @PathVariable final Long id) {
+    public String updateRouterForm() {
         return "router-update";
     }
 
     @RequestMapping(value = "/search/update/{id}", method = GET)
-    public String updatefromSearchRouterForm(final Model model, @PathVariable final Long id) {
+    public String updatefromSearchRouterForm() {
         return "router-updateSearch";
     }
 
     @RequestMapping(value = "/view/{id}", method = GET)
-    public String viewRouterForm(final Model model, @PathVariable final Long id) {
+    public String viewRouterForm() {
         return "router-view";
     }
 
     @RequestMapping(value = "/update/{id}", method = POST)
     public String update(@Valid @ModelAttribute final ComplaintRouter complaintRouter, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+                         final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "router-update";
 
@@ -114,7 +113,7 @@ class UpdateRouterController {
 
     @RequestMapping(value = "/search/update/{id}", method = POST)
     public String searchupdate(@Valid @ModelAttribute final ComplaintRouter complaintRouter,
-            final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
+                               final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "router-updateSearch";
 
@@ -127,7 +126,7 @@ class UpdateRouterController {
 
     @RequestMapping(value = "/delete/{id}", method = POST)
     public String delete(@Valid @ModelAttribute final ComplaintRouter complaintRouter, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+                         final RedirectAttributes redirectAttrs, final Model model) {
         if (errors.hasErrors())
             return "router-update";
         if (!validateIfCityLevelRouter(complaintRouter)) {
@@ -143,8 +142,8 @@ class UpdateRouterController {
     }
 
     private boolean validateIfCityLevelRouter(final ComplaintRouter complaintRouter) {
-        return complaintRouter.getBoundary() != null && complaintRouter.getBoundary().getBoundaryType().getName().equals("City")
-                && complaintRouter.getComplaintType() == null ? true : false;
+        return complaintRouter.getBoundary() != null && "City".equalsIgnoreCase(complaintRouter.getBoundary().getBoundaryType().getName())
+                && complaintRouter.getComplaintType() == null;
     }
 
 }
