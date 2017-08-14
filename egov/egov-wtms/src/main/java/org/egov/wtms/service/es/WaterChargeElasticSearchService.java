@@ -344,7 +344,7 @@ public class WaterChargeElasticSearchService {
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
         final BoolQueryBuilder boolQuery = waterChargeCollDocService.prepareWhereClause(waterChargedashBoardRequest,
                 null);
-        CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        CFinancialYear currFinYear = cFinancialYearService.getCurrentFinancialYear();
 
         // orderingAggregationName is the aggregation name by which we have to
         // order the results

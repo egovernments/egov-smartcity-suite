@@ -115,7 +115,7 @@ public class DemandGenerationController {
     @RequestMapping(value = "licensedemandgenerate", method = RequestMethod.GET)
     public String generateDemandForLicense(@RequestParam Long licenseId, Model model) {
         model.addAttribute("licenseNumber", tradeLicenseService.getLicenseById(licenseId).getLicenseNumber());
-        model.addAttribute("financialYear", demandGenerationService.getLatestFinancialYear().getFinYearRange());
+        model.addAttribute("financialYear", financialYearService.getLatestFinancialYear().getFinYearRange());
         return "demandgenerate-result";
     }
 

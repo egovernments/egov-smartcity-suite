@@ -161,7 +161,7 @@ public class WaterChargeCollectionDocService {
          * between 2 dates, add a day to the endDate and fetch the results
          */
         final Map<String, BigDecimal> consolidatedCollValues = new HashMap<>();
-        final CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear currFinYear = cFinancialYearService.getCurrentFinancialYear();
         // For current year results
         consolidatedCollValues.put("cytdColln", getConsolidatedCollForYears(currFinYear.getStartingDate(),
                 org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1), billingService));
@@ -344,7 +344,7 @@ public class WaterChargeCollectionDocService {
         BigDecimal todayColl;// need to test
         BigDecimal tillDateColl;// need to test
         final Long startTime = System.currentTimeMillis();
-        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialyear = cFinancialYearService.getCurrentFinancialYear();
 
         /**
          * As per Elastic Search functionality, to get the total collections
@@ -526,7 +526,7 @@ public class WaterChargeCollectionDocService {
         BigDecimal variance;
         String aggregationField = WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD;
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         /**
          * Select the grouping based on the type parameter, by default the
          * grouping is done based on Regions. If type is region, group by
@@ -723,7 +723,7 @@ public class WaterChargeCollectionDocService {
         String[] dateArr;
         Integer month;
         Sum aggregateSum;
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
         final Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
@@ -834,7 +834,7 @@ public class WaterChargeCollectionDocService {
         String[] dateArr;
         Integer month;
         Sum aggregateSum;
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
         final Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
@@ -1057,7 +1057,7 @@ public class WaterChargeCollectionDocService {
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
         Date fromDate;
         Date toDate;
-        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialyear = cFinancialYearService.getCurrentFinancialYear();
 
         final List<WaterChargeDashBoardResponse> receiptDetailsList = new ArrayList<>();
         final WaterChargeDashBoardResponse receiptDetails = new WaterChargeDashBoardResponse();
@@ -1151,7 +1151,7 @@ public class WaterChargeCollectionDocService {
         Long rcptCount;
         String monthName;
         Map<String, Long> monthwiseCount;
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
         final Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
@@ -1301,7 +1301,7 @@ public class WaterChargeCollectionDocService {
          * by ULB
          */
         final String aggregationField = getaggregationFiledByType(collectionDetailsRequest);
-        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialyear = cFinancialYearService.getCurrentFinancialYear();
 
         /**
          * For Current day's collection if dates are sent in the request,
