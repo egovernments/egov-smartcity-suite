@@ -61,7 +61,7 @@
 			$('#approvalPosition').attr('required', 'required');
 			$('#approvalComent').removeAttr('required');
 		}
-		if(rejectbutton!=null && rejectbutton=='Reject')
+		if(rejectbutton!=null && (rejectbutton=='Reject' || rejectbutton == 'Cancel'))
 			{
 			$('#approvalDepartment').removeAttr('required');
 			$('#approvalDesignation').removeAttr('required');
