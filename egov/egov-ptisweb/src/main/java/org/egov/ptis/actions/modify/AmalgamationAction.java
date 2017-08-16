@@ -480,7 +480,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (loggedUserIsMeesevaUser && StringUtils.isBlank(propertyModel.getMeesevaApplicationNumber()))
             propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
         if (hasErrors())
-            if (checkDesignationsForEdit()) {
+            if (getModelId() == null || getModelId().isEmpty() || checkDesignationsForEdit()) {
                 allowEditDocument = Boolean.TRUE;
                 return NEW;
             } else if (checkDesignationsForView())
