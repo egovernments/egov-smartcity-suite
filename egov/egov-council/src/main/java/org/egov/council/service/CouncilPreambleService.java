@@ -135,6 +135,7 @@ public class CouncilPreambleService {
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchPreambleForWardwiseReport(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
+        criteria.add(Restrictions.ne("status.code",  REJECTED));
         return criteria.list();
     }
 
