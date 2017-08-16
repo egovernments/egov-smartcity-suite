@@ -404,6 +404,7 @@ public class ReportController {
         reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
         reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
         reportParams.put("subjectMatter",advertisementPermitDetail.getAdvertisementParticular());
+        reportParams.put("subCategory",advertisementPermitDetail.getAdvertisement().getSubCategory().getCode());       
         buildMeasurementDetailsForJasper(advertisementPermitDetail, measurement, reportParams, NOTMENTIONED);
         
         reportParams.put("permitStartDate", formatter.format( advertisementPermitDetail.getPermissionstartdate()));

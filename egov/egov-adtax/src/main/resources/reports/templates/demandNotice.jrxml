@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-03-16T18:04:48 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-08-14T18:45:04 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -57,7 +57,7 @@
 	<parameter name="agencyaddress" class="java.lang.String"/>
 	<parameter name="permitNumber" class="java.lang.String"/>
 	<parameter name="applicationNumber" class="java.lang.String"/>
-	<parameter name="subjectMatter" class="java.lang.String"/>
+	<parameter name="subCategory" class="java.lang.String"/>
 	<parameter name="curntInsPenaltyFee" class="java.math.BigDecimal">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -216,7 +216,7 @@
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{subjectMatter}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{subCategory}]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="130" y="12" width="160" height="19" isPrintWhenDetailOverflows="true" uuid="efb6adce-48bc-4cd7-a6a1-262eb25f66a1"/>
@@ -943,7 +943,7 @@ or online through Creditcard/Debitcard/Net Banking.]]></text>
 				<textElement verticalAlignment="Middle">
 					<font isBold="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{subjectMatter}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[$P{subCategory}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="291" y="49" width="90" height="23" uuid="5179075a-05a3-441b-8d3b-21b4d41bc9b7"/>
