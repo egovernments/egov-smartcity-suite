@@ -255,6 +255,12 @@
 		dom.get("selectremittanceerror").style.display = "none";
 		dom.get("approvalSelectionError").style.display = "none";
 
+		if (dom.get("accountNumberId").value != null
+				&& dom.get("accountNumberId").value == -1) {
+			dom.get("bankselectionerror").innerHTML = "";
+			dom.get("accountselectionerror").style.display = "block";
+			return false;
+		}
 		<s:if test="showRemittanceDate">
 		if (dom.get("remittanceDate") != null
 				&& dom.get("remittanceDate").value == "") {
