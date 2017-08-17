@@ -168,8 +168,7 @@ public class MarriageUtils {
             reportOutput = marriageCertificateService.generateCertificate(reIssueObj, objType,cityName, cityLogo, "");
         } else if(objType!=null && objType.equalsIgnoreCase(MarriageCertificateType.REGISTRATION.toString())){
             final MarriageRegistration marriageRegistrationObj = marriageRegistrationService.get(id);
-            reportOutput = marriageCertificateService.generate(marriageRegistrationObj, objType,cityName, cityLogo, "");
-        }
+            reportOutput = marriageCertificateService.generate(marriageRegistrationObj, cityName, cityLogo, "");     }
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=WorkOrderNotice.pdf");
