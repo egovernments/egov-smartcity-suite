@@ -661,7 +661,6 @@ public class WaterConnectionDetailsService {
                                 .equals(WaterTaxConstants.TEMPERARYCLOSECODE)) {
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED, WaterTaxConstants.MODULETYPE));
-                    updateIndexes(waterConnectionDetails, sourceChannel);
                 } else if (!"Reject".equals(workFlowAction))
                     if (!"reconnectioneredit".equals(mode))
                         if (WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED

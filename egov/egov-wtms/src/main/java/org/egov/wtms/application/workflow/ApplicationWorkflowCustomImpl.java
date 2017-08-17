@@ -195,8 +195,11 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         }
                     }
             } else {
-                wfInitiator = assignmentService
-                        .getPrimaryAssignmentForUser(waterConnectionDetails.getCreatedBy().getId());
+                List<Assignment> assignList = new ArrayList<>();
+                assignList = assignmentService
+                        .findByEmployeeAndGivenDate(waterConnectionDetails.getCreatedBy().getId(), new Date());
+                if (!assignList.isEmpty())
+                    wfInitiator = assignList.get(0);
 
                 if (wfInitiator == null) {
                     final List<Assignment> assignmtList = assignmentService
