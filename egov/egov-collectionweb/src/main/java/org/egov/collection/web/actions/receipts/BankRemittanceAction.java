@@ -39,7 +39,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.math.BigInteger;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -139,6 +138,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private String remittanceAmount;
     private static final String REMITTANCE_LIST = "REMITTANCE_LIST";
     private Boolean isBankCollectionRemitter;
+    private String remitAccountNumber;
 
     /**
      * @param collectionsUtil the collectionsUtil to set
@@ -206,6 +206,14 @@ public class BankRemittanceAction extends BaseFormAction {
     @SkipValidation
     public String listData() {
         isListData = true;
+        final String bankAccountStr = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id ='" + accountNumberId
+                + "'";
+
+        final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
+
+        final Object bankAccountResult = bankAccountQry.uniqueResult();
+        remitAccountNumber = (String) bankAccountResult;
+
         populateRemittanceList();
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
@@ -274,11 +282,10 @@ public class BankRemittanceAction extends BaseFormAction {
     @ValidationErrorPage(value = NEW)
     public String create() throws InstantiationException, IllegalAccessException {
         final long startTimeMillis = System.currentTimeMillis();
-        if ( accountNumberId == null ||accountNumberId == -1 )
-            throw new ValidationException(Arrays.asList(new ValidationError(
-                    "Please select Account number",
-                    "bankremittance.error.noaccountNumberselected")));    
-        voucherHeaderValues =remittanceService.createBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),
+        if (accountNumberId == null || accountNumberId == -1)
+            throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
+                    "bankremittance.error.noaccountNumberselected")));
+        voucherHeaderValues = remittanceService.createBankRemittance(getServiceNameArray(), getTotalCashAmountArray(),    
                 getTotalChequeAmountArray(), getTotalCardAmountArray(), getReceiptDateArray(), getFundCodeArray(),
                 getDepartmentCodeArray(), accountNumberId, positionUser, getReceiptNumberArray(), remittanceDate);
         final long elapsedTimeMillis = System.currentTimeMillis() - startTimeMillis;
@@ -660,6 +667,14 @@ public class BankRemittanceAction extends BaseFormAction {
 
     public void setIsBankCollectionRemitter(Boolean isBankCollectionRemitter) {
         this.isBankCollectionRemitter = isBankCollectionRemitter;
+    }
+
+    public String getRemitAccountNumber() {
+        return remitAccountNumber;
+    }
+
+    public void setRemitAccountNumber(String remitAccountNumber) {
+        this.remitAccountNumber = remitAccountNumber;
     }
 
 }
