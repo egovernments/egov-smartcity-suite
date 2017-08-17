@@ -41,6 +41,8 @@ package org.egov.wtms.web.controller.application;
 
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSECODE;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -157,6 +159,10 @@ public class CloserConnectionController extends GenericConnectionController {
 
         final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
         final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(applicationCode);
+        if (waterConnectionDetails.getCloseConnectionType() != null &&
+                (PERMENENTCLOSECODE.equals(waterConnectionDetails.getCloseConnectionType()) ||
+                        TEMPERARYCLOSECODE.equals(waterConnectionDetails.getCloseConnectionType())))
+            throw new ApplicationRuntimeException("connection.closed");
 
         return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber);
     }
