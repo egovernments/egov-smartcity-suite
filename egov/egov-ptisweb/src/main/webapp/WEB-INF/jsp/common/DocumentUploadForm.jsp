@@ -48,6 +48,16 @@
 				<s:text name="docsectiontitle" />
 			</div>
 		</td>
+		<s:if test="%{modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
+		<td colspan="2">
+			<div class="headingsmallbg" style="text-align: right;">
+				<s:if test="%{showTaxCalcBtn}">
+					<input type="button" name="calculateTax" id="calculateTax"
+						value="Show Tax" class="buttonsubmit" />
+				</s:if>
+			</div>
+		</td>
+		</s:if>
 	</tr>
 
 	<tr>
