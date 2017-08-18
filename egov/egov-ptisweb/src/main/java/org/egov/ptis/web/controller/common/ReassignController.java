@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.web.controller.common;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,7 +99,7 @@ public class ReassignController {
     public ReassignInfo reassign() {
         return new ReassignInfo();
     }
-    
+
     public Long getLoggedInPositiontionId() {
         final Position position = propertyTaxCommonUtils.getPositionForUser(ApplicationThreadLocals.getUserId());
         return position.getId();
@@ -108,23 +109,20 @@ public class ReassignController {
     public String getReassign(@ModelAttribute("reassign") final ReassignInfo reassignInfo, final Model model,
             @PathVariable final String modelIdAndApplicationType,
             final HttpServletRequest request) {
-        Department department = departmentService.getDepartmentByCode("REV");
-        Map<Long, String> employeeWithPosition = new HashMap<>();
-        for (String designationName : Arrays.asList(PropertyTaxConstants.JUNIOR_ASSISTANT,
-                PropertyTaxConstants.SENIOR_ASSISTANT)) {
-            List<Designation> designations = designationService.getDesignationsByName(designationName);
-            for (Designation designation : designations) {
-                List<Assignment> assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(department.getId(),
-                        designation.getId(), new Date());
-                for (Assignment assignment : assignments) {
-                    if (!(getLoggedInPositiontionId()).equals(assignment.getPosition().getId())) {
-                        employeeWithPosition.put(assignment.getPosition().getId(), assignment.getEmployee().getName().concat("/")
-                                .concat(assignment.getPosition().getName()));
-                        model.addAttribute("assignments", employeeWithPosition);
-                    }
-                }
-            }
-        }
+        final Department department = departmentService.getDepartmentByCode("REV");
+        final Map<Long, String> employeeWithPosition = new HashMap<>();
+        final List<Assignment> assignments = new ArrayList<>();
+        final List<Designation> designations = designationService
+                .getDesignationsByNames(Arrays.asList(PropertyTaxConstants.JUNIOR_ASSISTANT.toUpperCase(),
+                        PropertyTaxConstants.SENIOR_ASSISTANT.toUpperCase()));
+        for (final Designation designation : designations)
+            assignments.addAll(assignmentService.findAllAssignmentsByDeptDesigAndDates(department.getId(),
+                    designation.getId(), new Date()));
+        for (final Assignment assignment : assignments)
+            if (!getLoggedInPositiontionId().equals(assignment.getPosition().getId()))
+                employeeWithPosition.put(assignment.getPosition().getId(), assignment.getEmployee().getName().concat("/")
+                        .concat(assignment.getPosition().getName()));
+        model.addAttribute("assignments", employeeWithPosition);
         model.addAttribute("stateAwareId", Long.valueOf(modelIdAndApplicationType.split("&")[1]));
         model.addAttribute("transactionType", modelIdAndApplicationType.split("&")[0]);
         return "reassign";
@@ -134,16 +132,15 @@ public class ReassignController {
     public String update(@ModelAttribute("reassign") final ReassignInfo reassignInfo, final Model model,
             @Valid final BindingResult errors, final HttpServletRequest request) {
         String successMessage;
-        Long positionId = Long.valueOf(request.getParameter("approvalPosition"));
-        Position position = positionMasterService.getPositionById(positionId);
-        Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
+        final Long positionId = Long.valueOf(request.getParameter("approvalPosition"));
+        final Position position = positionMasterService.getPositionById(positionId);
+        final Assignment assignment = assignmentService.getAssignmentsForPosition(positionId).get(0);
         if (reassignService.getStateObject(reassignInfo, position)) {
             successMessage = "Reassigned successfully to "
                     + assignment.getEmployee().getName();
             model.addAttribute(SUCCESSMESSAGE, successMessage);
-        } else {
+        } else
             model.addAttribute(SUCCESSMESSAGE, "Reassign Failed!");
-        }
         return "reassign-success";
     }
 

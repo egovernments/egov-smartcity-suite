@@ -1296,8 +1296,10 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		getPropertyView(objection.getBasicProperty().getUpicNo());
 		isReassignEnabled = reassignmentservice.isReassignEnabled();
                 stateAwareId = objection.getId();
-                transactionType = APPLICATION_TYPE_GRP;
-
+                if (PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION.equals(objection.getType()))
+                    transactionType = GENERAL_REVISION_PETITION;
+                 else
+                    transactionType = REVISION_PETITION;
 		if (objection != null && objection.getBasicProperty() != null
 				&& objection.getBasicProperty().getPropertyID() != null) {
 			final PropertyID propertyID = objection.getBasicProperty().getPropertyID();
