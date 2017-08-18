@@ -215,8 +215,7 @@ public class CommonWaterTaxSearchController {
         if (applicationType != null
                 && applicationType.equals(SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE))
             if (waterConnectionDetails.getCloseConnectionType() != null && (waterConnectionDetails
-                    .getCloseConnectionType().equals(PERMENENTCLOSECODE)
-                    || waterConnectionDetails.getCloseConnectionType().equals(TEMPERARYCLOSECODE))) {
+                    .getCloseConnectionType().equals(PERMENENTCLOSECODE))) {
                 model.addAttribute("mode", "errorMode");
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, "connection.closed");
                 return COMMON_FORM_SEARCH;

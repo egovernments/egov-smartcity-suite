@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 
 import java.io.ByteArrayInputStream;
@@ -658,10 +659,10 @@ public class WaterConnectionDetailsService {
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                         && waterConnectionDetails.getCloseConnectionType() != null
                         && waterConnectionDetails.getCloseConnectionType()
-                                .equals(WaterTaxConstants.TEMPERARYCLOSECODE)) {
+                                .equals(WaterTaxConstants.TEMPERARYCLOSECODE))
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED, WaterTaxConstants.MODULETYPE));
-                } else if (!"Reject".equals(workFlowAction))
+                else if (!"Reject".equals(workFlowAction))
                     if (!"reconnectioneredit".equals(mode))
                         if (WaterTaxConstants.WORKFLOW_RECONNCTIONINITIATED
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
@@ -903,6 +904,8 @@ public class WaterConnectionDetailsService {
                     applicationIndex.setChannel(Source.CITIZENPORTAL.toString());
                 else if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
+                else if (MEESEVA.toString().equals(waterConnectionDetails.getSource()))
+                    applicationIndex.setChannel(MEESEVA.toString());
                 else
                     applicationIndex.setChannel(sourceChannel);
             }
@@ -915,6 +918,7 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
+                applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
             }
             if (waterConnectionDetails.getStatus().getCode()
                     .equals(WaterTaxConstants.APPLICATION_STATUS_CANCELLED)) {

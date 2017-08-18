@@ -167,14 +167,14 @@ public class AdditionalConnectionController extends GenericConnectionController 
         }
 
         final String sourceChannel = request.getParameter("Source");
-        final WaterConnectionDetails parent = waterConnectionDetailsService.findByConnection(addConnection
+        final WaterConnectionDetails parent = waterConnectionDetailsService.getActiveConnectionDetailsByConnection(addConnection
                 .getConnection().getParentConnection());
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
         if (!message.isEmpty() && !"".equals(message))
             return "redirect:/application/addconnection/"
             + addConnection.getConnection().getParentConnection().getConsumerCode();
 
-        final List<ApplicationDocuments> applicationDocs = new ArrayList<ApplicationDocuments>();
+        final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
         if (!addConnection.getApplicationDocs().isEmpty())
             for (final ApplicationDocuments applicationDocument : addConnection.getApplicationDocs()) {
