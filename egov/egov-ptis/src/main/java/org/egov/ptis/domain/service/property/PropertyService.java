@@ -2178,11 +2178,9 @@ public class PropertyService {
 	}
 
 	private User getOwnerName(final StateAware stateAwareObject) {
-		User user;
+		User user= null;
 		final Position position = stateAwareObject.getState().getOwnerPosition();
-		if (position == null)
-			user = stateAwareObject.getState().getCreatedBy();
-		else
+		if (position != null)
 			user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
 		return user;
 	}
@@ -2393,8 +2391,9 @@ public class PropertyService {
 				.withStatus(property.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
 				.withApplicantAddress(property.getBasicProperty().getAddress().toString())
-				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName()).withChannel(source)
-				.withMobileNumber(owner.getMobileNumber()).withAadharNumber(owner.getAadhaarNumber())
+				.withOwnername(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
+						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withChannel(source).withMobileNumber(owner.getMobileNumber()).withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(property.getBasicProperty().getUpicNo()).withClosed(closureStatus)
 				.withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
 						? ApprovalStatus.APPROVED
@@ -2419,7 +2418,8 @@ public class PropertyService {
 		if (propertyApplicationTypes().contains(applictionType)) {
 			applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
 			applicationIndex.setApplicantName(owner.getName());
-			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(property.getState().getValue().contains(WF_STATE_CLOSED)
+					? null : stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setMobileNumber(owner.getMobileNumber());
 			applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 			applicationIndex.setClosed(

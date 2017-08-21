@@ -316,7 +316,7 @@ public class VacancyRemissionService {
             if (wfInitiator.getPosition().equals(vacancyRemission.getState().getOwnerPosition())) {
                 vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
                 vacancyRemission.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
                 vacancyRemission.getBasicProperty().setUnderWorkflow(false);
             }
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {

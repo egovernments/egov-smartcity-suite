@@ -701,16 +701,16 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			logger.debug("ObjectionAction | recordInspectionDetails | start "
 					+ objection.getInspections().get(objection.getInspections().size() - 1));
 		vaidatePropertyDetails();
+		if (hasErrors()) {
+			checkIfEligibleForDocEdit();
+			return "view";
+		}
 		try {
 			modifyBasicProp();
 		} catch (final TaxCalculatorExeption e) {
 			addActionError(getText("unitrate.error"));
 		}
 
-		if (hasErrors()) {
-			checkIfEligibleForDocEdit();
-			return "view";
-		}
 		final String designation = propService.getDesignationForPositionAndUser(
 				objection.getCurrentState().getOwnerPosition().getId(), securityUtils.getCurrentUser().getId());
 		if (REVENUE_INSPECTOR_DESGN.equals(designation))
@@ -1159,7 +1159,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
 
 				objection.transition().end().withOwner(position).withOwner(user).withComments(approverComments)
-						.withNextAction(null);
+						.withNextAction(null).withOwner((Position)null);
 			} else if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
 				updateStateAndStatus(objection);
 
@@ -1683,7 +1683,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				objection.transition().end().withStateValue(wfmatrix.getNextState()).withOwner(position)
 						.withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
 						.withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
-						.withComments(approverComments).withNextAction(null);
+						.withComments(approverComments).withNextAction(null).withOwner((Position)null);
 
 				updateRevisionPetitionStatus(wfmatrix, objection, REJECTED);
 

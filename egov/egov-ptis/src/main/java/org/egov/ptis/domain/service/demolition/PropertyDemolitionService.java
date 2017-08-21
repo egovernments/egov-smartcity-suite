@@ -426,7 +426,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         String nextAction;
         if (wfInitiator != null && wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approvarComments).withDateInfo(currentDate.toDate());
+                    .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
         } else {

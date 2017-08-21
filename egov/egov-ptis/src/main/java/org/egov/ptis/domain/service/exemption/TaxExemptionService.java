@@ -369,7 +369,7 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
             if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
                 property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null);
+                        .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
                 property.setStatus(STATUS_CANCELLED);
                 property.getBasicProperty().setUnderWorkflow(FALSE);
             } else {

@@ -445,7 +445,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                                 || floor.getStructureClassification().getId() == null
                                 || "-1".equals(floor.getStructureClassification().getId().toString()))
                             addActionError(getText("mandatory.constType", msgParams));
-
+                        
                         if (!floor.getUnstructuredLand()) {
                             if (floor.getBuiltUpArea() == null || floor.getBuiltUpArea().getLength() == null
                                     || "".equals(floor.getBuiltUpArea().getLength()))
@@ -750,7 +750,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Position owner = null;
         if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
+                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
         } else {
