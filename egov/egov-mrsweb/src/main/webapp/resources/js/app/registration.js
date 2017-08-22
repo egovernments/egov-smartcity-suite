@@ -436,7 +436,8 @@ $(".btn-primary").click(function(e) {
 		 }
 	}
 	
-		 if(action == 'Print Certificate') { 
+		 if(action == 'Print Certificate') {
+			 validateSerialNumber(e)
 			 validateForm(e);
 		 }
 		 
@@ -463,11 +464,11 @@ function validateForm(e) {
 		e.preventDefault();
 	}
 }
-$('#txt-serialNo').change(function(){
-	validateSerialNumber();
+$('#txt-serialNo').change(function(e){
+	validateSerialNumber(e);
 });
 
-function validateSerialNumber(){
+function validateSerialNumber(e){
 	var serialNo=$('#txt-serialNo').val();
 	if(serialNo != '') {
 		$.ajax({
@@ -481,11 +482,13 @@ function validateSerialNumber(){
 				if(response) {
 						bootbox.alert("Entered Serial Number already exists. Please Enter Unique Number.");
 						$('#txt-serialNo').val('');
+						e.preventDefault();
 				}
 			}, 
 			error: function (response) {
 				$('#txt-serialNo').val('');
-				bootbox.alert("connection validation failed");
+				e.preventDefault();
+
 			}
 		});
 	}	
