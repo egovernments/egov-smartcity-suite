@@ -833,7 +833,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             if (wfInitiator.getPosition().equals(propertyMutation.getState().getOwnerPosition())
                     || propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
                 propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
+                        .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
                 propertyMutation.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             } else {
                 if (loggedInUserDesignation.equalsIgnoreCase(REVENUE_OFFICER_DESGN)
@@ -877,7 +877,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if (propertyMutation.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 propertyMutation.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
+                        .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
             else {
                 final WorkFlowMatrix wfmatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(), null, null,
                         getAdditionalRule(), propertyMutation.getCurrentState().getValue(),
