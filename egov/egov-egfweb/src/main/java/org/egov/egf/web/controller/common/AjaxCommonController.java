@@ -74,6 +74,7 @@ import org.egov.services.masters.SubSchemeService;
 import org.egov.utils.FinancialConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -112,6 +113,9 @@ public class AjaxCommonController {
     private FunctionService functionService;
 
     @Autowired
+    private ApplicationContext applicationContext;
+
+    @Autowired
     private AccountdetailtypeService accountdetailtypeService;
 
     @Autowired
@@ -123,7 +127,7 @@ public class AjaxCommonController {
 
     @Autowired
     private AppConfigValueService appConfigValueService;
-    
+
     @Autowired
     private CreateBankAccountService createBankAccountService;
 
@@ -173,9 +177,7 @@ public class AjaxCommonController {
             String simpleName = service.getSimpleName();
             simpleName = simpleName.substring(0, 1).toLowerCase() + simpleName.substring(1) + "Service";
 
-            final WebApplicationContext wac = WebApplicationContextUtils
-                    .getWebApplicationContext(ServletActionContext.getServletContext());
-            final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
+            final EntityTypeService entityService = (EntityTypeService) applicationContext.getBean(simpleName);
             entitiesList = (List<EntityType>) entityService.filterActiveEntities(name, 20, detailType.getId());
         } catch (final Exception e) {
             e.printStackTrace();
@@ -260,7 +262,7 @@ public class AjaxCommonController {
         else
             return createBankBranchService.getByIsActiveTrueOrderByBranchname();
     }
-    
+
     @RequestMapping(value = "/getbankaccountbybranchid", method = RequestMethod.GET)
     @ResponseBody
     public List<Bankaccount> getBankAccountByBranchId(@RequestParam("branchId") final String branchId)

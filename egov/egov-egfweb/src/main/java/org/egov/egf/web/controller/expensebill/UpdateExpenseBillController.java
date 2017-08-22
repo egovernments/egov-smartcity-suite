@@ -48,6 +48,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.CheckListService;
+import org.egov.egf.expensebill.repository.DocumentUploadRepository;
 import org.egov.egf.expensebill.service.ExpenseBillService;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -55,6 +56,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.utils.FinancialConstants;
@@ -85,17 +87,15 @@ public class UpdateExpenseBillController extends BaseBillController {
     private static final String EXPENSEBILL_VIEW = "expensebill-view";
 
     private static final String NET_PAYABLE_ID = "netPayableId";
-
+    @Autowired
+    DocumentUploadRepository documentUploadRepository;
     @Autowired
     private ExpenseBillService expenseBillService;
-
     @Autowired
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
-
     @Autowired
     private FinancialUtils financialUtils;
-
     @Autowired
     private CheckListService checkListService;
 
@@ -112,6 +112,8 @@ public class UpdateExpenseBillController extends BaseBillController {
     public String updateForm(final Model model, @PathVariable final String billId,
                              final HttpServletRequest request) throws ApplicationException {
         final EgBillregister egBillregister = expenseBillService.getById(Long.parseLong(billId));
+        final List<DocumentUpload> documents = documentUploadRepository.findByObjectId(Long.valueOf(billId));
+        egBillregister.setDocumentDetail(documents);
         List<Map<String, Object>> budgetDetails;
         setDropDownValues(model);
         model.addAttribute("stateType", egBillregister.getClass().getSimpleName());

@@ -132,6 +132,9 @@
 			</div>
 			<jsp:include page="expensebill-accountdetails.jsp" />
 			<jsp:include page="expensebill-subledgeraccountdetails.jsp" />
+            <c:if test="${egBillregister.documentDetail != null &&  !egBillregister.documentDetail.isEmpty()}">
+                <jsp:include page="billdocument-upload.jsp"/>
+            </c:if>
 		</div>
 		<div class="tab-pane fade" id="checklist">
 			<jsp:include page="expensebill-checklist.jsp" />

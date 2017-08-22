@@ -51,6 +51,7 @@ import org.egov.dao.budget.BudgetDetailsHibernateDAO;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
 import org.egov.egf.autonumber.WorksBillNumberGenerator;
 import org.egov.egf.billsubtype.service.EgBillSubTypeService;
+import org.egov.egf.expensebill.repository.DocumentUploadRepository;
 import org.egov.egf.expensebill.repository.ExpenseBillRepository;
 import org.egov.egf.utils.FinancialUtils;
 import org.egov.eis.entity.Assignment;
@@ -67,6 +68,7 @@ import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.model.bills.DocumentUpload;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
@@ -90,13 +92,7 @@ import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
 import java.io.IOException;
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 /**
  * @author venki
@@ -112,6 +108,8 @@ public class ExpenseBillService {
     private final ScriptService scriptExecutionService;
     @Autowired
     protected AppConfigValueService appConfigValuesService;
+    @Autowired
+    DocumentUploadRepository documentUploadRepository;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -128,30 +126,22 @@ public class ExpenseBillService {
     private AutonumberServiceBeanResolver beanResolver;
     @Autowired
     private SecurityUtils securityUtils;
-
     @Autowired
     @Qualifier(value = "voucherService")
     private VoucherService voucherService;
-
     @Autowired
     private CheckListService checkListService;
-
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<EgBillregister> egBillregisterRegisterWorkflowService;
-
     @Autowired
     private FundService fundService;
-
     @Autowired
     private ChartOfAccountDetailService chartOfAccountDetailService;
-
     @Autowired
     private AppConfigService appConfigService;
-
     @Autowired
     private BudgetDetailsHibernateDAO budgetDetailsHibernateDAO;
-
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
@@ -179,8 +169,8 @@ public class ExpenseBillService {
     }
 
     @Transactional
-    public EgBillregister create(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
-                                 final String additionalRule, final String workFlowAction) {
+    public EgBillregister create(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent
+            , final String additionalRule, final String workFlowAction) {
         if (StringUtils.isBlank(egBillregister.getBilltype()))
             egBillregister.setBilltype(FinancialConstants.BILLTYPE_FINAL_BILL);
         if (StringUtils.isBlank(egBillregister.getExpendituretype()))
@@ -233,6 +223,20 @@ public class ExpenseBillService {
             createExpenseBillRegisterWorkflowTransition(savedEgBillregister, approvalPosition, approvalComent, additionalRule,
                     workFlowAction);
         }
+        List<DocumentUpload> files = egBillregister.getDocumentDetail() == null ? null : egBillregister.getDocumentDetail();
+        final List<DocumentUpload> documentDetails;
+        try {
+            documentDetails = financialUtils.getDocumentDetails(files, savedEgBillregister,
+                    FinancialConstants.FILESTORE_MODULEOBJECT);
+            if (!documentDetails.isEmpty()) {
+                savedEgBillregister.setDocumentDetail(documentDetails);
+                persistDocuments(documentDetails);
+            }
+        } catch (IOException e) {
+
+        }
+
+
         // TODO: add the code to handle new screen for view bills of all type
         savedEgBillregister.getEgBillregistermis().setSourcePath(
                 "/EGF/expensebill/view/" + savedEgBillregister.getId().toString());
@@ -625,5 +629,13 @@ public class ExpenseBillService {
 
     }
 
+    public void persistDocuments(final List<DocumentUpload> documentDetailsList) {
+        if (documentDetailsList != null && !documentDetailsList.isEmpty())
+            for (final DocumentUpload doc : documentDetailsList)
+                documentUploadRepository.save(doc);
+    }
 
+    public List<DocumentUpload> findByObjectIdAndObjectType(final Long objectId, final String objectType) {
+        return documentUploadRepository.findByObjectIdAndObjectType(objectId, objectType);
+    }
 }

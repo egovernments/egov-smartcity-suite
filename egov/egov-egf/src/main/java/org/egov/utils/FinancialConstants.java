@@ -410,4 +410,7 @@ public interface FinancialConstants {
     public static final String SCHEME_CODE = "schemeCode";
     public static final String SUBSCHEME_CODE = "subSchemeCode";
 
+    public static final String FILESTORE_MODULECODE = "EGF";
+    public static final String FILESTORE_MODULEOBJECT = "egBillRegister";
+    public static final String BANK_STATEMET_OBJECT = "bankStatement";
 }
