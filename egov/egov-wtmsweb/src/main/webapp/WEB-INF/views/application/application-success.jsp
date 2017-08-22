@@ -78,6 +78,9 @@
 							<c:when test="${waterConnectionDetails.connectionStatus== 'INACTIVE' && waterConnectionDetails.applicationType.code=='ADDNLCONNECTION' }">
 							<span><spring:message code="msg.additionalconnection.cancel.success" /></span>
 							</c:when>
+							<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.applicationType.code=='NEWCONNECTION' && waterConnectionDetails.status.code=='CANCELLED'}">
+							<span><spring:message code="msg.newapplication.cancel.success" /></span>
+							</c:when>
 							<c:when test="${waterConnectionDetails.state.value== 'Rejected' && waterConnectionDetails.applicationType.code=='NEWCONNECTION' && waterConnectionDetails.closeConnectionType==null}">
 							<span><spring:message code="msg.newapplication.rejection.success" />${approverName}~${nextDesign}</span>
 							</c:when>
