@@ -124,5 +124,8 @@ public class ApiUrl {
 	public final static String EMPLOYEE_SEARCH_INBOX = "/employee/inbox/search/{pageno}/{limit}";
 	
 	public final static String EMPLOYEE_LOGOUT = "/employee/logout";
-	
+
+	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT = "/employee/routedcomplaints/{page}/{pageSize}";
+	public final static String EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT = "/employee/routedcomplaintcount";
+
 }

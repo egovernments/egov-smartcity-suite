@@ -53,6 +53,7 @@ import org.egov.api.adapter.ComplaintAdapter;
 import org.egov.api.adapter.ComplaintStatusAdapter;
 import org.egov.api.adapter.ComplaintTypeAdapter;
 import org.egov.api.controller.core.ApiController;
+import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.api.model.ComplaintAction;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
@@ -66,6 +67,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.StringUtils;
+import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -816,4 +818,38 @@ public class ComplaintController extends ApiController {
 
     }
 
+    @RequestMapping(value = {
+            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getRoutedComplaints(@PathVariable("page") final int page,
+                                                      @PathVariable("pageSize") final int pageSize) {
+        if (page < 0)
+            return getResponseHandler().error(INVALID_PAGE_NUMBER_ERROR);
+        try {
+            final JsonArray inboxItems = new JsonArray();
+            final List<Complaint> list = complaintService.getActedUponComplaints(page, pageSize);
+            boolean hasNextPage = false;
+            if (list.size() > pageSize) {
+                hasNextPage = true;
+                list.remove(pageSize);
+            }
+            if (list != null) {
+                for (final StateAware stateAware : list)
+                    inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
+                final ApiResponse res = ApiResponse.newInstance();
+                return res.setDataAdapter(new ComplaintAdapter()).putStatusAttribute(HAS_NEXT_PAGE, String.valueOf(hasNextPage))
+                        .success(inboxItems);
+            } else
+                return getResponseHandler().error("No Response Found");
+        } catch (final Exception e) {
+            LOGGER.error(EGOV_API_ERROR, e);
+            return getResponseHandler().error(getMessage(SERVER_ERROR));
+        }
+
+    }
+
+    @RequestMapping(value = {
+            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getMyRoutedComplaintCount() {
+        return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaintService.getActedUponComplaintCount().size());
+    }
 }

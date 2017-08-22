@@ -75,4 +75,10 @@ public interface ComplaintRepository extends JpaRepository<Complaint, Long> {
                                            @Param("lng") Float lng, @Param("distance") Long distance,
                                            @Param("limit") Long limit, @Param("offset") Long offset);
 
+    @Query(value = "SELECT c.* FROM egpgr_complaint c left join egpgr_complaintstatus cstatus on c.status=cstatus.id LEFT JOIN (SELECT state_id, min(id) AS id " +
+            "FROM eg_wf_State_history GROUP BY state_id ORDER BY state_id) state ON c.state_id=state.state_id JOIN eg_wf_state_history sh ON state.id=sh.id " +
+            "where sh.owner_pos in (:ownerpos) and cstatus.name in (:complaintstatus) ORDER BY c.createddate desc limit :limit offset :offset", nativeQuery = true)
+    List<Complaint> findRoutedComplaints(@Param("ownerpos") List<Long> ownerpos, @Param("complaintstatus") List<String> complaintstatus, @Param("limit") Long limit, @Param("offset") Long offset);
+
+
 }

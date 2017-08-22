@@ -47,9 +47,11 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.service.es.ComplaintIndexService;
+import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.Restrictions;
@@ -66,7 +68,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
+import java.util.ArrayList;
+import java.util.Comparator;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;
@@ -198,7 +201,7 @@ public class ComplaintService {
     @ReadOnly
     public List<Complaint> getPendingGrievances() {
         Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
-                .createAlias("complaint.state", "state").createAlias("complaint.status", "status");
+                .createAlias("complaint.status", "status");
         criteria.add(Restrictions.in("status.name", PENDING_STATUS));
         criteria.add(
                 Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(getUserId(), new Date())));
@@ -249,5 +252,33 @@ public class ComplaintService {
     @ReadOnly
     public List<Complaint> getOpenComplaints() {
         return complaintRepository.findByStatusNameIn(Arrays.asList(PENDING_STATUS));
+    }
+
+    @ReadOnly
+    public List<Complaint> getActedUponComplaints(int page, int pageSize) {
+        User user = securityUtils.getCurrentUser();
+        List<Position> positions = positionMasterService.getPositionsForEmployee(user.getId());
+        List<Long> positionIds = new ArrayList<>();
+        positions.stream().forEach(position -> positionIds.add(position.getId()));
+        return complaintRepository.findRoutedComplaints(positionIds, Arrays.asList(PENDING_STATUS), pageSize + 1L, (page - 1L) * pageSize);
+    }
+
+    @ReadOnly
+    public List<Complaint> getActedUponComplaintCount() {
+        User user = securityUtils.getCurrentUser();
+        List<Complaint> complaintList = new ArrayList<>();
+        List<Complaint> openComplaints = complaintRepository.findByStatusNameIn(Arrays.asList(PENDING_STATUS));
+        List<Position> positions = positionMasterService.getPositionsForEmployee(user.getId());
+        openComplaints.forEach(openComplaint -> {
+            if (!openComplaint.getStateHistory().isEmpty()) {
+                openComplaint.getStateHistory().stream()
+                        .sorted(Comparator.comparing(StateHistory::getLastModifiedDate)).findFirst()
+                        .ifPresent(stateHistory -> {
+                            if (positions.contains(stateHistory.getOwnerPosition()))
+                                complaintList.add(openComplaint);
+                        });
+            }
+        });
+        return complaintList;
     }
 }
