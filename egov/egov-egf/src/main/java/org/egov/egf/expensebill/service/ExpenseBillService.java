@@ -109,7 +109,7 @@ public class ExpenseBillService {
     @Autowired
     protected AppConfigValueService appConfigValuesService;
     @Autowired
-    DocumentUploadRepository documentUploadRepository;
+    private DocumentUploadRepository documentUploadRepository;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired

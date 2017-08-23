@@ -52,12 +52,17 @@ import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
+import org.egov.egf.expensebill.repository.DocumentUploadRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.model.bills.DocumentUpload;
 import org.egov.model.brs.AutoReconcileBean;
+import org.egov.model.brs.BankStatementUploadFile;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.HibernateException;
@@ -73,27 +78,17 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 public class AutoReconcileHelper {
 
     private static final String DID_NOT_FIND_MATCH_IN_BANKBOOK = "did not find match in Bank Book  (InstrumentHeader)";
-    private String file_already_uploaded = "This file (#name) already uploaded ";
-    private String bank_account_not_match_msg = "Selected Bank account and spreadsheet ( #name ) account does not match";
-    private String bankStatementFormat = "Upload the Bank Statement as shown in the Download Template format.";
     private static final long serialVersionUID = -4207341983597707193L;
     private static final Logger LOGGER = Logger.getLogger(AutoReconciliationAction.class);
     private static final int ACCOUNTNUMBER_ROW_INDEX = 2;
@@ -106,12 +101,30 @@ public class AutoReconcileHelper {
     private static final int CREDIT_INDEX = 6;
     private static final int BALANCE_INDEX = 7;
     private static final int CSLNO_INDEX = 8;
-    private final String BRS_TRANSACTION_TYPE_CHEQUE = "CLG";
     private static final String BRS_TRANSACTION_TYPE_BANK = "TRF";
-    private List<Bankbranch> branchList = Collections.EMPTY_LIST;
+    private final String BRS_TRANSACTION_TYPE_CHEQUE = "CLG";
     private final List<Bankaccount> accountList = Collections.EMPTY_LIST;
+    private final String successMessage = "BankStatement upload completed Successfully # rows processed";
+    private final String TABLENAME = "egf_brs_bankstatements";
+    private final String BRS_ACTION_TO_BE_PROCESSED = "to be processed";
+    private final String BRS_ACTION_TO_BE_PROCESSED_MANUALLY = "to be processed manually";
+    private final String BRS_ACTION_PROCESSED = "processed";
+    private final String jasperpath = "/reports/templates/AutoReconcileReport.jasper";
+    private final String BRS_MESSAGE_MORE_THAN_ONE_MATCH = "found more than one match in instruments";
+    private final String BRS_MESSAGE_DUPPLICATE_IN_BANKSTATEMENT = "duplicate instrument number within the bankstament";
+    private final String dateInDotFormat = "dd.mm.yyyy";
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MMM/yyyy");
+    private final String insertsql = "insert into egf_brs_bankstatements (ID,ACCOUNTNUMBER,ACCOUNTID,TXDATE,TYPE,INSTRUMENTNO,DEBIT,CREDIT,BALANCE"
+            +
+            ",NARRATION,CSLNO,CREATEDDATE) values (nextval('seq_egf_brs_bankstatements'),:accNo,:accountId,to_date(:txDate,"
+            + "'"
+            + dateInDotFormat + "'),:type,:instrumentNo,:debit" +
+            ",:credit,:balance,:narration,:cslNo,CURRENT_DATE)";
+    private String file_already_uploaded = "This file (#name) already uploaded ";
+    private String bank_account_not_match_msg = "Selected Bank account and spreadsheet ( #name ) account does not match";
+    private String bankStatementFormat = "Upload the Bank Statement as shown in the Download Template format.";
+    private List<Bankbranch> branchList = Collections.EMPTY_LIST;
     private Integer accountId;
-
     private Date reconciliationDate;
     private Date fromDate;
     private Date toDate;
@@ -119,28 +132,11 @@ public class AutoReconcileHelper {
     private File bankStatmentInXls;
     private String bankStatmentInXlsFileName;
     private String failureMessage = "Invalid data in  the  following row(s), please correct and upload again\n";
-    private final String successMessage = "BankStatement upload completed Successfully # rows processed";
     private boolean isFailed;
-    private final String TABLENAME = "egf_brs_bankstatements";
-    private final String BRS_ACTION_TO_BE_PROCESSED = "to be processed";
-    private final String BRS_ACTION_TO_BE_PROCESSED_MANUALLY = "to be processed manually";
-    private final String BRS_ACTION_PROCESSED = "processed";
-
-    private final String jasperpath = "/reports/templates/AutoReconcileReport.jasper";
     private ReportHelper reportHelper;
     private InputStream inputStream;
-    private final String BRS_MESSAGE_MORE_THAN_ONE_MATCH = "found more than one match in instruments";
-    private final String BRS_MESSAGE_DUPPLICATE_IN_BANKSTATEMENT = "duplicate instrument number within the bankstament";
     private String message = "";
-    private final String dateInDotFormat = "dd.mm.yyyy";
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MMM/yyyy");
     private SQLQuery insertQuery;
-    private final String insertsql = "insert into egf_brs_bankstatements (ID,ACCOUNTNUMBER,ACCOUNTID,TXDATE,TYPE,INSTRUMENTNO,DEBIT,CREDIT,BALANCE"
-            +
-            ",NARRATION,CSLNO,CREATEDDATE) values (nextval('seq_egf_brs_bankstatements'),:accNo,:accountId,to_date(:txDate,"
-            + "'"
-            + dateInDotFormat + "'),:type,:instrumentNo,:debit" +
-            ",:credit,:balance,:narration,:cslNo,CURRENT_DATE)";
     private int count;
     private int rowIndex;
     private int rowCount;
@@ -154,7 +150,9 @@ public class AutoReconcileHelper {
     private BigDecimal notInBooktotalDebit;
     private BigDecimal notInBooktotalCredit;
     private BigDecimal notprocessedCredit;
-    private @Autowired EGovernCommon eGovernCommon;
+    private
+    @Autowired
+    EGovernCommon eGovernCommon;
     private BigDecimal notprocessedDebit;
     private BigDecimal notprocessedNet;
     private BigDecimal notInBookNet;
@@ -168,6 +166,15 @@ public class AutoReconcileHelper {
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
 
+    @Autowired
+    private FileStoreService fileStoreService;
+
+    @Autowired
+    private DocumentUploadRepository documentUploadRepository;
+    private BigDecimal brsBalance;
+    private BigDecimal totalNotReconciledAmount;
+    private Integer statusId;
+
     public BigDecimal getBankBookBalance() {
         return bankBookBalance;
     }
@@ -175,10 +182,6 @@ public class AutoReconcileHelper {
     public void setBankBookBalance(final BigDecimal bankBookBalance) {
         this.bankBookBalance = bankBookBalance;
     }
-
-    private BigDecimal brsBalance;
-    private BigDecimal totalNotReconciledAmount;
-    private Integer statusId;
 
     public BigDecimal getBrsBalance() {
         return brsBalance;
@@ -197,8 +200,7 @@ public class AutoReconcileHelper {
     }
 
     @Transactional
-    public String upload()
-    {
+    public String upload() {
         try {
             insertQuery = persistenceService.getSession().createSQLQuery(insertsql);
             final Bankaccount ba = (Bankaccount) persistenceService.find("from Bankaccount ba where id=?",
@@ -211,16 +213,14 @@ public class AutoReconcileHelper {
             sheet.getFirstRowNum();
             // Validating selected bankaccount and BankStatements bankaccount
             final HSSFRow row = sheet.getRow(ACCOUNTNUMBER_ROW_INDEX);
-            if (row == null)
-            {
+            if (row == null) {
                 bank_account_not_match_msg = bank_account_not_match_msg.replace("#name", bankStatmentInXlsFileName);
                 throw new ValidationException(Arrays.asList(new ValidationError(bank_account_not_match_msg,
                         bank_account_not_match_msg)));
             }
             String strValue2 = getStrValue(row.getCell(0));
             strValue2 = strValue2.substring(strValue2.indexOf(':') + 1, strValue2.indexOf('-')).trim();
-            if (!strValue2.equals(accNo.trim()))
-            {
+            if (!strValue2.equals(accNo.trim())) {
                 bank_account_not_match_msg = bank_account_not_match_msg.replace("#name", bankStatmentInXlsFileName);
                 throw new ValidationException(Arrays.asList(new ValidationError(bank_account_not_match_msg,
                         bank_account_not_match_msg)));
@@ -235,15 +235,13 @@ public class AutoReconcileHelper {
                 try {
 
                     ab = new AutoReconcileBean();
-                    if (rowIndex == STARTOF_DETAIL_ROW_INDEX)
-                    {
+                    if (rowIndex == STARTOF_DETAIL_ROW_INDEX) {
                         detailRow = sheet.getRow(rowIndex);
                         if (rowIndex >= 9290)
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(detailRow.getRowNum());
                         dateStr = getStrValue(detailRow.getCell(TXNDT_INDEX));
-                        if (alreadyUploaded(dateStr))
-                        {
+                        if (alreadyUploaded(dateStr)) {
                             file_already_uploaded = file_already_uploaded.replace("#name", bankStatmentInXlsFileName);
                             throw new ValidationException(Arrays.asList(new ValidationError(file_already_uploaded,
                                     file_already_uploaded)));
@@ -258,8 +256,7 @@ public class AutoReconcileHelper {
                     ab.setCredit(getNumericValue(detailRow.getCell(CREDIT_INDEX)));
                     ab.setBalance(getNumericValue(detailRow.getCell(BALANCE_INDEX)));
                     String strValue = getStrValue(detailRow.getCell(NARRATION_INDEX));
-                    if (strValue != null)
-                    {
+                    if (strValue != null) {
                         if (strValue.length() > 125)
                             strValue = strValue.substring(0, 125);
                         // strValue=strValue.replaceFirst(".0", "");
@@ -275,8 +272,7 @@ public class AutoReconcileHelper {
                     if (count % 20 == 0)
                         persistenceService.getSession().flush();
 
-                } catch (ValidationException ve)
-                {
+                } catch (ValidationException ve) {
                     throw ve;
                 } catch (final NumberFormatException e) {
                     if (!isFailed)
@@ -300,8 +296,21 @@ public class AutoReconcileHelper {
 
             if (isFailed)
                 throw new ValidationException(Arrays.asList(new ValidationError(failureMessage, failureMessage)));
-            else
+            else {
+                final FileStoreMapper fileStore = fileStoreService.store(getBankStatmentInXls(),
+                        bankStatmentInXlsFileName,
+                        "application/vnd.ms-excel", FinancialConstants.MODULE_NAME_APPCONFIG, false);
+
+                persistenceService.persist(fileStore);
+                String fileStoreId = fileStore.getFileStoreId();
+                DocumentUpload upload = new DocumentUpload();
+                upload.setFileStore(fileStore);
+                upload.setObjectId(accountId.longValue());
+                upload.setObjectType(FinancialConstants.BANK_STATEMET_OBJECT);
+                upload.setUploadedDate(new Date());
+                documentUploadRepository.save(upload);
                 message = successMessage.replace("#", "" + count);
+            }
 
         } catch (final FileNotFoundException e) {
             throw new ValidationException(
@@ -310,15 +319,12 @@ public class AutoReconcileHelper {
         } catch (final IOException e) {
             throw new ValidationException(Arrays.asList(new ValidationError("Unable to read uploaded file",
                     "Unable to read uploaded file")));
-        } catch (final ValidationException ve)
-        {
+        } catch (final ValidationException ve) {
             throw ve;
-        } catch (final NullPointerException npe)
-        {
+        } catch (final NullPointerException npe) {
             throw new ValidationException(Arrays.asList(new ValidationError(bankStatementFormat,
                     bankStatementFormat)));
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             throw new ValidationException(Arrays.asList(new ValidationError(bankStatementFormat,
                     bankStatementFormat)));
         }
@@ -373,16 +379,15 @@ public class AutoReconcileHelper {
             return null;
         double numericCellValue = 0d;
         String strValue = "";
-        switch (cell.getCellType())
-        {
-        case HSSFCell.CELL_TYPE_NUMERIC:
-            numericCellValue = cell.getNumericCellValue();
-            final DecimalFormat decimalFormat = new DecimalFormat("#");
-            strValue = decimalFormat.format(numericCellValue);
-            break;
-        case HSSFCell.CELL_TYPE_STRING:
-            strValue = cell.getStringCellValue();
-            break;
+        switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                numericCellValue = cell.getNumericCellValue();
+                final DecimalFormat decimalFormat = new DecimalFormat("#");
+                strValue = decimalFormat.format(numericCellValue);
+                break;
+            case HSSFCell.CELL_TYPE_STRING:
+                strValue = cell.getStringCellValue();
+                break;
         }
         return strValue;
 
@@ -395,36 +400,33 @@ public class AutoReconcileHelper {
         BigDecimal bigDecimalValue = BigDecimal.ZERO;
         String strValue = "";
 
-        switch (cell.getCellType())
-        {
-        case HSSFCell.CELL_TYPE_NUMERIC:
-            numericCellValue = cell.getNumericCellValue();
-            bigDecimalValue = BigDecimal.valueOf(numericCellValue);
-            break;
-        case HSSFCell.CELL_TYPE_STRING:
-            strValue = cell.getStringCellValue();
-            strValue = strValue.replaceAll("[^\\p{L}\\p{Nd}]", "");
-            if (strValue != null && strValue.contains("E+"))
-            {
-                final String[] split = strValue.split("E+");
-                String mantissa = split[0].replaceAll(".", "");
-                final int exp = Integer.parseInt(split[1]);
-                while (mantissa.length() <= exp + 1)
-                    mantissa += "0";
-                numericCellValue = Double.parseDouble(mantissa);
+        switch (cell.getCellType()) {
+            case HSSFCell.CELL_TYPE_NUMERIC:
+                numericCellValue = cell.getNumericCellValue();
                 bigDecimalValue = BigDecimal.valueOf(numericCellValue);
-            } else if (strValue != null && strValue.contains(","))
-                strValue = strValue.replaceAll(",", "");
-            // Ignore the error and continue Since in numric field we find empty or non numeric value
-            try {
-                numericCellValue = Double.parseDouble(strValue);
-                bigDecimalValue = BigDecimal.valueOf(numericCellValue);
-            } catch (final Exception e)
-            {
-                if (LOGGER.isDebugEnabled())
-                    LOGGER.debug("Found : Non numeric value in Numeric Field :" + strValue + ":");
-            }
-            break;
+                break;
+            case HSSFCell.CELL_TYPE_STRING:
+                strValue = cell.getStringCellValue();
+                strValue = strValue.replaceAll("[^\\p{L}\\p{Nd}]", "");
+                if (strValue != null && strValue.contains("E+")) {
+                    final String[] split = strValue.split("E+");
+                    String mantissa = split[0].replaceAll(".", "");
+                    final int exp = Integer.parseInt(split[1]);
+                    while (mantissa.length() <= exp + 1)
+                        mantissa += "0";
+                    numericCellValue = Double.parseDouble(mantissa);
+                    bigDecimalValue = BigDecimal.valueOf(numericCellValue);
+                } else if (strValue != null && strValue.contains(","))
+                    strValue = strValue.replaceAll(",", "");
+                // Ignore the error and continue Since in numric field we find empty or non numeric value
+                try {
+                    numericCellValue = Double.parseDouble(strValue);
+                    bigDecimalValue = BigDecimal.valueOf(numericCellValue);
+                } catch (final Exception e) {
+                    if (LOGGER.isDebugEnabled())
+                        LOGGER.debug("Found : Non numeric value in Numeric Field :" + strValue + ":");
+                }
+                break;
         }
         return bigDecimalValue;
 
@@ -439,8 +441,7 @@ public class AutoReconcileHelper {
      * @return
      */
     @Transactional
-    public String schedule()
-    {
+    public String schedule() {
         // Step1: mark which are all we are going to process
         count = 0;
         // persistenceService.getSession().getTransaction().setTimeout(900);
@@ -499,8 +500,7 @@ public class AutoReconcileHelper {
         final SQLQuery backupdateQuery = persistenceService.getSession().createSQLQuery(backUpdateBankStmtquery);
         final SQLQuery backupdateFailureQuery = persistenceService.getSession().createSQLQuery(backUpdateFailureBRSquery);
         rowCount = 0;
-        for (final AutoReconcileBean bean : detailList)
-        {
+        for (final AutoReconcileBean bean : detailList) {
             int updated = -1;
             try {
                 updateQuery.setLong("statusId", statusId);
@@ -515,28 +515,24 @@ public class AutoReconcileHelper {
 
                 updateQuery2.setString("instrumentNo", bean.getInstrumentNo());
                 updateQuery2.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
-                if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0)
-                {
+                if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0) {
                     updateQuery.setBigDecimal("amount", bean.getDebit());
                     updateQuery.setCharacter("ispaycheque", '1');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
                     updated = updateQuery.executeUpdate();
-                    if (updated != 0)
-                    {
+                    if (updated != 0) {
                         updateQuery2.setBigDecimal("amount", bean.getDebit());
                         updateQuery2.setCharacter("ispaycheque", '1');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
                         updated = updateQuery2.executeUpdate();
                     }
 
-                } else
-                {
+                } else {
                     updateQuery.setBigDecimal("amount", bean.getCredit());
                     updateQuery.setCharacter("ispaycheque", '0');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_DEPOSITED_STATUS);
                     updated = updateQuery.executeUpdate();
-                    if (updated != 0)
-                    {
+                    if (updated != 0) {
                         updateQuery2.setBigDecimal("amount", bean.getCredit());
                         updateQuery2.setCharacter("ispaycheque", '0');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
@@ -544,14 +540,12 @@ public class AutoReconcileHelper {
                     }
                 }
                 // if updated is 0 means nothing got updated means could not find matching row in instrumentheader
-                if (updated == 0)
-                {
+                if (updated == 0) {
                     backupdateFailureQuery.setLong("id", bean.getId());
                     backupdateFailureQuery.setString("e", DID_NOT_FIND_MATCH_IN_BANKBOOK);
                     backupdateFailureQuery.executeUpdate();
 
-                } else
-                {
+                } else {
                     backupdateQuery.setLong("id", bean.getId());
                     backupdateQuery.setDate("reconciliationDate", reconciliationDate);
                     backupdateQuery.executeUpdate();
@@ -650,8 +644,7 @@ public class AutoReconcileHelper {
                 + "',errormessage=:e where id=:id";
         final SQLQuery backupdateQuery = persistenceService.getSession().createSQLQuery(backUpdateBankStmtquery);
         final SQLQuery backupdateFailureQuery = persistenceService.getSession().createSQLQuery(backUpdateFailureBRSquery);
-        for (final AutoReconcileBean bean : CSLList)
-        {
+        for (final AutoReconcileBean bean : CSLList) {
             int updated = -1;
             try {
                 updateQuery.setLong("statusId", statusId);
@@ -666,58 +659,46 @@ public class AutoReconcileHelper {
 
                 updateQuery2.setString("cslNo", bean.getCSLno());
                 updateQuery2.setInteger("userId", ApplicationThreadLocals.getUserId().intValue());
-                if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0)
-                {
+                if (bean.getDebit() != null && bean.getDebit().compareTo(BigDecimal.ZERO) != 0) {
                     updateQuery.setBigDecimal("amount", bean.getDebit());
                     updateQuery.setCharacter("ispaycheque", '1');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
                     updated = updateQuery.executeUpdate();
-                    if (updated != 0)
-                    {
+                    if (updated != 0) {
                         updateQuery2.setBigDecimal("amount", bean.getDebit());
                         updateQuery2.setCharacter("ispaycheque", '1');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
                         updated = updateQuery2.executeUpdate();
                     }
 
-                }
-
-                else
-                {
+                } else {
                     updateQuery.setBigDecimal("amount", bean.getCredit());
                     updateQuery.setCharacter("ispaycheque", '1');
                     updateQuery.setString("instrumentStatus", FinancialConstants.INSTRUMENT_CREATED_STATUS);
                     updated = updateQuery.executeUpdate();
-                    if (updated != 0)
-                    {
+                    if (updated != 0) {
                         updateQuery2.setBigDecimal("amount", bean.getCredit());
                         updateQuery2.setCharacter("ispaycheque", '1');
                         updateQuery2.setString("instrumentStatus", FinancialConstants.INSTRUMENT_RECONCILED_STATUS);
                         updated = updateQuery2.executeUpdate();
                     }
-                    if (updated == 0)
-                    {
+                    if (updated == 0) {
 
                     }
                 }
                 // if updated is 0 means nothing got updated means could not find matching row in instrumentheader
 
-                if (updated == 0)
-                {
+                if (updated == 0) {
                     backupdateFailureQuery.setLong("id", bean.getId());
                     backupdateFailureQuery.setString("e", DID_NOT_FIND_MATCH_IN_BANKBOOK);
                     backupdateFailureQuery.executeUpdate();
 
-                }
-                else if (updated == -1)
-                {
+                } else if (updated == -1) {
                     backupdateFailureQuery.setLong("id", bean.getId());
                     backupdateFailureQuery.setString("e", DID_NOT_FIND_MATCH_IN_BANKBOOK);
                     backupdateFailureQuery.executeUpdate();
                     // if(LOGGER.isDebugEnabled()) LOGGER.debug(count);
-                }
-                else
-                {
+                } else {
                     backupdateQuery.setLong("id", bean.getId());
                     backupdateQuery.setDate("reconciliationDate", reconciliationDate);
                     backupdateQuery.executeUpdate();
@@ -764,7 +745,7 @@ public class AutoReconcileHelper {
     }
 
     @Action(value = "/brs/autoReconciliation-generateReport")
-    @SuppressWarnings({ "unchecked", "deprecation" })
+    @SuppressWarnings({"unchecked", "deprecation"})
     @Transactional(readOnly = true)
     public String generateReport() {
         // bankStatments not in BankBook
@@ -805,8 +786,7 @@ public class AutoReconcileHelper {
         notInBooktotalCredit = BigDecimal.ZERO;
         notInBookNet = BigDecimal.ZERO;
 
-        for (final AutoReconcileBean ab : statementsNotInBankBookList)
-        {
+        for (final AutoReconcileBean ab : statementsNotInBankBookList) {
             notInBooktotalDebit = notInBooktotalDebit.add(ab.getDebit() == null ? BigDecimal.ZERO : ab.getDebit());
             notInBooktotalCredit = notInBooktotalCredit.add(ab.getCredit() == null ? BigDecimal.ZERO : ab.getCredit());
         }
@@ -866,8 +846,7 @@ public class AutoReconcileHelper {
         notInStatementTotalDebit = BigDecimal.ZERO;
         notInStatementTotalCredit = BigDecimal.ZERO;
         notInStatementNet = BigDecimal.ZERO;
-        for (final AutoReconcileBean ab : entriesNotInBankStament)
-        {
+        for (final AutoReconcileBean ab : entriesNotInBankStament) {
             // LOGGER.error("notInStatementTotalDebit=="+notInStatementTotalDebit+"           "+ab.getDebit());
             notInStatementTotalDebit = notInStatementTotalDebit.add(ab.getDebit() == null ? BigDecimal.ZERO : ab.getDebit());
             LOGGER.error("no=" + ab.getInstrumentNo() + " t =" + notInStatementTotalCredit + " a=" + ab.getCredit());
@@ -914,14 +893,12 @@ public class AutoReconcileHelper {
                 .setLong("accountId", accountId)
                 .setString("multipleEntryErrorMessage", BRS_MESSAGE_MORE_THAN_ONE_MATCH);
         final List<AutoReconcileBean> entriesNotInBankStament1 = entriesNotInBankStamentQry.list();
-        if (entriesNotInBankStament1.size() > 0)
-        {
+        if (entriesNotInBankStament1.size() > 0) {
             notInStatementTotalCredit = entriesNotInBankStament1.get(0).getCredit();
             if (notInStatementTotalCredit == null)
                 notInStatementTotalCredit = BigDecimal.ZERO;
         }
-        if (entriesNotInBankStament1.size() > 1)
-        {
+        if (entriesNotInBankStament1.size() > 1) {
             notInStatementTotalDebit = entriesNotInBankStament1.get(1).getCredit();
             if (notInStatementTotalDebit == null)
                 notInStatementTotalDebit = BigDecimal.ZERO;
@@ -957,8 +934,7 @@ public class AutoReconcileHelper {
         notprocessedCredit = BigDecimal.ZERO;
         notprocessedNet = BigDecimal.ZERO;
 
-        for (final AutoReconcileBean ab : statementsFoundButNotProcessed)
-        {
+        for (final AutoReconcileBean ab : statementsFoundButNotProcessed) {
             LOGGER.error("notprocessedDebit==" + notprocessedDebit + "           " + ab.getDebit());
             notprocessedDebit = notprocessedDebit.add(ab.getDebit() == null ? BigDecimal.ZERO : ab.getDebit());
             LOGGER.error("notprocessedCredit==" + notprocessedCredit + "           " + ab.getCredit());
@@ -986,44 +962,44 @@ public class AutoReconcileHelper {
         return notInBooktotalDebit;
     }
 
-    public BigDecimal getNotInBooktotalCredit() {
-        return notInBooktotalCredit;
-    }
-
-    public BigDecimal getNotInBookNet() {
-        return notInBookNet;
-    }
-
-    public BigDecimal getNotInStatementTotalDebit() {
-        return notInStatementTotalDebit;
-    }
-
-    public BigDecimal getNotInStatementTotalCredit() {
-        return notInStatementTotalCredit;
-    }
-
-    public BigDecimal getNotInStatementNet() {
-        return notInStatementNet;
-    }
-
     public void setNotInBooktotalDebit(final BigDecimal notInBooktotalDebit) {
         this.notInBooktotalDebit = notInBooktotalDebit;
+    }
+
+    public BigDecimal getNotInBooktotalCredit() {
+        return notInBooktotalCredit;
     }
 
     public void setNotInBooktotalCredit(final BigDecimal notInBooktotalCredit) {
         this.notInBooktotalCredit = notInBooktotalCredit;
     }
 
+    public BigDecimal getNotInBookNet() {
+        return notInBookNet;
+    }
+
     public void setNotInBookNet(final BigDecimal notInBookNet) {
         this.notInBookNet = notInBookNet;
+    }
+
+    public BigDecimal getNotInStatementTotalDebit() {
+        return notInStatementTotalDebit;
     }
 
     public void setNotInStatementTotalDebit(final BigDecimal notInStatementTotalDebit) {
         this.notInStatementTotalDebit = notInStatementTotalDebit;
     }
 
+    public BigDecimal getNotInStatementTotalCredit() {
+        return notInStatementTotalCredit;
+    }
+
     public void setNotInStatementTotalCredit(final BigDecimal notInStatementTotalCredit) {
         this.notInStatementTotalCredit = notInStatementTotalCredit;
+    }
+
+    public BigDecimal getNotInStatementNet() {
+        return notInStatementNet;
     }
 
     public void setNotInStatementNet(final BigDecimal notInStatementNet) {
@@ -1034,12 +1010,12 @@ public class AutoReconcileHelper {
         return rowIndex;
     }
 
-    public int getRowCount() {
-        return rowCount;
-    }
-
     public void setRowIndex(final int rowIndex) {
         this.rowIndex = rowIndex;
+    }
+
+    public int getRowCount() {
+        return rowCount;
     }
 
     public void setRowCount(final int rowCount) {
@@ -1069,8 +1045,7 @@ public class AutoReconcileHelper {
 
             final SQLQuery paymentDuplicateUpdate = persistenceService.getSession().createSQLQuery(
                     backUpdateDuplicatePaymentquery);
-            for (final AutoReconcileBean bean : duplicatePaymentCheques)
-            {
+            for (final AutoReconcileBean bean : duplicatePaymentCheques) {
 
                 paymentDuplicateUpdate.setLong("accountId", bean.getAccountId());
                 paymentDuplicateUpdate.setBigDecimal("debit", bean.getDebit());
@@ -1098,8 +1073,7 @@ public class AutoReconcileHelper {
             final SQLQuery receiptDuplicateUpdate = persistenceService.getSession().createSQLQuery(
                     backUpdateDuplicateReceiptsQuery);
 
-            for (final AutoReconcileBean bean : duplicateReceiptsCheques)
-            {
+            for (final AutoReconcileBean bean : duplicateReceiptsCheques) {
                 receiptDuplicateUpdate.setLong("accountId", bean.getAccountId());
                 receiptDuplicateUpdate.setBigDecimal("credit", bean.getCredit());
                 receiptDuplicateUpdate.setString("instrumentNo", bean.getInstrumentNo());
@@ -1109,6 +1083,24 @@ public class AutoReconcileHelper {
             throw new ApplicationRuntimeException("Failed while processing autoreconciliation ");
         }
 
+    }
+
+    public List<DocumentUpload> getUploadedFiles(BankStatementUploadFile bankStatementUploadFile) {
+        List<DocumentUpload> uploadedFileList = new ArrayList<>();
+        if (bankStatementUploadFile.getBankAccount() == null && bankStatementUploadFile.getAsOnDate() == null) {
+            uploadedFileList = documentUploadRepository.findByObjectType(FinancialConstants.BANK_STATEMET_OBJECT);
+        } else if (bankStatementUploadFile.getBankAccount() != null && bankStatementUploadFile.getAsOnDate() == null) {
+            uploadedFileList = documentUploadRepository.findByObjectId(bankStatementUploadFile.getBankAccount().getId());
+        } else if (bankStatementUploadFile.getBankAccount() == null && bankStatementUploadFile.getAsOnDate() != null) {
+            uploadedFileList = documentUploadRepository.findByUploadedDateAndObjectType(bankStatementUploadFile.getAsOnDate(), FinancialConstants.BANK_STATEMET_OBJECT);
+        } else {
+            uploadedFileList = documentUploadRepository.findByUploadedDateAndObjectId(bankStatementUploadFile.getAsOnDate(), bankStatementUploadFile.getBankAccount().getId());
+        }
+        return uploadedFileList;
+    }
+
+    public DocumentUpload getDocumentsByFileStoreId(String fileStore) {
+        return documentUploadRepository.findByFileStore(fileStore);
     }
 
     public Date getReconciliationDate() {
@@ -1198,12 +1190,12 @@ public class AutoReconcileHelper {
         return statementsFoundButNotProcessed;
     }
 
-    public BigDecimal getNotprocessedNet() {
-        return notprocessedNet;
-    }
-
     public void setStatementsFoundButNotProcessed(final List<AutoReconcileBean> statementsFoundButNotProcessed) {
         this.statementsFoundButNotProcessed = statementsFoundButNotProcessed;
+    }
+
+    public BigDecimal getNotprocessedNet() {
+        return notprocessedNet;
     }
 
     public void setNotprocessedNet(final BigDecimal notprocessedNet) {
@@ -1212,6 +1204,10 @@ public class AutoReconcileHelper {
 
     public String getNotInBookNetBal() {
         return notInBookNetBal;
+    }
+
+    public void setNotInBookNetBal(String notInBookNetBal) {
+        this.notInBookNetBal = notInBookNetBal;
     }
 
     public boolean isFailed() {
@@ -1240,10 +1236,6 @@ public class AutoReconcileHelper {
 
     public String getSuccessMessage() {
         return successMessage;
-    }
-
-    public void setNotInBookNetBal(String notInBookNetBal) {
-        this.notInBookNetBal = notInBookNetBal;
     }
 
 }

@@ -44,33 +44,42 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.egf.expensebill.repository;
 
+package org.egov.egf.web.controller.bankstatement.adaptor;
+
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
+import org.egov.infra.utils.DateUtils;
 import org.egov.model.bills.DocumentUpload;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
 
-import java.util.Date;
-import java.util.List;
+import java.lang.reflect.Type;
 
-@Repository
-public interface DocumentUploadRepository extends JpaRepository<DocumentUpload, Long> {
+public class DocumentUploadJsonAdaptor implements JsonSerializer<DocumentUpload> {
 
-    List<DocumentUpload> findByObjectId(Long objectId);
+    @Override
+    public JsonElement serialize(final DocumentUpload documentUpload, final Type type, final JsonSerializationContext jsc) {
+        final JsonObject jsonObject = new JsonObject();
+        if (documentUpload != null) {
+            if (documentUpload.getFileStore() != null && documentUpload.getFileStore().getFileName() != null)
+                jsonObject.addProperty("filename", documentUpload.getFileStore().getFileName());
+            else
+                jsonObject.addProperty("filename", "");
+            if (documentUpload.getUploadedDate() != null)
+                jsonObject.addProperty("fieldate", DateUtils.getDefaultFormattedDate(documentUpload.getUploadedDate()));
+            else
+                jsonObject.addProperty("filedate", "");
+            if (documentUpload.getFileStore() != null && documentUpload.getFileStore().getFileName() != null)
+                jsonObject.addProperty("file", documentUpload.getFileStore().getFileName());
+            else
+                jsonObject.addProperty("file", "");
+            if (documentUpload.getFileStore() != null && documentUpload.getFileStore().getFileStoreId() != null)
+                jsonObject.addProperty("fileStoreId", documentUpload.getFileStore().getFileStoreId());
+            else
+                jsonObject.addProperty("fileStoreId", "");
+        }
 
-    List<DocumentUpload> findByObjectIdAndObjectType(Long objectId, String objectType);
-
-    List<DocumentUpload> findByObjectType(String objectType);
-
-    @Query("from DocumentUpload where uploadedDate <= :uploadedDate and objectType=:objectType")
-    List<DocumentUpload> findByUploadedDateAndObjectType(@Param("uploadedDate") Date uploadedDate, @Param("objectType") String objectType);
-
-    @Query("from DocumentUpload where uploadedDate <=:uploadedDate and objectId =:objectId")
-    List<DocumentUpload> findByUploadedDateAndObjectId(@Param("uploadedDate") Date uploadedDate, @Param("objectId") Long objectId);
-
-    @Query("from DocumentUpload where fileStore.fileStoreId = :fileStore")
-    DocumentUpload findByFileStore(@Param("fileStore") String fileStore);
-
+        return jsonObject;
+    }
 }

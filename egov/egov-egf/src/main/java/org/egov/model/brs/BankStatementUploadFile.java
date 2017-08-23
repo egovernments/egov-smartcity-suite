@@ -44,110 +44,40 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.model.bills;
+package org.egov.model.brs;
 
+import org.egov.commons.Bankaccount;
 import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
-import java.io.ByteArrayInputStream;
 import java.util.Date;
 
-@Entity
-@Table(name = "EGF_DOCUMENTS")
-@SequenceGenerator(name = DocumentUpload.SEQ_EGF_DOCUMENTS, sequenceName = DocumentUpload.SEQ_EGF_DOCUMENTS, allocationSize = 1)
-public class DocumentUpload {
+public class BankStatementUploadFile {
 
-    public static final String SEQ_EGF_DOCUMENTS = "SEQ_EGF_DOCUMENTS";
-
-    @Id
-    @GeneratedValue(generator = SEQ_EGF_DOCUMENTS, strategy = GenerationType.SEQUENCE)
-    private Long id;
-
-    @Column(name = "objectid")
-    private Long objectId;
-
-    @NotNull
-    @SafeHtml
-    @Length(max = 128)
-    private String objectType;
-
-    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinColumn(name = "filestoreid")
+    private Bankaccount bankAccount;
+    private Date asOnDate;
     private FileStoreMapper fileStore;
 
-    @Column(name = "uploadeddate")
-    private Date uploadedDate;
-
-    private transient ByteArrayInputStream inputStream;
-
-    private transient String fileName;
-
-    private transient String contentType;
-
-    public String getObjectType() {
-        return objectType;
+    public Bankaccount getBankAccount() {
+        return bankAccount;
     }
 
-    public void setObjectType(final String objectType) {
-        this.objectType = objectType;
+    public void setBankAccount(Bankaccount bankAccount) {
+        this.bankAccount = bankAccount;
+    }
+
+    public Date getAsOnDate() {
+        return asOnDate;
+    }
+
+    public void setAsOnDate(Date asOnDate) {
+        this.asOnDate = asOnDate;
     }
 
     public FileStoreMapper getFileStore() {
         return fileStore;
     }
 
-    public void setFileStore(final FileStoreMapper fileStore) {
+    public void setFileStore(FileStoreMapper fileStore) {
         this.fileStore = fileStore;
-    }
-
-    public Long getObjectId() {
-        return objectId;
-    }
-
-    public void setObjectId(final Long objectId) {
-        this.objectId = objectId;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public ByteArrayInputStream getInputStream() {
-        return inputStream;
-    }
-
-    public void setInputStream(ByteArrayInputStream inputStream) {
-        this.inputStream = inputStream;
-    }
-
-    public String getFileName() {
-        return fileName;
-    }
-
-    public void setFileName(String fileName) {
-        this.fileName = fileName;
-    }
-
-    public String getContentType() {
-        return contentType;
-    }
-
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
-
-    public Date getUploadedDate() {
-        return uploadedDate;
-    }
-
-    public void setUploadedDate(Date uploadedDate) {
-        this.uploadedDate = uploadedDate;
     }
 }

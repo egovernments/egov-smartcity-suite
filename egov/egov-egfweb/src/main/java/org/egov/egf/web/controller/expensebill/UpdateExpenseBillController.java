@@ -39,12 +39,6 @@
  */
 package org.egov.egf.web.controller.expensebill;
 
-import java.io.IOException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.service.ChartOfAccountsService;
 import org.egov.commons.service.CheckListService;
@@ -65,12 +59,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/expensebill")
@@ -88,7 +83,7 @@ public class UpdateExpenseBillController extends BaseBillController {
 
     private static final String NET_PAYABLE_ID = "netPayableId";
     @Autowired
-    DocumentUploadRepository documentUploadRepository;
+    private DocumentUploadRepository documentUploadRepository;
     @Autowired
     private ExpenseBillService expenseBillService;
     @Autowired
