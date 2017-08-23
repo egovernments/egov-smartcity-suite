@@ -181,3 +181,9 @@ $('#payBtn').click(function() {
 	$('#waterConnectionSuccess').attr('method', 'post');
 	$('#waterConnectionSuccess').attr('action', url);
 })
+
+$('#viewdcb').click(function() {
+	var url = '/wtms/viewDcb/consumerCodeWis/'+$('#applicationCode').val();
+	$('#waterConnectionSuccess').attr('method', 'get');
+	$('#waterConnectionSuccess').attr('action', url);
+});
