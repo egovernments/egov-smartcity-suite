@@ -273,7 +273,6 @@ public class PropertyService {
 	public static final String PARAMS = "params";
 	final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
-
 	@SuppressWarnings("rawtypes")
 	private PersistenceService propPerServ;
 	private Installment currentInstall;
@@ -810,7 +809,7 @@ public class PropertyService {
 
 	/**
 	 * Carries forward the penalty from the old property to the new property
-	 * 
+	 *
 	 * @param ptDemandOld
 	 * @param ptDemandNew
 	 * @param inst
@@ -2172,13 +2171,14 @@ public class PropertyService {
 			updatePropertyMutationIndex(stateAwareObject, applictionType, stateOwner, sla);
 		else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
 			updateVacancyRemissionIndex(stateAwareObject, applictionType, stateOwner, sla);
-		else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
-                    updateVacancyRemissionApprovalIndex(stateAwareObject, applictionType, stateOwner, sla);
+		else if (!applictionType.isEmpty()
+				&& applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+			updateVacancyRemissionApprovalIndex(stateAwareObject, applictionType, stateOwner, sla);
 
 	}
 
 	private User getOwnerName(final StateAware stateAwareObject) {
-		User user= null;
+		User user = null;
 		final Position position = stateAwareObject.getState().getOwnerPosition();
 		if (position != null)
 			user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
@@ -2197,7 +2197,8 @@ public class PropertyService {
 			createVacancyRemissionApprovalApplicationIndex(applictionType, stateOwner, sla, vacancyRemission, owner,
 					vacancyRemissionApproval, source);
 		else
-			updateVacancyRemissionApprovalApplicationIndex(stateOwner, applicationIndex, owner, vacancyRemissionApproval);
+			updateVacancyRemissionApprovalApplicationIndex(stateOwner, applicationIndex, owner,
+					vacancyRemissionApproval);
 	}
 
 	private void createVacancyRemissionApprovalApplicationIndex(final String applictionType, final User stateOwner,
@@ -2226,13 +2227,12 @@ public class PropertyService {
 		applicationIndexService.createApplicationIndex(applicationIndex);
 	}
 
-	private void updateVacancyRemissionApprovalApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
-			final User owner, final VacancyRemissionApproval vacancyRemissionApproval) {
+	private void updateVacancyRemissionApprovalApplicationIndex(final User stateOwner,
+			final ApplicationIndex applicationIndex, final User owner,
+			final VacancyRemissionApproval vacancyRemissionApproval) {
 		applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		if(!vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)){
 		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
-		}
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
@@ -2273,8 +2273,10 @@ public class PropertyService {
 				.withStatus(propertyMutation.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType))
 				.withApplicantAddress(propertyMutation.getBasicProperty().getAddress().toString())
-				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName()).withChannel(source)
-				.withMobileNumber(owner.getMobileNumber()).withAadharNumber(owner.getAadhaarNumber())
+				.withOwnername(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
+						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withChannel(source).withMobileNumber(owner.getMobileNumber())
+				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(propertyMutation.getBasicProperty().getUpicNo()).withClosed(closureStatus)
 				.withApproved(propertyMutation.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
 						? ApprovalStatus.APPROVED
@@ -2289,9 +2291,8 @@ public class PropertyService {
 			final ApplicationIndex applicationIndex, final User owner) {
 		applicationIndex.setStatus(propertyMutation.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		if(!propertyMutation.getState().getValue().contains(WF_STATE_CLOSED)){
-		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
-		}
+		applicationIndex.setOwnerName(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
+					: stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
@@ -2331,8 +2332,10 @@ public class PropertyService {
 				.withStatus(revisionPetition.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType))
 				.withApplicantAddress(revisionPetition.getBasicProperty().getAddress().toString())
-				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName()).withChannel(source)
-				.withMobileNumber(owner.getMobileNumber()).withAadharNumber(owner.getAadhaarNumber())
+				.withOwnername(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
+						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withChannel(source).withMobileNumber(owner.getMobileNumber())
+				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(revisionPetition.getBasicProperty().getUpicNo()).withClosed(closureStatus)
 				.withApproved(revisionPetition.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
 						? ApprovalStatus.APPROVED
@@ -2348,9 +2351,8 @@ public class PropertyService {
 		applicationIndex.setStatus(revisionPetition.getState().getValue());
 		if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
 				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
-		    if(!revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)){
-			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
-		    }
+			applicationIndex.setOwnerName(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
+					: stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setClosed(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
 					? ClosureStatus.YES : ClosureStatus.NO);
 			if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
@@ -2399,8 +2401,9 @@ public class PropertyService {
 				.withApplicantAddress(property.getBasicProperty().getAddress().toString())
 				.withOwnername(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
 						: stateOwner.getUsername() + "::" + stateOwner.getName())
-				.withChannel(source).withMobileNumber(owner.getMobileNumber()).withAadharNumber(owner.getAadhaarNumber())
-				.withConsumerCode(property.getBasicProperty().getUpicNo()).withClosed(closureStatus)
+				.withChannel(source).withMobileNumber(owner.getMobileNumber())
+				.withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
+				.withClosed(closureStatus)
 				.withApproved(property.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
 						? ApprovalStatus.APPROVED
 						: property.getState().getValue().contains(WF_STATE_REJECTED)
@@ -2424,8 +2427,8 @@ public class PropertyService {
 		if (propertyApplicationTypes().contains(applictionType)) {
 			applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
 			applicationIndex.setApplicantName(owner.getName());
-			applicationIndex.setOwnerName(property.getState().getValue().contains(WF_STATE_CLOSED)
-					? null : stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
+					: stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setMobileNumber(owner.getMobileNumber());
 			applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 			applicationIndex.setClosed(
@@ -2980,10 +2983,10 @@ public class PropertyService {
 
 	public Map<String, Object> getOldMunicipalNumQuery(final String oldMuncipalNum) {
 		final Map<String, Object> map = new HashMap<>();
-		String from = "from PropertyMaterlizeView pmv ";
-		String where = "where pmv.isActive = true and pmv.oldMuncipalNum = ? ";
-		StringBuilder search = new StringBuilder("select distinct pmv ");
-		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		final String from = "from PropertyMaterlizeView pmv ";
+		final String where = "where pmv.isActive = true and pmv.oldMuncipalNum = ? ";
+		final StringBuilder search = new StringBuilder("select distinct pmv ");
+		final StringBuilder count = new StringBuilder("select count(distinct pmv) ");
 		map.put(SEARCH, search.append(from).append(where).toString());
 		map.put(COUNT, count.append(from).append(where).toString());
 		map.put(PARAMS, Arrays.asList(oldMuncipalNum));
@@ -2992,10 +2995,10 @@ public class PropertyService {
 
 	public Map<String, Object> getAssessmentNumQuery(final String assessmentNumber) {
 		final Map<String, Object> map = new HashMap<>();
-		String from = "from BasicPropertyImpl bp ";
-		String where = "where bp.upicNo = ? and bp.active='Y' ";
-		StringBuilder search = new StringBuilder("select bp ");
-		StringBuilder count = new StringBuilder("select count(bp) ");
+		final String from = "from BasicPropertyImpl bp ";
+		final String where = "where bp.upicNo = ? and bp.active='Y' ";
+		final StringBuilder search = new StringBuilder("select bp ");
+		final StringBuilder count = new StringBuilder("select count(bp) ");
 		map.put(SEARCH, search.append(from).append(where).toString());
 		map.put(COUNT, count.append(from).append(where).toString());
 		map.put(PARAMS, Arrays.asList(assessmentNumber));
@@ -3004,10 +3007,10 @@ public class PropertyService {
 
 	public Map<String, Object> getDoorNoQuery(final String doorNo) {
 		final Map<String, Object> map = new HashMap<>();
-		String from = "from PropertyMaterlizeView pmv ";
-		String where = "where pmv.isActive = true and pmv.houseNo like ? ";
-		StringBuilder search = new StringBuilder("select distinct pmv ");
-		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		final String from = "from PropertyMaterlizeView pmv ";
+		final String where = "where pmv.isActive = true and pmv.houseNo like ? ";
+		final StringBuilder search = new StringBuilder("select distinct pmv ");
+		final StringBuilder count = new StringBuilder("select count(distinct pmv) ");
 		map.put(SEARCH, search.append(from).append(where).toString());
 		map.put(COUNT, count.append(from).append(where).toString());
 		map.put(PARAMS, Arrays.asList(doorNo + "%"));
@@ -3016,25 +3019,26 @@ public class PropertyService {
 
 	public Map<String, Object> getMobileNumberQuery(final String mobileNumber) {
 		final Map<String, Object> map = new HashMap<>();
-		String from = "from PropertyMaterlizeView pmv ";
-		String where = "where pmv.isActive = true and pmv.mobileNumber = ? ";
-		StringBuilder search = new StringBuilder("select distinct pmv ");
-		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		final String from = "from PropertyMaterlizeView pmv ";
+		final String where = "where pmv.isActive = true and pmv.mobileNumber = ? ";
+		final StringBuilder search = new StringBuilder("select distinct pmv ");
+		final StringBuilder count = new StringBuilder("select count(distinct pmv) ");
 		map.put(SEARCH, search.append(from).append(where).toString());
 		map.put(COUNT, count.append(from).append(where).toString());
 		map.put(PARAMS, Arrays.asList(mobileNumber));
 		return map;
 	}
 
-	public Map<String, Object> getBoundaryQuery(final Long zoneId, final Long wardId, final String  ownerName, final String houseNum) {
+	public Map<String, Object> getBoundaryQuery(final Long zoneId, final Long wardId, final String ownerName,
+			final String houseNum) {
 
 		final Map<String, Object> map = new HashMap<>();
-		StringBuilder search = new StringBuilder("select distinct pmv ");
-		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
-		String from = "from PropertyMaterlizeView pmv ";
-		StringBuilder where = new StringBuilder("where pmv.isActive = true ");
+		final StringBuilder search = new StringBuilder("select distinct pmv ");
+		final StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		final String from = "from PropertyMaterlizeView pmv ";
+		final StringBuilder where = new StringBuilder("where pmv.isActive = true ");
 
-		List params = new ArrayList();
+		final List params = new ArrayList();
 		if (null != zoneId && zoneId != -1) {
 			where.append(" and pmv.zone.id = ?");
 			params.add(zoneId);
@@ -3061,12 +3065,12 @@ public class PropertyService {
 	public Map<String, Object> getLocationQuery(final Long locationId, final String houseNo, final String ownerName) {
 
 		final Map<String, Object> map = new HashMap<>();
-		StringBuilder search = new StringBuilder("select distinct pmv ");
-		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
-		String from = "from PropertyMaterlizeView pmv ";
-		StringBuilder where = new StringBuilder("where pmv.isActive = true ");
+		final StringBuilder search = new StringBuilder("select distinct pmv ");
+		final StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		final String from = "from PropertyMaterlizeView pmv ";
+		final StringBuilder where = new StringBuilder("where pmv.isActive = true ");
 
-		List params = new ArrayList();
+		final List params = new ArrayList();
 		if (null != locationId && locationId != -1) {
 			where.append(" and pmv.locality.id = ?");
 			params.add(locationId);
@@ -3089,11 +3093,12 @@ public class PropertyService {
 	public Map<String, Object> getDemandQuery(final String fromDemand, final String toDemand) {
 
 		final Map<String, Object> map = new HashMap<>();
-		StringBuilder search = new StringBuilder("select distinct pmv ");
-		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
-		String from = "from PropertyMaterlizeView pmv ";
-		StringBuilder where = new StringBuilder("where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd >= ? ")
-				.append("and pmv.aggrCurrFirstHalfDmd <= ? and pmv.isActive = true ");
+		final StringBuilder search = new StringBuilder("select distinct pmv ");
+		final StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		final String from = "from PropertyMaterlizeView pmv ";
+		final StringBuilder where = new StringBuilder(
+				"where pmv.aggrCurrFirstHalfDmd is not null and pmv.aggrCurrFirstHalfDmd >= ? ")
+						.append("and pmv.aggrCurrFirstHalfDmd <= ? and pmv.isActive = true ");
 
 		map.put(SEARCH, search.append(from).append(where).toString());
 		map.put(COUNT, count.append(from).append(where).toString());
@@ -3101,14 +3106,15 @@ public class PropertyService {
 		return map;
 	}
 
-	public Map<String, Object> getAssessmentAndOwnerDetailsQuery(final String oldMuncipalNum, final String ownerName, final String doorNo) {
+	public Map<String, Object> getAssessmentAndOwnerDetailsQuery(final String oldMuncipalNum, final String ownerName,
+			final String doorNo) {
 
 		final Map<String, Object> map = new HashMap<>();
 		final List params = new ArrayList();
-		StringBuilder search = new StringBuilder("select distinct pmv ");
-		StringBuilder count = new StringBuilder("select count(distinct pmv) ");
-		String from = "from PropertyMaterlizeView pmv ";
-		StringBuilder where = new StringBuilder("where pmv.isActive = true ");
+		final StringBuilder search = new StringBuilder("select distinct pmv ");
+		final StringBuilder count = new StringBuilder("select count(distinct pmv) ");
+		final String from = "from PropertyMaterlizeView pmv ";
+		final StringBuilder where = new StringBuilder("where pmv.isActive = true ");
 
 		if (oldMuncipalNum != null && !oldMuncipalNum.trim().isEmpty()) {
 			where.append(" and pmv.oldMuncipalNum = ? ");
@@ -3348,7 +3354,7 @@ public class PropertyService {
 	/**
 	 * Returns a map of current tax and balance, based on passed date being in
 	 * first half or second half of the installments for current year
-	 * 
+	 *
 	 * @param propertyTaxDetails
 	 * @param currDate
 	 * @return
@@ -3377,7 +3383,7 @@ public class PropertyService {
 	/**
 	 * Returns a map of current tax and balance, based on passed date being in
 	 * first half or second half of the installments for current year
-	 * 
+	 *
 	 * @param propertyTaxDetails
 	 * @param currDate
 	 * @return
@@ -3397,7 +3403,7 @@ public class PropertyService {
 
 	/**
 	 * Gives the tax details for the installment
-	 * 
+	 *
 	 * @param propertyTaxDetails
 	 * @param taxValues
 	 * @param installmentHalf
@@ -3620,7 +3626,7 @@ public class PropertyService {
 
 	/**
 	 * Updates the PropertyDetail for a Property
-	 * 
+	 *
 	 * @param property
 	 * @param floorTypeId
 	 * @param roofTypeId
@@ -3702,7 +3708,7 @@ public class PropertyService {
 
 	/**
 	 * Update the Floor details for a property
-	 * 
+	 *
 	 * @param property
 	 * @param savedFloorDetails
 	 */
@@ -3767,7 +3773,7 @@ public class PropertyService {
 
 	/**
 	 * Convert string to date
-	 * 
+	 *
 	 * @param dateInString
 	 * @return
 	 * @throws ParseException
@@ -3779,7 +3785,7 @@ public class PropertyService {
 
 	/**
 	 * Fetch the assignments for the designation
-	 * 
+	 *
 	 * @param designationName
 	 * @return
 	 */
@@ -3792,7 +3798,7 @@ public class PropertyService {
 	/**
 	 * Update Reference Basic Property in Property Status values (Bifurcation
 	 * workflow)
-	 * 
+	 *
 	 * @param basicProperty,
 	 *            parentPropId
 	 */
@@ -3849,7 +3855,7 @@ public class PropertyService {
 
 	/**
 	 * Method to get total property tax due
-	 * 
+	 *
 	 * @param basicProperty
 	 * @return Total property tax due
 	 */
@@ -3893,7 +3899,7 @@ public class PropertyService {
 
 	/**
 	 * Method to get children created for property
-	 * 
+	 *
 	 * @param basicProperty
 	 * @return List<PropertyStatusValues>
 	 */
@@ -4031,36 +4037,36 @@ public class PropertyService {
 		BigDecimal totalColl = BigDecimal.ZERO;
 
 		final Ptdemand ptDemandOld = getCurrrentDemand(oldProperty);
-		Ptdemand ptDemandNew = getCurrrentDemand(newProperty);
+		final Ptdemand ptDemandNew = getCurrrentDemand(newProperty);
 
-		for (EgDemandDetails demandDetails : ptDemandOld.getEgDemandDetails()) {
+		for (final EgDemandDetails demandDetails : ptDemandOld.getEgDemandDetails())
 			totalColl = totalColl.add(demandDetails.getAmtCollected());
-		}
 
 		final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
 				DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
 				DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-		Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(ptDemandNew.getEgDemandDetails());
-		List<Installment> installments = new ArrayList<>(installmentWiseDemandDetails.keySet());
+		final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(
+				ptDemandNew.getEgDemandDetails());
+		final List<Installment> installments = new ArrayList<>(installmentWiseDemandDetails.keySet());
 		Collections.sort(installments);
 
 		for (final Installment installment : installments) {
 			for (final String demandReason : demandReasons) {
-				final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(installmentWiseDemandDetails.get(installment), demandReason);
+				final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
+						installmentWiseDemandDetails.get(installment), demandReason);
 
-				if (newDemandDetail != null) {
-						if (totalColl.compareTo(BigDecimal.ZERO) > 0)
-							if (totalColl.compareTo(newDemandDetail.getAmount()) <= 0) {
-								newDemandDetail.setAmtCollected(totalColl);
-								newDemandDetail.setModifiedDate(new Date());
-								totalColl = BigDecimal.ZERO;
-							} else {
-								newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
-								newDemandDetail.setModifiedDate(new Date());
-								totalColl = totalColl.subtract(newDemandDetail.getAmount());
-							}
-				}
+				if (newDemandDetail != null)
+					if (totalColl.compareTo(BigDecimal.ZERO) > 0)
+						if (totalColl.compareTo(newDemandDetail.getAmount()) <= 0) {
+							newDemandDetail.setAmtCollected(totalColl);
+							newDemandDetail.setModifiedDate(new Date());
+							totalColl = BigDecimal.ZERO;
+						} else {
+							newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
+							newDemandDetail.setModifiedDate(new Date());
+							totalColl = totalColl.subtract(newDemandDetail.getAmount());
+						}
 				if (totalColl.compareTo(BigDecimal.ZERO) == 0)
 					break;
 			}
@@ -4069,10 +4075,13 @@ public class PropertyService {
 		}
 
 		if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
-			final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-			EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf, DEMANDRSN_CODE_ADVANCE);
+			final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+					.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+			final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
+					DEMANDRSN_CODE_ADVANCE);
 			if (advanceDemandDetails == null) {
-				final EgDemandDetails demandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,totalColl, currSecondHalf);
+				final EgDemandDetails demandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
+						totalColl, currSecondHalf);
 				ptDemandNew.getEgDemandDetails().add(demandDetails);
 			} else
 				advanceDemandDetails.getAmtCollected().add(totalColl);
@@ -4084,14 +4093,17 @@ public class PropertyService {
 	 */
 
 	@Transactional
-	public void pushPortalMessage(final StateAware stateAware,final String applictionType) {
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+	public void pushPortalMessage(final StateAware stateAware, final String applictionType) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final PropertyImpl property = (PropertyImpl) stateAware;
-		BasicProperty basicProperty = property.getBasicProperty();
-		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,property.getPropertyModifyReason()+" "+module.getDisplayName(),
-				property.getApplicationNo(),basicProperty.getUpicNo(),basicProperty.getId(),
-				property.getPropertyModifyReason(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType),
-				isResolved(property),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),property.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final BasicProperty basicProperty = property.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+				property.getPropertyModifyReason() + " " + module.getDisplayName(), property.getApplicationNo(),
+				basicProperty.getUpicNo(), basicProperty.getId(), property.getPropertyModifyReason(),
+				getDetailedMessage(stateAware, applictionType),
+				format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType), isResolved(property),
+				basicProperty.getStatus().getName(), getSlaEndDate(applictionType), property.getState(),
+				Arrays.asList(securityUtils.getCurrentUser()));
 		final PortalInbox portalInbox = portalInboxBuilder.build();
 		portalInboxService.pushInboxMessage(portalInbox);
 	}
@@ -4100,56 +4112,58 @@ public class PropertyService {
 	 * Method to update data for citizen portal inbox
 	 */
 	@Transactional
-	public void updatePortalMessage(final StateAware stateAware,final String applictionType){
+	public void updatePortalMessage(final StateAware stateAware, final String applictionType) {
 		final PropertyImpl property = (PropertyImpl) stateAware;
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		BasicProperty basicProperty = property.getBasicProperty();
-		portalInboxService.updateInboxMessage(property.getApplicationNo(), module.getId(),property.getState().getValue(),
-				isResolved(property), getSlaEndDate(applictionType), property.getState(), null,
-				basicProperty.getUpicNo(),format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType));
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final BasicProperty basicProperty = property.getBasicProperty();
+		portalInboxService.updateInboxMessage(property.getApplicationNo(), module.getId(),
+				property.getState().getValue(), isResolved(property), getSlaEndDate(applictionType),
+				property.getState(), null, basicProperty.getUpicNo(),
+				format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType));
 	}
 
-	private Date getSlaEndDate(final String applictionType){
-		DateTime dt = new DateTime(new Date());
+	private Date getSlaEndDate(final String applictionType) {
+		final DateTime dt = new DateTime(new Date());
 		return dt.plusDays(getSlaValue(applictionType)).toDate();
 	}
 
-	private String getDetailedMessage(final StateAware stateAware,final String applictionType) {
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+	private String getDetailedMessage(final StateAware stateAware, final String applictionType) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final StringBuilder detailedMessage = new StringBuilder();
 		if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType)) {
 			final PropertyImpl property = (PropertyImpl) stateAware;
 			detailedMessage.append(APPLICATION_NO).append(property.getApplicationNo()).append(REGARDING)
-					.append(property.getPropertyModifyReason()+" "+module.getDisplayName()).append(" in ")
+					.append(property.getPropertyModifyReason() + " " + module.getDisplayName()).append(" in ")
 					.append(property.getBasicProperty().getStatus().getName()).append(STATUS);
 		} else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
 				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
 			final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
 			detailedMessage.append(APPLICATION_NO).append(revisionPetition.getObjectionNumber()).append(REGARDING)
-					.append(revisionPetition.getType()+" "+module.getDisplayName()).append(" in ")
+					.append(revisionPetition.getType() + " " + module.getDisplayName()).append(" in ")
 					.append(revisionPetition.getBasicProperty().getStatus().getName()).append(STATUS);
-		}else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+		} else if (!applictionType.isEmpty()
+				&& applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
 			final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
 			detailedMessage.append(APPLICATION_NO).append(propertyMutation.getApplicationNo()).append(REGARDING)
-					.append(propertyMutation.getType()+" "+module.getDisplayName()).append(" in ")
+					.append(propertyMutation.getType() + " " + module.getDisplayName()).append(" in ")
 					.append(propertyMutation.getBasicProperty().getStatus().getName()).append(STATUS);
-		}else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
+		} else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
 			final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
 			detailedMessage.append(APPLICATION_NO).append(vacancyRemission.getApplicationNumber()).append(REGARDING)
-					.append(vacancyRemission.getStateType()+" "+module.getDisplayName()).append(" in ")
+					.append(vacancyRemission.getStateType() + " " + module.getDisplayName()).append(" in ")
 					.append(vacancyRemission.getBasicProperty().getStatus().getName()).append(STATUS);
 		}
 
 		return detailedMessage.toString();
 	}
 
-	private boolean isResolved(final StateAware stateAware){
+	private boolean isResolved(final StateAware stateAware) {
 		return "CLOSED".equalsIgnoreCase(stateAware.getState().getValue());
 	}
 
-	public PortalInbox getPortalInbox(final String applicationNumber){
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-		return portalInboxService.getPortalInboxByApplicationNo(applicationNumber,module.getId());
+	public PortalInbox getPortalInbox(final String applicationNumber) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		return portalInboxService.getPortalInboxByApplicationNo(applicationNumber, module.getId());
 	}
 
 	/**
@@ -4160,16 +4174,15 @@ public class PropertyService {
 	 */
 	@Transactional
 	public void updatePortal(final StateAware stateAware, final String applictionType) {
-		if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType)) {
+		if (!applictionType.isEmpty() && propertyApplicationTypes().contains(applictionType))
 			updatePortalMessage(stateAware, applictionType);
-		} else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP))) {
+		else if (!applictionType.isEmpty() && (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)))
 			updateRevisionPetitionPortalmessage(stateAware, applictionType);
-		} else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
-			updatePropertyMutationPortalmessage(stateAware, applictionType );
-		} else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)) {
+		else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP))
+			updatePropertyMutationPortalmessage(stateAware, applictionType);
+		else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
 			updateVacancyRemissionPortalmessage(stateAware, applictionType);
-		}
 
 	}
 
@@ -4178,14 +4191,17 @@ public class PropertyService {
 	 */
 
 	@Transactional
-	public void pushPropertyMutationPortalMessage(final StateAware stateAware,final String applictionType) {
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+	public void pushPropertyMutationPortalMessage(final StateAware stateAware, final String applictionType) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
-		BasicProperty basicProperty = propertyMutation.getBasicProperty();
-		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,propertyMutation.getType()+" "+module.getDisplayName(),
-				propertyMutation.getApplicationNo(),basicProperty.getUpicNo(),basicProperty.getId(),
-				propertyMutation.getType(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType),
-				isResolved(propertyMutation),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),propertyMutation.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final BasicProperty basicProperty = propertyMutation.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+				propertyMutation.getType() + " " + module.getDisplayName(), propertyMutation.getApplicationNo(),
+				basicProperty.getUpicNo(), basicProperty.getId(), propertyMutation.getType(),
+				getDetailedMessage(stateAware, applictionType),
+				format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType),
+				isResolved(propertyMutation), basicProperty.getStatus().getName(), getSlaEndDate(applictionType),
+				propertyMutation.getState(), Arrays.asList(securityUtils.getCurrentUser()));
 		final PortalInbox portalInbox = portalInboxBuilder.build();
 		portalInboxService.pushInboxMessage(portalInbox);
 	}
@@ -4194,13 +4210,14 @@ public class PropertyService {
 	 * Method to update Property Mutation data for citizen portal inbox
 	 */
 	@Transactional
-	public void updatePropertyMutationPortalmessage(final StateAware stateAware,final String applictionType){
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+	public void updatePropertyMutationPortalmessage(final StateAware stateAware, final String applictionType) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final PropertyMutation propertyMutation = (PropertyMutation) stateAware;
-		BasicProperty basicProperty = propertyMutation.getBasicProperty();
-		portalInboxService.updateInboxMessage(propertyMutation.getApplicationNo(), module.getId(),propertyMutation.getState().getValue(),
-				isResolved(propertyMutation), getSlaEndDate(applictionType), propertyMutation.getState(), null,
-				basicProperty.getUpicNo(),format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType));
+		final BasicProperty basicProperty = propertyMutation.getBasicProperty();
+		portalInboxService.updateInboxMessage(propertyMutation.getApplicationNo(), module.getId(),
+				propertyMutation.getState().getValue(), isResolved(propertyMutation), getSlaEndDate(applictionType),
+				propertyMutation.getState(), null, basicProperty.getUpicNo(),
+				format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType));
 	}
 
 	/**
@@ -4208,14 +4225,17 @@ public class PropertyService {
 	 */
 
 	@Transactional
-	public void pushVacancyRemissionPortalMessage(final StateAware stateAware,final String applictionType) {
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+	public void pushVacancyRemissionPortalMessage(final StateAware stateAware, final String applictionType) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
-		BasicProperty basicProperty = vacancyRemission.getBasicProperty();
-		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,vacancyRemission.getStateType()+" "+module.getDisplayName(),
-				vacancyRemission.getApplicationNumber(),basicProperty.getUpicNo(),basicProperty.getId(),
-				vacancyRemission.getStateType(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType),
-				isResolved(stateAware),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),vacancyRemission.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+				vacancyRemission.getStateType() + " " + module.getDisplayName(),
+				vacancyRemission.getApplicationNumber(), basicProperty.getUpicNo(), basicProperty.getId(),
+				vacancyRemission.getStateType(), getDetailedMessage(stateAware, applictionType),
+				format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType),
+				isResolved(stateAware), basicProperty.getStatus().getName(), getSlaEndDate(applictionType),
+				vacancyRemission.getState(), Arrays.asList(securityUtils.getCurrentUser()));
 		final PortalInbox portalInbox = portalInboxBuilder.build();
 		portalInboxService.pushInboxMessage(portalInbox);
 	}
@@ -4224,31 +4244,33 @@ public class PropertyService {
 	 * Method to update Vacancy Remission data for citizen portal inbox
 	 */
 	@Transactional
-	public void updateVacancyRemissionPortalmessage(final StateAware stateAware,final String applicationType){
+	public void updateVacancyRemissionPortalmessage(final StateAware stateAware, final String applicationType) {
 		String stateVal;
 		Boolean resolved;
 		VacancyRemissionApproval vacancyRemissionApproval;
 		State state;
 		String applicationNo;
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final VacancyRemission vacancyRemission = (VacancyRemission) stateAware;
-		BasicProperty basicProperty = vacancyRemission.getBasicProperty();
+		final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
 
-		if("CLOSED".equalsIgnoreCase(vacancyRemission.getState().getValue()) && vacancyRemission.getVacancyRemissionApproval().size()>0){
-				vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-				stateVal = vacancyRemissionApproval.getState().getValue() + ": " + vacancyRemissionApproval.getStatus();
-            resolved = isResolved(vacancyRemissionApproval);
-				state = vacancyRemissionApproval.getState();
-				applicationNo = vacancyRemissionApproval.getVacancyRemission().getApplicationNumber();
-		}else{
-				stateVal= vacancyRemission.getState().getValue()+ ": " + vacancyRemission.getStatus();;
-				resolved = isResolved(vacancyRemission);
-				state = vacancyRemission.getState();
-				applicationNo = vacancyRemission.getApplicationNumber();
+		if ("CLOSED".equalsIgnoreCase(vacancyRemission.getState().getValue())
+				&& vacancyRemission.getVacancyRemissionApproval().size() > 0) {
+			vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
+			stateVal = vacancyRemissionApproval.getState().getValue() + ": " + vacancyRemissionApproval.getStatus();
+			resolved = isResolved(vacancyRemissionApproval);
+			state = vacancyRemissionApproval.getState();
+			applicationNo = vacancyRemissionApproval.getVacancyRemission().getApplicationNumber();
+		} else {
+			stateVal = vacancyRemission.getState().getValue() + ": " + vacancyRemission.getStatus();
+			;
+			resolved = isResolved(vacancyRemission);
+			state = vacancyRemission.getState();
+			applicationNo = vacancyRemission.getApplicationNumber();
 		}
-		portalInboxService.updateInboxMessage(applicationNo, module.getId(),stateVal,
-                resolved, getSlaEndDate(applicationType), state, null,
-					basicProperty.getUpicNo(), format(APPLICATION_VIEW_URL, applicationNo, applicationType));
+		portalInboxService.updateInboxMessage(applicationNo, module.getId(), stateVal, resolved,
+				getSlaEndDate(applicationType), state, null, basicProperty.getUpicNo(),
+				format(APPLICATION_VIEW_URL, applicationNo, applicationType));
 
 	}
 
@@ -4257,14 +4279,17 @@ public class PropertyService {
 	 */
 
 	@Transactional
-	public void pushRevisionPetitionPortalMessage(final StateAware stateAware,final String applictionType) {
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+	public void pushRevisionPetitionPortalMessage(final StateAware stateAware, final String applictionType) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
-		BasicProperty basicProperty = revisionPetition.getBasicProperty();
-		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,revisionPetition.getType()+" "+module.getDisplayName(),
-				revisionPetition.getObjectionNumber(),basicProperty.getUpicNo(),basicProperty.getId(),
-				revisionPetition.getType(),getDetailedMessage(stateAware,applictionType),format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType),
-				isResolved(stateAware),basicProperty.getStatus().getName(),getSlaEndDate(applictionType),revisionPetition.getState(),Arrays.asList(securityUtils.getCurrentUser()));
+		final BasicProperty basicProperty = revisionPetition.getBasicProperty();
+		final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+				revisionPetition.getType() + " " + module.getDisplayName(), revisionPetition.getObjectionNumber(),
+				basicProperty.getUpicNo(), basicProperty.getId(), revisionPetition.getType(),
+				getDetailedMessage(stateAware, applictionType),
+				format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType),
+				isResolved(stateAware), basicProperty.getStatus().getName(), getSlaEndDate(applictionType),
+				revisionPetition.getState(), Arrays.asList(securityUtils.getCurrentUser()));
 		final PortalInbox portalInbox = portalInboxBuilder.build();
 		portalInboxService.pushInboxMessage(portalInbox);
 	}
@@ -4273,72 +4298,73 @@ public class PropertyService {
 	 * Method to update revision petition data for citizen portal inbox
 	 */
 	@Transactional
-	public void updateRevisionPetitionPortalmessage(final StateAware stateAware,final String applictionType){
-		Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+	public void updateRevisionPetitionPortalmessage(final StateAware stateAware, final String applictionType) {
+		final Module module = moduleDao.getModuleByName(PropertyTaxConstants.PTMODULENAME);
 		final RevisionPetition revisionPetition = (RevisionPetition) stateAware;
-		BasicProperty basicProperty = revisionPetition.getBasicProperty();
-		portalInboxService.updateInboxMessage(revisionPetition.getObjectionNumber(), module.getId(),revisionPetition.getState().getValue(),
-				isResolved(stateAware), getSlaEndDate(applictionType), revisionPetition.getState(), null,
-				basicProperty.getUpicNo(),format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType));
+		final BasicProperty basicProperty = revisionPetition.getBasicProperty();
+		portalInboxService.updateInboxMessage(revisionPetition.getObjectionNumber(), module.getId(),
+				revisionPetition.getState().getValue(), isResolved(stateAware), getSlaEndDate(applictionType),
+				revisionPetition.getState(), null, basicProperty.getUpicNo(),
+				format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType));
 	}
-	
+
 	private void updateVacancyRemissionIndex(final StateAware stateAwareObject, final String applictionType,
-                final User stateOwner, final int sla) {
-        final VacancyRemission vacancyRemission = (VacancyRemission) stateAwareObject;
-        final ApplicationIndex applicationIndex = applicationIndexService
-                        .findByApplicationNumber(vacancyRemission.getApplicationNumber());
-        final User owner = vacancyRemission.getBasicProperty().getPrimaryOwner();
-        final String source = propertyTaxCommonUtils.getVRSource(vacancyRemission);
-        if (applicationIndex == null)
-                createVacancyRemissionApplicationIndex(applictionType, stateOwner, sla, vacancyRemission, owner, source);
-        else
-                updateVacancyRemissionApplicationIndex(stateOwner, applicationIndex, owner, vacancyRemission);
+			final User stateOwner, final int sla) {
+		final VacancyRemission vacancyRemission = (VacancyRemission) stateAwareObject;
+		final ApplicationIndex applicationIndex = applicationIndexService
+				.findByApplicationNumber(vacancyRemission.getApplicationNumber());
+		final User owner = vacancyRemission.getBasicProperty().getPrimaryOwner();
+		final String source = propertyTaxCommonUtils.getVRSource(vacancyRemission);
+		if (applicationIndex == null)
+			createVacancyRemissionApplicationIndex(applictionType, stateOwner, sla, vacancyRemission, owner, source);
+		else
+			updateVacancyRemissionApplicationIndex(stateOwner, applicationIndex, owner, vacancyRemission);
 	}
 
 	private void createVacancyRemissionApplicationIndex(final String applictionType, final User stateOwner,
-                final int sla, final VacancyRemission vacancyRemission, final User owner, final String source) {
-        ApplicationIndex applicationIndex;
-        final Date applicationDate = vacancyRemission.getCreatedDate() != null ? vacancyRemission.getCreatedDate()
-                        : new Date();
-        final ClosureStatus closureStatus = vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
-                        ? ClosureStatus.YES : ClosureStatus.NO;
-        applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
-                        .withApplicationNumber(vacancyRemission.getApplicationNumber()).withApplicationDate(applicationDate)
-                        .withApplicationType(applictionType).withApplicantName(owner.getName())
-                        .withStatus(vacancyRemission.getState().getValue())
-                        .withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
-                        .withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-                        .withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName()).withChannel(source)
-                        .withMobileNumber(owner.getMobileNumber()).withAadharNumber(owner.getAadhaarNumber())
-                        .withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
-                        .withApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
-                                        ? ApprovalStatus.APPROVED
-                                        : vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
-                                                        || vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
-                                                                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
-                        .withSla(sla).build();
-        applicationIndexService.createApplicationIndex(applicationIndex);
+			final int sla, final VacancyRemission vacancyRemission, final User owner, final String source) {
+		ApplicationIndex applicationIndex;
+		final Date applicationDate = vacancyRemission.getCreatedDate() != null ? vacancyRemission.getCreatedDate()
+				: new Date();
+		final ClosureStatus closureStatus = vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+				? ClosureStatus.YES : ClosureStatus.NO;
+		applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
+				.withApplicationNumber(vacancyRemission.getApplicationNumber()).withApplicationDate(applicationDate)
+				.withApplicationType(applictionType).withApplicantName(owner.getName())
+				.withStatus(vacancyRemission.getState().getValue())
+				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
+				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
+				.withOwnername(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
+						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withChannel(source).withMobileNumber(owner.getMobileNumber())
+				.withAadharNumber(owner.getAadhaarNumber())
+				.withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
+				.withApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+						? ApprovalStatus.APPROVED
+						: vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
+								|| vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+										? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+				.withSla(sla).build();
+		applicationIndexService.createApplicationIndex(applicationIndex);
 	}
 
-    private void updateVacancyRemissionApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
-                final User owner, final VacancyRemission vacancyRemission) {
-        applicationIndex.setStatus(vacancyRemission.getState().getValue());
-        applicationIndex.setApplicantName(owner.getName());
-        if(!vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)){
-        applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
-        }
-        applicationIndex.setMobileNumber(owner.getMobileNumber());
-        applicationIndex.setAadharNumber(owner.getAadhaarNumber());
-        applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
-                        ? ClosureStatus.YES : ClosureStatus.NO);
-        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
-                applicationIndex
-                                .setApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
-                                                ? ApprovalStatus.APPROVED
-                                                : vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
-                                                                || vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
-                                                                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
-        applicationIndexService.updateApplicationIndex(applicationIndex);
-    }
+	private void updateVacancyRemissionApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
+			final User owner, final VacancyRemission vacancyRemission) {
+		applicationIndex.setStatus(vacancyRemission.getState().getValue());
+		applicationIndex.setApplicantName(owner.getName());
+		applicationIndex.setOwnerName(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
+					: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setMobileNumber(owner.getMobileNumber());
+		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
+		applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
+				: ClosureStatus.NO);
+		if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+			applicationIndex.setApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+					? ApprovalStatus.APPROVED
+					: vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
+							|| vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+									? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
+		applicationIndexService.updateApplicationIndex(applicationIndex);
+	}
 
 }
