@@ -197,7 +197,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 reIssueService.rejectReIssue(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.rejected.reissue", new String[] { reIssue.getApplicationNo(),
                         approverName.concat("~").concat(nextDesignation) }, null);
-            } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL)) {
+            } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
                 reIssueService.rejectReIssue(reIssue, workflowContainer, request);
                 message = messageSource.getMessage("msg.cancelled.reissue", new String[] { reIssue.getApplicationNo(), null },
                         null);
