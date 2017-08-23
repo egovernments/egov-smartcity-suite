@@ -42,14 +42,14 @@ package org.egov.ptis.domain.service.property;
 import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESIGNATIONS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITY_GRADE_CORPORATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
@@ -62,6 +62,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_D
 import static org.egov.ptis.constants.PropertyTaxConstants.DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION_APPROVAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTYTAX_ROLEFORNONEMPLOYEE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
@@ -79,14 +80,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APP
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_FORWARD_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_FORWARD_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESIGNATIONS;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION_APPROVAL;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
@@ -119,6 +117,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -128,9 +127,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
-import org.egov.portal.entity.PortalInbox;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -141,7 +138,6 @@ import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
@@ -694,10 +690,19 @@ public class VacancyRemissionService {
 
     public ReportOutput generateReport(final VacancyRemission vacancyRemission, final HttpServletRequest request,
                                        final String approvedUser, final String noticeNo) {
-        ReportRequest reportInput;
         ReportOutput reportOutput = null;
+        if (vacancyRemission != null) {
+            reportOutput = reportService.createReport(generateVRReportRequest(vacancyRemission, noticeNo, request, approvedUser));
+        }
+        return reportOutput;
+    }
+    
+    public ReportRequest generateVRReportRequest(VacancyRemission vacancyRemission,
+            String noticeNo, HttpServletRequest request, final String approvedUser) {
+        ReportRequest reportInput = null;
         CFinancialYear financialYear;
         if (vacancyRemission != null) {
+            final BasicPropertyImpl basicProperty = vacancyRemission.getBasicProperty();
             final Map<String, Object> reportParams = new HashMap<>();
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
@@ -709,17 +714,15 @@ public class VacancyRemissionService {
                 isCorporation = true;
             else
                 isCorporation = false;
-            final BasicPropertyImpl basicProperty = vacancyRemission.getBasicProperty();
             final Address ownerAddress = basicProperty.getAddress();
             final PropertyID propertyId = basicProperty.getPropertyID();
             reportParams.put("isCorporation", isCorporation);
             reportParams.put("cityName", cityName);
             reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
                     ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
-            reportParams.put("loggedInUsername",
-                    userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
+            reportParams.put("loggedInUsername", approvedUser);
             reportParams.put("approvedDate", formatter.format(vacancyRemission.getState().getCreatedDate()));
-            reportParams.put("approverName", approvedUser);
+            reportParams.put("approverName", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
             reportParams.put("applicationDate", formatter.format(vacancyRemission.getCreatedDate()));
             reportParams.put("currentDate", formatter.format(new Date()));
             reportParams.put("noticeNo", noticeNo);
@@ -740,9 +743,12 @@ public class VacancyRemissionService {
             reportParams.put("halfYearTax", halfYearTax.toString());
             reportParams.put("newTax", halfYearTax.divide(BigDecimal.valueOf(2)).setScale(2).toString());
             reportInput = new ReportRequest(VR_SPECIALNOTICE_TEMPLATE, vacancyRemission, reportParams);
-            reportOutput = reportService.createReport(reportInput);
         }
-        return reportOutput;
+        if (reportInput != null) {
+            reportInput.setPrintDialogOnOpenReport(true);
+            reportInput.setReportFormat(ReportFormat.PDF);
+        }
+        return reportInput;
     }
 
     public String getLoggedInUserDesignation(final Long posId, final User user) {

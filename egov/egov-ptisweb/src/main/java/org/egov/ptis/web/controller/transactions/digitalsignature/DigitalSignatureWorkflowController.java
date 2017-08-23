@@ -317,7 +317,7 @@ public class DigitalSignatureWorkflowController {
             revPetition.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
             revPetition.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
             revPetition.getProperty().setStatus(STATUS_ISACTIVE);
-            revPetition.transition().end().withOwner((Position)null).withNextAction(null);;
+            revPetition.transition().end().withOwner((Position)null).withNextAction(null);
     }
 
     public void transition(final PropertyMutation propertyMutation) {

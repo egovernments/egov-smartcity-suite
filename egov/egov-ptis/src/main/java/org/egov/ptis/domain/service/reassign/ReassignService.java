@@ -41,17 +41,14 @@
 package org.egov.ptis.domain.service.reassign;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_REASSIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 
 import java.util.List;
 
