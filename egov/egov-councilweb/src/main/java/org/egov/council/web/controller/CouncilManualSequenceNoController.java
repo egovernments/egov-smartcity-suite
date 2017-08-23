@@ -50,6 +50,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.sql.SQLException;
 
+import javax.servlet.http.HttpServletRequest;
+
+import org.apache.commons.lang.StringUtils;
 import org.egov.council.entity.CouncilSequenceNumber;
 import org.egov.council.service.CouncilSequenceGenerationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,32 +72,58 @@ public class CouncilManualSequenceNoController {
 
     @RequestMapping(value = "/create", method = GET)
     public String newForm(final Model model) {
-        CouncilSequenceNumber councilSequenceNumber=new CouncilSequenceNumber();
-        String preambleseq= null;
-        String resolutionseq= null;
-        if(!councilSequenceGenerationService.getPreambleLastSeq().isEmpty())
-        preambleseq= councilSequenceGenerationService.getPreambleLastSeq();
-        if(!councilSequenceGenerationService.getresolutionsequence().isEmpty())
-            resolutionseq= councilSequenceGenerationService.getresolutionsequence();
-        if(preambleseq != null )
-        councilSequenceNumber.setPreambleSeqNumber(preambleseq);
-        if(!councilSequenceGenerationService.getAgendaLastSeq().isEmpty())
-        councilSequenceNumber.setAgendaSeqNumber(councilSequenceGenerationService.getAgendaLastSeq());
-        if(resolutionseq != null )
-        councilSequenceNumber.setResolutionSeqNumber(resolutionseq);      
-        model.addAttribute("councilSequenceNumber", councilSequenceNumber);
+        String preambleseq = StringUtils.EMPTY;
+        String resolutionseq = StringUtils.EMPTY;
+        String agendaSeq = StringUtils.EMPTY;
+        if (!councilSequenceGenerationService.getPreambleLastSeq().isEmpty())
+            preambleseq = councilSequenceGenerationService.getPreambleLastSeq();
+
+        if (!councilSequenceGenerationService.getresolutionsequence().isEmpty())
+            resolutionseq = councilSequenceGenerationService.getresolutionsequence();
+
+        if (!councilSequenceGenerationService.getAgendaLastSeq().isEmpty())
+            agendaSeq = councilSequenceGenerationService.getAgendaLastSeq();
+
+        model.addAttribute("preambleseq", preambleseq);
+        model.addAttribute("councilSequenceNumber", new CouncilSequenceNumber());
+        model.addAttribute("resolutionseq", resolutionseq);
+        model.addAttribute("agendaSeq", agendaSeq);
+
         return COUNCILSEQUENCECREATE;
     }
 
     @RequestMapping(value = "/create", method = POST)
-    public String createCouncilSequence(final Model model, @ModelAttribute final CouncilSequenceNumber councilSequenceNumber, final BindingResult resultBinder) throws SQLException {
-        CouncilSequenceNumber sequence=councilSequenceGenerationService.create(councilSequenceNumber);
-        councilSequenceGenerationService.updatesequences(sequence);
-        if(resultBinder.hasErrors())
-        {
-            model.addAttribute("councilSequenceNumber", new CouncilSequenceNumber());
+    public String createCouncilSequence(final Model model, final HttpServletRequest request,
+            @ModelAttribute final CouncilSequenceNumber councilSequenceNumber, final BindingResult resultBinder)
+            throws SQLException {
+
+        String preambleseq = null;
+        String resolutionseq = null;
+        String agendaSeq = null;
+        if (request.getParameter("lastPreambleSeq") != null)
+            preambleseq = request.getParameter("lastPreambleSeq");
+
+        if (request.getParameter("lastAgendaSeq") != null)
+            agendaSeq = request.getParameter("lastAgendaSeq");
+
+        if (request.getParameter("lastResolutionSeq") != null)
+            resolutionseq = request.getParameter("lastResolutionSeq");
+
+        councilSequenceGenerationService.validate(resultBinder, councilSequenceNumber, preambleseq, resolutionseq, agendaSeq);
+
+        if (resultBinder.hasErrors()) {
+            model.addAttribute("preambleseq", preambleseq);
+            model.addAttribute("councilSequenceNumber", councilSequenceNumber);
+            model.addAttribute("resolutionseq", resolutionseq);
+            model.addAttribute("agendaSeq", agendaSeq);
+
+            return COUNCILSEQUENCECREATE;
 
         }
+
+        CouncilSequenceNumber sequence = councilSequenceGenerationService.create(councilSequenceNumber);
+        councilSequenceGenerationService.updatesequences(sequence);
+
         model.addAttribute("message", "Sequence Numbers Updated suceesfully");
 
         return "councilsequence-success";

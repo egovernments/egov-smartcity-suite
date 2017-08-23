@@ -58,6 +58,7 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Errors;
 
 @Service
 @Transactional(readOnly = true)
@@ -91,13 +92,13 @@ public class CouncilSequenceGenerationService {
         String preamblesequence = "seq_egcncl_preamble_number";
         String agendasequence = "seq_egcncl_agenda_number";
         String resolutionsequence = "seq_egcncl_mom_number";
-        if (!councilSequenceNumber.getPreambleSeqNumber().isEmpty() && councilSequenceNumber.getPreambleSeqNumber() != null)
+        if (councilSequenceNumber.getPreambleSeqNumber() != null)
             update(preamblesequence, councilSequenceNumber.getPreambleSeqNumber());
 
-        if (!councilSequenceNumber.getAgendaSeqNumber().isEmpty() && councilSequenceNumber.getAgendaSeqNumber() != null)
+        if (councilSequenceNumber.getAgendaSeqNumber() != null)
             update(agendasequence, councilSequenceNumber.getAgendaSeqNumber());
 
-        if (!councilSequenceNumber.getResolutionSeqNumber().isEmpty() && councilSequenceNumber.getResolutionSeqNumber() != null)
+        if (councilSequenceNumber.getResolutionSeqNumber() != null)
             update(resolutionsequence, councilSequenceNumber.getResolutionSeqNumber());
     }
 
@@ -120,5 +121,21 @@ public class CouncilSequenceGenerationService {
         String sql = "select last_value from seq_egcncl_mom_number";
         javax.persistence.Query query = entityManager.createNativeQuery(sql);
         return query.getSingleResult() != null ? query.getSingleResult().toString() : StringUtils.EMPTY;
+    }
+
+    public void validate(final Errors error, final CouncilSequenceNumber councilSequenceNumber, String preambleseq,
+            String resolutionseq, String agendaSeq) {
+        if (councilSequenceNumber.getPreambleSeqNumber() != null
+                && Integer.valueOf(councilSequenceNumber.getPreambleSeqNumber()).compareTo(Integer.valueOf(preambleseq)) <= 0) {
+            error.rejectValue("preambleSeqNumber", "err.preamble.sequence");
+        }
+        if (councilSequenceNumber.getAgendaSeqNumber() != null
+                && Integer.valueOf(councilSequenceNumber.getAgendaSeqNumber()).compareTo(Integer.valueOf(agendaSeq)) <= 0) {
+            error.rejectValue("agendaSeqNumber", "err.agenda.sequence");
+        }
+        if (councilSequenceNumber.getResolutionSeqNumber() != null && Integer
+                .valueOf(councilSequenceNumber.getResolutionSeqNumber()).compareTo(Integer.valueOf(resolutionseq)) <= 0) {
+            error.rejectValue("resolutionSeqNumber", "err.resolution.sequence");
+        }
     }
 }

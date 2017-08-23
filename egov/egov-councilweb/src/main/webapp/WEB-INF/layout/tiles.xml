@@ -352,7 +352,7 @@
 	<put-attribute name="body" value="/WEB-INF/views/councilsequence/councilsequence-create.jsp"/>
 </definition>
 <definition name="councilsequence-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.council.sequenceno" cascade="true"/>
+	<put-attribute name="page-title" value="title.councilsequence.success" cascade="true"/>
 	<put-attribute name="body" value="/WEB-INF/views/councilsequence/councilsequence-success.jsp"/>
 </definition>
 </tiles-definitions>

@@ -50,52 +50,75 @@
 					<c:out value="${message}" />
 				</div>
 			</div>
-		</div>
-
-		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-body custom-form">
-				<div class="tab-content">
-					<div class="tab-pane fade active in" id="hoardingdetails">
+				<c:choose>
+					<c:when test="${councilSequenceNumber.preambleSeqNumber ne null}">
 						<div class="form-group">
-
-							<label class="col-sm-3 add-margin text-right"> <spring:message
-									code="lbl.preamble.number" />(seq no.)
-
+							<label class="col-sm-3 add-margin  text-right"> <spring:message
+									code="lbl.preamble.number" />(seq no.) :
 							</label>
-							<div class="col-sm-3 add-margin view-content view-content">
+							<div class="col-sm-3 add-margin  view-content">
 								${councilSequenceNumber.preambleSeqNumber}</div>
-
-
-							<div class="form-group">
-
-								<label class="col-sm-3 control-label text-right"> <spring:message
-										code="lbl.agendaNumber" />(seq no.)
-								</label>
-								<div
-									class="col-sm-3 add-margin view-content dynamic-span capitalize">
-									${councilSequenceNumber.agendaSeqNumber}</div>
-
-								<div class="form-group">
-									<label class="col-sm-3 control-label text-right"> <spring:message
-											code="lbl.resolutionNumber" />(seq no.)
-									</label>
-									<div class="col-sm-3 add-margin view-content">
-										${councilSequenceNumber.resolutionSeqNumber}</div>
-
-
-									<div class="col-sm-5 add-margin">&nbsp;</div>
-								</div>
-							</div>
 						</div>
-					</div>
-				</div>
+					</c:when>
+					<c:otherwise>
+						<div class="form-group">
+							<label class="col-sm-3 add-margin text-right"> <spring:message
+									code="lbl.preamble.number" />(seq no.) :
+							</label>
+							<div class="col-sm-3 add-margin  view-content">N/A</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
+				<c:choose>
+					<c:when test="${councilSequenceNumber.agendaSeqNumber ne null}">
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.agendaNumber" />(seq no.) :
+							</label>
+							<div
+								class="col-sm-3 add-margin view-content dynamic-span capitalize">
+								${councilSequenceNumber.agendaSeqNumber}</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.agendaNumber" />(seq no.) :
+							</label>
+							<div
+								class="col-sm-3 add-margin view-content dynamic-span capitalize">
+								N/A</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
+				<c:choose>
+					<c:when test="${councilSequenceNumber.resolutionSeqNumber ne null}">
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.resolutionNumber" />(seq no.) :
+							</label>
+							<div class="col-sm-3 add-margin view-content">
+								${councilSequenceNumber.resolutionSeqNumber}</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="form-group">
+							<label class="col-sm-3 control-label text-right"> <spring:message
+									code="lbl.resolutionNumber" />(seq no.) :
+							</label>
+							<div class="col-sm-3 add-margin view-content">N/A</div>
+						</div>
+					</c:otherwise>
+				</c:choose>
+				<div class="col-sm-5 add-margin">&nbsp;</div>
 			</div>
 		</div>
 	</div>
-	<div class="row text-center">
-		<div class="add-margin">
-			<a href="javascript:void(0)" class="btn btn-default"
-				onclick="self.close()"><spring:message code="lbl.close" /></a>
-		</div>
+</div>
+<div class="row text-center">
+	<div class="add-margin">
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()"><spring:message code="lbl.close" /></a>
 	</div>
 </div>

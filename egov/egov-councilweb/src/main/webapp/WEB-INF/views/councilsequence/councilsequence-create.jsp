@@ -52,48 +52,74 @@
 		<div class="col-md-12">
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
-					<div class="panel-title">Add Sequence numbers</div>
+					<div class="panel-title">Update Sequence numbers</div>
+				</div>
+				<div class="row">
+					<label class="col-sm-4 control-label text-right">LAST USED
+						VALUES</label> <label class="col-sm-4 control-label text-right">ENTER
+						REQUIRED VALUES</label>
 				</div>
 				<div class="panel-body">
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.preamble.number" /> (seq no.)<span class="mandatory"></span></label>
+								code="lbl.preamble.number" /> (seq no.)</label>
+						<div class="col-sm-1 add-margin">
+							<form:input path="" maxlength="3" value="${preambleseq}"
+								id="lastPreambleSeq" name="lastPreambleSeq"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" readonly="true" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.preamble.number" /> (seq no.)</label>
 						<div class="col-sm-1 add-margin">
 							<form:input path="preambleSeqNumber" maxlength="3"
+								id="enteredPreambleSeq"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" required="required" />
-							<form:errors path="preambleSeqNumber" cssClass="error-msg" />
+								data-pattern="number" />
 						</div>
-
+						<form:errors path="preambleSeqNumber" cssClass="error-msg" />
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.agendaNumber" /> (seq no.)<span class="mandatory"></span></label>
+								code="lbl.agendaNumber" /> (seq no.)</label>
+						<div class="col-sm-1 add-margin">
+							<form:input path="" maxlength="3" value="${agendaSeq}"
+								id="lastAgendaSeq" name="lastAgendaSeq"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" readonly="true" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.agendaNumber" /> (seq no.)</label>
 						<div class="col-sm-1 add-margin">
 							<form:input path="agendaSeqNumber" maxlength="3"
+								id="enteredAgendaSeq"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" required="required" />
-							<form:errors path="agendaSeqNumber" cssClass="error-msg" />
+								data-pattern="number" />
 						</div>
-
-
+						<form:errors path="agendaSeqNumber"
+							cssClass="add-margin error-msg" />
 					</div>
 					<div class="form-group">
 						<label class="col-sm-3 control-label text-right"><spring:message
-								code="lbl.resolutionNumber" /> (seq no.)<span class="mandatory"></span></label>
+								code="lbl.resolutionNumber" /> (seq no.)</label>
+						<div class="col-sm-1 add-margin">
+							<form:input path="" maxlength="3" value="${resolutionseq}"
+								id="lastResolutionSeq" name="lastResolutionSeq"
+								class="form-control text-left patternvalidation"
+								data-pattern="number" readonly="true" />
+						</div>
+						<label class="col-sm-3 control-label text-right"><spring:message
+								code="lbl.resolutionNumber" /> (seq no.)</label>
 						<div class="col-sm-1 add-margin">
 							<form:input path="resolutionSeqNumber" maxlength="3"
+								id="enteredResolutionSeq"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" required="required" />
-							<form:errors path="resolutionSeqNumber" cssClass="error-msg" />
+								data-pattern="number" />
 						</div>
+						<form:errors path="resolutionSeqNumber" cssClass="error-msg" />
 					</div>
-
-					<div class=" mandatory text-left">Note: Enter the last number
-						used, system will generate +1 number entered. Please double
-						confirm once you enter all the Manual sequence numbers. Once
-						submitted can not be modified.</div>
-
+					<div class=" mandatory text-left"> Note : * System will generate from the number entered
+					 Please double confirm once you enter all the sequence numbers to be generated going forward.</div>
 				</div>
 			</div>
 		</div>
@@ -101,7 +127,7 @@
 	<div class="form-group">
 		<div class="text-center">
 			<button type='button' class='btn btn-primary' id="btnsave">
-				<spring:message code='lbl.save' />
+				<spring:message code='lbl.update' />
 			</button>
 			<button type="reset" class="btn btn-danger">
 				<spring:message code="lbl.reset" />
