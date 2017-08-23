@@ -290,9 +290,9 @@
 			}
 		}
 		</s:if>
-		if(document.getElementById('accountNumberId').options[document.getElementById('accountNumberId').selectedIndex].text != dom.get("remitAccountNumber").value)
+		if(document.getElementById('accountNumberId').options[document.getElementById('accountNumberId').selectedIndex].text != dom.get("remitAccountNumber").value.trim())
 			{
-				 alert("Account number for which search result has dispayed and selected account number in search drop down are different. \n Please make sure account number in drop down and account number for which search has done are same.");
+				 alert("Account number for which search result has displayed and selected account number in search drop down are different. \n Please make sure account number in drop down and account number for which search has done are same.");
 				 return false;
 			}
 		var flag=confirm('Receipts once remitted cannot be modified, please verify before you proceed.');
