@@ -124,7 +124,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private boolean isDemandActive;
     private String applicationNo;
     private String applicationType;
-    private String[] floorNoStr = new String[100];
+    private String[] floorNoStr = new String[275];
     private String errorMessage;
     private String isCitizen;
     private boolean citizenPortalUser;
