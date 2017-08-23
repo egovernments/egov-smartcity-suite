@@ -42,7 +42,6 @@ package org.egov.ptis.domain.service.property;
 import static java.lang.Boolean.FALSE;
 import static java.lang.String.format;
 import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADVANCE_DMD_RSN_CODE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
@@ -54,13 +53,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVI
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
@@ -138,7 +137,6 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.apache.commons.collections.map.HashedMap;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -2174,6 +2172,8 @@ public class PropertyService {
 			updatePropertyMutationIndex(stateAwareObject, applictionType, stateOwner, sla);
 		else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION))
 			updateVacancyRemissionIndex(stateAwareObject, applictionType, stateOwner, sla);
+		else if (!applictionType.isEmpty() && applictionType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL))
+                    updateVacancyRemissionApprovalIndex(stateAwareObject, applictionType, stateOwner, sla);
 
 	}
 
@@ -2185,22 +2185,22 @@ public class PropertyService {
 		return user;
 	}
 
-	private void updateVacancyRemissionIndex(final StateAware stateAwareObject, final String applictionType,
+	private void updateVacancyRemissionApprovalIndex(final StateAware stateAwareObject, final String applictionType,
 			final User stateOwner, final int sla) {
-		final VacancyRemission vacancyRemission = (VacancyRemission) stateAwareObject;
+		final VacancyRemissionApproval vacancyRemissionApproval = (VacancyRemissionApproval) stateAwareObject;
+		final VacancyRemission vacancyRemission = vacancyRemissionApproval.getVacancyRemission();
 		final ApplicationIndex applicationIndex = applicationIndexService
 				.findByApplicationNumber(vacancyRemission.getApplicationNumber());
 		final User owner = vacancyRemission.getBasicProperty().getPrimaryOwner();
-		final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
 		final String source = propertyTaxCommonUtils.getVRSource(vacancyRemission);
 		if (applicationIndex == null)
-			createVacancyRemissionApplicationIndex(applictionType, stateOwner, sla, vacancyRemission, owner,
+			createVacancyRemissionApprovalApplicationIndex(applictionType, stateOwner, sla, vacancyRemission, owner,
 					vacancyRemissionApproval, source);
 		else
-			updateVacancyRemissionApplicationIndex(stateOwner, applicationIndex, owner, vacancyRemissionApproval);
+			updateVacancyRemissionApprovalApplicationIndex(stateOwner, applicationIndex, owner, vacancyRemissionApproval);
 	}
 
-	private void createVacancyRemissionApplicationIndex(final String applictionType, final User stateOwner,
+	private void createVacancyRemissionApprovalApplicationIndex(final String applictionType, final User stateOwner,
 			final int sla, final VacancyRemission vacancyRemission, final User owner,
 			final VacancyRemissionApproval vacancyRemissionApproval, final String source) {
 		ApplicationIndex applicationIndex;
@@ -2226,11 +2226,13 @@ public class PropertyService {
 		applicationIndexService.createApplicationIndex(applicationIndex);
 	}
 
-	private void updateVacancyRemissionApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
+	private void updateVacancyRemissionApprovalApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
 			final User owner, final VacancyRemissionApproval vacancyRemissionApproval) {
 		applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
+		if(!vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)){
 		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
+		}
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
@@ -2287,7 +2289,9 @@ public class PropertyService {
 			final ApplicationIndex applicationIndex, final User owner) {
 		applicationIndex.setStatus(propertyMutation.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
+		if(!propertyMutation.getState().getValue().contains(WF_STATE_CLOSED)){
 		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
+		}
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
@@ -2344,7 +2348,9 @@ public class PropertyService {
 		applicationIndex.setStatus(revisionPetition.getState().getValue());
 		if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
 				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+		    if(!revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)){
 			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
+		    }
 			applicationIndex.setClosed(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
 					? ClosureStatus.YES : ClosureStatus.NO);
 			if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
@@ -4275,5 +4281,64 @@ public class PropertyService {
 				isResolved(stateAware), getSlaEndDate(applictionType), revisionPetition.getState(), null,
 				basicProperty.getUpicNo(),format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType));
 	}
+	
+	private void updateVacancyRemissionIndex(final StateAware stateAwareObject, final String applictionType,
+                final User stateOwner, final int sla) {
+        final VacancyRemission vacancyRemission = (VacancyRemission) stateAwareObject;
+        final ApplicationIndex applicationIndex = applicationIndexService
+                        .findByApplicationNumber(vacancyRemission.getApplicationNumber());
+        final User owner = vacancyRemission.getBasicProperty().getPrimaryOwner();
+        final String source = propertyTaxCommonUtils.getVRSource(vacancyRemission);
+        if (applicationIndex == null)
+                createVacancyRemissionApplicationIndex(applictionType, stateOwner, sla, vacancyRemission, owner, source);
+        else
+                updateVacancyRemissionApplicationIndex(stateOwner, applicationIndex, owner, vacancyRemission);
+	}
+
+	private void createVacancyRemissionApplicationIndex(final String applictionType, final User stateOwner,
+                final int sla, final VacancyRemission vacancyRemission, final User owner, final String source) {
+        ApplicationIndex applicationIndex;
+        final Date applicationDate = vacancyRemission.getCreatedDate() != null ? vacancyRemission.getCreatedDate()
+                        : new Date();
+        final ClosureStatus closureStatus = vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+                        ? ClosureStatus.YES : ClosureStatus.NO;
+        applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
+                        .withApplicationNumber(vacancyRemission.getApplicationNumber()).withApplicationDate(applicationDate)
+                        .withApplicationType(applictionType).withApplicantName(owner.getName())
+                        .withStatus(vacancyRemission.getState().getValue())
+                        .withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
+                        .withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
+                        .withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName()).withChannel(source)
+                        .withMobileNumber(owner.getMobileNumber()).withAadharNumber(owner.getAadhaarNumber())
+                        .withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
+                        .withApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+                                        ? ApprovalStatus.APPROVED
+                                        : vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
+                                                        || vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+                                                                        ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS)
+                        .withSla(sla).build();
+        applicationIndexService.createApplicationIndex(applicationIndex);
+	}
+
+    private void updateVacancyRemissionApplicationIndex(final User stateOwner, final ApplicationIndex applicationIndex,
+                final User owner, final VacancyRemission vacancyRemission) {
+        applicationIndex.setStatus(vacancyRemission.getState().getValue());
+        applicationIndex.setApplicantName(owner.getName());
+        if(!vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)){
+        applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
+        }
+        applicationIndex.setMobileNumber(owner.getMobileNumber());
+        applicationIndex.setAadharNumber(owner.getAadhaarNumber());
+        applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+                        ? ClosureStatus.YES : ClosureStatus.NO);
+        if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
+                applicationIndex
+                                .setApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)
+                                                ? ApprovalStatus.APPROVED
+                                                : vacancyRemission.getState().getValue().contains(WF_STATE_REJECTED)
+                                                                || vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED)
+                                                                                ? ApprovalStatus.REJECTED : ApprovalStatus.INPROGRESS);
+        applicationIndexService.updateApplicationIndex(applicationIndex);
+    }
 
 }

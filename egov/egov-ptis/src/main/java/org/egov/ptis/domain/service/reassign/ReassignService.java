@@ -41,12 +41,17 @@
 package org.egov.ptis.domain.service.reassign;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_REASSIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 
 import java.util.List;
 
@@ -107,6 +112,8 @@ public class ReassignService {
             stateAware = persistenceService.find("From PropertyMutation where id = ? ", stateAwareId);
         } else if (GENERAL_REVISION_PETITION.equalsIgnoreCase(transactionType) || REVISION_PETITION.equalsIgnoreCase(transactionType)) {
             stateAware = revisionPetitionService.findById(Long.valueOf(stateAwareId), false);
+            transactionType = transactionType.equalsIgnoreCase(REVISION_PETITION) ? APPLICATION_TYPE_REVISION_PETITION
+                    : APPLICATION_TYPE_GRP;
         } else {
             stateAware = persistenceService.findByNamedQuery(QUERY_PROPERTYIMPL_BYID, Long.valueOf(stateAwareId));
         }

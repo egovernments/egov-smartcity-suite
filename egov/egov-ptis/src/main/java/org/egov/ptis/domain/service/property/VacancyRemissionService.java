@@ -42,7 +42,9 @@ package org.egov.ptis.domain.service.property;
 import static java.lang.Boolean.FALSE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_BAL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
@@ -84,6 +86,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DE
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_FORWARD_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESIGNATIONS;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION_APPROVAL;
 
 import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
@@ -366,6 +369,7 @@ public class VacancyRemissionService {
                     buildSMS(vacancyRemission, workFlowAction);
             }
         }
+        propertyService.updateIndexes(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemission.getSource()) && propertyService.getPortalInbox(vacancyRemission.getApplicationNumber()) != null) {
             propertyService.updatePortal(vacancyRemission, APPLICATION_TYPE_VACANCY_REMISSION);
         }
@@ -575,7 +579,7 @@ public class VacancyRemissionService {
                     vacancyRemissionApproval.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" +user.getName()).withComments(approvalComent)
                             .withStateValue(WF_STATE_REJECTED).withDateInfo(currentDate.toDate())
                             .withOwner(wfInitiator.getPosition())
-                            .withNextAction(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING);
+                            .withNextAction(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING).withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL);
                     vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
                 }
         } else {
@@ -596,7 +600,7 @@ public class VacancyRemissionService {
                         null, additionalRule, null, null);
                 vacancyRemissionApproval.transition().start().withSenderName(user.getUsername() + "::" +user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
-                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION)
+                        .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL)
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if ("END".equalsIgnoreCase(vacancyRemissionApproval.getCurrentState().getNextAction()))
                 vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" +user.getName())
@@ -608,14 +612,15 @@ public class VacancyRemissionService {
                 vacancyRemissionApproval.transition().progress().withSenderName(user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState())
                         .withDateInfo(currentDate.toDate()).withOwner(pos)
-                        .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction());
+                        .withNextAction(StringUtils.isNotBlank(nextAction) ? nextAction : wfmatrix.getNextAction()).withNatureOfTask(NATURE_VACANCY_REMISSION_APPROVAL);
 
                 if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE))
                     wFApprove(vacancyRemissionApproval);
 
             }
         }
-
+        propertyService.updateIndexes(vacancyRemissionApproval, APPLICATION_TYPE_VACANCY_REMISSION_APPROVAL);
+        
         if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
                 && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber())!=null) {
             propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(), APPLICATION_TYPE_VACANCY_REMISSION);
