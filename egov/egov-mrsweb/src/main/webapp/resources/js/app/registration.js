@@ -437,8 +437,7 @@ $(".btn-primary").click(function(e) {
 	}
 	
 		 if(action == 'Print Certificate') {
-			 validateSerialNumber(e)
-			 validateForm(e);
+			 validateSerialNumber(e);
 		 }
 		 
 		 if(action == 'Approve') {
@@ -480,10 +479,12 @@ function validateSerialNumber(e){
 			dataType: "json",
 			success: function (response) { 
 				if(response) {
+					    $('#txt-serialNo').val('');
 						bootbox.alert("Entered Serial Number already exists. Please Enter Unique Number.");
-						$('#txt-serialNo').val('');
-						e.preventDefault();
+						validateForm(e);
 				}
+				else
+					validateForm(e);
 			}, 
 			error: function (response) {
 				$('#txt-serialNo').val('');
