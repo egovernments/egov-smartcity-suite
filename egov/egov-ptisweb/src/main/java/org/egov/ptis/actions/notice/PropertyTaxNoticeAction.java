@@ -380,7 +380,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type))
 				savedNotice = noticeService.saveNotice(revisionPetition.getObjectionNumber(),
 				        noticeNo,
-						PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE, revisionPetition.getBasicProperty(),
+				        type.equalsIgnoreCase(RP)
+	                                ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS, revisionPetition.getBasicProperty(),
 						NoticePDF);
 			else if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type))
                             savedNotice = noticeService.saveNotice(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber(),
