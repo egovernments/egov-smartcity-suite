@@ -1,1 +1,3 @@
-INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'PUBLIC'),(select id from eg_action where name in('watertaxappsearch'))) on conflict(roleid, actionid) do nothing;
+delete from eg_roleaction where actionid = (select id from eg_action where name='watertaxappsearch' and contextroot='wtms') and roleid = (select id from eg_role where name='PUBLIC');
+ 
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'PUBLIC'),(select id from eg_action where name in('watertaxappsearch') and contextroot='wtms'));
