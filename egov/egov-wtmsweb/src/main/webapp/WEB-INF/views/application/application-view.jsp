@@ -70,14 +70,12 @@
 </div>			
 <div class="row text-center">
 	<div class="add-margin">
-	
-
 	<c:choose>
 	<c:when test="${waterConnectionDetails.legacy}">
 	<%-- <input type="button" class="btn btn-primary" id="viewWorkOrder" value="Edit" onclick="showEdit('<c:out value="${waterConnectionDetails.connection.consumerCode}" />')"/> --%>
 	</c:when>
 	<c:otherwise>
-        <c:if test="${!citizenPortal }">
+       
             <c:if test="${waterConnectionDetails.status.code == 'ESTIMATIONNOTICEGENERATED' && waterConnectionDetails.status.code != 'VERIFIED'  && (checkOperator ) }">
                 <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.collect.fees"/></button>
             </c:if>
@@ -86,15 +84,18 @@
             </c:if>
             <c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType == 'METERED' && checkOperator && waterTaxDueforParent > 0}">
                 <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-                <button type="submit" class="btn btn-primary" id="viewdcb"><spring:message code="lbl.viewdcb"/></button>
+                <button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
             </c:if>
             <c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType != 'METERED' && checkOperator }">
                 <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.tax"/></button>
-                <button type="submit" class="btn btn-primary" id="viewdcb"><spring:message code="lbl.viewdcb"/></button>
+                <button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
+            </c:if>
+            <c:if test="${waterConnectionDetails.status.code == 'SANCTIONED' && waterConnectionDetails.connectionType != 'METERED' && citizenRole }">
+                <button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
             </c:if>
             <c:if test="${waterConnectionDetails.status.code != 'ESTIMATIONNOTICEGENERATED' && waterTaxDueforParent > 0 && (citizenRole && !checkOperator) }">
                 <button type="submit" class="btn btn-primary" id="payBtn"><spring:message code="lbl.pay.online"/></button>
-                <button type="submit" class="btn btn-primary" id="viewdcb"><spring:message code="lbl.viewdcb"/></button>
+                <button type="submit" class="btn btn-primary" id="dcbscreen-view"><spring:message code="lbl.dcbscreen.view"/></button>
             </c:if>
             <c:if test="${waterConnectionDetails.status.code != 'CREATED' && waterConnectionDetails.status.code != 'VERIFIED'
 	&& waterConnectionDetails.status.code != 'CANCELLED' && waterConnectionDetails.fieldInspectionDetails != null && !legacy && !citizenRole && waterConnectionDetails.applicationType.code !='CLOSINGCONNECTION'}">
@@ -158,7 +159,6 @@
             <c:if test="${ ((ulbUserRole != null && ulbUserRole!='') ||  (cscUserRole!=null && cscUserRole!=''))  && waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION'  && waterConnectionDetails.connectionStatus == 'CLOSED' && waterConnectionDetails.closeConnectionType== 'T' && waterConnectionDetails.status.code == 'CLOSERSANCTIONED' }">
                 <button type="submit" class="btn btn-primary" id="re-connection"><spring:message code="lbl.re-connection"/></button>
             </c:if>
-        </c:if>
 	</c:otherwise>
 	</c:choose>
 		<a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close" /></a>

@@ -1,0 +1,1 @@
+INSERT INTO eg_roleaction(roleid, actionid) VALUES ((select id from eg_role where name = 'PUBLIC'),(select id from eg_action where name in('watertaxappsearch'))) on conflict(roleid, actionid) do nothing;
