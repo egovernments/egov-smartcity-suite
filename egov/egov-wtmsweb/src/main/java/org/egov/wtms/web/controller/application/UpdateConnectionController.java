@@ -636,11 +636,14 @@ public class UpdateConnectionController extends GenericConnectionController {
                         session.setAttribute(APPROVAL_COMMENT, approvalComent);
                         session.setAttribute(FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
                         model.addAttribute("isDigitalSignatureEnabled", waterTaxUtils.isDigitalSignatureEnabled());
-                        return "newConnection-digitalSignatureRedirection";
-                    } else
                         waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
                                 approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
                                 mode, null, sourceChannel);
+                        return "newConnection-digitalSignatureRedirection";
+                    }
+                waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
+                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
+                        mode, null, sourceChannel);
             } catch (final ValidationException e) {
                 throw new ValidationException(e.getMessage());
             }

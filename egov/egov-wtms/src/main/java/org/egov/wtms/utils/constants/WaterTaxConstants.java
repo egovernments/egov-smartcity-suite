@@ -66,7 +66,7 @@ public class WaterTaxConstants {
     public static final String WATERTAX_SECURITY_CHARGE = "WTAXSECURITY";
     public static final String WATERTAX_DONATION_CHARGE = "WTAXDONATION";
     public static final String WATERTAX_ROADCUTTING_CHARGE = "WTAXROADCUTTING";
-    public static final String WATERTAX_SUPERVISION_CHARGE ="WTAXSUPERVISION";
+    public static final String WATERTAX_SUPERVISION_CHARGE = "WTAXSUPERVISION";
     public static final String CONNECTION_FEE = "Connection fee";
     public static final String ADDNLCONNECTION = "ADDNLCONNECTION";
     public static final String CLOSINGCONNECTION = "CLOSINGCONNECTION";
@@ -89,6 +89,9 @@ public class WaterTaxConstants {
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
+    public static final String SMSEMAILTYPENEWCONNDIGISIGN = "newconndigitalsigned";
+    public static final String SMSEMAILTYPEADDITONALCONNDIGISIGN = "additionalconndigitalsigned";
+    public static final String SMSEMAILTYPECHANGEOFUSECONNDIGISIGN = "changeofusedigitalsigned";
 
     public static final String SMSEMAILTYPECHANGEOFUSECREATE = "changeofusecreate";
     public static final String SMSEMAILTYPECHANGEOFUSEAPPROVE = "changeofuseapprove";
@@ -146,23 +149,22 @@ public class WaterTaxConstants {
     public static final String WF_STATE_CLERK_APPROVED = "Clerk approved";
     public static final String WF_STATE_PAYMENT_DONE_AGT_ESTIMATION = "Payment done against Estimation";
     public static final String WF_STATE_COMMISSIONER_APPROVED = "Commissioner Approved";
-    public static final String WF_STATE_CLOSURE_FORWARED_APPROVER="Close forwared By Approver";
-    public static final String WF_STATE_RECONN_FORWARED_APPROVER="ReConn forwared By Approver";
-    public static final String WF_STATE_COLSURE_APPROVED="Close approve By Comm";
-    public static final String WF_STATE_RECONN_APPROVED="Reconnection approve By Comm";
-    public static final String WF_STATE_STATE_FORWARD="Application Approval Pending";
+    public static final String WF_STATE_CLOSURE_FORWARED_APPROVER = "Close forwared By Approver";
+    public static final String WF_STATE_RECONN_FORWARED_APPROVER = "ReConn forwared By Approver";
+    public static final String WF_STATE_COLSURE_APPROVED = "Close approve By Comm";
+    public static final String WF_STATE_RECONN_APPROVED = "Reconnection approve By Comm";
+    public static final String WF_STATE_STATE_FORWARD = "Application Approval Pending";
     public static final String WF_STATE_ASSISTANT_ENGINEER_APPROVED = "Asst engg approved";
     public static final String WF_STATE_WORK_ORDER_GENERETED = "Work order generated";
 
     public static final String APPROVEWORKFLOWACTION = "Approve";
     public static final String FORWARDWORKFLOWACTION = "Forward";
     public static final String SUBMITWORKFLOWACTION = "Submit";
-    public static final String  EXECUTIVEENGINEERFORWARDED="Engineer Executive Forwarded";
-    public static final String  SUPERINTENDANTENGINEERFORWARDED="Superintendent Executive Forwarded";
+    public static final String EXECUTIVEENGINEERFORWARDED = "Engineer Executive Forwarded";
+    public static final String SUPERINTENDANTENGINEERFORWARDED = "Superintendent Executive Forwarded";
 
-    public static final String  EXECUTIVEENGINEERAPPROVED="Executive Engineer Approved";
-    public static final String  DIGITALSIGNATUREUPDATED="Digital Signature Updated";
-
+    public static final String EXECUTIVEENGINEERAPPROVED = "Executive Engineer Approved";
+    public static final String DIGITALSIGNATUREUPDATED = "Digital Signature Updated";
 
     public static final String BPL_CATEGORY = "BPL";
     public static final String HIERARCHYNAME_ADMIN = "ADMINISTRATION";
@@ -276,8 +278,8 @@ public class WaterTaxConstants {
     public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
     public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
     public static final String GLCODE_FOR_ADVANCE = "3504106";
-    public static final String [] DESG_COMM = {"Commissioner"};
-    public static final String  DESG_COMM_NAME = "Commissioner";
+    public static final String[] DESG_COMM = { "Commissioner" };
+    public static final String DESG_COMM_NAME = "Commissioner";
 
     public static final List<String> ORDERED_DEMAND_RSNS_LIST = Arrays.asList(WATERTAXREASONCODE,
             DEMANDRSN_CODE_ADVANCE);
@@ -337,7 +339,7 @@ public class WaterTaxConstants {
     public static final String WATER_TAX_INDEX_NAME = "waterchargeconsumer";
     public static final String COLLECION_BILLING_SERVICE_WTMS = "Water Charges";
     public static final BigDecimal BIGDECIMAL_100 = new BigDecimal("100");
-    
+
     public static final String DASHBOARD_GROUPING_DISTRICTWISE = "district";
     public static final String DASHBOARD_GROUPING_ULBWISE = "ulb";
     public static final String DASHBOARD_GROUPING_REGIONWISE = "region";
@@ -350,17 +352,15 @@ public class WaterTaxConstants {
     public static final String REGIONNAMEAGGREGATIONFIELD = "regionName";
     public static final String DISTRICTNAMEAGGREGATIONFIELD = "districtName";
     public static final String CITYNAMEAGGREGATIONFIELD = "cityName";
-    public static final String CITYGRADEAGGREGATIONFIELD =  "cityGrade";
+    public static final String CITYGRADEAGGREGATIONFIELD = "cityGrade";
     public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
     public static final String CITYCODEAGGREGATIONFIELD = "cityCode";
-    
+
     public static final String RESIDENTIALCONNECTIONTYPEFORDASHBOARD = "RESIDENTIAL";
-    
-    
-    
+
     public static final String COMMERCIALCONNECTIONTYPEFORDASHBOARD = "COMMERCIAL";
 
-    //Designation
+    // Designation
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String EXECUTIVE_ENGINEER_DESIGN = "Executive engineer";
     public static final String MUNICIPAL_ENGINEER_DESIGN = "Municipal Engineer";
@@ -373,21 +373,21 @@ public class WaterTaxConstants {
     public static final String AE_TAPE_AEE__DESIGN = "Assistant executive engineer,Assistant engineer,Tap Inspector";
     public static final String JUNIOR_OR_SENIOR_ASSISTANT_DESIGN_REVENUE_CLERK = "Senior Assistant,Junior Assistant,Revenue Clerk";
 
-
     public static final String SENIOR_ASSISTANT_DESIGN = "Senior Assistant";
     public static final String JUNIOR_ASSISTANT_DESIGN = "Junior Assistant";
 
-    public static final String BOUNDARY_TYPE_ZONE= "Zone";
-    public static final String BOUNDARY_TYPE_CITY="City";
+    public static final String BOUNDARY_TYPE_ZONE = "Zone";
+    public static final String BOUNDARY_TYPE_CITY = "City";
     public static final String CONNECTION_RECTIFICATION = "connection-rectification";
-    
+
     public static final String ASSESSMENTSTATUSACTIVE = "ACTIVE";
     public static final String ASSESSMENTSTATUSINACTIVE = "INACTIVE";
 
-    public static final String IS_METEREDDONATIONAMOUNT_MANUAL="IS_METEREDDONATIONAMOUNT_MANUAL";
-    public static final String IS_NONMETEREDDONATIONAMOUNT_MANUAL="IS_NONMETEREDDONATIONAMOUNT_MANUAL";
-    
+    public static final String IS_METEREDDONATIONAMOUNT_MANUAL = "IS_METEREDDONATIONAMOUNT_MANUAL";
+    public static final String IS_NONMETEREDDONATIONAMOUNT_MANUAL = "IS_NONMETEREDDONATIONAMOUNT_MANUAL";
+
     public static final String INPROGRESS = "INPROGRESS";
     public static final String APPLICATIONINITIATORROLE = "WCMSDESIGNATIONFORINITIATOR";
-    public static final String PROCEEDWITHOUTDONATIONAMOUNTPAID="PROCEEDWITHOUTDONATIONAMOUNTPAID";
+    public static final String PROCEEDWITHOUTDONATIONAMOUNTPAID = "PROCEEDWITHOUTDONATIONAMOUNTPAID";
+
 }
