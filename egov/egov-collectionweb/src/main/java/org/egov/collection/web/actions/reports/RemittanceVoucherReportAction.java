@@ -113,6 +113,8 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     @Autowired
     private BankBranchHibernateDAO bankbranchDAO;
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
+        @Autowired
+        private CollectionsUtil collectionsUtil;
 
     /*
      * (non-Javadoc)
@@ -126,6 +128,7 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     public void populateBankAccountList() {
         final AjaxBankRemittanceAction ajaxBankRemittanceAction = new AjaxBankRemittanceAction();
         ajaxBankRemittanceAction.setPersistenceService(getPersistenceService());
+        ajaxBankRemittanceAction.setCollectionsUtil(collectionsUtil);
         ajaxBankRemittanceAction.bankBranchListOfService();
         addDropdownData("bankBranchList", ajaxBankRemittanceAction.getBankBranchArrayList());
         if (branchId != null) {
@@ -143,7 +146,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
      */
     @Action(value = "/reports/remittanceVoucherReport-criteria")
     public String criteria() {
-
         populateBankAccountList();
         // Set default values of criteria fields
         setReportParam(EGOV_REMITTANCE_DATE, new Date());

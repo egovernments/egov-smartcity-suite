@@ -41,53 +41,7 @@
   
 <head>
 <title><s:text name="remittanceVoucherReport.title" /></title>
-<style type="text/css">
-#codescontainer {
-	position: absolute;
-	left: 11em;
-	width: 9%;
-	text-align: left;
-}
-
-#codescontainer .yui-ac-content {
-	position: absolute;
-	width: 600px;
-	border: 1px solid #404040;
-	background: #fff;
-	overflow: hidden;
-	z-index: 9050;
-}
-
-#codescontainer .yui-ac-shadow {
-	position: absolute;
-	margin: .3em;
-	width: 300px;
-	background: #a0a0a0;
-	z-index: 9049;
-}
-
-#codescontainer ul {
-	padding: 5px 0;
-	width: 100%;
-}
-
-#codescontainer li {
-	padding: 0 5px;
-	cursor: default;
-	white-space: nowrap;
-}
-
-#codescontainer li.yui-ac-highlight {
-	background: #ff0;
-}
-
-#codescontainer li.yui-ac-prehighlight {
-	background: #FFFFCC;
-}
-</style>
 <link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />
-  <link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
-  <link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
 
 <script>
 function onChangeBankAccount(branchId) {
@@ -105,50 +59,38 @@ function onChangeServiceList(bankAccountId) {
 
 function validate()
 {
-	var fromdate=dom.get("fromDate").value;
-	var todate=dom.get("toDate").value;
-	var valSuccess = true;
-	document.getElementById("report_error_area").innerHTML = "";
-	document.getElementById("report_error_area").style.display="none"; 
-	
-
-		if (fromdate == "") {
+		document.getElementById("report_error_area").innerHTML = "";
+		document.getElementById("report_error_area").style.display="none"; 
+		var valid = false;
+		if (document.getElementById('receiptNumber').value != ""
+			&& document.getElementById('receiptNumber').value != null) {
+			valid = true;
+		} else if (document.getElementById('remittanceNumber').value != ""
+				&& document.getElementById('remittanceNumber').value != null) {
+			alert("remitnumber");
+			valid = true;
+		} else if (document.getElementById("voucherNumber").value != null
+				&& document.getElementById("voucherNumber").value != "") {
+			valid = true;
+		} else if (document.getElementById("remittanceDate").value != null
+				&& document.getElementById("remittanceDate").value != "") {
+			valid = true;
+		} else if (document.getElementById("bankBranchMaster").value != null
+				&& document.getElementById("bankBranchMaster").value != -1) {
+			valid = true;
+		} else if (document.getElementById("bankAccountId").value != null
+				&& document.getElementById("bankAccountId").value != -1) {
+			valid = true;
+		} 
+		if (!valid) {
 			document.getElementById("report_error_area").style.display = "block";
-			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
+			document.getElementById("report_error_area").innerHTML += '<s:text name="remittanceVoucher.atleast.one.criteria" />'
 					+ '<br>';
-			valSuccess = false;
-		}
+			return false;
+		} 
 
-		if (todate == "") {
-			document.getElementById("report_error_area").style.display = "block";
-			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.todate" />'
-					+ '<br>';
-			valSuccess = false;
-		}
-
-		if (fromdate != "" && todate != "" && fromdate != todate) {
-			if (!checkFdateTdate(fromdate, todate)) {
-				document.getElementById("report_error_area").style.display = "block";
-				document.getElementById("report_error_area").innerHTML += '<s:text name="common.comparedate.errormessage" />'
-						+ '<br>';
-				valSuccess = false;
-			}
-			if (!validateNotFutureDate(fromdate, currDate)) {
-				document.getElementById("report_error_area").style.display = "block";
-				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.fromdate.futuredate.message" />'
-						+ '<br>';
-				valSuccess = false;
-			}
-			if (!validateNotFutureDate(todate, currDate)) {
-				document.getElementById("report_error_area").style.display = "block";
-				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.todate.futuredate.message" />'
-						+ '<br>';
-				valSuccess = false;
-			}
-		}
-
-		return valSuccess;
-	}
+		return validate;
+}
 var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
 		warn('improperreceiptNumberSelection');
 }
@@ -171,7 +113,7 @@ var receiptNumberSelectionHandler = function(sType, arguments) {
 			<td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox"><s:text
 				name="remittanceVoucher.criteria.receiptnumber" /></td>
-			<td width="24%" class="bluebox"><%-- <s:textfield id="receiptNumber" type="text" name="receiptNumber"/> --%>
+			<td width="24%" class="bluebox">
 			   <div class="yui-skin-sam">
                    <div id="receiptNumber_autocomplete">
                       <div><s:textfield id="receiptNumber" type="text" name="receiptNumber"/>
@@ -239,8 +181,6 @@ var receiptNumberSelectionHandler = function(sType, arguments) {
 								selectedValue="%{serviceId}" /></td></td>
 		</tr>
 	</table>
-<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
-	</div>
 	
 	<div class="buttonbottom">
 			<label>
