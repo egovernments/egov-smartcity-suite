@@ -115,6 +115,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
 
     private static final String RE_OPENED_COMPLAINT_COUNT = "reOpenedComplaintCount";
 
+    public static final String INITIAL_FUNCTIONARY_NAME="initialFunctionaryName";
+
     private static final DateTimeFormatter formatter = DateTimeFormat.forPattern(PGR_INDEX_DATE_FORMAT);
 
     @Autowired
@@ -502,7 +504,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                             .addField(WARD_NAME)
                                             .addField(CITY_NAME)
                                             .addField(DISTRICT_NAME)
-                                            .addField("initialFunctionaryName")
+                                            .addField(INITIAL_FUNCTIONARY_NAME)
                                             .addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER)
                                             .setSize(1))))
                     .addAggregation(getCountWithGrouping("complaintTypeWise", "complaintTypeName", 120)
@@ -519,7 +521,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                     .addField(WARD_NAME)
                                                     .addField(CITY_NAME)
                                                     .addField(DISTRICT_NAME)
-                                                    .addField("initialFunctionaryName")
+                                                    .addField(INITIAL_FUNCTIONARY_NAME)
                                                     .addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER)
                                                     .addField("departmentName")
                                                     .setSize(1)))))
@@ -537,7 +539,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                     .addField(WARD_NAME)
                                                     .addField(CITY_NAME)
                                                     .addField(DISTRICT_NAME)
-                                                    .addField("initialFunctionaryName")
+                                                    .addField(INITIAL_FUNCTIONARY_NAME)
                                                     .addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER)
                                                     .addField("departmentName")
                                                     .setSize(1)))))
@@ -553,12 +555,13 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                     .addField(WARD_NAME)
                                     .addField(CITY_NAME)
                                     .addField(DISTRICT_NAME)
-                                    .addField("initialFunctionaryName")
+                                    .addField(INITIAL_FUNCTIONARY_NAME)
                                     .addField(INITIAL_FUNCTIONARY_MOBILE_NUMBER)
                                     .setSize(1)))
                     .addAggregation(getCountWithGrouping("complaintTypeWise", "complaintTypeName", 120)
                             .subAggregation(getCountWithGrouping("complaintTypeWiseSource", "source", 30)))
                     .execute().actionGet();
+        System.out.println("tableResponse" + tableResponse.toString());
         return tableResponse;
 
     }
@@ -567,7 +570,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     public String getFunctionryMobileNumber(final String functionaryName) {
         final SearchResponse response = elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
                 .setSize(1)
-                .setQuery(QueryBuilders.matchQuery("initialFunctionaryName", functionaryName))
+                .setQuery(QueryBuilders.matchQuery(INITIAL_FUNCTIONARY_NAME, functionaryName))
                 .execute().actionGet();
 
         for (final SearchHit hit : response.getHits()) {
@@ -601,7 +604,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                                                 .subAggregation(
                                                         AggregationBuilders
                                                                 .terms("functionarywise")
-                                                                .field("initialFunctionaryName")
+                                                                .field(INITIAL_FUNCTIONARY_NAME)
                                                                 .size(size)
                                                                 .subAggregation(
                                                                         AggregationBuilders.topHits("complaintrecord")
@@ -710,8 +713,8 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
     }
 
     @Override
-    public SearchResponse findByAllCitizenRating(final ComplaintDashBoardRequest complaintDashBoardRequest,
-                                                 final BoolQueryBuilder query) {
+    public SearchResponse findByFunctionaryWiseRating(final ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                      final BoolQueryBuilder query, String grouByField) {
         return elasticsearchTemplate
                 .getClient()
                 .prepareSearch(PGR_INDEX_NAME)
@@ -719,7 +722,7 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 .addAggregation(
                         AggregationBuilders
                                 .terms("functionarywise")
-                                .field("initialFunctionaryName")
+                                .field(INITIAL_FUNCTIONARY_NAME)
                                 .size(10000)
                                 .subAggregation(AggregationBuilders.topHits("complaintrecord")
                                         .addField(CITY_CODE)
@@ -734,5 +737,22 @@ public class ComplaintIndexRepositoryImpl implements ComplaintIndexCustomReposit
                 )
                 .execute().actionGet();
 
+    }
+
+    public SearchResponse findByDistrictWiseRating(final ComplaintDashBoardRequest complaintDashBoardRequest,
+                                                   final BoolQueryBuilder query, String grouByField) {
+        return elasticsearchTemplate.getClient().prepareSearch(PGR_INDEX_NAME)
+                .setQuery(query).setSize(0)
+                .addAggregation(getCountWithGrouping(GROUP_BY_FIELD, grouByField, 30)
+                        .subAggregation(getCountWithGrouping("groupByInitialFunctionary", INITIAL_FUNCTIONARY_NAME, 30))
+                        .subAggregation(AggregationBuilders.topHits("complaintrecord")
+                                .addField(DISTRICT_NAME)
+                                .addField(CITY_CODE)
+                                .addField(CITY_NAME)
+                                .addField(WARD_NAME)
+                                .setSize(1))
+                        .subAggregation(getCountWithGrouping("closedcount", IF_CLOSED, 2)
+                                .subAggregation(getAverageWithExclusion("satisfactionAverage", "satisfactionIndex")))).
+                        execute().actionGet();
     }
 }

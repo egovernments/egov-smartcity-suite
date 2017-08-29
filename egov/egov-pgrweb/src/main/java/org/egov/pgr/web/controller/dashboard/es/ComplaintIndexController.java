@@ -40,12 +40,7 @@
 
 package org.egov.pgr.web.controller.dashboard.es;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
+import com.fasterxml.jackson.core.JsonProcessingException;
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
@@ -67,7 +62,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @RestController
 @RequestMapping(value = "/complaint/aggregate")
@@ -104,7 +103,7 @@ public class ComplaintIndexController {
 
     @RequestMapping(value = "/citizenrating", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> getCitizenRatingResponse(@RequestBody final ComplaintDashBoardRequest complaintRequest) {
-        return complaintIndexService.findByAllCitizenRating(complaintRequest);
+        return complaintIndexService.getAvrgRating(complaintRequest);
     }
 
     @RequestMapping(value = "/departments", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)

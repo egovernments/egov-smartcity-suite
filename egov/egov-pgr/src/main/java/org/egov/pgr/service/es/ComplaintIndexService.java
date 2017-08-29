@@ -1470,9 +1470,61 @@ public class ComplaintIndexService {
             }
     }
 
-    public Map<String, Object> findByAllCitizenRating(final ComplaintDashBoardRequest complaintDashBoardRequest) {
-        final SearchResponse citizenRatingResponse = complaintIndexRepository.findByAllCitizenRating(complaintDashBoardRequest,
-                getFilterQuery(complaintDashBoardRequest));
+
+    public Map<String, Object> getAvrgRating(final ComplaintDashBoardRequest complaintDashBoardRequest) {
+        final List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
+
+        final String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
+        if (INITIAL_FUNCTIONARY_NAME.equalsIgnoreCase(groupByField))
+            return getRatingBasedOnFunctionary(complaintDashBoardRequest, groupByField);
+        else
+            return getRatingCountBasedOnParam(complaintDashBoardRequest, responseDetailsList, groupByField);
+    }
+
+    private HashMap<String, Object> getRatingCountBasedOnParam(ComplaintDashBoardRequest complaintDashBoardRequest, List<ComplaintDashBoardResponse> responseDetailsList, String groupByField) {
+        final SearchResponse citizenRatingResponse = complaintIndexRepository.findByDistrictWiseRating(complaintDashBoardRequest,
+                getFilterQuery(complaintDashBoardRequest), groupByField);
+        HashMap<String, Object> result = new HashMap<>();
+        Terms terms = citizenRatingResponse.getAggregations().get(GROUP_BY_FIELD);
+
+        for (final Bucket bucket : terms.getBuckets()) {
+            final ComplaintDashBoardResponse complaintDashBoardResponse = new ComplaintDashBoardResponse();
+            final TopHits topHits = bucket.getAggregations().get(COMPLAINTRECORD);
+            final SearchHit[] hit = topHits.getHits().getHits();
+            complaintDashBoardResponse.setUlbCode(hit[0].field(CITY_CODE).getValue());
+            complaintDashBoardResponse.setUlbName(hit[0].field(CITY_NAME).getValue());
+            complaintDashBoardResponse.setDistrictName(hit[0].field(CITY_DISTRICT_NAME).getValue());
+            complaintDashBoardResponse.setWardName(hit[0].field(WARD_NAME).getValue());
+            if (hit[0].field(DEPARTMENT_NAME) != null) {
+                complaintDashBoardResponse.setDepartmentName(hit[0].field(DEPARTMENT_NAME).getValue());
+            }
+            if (hit[0].field(INITIAL_FUNCTIONARY_NAME) != null)
+                complaintDashBoardResponse.setFunctionaryName(hit[0].field(INITIAL_FUNCTIONARY_NAME).getValue());
+            if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) != null)
+                complaintDashBoardResponse.setFunctionaryMobileNumber(hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue());
+            CityIndex city;
+            if (CITY_REGION_NAME.equals(groupByField))
+                complaintDashBoardResponse.setRegionName(bucket.getKeyAsString());
+            if ("cityDistrictCode".equals(groupByField)) {
+                city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
+                complaintDashBoardResponse.setDistrictName(city.getDistrictname());
+            }
+            final Terms functionaryTerms = bucket.getAggregations().get("groupByInitialFunctionary");
+            List<String> functionaryNames = new ArrayList<>();
+            for (final Bucket fnBucket : functionaryTerms.getBuckets())
+                functionaryNames.add(fnBucket.getKeyAsString());
+            complaintDashBoardResponse.setFunctionaryCount(functionaryNames.size());
+            updateClosedAndAvgSatisfactionIndex(bucket, complaintDashBoardResponse);
+            responseDetailsList.add(complaintDashBoardResponse);
+        }
+        result.put("functionarylist", responseDetailsList);
+        return result;
+    }
+
+
+    private HashMap<String, Object> getRatingBasedOnFunctionary(ComplaintDashBoardRequest complaintDashBoardRequest, String groupByField) {
+        final SearchResponse citizenRatingResponse = complaintIndexRepository.findByFunctionaryWiseRating(complaintDashBoardRequest,
+                getFilterQuery(complaintDashBoardRequest), groupByField);
         List<ComplaintDashBoardResponse> complaintDashBoardResponses = new ArrayList<>();
         final Terms functionaryWise = citizenRatingResponse.getAggregations().get("functionarywise");
         final HashMap<String, Object> result = new HashMap<>();
@@ -1490,24 +1542,26 @@ public class ComplaintIndexService {
             else
                 initialFunctionaryNumber = hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
             complaintDashBoardResponse.setFunctionaryMobileNumber(initialFunctionaryNumber);
-            Terms closedCount = fnBucket.getAggregations().get("closedcount");
-            for (Bucket bucket : closedCount.getBuckets()) {
-                if (bucket.getKeyAsNumber().intValue() == 1)
-                    complaintDashBoardResponse.setClosedComplaintCount(bucket.getDocCount());
-                Range satisfactionAverage = bucket.getAggregations().get(EXCLUDE_ZERO);
-
-                final Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
-                if (Double.isNaN(averageSatisfaction.getValue()))
-                    complaintDashBoardResponse.setAvgSatisfactionIndex(0);
-                else
-                    complaintDashBoardResponse.setAvgSatisfactionIndex(averageSatisfaction.getValue());
-
-            }
+            updateClosedAndAvgSatisfactionIndex(fnBucket, complaintDashBoardResponse);
             complaintDashBoardResponses.add(complaintDashBoardResponse);
         }
         result.put(COMPLAINTS, complaintDashBoardResponses);
         return result;
     }
 
+    private void updateClosedAndAvgSatisfactionIndex(Bucket bucket, ComplaintDashBoardResponse complaintDashBoardResponse) {
+        Terms closedCount = bucket.getAggregations().get("closedcount");
+        for (Bucket ratingbucket : closedCount.getBuckets()) {
+            if (ratingbucket.getKeyAsNumber().intValue() == 1)
+                complaintDashBoardResponse.setClosedComplaintCount(ratingbucket.getDocCount());
+            Range satisfactionAverage = ratingbucket.getAggregations().get(EXCLUDE_ZERO);
 
+            final Avg averageSatisfaction = satisfactionAverage.getBuckets().get(0).getAggregations().get("satisfactionAverage");
+            if (Double.isNaN(averageSatisfaction.getValue()))
+                complaintDashBoardResponse.setAvgSatisfactionIndex(0);
+            else
+                complaintDashBoardResponse.setAvgSatisfactionIndex(averageSatisfaction.getValue());
+
+        }
+    }
 }

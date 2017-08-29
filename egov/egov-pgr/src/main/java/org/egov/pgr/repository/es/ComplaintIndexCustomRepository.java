@@ -75,6 +75,8 @@ public interface ComplaintIndexCustomRepository {
 
     List<ComplaintIndex> findAllComplaintsByField(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
 
-    SearchResponse findByAllCitizenRating(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query);
+    SearchResponse findByFunctionaryWiseRating(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String groupByField);
+
+    SearchResponse findByDistrictWiseRating(ComplaintDashBoardRequest complaintDashBoardRequest, BoolQueryBuilder query, String groupByField);
 
 }
