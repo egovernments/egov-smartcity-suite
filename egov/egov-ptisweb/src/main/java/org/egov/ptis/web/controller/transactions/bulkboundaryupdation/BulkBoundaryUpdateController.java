@@ -41,6 +41,7 @@
 package org.egov.ptis.web.controller.transactions.bulkboundaryupdation;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -98,6 +99,7 @@ public class BulkBoundaryUpdateController {
 				basicProperty.getPropertyID().setElectionBoundary(
 						boundaryService.getBoundaryById(new Long(jsonobj.getString(ELECTION_WARD))));
 				basicProperty.setBoundary(basicProperty.getPropertyID().getElectionBoundary());
+				basicProperty.setModifiedDate(new Date());
 				basicProperties.add(basicProperty);
 			}
 			if (bulkBoundaryService.updateBasicPropertyByBoundary(basicProperties)) {
