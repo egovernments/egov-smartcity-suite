@@ -123,7 +123,7 @@ var receiptNumberSelectionHandler = function(sType, arguments) {
                 <egov:autocomplete name="receiptNumber" width="15" field="receiptNumber"
                  url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchAjax.action" 
                  queryQuestionMark="true" results="receiptNumberResults" 
-                 handler="receiptNumberSelectionHandler"  id="improperreceiptNumberSelectionWarning"/>
+                 handler="receiptNumberSelectionHandler"  id="improperreceiptNumberSelectionWarning" queryLength="3"/>
                  <span class='warning' id="improperreceiptNumberSelectionWarning"></span>
 			</td>
 			<td width="21%" class="bluebox"> <s:text
