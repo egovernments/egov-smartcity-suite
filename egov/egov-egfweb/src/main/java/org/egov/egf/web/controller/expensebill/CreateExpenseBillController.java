@@ -141,6 +141,7 @@ public class CreateExpenseBillController extends BaseBillController {
         List<DocumentUpload> list = new ArrayList<>();
         UploadedFile[] uploadedFiles = ((MultiPartRequestWrapper) request).getFiles("file");
         String[] fileName = ((MultiPartRequestWrapper) request).getFileNames("file");
+        if(uploadedFiles!=null)
         for (int i = 0; i < uploadedFiles.length; i++) {
 
             Path path = Paths.get(uploadedFiles[i].getAbsolutePath());

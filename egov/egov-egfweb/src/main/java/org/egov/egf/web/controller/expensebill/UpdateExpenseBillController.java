@@ -93,7 +93,7 @@ public class UpdateExpenseBillController extends BaseBillController {
     private FinancialUtils financialUtils;
     @Autowired
     private CheckListService checkListService;
-
+    
     public UpdateExpenseBillController(final AppConfigValueService appConfigValuesService) {
         super(appConfigValuesService);
     }
@@ -109,7 +109,7 @@ public class UpdateExpenseBillController extends BaseBillController {
         final EgBillregister egBillregister = expenseBillService.getById(Long.parseLong(billId));
         final List<DocumentUpload> documents = documentUploadRepository.findByObjectId(Long.valueOf(billId));
         egBillregister.setDocumentDetail(documents);
-        List<Map<String, Object>> budgetDetails;
+        List<Map<String, Object>> budgetDetails = null;
         setDropDownValues(model);
         model.addAttribute("stateType", egBillregister.getClass().getSimpleName());
         if (egBillregister.getState() != null)
@@ -138,7 +138,9 @@ public class UpdateExpenseBillController extends BaseBillController {
             return "expensebill-update";
         } else {
             model.addAttribute("mode", "view");
-            budgetDetails = expenseBillService.getBudgetDetailsForBill(egBillregister);
+            if (egBillregister.getEgBillregistermis().getBudgetaryAppnumber() != null && !egBillregister.getEgBillregistermis().getBudgetaryAppnumber().isEmpty()) {
+                budgetDetails = expenseBillService.getBudgetDetailsForBill(egBillregister);
+            }
             model.addAttribute("budgetDetails", budgetDetails);
             return EXPENSEBILL_VIEW;
         }
