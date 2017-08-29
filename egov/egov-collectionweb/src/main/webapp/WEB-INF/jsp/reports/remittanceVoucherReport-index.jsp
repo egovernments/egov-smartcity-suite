@@ -67,7 +67,6 @@ function validate()
 			valid = true;
 		} else if (document.getElementById('remittanceNumber').value != ""
 				&& document.getElementById('remittanceNumber').value != null) {
-			alert("remitnumber");
 			valid = true;
 		} else if (document.getElementById("voucherNumber").value != null
 				&& document.getElementById("voucherNumber").value != "") {
@@ -143,12 +142,13 @@ var receiptNumberSelectionHandler = function(sType, arguments) {
 				name="remittanceDate" value="%{cdFormat}"
 				onfocus="javascript:vDateType='3';"
 				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-				href="javascript:show_calendar('forms[0].fromDate');"
+				href="javascript:show_calendar('forms[0].remittanceDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
 				src="/egi/resources/erp2/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
 			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+			
 		</tr>
 	
 		<tr>

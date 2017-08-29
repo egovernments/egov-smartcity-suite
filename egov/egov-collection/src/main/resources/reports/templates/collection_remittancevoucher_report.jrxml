@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-08-29T08:29:46 -->
+<!-- 2017-08-29T18:04:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_voucher_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="b76bdff0-f9b9-4afd-886d-d310a7b060b2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
@@ -834,7 +873,9 @@ ORDER BY
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
 			<staticText>
-				<reportElement x="51" y="89" width="89" height="20" uuid="2e28db94-90e7-414f-bc0b-9d5b165ce2b5"/>
+				<reportElement x="51" y="89" width="144" height="20" uuid="2e28db94-90e7-414f-bc0b-9d5b165ce2b5">
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -848,9 +889,10 @@ ORDER BY
 				<text><![CDATA[Receipt Number:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="140" y="89" width="140" height="20" uuid="8cf19a5e-76b0-420c-b3bd-1c7002487080">
+				<reportElement x="195" y="89" width="140" height="20" uuid="8cf19a5e-76b0-420c-b3bd-1c7002487080">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 				</reportElement>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
@@ -865,7 +907,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_RECEIPT_NUMBER} == null || $P{EGOV_RECEIPT_NUMBER} == "") ? "NA" :$P{EGOV_RECEIPT_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="51" y="109" width="89" height="20" uuid="5ac3023f-0ff9-4ae2-a9f7-3effc60aab44">
+				<reportElement x="51" y="109" width="144" height="20" uuid="5ac3023f-0ff9-4ae2-a9f7-3effc60aab44">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -879,10 +921,10 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[Remittance Voucher Number]]></text>
+				<text><![CDATA[Remittance Voucher Number:]]></text>
 			</staticText>
 			<textField pattern="dd/MM/yyyy">
-				<reportElement x="140" y="109" width="140" height="20" uuid="e24331ee-9072-4754-9f74-c0aa317e5369">
+				<reportElement x="195" y="109" width="140" height="20" uuid="e24331ee-9072-4754-9f74-c0aa317e5369">
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
@@ -900,7 +942,7 @@ ORDER BY
 				<textFieldExpression><![CDATA[($P{EGOV_VOUCHER_NUMBER} == null || $P{EGOV_VOUCHER_NUMBER} == "") ? "NA" : $P{EGOV_VOUCHER_NUMBER}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="51" y="129" width="89" height="20" uuid="5e9f4384-598d-42a4-bd4a-2545a5611358">
+				<reportElement x="51" y="129" width="144" height="20" uuid="5e9f4384-598d-42a4-bd4a-2545a5611358">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 				</reportElement>
@@ -917,7 +959,7 @@ ORDER BY
 				<text><![CDATA[Bank Branch:]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="140" y="129" width="140" height="20" uuid="26559305-109b-4d6c-b445-8c19afa2b8d7">
+				<reportElement x="195" y="129" width="140" height="20" uuid="26559305-109b-4d6c-b445-8c19afa2b8d7">
 					<property name="com.jaspersoft.studio.unit.y" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
 					<property name="com.jaspersoft.studio.unit.x" value="pixel"/>
@@ -1003,7 +1045,7 @@ ORDER BY
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" isBold="true" pdfFontName="Times-Roman"/>
 				</textElement>
-				<text><![CDATA[ Remittance Date:]]></text>
+				<text><![CDATA[Remittance Date:]]></text>
 			</staticText>
 			<staticText>
 				<reportElement x="479" y="89" width="105" height="20" uuid="b13a6ccf-e62e-46c0-8761-ff70acff9099">
