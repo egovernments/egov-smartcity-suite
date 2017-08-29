@@ -40,6 +40,7 @@
 package org.egov.ptis.web.controller.masters.usage;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.util.List;
 
@@ -52,7 +53,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
@@ -62,7 +62,7 @@ public class ModifyUsageController {
     @Autowired
     private PropertyUsageService propertyUsageService;
     
-    @RequestMapping(value = "/modify", method = RequestMethod.GET)
+    @RequestMapping(value = "/modify", method = GET)
     public String getUsageMaster(final Model model) {
         model.addAttribute("propertyUsages", propertyUsageService.getAllActivePropertyUsages());
         return "usageModify-list";
@@ -74,7 +74,7 @@ public class ModifyUsageController {
         return "usageModify-form";
     }
 
-    @RequestMapping(value = "/modify/{usageId}", method = RequestMethod.POST)
+    @RequestMapping(value = "/modify/{usageId}", method = POST)
     public String editUsageMasterData(@ModelAttribute final PropertyUsage propertyUsage, final BindingResult errors,
             final RedirectAttributes redirectAttrs, final Model model, @PathVariable final long usageId) {
         List<String> hasErrors = propertyUsageService.validateModifyPropertyUsage(propertyUsage);
