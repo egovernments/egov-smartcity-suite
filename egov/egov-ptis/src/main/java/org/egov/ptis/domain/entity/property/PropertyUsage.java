@@ -54,6 +54,7 @@ import javax.persistence.Table;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.Audited;
 
 /**
  * <p>
@@ -79,9 +80,11 @@ public class PropertyUsage extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_PROPERTY_USAGE, strategy = GenerationType.SEQUENCE)
     private Long id;
     
+    @Audited
     @Column(name = "USG_NAME")
     private String usageName;
     
+    @Audited
     @Column(name = "CODE")
     private String usageCode;
     
@@ -103,6 +106,7 @@ public class PropertyUsage extends AbstractAuditable {
     @Column(name = "ISRESIDENTIAL")
     private Boolean isResidential;
     
+    @Audited
     @Column(name = "ISACTIVE")
     private Boolean isActive;
 

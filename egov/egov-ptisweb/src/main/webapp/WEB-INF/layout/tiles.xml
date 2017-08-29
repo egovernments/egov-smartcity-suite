@@ -509,4 +509,23 @@
 			value="/WEB-INF/views/transactions/bulkBoundaryUpdation/bulkboundary-form.jsp" />
 	</definition>
     
+     <definition name="endorsement_history" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/endorsement_history.jsp"/>
+    </definition>
+    
+     <definition name="usageModify-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-form.jsp"/>
+    </definition>
+    
+     <definition name="usageModify-list" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-list.jsp"/>
+    </definition>
+    
+     <definition name="usageModify-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-success.jsp"/>
+    </definition>
 </tiles-definitions> 

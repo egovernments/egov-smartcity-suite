@@ -41,9 +41,12 @@ package org.egov.ptis.domain.repository.master.usage;
 
 import java.util.List;
 
+import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 @Repository
 public interface PropertyUsageRepository extends JpaRepository<PropertyUsage, Long> {
@@ -53,4 +56,13 @@ public interface PropertyUsageRepository extends JpaRepository<PropertyUsage, Lo
     public List<PropertyUsage> findByIsResidentialTrueAndIsActiveTrueOrderByUsageName();
 
     public List<PropertyUsage> findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
+    
+    @Query(value = "select * from egpt_property_usage_master where upper(code) = upper(:usageCode) and id <> :usageId", nativeQuery = true)
+    List<PropertyUsage> findByCodeAndNotInId(@Param("usageCode") String usageCode, @Param("usageId") Long usageId);
+    
+    @Query(value = "select * from egpt_property_usage_master where upper(usg_name) = upper(:usageName) and id != :usageId", nativeQuery = true)
+    List<PropertyUsage> findByNameAndNotInId(@Param("usageName") String usageName, @Param("usageId") Long usageId);
+    
+    @Query(value = "from Category where propUsage.id = :usageId and isActive = true")
+    List<Category> findByUsageUnitRateActive(@Param("usageId") Long usageId);
 }

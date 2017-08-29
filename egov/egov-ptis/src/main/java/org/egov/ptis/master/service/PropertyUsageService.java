@@ -41,6 +41,7 @@ package org.egov.ptis.master.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -59,6 +60,7 @@ import org.egov.ptis.domain.repository.master.usage.PropertyUsageRepository;
 import org.egov.ptis.report.bean.PropertyUsageSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for PropertyUsage
@@ -91,7 +93,7 @@ public class PropertyUsageService {
         } else {
             propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_NON_RESD);
         }
-
+        propertyUsage.setLastModifiedDate(new Date());
         propertyUsage.setIsEnabled(1);
         propertyUsageHibernateDAO.create(propertyUsage);
 
@@ -162,5 +164,24 @@ public class PropertyUsageService {
     @ReadOnly
     public List<PropertyUsage> getNonResidentialPropertyUsages(){
         return propertyUsageRepository.findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
+    }
+    
+    @Transactional
+    public void updateUsage(final PropertyUsage propertyUsage) {
+        propertyUsageRepository.save(propertyUsage);
+    }
+
+    public List<String> validateModifyPropertyUsage(final PropertyUsage propertyUsage) {
+        final List<String> errors = new ArrayList<>();
+        if (!propertyUsageRepository.findByCodeAndNotInId(propertyUsage.getUsageCode().toUpperCase(), propertyUsage.getId())
+                .isEmpty())
+            errors.add("error.duplicate.code");
+        else if (!propertyUsageRepository.findByNameAndNotInId(propertyUsage.getUsageName().toUpperCase(), propertyUsage.getId())
+                .isEmpty())
+            errors.add("error.duplicate.usage");
+        else if (!propertyUsageRepository.findByUsageUnitRateActive(propertyUsage.getId()).isEmpty()
+                && !propertyUsage.getIsActive())
+            errors.add("error.active.unitrates.exist");
+        return errors;
     }
 }
