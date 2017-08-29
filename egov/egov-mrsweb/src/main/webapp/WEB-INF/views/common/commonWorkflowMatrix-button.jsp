@@ -39,9 +39,37 @@
 -->
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <script>
+	var popupWindow = null;
+	function openReassignWindow() {
+		var appId;
+		if ($("#registrationId").val()) {
+			appId = $("#registrationId").val();
+		} else if ($("#reIssueId").val()) {
+			appId = $("#reIssueId").val();
+		}
 
+		var applicationtype = $("#stateType").val();
+
+		popupWindow = window.open('/mrs/reassignmrs/'
+				+appId + "/" + applicationtype, '_blank',
+				'width=650, height=500, scrollbars=yes', false);
+		jQuery('.loader-class').modal('show', {
+			backdrop : 'static'
+		});
+	}
+
+	function closeAllWindows() {
+		popupWindow.close();
+		window.opener.inboxloadmethod();
+		self.close();
+	}
+
+	function closeChildWindow() {
+		jQuery('.loader-class').modal('hide');
+		popupWindow.close();
+	}
 	function validateWorkFlowApprover(name) {
 		$("#workFlowAction").val(name);
 		var rejectbutton = name;
@@ -49,8 +77,9 @@
 		console.log('rejectbutton=' + rejectbutton);
 		console.log('workFlorAction= ' + $("#workFlowAction").val());
 
-		if (rejectbutton != null ) {
-			if (rejectbutton == 'Approve' || rejectbutton == 'Cancel ReIssue' || rejectbutton == 'Cancel Registration') {
+		if (rejectbutton != null) {
+			if (rejectbutton == 'Approve' || rejectbutton == 'Cancel ReIssue'
+					|| rejectbutton == 'Cancel Registration') {
 				$('#approvalDepartment').removeAttr('required');
 				$('#approvalDesignation').removeAttr('required');
 				$('#approvalPosition').removeAttr('required');
@@ -63,11 +92,14 @@
 				if (!validateChecklists()) {
 					return false;
 				}
-			} 
+			}
 
 			if (rejectbutton == 'Print Rejection Certificate') {
-				$('#form-registration').prop('action', '../certificate/rejection?registrationId='+$('#registrationId').val());
-			}  
+				$('#form-registration').prop(
+						'action',
+						'../certificate/rejection?registrationId='
+								+ $('#registrationId').val());
+			}
 
 			if (rejectbutton == 'Reject') {
 				$('#approvalComent').attr('required', 'required');
@@ -75,22 +107,38 @@
 				$('#approvalComent').removeAttr('required');
 			}
 		}
+
 		document.forms[0].submit;
-	   return true;
+		return true;
 	}
 </script>
 
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>
-			<td>
-				<c:forEach items="${validActionList}" var="validButtons">
-					<form:button type="submit" id="${validButtons}" class="btn btn-primary" value="${validButtons}" onclick="return validateWorkFlowApprover('${validButtons}');" >
-						<c:out value="${validButtons}" /> 
+			<td><c:if
+					test="${marriageRegistration.currentState.value == 'NEW' or reIssue.currentState.value == 'NEW'}">
+					<c:if test="${isReassignEnabled}">
+						<input type="hidden" name="stateType" id="stateType"
+							value="${stateType}" />
+						<input type="hidden" id="registrationId"
+							value="${marriageRegistration.id}" />
+						<input type="hidden" id="reIssueId"
+							value="${reIssue.id}" />
+
+						<input type="button" value="Reassign" class="btn btn-primary"
+							id="Reassign" name="Reassign"
+							onclick="return openReassignWindow();" />
+					</c:if>
+				</c:if> <c:forEach items="${validActionList}" var="validButtons">
+
+					<form:button type="submit" id="${validButtons}"
+						class="btn btn-primary" value="${validButtons}"
+						onclick="return validateWorkFlowApprover('${validButtons}');">
+						<c:out value="${validButtons}" />
 					</form:button>
-				</c:forEach>
-				<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
-			</td>
+				</c:forEach> <input type="button" name="button2" id="button2" value="Close"
+				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>
 	</table>
 </div>

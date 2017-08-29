@@ -105,6 +105,8 @@ public class MarriageConstants {
 
 
     public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
+    public static final String APPCONFKEY_REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED";
+
 
     public static final List<String> venuelist = new ArrayList<String>() {
         private static final long serialVersionUID = -6112513531476444226L;
@@ -160,6 +162,10 @@ public class MarriageConstants {
     public static final String DIGITALSIGNED = "DIGITALSIGNED";
     public static final String REGISTERED = "REGISTERED";
     public static final String CANCELLED = "CANCELLED";
+    
+    public static final String STATETYPE_REGISTRATION = "MarriageRegistration";
+    public static final String STATETYPE_REISSUE = "ReIssue";
+
 
 
 

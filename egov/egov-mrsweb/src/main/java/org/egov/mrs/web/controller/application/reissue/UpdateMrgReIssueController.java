@@ -166,6 +166,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 && MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
                         .equalsIgnoreCase(reIssue.getState().getNextAction()))
             model.addAttribute("nextActn", MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING);
+          model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)

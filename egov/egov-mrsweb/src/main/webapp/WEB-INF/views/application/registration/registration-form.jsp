@@ -84,8 +84,7 @@
 			</div>
 			<input type="hidden" name="applicationNo" value="${marriageRegistration.applicationNo}" />
 			<input type="hidden" name="source" value="${marriageRegistration.source}" />
-			
-
+			<input type="hidden" name="stateType" id="stateType" value="${stateType}" />
 			<input type="hidden" id="currentState" value="${currentState}" />
 			<input type="hidden" id="registrationId"
 				value="${marriageRegistration.id}" />

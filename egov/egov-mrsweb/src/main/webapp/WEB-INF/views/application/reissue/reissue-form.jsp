@@ -46,19 +46,18 @@
 
 <script src="<cdn:url value='/resources/js/app/viewregistration.js'/> "></script>
 
- <div class="row" id="page-content">
-	<div class="col-md-12"> 
-		<div class="text-right error-msg" style="font-size:14px;"></div>
-			<c:set value="/mrs/reissue/create" var="actionUrl" />
+<div class="row" id="page-content">
+	<div class="col-md-12">
+		<div class="text-right error-msg" style="font-size: 14px;"></div>
+		<c:set value="/mrs/reissue/create" var="actionUrl" />
 		<c:if test="${reIssue.status.code == 'REJECTED'}">
-				 <c:set value="/mrs/reissue/workflow" var="actionUrl" />
-			</c:if>
-			<form:form role="form" action="${actionUrl}"
-				modelAttribute="reIssue" id="form-reissue"
-				cssClass="form-horizontal form-groups-bordered"
-				enctype="multipart/form-data" method="POST">
-				
-				<div>
+			<c:set value="/mrs/reissue/workflow" var="actionUrl" />
+		</c:if>
+		<form:form role="form" action="${actionUrl}" modelAttribute="reIssue"
+			id="form-reissue" cssClass="form-horizontal form-groups-bordered"
+			enctype="multipart/form-data" method="POST">
+
+			<div>
 				<spring:hasBindErrors name="reIssue">
 					<div class="alert alert-danger col-md-12 col-md-offset-0">
 						<form:errors path="*" />
@@ -66,52 +65,60 @@
 					</div>
 				</spring:hasBindErrors>
 				<br />
-				</div>
-						<input type="hidden" id="message" value="${message}" />
-				
-				<input type="hidden" name="reIssue" id="reIssue" value="${reIssue.id}" /> 
-				<input type="hidden" id="reIssueId" value="${reIssue.id}" />
-				<input type="hidden" id="reIssueStatus" value="${reIssue.status.code}" />
-				<form:hidden path="" name="registration.id" id="reIssueRegistrationId" value="${reIssue.registration.id}"/>	
-				  <ul class="nav nav-tabs" id="settingstab">
-				    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0><spring:message code="subheading.applicant.info"/></a></li>
-				    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message code="lbl.registration.detail"/></a></li>
-				  </ul>
-				  <div class="tab-content">
-					   <div id="applicant-info" class="tab-pane fade in active">
-					    	<div class="panel panel-primary" data-collapsed="0">
-					    		<jsp:include page="reissueApplicantInfo.jsp"></jsp:include> 
-					    		
-					    		<c:if test="${reIssue.rejectionReason != null}">
-									<div class="row">
-										<div class="col-sm-3 control-label"><spring:message code="lbl.reason.rejection"/></div>
-										<div class="col-sm-3 add-margin view-content">
-											<c:out value="${reIssue.rejectionReason}" />
-										</div>
-									</div>
-								</c:if>	
-								
-						    	<jsp:include page="reissuedocumentdetails.jsp"></jsp:include>
-					    	</div>
-				    	</div>
-				    
-					     <div id="checklist-info" class="tab-pane fade">
-					    	<div class="panel panel-primary" data-collapsed="0">
-					    		<jsp:include page="../../common/generalinfo.jsp" />
-					    	</div>
-					    </div>
-				   </div>
-					<c:if test="${reIssue.status != null}">
-						<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>	
-					</c:if>	
-					<br />
-					<c:if test="${isEmployee}">
-						<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
-					</c:if>
-					<div class="buttonbottom" align="center">
-						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+			</div>
+			<input type="hidden" id="message" value="${message}" />
+			<input type="hidden" name="stateType" id="stateType"
+				value="${stateType}" />
+			<input type="hidden" name="reIssue" id="reIssue"
+				value="${reIssue.id}" />
+			<input type="hidden" id="reIssueId" value="${reIssue.id}" />
+			<input type="hidden" id="reIssueStatus"
+				value="${reIssue.status.code}" />
+			<form:hidden path="" name="registration.id"
+				id="reIssueRegistrationId" value="${reIssue.registration.id}" />
+			<ul class="nav nav-tabs" id="settingstab">
+				<li class="active"><a data-toggle="tab" href="#applicant-info"
+					data-tabidx=0><spring:message code="subheading.applicant.info" /></a></li>
+				<li><a data-toggle="tab" href="#checklist-info" data-tabidx=1><spring:message
+							code="lbl.registration.detail" /></a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="applicant-info" class="tab-pane fade in active">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="reissueApplicantInfo.jsp"></jsp:include>
+
+						<c:if test="${reIssue.rejectionReason != null}">
+							<div class="row">
+								<div class="col-sm-3 control-label">
+									<spring:message code="lbl.reason.rejection" />
+								</div>
+								<div class="col-sm-3 add-margin view-content">
+									<c:out value="${reIssue.rejectionReason}" />
+								</div>
+							</div>
+						</c:if>
+
+						<jsp:include page="reissuedocumentdetails.jsp"></jsp:include>
 					</div>
-			</form:form>
+				</div>
+
+				<div id="checklist-info" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<jsp:include page="../../common/generalinfo.jsp" />
+					</div>
+				</div>
+			</div>
+			<c:if test="${reIssue.status != null}">
+				<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
+			</c:if>
+			<br />
+			<c:if test="${isEmployee}">
+				<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
+			</c:if>
+			<div class="buttonbottom" align="center">
+				<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+			</div>
+		</form:form>
 	</div>
 </div>
 <script src="<cdn:url value='/resources/js/app/mrgcert-reissue.js?rnd=${app_release_no}'/> "></script> 

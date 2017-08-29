@@ -199,6 +199,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 && MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
                         .equalsIgnoreCase(registration.getState().getNextAction()))
             model.addAttribute("nextActn", MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING);
+            model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
     }
 
     @RequestMapping(value = "/update", method = POST)

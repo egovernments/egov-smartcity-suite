@@ -285,4 +285,13 @@ public class MarriageUtils {
         }
         return outputStream.toByteArray();
     }
+    
+
+    public boolean isReassignEnabled() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME,
+                MarriageConstants.APPCONFKEY_REASSIGN_BUTTONENABLED);
+        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue()) ? true : false;
+    }
+
 }
