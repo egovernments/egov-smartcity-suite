@@ -38,9 +38,57 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+  
 <head>
 <title><s:text name="remittanceVoucherReport.title" /></title>
+<style type="text/css">
+#codescontainer {
+	position: absolute;
+	left: 11em;
+	width: 9%;
+	text-align: left;
+}
+
+#codescontainer .yui-ac-content {
+	position: absolute;
+	width: 600px;
+	border: 1px solid #404040;
+	background: #fff;
+	overflow: hidden;
+	z-index: 9050;
+}
+
+#codescontainer .yui-ac-shadow {
+	position: absolute;
+	margin: .3em;
+	width: 300px;
+	background: #a0a0a0;
+	z-index: 9049;
+}
+
+#codescontainer ul {
+	padding: 5px 0;
+	width: 100%;
+}
+
+#codescontainer li {
+	padding: 0 5px;
+	cursor: default;
+	white-space: nowrap;
+}
+
+#codescontainer li.yui-ac-highlight {
+	background: #ff0;
+}
+
+#codescontainer li.yui-ac-prehighlight {
+	background: #FFFFCC;
+}
+</style>
+<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />
+  <link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/fonts/fonts-min.css"/>
+  <link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/datatable/assets/skins/sam/datatable.css"/>	
+
 <script>
 function onChangeBankAccount(branchId) {
 	populatebankAccountId({
@@ -101,6 +149,13 @@ function validate()
 
 		return valSuccess;
 	}
+var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
+		warn('improperreceiptNumberSelection');
+}
+var receiptNumberSelectionHandler = function(sType, arguments) { 
+	var oData = arguments[2];
+	dom.get("receiptNumber").value=oData[0];
+}
 </script>
 </head>
 <body>
@@ -112,13 +167,38 @@ function validate()
 	<div class="subheadsmallnew"><span class="subheadnew"><s:text
 		name="collectionReport.criteria" /></span></div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
+	    <tr>
 			<td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.fromdate" /><span class="mandatory"></span></td>
-			<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
-			<td width="24%" class="bluebox"><s:textfield id="fromDate"
-				name="fromDate" value="%{cdFormat}"
+				name="remittanceVoucher.criteria.receiptnumber" /></td>
+			<td width="24%" class="bluebox"><%-- <s:textfield id="receiptNumber" type="text" name="receiptNumber"/> --%>
+			   <div class="yui-skin-sam">
+                   <div id="receiptNumber_autocomplete">
+                      <div><s:textfield id="receiptNumber" type="text" name="receiptNumber"/>
+                      </div><span id="receiptNumberResults"></span>
+                    </div>
+                </div>
+                <egov:autocomplete name="receiptNumber" width="15" field="receiptNumber"
+                 url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchAjax.action" 
+                 queryQuestionMark="true" results="receiptNumberResults" 
+                 handler="receiptNumberSelectionHandler"  id="improperreceiptNumberSelectionWarning"/>
+                 <span class='warning' id="improperreceiptNumberSelectionWarning"></span>
+			</td>
+			<td width="21%" class="bluebox"> <s:text
+				name="remittanceVoucher.criteria.remittanceno" /> </td>
+			<td width="24%" class="bluebox"><s:textfield id="remittanceNumber" type="text" name="remittanceNumber"/></td>
+		</tr>
+		  <tr>
+			<td width="4%" class="bluebox">&nbsp;</td>
+			<td width="21%" class="bluebox"><s:text
+				name="remittanceVoucher.criteria.remittance.voucherno" /></td>
+			<td width="24%" class="bluebox"><s:textfield id="voucherNumber" type="text" name="voucherNumber"/>
+			</td>
+			<td width="21%" class="bluebox"><s:text
+				name="remittanceVoucher.criteria.remittancedate" /></td>
+			<s:date name="remittanceDate" var="cdFormat" format="dd/MM/yyyy" />
+			<td width="24%" class="bluebox"><s:textfield id="remittanceDate"
+				name="remittanceDate" value="%{cdFormat}"
 				onfocus="javascript:vDateType='3';"
 				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
 				href="javascript:show_calendar('forms[0].fromDate');"
@@ -126,28 +206,13 @@ function validate()
 				onmouseout="window.status='';return true;"><img
 				src="/egi/resources/erp2/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
-			</td>
-			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.todate" /><span class="mandatory"></span></td>
-			<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
-			<td width="24%" class="bluebox"><s:textfield id="toDate"
-				name="toDate" value="%{cdFormat1}"
-				onfocus="javascript:vDateType='3';"
-				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-				href="javascript:show_calendar('forms[0].toDate');"
-				onmouseover="window.status='Date Picker';return true;"
-				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
-				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
-			</td>
+			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
 		</tr>
 	
 		<tr>
 		 <td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox2"><s:text
-								name="collectionReport.bank.name" />:</td>
+								name="remittanceVoucher.criteria.remittance.branchName" />:</td>
 						<td width="24%" class="bluebox"><s:select
 								headerValue="--Select--" headerKey="-1"
 								list="dropdownData.bankBranchList" listKey="id"
@@ -172,21 +237,6 @@ function validate()
 								dropdownId='serviceId'
 								url='receipts/ajaxBankRemittance-serviceListOfAccount.action'
 								selectedValue="%{serviceId}" /></td></td>
-		</tr>
-		<tr>
-         <td width="4%" class="bluebox">&nbsp;</td>
-			<td width="21%" class="bluebox2"><s:text
-				name="collectionReport.criteria.service" /></td>
-			<td width="24%" class="bluebox2"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.service.all')}" name="serviceId" id="serviceId" cssClass="selectwk"
-				list="dropdownData.collectionServiceList" listKey="id" listValue="name"
-				value="%{serviceId}" /></td>
-			<td width="21%" class="bluebox2">
-				<s:text name="collectionReport.criteria.user"/></td>
-	        	<td width="24%" class="bluebox2"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.user.all')}" name="createdById" id="createdById" cssClass="selectwk"
-				list="dropdownData.remittanceVoucherCreatorList" listKey="id" listValue="name"
-				value="%{createdById}" /></td>
 		</tr>
 	</table>
 <div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>

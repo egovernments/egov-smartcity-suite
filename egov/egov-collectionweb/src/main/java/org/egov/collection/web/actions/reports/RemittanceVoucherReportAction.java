@@ -86,45 +86,32 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
 
-    private static final String EGOV_FROM_DATE = "EGOV_FROM_DATE";
-    private static final String EGOV_TO_DATE = "EGOV_TO_DATE";
-
-    static final String EGOV_BANKACCOUNT_ID = "EGOV_BANKACCOUNT_ID";
-    private static final String EGOV_BRANCH_ID = "EGOV_BRANCH_ID";
-    private static final String EGOV_CREATEDBY_ID = "EGOV_CREATEDBY_ID";
-    private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
     private static final String EGOV_VOUCHER_NUMBER = "EGOV_VOUCHER_NUMBER";
-    private static final String EGOV_BANK_NAME = "EGOV_BANK_NAME";
-    private static final String EGOV_BANKACCOUNT_NAME = "EGOV_BANKACCOUNT_NAME";
-    private static final String EGOV_CREATED_BY_NAME = "EGOV_CREATED_BY_NAME";
-    private static final String EGOV_SERVICE_NAME = "EGOV_SERVICE_NAME";
+    private static final String EGOV_RECEIPT_NUMBER = "EGOV_RECEIPT_NUMBER";
+    private static final String EGOV_REMITTANCE_NUMBER= "EGOV_REMITTANCE_NUMBER";
+    private static final String EGOV_REMITTANCE_DATE = "EGOV_REMITTANCE_DATE";
+    private static final String EGOV_BANKACCOUNT_ID = "EGOV_BANKACCOUNT_ID";
+    private static final String EGOV_BRANCH_ID = "EGOV_BRANCH_ID";
 
-    @Autowired
-    private EmployeeService employeeService;
-    @Autowired
-    private CollectionsUtil collectionsUtil;
     @Autowired
     private ReportService reportService;
     private Integer branchId;
+    private String voucherNumber;
+    private Long bankAcctId;
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private static final String RECEIPTDETAILSLIST = "receiptdetailslist";
     private static final String RECIEPT_DETAILS_TEMPLATE = "collection_receiptdetails_main_report";
     private String reportId;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
-    private String voucherNumber;
     private final Map<String, Object> critParams = new HashMap<String, Object>(0);
     private List<CollectionBankRemittanceReport> bankRemittanceList;
     private Long srvId;
-    private Long bankAcctId;
-    private Long createdId;
     private Integer bankBranchId;
     @Autowired
     private BankaccountHibernateDAO bankAccountHibernateDAO;
     @Autowired
     private BankBranchHibernateDAO bankbranchDAO;
-    @Autowired
-    private UserService userservice;
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
 
     /*
@@ -157,18 +144,10 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     @Action(value = "/reports/remittanceVoucherReport-criteria")
     public String criteria() {
 
-        List<User> usersList = persistenceService
-                .findAllByNamedQuery(CollectionConstants.QUERY_REMITTANCEVOUCHER_CREATOR_LIST);
-        final User user = collectionsUtil.getLoggedInUser();
-        employeeService.getEmployeeById(user.getId());
         populateBankAccountList();
-        addDropdownData("collectionServiceList", Collections.EMPTY_LIST);
-        addDropdownData("remittanceVoucherCreatorList", usersList);
         // Set default values of criteria fields
-        setReportParam(EGOV_FROM_DATE, new Date());
-        setReportParam(EGOV_TO_DATE, new Date());
-        critParams.put(EGOV_FROM_DATE, new Date());
-        critParams.put(EGOV_TO_DATE, new Date());
+        setReportParam(EGOV_REMITTANCE_DATE, new Date());
+        critParams.put(EGOV_REMITTANCE_DATE, new Date());
         return INDEX;
     }
 
@@ -177,8 +156,7 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
 
         final Remittance remittanceObj = (Remittance) persistenceService
                 .findByNamedQuery(CollectionConstants.REMITTANCE_BY_VOUCHER_NUMBER, voucherNumber);
-        critParams.put(EGOV_FROM_DATE, new Date());
-        critParams.put(EGOV_TO_DATE, new Date());
+        critParams.put(EGOV_REMITTANCE_DATE, new Date());
         final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
         if (remittanceObj != null)
         {
@@ -197,14 +175,14 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
             }
         }
         ServiceDetails service = serviceDetailsService.findById(srvId, false);
-        setEgovVoucherNumber(voucherNumber);
-        critParams.put(EGOV_SERVICE_NAME, service != null ? service.getName() : null);
+      //  setEgovVoucherNumber(voucherNumber);
+       /* critParams.put(EGOV_SERVICE_NAME, service != null ? service.getName() : null);
         critParams.put(EGOV_BANK_NAME, bankBranchId != -1 ? bankbranchDAO.findById(bankBranchId, false).getBank().getName()
                 : null);
         critParams.put(EGOV_BANKACCOUNT_NAME, bankAcctId != -1 ? bankAccountHibernateDAO.findById(bankAcctId, false)
                 .getBankbranch().getBank().getName()
                 + "-" + bankAccountHibernateDAO.findById(bankAcctId, false).getAccountnumber() : null);
-        critParams.put(EGOV_CREATED_BY_NAME, createdId != -1 ? userservice.getUserById(createdId).getName() : null);
+        critParams.put(EGOV_CREATED_BY_NAME, createdId != -1 ? userservice.getUserById(createdId).getName() : null);*/
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         collReportResult.setCollectionBankRemittanceReportList(reportList);
         final ReportRequest reportInput = new ReportRequest(RECIEPT_DETAILS_TEMPLATE, collReportResult, critParams);
@@ -213,12 +191,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         return REPORT;
     }
 
-    /**
-     * @return the from date
-     */
-    public Date getFromDate() {
-        return (Date) getReportParam(EGOV_FROM_DATE);
-    }
 
     @Action(value = "/reports/remittanceVoucherReport-report")
     public String report() {
@@ -233,25 +205,12 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
      * @param fromDate the from date to set
      */
     public void setFromDate(final Date fromDate) {
-        critParams.put(EGOV_FROM_DATE, fromDate);
+        critParams.put(EGOV_REMITTANCE_DATE, fromDate);
     }
 
-    /**
-     * @return the do date
-     */
-    public Date getToDate() {
-        return (Date) getReportParam(EGOV_TO_DATE);
-    }
 
     public static String getReceiptdetailslist() {
         return RECEIPTDETAILSLIST;
-    }
-
-    /**
-     * @param toDate the to date to set
-     */
-    public void setToDate(Date toDate) {
-        critParams.put(EGOV_TO_DATE, toDate);
     }
 
     @Override
@@ -267,30 +226,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         critParams.put(EGOV_BANKACCOUNT_ID, bankAccountId);
     }
 
-    public Integer getCreatedById() {
-        return (Integer) getReportParam(EGOV_CREATEDBY_ID);
-    }
-
-    public void setCreatedById(Integer createdById) {
-        critParams.put(EGOV_CREATEDBY_ID, createdById);
-    }
-
-    public Long getServiceId() {
-        return (Long) getReportParam(EGOV_SERVICE_ID);
-    }
-
-    public void setServiceId(Long serviceId) {
-        critParams.put(EGOV_SERVICE_ID, serviceId);
-    }
-
-    public String getEgovVoucherNumber() {
-        return (String) getReportParam(EGOV_VOUCHER_NUMBER);
-    }
-
-    public void setEgovVoucherNumber(String voucherNumber) {
-        critParams.put(EGOV_VOUCHER_NUMBER, voucherNumber);
-    }
-
     public Integer getBranchId() {
         return (Integer) getReportParam(EGOV_BRANCH_ID);
     }
@@ -299,14 +234,47 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         critParams.put(EGOV_BRANCH_ID, branchId);
     }
 
-    public String getVoucherNumber() {
-        return voucherNumber;
+    /**
+     * @return the remittance date
+     */
+    public Date getRemittanceDate() {
+        return (Date) getReportParam(EGOV_REMITTANCE_DATE);
+    }
+    
+    /**
+     * @return the remittance date
+     */
+    public void setRemittanceDate(final Date remittanceDate) {
+        critParams.put(EGOV_REMITTANCE_DATE,remittanceDate);
     }
 
-    public void setVoucherNumber(String voucherNumber) {
-        this.voucherNumber = voucherNumber;
+    public String getReceiptNumber()
+    {
+        return (String) getReportParam(EGOV_RECEIPT_NUMBER);
     }
 
+     public void setReceiptNumber(String receiptNumber)
+     {
+         critParams.put(EGOV_RECEIPT_NUMBER,receiptNumber);
+     }
+     
+     public String getRemittanceNumber()
+     {
+         return (String) getReportParam(EGOV_REMITTANCE_NUMBER);
+     }
+     public void setRemittanceNumber(String remittanceNumber)
+     {
+         critParams.put(EGOV_REMITTANCE_NUMBER, remittanceNumber);
+     }
+     
+     public String getVoucherNumber(){
+         return (String) getReportParam(EGOV_VOUCHER_NUMBER);
+     }
+     
+     public void setVoucherNumber(String voucherNumber){
+         critParams.put(EGOV_VOUCHER_NUMBER,voucherNumber);
+     }
+     
     @Override
     public String getReportId() {
         return reportId;
@@ -320,13 +288,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         this.bankRemittanceList = bankRemittanceList;
     }
 
-    public Long getSrvId() {
-        return srvId;
-    }
-
-    public void setSrvId(Long srvId) {
-        this.srvId = srvId;
-    }
 
     public Long getBankAcctId() {
         return bankAcctId;
@@ -336,13 +297,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         this.bankAcctId = bankAcctId;
     }
 
-    public Long getCreatedId() {
-        return createdId;
-    }
-
-    public void setCreatedId(Long createdId) {
-        this.createdId = createdId;
-    }
 
     public Integer getBankBranchId() {
         return bankBranchId;
@@ -350,38 +304,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
 
     public void setBankBranchId(Integer bankBranchId) {
         this.bankBranchId = bankBranchId;
-    }
-
-    public String getEgovBankName() {
-        return (String) getReportParam(EGOV_BANK_NAME);
-    }
-
-    public void setEgovBankName(String branchName) {
-        critParams.put(EGOV_BANK_NAME, branchName);
-    }
-
-    public String getEgovBankaccountName() {
-        return (String) getReportParam(EGOV_BANKACCOUNT_NAME);
-    }
-
-    public void setEgovBankaccountName(String branchAccountName) {
-        critParams.put(EGOV_BANKACCOUNT_NAME, branchAccountName);
-    }
-
-    public String getEgovCreatedByName() {
-        return (String) getReportParam(EGOV_CREATED_BY_NAME);
-    }
-
-    public void setEgovCreatedByName(String createdByName) {
-        critParams.put(EGOV_CREATED_BY_NAME, createdByName);
-    }
-
-    public String getEgovServiceName() {
-        return (String) getReportParam(EGOV_SERVICE_NAME);
-    }
-
-    public void setEgovServiceName(String serviceName) {
-        critParams.put(EGOV_SERVICE_NAME, serviceName);
     }
 
     public void setServiceDetailsService(final PersistenceService<ServiceDetails, Long> serviceDetailsService) {
