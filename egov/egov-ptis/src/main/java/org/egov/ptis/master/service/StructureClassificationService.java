@@ -39,6 +39,7 @@
  */
 package org.egov.ptis.master.service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -57,32 +58,53 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional
 public class StructureClassificationService {
 
-    private final StructureClassificationRepository structureClassificationRepository;
+	private final StructureClassificationRepository structureClassificationRepository;
 
-    @Autowired
-    public StructureClassificationService(final StructureClassificationRepository structureClassificationRepository) {
-        this.structureClassificationRepository = structureClassificationRepository;
-    }
+	@Autowired
+	public StructureClassificationService(final StructureClassificationRepository structureClassificationRepository) {
+		this.structureClassificationRepository = structureClassificationRepository;
+	}
 
-    @Autowired
-    private InstallmentDao installmentDao;
+	@Autowired
+	private InstallmentDao installmentDao;
 
-    @Autowired
-    private ModuleService moduleService;
+	@Autowired
+	private ModuleService moduleService;
 
-    @Transactional
-    public StructureClassification create(final StructureClassification structureClassification) {
-        structureClassificationRepository.save(structureClassification);
-        return structureClassification;
-    }
+	@Transactional
+	public StructureClassification create(final StructureClassification structureClassification) {
+		structureClassificationRepository.save(structureClassification);
+		return structureClassification;
+	}
 
-    public Installment getInstallment() {
-        final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
-        final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
-        return installment;
-    }
+	public Installment getInstallment() {
+		final Module module = moduleService.getModuleByName(PropertyTaxConstants.PTMODULENAME);
+		final Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date());
+		return installment;
+	}
 
-    public List<StructureClassification> getAllActiveStructureTypes() {
-        return structureClassificationRepository.findByIsActiveTrueOrderByTypeName();
-    }
+	public List<StructureClassification> getAllActiveStructureTypes() {
+		return structureClassificationRepository.findByIsActiveTrueOrderByTypeName();
+	}
+
+	public StructureClassification findOne(final Long id) {
+		return structureClassificationRepository.findOne(id);
+	}
+
+	@Transactional
+	public void update(final StructureClassification structureClassification) {
+		structureClassificationRepository.save(structureClassification);
+	}
+
+	public List<String> validateUpdateClassification(final StructureClassification structureClassification) {
+		final List<String> errors = new ArrayList<>();
+		if (!structureClassificationRepository
+				.findByCodeAndNotInId(structureClassification.getConstrTypeCode(), structureClassification.getId())
+				.isEmpty())
+			errors.add("error.duplicate.code");
+		else if (!structureClassificationRepository.findByUsageUnitRateActive(structureClassification.getId()).isEmpty()
+				&& !structureClassification.getIsActive())
+			errors.add("error.active.unitrates.exist.forstructure");
+		return errors;
+	}
 }

@@ -41,12 +41,22 @@ package org.egov.ptis.domain.repository.master.structureclassification;
 
 import java.util.List;
 
+import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 public interface StructureClassificationRepository extends JpaRepository<StructureClassification, Long> {
 
-    List<StructureClassification> findByIsActiveTrueOrderByTypeName();
+	List<StructureClassification> findByIsActiveTrueOrderByTypeName();
 
-    List<StructureClassification> findByConstrTypeCodeLike(String structureCode);
+	List<StructureClassification> findByConstrTypeCodeLike(String structureCode);
+
+	@Query(value = "select * from egpt_struc_cl where upper(code) = upper(:constrTypeCode) and id <> :id", nativeQuery = true)
+	List<StructureClassification> findByCodeAndNotInId(@Param("constrTypeCode") String constrTypeCode,
+			@Param("id") Long id);
+
+	@Query(value = "from Category where structureClass.id = :id and isActive = true")
+	List<Category> findByUsageUnitRateActive(@Param("id") Long id);
 }

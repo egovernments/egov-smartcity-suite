@@ -10,7 +10,7 @@
  *     This program is free software: you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
  *     the Free Software Foundation, either version 3 of the License, or
-4 *     any later version.
+ *     any later version.
  *
  *     This program is distributed in the hope that it will be useful,
  *     but WITHOUT ANY WARRANTY; without even the implied warranty of
@@ -37,7 +37,7 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-	jQuery(document).ready(
+jQuery(document).ready(
 		function() {
 			$("#fromDate,#toDate").on(
 					'changeDate',
@@ -63,10 +63,18 @@
 							}
 						}
 					});
+
+			jQuery('#edit').click(
+					function() {
+						if (jQuery("#typeName").val() == '') {
+							bootbox.alert("Building type Required");
+							return false;
+						} else {
+							var building = jQuery("#typeName").val();
+							window.open("/ptis/structureclassification/edit/"
+									+ building, "_self");
+
+						}
+					});
+
 		});
-				
-
-			
-	
-
-

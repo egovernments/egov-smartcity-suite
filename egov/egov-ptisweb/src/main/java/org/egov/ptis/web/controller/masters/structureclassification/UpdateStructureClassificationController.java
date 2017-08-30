@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2015>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -42,9 +42,7 @@ package org.egov.ptis.web.controller.masters.structureclassification;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
 
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.master.service.StructureClassificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,68 +50,50 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 @Controller
 @RequestMapping(value = "/structureclassification")
-public class CreateAndViewStructureClassificationController {
+public class UpdateStructureClassificationController {
 
 	private final StructureClassificationService structureClassificationService;
 
 	@Autowired
-	public UserService userService;
-
-	@Autowired
-	public CreateAndViewStructureClassificationController(
+	public UpdateStructureClassificationController(
 			final StructureClassificationService structureClassificationService) {
 		this.structureClassificationService = structureClassificationService;
 	}
 
 	@ModelAttribute
-	public StructureClassification structureClassificationModel() {
-		return new StructureClassification();
+	public StructureClassification structureClassificationModel(@PathVariable final Long id) {
+		return structureClassificationService.findOne(id);
 	}
 
-	@ModelAttribute(value = "structuretypes")
-	public List<StructureClassification> listStructures() {
-		return structureClassificationService.getAllActiveStructureTypes();
+	@RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
+	public String edit(@ModelAttribute final StructureClassification structureClassification, final Model model,
+			final HttpServletRequest request, @PathVariable final Long id) {
+		model.addAttribute("structureClassification", structureClassification);
+		return "structureclassification-edit";
 	}
 
-	@RequestMapping(value = "/create", method = RequestMethod.GET)
-	public String create(final Model model) {
-		model.addAttribute("structureclassification", structureClassificationModel());
-		return "structureclassification-create";
-	}
-
-	@RequestMapping(value = "/view", method = RequestMethod.GET)
-	public String showStructureType(final Model model) {
-		model.addAttribute("structureclassifications", structureClassificationService.getAllActiveStructureTypes());
-		return "structureclassification-view";
-	}
-
-	@RequestMapping(value = "/create", method = RequestMethod.POST)
-	public String create(@Valid @ModelAttribute final StructureClassification structureClassification,
+	@RequestMapping(value = "/edit/{id}", method = RequestMethod.POST)
+	public String update(@ModelAttribute final StructureClassification structureClassification,
 			final BindingResult errors, final RedirectAttributes redirectAttributes, final HttpServletRequest request,
 			final Model model) {
-
-		if (errors.hasErrors())
-			return "structureclassification-create";
-		structureClassification.setNumber(1);
-		structureClassification.setStartInstallment(structureClassificationService.getInstallment());
-		structureClassification.setIsHistory('N');
-
-		structureClassificationService.create(structureClassification);
-		redirectAttributes.addFlashAttribute("message", "msg.structcls.create.success");
-		return "redirect:/structureclassification/create";
-
-	}
-
-	@RequestMapping(value = "/search", method = RequestMethod.GET)
-	public String search(final Model model) {
-		return "structureclassification-search";
-
+		final List<String> hasErrors = structureClassificationService
+				.validateUpdateClassification(structureClassification);
+		if (!hasErrors.isEmpty())
+			for (final String error : hasErrors)
+				errors.reject(error, error);
+		else {
+			structureClassificationService.update(structureClassification);
+			model.addAttribute("message", "Building Classification updated successfully.");
+			return "structureedit-success";
+		}
+		return "structureclassification-edit";
 	}
 
 }

@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) <2015>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -42,70 +42,59 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt"%>
-
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row" id="page-content">
 	<div class="col-md-12">
-		<div class="row">
-			<div class="col-md-12">
-				<div class="panel-group">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message
-										code="lbl.structureclassification.view" /></strong>
-							</div>
-						</div>
-						<div class="panel-body history-slide">
-							<div class="form-group col-sm-10 col-sm-offset-1">
-								<table align="left" Class="table table-bordered table-hover">
-									<thead>
-										<tr>
-											<th class="text-left"><spring:message code="lbl.sno" /></th>
-											<th class="text-left"><spring:message code="lbl.code" /></th>
-											<th class="text-left"><spring:message code="lbl.name" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.description" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.fromDate" /></th>
-											<th class="text-left"><spring:message code="lbl.toDate" /></th>
+		<c:if test="${not empty message}">
+			<div class="alert alert-success" role="alert">
+				<spring:message code="${message}" />
+			</div>
+		</c:if>
 
-										</tr>
-									</thead>
-									<tbody>
-										<c:set var="count" value="1" />
-
-										<c:forEach var="structureclassification"
-											items="${structureclassifications}">
-											<tr>
-												<td><c:out value="${count}" /></td>
-												<td><c:out
-														value="${structureclassification.constrTypeCode}" /></td>
-												<td><c:out value="${structureclassification.typeName}" /></td>
-												<td><c:out
-														value="${structureclassification.description}" /></td>
-												<td><fmt:formatDate
-														value="${structureclassification.fromDate}"
-														pattern="dd-MM-yyyy" /></td>
-												<td><fmt:formatDate
-														value="${structureclassification.toDate}"
-														pattern="dd-MM-yyyy" /></td>
-											</tr>
-											<c:set var="count" value="${count+1}" />
-										</c:forEach>
-									</tbody>
-								</table>
-							</div>
+		<form:form id="structureTypeForm"
+			modelAttribute="structureClassification"
+			class="form-horizontal form-groups-bordered">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+						<strong><spring:message code="lbl.title.searchBuilding" /></strong>
+					</div>
+				</div>
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label class="col-sm-3 control-label"> <spring:message
+								code="lbl.structureclassification" /> <span class="mandatory"></span>
+						</label>
+						<div class="col-sm-6 add-margin">
+							<form:select path="id" id="typeName" cssClass="form-control"
+								cssErrorClass="form-control error" required="required">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${structuretypes}" itemValue="id"
+									itemLabel="typeName" />
+							</form:select>
+							<form:errors path="typeName" cssClass="error-msg" />
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
-		<div class="row">
-			<div class="text-center">
-				<a href="javascript:void(0)" class="btn btn-default"
-					onclick="self.close()"><spring:message code="lbl.close" /></a>
+			<div class="form-group">
+				<div class="text-center">
+					<button type="button" id="edit" class="btn btn-primary">
+						<spring:message code="lbl.button.edit" />
+					</button>
+					<button type="button" class="btn btn-default" data-dismiss="modal"
+						onclick="self.close()">
+						<spring:message code="lbl.close" />
+					</button>
+
+				</div>
 			</div>
-		</div>
+			<div class="row"></div>
+
+		</form:form>
 	</div>
 </div>
+<script
+	src="<cdn:url value='/resources/js/app/structure.js?rnd=${app_release_no}'/>"></script>

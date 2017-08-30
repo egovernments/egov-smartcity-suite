@@ -401,6 +401,21 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-create.jsp"/>
     </definition>
     
+    <definition name="structureclassification-edit" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-edit.jsp"/>
+    </definition>
+    
+    <definition name="structureclassification-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-search.jsp"/>
+    </definition>
+    
+    <definition name="structureedit-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureedit-success.jsp"/>
+    </definition>
+    
     <definition name="inventorynotice-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.inventory.notice" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/inventorynotice-form.jsp"/>
