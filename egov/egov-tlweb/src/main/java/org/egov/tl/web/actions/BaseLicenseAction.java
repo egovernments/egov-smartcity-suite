@@ -83,6 +83,7 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.ProcessOwnerReassignmentService;
 import org.egov.tl.service.LicenseSubCategoryService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
@@ -121,6 +122,8 @@ import static org.egov.tl.utils.Constants.*;
                 params = {"prependServletContext", "false", "transactionServiceNumber", "${applicationNo}"})})
 public abstract class BaseLicenseAction<T extends License> extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
+    private static final String WF_ITEM_PROCESSED = "wf.item.processed";
+    private static final String MESSAGE = "message";
 
     protected transient WorkflowBean workflowBean = new WorkflowBean();
     protected transient List<String> buildingTypeList;
@@ -166,6 +169,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Qualifier("feeTypeService")
     private transient FeeTypeService feeTypeService;
 
+    @Autowired
+    private transient ProcessOwnerReassignmentService processOwnerReassignmentService;
+
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("parentBoundary", Boundary.class);
@@ -206,20 +212,20 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
             if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
-                addActionMessage(this.getText("wf.item.processed"));
-                return "message";
+                addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                return MESSAGE;
             }
         }
         if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
-            addActionMessage(this.getText("wf.item.processed"));
-            return "message";
+            addActionMessage(this.getText(WF_ITEM_PROCESSED));
+            return MESSAGE;
         }
         processWorkflow(NEW);
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
         if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             return GENERATE_CERTIFICATE;
         else
-            return "message";
+            return MESSAGE;
 
     }
 
@@ -253,16 +259,16 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
             WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
             if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
-                addActionMessage(this.getText("wf.item.processed"));
-                return "message";
+                addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                return MESSAGE;
             }
         }
         if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
-            addActionMessage(this.getText("wf.item.processed"));
-            return "message";
+            addActionMessage(this.getText(WF_ITEM_PROCESSED));
+            return MESSAGE;
         }
         processWorkflow(RENEWAL_LIC_APPTYPE);
-        return "message";
+        return MESSAGE;
     }
 
     protected void populateWorkflowBean() {
@@ -430,6 +436,18 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         workflowBean.setDepartmentList(licenseUtils.getAllDepartments());
         workflowBean.setDesignationList(Collections.emptyList());
         workflowBean.setAppoverUserList(Collections.emptyList());
+    }
+
+    public Boolean hasJuniorOrSeniorAssistantRole() {
+        List<Position> userPositions = positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId());
+        return userPositions
+                .stream()
+                .anyMatch(position -> (position.getDeptDesig().getDesignation().getName().equalsIgnoreCase(JA_DESIGNATION)
+                        || position.getDeptDesig().getDesignation().getName().equalsIgnoreCase(SA_DESIGNATION)));
+    }
+
+    public Boolean reassignEnabled(){
+        return processOwnerReassignmentService.reassignmentEnabled();
     }
 
     public LicenseDemand getCurrentYearDemand() {

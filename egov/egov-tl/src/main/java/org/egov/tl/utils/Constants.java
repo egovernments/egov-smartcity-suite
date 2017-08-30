@@ -194,9 +194,12 @@ public final class Constants {
     public static final String CSCOPERATOR = "CSC Operator";
     public static final String PRINTACK = "printAck";
     public static final String PUBLIC_HEALTH_DEPT = "PUBLIC HEALTH AND SANITATION";
+    public static final String PUBLIC_HEALTH_DEPT_CODE = "PHS";
     public static final String JA_DESIGNATION = "Junior Assistant";
     public static final String RC_DESIGNATION = "Revenue Clerk";
     public static final String SA_DESIGNATION = "Senior Assistant";
+    public static final String SA_DESIGNATION_CODE= "SASST";
+    public static final String JA_DESIGNATION_CODE="JASST";
     public static final String CLOSURE_NATUREOFTASK = "Closure License";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String TRADE_LICENSE = "Trade License";

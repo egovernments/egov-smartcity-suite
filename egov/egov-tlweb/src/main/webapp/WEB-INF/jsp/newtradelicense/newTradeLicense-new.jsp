@@ -132,7 +132,7 @@
                 var mobileno = document.getElementById('mobilePhoneNumber').value;
                 if (adhaar.length > 0 && adhaar.length < 12) {
                     $('#adhaarError').removeClass("hide");
-                    document.getElementById("adhaarId").focus();
+                    $("#adhaarId").focus();
                     return false;
                 }
                 if (mobileno.length > 0 && mobileno.length < 10) {
@@ -444,12 +444,20 @@
             </s:push>
         </s:form>
         <div style="text-align: center;" id="btndiv">
+            <s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() &&  mode!=('editForReject') && state.value!='License Created'">
+                <button type="button" class="btn btn-primary" id="reassign">
+                    Reassign
+                </button>
+            </s:if>
             <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
                    style="display: none;" onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
         </div>
 
     </div>
 </div>
+<s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && mode!=('editForReject') && state.value!='License Created'">
+<jsp:include page="../common/process-owner-reassignment.jsp"/>
+</s:if>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>

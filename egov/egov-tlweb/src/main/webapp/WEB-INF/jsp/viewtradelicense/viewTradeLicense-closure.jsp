@@ -94,6 +94,13 @@
                 <div class="panel panel-primary" id="workflowDiv">
                     <%@ include file='../common/license-workflow-dropdown.jsp' %>
                     <%@ include file='../common/license-workflow-button.jsp' %>
+                    <s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && state.value=='NEW' ">
+                        <div class="text-center">
+                            <button type="button" class="btn btn-primary" id="reassign">
+                                Reassign
+                            </button>
+                        </div>
+                    </s:if>
                 </div>
             </s:if>
             <s:else>
@@ -113,15 +120,15 @@
         </s:push>
     </s:form>
 </div>
+<jsp:include page="../common/process-owner-reassignment.jsp"/>
 <script>
     function onSubmitValidations() {
         return true;
     }
-
     function onSubmit() {
         var licid = $('#licenseId').val();
         var url = $('#url').val();
-        document.viewForm.action = '${pageContext.request.contextPath}/'+url+licid;
+        document.viewForm.action = '${pageContext.request.contextPath}/' + url + licid;
         return true;
     }
 
