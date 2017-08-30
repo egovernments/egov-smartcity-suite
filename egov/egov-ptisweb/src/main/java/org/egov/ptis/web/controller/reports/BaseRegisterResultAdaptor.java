@@ -67,7 +67,7 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 
 	public static final String CURRENTYEAR_FIRST_HALF = "Current 1st Half";
 	public static final String CURRENTYEAR_SECOND_HALF = "Current 2nd Half";
-	
+
 	private static PropertyTaxUtil propertyTaxUtil;
 
 	public BaseRegisterResultAdaptor() {
@@ -88,6 +88,8 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 			final Map<String, BigDecimal> valuesMap = getTaxDetails(baseRegisterResultObj);
 			final Map<String, String> floorValuesMap = getFloorDetails(baseRegisterResultObj);
 
+			BigDecimal currTotal = BigDecimal.ZERO;
+
 			final BigDecimal currColl = baseRegisterResultObj.getAggrCurrFirstHalfColl() != null
 					? baseRegisterResultObj.getAggrCurrFirstHalfColl()
 					: BigDecimal.ZERO.add(baseRegisterResultObj.getAggrCurrSecondHalfColl() != null
@@ -95,9 +97,9 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 
 			final BigDecimal totalColl = currColl.add(baseRegisterResultObj.getArrearCollection() != null
 					? baseRegisterResultObj.getArrearCollection() : BigDecimal.ZERO);
-
-			final BigDecimal currTotal = valuesMap.get("totalCurrPropertyTax")
-					.add(valuesMap.get("totalCurrEduCess").add(valuesMap.get("totalCurrLibCess")));
+			if (!valuesMap.isEmpty())
+				currTotal = valuesMap.get("totalCurrPropertyTax")
+						.add(valuesMap.get("totalCurrEduCess").add(valuesMap.get("totalCurrLibCess")));
 
 			jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getPropertyId());
 			jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
