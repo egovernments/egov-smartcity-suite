@@ -192,9 +192,9 @@
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-create.jsp"/>
     </definition>
 
-    <definition name="view-boundaries" extends="base_layout">
+    <definition name="boundary-update" extends="base_layout">
         <put-attribute name="page-title" value="title.boundary" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/view-boundaries.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/boundary/boundary-update.jsp"/>
     </definition>
 
     <definition name="department-search" extends="base_layout">

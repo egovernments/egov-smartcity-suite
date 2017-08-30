@@ -46,10 +46,9 @@ import java.util.Date;
 
 public class BoundaryBuilder {
 
-    private final Boundary boundary;
-
     // use this count where unique names,descriptions etc required
     private static long count;
+    private final Boundary boundary;
 
     public BoundaryBuilder() {
         boundary = new Boundary();
@@ -97,7 +96,7 @@ public class BoundaryBuilder {
     }
 
     public BoundaryBuilder withIsHistory(final boolean isHistory) {
-        boundary.setHistory(isHistory);
+        boundary.setActive(isHistory);
         return this;
     }
 
@@ -143,7 +142,7 @@ public class BoundaryBuilder {
             withFromDate(new Date());
         if (null == boundary.getToDate())
             withToDate(new Date());
-        if (boundary.isHistory())
+        if (boundary.isActive())
             withIsHistory(false);
         if (null == boundary.getBndryId())
             withBndryId(Long.valueOf(count));
@@ -175,7 +174,7 @@ public class BoundaryBuilder {
             withFromDate(new Date());
         if (null == boundary.getToDate())
             withToDate(new Date());
-        if (boundary.isHistory())
+        if (boundary.isActive())
             withIsHistory(false);
         if (null == boundary.getBndryId())
             withBndryId(Long.valueOf(count));

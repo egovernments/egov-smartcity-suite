@@ -43,6 +43,7 @@ package org.egov.infra.admin.master.service;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+import org.egov.infra.admin.master.contracts.BoundarySearchRequest;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
@@ -58,6 +59,9 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -94,14 +98,12 @@ public class BoundaryService {
 
     @Transactional
     public Boundary createBoundary(final Boundary boundary) {
-        boundary.setHistory(false);
         boundary.setMaterializedPath(getMaterializedPath(null, boundary.getParent()));
         return boundaryRepository.save(boundary);
     }
 
     @Transactional
     public void updateBoundary(final Boundary boundary) {
-        boundary.setHistory(false);
         boundary.setMaterializedPath(getMaterializedPath(boundary, boundary.getParent()));
         boundaryRepository.save(boundary);
     }
@@ -115,16 +117,17 @@ public class BoundaryService {
     }
 
     public List<Boundary> getAllBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
-        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
+        return boundaryRepository.findByBoundaryTypeId(boundaryTypeId);
     }
 
-    public List<Boundary> getPageOfBoundaries(final Long boundaryTypeId) {
-
-        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
+    public Page<Boundary> getPageOfBoundaries(BoundarySearchRequest searchRequest) {
+        Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+                searchRequest.orderDir(), searchRequest.orderBy());
+        return boundaryRepository.findByBoundaryTypeId(searchRequest.getBoundaryTypeId(), pageable);
     }
 
     public Boundary getBoundaryByTypeAndNo(final BoundaryType boundaryType, final Long boundaryNum) {
-        return boundaryRepository.findBoundarieByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
+        return boundaryRepository.findByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
     }
 
     public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {

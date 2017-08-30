@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -41,10 +41,8 @@
 package org.egov.infra.web.controller.admin.masters.boundary;
 
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,25 +57,22 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
+import java.util.Optional;
 
 @Controller
-@RequestMapping("boundary/create")
-public class CreateBoundaryController {
+@RequestMapping("boundary/update")
+public class UpdateBoundaryController {
 
-    private static final String BOUNDARY_CREATE_VIEW = "boundary-create";
-
+    private static final String BOUNDARY_UPDATE_VIEW = "boundary-update";
     @Autowired
     private BoundaryService boundaryService;
-
-    @Autowired
-    private BoundaryTypeService boundaryTypeService;
 
     @Autowired
     private HierarchyTypeService hierarchyTypeService;
 
     @ModelAttribute
-    public Boundary boundary() {
-        return new Boundary();
+    public Boundary boundary(@PathVariable Optional<Long> id) {
+        return id.isPresent() ? boundaryService.getBoundaryById(id.get()) : new Boundary();
     }
 
     @ModelAttribute("hierarchyTypes")
@@ -85,39 +80,31 @@ public class CreateBoundaryController {
         return hierarchyTypeService.getAllHierarchyTypes();
     }
 
-    @GetMapping
-    public String showCreateBoundarySearchForm(Model model) {
+    @GetMapping("/")
+    public String showUpdateBoundarySearchForm(Model model) {
         model.addAttribute("search", true);
-        return BOUNDARY_CREATE_VIEW;
+        return BOUNDARY_UPDATE_VIEW;
     }
 
-    @GetMapping("{boundaryTypeId}")
-    public String showCreateBoundaryForm(@PathVariable Long boundaryTypeId, Model model, RedirectAttributes redirectAttributes) {
-        BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundaryTypeId);
-        if (boundaryService.validateBoundary(boundaryType)) {
-            redirectAttributes.addFlashAttribute("warning", "err.root.bndry.exists");
-            return "redirect:/boundary/create";
-        }
-
-        model.addAttribute("boundaryType", boundaryType);
-        if (boundaryType.getParent() != null)
-            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
+    @GetMapping("{id}")
+    public String showUpdateBoundaryForm(Model model) {
         model.addAttribute("search", false);
-        return BOUNDARY_CREATE_VIEW;
+        return BOUNDARY_UPDATE_VIEW;
     }
 
-    @PostMapping
-    public String createBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult errors,
+    @PostMapping("{id}")
+    public String updateBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult bindingResult,
                                  RedirectAttributes redirectAttributes, Model model) {
-        if (errors.hasErrors()) {
-            BoundaryType boundaryType = boundary.getBoundaryType();
-            model.addAttribute("boundaryType", boundaryType);
-            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
-            return BOUNDARY_CREATE_VIEW;
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("boundaryType", boundary.getBoundaryType());
+            model.addAttribute("parentBoundary", boundaryService
+                    .getActiveBoundariesByBoundaryTypeId(boundary.getBoundaryType().getParent().getId()));
+            return BOUNDARY_UPDATE_VIEW;
         }
-        boundaryService.createBoundary(boundary);
-        redirectAttributes.addFlashAttribute("message", "msg.bndry.create.success");
-        redirectAttributes.addFlashAttribute("create", true);
+        boundaryService.updateBoundary(boundary);
+        redirectAttributes.addFlashAttribute("message", "msg.bndry.update.success");
+        redirectAttributes.addFlashAttribute("edit", true);
         return "redirect:/boundary/view/" + boundary.getId();
     }
+
 }

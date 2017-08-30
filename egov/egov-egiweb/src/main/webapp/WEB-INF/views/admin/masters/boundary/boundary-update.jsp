@@ -45,16 +45,14 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib prefix="egov" tagdir="/WEB-INF/tags" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<link rel="stylesheet" href="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css'/>">
 <div class="row" id="page-content">
     <div class="col-md-12">
         <div class="panel" data-collapsed="0">
             <div class="panel-body">
-                <c:if test="${not empty warning}">
-                    <div class="alert alert-danger" role="alert"><spring:message code="${warning}"/></div>
-                </c:if>
                 <c:choose>
                     <c:when test="${search}">
-                        <form:form id="boundaryCreateSearchForm" class="form-horizontal form-groups-bordered" method="get">
+                        <form id="boundaryCreateSearchForm" class="form-horizontal form-groups-bordered" method="get">
                             <div class="panel panel-primary" data-collapsed="0">
                                 <div class="panel-heading">
                                     <div class="panel-title">
@@ -88,6 +86,15 @@
                                             </select>
                                         </div>
                                     </div>
+                                    <div class="form-group">
+                                        <label class="col-sm-3 control-label"><spring:message
+                                                code="lbl.boundary.name"/></label>
+                                        <div class="col-sm-6 add-margin">
+                                            <select id="boundary" class="form-control">
+                                                <option value=""><spring:message code="lbl.select"/></option>
+                                            </select>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
 
@@ -97,14 +104,14 @@
                                 <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
                             </div>
 
-                        </form:form>
+                        </form>
                     </c:when>
                     <c:otherwise>
-                        <form:form method="post" action="/egi/boundary/create" class="form-horizontal form-groups-bordered" commandName="boundary" id="boundaryCreate">
+                        <form:form method="post" class="form-horizontal form-groups-bordered" commandName="boundary" id="boundaryUpdate">
                             <div class="panel panel-primary" data-collapsed="0">
                                 <div class="panel-heading">
                                     <div class="panel-title">
-                                        <strong><spring:message code="lbl.hdr.createBoundary"/></strong>
+                                        <strong><spring:message code="lbl.hdr.updateBoundary"/></strong>
                                     </div>
                                 </div>
 
@@ -112,7 +119,7 @@
                                     <div class="form-group">
                                         <label class="col-sm-3 control-label"><spring:message code="lbl.hierarchyType"/></label>
                                         <div class="col-sm-6" style="padding-top: 7px">
-                                            <strong><c:out value="${boundaryType.hierarchyType.name}"/></strong>
+                                            <strong><c:out value="${boundary.boundaryType.hierarchyType.name}"/></strong>
                                         </div>
                                     </div>
                                     <div class="form-group">
@@ -120,43 +127,20 @@
                                             <spring:message code="lbl.boundaryType"/>
                                         </label>
                                         <div class="col-sm-6" style="padding-top: 7px">
-                                            <strong><c:out value="${boundaryType.name}"/></strong>
-                                            <input type="hidden" name="boundaryType" value="<c:out value="${boundaryType.id}" />"/>
+                                            <strong><c:out value="${boundary.boundaryType.name}"/></strong>
+                                            <input type="hidden" name="boundaryType" value="<c:out value="${boundary.boundaryType.id}" />"/>
                                         </div>
                                     </div>
                                     <div class="panel-body custom-form">
-                                        <c:choose>
-                                            <c:when test="${not empty parentBoundary}">
-                                                <div class="form-group">
-                                                    <label class="col-sm-3 control-label">
-                                                        <spring:message code="lbl.parent.boundary.name"/>
-                                                        <span class="mandatory"></span>
-                                                    </label>
-                                                    <div class="col-sm-6 add-margin">
-                                                        <form:select path="parent" id="hierarchyTypeSelect" cssClass="form-control" cssErrorClass="form-control error" required="true">
-                                                            <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                                            <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
-                                                        </form:select>
-                                                        <form:errors path="parent" cssClass="error-msg"/>
-                                                    </div>
-                                                </div>
-                                            </c:when>
-                                            <c:otherwise>
-                                                <div class="form-group">
-                                                    <label class="col-sm-3 control-label">
-                                                        <spring:message code="lbl.parent.boundary.name"/>
-                                                    </label>
-                                                    <div class="col-sm-6 add-margin">
-                                                        <form:select path="parent"
-                                                                     id="hierarchyTypeSelect" cssClass="form-control" cssErrorClass="form-control error">
-                                                            <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                                            <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
-                                                        </form:select>
-                                                        <form:errors path="parent" cssClass="error-msg"/>
-                                                    </div>
-                                                </div>
-                                            </c:otherwise>
-                                        </c:choose>
+                                        <div class="form-group">
+                                            <label class="col-sm-3 control-label">
+                                                <spring:message code="lbl.parent.boundary.name"/>
+                                            </label>
+                                            <div class="col-sm-6 add-margin">
+                                                <strong><c:out value="${boundary.parent.name}" default="N/A"/></strong>
+                                                <form:errors path="parent" cssClass="error-msg"/>
+                                            </div>
+                                        </div>
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label">
                                                 <spring:message code="lbl.boundary.name"/><span class="mandatory"></span>
@@ -180,7 +164,7 @@
                                                 <spring:message code="lbl.boundary.number"/><span class="mandatory"></span>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="boundaryNum" id="name" type="text" class="form-control low-width is_valid_number" placeholder="" autocomplete="off" required="required"/>
+                                                <form:input path="boundaryNum" id="name" type="text" class="form-control low-width is_valid_number" placeholder="" autocomplete="off" required="required" readonly="true"/>
                                                 <form:errors path="boundaryNum" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -205,7 +189,7 @@
                                         <div class="form-group">
                                             <label class="col-sm-3 control-label"><spring:message code="lbl.isactive"/></label>
                                             <div class="col-sm-6 add-margin">
-                                                <form:checkbox path="active" checked="checked"/>
+                                                <form:checkbox path="active"/>
                                             </div>
                                         </div>
                                     </div>
@@ -213,9 +197,9 @@
                             </div>
                             <div class="row">
                                 <div class="text-center">
-                                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+                                    <button class="btn btn-primary"><spring:message code="lbl.submit"/></button>
                                     <a href="javascript:void(0)" class="btn btn-default" id="backBtnId">
-                                        <spring:message code="lbl.create"/>&nbsp;<spring:message code="lbl.search"/>
+                                        <spring:message code="lbl.edit"/>&nbsp;<spring:message code="lbl.search"/>
                                     </a>
                                     <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
                                 </div>
@@ -227,4 +211,11 @@
         </div>
     </div>
 </div>
-<script src="<cdn:url  value='/resources/js/app/boundary-create.js?rnd=${app_release_no}'/>"></script>
+<table class="table table-bordered datatable" id="view-boundaries">
+</table>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js'/>"></script>
+<script src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/boundary-update.js?rnd=${app_release_no}'/>"></script>

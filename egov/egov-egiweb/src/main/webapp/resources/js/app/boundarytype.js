@@ -38,46 +38,65 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.controller.admin.masters.boundary;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+function populateBoundaryTypes(dropdown) {
+    populateboundaryTypeSelect({
+        hierarchyTypeId: dropdown.value
+    });
+}
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-@Controller
-public class PageViewBoundaryController {
-
-    private final BoundaryService boundaryService;
-
-    @Autowired
-    public PageViewBoundaryController(final BoundaryService boundaryService) {
-        this.boundaryService = boundaryService;
+/**
+ * Ajax validation to check for child boundary type for a parent
+ */
+function checkForChild() {
+    var id = $("#boundaryTypeSelect").val();
+    if (id == '') {
+        bootbox.alert('Please select the Boundary Type !');
+        return false;
     }
-
-    @RequestMapping(value = "/list-boundaries", method = RequestMethod.GET)
-    public @ResponseBody void springPaginationDataTables(final HttpServletRequest request,
-            final HttpServletResponse response) throws IOException {
-
-        final Long boundaryTypeId = Long.valueOf(request.getParameter("boundaryTypeId"));
-
-        final List<Boundary> pageOfBoundaries = boundaryService.getPageOfBoundaries(boundaryTypeId);
-        final StringBuilder boundaryJSONData = new StringBuilder("{\"data\":").append(toJSON(pageOfBoundaries, Boundary.class, BoundaryAdapter.class))
-                .append("}");
-        response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-        IOUtils.write(boundaryJSONData, response.getWriter());
+    else {
+        $.ajax({
+            type: "GET",
+            url: "ajax/checkchild",
+            data: {'parentId': id},
+            dataType: "json",
+            success: function (response) {
+                if (response == true) {
+                    bootbox.alert('Child already exists!');
+                    return false;
+                }
+                else {
+                    $("#boundaryTypeSearch").submit();
+                    return true;
+                }
+            },
+            error: function (response) {
+                console.log("failed");
+            }
+        });
     }
 }
+
+$('#boundaryTypeCreateBtn').click(function () {
+    $('#boundaryTypeSuccess').attr('method', 'get');
+    $('#boundaryTypeSuccess').attr('action', '/egi/boundarytype/create');
+});
+
+$('#boundaryTypeUpdateBtn').click(function () {
+    var url = '/egi/boundarytype/update/' + $('#boundaryTypeId').val();
+    $('#boundaryTypeSuccess').attr('method', 'get');
+    $('#boundaryTypeSuccess').attr('action', url);
+});
+
+function validateName() {
+    var childName = $("#name").val();
+    var parentName = $("#parent").val();
+    if (childName == parentName) {
+        bootbox.alert('Child and parent boundary types cannot have the same name!');
+        return false;
+    }
+    else {
+        $("#boundaryTypeAddChildform").submit();
+        return true;
+    }
+} 

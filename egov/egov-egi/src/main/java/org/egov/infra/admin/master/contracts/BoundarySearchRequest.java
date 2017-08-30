@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,33 +38,19 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.support.json.adapter;
+package org.egov.infra.admin.master.contracts;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import java.lang.reflect.Type;
+public class BoundarySearchRequest extends DataTableSearchRequest {
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+    private Long boundaryTypeId;
 
-public class BoundaryAdapter implements JsonSerializer<Boundary> {
+    public Long getBoundaryTypeId() {
+        return boundaryTypeId;
+    }
 
-    @Override
-    public JsonElement serialize(final Boundary boundary, final Type type, final JsonSerializationContext jsc) {
-        JsonObject boundaryJson = new JsonObject();
-        boundaryJson.addProperty("id", boundary.getId());
-        boundaryJson.addProperty("name", boundary.getName());
-        boundaryJson.addProperty("boundaryNameLocal", defaultIfBlank(boundary.getLocalName()));
-        boundaryJson.addProperty("boundaryParentName", (boundary.getParent() == null ? NA : boundary.getParent().getName()));
-        boundaryJson.addProperty("boundaryNum", boundary.getBoundaryNum());
-        boundaryJson.addProperty("fromDate", toDefaultDateFormat(boundary.getFromDate()));
-        boundaryJson.addProperty("toDate", boundary.getToDate() == null ? NA : toDefaultDateFormat(boundary.getToDate()));
-
-        return boundaryJson;
+    public void setBoundaryTypeId(final Long boundaryTypeId) {
+        this.boundaryTypeId = boundaryTypeId;
     }
 }

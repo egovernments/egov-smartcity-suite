@@ -114,7 +114,7 @@ public class Boundary extends AbstractAuditable {
 
     private Date toDate;
 
-    private boolean isHistory;
+    private boolean active;
 
     private Long bndryId;
 
@@ -215,12 +215,12 @@ public class Boundary extends AbstractAuditable {
         this.toDate = toDate;
     }
 
-    public boolean isHistory() {
-        return isHistory;
+    public boolean isActive() {
+        return active;
     }
 
-    public void setHistory(final boolean isHistory) {
-        this.isHistory = isHistory;
+    public void setActive(final boolean active) {
+        this.active = active;
     }
 
     public Long getBndryId() {

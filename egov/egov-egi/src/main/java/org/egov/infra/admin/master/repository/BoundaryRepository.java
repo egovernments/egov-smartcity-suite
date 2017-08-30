@@ -43,6 +43,8 @@ package org.egov.infra.admin.master.repository;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.jpa.repository.QueryHints;
@@ -64,65 +66,84 @@ public interface BoundaryRepository extends JpaRepository<Boundary, Long> {
 
     List<Boundary> findByNameContainingIgnoreCase(String name);
 
+    List<Boundary> findByBoundaryTypeId(Long boundaryType);
 
-    List<Boundary> findBoundariesByBoundaryType(@Param("boundaryTypeId") Long boundaryTypeId);
+    Page<Boundary> findByBoundaryTypeId(Long boundaryType, Pageable pageable);
 
+    Boundary findByBoundaryTypeAndBoundaryNum(BoundaryType boundaryType, Long boundaryNum);
 
-    Boundary findBoundarieByBoundaryTypeAndBoundaryNum(@Param("boundaryType") BoundaryType boundaryType,
-                                                       @Param("boundaryNum") Long boundaryNum);
-
-    @Query("select b from Boundary b where b.isHistory=false AND b.boundaryType.id =:boundaryTypeId order by b.name")
+    @Query("select b from Boundary b where b.active=true AND b.boundaryType.id =:boundaryTypeId order by b.name")
     List<Boundary> findActiveBoundariesByBoundaryTypeId(@Param("boundaryTypeId") Long boundaryTypeId);
 
-    @Query("select b from Boundary b where b.isHistory=false AND b.boundaryType.hierarchyType = :hierarchyType AND b.boundaryType.hierarchy = :hierarchyLevel AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
+    @Query("select b from Boundary b where b.active=true AND b.boundaryType.hierarchyType = :hierarchyType " +
+            "AND b.boundaryType.hierarchy = :hierarchyLevel AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) " +
+            "OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findActiveBoundariesByHierarchyTypeAndLevelAndAsOnDate(
             @Param("hierarchyType") HierarchyType hierarchyType, @Param("hierarchyLevel") Long hierarchyLevel,
             @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory=false AND b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
+    @Query("select b from Boundary b where b.active=true AND b.parent is not null AND b.parent.id = :parentBoundaryId " +
+            "AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate " +
+            "AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findActiveChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
                                                                     @Param("asOnDate") Date asOnDate);
 
-    @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath like (select B.materializedPath from Boundary B where B.id=:parentId)||'%'")
+    @Query("from Boundary BND where BND.active=true AND BND.materializedPath like (select B.materializedPath " +
+            "from Boundary B where B.id=:parentId)||'%'")
     List<Boundary> findActiveChildrenWithParent(@Param("parentId") Long parentId);
 
-    @Query("from Boundary BND where BND.isHistory=false AND BND.materializedPath in :mpath ")
+    @Query("from Boundary BND where BND.active=true AND BND.materializedPath in :mpath ")
     List<Boundary> findActiveBoundariesForMpath(@Param("mpath") final Set<String> mpath);
 
-    @Query("select b from Boundary b where b.parent is not null AND b.parent.id = :parentBoundaryId AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate)) order by b.name")
+    @Query("select b from Boundary b where b.parent is not null AND b.parent.id = :parentBoundaryId " +
+            "AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate " +
+            "AND b.toDate >= :asOnDate)) order by b.name")
     List<Boundary> findChildBoundariesByBoundaryIdAndAsOnDate(@Param("parentBoundaryId") Long parentBoundaryId,
                                                               @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory=false AND b.boundaryNum = :boundaryNum AND b.boundaryType.name = :boundaryType AND upper(b.boundaryType.hierarchyType.code) = :hierarchyTypeCode AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate AND b.toDate >= :asOnDate))")
+    @Query("select b from Boundary b where b.active=true AND b.boundaryNum = :boundaryNum " +
+            "AND b.boundaryType.name = :boundaryType AND upper(b.boundaryType.hierarchyType.code) = :hierarchyTypeCode " +
+            "AND ((b.toDate IS NULL AND b.fromDate <= :asOnDate) OR (b.toDate IS NOT NULL AND b.fromDate <= :asOnDate " +
+            "AND b.toDate >= :asOnDate))")
     Boundary findActiveBoundaryByBndryNumAndTypeAndHierarchyTypeCodeAndAsOnDate(@Param("boundaryNum") Long boundaryNum,
-                                                                                @Param("boundaryType") String boundaryType, @Param("hierarchyTypeCode") String hierarchyTypeCode,
+                                                                                @Param("boundaryType") String boundaryType,
+                                                                                @Param("hierarchyTypeCode") String hierarchyTypeCode,
                                                                                 @Param("asOnDate") Date asOnDate);
 
-    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) order by b.name")
+    @Query("select b from Boundary b where b.active=true AND upper(b.boundaryType.name) = upper(:boundaryTypeName) " +
+            "AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) order by b.name")
     List<Boundary> findActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
             @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName);
 
-    @Query("select b from Boundary b where upper(b.boundaryType.name) = UPPER(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = UPPER(:hierarchyTypeName) order by b.id")
+    @Query("select b from Boundary b where upper(b.boundaryType.name) = UPPER(:boundaryTypeName) " +
+            "AND upper(b.boundaryType.hierarchyType.name) = UPPER(:hierarchyTypeName) order by b.id")
     List<Boundary> findBoundariesByBndryTypeNameAndHierarchyTypeName(@Param("boundaryTypeName") String boundaryTypeName,
                                                                      @Param("hierarchyTypeName") String hierarchyTypeName);
 
-    @Query("select b from Boundary b where upper(b.boundaryType.name) = UPPER(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = UPPER(:hierarchyTypeName) order by b.id")
+    @Query("select b from Boundary b where upper(b.boundaryType.name) = UPPER(:boundaryTypeName) " +
+            "AND upper(b.boundaryType.hierarchyType.name) = UPPER(:hierarchyTypeName) order by b.id")
     Boundary findBoundaryByBndryTypeNameAndHierarchyTypeName(@Param("boundaryTypeName") String boundaryTypeName,
                                                              @Param("hierarchyTypeName") String hierarchyTypeName);
 
-    @Query("select b from Boundary b where b.isHistory=false and UPPER(b.name) like UPPER(:boundaryName) and b.boundaryType.id=:boundaryTypeId order by b.boundaryNum asc")
+    @Query("select b from Boundary b where b.active=true and UPPER(b.name) like UPPER(:boundaryName) " +
+            "and b.boundaryType.id=:boundaryTypeId order by b.boundaryNum asc")
     List<Boundary> findByNameAndBoundaryTypeOrderByBoundaryNumAsc(@Param("boundaryName") String boundaryName,
                                                                   @Param("boundaryTypeId") Long boundaryTypeId);
 
-    @Query("select b from Boundary b where b.boundaryType.name=:boundaryType and b.boundaryType.hierarchyType.name=:hierarchyType and b.boundaryType.hierarchy=:hierarchyLevel")
+    @Query("select b from Boundary b where b.boundaryType.name=:boundaryType and b.boundaryType.hierarchyType.name=:hierarchyType " +
+            "and b.boundaryType.hierarchy=:hierarchyLevel")
     Boundary findByBoundaryTypeNameAndHierarchyTypeNameAndLevel(@Param("boundaryType") String boundaryType,
-                                                                @Param("hierarchyType") String hierarchyType, @Param("hierarchyLevel") Long hierarchyLevel);
+                                                                @Param("hierarchyType") String hierarchyType,
+                                                                @Param("hierarchyLevel") Long hierarchyLevel);
 
-    @Query("select b from Boundary b where b.isHistory=false AND upper(b.boundaryType.name) = upper(:boundaryTypeName) AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) like UPPER(:name)||'%' order by b.id")
+    @Query("select b from Boundary b where b.active=true AND upper(b.boundaryType.name) = upper(:boundaryTypeName) " +
+            "AND upper(b.boundaryType.hierarchyType.name) = upper(:hierarchyTypeName) AND UPPER(b.name) " +
+            "like UPPER(:name)||'%' order by b.id")
     List<Boundary> findActiveBoundariesByNameAndBndryTypeNameAndHierarchyTypeName(
-            @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName, @Param("name") String name);
+            @Param("boundaryTypeName") String boundaryTypeName, @Param("hierarchyTypeName") String hierarchyTypeName,
+            @Param("name") String name);
 
-    @Query("from Boundary BND where BND.isHistory=false AND BND.parent.id=:parentId)")
+    @Query("from Boundary BND where BND.active=true AND BND.parent.id=:parentId)")
     List<Boundary> findActiveImmediateChildrenWithOutParent(@Param("parentId") Long parentId);
 
     @Query("from Boundary BND where BND.parent is null")

@@ -1037,7 +1037,7 @@ public class CollectionObjectFactory {
 		boundaryImpl.setBoundaryNum(Long.valueOf(123232));
 		boundaryImpl.setName("Bangalore");
 		boundaryImpl.setBoundaryType(createBoundaryType());
-		boundaryImpl.setHistory(false);
+		boundaryImpl.setActive(true);
 		session.saveOrUpdate(boundaryImpl);
 		return boundaryImpl;
 	}

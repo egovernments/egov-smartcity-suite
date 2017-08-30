@@ -40,31 +40,41 @@
 
 package org.egov.infra.web.support.json.adapter;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.web.support.ui.DataTable;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
-public class BoundaryAdapter implements JsonSerializer<Boundary> {
+public class BoundaryDatatableAdapter implements DataTableJsonAdapter<Boundary> {
 
     @Override
-    public JsonElement serialize(final Boundary boundary, final Type type, final JsonSerializationContext jsc) {
-        JsonObject boundaryJson = new JsonObject();
-        boundaryJson.addProperty("id", boundary.getId());
-        boundaryJson.addProperty("name", boundary.getName());
-        boundaryJson.addProperty("boundaryNameLocal", defaultIfBlank(boundary.getLocalName()));
-        boundaryJson.addProperty("boundaryParentName", (boundary.getParent() == null ? NA : boundary.getParent().getName()));
-        boundaryJson.addProperty("boundaryNum", boundary.getBoundaryNum());
-        boundaryJson.addProperty("fromDate", toDefaultDateFormat(boundary.getFromDate()));
-        boundaryJson.addProperty("toDate", boundary.getToDate() == null ? NA : toDefaultDateFormat(boundary.getToDate()));
+    public JsonElement serialize(DataTable<Boundary> boundaryDataTable, Type type, JsonSerializationContext jsc) {
+        List<Boundary> boundaries = boundaryDataTable.getData();
 
-        return boundaryJson;
+        JsonArray boundaryJsonData = new JsonArray();
+        boundaries.forEach(boundary -> {
+            JsonObject boundaryJson = new JsonObject();
+            boundaryJson.addProperty("id", boundary.getId());
+            boundaryJson.addProperty("name", boundary.getName());
+            boundaryJson.addProperty("boundaryNameLocal", defaultIfBlank(boundary.getLocalName()));
+            boundaryJson.addProperty("boundaryParentName", (boundary.getParent() == null ? NA : boundary.getParent().getName()));
+            boundaryJson.addProperty("boundaryNum", boundary.getBoundaryNum());
+            boundaryJson.addProperty("active", toYesOrNo(boundary.isActive()));
+            boundaryJson.addProperty("fromDate", toDefaultDateFormat(boundary.getFromDate()));
+            boundaryJson.addProperty("toDate", boundary.getToDate() == null ? NA : toDefaultDateFormat(boundary.getToDate()));
+            boundaryJsonData.add(boundaryJson);
+        });
+
+        return enhance(boundaryJsonData, boundaryDataTable);
     }
 }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,33 +38,32 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.web.support.json.adapter;
+package org.egov.infra.web.controller.admin.masters.boundary;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
-import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.lang.reflect.Type;
+@Controller
+@RequestMapping("boundary/view")
+public class ViewBoundaryController {
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+    @Autowired
+    private BoundaryService boundaryService;
 
-public class BoundaryAdapter implements JsonSerializer<Boundary> {
+    @GetMapping
+    public String viewBoundarySearchForm() {
+        return "boundary-view";
+    }
 
-    @Override
-    public JsonElement serialize(final Boundary boundary, final Type type, final JsonSerializationContext jsc) {
-        JsonObject boundaryJson = new JsonObject();
-        boundaryJson.addProperty("id", boundary.getId());
-        boundaryJson.addProperty("name", boundary.getName());
-        boundaryJson.addProperty("boundaryNameLocal", defaultIfBlank(boundary.getLocalName()));
-        boundaryJson.addProperty("boundaryParentName", (boundary.getParent() == null ? NA : boundary.getParent().getName()));
-        boundaryJson.addProperty("boundaryNum", boundary.getBoundaryNum());
-        boundaryJson.addProperty("fromDate", toDefaultDateFormat(boundary.getFromDate()));
-        boundaryJson.addProperty("toDate", boundary.getToDate() == null ? NA : toDefaultDateFormat(boundary.getToDate()));
-
-        return boundaryJson;
+    @GetMapping(value = "{boundaryId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public String viewBoundaries(@PathVariable Long boundaryId, Model model) {
+        model.addAttribute("boundary", boundaryService.getBoundaryById(boundaryId));
+        return "boundary-view";
     }
 }

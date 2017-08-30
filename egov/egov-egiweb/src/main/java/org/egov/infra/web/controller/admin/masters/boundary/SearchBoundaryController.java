@@ -40,37 +40,68 @@
 
 package org.egov.infra.web.controller.admin.masters.boundary;
 
+import org.egov.infra.admin.master.contracts.BoundarySearchRequest;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.HierarchyTypeService;
+import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
+import org.egov.infra.web.support.json.adapter.BoundaryDatatableAdapter;
+import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping(value = { "/search-boundary", "/view-boundary", "/create-boundary"})
+@RequestMapping("boundary/search")
 public class SearchBoundaryController {
 
-    private BoundaryService boundaryService;
-    private HierarchyTypeService hierarchyTypeService;
-    
     @Autowired
-    public SearchBoundaryController(BoundaryService boundaryService, HierarchyTypeService hierarchyTypeService){
-        this.boundaryService = boundaryService; 
-        this.hierarchyTypeService = hierarchyTypeService;
+    private HierarchyTypeService hierarchyTypeService;
+
+    @Autowired
+    private BoundaryService boundaryService;
+
+    @ModelAttribute("hierarchyTypes")
+    public List<HierarchyType> hierarchyTypes() {
+        return hierarchyTypeService.getAllHierarchyTypes();
     }
-    
-    @ModelAttribute
-    public Boundary boundaryModel() {
-        return new Boundary();
-    }
-    
-    @RequestMapping(method = RequestMethod.GET)
-    public String showSearchBoundaryForm(Model model) {
-        model.addAttribute("hierarchyTypes", hierarchyTypeService.getAllHierarchyTypes());
+
+    @GetMapping
+    public String showBoundarySearchForm() {
         return "boundary-search";
+    }
+
+    @PostMapping(produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchBoundary(BoundarySearchRequest searchRequest) {
+        return new DataTable<>(boundaryService.getPageOfBoundaries(searchRequest), searchRequest.draw())
+                .toJson(BoundaryDatatableAdapter.class);
+
+    }
+
+    @GetMapping(value = "wards-by-zone", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<Boundary> getWardByZone(@RequestParam Long zoneId) {
+        return boundaryService.getActiveChildBoundariesByBoundaryId(zoneId);
+    }
+
+    @GetMapping(value = "by-boundarytype", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String boundaryByBoundaryType(@RequestParam Long boundaryTypeId) {
+        return toJSON(boundaryService
+                .getActiveBoundariesByBoundaryTypeId(boundaryTypeId), Boundary.class, BoundaryAdapter.class)
+                .toString();
     }
 }
