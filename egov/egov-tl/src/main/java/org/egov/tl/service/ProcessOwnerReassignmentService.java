@@ -123,7 +123,7 @@ public class ProcessOwnerReassignmentService {
     }
 
     public boolean reassignmentEnabled() {
-        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(TRADE_LICENSE, "TL_REASSIGN");
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(TRADE_LICENSE, "Reassignment");
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue());
     }
 }
