@@ -385,6 +385,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                 additionalRule = WORKFLOW_CLOSUREADDITIONALRULE;
             else if (waterConnectionDetails.getStatus().getCode().equals(WORKFLOW_RECONNCTIONINITIATED))
                 additionalRule = RECONNECTIONCONNECTION;
+            if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+                additionalRule = NEWCONNECTION;
             model.addAttribute("mode", "fieldInspection");
             model.addAttribute("approvalPositionExist",
                     waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
@@ -636,9 +638,6 @@ public class UpdateConnectionController extends GenericConnectionController {
                         session.setAttribute(APPROVAL_COMMENT, approvalComent);
                         session.setAttribute(FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
                         model.addAttribute("isDigitalSignatureEnabled", waterTaxUtils.isDigitalSignatureEnabled());
-                        waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
-                                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                                mode, null, sourceChannel);
                         return "newConnection-digitalSignatureRedirection";
                     }
                 waterConnectionDetailsService.updateWaterConnection(waterConnectionDetails, approvalPosition,
