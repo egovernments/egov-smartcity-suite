@@ -1282,7 +1282,8 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 propertyDetail.isAttachedBathRoom(), propertyDetail.isWaterHarvesting(), propertyDetail.isCable(),
                 propertyDetail.getSiteOwner(), propertyDetail.getPattaNumber(), propertyDetail.getCurrentCapitalValue(),
                 propertyDetail.getMarketValue(), propertyDetail.getCategoryType(),
-                propertyDetail.getOccupancyCertificationNo(), propertyDetail.isAppurtenantLandChecked(),
+				propertyDetail.getOccupancyCertificationNo(), propertyDetail.getOccupancyCertificationDate(),
+				propertyDetail.isAppurtenantLandChecked(),
                 propertyDetail.isCorrAddressDiff(), propertyDetail.getPropertyDepartment(),
                 propertyDetail.getVacantLandPlotArea(), propertyDetail.getLayoutApprovalAuthority(),
                 propertyDetail.getLayoutPermitNo(), propertyDetail.getLayoutPermitDate());

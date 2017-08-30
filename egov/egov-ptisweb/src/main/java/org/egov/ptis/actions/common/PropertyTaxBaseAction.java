@@ -398,8 +398,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void validateBuiltUpProperty(final PropertyDetail propertyDetail, final Long floorTypeId,
             final Long roofTypeId, final String areaOfPlot, final Date regDocDate, final String modifyRsn) {
-
-        if (logger.isDebugEnabled())
+    	
+    	final Date propCompletionDate = propertyService.getLowestDtOfCompFloorWise(propertyDetail.getFloorDetailsProxy());
+        
+    	if (logger.isDebugEnabled())
             logger.debug("Eneterd into validateBuiltUpProperty");
 
         if (TRUE.equals(propertyDetail.isAppurtenantLandChecked()) && null == propertyDetail.getExtentAppartenauntLand())
@@ -413,6 +415,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.floorType"));
         if (roofTypeId == null || roofTypeId == -1)
             addActionError(getText("mandatory.roofType"));
+        if (propertyDetail.getOccupancyCertificationDate() != null && propCompletionDate != null
+                && propertyDetail.getOccupancyCertificationDate().before(propCompletionDate))
+            addActionError(getText("occupancydate.before.constrDate.error"));
 
         if (logger.isDebugEnabled())
             logger.debug("Exiting from validateBuiltUpProperty");
