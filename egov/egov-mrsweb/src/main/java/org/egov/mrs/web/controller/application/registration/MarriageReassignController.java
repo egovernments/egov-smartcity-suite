@@ -101,7 +101,7 @@ public class MarriageReassignController extends GenericWorkFlowController {
 
     @Autowired
     private PositionMasterService positionMasterService;
-
+    
     @Autowired
     private RegistrationWorkflowService registrationWorkFlowService;
 
@@ -137,12 +137,16 @@ public class MarriageReassignController extends GenericWorkFlowController {
                 for (Designation designation : desig) {
                     List<Assignment> assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(dept.getId(),
                             designation.getId(), new Date());
-                    for (Assignment assignment : assignments) {
-                        if (!(getLoggedInPositiontionId()).equals(assignment.getPosition().getId())) {
-                            employeeWithPosition.put(assignment.getPosition().getId(),
-                                    assignment.getEmployee().getName().concat("/")
-                                            .concat(assignment.getPosition().getName()));
-                            model.addAttribute("assignments", employeeWithPosition);
+                    if (!assignments.isEmpty()) {
+                        for (Assignment assignment : assignments) {
+                            if (assignment != null && assignment.getPosition() != null) {
+                                if (!(getLoggedInPositiontionId()).equals(assignment.getPosition().getId())) {
+                                    employeeWithPosition.put(assignment.getPosition().getId(),
+                                            assignment.getEmployee().getName().concat("/")
+                                                    .concat(assignment.getPosition().getName()));
+                                    model.addAttribute("assignments", employeeWithPosition);
+                                }
+                            }
                         }
                     }
                 }
