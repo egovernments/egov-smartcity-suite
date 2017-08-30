@@ -39,6 +39,17 @@
  */
 package org.egov.ptis.actions.admin;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
+import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -55,19 +66,10 @@ import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.StructureClassification;
+import org.egov.ptis.domain.entity.property.UnitRateAudit;
+import org.egov.ptis.domain.service.property.UnitRateAuditService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ROLE_PTADMINISTRATOR;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 @SuppressWarnings("serial")
 @ParentPackage("egov")
@@ -93,6 +95,9 @@ public class UnitRateAction extends BaseFormAction {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired
+    private UnitRateAuditService unitRateAuditService;
 
     List<BoundaryCategory> bndryCatList;
 
@@ -129,7 +134,7 @@ public class UnitRateAction extends BaseFormAction {
     @Action(value = "/unitRate-newForm")
     public String newForm() {
         if (roleName.contains(ROLE_PTADMINISTRATOR.toUpperCase())) {
-            if (mode.equals(EDIT) || mode.equals("deactivate")) {
+            if (mode.equals(EDIT) || "deactivate".equals(mode)) {
                 if (categoryId != null && categoryId != -1) {
                     category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
                     setUsageId(category.getPropUsage().getId());
@@ -263,10 +268,11 @@ public class UnitRateAction extends BaseFormAction {
         return RESULT_NEW;
     }
 
+    @SuppressWarnings("unchecked")
     @SkipValidation
     @Action(value = "/unitRate-update")
     public String update() {
-        Category catFromDb = null;
+        Category oldCategory = null;
         Category existingCategory = (Category) getPersistenceService()
                 .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
                         + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.categoryAmount = ? ",
@@ -277,59 +283,37 @@ public class UnitRateAction extends BaseFormAction {
             return RESULT_NEW;
         } else {
             if (category != null && category.getId() != null && category.getId() != -1) {
-                catFromDb = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
+                oldCategory = (Category) getPersistenceService().find("from Category where id = ?", category.getId());
             }
-            Category categoryObj = new Category();
-            categoryObj.setCategoryAmount(category.getCategoryAmount());
-            categoryObj.setFromDate(category.getFromDate());
+            UnitRateAudit unitRateAudit = unitRateAuditService.setUnitRateAuditDetails(oldCategory, "update");
             PropertyUsage usage = (PropertyUsage) getPersistenceService().find("from PropertyUsage where id = ? ",
                     usageId);
             StructureClassification structureClass = (StructureClassification) getPersistenceService().find(
                     "from StructureClassification where id = ? ", structureClassId);
-            Boundary zone = boundaryService.getBoundaryById(zoneId);
-            categoryObj.setPropUsage(usage);
-            categoryObj.setStructureClass(structureClass);
-            categoryObj.setIsHistory('N');
-            categoryObj.setToDate(catFromDb.getToDate());
-            categoryObj.setIsActive(true);
-            categoryObj.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
-                    .concat("-").concat(categoryObj.getCategoryAmount().toString()));
-
-            BoundaryCategory boundaryCategory = new BoundaryCategory();
-            boundaryCategory.setCategory(categoryObj);
-            boundaryCategory.setBndry(zone);
-            boundaryCategory.setFromDate(categoryObj.getFromDate());
-            boundaryCategory.setToDate(categoryObj.getToDate());
             
-            
-            if (catFromDb != null) {
-                catFromDb.setIsHistory('Y');
-                Date toDate = catFromDb.getToDate();
-                if (toDate == null || (toDate != null && toDate.after(catFromDb.getFromDate()))) {
-                    Date newToDate = DateUtils.addDays(category.getFromDate(), -1);
-                    catFromDb.setToDate(newToDate);
-                }
+            if (oldCategory != null) {
+                oldCategory.setCategoryAmount(category.getCategoryAmount());
+                oldCategory.setCategoryName(usage.getUsageCode().concat("-").concat(structureClass.getConstrTypeCode())
+                        .concat("-").concat(category.getCategoryAmount().toString()));
             }
-
-            Set<BoundaryCategory> boundaryCategorySet = new HashSet<BoundaryCategory>();
-            boundaryCategorySet.add(boundaryCategory);
-
-            categoryObj.setCatBoundaries(boundaryCategorySet);
-            getPersistenceService().persist(categoryObj);
-            getPersistenceService().update(catFromDb);
+            getPersistenceService().update(oldCategory);
+            unitRateAuditService.saveUnitRateDetails(unitRateAudit);
             setAckMessage("Unit Rate is updated successfully!");
             return RESULT_ACK;
         }
     }
 
+    @SuppressWarnings("unchecked")
     @SkipValidation
     @Action(value = "/unitRate-deactivate")
     public String deactivate() {
         if (categoryId != null && categoryId != -1) {
             category = (Category) getPersistenceService().find("from Category where id = ?", categoryId);
+            UnitRateAudit unitRateAudit = unitRateAuditService.setUnitRateAuditDetails(category, "deactivate");
             category.setIsActive(false);
             setAckMessage("Unit Rate deactivated successfully!");
             getPersistenceService().update(category);
+            unitRateAuditService.saveUnitRateDetails(unitRateAudit);
         }
         return RESULT_ACK;
     }
