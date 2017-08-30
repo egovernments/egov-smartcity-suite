@@ -132,7 +132,6 @@ public class SewerageTaxCollection extends TaxCollection {
             updateDemandWithcollectdTaxDetails(demand, billRcptInfo, EVENT_RECEIPT_CREATED, totalAmount);
         else if (billRcptInfo.getEvent().equals(EVENT_RECEIPT_CANCELLED))
             updateDemandWithcollectdTaxDetails(demand, billRcptInfo, EVENT_RECEIPT_CANCELLED, totalAmount);
-
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("updateDemandDetails : Demand updation processed. ");
 
@@ -354,8 +353,10 @@ public class SewerageTaxCollection extends TaxCollection {
                     sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
                             SewerageTaxConstants.APPLICATION_STATUS_FEEPAID, SewerageTaxConstants.MODULETYPE));
                 sewerageApplicationDetailsService.save(sewerageApplicationDetails);
-                sewerageApplicationDetailsService.updateIndexes(sewerageApplicationDetails);
+                if(sewerageApplicationDetailsService.getPortalInbox(sewerageApplicationDetails.getApplicationNumber()) != null)
+                    sewerageApplicationDetailsService.updatePortalMessage(sewerageApplicationDetails);
 
+                sewerageApplicationDetailsService.updateIndexes(sewerageApplicationDetails);
                 // Sms and email not sending after doing demand collection,later must be fix
 
                 /*

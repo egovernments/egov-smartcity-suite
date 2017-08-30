@@ -57,13 +57,20 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.domain.model.AssessmentDetails;
+import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.egov.wtms.utils.PropertyExtnUtils;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,7 +88,10 @@ public class SewerageWorkflowService {
     private DepartmentService departmentService;
     @Autowired
     protected AssignmentService assignmentService;
-
+    @Autowired
+    private BoundaryService boundaryService;
+    @Autowired
+    private PropertyExtnUtils propertyExtnUtils;
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -104,6 +114,19 @@ public class SewerageWorkflowService {
     }
 
     /**
+     * Checks for Citizen Role
+     *
+     * @param user
+     * @return
+     */
+    public Boolean isCitizenPortalUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(SewerageTaxConstants.ROLE_CITIZEN))
+                return true;
+        return false;
+    }
+
+    /**
      * Returns third party user roles
      *
      * @return
@@ -114,15 +137,19 @@ public class SewerageWorkflowService {
         return !appConfigValueList.isEmpty() ? appConfigValueList : Collections.emptyList();
     }
 
-    public Assignment getMappedAssignmentForCscOperator(final SewerageApplicationDetails sewerageApplicationDetails) {
-        Assignment assignment;
-        /* assignment = getAssignmentByDeptDesigElecWard(propertyOwnerDetails); */
+    public Assignment getMappedAssignmentForCscOperator(final String asessmentNumber) {
 
-        assignment = getUserPositionByZone(sewerageApplicationDetails);
-        return assignment;
+        final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(asessmentNumber,
+                PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
+        Assignment assignmentObj = null;
+        final Boundary boundaryObj = boundaryService
+                .getBoundaryById(assessmentDetails.getBoundaryDetails().getAdminWardId());
+        assignmentObj = getUserPositionByZone(boundaryObj);
+
+        return assignmentObj;
     }
 
-    private Assignment getUserPositionByZone(final SewerageApplicationDetails sewerageApplicationDetails) {
+    private Assignment getUserPositionByZone(final Boundary boundaryObj) {
         final String designationStr = getDesignationForCscOperatorWorkFlow();
         final String departmentStr = getDepartmentForCscOperatorWorkFlow();
         final String[] department = departmentStr.split(",");
@@ -130,8 +157,35 @@ public class SewerageWorkflowService {
         List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
-                assignment = assignmentService.findByDepartmentAndDesignation(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId());
+                assignment = assignmentService.findByDepartmentDesignationAndBoundary(
+                        departmentService.getDepartmentByName(dept).getId(),
+                        designationService.getDesignationByName(desg).getId(), boundaryObj.getId());
+                if (assignment.isEmpty()) {
+                    // Ward->Zone
+                    if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType() != null
+                            && boundaryObj.getParent().getBoundaryType().equals(WaterTaxConstants.BOUNDARY_TYPE_ZONE)) {
+                        assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+                                departmentService.getDepartmentByName(dept).getId(),
+                                designationService.getDesignationByName(desg).getId(), boundaryObj.getParent().getId());
+                        if (assignment.isEmpty())
+                            // Ward->Zone->City
+                            if (boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null
+                                    && boundaryObj.getParent().getParent().getBoundaryType().getName()
+                                            .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                            assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+                                    departmentService.getDepartmentByName(dept).getId(),
+                                    designationService.getDesignationByName(desg).getId(),
+                                    boundaryObj.getParent().getParent().getId());
+                    }
+                    // ward->City mapp
+                    if (assignment.isEmpty())
+                        if (boundaryObj.getParent() != null && boundaryObj.getParent().getBoundaryType().getName()
+                                .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                            assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
+                                    departmentService.getDepartmentByName(dept).getId(),
+                                    designationService.getDesignationByName(desg).getId(),
+                                    boundaryObj.getParent().getId());
+                }
                 if (!assignment.isEmpty())
                     break;
             }
@@ -169,7 +223,10 @@ public class SewerageWorkflowService {
                                     new Date());
                     wfInitiator = getActiveAssignment(assignment);
                 }
-            } else if (!isEmployee(sewerageApplicationDetails.getCreatedBy()) || SewerageTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername()))
+            } else if (!isEmployee(sewerageApplicationDetails.getCreatedBy())
+                    || SewerageTaxConstants.ANONYMOUS_USER
+                            .equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername())
+                    || isCitizenPortalUser(sewerageApplicationDetails.getCreatedBy()))
                 wfInitiator = getUserAssignment(sewerageApplicationDetails.getCreatedBy(), sewerageApplicationDetails);
             else
                 wfInitiator = assignmentService.getPrimaryAssignmentForUser(sewerageApplicationDetails
@@ -179,8 +236,9 @@ public class SewerageWorkflowService {
 
     private Assignment getUserAssignment(final User user, final SewerageApplicationDetails sewerageApplicationDetails) {
         Assignment assignment;
-        if (isCscOperator(user) || user.getUsername().equalsIgnoreCase("anonymous"))
-            assignment = getMappedAssignmentForCscOperator(sewerageApplicationDetails);
+        if (isCscOperator(user) || user.getUsername().equalsIgnoreCase("anonymous") || isCitizenPortalUser(user))
+            assignment = getMappedAssignmentForCscOperator(
+                    sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
 
         else
             assignment = getWorkFlowInitiator(sewerageApplicationDetails);

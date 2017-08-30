@@ -40,7 +40,6 @@
 package org.egov.stms.web.controller.citizen;
 
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.Serializable;
 import java.text.SimpleDateFormat;
@@ -178,7 +177,8 @@ public class SewerageCitizenSupportController {
         return new ModelAndView(SEWERAGE_CITIZEN_ONLINE_DCBVIEW, "sewerageApplicationDetails", sewerageApplicationDetails);
     }
 
-    @RequestMapping(value = "/citizen/search/sewerageGenerateonlinebill/{consumerno}/{assessmentno}", method = POST)
+    @RequestMapping(value = "/citizen/search/sewerageGenerateonlinebill/{consumerno}/{assessmentno}", method = {
+            RequestMethod.POST, RequestMethod.GET })
     public String payTax(@PathVariable final String consumerno, @PathVariable final String assessmentno,
             final RedirectAttributes redirectAttributes, final Model model, final HttpServletRequest request) {
         SewerageApplicationDetails sewerageApplicationDetails = new SewerageApplicationDetails();

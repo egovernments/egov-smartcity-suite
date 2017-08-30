@@ -66,6 +66,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEW;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCB;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCBURL;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWURL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_CITIZEN;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -182,7 +183,7 @@ public class SewerageActionDropDownUtil {
                 actionList.add(GENERATEBEMANDBILL);
             }
             if (role.equalsIgnoreCase(ROLE_ULBOPERATOR) || role.equalsIgnoreCase(ROLE_SEWERAGETAX_CREATOR)
-                    || role.equalsIgnoreCase(ROLE_SEWERAGETAX_APPROVER)) {
+                    || role.equalsIgnoreCase(ROLE_SEWERAGETAX_APPROVER) || role.equalsIgnoreCase(ROLE_CITIZEN)) {
                 actionList.add(CHANGENOOFCLOSET);
             }
             if (role.equalsIgnoreCase(ROLE_CSCOPERTAOR) || role.equalsIgnoreCase(ROLE_ULBOPERATOR)

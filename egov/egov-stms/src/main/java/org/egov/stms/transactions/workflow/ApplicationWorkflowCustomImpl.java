@@ -43,9 +43,7 @@ package org.egov.stms.transactions.workflow;
 import java.math.BigDecimal;
 import java.util.Date;
 
-import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -53,6 +51,7 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.transactions.service.SewerageWorkflowService;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
@@ -70,6 +69,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
     private static final String ANONYMOUS_CREATED = "Anonymous  Created";
 
     private static final String THIRD_PARTY_OPERATOR_CREATED = "Third Party operator created";
+    
+    private static final String CITIZEN_CREATED=  "Citizen created";
 
     private static final String NEW = "NEW";
 
@@ -77,23 +78,17 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
 
     @Autowired
     private SecurityUtils securityUtils;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
     @Autowired
     private PositionMasterService positionMasterService;
-
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
-   
     @Autowired
     private SewerageWorkflowService sewerageWorkflowService;
-
+    @Autowired
+    private SewerageDemandService sewerageDemandService;
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<SewerageApplicationDetails> sewerageApplicationWorkflowService;
-
     @Autowired
     public ApplicationWorkflowCustomImpl() {
 
@@ -146,14 +141,37 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 pos = wfInitiator.getPosition();
 
             Boolean cscOperatorLoggedIn = sewerageWorkflowService.isCscOperator(user);
-
-            if (null == sewerageApplicationDetails.getState() && (cscOperatorLoggedIn || SewerageTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()))) {
-                if(cscOperatorLoggedIn)
-                currState = THIRD_PARTY_OPERATOR_CREATED;
+            Boolean citizenPortalUser = sewerageWorkflowService.isCitizenPortalUser(user);
+            if (null == sewerageApplicationDetails.getState() && (cscOperatorLoggedIn || citizenPortalUser || SewerageTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getUsername()))) {
+                if (cscOperatorLoggedIn)
+                    currState = THIRD_PARTY_OPERATOR_CREATED;
+                else if (citizenPortalUser && sewerageApplicationDetails.getState() == null)
+                    currState = CITIZEN_CREATED;
+                else if (citizenPortalUser && "Fee collection Pending".equals(sewerageApplicationDetails.getState().getValue()))
+                    currState = sewerageApplicationDetails.getState().getValue();
                 else
-                    currState= ANONYMOUS_CREATED;
+                    currState = ANONYMOUS_CREATED;
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(), null,
                         null, additionalRule, currState, null);
+                if (citizenPortalUser) {
+                    if (sewerageApplicationDetails.getCurrentDemand() != null
+                            && !sewerageDemandService
+                                    .checkAnyTaxIsPendingToCollect(sewerageApplicationDetails.getCurrentDemand()))
+                        sewerageApplicationDetails.transition().start()
+                                .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                                .withComments(approvalComent)
+                                .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
+                                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+                    else
+                        sewerageApplicationDetails.transition().start()
+                                .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                                .withComments(approvalComent)
+                                .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
+                                .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(user)
+                                .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
+                }
+                else
                 sewerageApplicationDetails.transition().start()
                         .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                         .withComments(approvalComent).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null)
@@ -178,7 +196,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             && SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE
                                     .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
                     &&
-                    (sewerageWorkflowService.isCscOperator(sewerageApplicationDetails.getCreatedBy()) || SewerageTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername()))) {
+                    (sewerageWorkflowService.isCscOperator(sewerageApplicationDetails.getCreatedBy()) || SewerageTaxConstants.ANONYMOUS_USER.equalsIgnoreCase(sewerageApplicationDetails.getCreatedBy().getUsername())||
+                            sewerageWorkflowService.isCitizenPortalUser(sewerageApplicationDetails.getCreatedBy()))) {
                 if (sewerageTaxUtils.isInspectionFeeCollectionRequired()) {
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(
                             sewerageApplicationDetails.getStateType(), null, null, additionalRule, NEW,

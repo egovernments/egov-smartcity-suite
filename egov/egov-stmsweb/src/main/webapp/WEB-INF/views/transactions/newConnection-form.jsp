@@ -66,7 +66,7 @@
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
 				</c:if>
 				<jsp:include page="documentdetails.jsp"></jsp:include>	
-				<c:if test="${isEmployee}">
+				<c:if test="${isEmployee && !isCitizenPortalUser}">
 				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				</c:if>
 			<div class="buttonbottom" align="center">

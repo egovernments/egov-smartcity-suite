@@ -45,7 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageApplicationDetailsForm" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
+<form:form role="form" action="/stms/transactions/update/${sewerageApplicationDetails.applicationNumber}" method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageApplicationDetailsForm" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
 	<form:hidden id="editdonationcharge" path="" name="editdonationcharge" value="${editdonationcharge}"/> 
 	
@@ -121,16 +121,33 @@
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 	</c:otherwise>
 	</c:choose>	
-	
+		<c:if test="${!isCitizenPortalUser}">
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+	 	</c:if>
+	 	<c:if test="${isInspectionFeePaid || isInspectionFeePaid==null}">
+	 	
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
+	 	</c:if>
 	 	<div class="row text-center">
        <div class="add-margin">
                <c:if test="${sewerageApplicationDetails.status.code == 'FINALAPPROVED' }">
                        <a href="javascript:void(0)" class="btn btn-default" onclick="renderWorkOrderPdf()" >Generate Work Order</a>
                </c:if>
        </div>
+       
+       
 	</div>
+	
+	<div class="row text-center">
+       <div class="add-margin">
+       <c:if test="${isCitizenPortalUser && !isInspectionFeePaid}">
+				<a href="javascript:void(0)" class="btn btn-default"
+					onclick="window.open('/stms/citizen/search/sewerageGenerateonlinebill/${sewerageApplicationDetails.applicationNumber}/${sewerageApplicationDetails.connectionDetail.propertyIdentifier}','name','width=800, height=600,scrollbars=yes')">
+					 Pay Fee</a>
+	 	       </c:if>
+	 	       </div>
+	 	       </div>
+       
 </form:form>
 <script src="<cdn:url  value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/transactions/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>

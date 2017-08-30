@@ -62,6 +62,7 @@ public class SewerageTaxConstants {
 
 
     // application status constants - start
+    public static final String STATUS ="status";
     public static final String APPLICATION_STATUS_CREATED = "CREATED";
     public static final String APPLICATION_STATUS_FINALAPPROVED = "FINALAPPROVED";
     public static final String APPLICATION_STATUS_ESTIMATENOTICEGEN = "ESTIMATIONNOTICEGENERATED";
@@ -331,6 +332,10 @@ public class SewerageTaxConstants {
     public static final String Online = "Online";
     public static final String ANONYMOUS_USER = "Anonymous";
     public static final String APPLICATION_STATUS_ANONYMOUSCREATED = "ANONYMOUSCREATED";
+    
+    //Citizen
+    public static final String APPLICATION_STATUS_CITIZENCREATED = "CITIZENCREATED";
+    public static final String APPLICATION_STATUS_FEECOLLECTIONPENDING = "FEECOLLECTIONPENDING";
 
     public static final String PROPERTYID_NOT_EXIST_ERR_CODE = "STAX101";
     public static final String STAXDETAILS_CONSUMER_CODE_NOT_EXIST_ERR_MSG_PREFIX = "Sewerage Connection details with Consumer code ";
