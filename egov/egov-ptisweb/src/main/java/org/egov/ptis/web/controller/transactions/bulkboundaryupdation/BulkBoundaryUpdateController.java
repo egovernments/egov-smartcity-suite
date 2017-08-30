@@ -99,6 +99,8 @@ public class BulkBoundaryUpdateController {
 				basicProperty.getPropertyID().setElectionBoundary(
 						boundaryService.getBoundaryById(new Long(jsonobj.getString(ELECTION_WARD))));
 				basicProperty.setBoundary(basicProperty.getPropertyID().getElectionBoundary());
+				basicProperty.getAddress().setStreetRoadLine(basicProperty.getPropertyID().getWard().getName());
+				basicProperty.getAddress().setAreaLocalitySector(basicProperty.getPropertyID().getLocality().getName());
 				basicProperty.setModifiedDate(new Date());
 				basicProperties.add(basicProperty);
 			}
