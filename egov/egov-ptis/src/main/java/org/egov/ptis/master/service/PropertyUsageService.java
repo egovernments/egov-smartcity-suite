@@ -52,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
@@ -86,7 +87,7 @@ public class PropertyUsageService {
         this.propertyUsageHibernateDAO = propertyUsageHibernateDAO;
     }
 
-    public PropertyUsage create(PropertyUsage propertyUsage) {
+    public PropertyUsage create(PropertyUsage propertyUsage, Long Id) {
 
         if (propertyUsage.getIsResidential()) {
             propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_RESD);
@@ -95,6 +96,10 @@ public class PropertyUsageService {
         }
         propertyUsage.setLastModifiedDate(new Date());
         propertyUsage.setIsEnabled(1);
+        propertyUsage.setIsActive(true);
+        final User createdBy = userService.getUserById(ApplicationThreadLocals.getUserId());
+        propertyUsage.setCreatedBy(createdBy);
+        propertyUsage.setLastModifiedBy(createdBy);
         propertyUsageHibernateDAO.create(propertyUsage);
 
         return propertyUsage;
