@@ -51,7 +51,7 @@ import static org.egov.infra.utils.ApplicationConstant.WHITESPACE;
 
 public final class NumberToWordConverter {
 
-    private static final String ZERO = "Zero";
+    private static final String ZERO = " Zero ";
     private static final String HUNDRED = " Hundred ";
     private static final String THOUSAND = " Thousand ";
     private static final String LAKH = " Lakh ";
@@ -69,23 +69,29 @@ public final class NumberToWordConverter {
     }
 
     public static String convertNumberToWords(BigDecimal number, boolean prefix, boolean suffix) {
-        StringBuilder numberInWordsCircumfix = new StringBuilder();
-        String numberInWords = convertNumberToWords(number);
+        StringBuilder numberInWordsWithCircumfix = new StringBuilder();
+        String numberInWords = convertNumberToWords(number, true);
         if (prefix) {
-            if (number.compareTo(BigDecimal.ONE) == 0) {
-                numberInWordsCircumfix.append(currencyName()).append(WHITESPACE).append(numberInWords);
+            if (number.intValue() < 2) {
+                numberInWordsWithCircumfix.append(currencyName()).append(WHITESPACE).append(numberInWords);
             } else {
-                numberInWordsCircumfix.append(currencyNamePlural()).append(WHITESPACE).append(numberInWords);
+                numberInWordsWithCircumfix.append(currencyNamePlural()).append(WHITESPACE).append(numberInWords);
             }
+        } else {
+            numberInWordsWithCircumfix.append(numberInWords);
         }
 
         if (suffix) {
-            numberInWordsCircumfix.append(" Only");
+            numberInWordsWithCircumfix.append(" Only");
         }
-        return numberInWordsCircumfix.toString();
+        return numberInWordsWithCircumfix.toString();
     }
 
     public static String convertNumberToWords(BigDecimal value) {
+        return convertNumberToWords(value, false);
+    }
+
+    private static String convertNumberToWords(BigDecimal value, boolean suffixUnitName) {
         BigDecimal givenNumber = value;
         boolean negativeNumber = givenNumber.signum() == -1;
         if (negativeNumber) {
@@ -124,10 +130,18 @@ public final class NumberToWordConverter {
             word.append(numberToWord((int) number)).append(WHITESPACE);
         }
 
-        convertFractionalPartToWord(word, number);
-
         if (word.toString().trim().length() == 0) {
-            return ZERO;
+            word.append(ZERO);
+        }
+
+        int fractionalPart = convertFractionalPartToWord(word, number);
+
+        if (suffixUnitName && fractionalPart >= 0) {
+            if (fractionalPart <= 1) {
+                word.append(WHITESPACE).append(currencyUnitName());
+            } else {
+                word.append(WHITESPACE).append(currencyUnitNamePlural());
+            }
         }
 
         String result = word.toString().trim();
@@ -139,8 +153,8 @@ public final class NumberToWordConverter {
 
     }
 
-    private static void convertFractionalPartToWord(StringBuilder word, final double number) {
-        int decimalPart;
+    private static int convertFractionalPartToWord(StringBuilder word, double number) {
+        int fractionalPart = -1;
         String val;
         if (number % 1 != 0) {
             String decimalInWords = Double.toString(number);
@@ -148,27 +162,23 @@ public final class NumberToWordConverter {
             decimalInWords = decimalInWords.substring(index + 1);
             if (decimalInWords.length() > 2) {
                 val = decimalInWords.substring(0, 2);
-                decimalPart = Integer.parseInt(val);
+                fractionalPart = Integer.parseInt(val);
                 if (Integer.parseInt(decimalInWords.substring(2, 3)) > 5) {
-                    decimalPart++;
+                    fractionalPart++;
                 }
             } else {
-                decimalPart = Integer.parseInt(decimalInWords);
+                fractionalPart = Integer.parseInt(decimalInWords);
             }
             if (decimalInWords.length() == 1) {
-                decimalPart *= 10;
+                fractionalPart *= 10;
             }
-            if (word.toString().trim().length() > 0) {
+            if (word.toString().length() > 0) {
                 word.append(("and "));
             }
 
-            word.append(numberToWord(decimalPart));
-            if (decimalPart > 1) {
-                word.append(WHITESPACE).append(currencyUnitNamePlural());
-            } else {
-                word.append(WHITESPACE).append(currencyUnitName());
-            }
+            word.append(numberToWord(fractionalPart));
         }
+        return fractionalPart;
     }
 
     private static String numberToWord(int number) {

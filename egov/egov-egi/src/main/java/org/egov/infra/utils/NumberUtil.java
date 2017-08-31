@@ -57,7 +57,7 @@ public class NumberUtil {
      * @return The amount in words with default decimal precision of 2.
      */
     public static String amountInWords(final BigDecimal amount) {
-        return NumberToWordConverter.convertNumberToWords(amount, true, true);
+        return NumberToWord.amountInWords(amount.doubleValue());
     }
 
     /**
