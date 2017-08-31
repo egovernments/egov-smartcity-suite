@@ -95,8 +95,9 @@ public final class ApplicationConstant {
     public static final String NA = "N/A";
     public static final String YES = "Yes";
     public static final String NO = "No";
-    public static final Character UNDERSCORE = '_';
-    public static final Character HYPHEN = '-';
+    public static final String UNDERSCORE = "_";
+    public static final String HYPHEN = "-";
+    public static final String WHITESPACE = " ";
 
     private ApplicationConstant() {
     }

@@ -55,6 +55,9 @@ public final class GlobalSettings {
     public static final String DEFAULT_COUNTRY_CODE_KEY = "default.country.code";
     public static final String DEFAULT_CURRENCY_CODE_KEY = "default.currency.code";
     public static final String DEFAULT_CURRENCY_NAME_KEY = "default.currency.name";
+    public static final String DEFAULT_CURRENCY_NAME_PLURAL_KEY = "default.currency.name.plural";
+    public static final String DEFAULT_CURRENCY_UNIT_NAME_KEY = "default.currency.unit.name";
+    public static final String DEFAULT_CURRENCY_UNIT_NAME_PLURAL_KEY = "default.currency.unit.name.plural";
     public static final String DEFAULT_CURRENCY_NAME_SHORT_KEY = "default.currency.name.short";
     public static final String DEFAULT_CURRENCY_SYMBOL_UTF8_KEY = "default.currency.symbol.utf-8";
     public static final String DEFAULT_CURRENCY_SYMBOL_HEX_KEY = "default.currency.symbol.hex";
@@ -68,7 +71,10 @@ public final class GlobalSettings {
     public static final String DEFAULT_TIME_ZONE = "IST";
     public static final String DEFAULT_COUNTRY_CODE = "91";
     public static final String DEFAULT_CURRENCY_CODE = "INR";
-    public static final String DEFAULT_CURRENCY_NAME = "Rupees";
+    public static final String DEFAULT_CURRENCY_NAME = "Rupee";
+    public static final String DEFAULT_CURRENCY_NAME_PLURAL = "Rupees";
+    public static final String DEFAULT_CURRENCY_UNIT_NAME = "Paisa";
+    public static final String DEFAULT_CURRENCY_UNIT_NAME_PLURAL = "Paise";
     public static final String DEFAULT_CURRENCY_NAME_SHORT = "Rs.";
     public static final String DEFAULT_CURRENCY_SYMBOL_UTF8 = "\u20B9";
     public static final String DEFAULT_CURRENCY_SYMBOL_HEX = "&#x20b9;";
@@ -98,6 +104,18 @@ public final class GlobalSettings {
 
     public static String currencyName() {
         return defaultIfBlank(getProperty(DEFAULT_CURRENCY_NAME_KEY), DEFAULT_CURRENCY_NAME);
+    }
+
+    public static String currencyNamePlural() {
+        return defaultIfBlank(getProperty(DEFAULT_CURRENCY_NAME_PLURAL_KEY), DEFAULT_CURRENCY_NAME_PLURAL);
+    }
+
+    public static String currencyUnitName() {
+        return defaultIfBlank(getProperty(DEFAULT_CURRENCY_UNIT_NAME_KEY), DEFAULT_CURRENCY_UNIT_NAME);
+    }
+
+    public static String currencyUnitNamePlural() {
+        return defaultIfBlank(getProperty(DEFAULT_CURRENCY_UNIT_NAME_PLURAL_KEY), DEFAULT_CURRENCY_UNIT_NAME_PLURAL);
     }
 
     public static String currencyNameShort() {
