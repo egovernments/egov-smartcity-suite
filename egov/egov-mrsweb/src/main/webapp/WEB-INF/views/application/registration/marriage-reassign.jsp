@@ -71,13 +71,16 @@ accountability and the service delivery of the government  organizations.
 	}
 </script>
 
+	<div class="text-right"  style="color:#ff0000 "><strong>${message}</strong>	</div>
 
 <div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="lbl.reassign.title" />
 	</div>
+	
 </div>
-<div class="panel-body">
+<div class="panel-body">		
+
 
 	<form:form name="reassign" id="reassign" modelAttribute="reassign">
 		<form:hidden path="applicationId" id="applicationId"

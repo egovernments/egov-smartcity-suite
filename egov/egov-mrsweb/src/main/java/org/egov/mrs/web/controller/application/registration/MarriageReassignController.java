@@ -69,6 +69,7 @@ import org.egov.mrs.domain.service.MarriageReassignService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -104,6 +105,9 @@ public class MarriageReassignController extends GenericWorkFlowController {
     
     @Autowired
     private RegistrationWorkflowService registrationWorkFlowService;
+    
+    @Autowired
+    protected ResourceBundleMessageSource messageSource;
 
     @ModelAttribute
     public MarriageReassignInfo reassign() {
@@ -151,6 +155,10 @@ public class MarriageReassignController extends GenericWorkFlowController {
                     }
                 }
             }
+        }
+        if(employeeWithPosition.isEmpty()){
+        model.addAttribute("message", messageSource.getMessage("notexists.position",
+                new String[] {}, null));
         }
 
         reassignInfo.setApplicationId(appId);
