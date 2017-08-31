@@ -98,7 +98,6 @@ public class PropertyUsageService {
         propertyUsage.setCreatedDate(new Date());
         propertyUsage.setIsActive(true);
         propertyUsage.setIsEnabled(1);
-        propertyUsage.setIsActive(true);
         final User createdBy = userService.getUserById(ApplicationThreadLocals.getUserId());
         propertyUsage.setCreatedBy(createdBy);
         propertyUsage.setLastModifiedBy(createdBy);
