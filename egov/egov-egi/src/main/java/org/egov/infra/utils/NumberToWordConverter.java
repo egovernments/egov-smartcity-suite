@@ -68,43 +68,52 @@ public final class NumberToWordConverter {
         //Only static API's
     }
 
-    public static String convertNumberToWords(BigDecimal number, boolean prefix, boolean suffix) {
-        StringBuilder numberInWordsWithCircumfix = new StringBuilder();
-        String numberInWords = convertNumberToWords(number, true);
+    public static String convertToWords(BigDecimal number, boolean prefix, boolean suffix) {
+        StringBuilder numberInWords = new StringBuilder();
         if (prefix) {
             if (number.intValue() < 2) {
-                numberInWordsWithCircumfix.append(currencyName()).append(WHITESPACE).append(numberInWords);
+                numberInWords.append(currencyName()).append(WHITESPACE).append(convertToWords(number));
             } else {
-                numberInWordsWithCircumfix.append(currencyNamePlural()).append(WHITESPACE).append(numberInWords);
+                numberInWords.append(currencyNamePlural()).append(WHITESPACE).append(convertToWords(number));
             }
         } else {
-            numberInWordsWithCircumfix.append(numberInWords);
+            numberInWords.append(convertToWords(number));
         }
 
         if (suffix) {
-            numberInWordsWithCircumfix.append(" Only");
+            numberInWords.append(" Only");
         }
-        return numberInWordsWithCircumfix.toString();
+        return numberInWords.toString();
     }
 
-    public static String convertNumberToWords(BigDecimal value) {
-        return convertNumberToWords(value, false);
-    }
-
-    private static String convertNumberToWords(BigDecimal value, boolean suffixUnitName) {
+    private static String convertToWords(BigDecimal value) {
         BigDecimal givenNumber = value;
         boolean negativeNumber = givenNumber.signum() == -1;
         if (negativeNumber) {
             givenNumber = givenNumber.abs();
         }
 
-        StringBuilder word = new StringBuilder();
         String numberString = givenNumber.setScale(2, RoundingMode.HALF_UP).toPlainString();
-        double number = Double.parseDouble(numberString);
+        StringBuilder numberInWord = convertIntegerPartToWord(Double.parseDouble(numberString));
 
+        if (numberInWord.toString().trim().length() == 0) {
+            numberInWord.append(ZERO);
+        }
+
+        String result = numberInWord.toString().trim();
+        if (negativeNumber) {
+            result = "Minus " + result;
+        }
+
+        return result;
+
+    }
+
+    private static StringBuilder convertIntegerPartToWord(double number) {
+        StringBuilder word = new StringBuilder();
         int quotient = (int) (number / 10000000);
         if (quotient > 0) {
-            word.append(convertNumberToWords(new BigDecimal(quotient))).append(CRORE);
+            word.append(convertToWords(new BigDecimal(quotient))).append(CRORE);
         }
 
         number = number % 10000000;
@@ -130,55 +139,38 @@ public final class NumberToWordConverter {
             word.append(numberToWord((int) number)).append(WHITESPACE);
         }
 
-        if (word.toString().trim().length() == 0) {
-            word.append(ZERO);
-        }
+        convertFractionalPartToWord(word, number);
 
-        int fractionalPart = convertFractionalPartToWord(word, number);
+        return word;
+    }
 
-        if (suffixUnitName && fractionalPart >= 0) {
+    private static void convertFractionalPartToWord(StringBuilder word, double number) {
+        int fractionalPart;
+        if (number % 1 != 0) {
+            String fraction = Double.toString(number).split("\\.")[1];
+            if (fraction.length() > 2) {
+                fractionalPart = Integer.parseInt(fraction.substring(0, 2));
+                if (Integer.parseInt(fraction.substring(2, 3)) > 5) {
+                    fractionalPart++;
+                }
+            } else {
+                fractionalPart = Integer.parseInt(fraction);
+            }
+            if (fraction.length() == 1) {
+                fractionalPart *= 10;
+            }
+            if (word.toString().trim().length() > 0) {
+                word.append(("and "));
+            }
+
+            word.append(numberToWord(fractionalPart));
+
             if (fractionalPart <= 1) {
                 word.append(WHITESPACE).append(currencyUnitName());
             } else {
                 word.append(WHITESPACE).append(currencyUnitNamePlural());
             }
         }
-
-        String result = word.toString().trim();
-        if (negativeNumber) {
-            result = "Minus " + result;
-        }
-
-        return result;
-
-    }
-
-    private static int convertFractionalPartToWord(StringBuilder word, double number) {
-        int fractionalPart = -1;
-        String val;
-        if (number % 1 != 0) {
-            String decimalInWords = Double.toString(number);
-            int index = decimalInWords.indexOf('.');
-            decimalInWords = decimalInWords.substring(index + 1);
-            if (decimalInWords.length() > 2) {
-                val = decimalInWords.substring(0, 2);
-                fractionalPart = Integer.parseInt(val);
-                if (Integer.parseInt(decimalInWords.substring(2, 3)) > 5) {
-                    fractionalPart++;
-                }
-            } else {
-                fractionalPart = Integer.parseInt(decimalInWords);
-            }
-            if (decimalInWords.length() == 1) {
-                fractionalPart *= 10;
-            }
-            if (word.toString().length() > 0) {
-                word.append(("and "));
-            }
-
-            word.append(numberToWord(fractionalPart));
-        }
-        return fractionalPart;
     }
 
     private static String numberToWord(int number) {
