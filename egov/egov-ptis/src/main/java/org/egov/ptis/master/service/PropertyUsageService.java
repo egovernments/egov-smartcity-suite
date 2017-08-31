@@ -95,6 +95,8 @@ public class PropertyUsageService {
             propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_NON_RESD);
         }
         propertyUsage.setLastModifiedDate(new Date());
+        propertyUsage.setCreatedDate(new Date());
+        propertyUsage.setIsActive(true);
         propertyUsage.setIsEnabled(1);
         propertyUsage.setIsActive(true);
         final User createdBy = userService.getUserById(ApplicationThreadLocals.getUserId());

@@ -42,60 +42,75 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form method ="post" action="" class="form-horizontal form-groups-bordered" modelAttribute="propertyUsage" id="propertyUsageform"
-			cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
+<form:form method="post" action=""
+	class="form-horizontal form-groups-bordered"
+	modelAttribute="propertyUsage" id="propertyUsageform"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
 	<div class="panel panel-primary" data-collapsed="0">
-	<div class="panel-heading"></div>
-	<spring:hasBindErrors name="propertyUsage">  
-		 		<div class="alert alert-danger col-md-10 col-md-offset-1">
-		  			<form:errors path="*" cssClass="error-msg add-margin" /><br/>
-		      	</div>
+		<div class="panel-heading"></div>
+		<spring:hasBindErrors name="propertyUsage">
+			<div class="alert alert-danger col-md-10 col-md-offset-1">
+				<form:errors path="*" cssClass="error-msg add-margin" />
+				<br />
+			</div>
 		</spring:hasBindErrors>
 		<div class="panel-body custom-form">
 			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.code" />:<span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin"  id="codediv">
-						<form:input class="form-control patternvalidation"  data-pattern="alphanumericwithspecialcharacters"  maxlength="25" id="usageCode"
-						path="usageCode" required="required" />
-<%-- 						<form:errors path="usageCode" cssClass="add-margin error-msg" /> --%>
+				<label class="col-sm-2 control-label text-right"><spring:message
+						code="lbl.code" />:<span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin" id="codediv">
+					<form:input cssClass="form-control is_valid_alphanumeric"
+						maxlength="25" id="usageCode" path="usageCode" required="required" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label class="col-sm-2 control-label text-right"><spring:message
+						code="lbl.usage.nature" />:<span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin" id="usagediv">
+					<form:input id="usageName" path="usageName"
+						cssClass="form-control is_valid_alphanumericwithspecialcharacters"
+						required="required" />
+				</div>
+			</div>
+
+			<div class="form-group">
+				<div class="form-group" id="statusdiv">
+					<label class="col-sm-3 control-label text-right"><spring:message
+							code="lbl.active" /></label>
+					<div class="col-sm-3 add-margin">
+						<form:checkbox id="isActive" path="isActive" value="active" />
 					</div>
-					</div>
-					
-					<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message code="lbl.usage.nature" />:<span class="mandatory"></span></label>
-					<div class="col-sm-3 add-margin"  id="usagediv">
-					<form:input id="usageName" path="usageName"  cssClass="form-control is_valid_alphabet" required="required" />
-<%-- 						<form:errors path="usageName" cssClass="add-margin error-msg" /> --%>
-					</div>
-					</div>
-				
-		<div class="form-group">
-			<div class="form-group" id="statusdiv">
-				<label class="col-sm-3 control-label text-right"><spring:message code="lbl.active"/></label>
-					<div class="col-sm-3 add-margin" >
-						<form:checkbox id="isActive" path="isActive" value ="active" />
-<%-- 						<form:errors path="isActive" /> --%>
-					</div>
-			</div>	
-		</div>
+				</div>
+			</div>
 			<input type="hidden" name="propertyUsage" value="${propertyUsage.id}" />
-					<div class="form-group text-center" >
-						<button type="submit" class="btn btn-primary" value="Save" id="buttonid"><spring:message code="lbl.button.modify"/></button>
-<%-- 						<button type="button" class="btn btn-default" id="resetid"><spring:message code="lbl.reset"/></button> --%>
-						<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
-					</div>
+			<div class="form-group text-center">
+				<button type="submit" class="btn btn-primary" value="Save"
+					id="buttonid">
+					<spring:message code="lbl.button.modify" />
+				</button>
+				<a onclick="self.close()" class="btn btn-default"
+					href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+			</div>
+		</div>
 	</div>
-</div>
-	</form:form>
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
-	            type="text/javascript"></script>
+</form:form>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
+	type="text/javascript"></script>

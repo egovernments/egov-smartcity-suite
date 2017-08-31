@@ -71,7 +71,7 @@
 								code="lbl.usage.nature" /><span class="mandatory"></span></label>
 
 						<div class="col-sm-6 add-margin">
-							<form:input id="usageName" path="usageName" type="text" cssClass="form-control is_valid_alphabet" autocomplete="off" required="required" />
+							<form:input id="usageName" path="usageName" type="text" cssClass="form-control is_valid_alphanumericspecialcharacters" autocomplete="off" required="required" />
 							<form:errors path="usageName" cssClass="error-msg"/>
 						</div>
 
