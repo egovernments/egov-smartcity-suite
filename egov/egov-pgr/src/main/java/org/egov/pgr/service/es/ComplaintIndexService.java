@@ -1472,26 +1472,68 @@ public class ComplaintIndexService {
 
 
     public Map<String, Object> getAvrgRating(final ComplaintDashBoardRequest complaintDashBoardRequest) {
-        final List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
-
         final String groupByField = ComplaintElasticsearchUtils.getAggregationGroupingField(complaintDashBoardRequest);
-        if (INITIAL_FUNCTIONARY_NAME.equalsIgnoreCase(groupByField))
-            return getRatingBasedOnFunctionary(complaintDashBoardRequest, groupByField);
-        else
-            return getRatingCountBasedOnParam(complaintDashBoardRequest, responseDetailsList, groupByField);
+        final SearchResponse functionaryWiseResponse = complaintIndexRepository.findRatingByGroupByField(complaintDashBoardRequest,
+                getFilterQuery(complaintDashBoardRequest), groupByField);
+
+        final HashMap<String, Object> result = new HashMap<>();
+        List<ComplaintDashBoardResponse> responseDetailsList = new ArrayList<>();
+
+        if (isNotBlank(complaintDashBoardRequest.getUlbCode())) {
+            final CityIndex city = cityIndexService.findOne(complaintDashBoardRequest.getUlbCode());
+            result.put(REGION_NAME, city.getRegionname());
+            result.put(DISTRICT_NAME, city.getDistrictname());
+            result.put(ULB_CODE, city.getCitycode());
+            result.put(ULB_GRADE, city.getCitygrade());
+            result.put(ULB_NAME, city.getName());
+            result.put(DOMAIN_URL, city.getDomainurl());
+        }
+        if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_WARDS)) {
+            final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
+            for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
+                final Terms terms = ulbBucket.getAggregations().get(GROUP_BY_FIELD);
+
+                responseDetailsList = getResponseList(groupByField, terms, responseDetailsList, complaintDashBoardRequest);
+            }
+
+        } else if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_LOCALITIES)) {
+            final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
+            for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
+                final Terms wardTerms = ulbBucket.getAggregations().get(WARDWISE);
+                for (final Bucket wardBucket : wardTerms.getBuckets()) {
+                    final Terms terms = wardBucket.getAggregations().get(GROUP_BY_FIELD);
+                    responseDetailsList = getResponseList(groupByField, terms, responseDetailsList,
+                            complaintDashBoardRequest);
+                }
+
+            }
+        } else if (complaintDashBoardRequest.getType().equals(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
+            final Terms ulbTerms = functionaryWiseResponse.getAggregations().get(ULBWISE);
+            for (final Bucket ulbBucket : ulbTerms.getBuckets()) {
+                final Terms deptTerms = ulbBucket.getAggregations().get(DEPARTMENTWISE);
+                for (final Bucket deptBucket : deptTerms.getBuckets()) {
+                    final Terms terms = deptBucket.getAggregations().get(GROUP_BY_FIELD);
+                    responseDetailsList = getResponseList(groupByField, terms, responseDetailsList,
+                            complaintDashBoardRequest);
+                }
+            }
+        } else {
+            final Terms terms = functionaryWiseResponse.getAggregations().get(GROUP_BY_FIELD);
+            responseDetailsList = getResponseList(groupByField, terms, responseDetailsList, complaintDashBoardRequest);
+        }
+
+        result.put("responseDetails", responseDetailsList);
+
+        return result;
+
     }
 
-    private HashMap<String, Object> getRatingCountBasedOnParam(ComplaintDashBoardRequest complaintDashBoardRequest, List<ComplaintDashBoardResponse> responseDetailsList, String groupByField) {
-        final SearchResponse citizenRatingResponse = complaintIndexRepository.findByDistrictWiseRating(complaintDashBoardRequest,
-                getFilterQuery(complaintDashBoardRequest), groupByField);
-        HashMap<String, Object> result = new HashMap<>();
-        Terms terms = citizenRatingResponse.getAggregations().get(GROUP_BY_FIELD);
-
+    private List<ComplaintDashBoardResponse> getResponseList(final String groupByField, final Terms terms,
+                                                             final List<ComplaintDashBoardResponse> responseDetailsList, final ComplaintDashBoardRequest complaintDashBoardRequest) {
         for (final Bucket bucket : terms.getBuckets()) {
             final ComplaintDashBoardResponse complaintDashBoardResponse = new ComplaintDashBoardResponse();
             final TopHits topHits = bucket.getAggregations().get(COMPLAINTRECORD);
             final SearchHit[] hit = topHits.getHits().getHits();
-            complaintDashBoardResponse.setUlbCode(hit[0].field(CITY_CODE).getValue());
             complaintDashBoardResponse.setUlbName(hit[0].field(CITY_NAME).getValue());
             complaintDashBoardResponse.setDistrictName(hit[0].field(CITY_DISTRICT_NAME).getValue());
             complaintDashBoardResponse.setWardName(hit[0].field(WARD_NAME).getValue());
@@ -1505,9 +1547,31 @@ public class ComplaintIndexService {
             CityIndex city;
             if (CITY_REGION_NAME.equals(groupByField))
                 complaintDashBoardResponse.setRegionName(bucket.getKeyAsString());
+            if (CITY_GRADE.equals(groupByField))
+                complaintDashBoardResponse.setUlbGrade(bucket.getKeyAsString());
             if ("cityDistrictCode".equals(groupByField)) {
                 city = cityIndexService.findByDistrictCode(bucket.getKeyAsString());
                 complaintDashBoardResponse.setDistrictName(city.getDistrictname());
+            }
+            if (CITY_CODE.equals(groupByField)) {
+                city = cityIndexService.findByCitycode(bucket.getKeyAsString());
+                complaintDashBoardResponse.setDistrictName(city.getDistrictname());
+                complaintDashBoardResponse.setUlbName(city.getName());
+                complaintDashBoardResponse.setUlbGrade(city.getCitygrade());
+                complaintDashBoardResponse.setUlbCode(city.getCitycode());
+                complaintDashBoardResponse.setDomainURL(city.getDomainurl());
+            }
+            if (DEPARTMENT_NAME.equals(groupByField))
+                complaintDashBoardResponse.setDepartmentName(bucket.getKeyAsString());
+            if (WARD_NAME.equals(groupByField))
+                complaintDashBoardResponse.setWardName(bucket.getKeyAsString());
+            if (LOCALITY_NAME.equals(groupByField))
+                complaintDashBoardResponse.setLocalityName(bucket.getKeyAsString());
+            if (INITIAL_FUNCTIONARY_NAME.equals(groupByField)
+                    && !complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_FUNCTIONARY)) {
+                complaintDashBoardResponse.setFunctionaryName(bucket.getKeyAsString());
+                final String mobileNumber = complaintIndexRepository.getFunctionryMobileNumber(bucket.getKeyAsString());
+                complaintDashBoardResponse.setFunctionaryMobileNumber(defaultString(mobileNumber, NA));
             }
             final Terms functionaryTerms = bucket.getAggregations().get("groupByInitialFunctionary");
             List<String> functionaryNames = new ArrayList<>();
@@ -1517,36 +1581,7 @@ public class ComplaintIndexService {
             updateClosedAndAvgSatisfactionIndex(bucket, complaintDashBoardResponse);
             responseDetailsList.add(complaintDashBoardResponse);
         }
-        result.put("functionarylist", responseDetailsList);
-        return result;
-    }
-
-
-    private HashMap<String, Object> getRatingBasedOnFunctionary(ComplaintDashBoardRequest complaintDashBoardRequest, String groupByField) {
-        final SearchResponse citizenRatingResponse = complaintIndexRepository.findByFunctionaryWiseRating(complaintDashBoardRequest,
-                getFilterQuery(complaintDashBoardRequest), groupByField);
-        List<ComplaintDashBoardResponse> complaintDashBoardResponses = new ArrayList<>();
-        final Terms functionaryWise = citizenRatingResponse.getAggregations().get("functionarywise");
-        final HashMap<String, Object> result = new HashMap<>();
-        for (final Bucket fnBucket : functionaryWise.getBuckets()) {
-            ComplaintDashBoardResponse complaintDashBoardResponse = new ComplaintDashBoardResponse();
-            complaintDashBoardResponse.setFunctionaryName(fnBucket.getKeyAsString());
-            final TopHits topHits = fnBucket.getAggregations().get(COMPLAINTRECORD);
-            final SearchHit[] hit = topHits.getHits().getHits();
-            complaintDashBoardResponse.setUlbCode(hit[0].field(CITY_CODE).getValue());
-            complaintDashBoardResponse.setUlbName(hit[0].field(CITY_NAME).getValue());
-            complaintDashBoardResponse.setDistrictName(hit[0].field(CITY_DISTRICT_NAME).getValue());
-            String initialFunctionaryNumber;
-            if (hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER) == null)
-                initialFunctionaryNumber = NA;
-            else
-                initialFunctionaryNumber = hit[0].field(INITIAL_FUNCTIONARY_MOBILE_NUMBER).getValue();
-            complaintDashBoardResponse.setFunctionaryMobileNumber(initialFunctionaryNumber);
-            updateClosedAndAvgSatisfactionIndex(fnBucket, complaintDashBoardResponse);
-            complaintDashBoardResponses.add(complaintDashBoardResponse);
-        }
-        result.put(COMPLAINTS, complaintDashBoardResponses);
-        return result;
+        return responseDetailsList;
     }
 
     private void updateClosedAndAvgSatisfactionIndex(Bucket bucket, ComplaintDashBoardResponse complaintDashBoardResponse) {
