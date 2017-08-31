@@ -188,7 +188,7 @@ public class PropertyUsage extends AbstractAuditable {
     }
 
     public void setUsageCode(String usageCode) {
-        this.usageCode = usageCode;
+        this.usageCode = usageCode.toUpperCase();
     }
 
     public Integer getOrderId() {

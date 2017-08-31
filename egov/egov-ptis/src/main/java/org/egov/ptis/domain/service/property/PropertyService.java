@@ -106,6 +106,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SQUARE_YARD_TO_SQUARE
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_REJECTION_ACK_GENERATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
@@ -4337,7 +4338,8 @@ public class PropertyService {
 				.withStatus(vacancyRemission.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
 				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-				.withOwnername(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
+				.withOwnername(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) 
+						|| vacancyRemission.getState().getValue().contains(VR_STATUS_REJECTION_ACK_GENERATED) ? null
 						: stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
@@ -4359,7 +4361,8 @@ public class PropertyService {
 				: stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
-		applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
+		applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) 
+				|| vacancyRemission.getState().getValue().contains(VR_STATUS_REJECTION_ACK_GENERATED) ? ClosureStatus.YES
 				: ClosureStatus.NO);
 		if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
 			applicationIndex.setApproved(vacancyRemission.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED)

@@ -51,6 +51,9 @@ $(document).ready(function(){
 					"mData" : "usageName",
 					"sTitle" : "Nature of usage",
 				}, {
+					"mData" : "usageCode", 
+					"sTitle" : "Code",
+				},{
 					"mData" : "usageType", 
 					"sTitle" : "Residential/Non Residential",
 				},  {

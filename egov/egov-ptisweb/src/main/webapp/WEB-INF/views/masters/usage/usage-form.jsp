@@ -76,6 +76,17 @@
 						</div>
 
 					</div>
+					
+					<div class="form-group">
+						<label for="usageCode" class="col-sm-3 control-label"><spring:message
+								code="lbl.code" /><span class="mandatory"></span></label>
+
+						<div class="col-sm-6 add-margin">
+							<form:input id="usageCode" path="usageCode" type="text" style="text-transform:uppercase" cssClass="form-control is_valid_alphanumeric" autocomplete="off" required="required" />
+							<form:errors path="usageCode" cssClass="error-msg"/>
+						</div>
+
+					</div>
 
 				    <div class="form-group">
 						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.propertytype" /><span class="mandatory"></span>

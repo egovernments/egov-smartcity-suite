@@ -53,6 +53,9 @@ cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 					<thead>
 						<tr>
 							<th colspan="1" class="text-center">
+								<spring:message code="lbl.name" />
+							</th>
+							<th colspan="1" class="text-center">
 								<spring:message code="lbl.code" />
 							</th>
 							<th colspan="1" class="text-center">
@@ -68,6 +71,11 @@ cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 					</thead>
 					<c:forEach var="propertyUsage" items="${propertyUsages}">
 						<tr>
+							<td colspan="1">
+								<div align="center">
+									<c:out value="${propertyUsage.usageName}" />
+								</div>
+							</td>
 							<td colspan="1">
 								<div align="center">
 									<c:out value="${propertyUsage.usageCode}" />

@@ -89,11 +89,6 @@ public class PropertyUsageService {
 
     public PropertyUsage create(PropertyUsage propertyUsage, Long Id) {
 
-        if (propertyUsage.getIsResidential()) {
-            propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_RESD);
-        } else {
-            propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_NON_RESD);
-        }
         propertyUsage.setLastModifiedDate(new Date());
         propertyUsage.setCreatedDate(new Date());
         propertyUsage.setIsActive(true);
