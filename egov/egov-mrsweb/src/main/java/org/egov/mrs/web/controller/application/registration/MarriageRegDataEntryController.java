@@ -39,6 +39,7 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
@@ -103,7 +104,7 @@ public class MarriageRegDataEntryController extends MarriageRegistrationControll
     @RequestMapping(value = "/checkUniqueAppl-RegNo", method = GET, produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public boolean uniqueApplRegNo(@RequestParam final String applicationNo, @RequestParam final String registrationNo) {
-        MarriageRegistration registration = applicationNo != null && applicationNo != ""
+        MarriageRegistration registration = isNotBlank(applicationNo)
                 ? marriageRegistrationService.findByApplicationNo(applicationNo)
                 : marriageRegistrationService.findByRegistrationNo(registrationNo);
         if (registration != null)

@@ -435,7 +435,7 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
     @SuppressWarnings("unchecked")
     @Action(value = "/receipts/ajaxReceiptCreate-ajaxLoadServiceByClassification")
     public String ajaxLoadServiceByClassification() {
-        if (null != serviceClass && serviceClass != "-1")
+        if (serviceClass != null && !serviceClass.equals("-1"))
             serviceList = getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE,
                     serviceClass);
         else

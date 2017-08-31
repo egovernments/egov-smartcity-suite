@@ -495,7 +495,7 @@ public class BudgetProposalDetailAction extends BaseBudgetDetailAction {
             userId = ApplicationThreadLocals.getUserId().intValue();
 
         for (final BudgetDetail detail : savedbudgetDetailList) {
-            if (new String("forward").equals(parameters.get(ACTIONNAME)[0]))
+            if ("forward".equals(parameters.get(ACTIONNAME)[0]))
                 detail.transition().progressWithStateCopy().withStateValue("Forwarded by " + getPosition().getName())
                         .withOwner(getPositionByUserId(userId)).withComments(detail.getComment());
             budgetDetailService.persist(detail);

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -37,16 +37,11 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-/*
- * Created on Oct 21, 2008
- *
- * TODO To change the template for this generated file go to
- * Window - Preferences - Java - Code Style - Code Templates
- */
+
 package org.egov.dao.bills;
 
-import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.model.bills.EgBilldetails;
 import org.hibernate.Query;
 import org.hibernate.Session;
@@ -58,14 +53,16 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.util.List;
 
-/**
- * @author Administrator TODO To change the template for this generated type
- *         comment go to Window - Preferences - Java - Code Style - Code
- *         Templates
- */
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+
 @Repository
 @Transactional(readOnly = true)
 public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
+    @PersistenceContext
+    private EntityManager entityManager;
+
     @Transactional
     public EgBilldetails update(final EgBilldetails entity) {
         getCurrentSession().update(entity);
@@ -84,30 +81,22 @@ public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
     }
 
     public EgBilldetails findById(Number id, boolean lock) {
-        return (EgBilldetails) getCurrentSession().load(EgBilldetails.class, id);
+        return getCurrentSession().load(EgBilldetails.class, id);
     }
 
     public List<EgBilldetails> findAll() {
         return (List<EgBilldetails>) getCurrentSession().createCriteria(EgBilldetails.class).list();
     }
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
-    private final Logger logger = Logger.getLogger(getClass().getName());
-
     @Override
     public BigDecimal getOtherBillsAmount(final Long minGlCodeId, final Long maxGlCodeId, final Long majGlCodeId,
-            final String finYearID, final String functionId, final String schemeId, final String subSchemeId,
-            final String asOnDate, final String billType) throws Exception {
-        if (logger.isDebugEnabled())
-            logger.debug("------- Inside getOtherBillsAmount() -----------");
-        Query qry = null;
-        final StringBuffer qryStr = new StringBuffer();
+                                          final String finYearID, final String functionId, final String schemeId, final String subSchemeId,
+                                          final String asOnDate, final String billType) throws Exception {
+        final StringBuilder qryStr = new StringBuilder();
         final BigDecimal result = new BigDecimal("0.00");
         try {
             String dateCond = "";
@@ -117,16 +106,16 @@ public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
 
             qryStr.append("select sum(bd.debitamount) from EgBilldetails bd, EgBillregister br, EgBillregistermis brm where br.id=bd.egBillregister.id and br.id=brm.egBillregister.id and bd.egBillregister.id=brm.egBillregister.id and brm.financialyear.id =:finYearID and br.expendituretype not in ( :billType)  and br.status.id not in (SELECT es.id FROM EgwStatus es  WHERE  UPPER(es.description) LIKE '%CANCELLED%') ");
 
-            if (!(asOnDate == null || "".equals(asOnDate)))
+            if (isNotBlank(asOnDate))
                 dateCond = " and br.billdate <=:asOnDate";
 
-            if (!(functionId == null || "".equals(functionId)))
+            if (isNotBlank(functionId))
                 funcStr = " and bd.functionid =:functionId";
 
-            if (!(schemeId == null || "".equals(schemeId)) && (subSchemeId == null || "".equals(subSchemeId)))
+            if (isNotBlank(schemeId) && isBlank(subSchemeId))
                 schStr = "  and brm.scheme =:schemeId";
 
-            if (!(schemeId == null || "".equals(schemeId)) && !(subSchemeId == null || "".equals(subSchemeId)))
+            if (isNotBlank(schemeId) && isNotBlank(subSchemeId))
                 schStr = "  and brm.scheme =:schemeId and brm.subScheme =:subSchemeId";
 
             if (minGlCodeId != 0 && maxGlCodeId != 0)
@@ -140,16 +129,16 @@ public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
             qryStr.append(funcStr);
             qryStr.append(schStr);
             qryStr.append(glcodeStr);
-            qry = getCurrentSession().createQuery(qryStr.toString());
-            if (!(functionId == "" || functionId == null))
+            Query qry = getCurrentSession().createQuery(qryStr.toString());
+            if (isNotBlank(functionId))
                 qry.setString("functionId", functionId);
-            if (!(schemeId == "" || schemeId == null) && (subSchemeId == "" || subSchemeId == null))
+            if (isNotBlank(schemeId) && isBlank(subSchemeId))
                 qry.setString("schemeId", schemeId);
-            if (!(schemeId == "" || schemeId == null) && !(subSchemeId == "" || subSchemeId == null)) {
+            if (isNotBlank(schemeId) && isNotBlank(subSchemeId)) {
                 qry.setString("schemeId", schemeId);
                 qry.setString("subSchemeId", subSchemeId);
             }
-            if (!(asOnDate == "" || asOnDate == null))
+            if (isNotBlank(asOnDate))
                 qry.setString("asOnDate", asOnDate);
             if (minGlCodeId != 0 && maxGlCodeId != 0) {
                 qry.setLong("minGlCodeId", minGlCodeId);
@@ -161,36 +150,27 @@ public class EgBilldetailsHibernateDAO implements EgBilldetailsDAO {
             qry.setString("finYearID", finYearID);
             qry.setString("billType", billType);
 
-            if (logger.isInfoEnabled())
-                logger.info("qry---------> " + qry);
-
             if (qry.uniqueResult() != null)
                 return new BigDecimal(qry.uniqueResult().toString());
             else
                 return result;
         } catch (final Exception e) {
-            logger.error(e.getCause() + " Error in getOtherBillsAmount");
-            throw new ApplicationException(e.getMessage());
+            throw new ApplicationRuntimeException("Error occurred while getting other bill amount", e);
         }
     }
 
     @Override
     public EgBilldetails getBillDetails(final Long billId, final List glcodeIdList) throws Exception {
-        Query qry = null;
-        final StringBuffer qryStr = new StringBuffer();
-        EgBilldetails billdetails = null;
+        
         try {
+            StringBuilder qryStr = new StringBuilder();
             qryStr.append("from EgBilldetails bd where bd.creditamount>0 AND bd.glcodeid IN (:glcodeIds) AND billid=:billId ");
-            qry = getCurrentSession().createQuery(qryStr.toString());
+            Query qry = getCurrentSession().createQuery(qryStr.toString());
             qry.setParameterList("glcodeIds", glcodeIdList);
             qry.setLong("billId", billId);
-            if (logger.isInfoEnabled())
-                logger.info("qry---------> " + qry);
-            billdetails = (EgBilldetails) qry.uniqueResult();
+            return (EgBilldetails) qry.uniqueResult();
         } catch (final Exception e) {
-            logger.error(e.getCause() + " Error in getBillDetails");
             throw new ApplicationException(e.getMessage());
         }
-        return billdetails;
     }
 }

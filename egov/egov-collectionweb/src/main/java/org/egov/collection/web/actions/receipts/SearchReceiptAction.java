@@ -181,7 +181,7 @@ public class SearchReceiptAction extends SearchFormAction {
         ArrayList<ReceiptHeader> receiptList = new ArrayList<ReceiptHeader>(0);
         receiptList.addAll(searchResult.getList());
         searchResult.getList().clear();
-        if (getServiceClass() != "-1")
+        if (!getServiceClass().equals("-1"))
             addDropdownData("serviceTypeList",
                     getPersistenceService().findAllByNamedQuery(CollectionConstants.QUERY_SERVICES_BY_TYPE, getServiceClass()));
 
@@ -255,7 +255,7 @@ public class SearchReceiptAction extends SearchFormAction {
             params.add(Long.valueOf(getServiceTypeId()));
         }
 
-        if (getServiceClass() != "-1") {
+        if (!getServiceClass().equals("-1")) {
             criteriaString.append(" and receipt.service.serviceType = ? ");
             params.add(getServiceClass());
         }

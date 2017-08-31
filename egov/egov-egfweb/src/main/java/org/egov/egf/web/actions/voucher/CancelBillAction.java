@@ -68,6 +68,8 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import com.exilant.eGov.src.domain.BillRegisterBean;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Results({ @Result(name = "search", location = "cancelBill-search.jsp") })
 public class CancelBillAction extends BaseFormAction {
     private static final long serialVersionUID = 1L;
@@ -399,7 +401,7 @@ public class CancelBillAction extends BaseFormAction {
                 }
                 idString += idList[i] + (i == idListLength - 1 ? "" : ",");
             }
-            if (idString != "")
+            if (isNotBlank(idString))
             {
                 if (idString.charAt(idString.length() - 1) == ',')
                     idString = idString.replace(",", "");
@@ -410,11 +412,11 @@ public class CancelBillAction extends BaseFormAction {
             final SQLQuery totalSQLQuery = persistenceService.getSession()
                     .createSQLQuery(cancelQuery.toString());
             totalSQLQuery.setLong("statusId", status.getId());
-            if (idString != "")
+            if (isNotBlank(idString))
                 totalSQLQuery.executeUpdate();
         }
 
-        if (idString != "")
+        if (isNotBlank(idString))
             addActionMessage(getText("cancel.bill.success"));
 
         prepareBeforeSearch();

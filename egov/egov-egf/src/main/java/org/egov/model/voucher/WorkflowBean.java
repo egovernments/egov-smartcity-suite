@@ -156,21 +156,4 @@ public class WorkflowBean {
         this.currentState = currentState;
     }
     
-    @Override
-    public String toString() {
-        final StringBuilder str = new StringBuilder();
-        str.append("WorkflowBean={ ");
-        str.append("actionName=").append(actionName == null ? "null" : actionName.toString());
-        str.append("actionState=").append(actionState == null ? "null" : actionState.toString());
-        str.append("appoverUserList=").append(appoverUserList == null ? "null" : appoverUserList.toString());
-        str.append("approverUserId=").append(approverUserId == null ? "null" : approverUserId.toString());
-        str.append("comments=").append(approverComments == null ? "null" : approverComments.toString());
-        str.append("departmentId=").append(departmentId == null ? "null" : departmentId.toString());
-        str.append("departmentList=").append(departmentList == null ? "null" : departmentList.toString());
-        str.append("designationId=").append(designationId == null ? "null" : designationId.toString());
-        str.append("designationList=").append(designationList == null ? "null" : designationList.toString());
-        str.append("}");
-        return str.toString();
-    }
-
 }

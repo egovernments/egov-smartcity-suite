@@ -39,27 +39,6 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
-import static java.lang.String.format;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -99,28 +78,47 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
+    private static final String REVISION_PETITION_CREATED = "CREATED";
+    @Autowired
+    protected AssignmentService assignmentService;
+    @Autowired
+    @Qualifier("workflowService")
+    protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
+    @Autowired
+    DesignationService designationService;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
     private PropertyStatusDAO propertyStatusDAO;
     @Autowired
-    DesignationService designationService;
-    @Autowired
     private SecurityUtils securityUtils;
     @Autowired
-    protected AssignmentService assignmentService;
-    @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-    @Autowired
-    @Qualifier("workflowService")
-    protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
     @Autowired
     private EisCommonService eisCommonService;
     @Autowired
     private ApplicationIndexService applicationIndexService;
-    private static final String REVISION_PETITION_CREATED = "CREATED";
-
     @Autowired
     private MessagingService messagingService;
     private SMSEmailService sMSEmailService;
@@ -254,10 +252,10 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param status
      */
     private void updateRevisionPetitionStatus(final WorkFlowMatrix wfmatrix, final RevisionPetition objection,
-            final String status) {
+                                              final String status) {
 
         EgwStatus egwStatus = null;
-        if (status != null && !"".equals(status))
+        if (isNotBlank(status))
             egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE, status);
 
         else if (wfmatrix != null && wfmatrix.getNextStatus() != null && objection != null)
@@ -335,9 +333,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                         + " for future reference";
             }
         }
-        if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
+        if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
             messagingService.sendSMS(mobileNumber, smsMsg);
-        if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailBody))
+        if (isNotBlank(emailid) && isNotBlank(emailBody))
             messagingService.sendEmail(emailid, emailSubject, emailBody);
     }
 
@@ -350,7 +348,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     }
 
     public RevisionPetition createRevisionPetition(final RevisionPetition objection,
-            final HashMap<String, String> meesevaParams) {
+                                                   final HashMap<String, String> meesevaParams) {
         createRevisionPetition(objection);
         return objection;
     }
@@ -365,15 +363,14 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                         .getCreatedBy(), objection.getState().getInitiatorPosition());
             else
                 wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(objection.getCreatedBy().getId()).get(0);
-        } else if (!objection.getStateHistory().isEmpty()){
+        } else if (!objection.getStateHistory().isEmpty()) {
             if (objection.getState().getInitiatorPosition() == null)
                 wfInitiator = assignmentService.getAssignmentsForPosition(
                         objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
             else
                 wfInitiator = assignmentService.getAssignmentsForPosition(
                         objection.getState().getInitiatorPosition().getId(), new Date()).get(0);
-        }
-        else
+        } else
             wfInitiator = assignmentService.getAssignmentsForPosition(objection.getState().getOwnerPosition()
                     .getId(), new Date()).get(0);
         return wfInitiator;
@@ -394,7 +391,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @return ReportOutput
      */
     public ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,
-            final String noticeNo) {
+                                                  final String noticeNo) {
         reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
@@ -405,12 +402,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
             final String cityGrade = request.getSession().getAttribute("cityGrade") != null
                     ? request.getSession().getAttribute("cityGrade").toString() : null;
-            Boolean isCorporation;
-            if (cityGrade != null && cityGrade != ""
-                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
-                isCorporation = true;
-            else
-                isCorporation = false;
+            Boolean isCorporation = isNotBlank(cityGrade) && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION);
             if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
                 natureOfWork = NATURE_REVISION_PETITION;
             else

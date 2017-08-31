@@ -71,6 +71,8 @@ import org.egov.infstr.search.SearchQuerySQL;
 import org.egov.model.instrument.InstrumentType;
 import org.springframework.beans.factory.annotation.Autowired;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
 @Results({ @Result(name = DishonoredChequeAction.SEARCH, location = "dishonoredCheque-search.jsp"),
         @Result(name = DishonoredChequeAction.SUCCESS, location = "dishonoredCheque-success.jsp"),
         @Result(name = "process", location = "dishonoredCheque-process.jsp"),
@@ -167,7 +169,7 @@ public class DishonoredChequeAction extends SearchFormAction {
     public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
 
         Long bankId = null;
-        if (!bankBranchId.equals("-1") && bankBranchId != null && bankBranchId != "") {
+        if (isNotBlank(bankBranchId) && !bankBranchId.equals("-1")) {
             final String id[] = bankBranchId.split("-");
             bankId = Long.parseLong(id[0]);
         }
