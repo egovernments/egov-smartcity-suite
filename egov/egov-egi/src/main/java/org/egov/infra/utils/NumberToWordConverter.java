@@ -68,7 +68,11 @@ public final class NumberToWordConverter {
         //Only static API's
     }
 
-    public static String convertToWords(BigDecimal number, boolean prefix, boolean suffix) {
+    public static String amountInWordsWithCircumfix(BigDecimal amount) {
+        return numberToWords(amount, true, true);
+    }
+
+    public static String numberToWords(BigDecimal number, boolean prefix, boolean suffix) {
         StringBuilder numberInWords = new StringBuilder();
         if (prefix) {
             if (number.intValue() < 2) {
