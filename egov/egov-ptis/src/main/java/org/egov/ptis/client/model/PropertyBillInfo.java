@@ -51,7 +51,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.MoneyUtils;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -224,7 +224,7 @@ public class PropertyBillInfo {
     }
 
     public String getTotalAmntInWords() {
-        return NumberToWord.amountInWords(getGrandTotal().doubleValue());
+        return NumberToWordConverter.amountInWordsWithCircumfix(getGrandTotal());
     }
 
     public Map<String, Map<String, BigDecimal>> getReasonwiseDues() {
