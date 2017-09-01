@@ -143,9 +143,7 @@ public class AdvertisementPermitDetailUpdateIndexService {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(advertisementPermitDetail
                 .getApplicationNumber());
         // update existing application index
-        if (applicationIndex != null && null != advertisementPermitDetail.getId() && advertisementPermitDetail.getStatus() != null
-                && !advertisementPermitDetail.getStatus().getCode()
-                        .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED)) {
+        if (applicationIndex != null && null != advertisementPermitDetail.getId() && advertisementPermitDetail.getStatus() != null) {
             if (advertisementPermitDetail.getStatus() != null &&
                     (advertisementPermitDetail.getStatus().getCode()
                             .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED)
@@ -153,6 +151,8 @@ public class AdvertisementPermitDetailUpdateIndexService {
                                     .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXAMOUNTPAID)
                             || advertisementPermitDetail.getStatus().getCode()
                                     .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED)
+                            || advertisementPermitDetail.getStatus().getCode()
+                                    .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CREATED)
                             || advertisementPermitDetail.getStatus().getCode()
                                     .equalsIgnoreCase(AdvertisementTaxConstants.APPLICATION_STATUS_CANCELLED))) {
                 applicationIndex.setStatus(advertisementPermitDetail.getStatus().getDescription());

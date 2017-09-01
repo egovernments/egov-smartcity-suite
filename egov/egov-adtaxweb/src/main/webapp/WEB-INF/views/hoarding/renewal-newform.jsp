@@ -57,10 +57,10 @@
 		<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 		<form:hidden path="" id="statuscode" value="${renewalPermitDetail.status.code}"/>
 		<form:hidden path="" id="wfstate" value="${renewalPermitDetail.state.id}"/> 
-			<form:hidden path="previousapplicationid" id="previousapplicationid" value="${renewalPermitDetail.previousapplicationid.id}"/> 
-		
-		
+		<form:hidden path="previousapplicationid" id="previousapplicationid" value="${renewalPermitDetail.previousapplicationid.id}"/> 
+		<form:hidden path="" id="renewpermitId" value="${renewalPermitDetail.id}"/> 
 		<form:hidden path="advertisement" id="adid" value="${renewalPermitDetail.advertisement.id}"/>
+		
 		<div class="panel panel-primary" data-collapsed="0" id="adtaxdetailsbody">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">

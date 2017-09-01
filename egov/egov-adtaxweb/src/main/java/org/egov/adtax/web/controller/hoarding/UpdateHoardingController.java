@@ -47,6 +47,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.exception.HoardingValidationError;
+import org.egov.adtax.service.ReassignAdvertisementService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.adtax.workflow.AdvertisementWorkFlowService;
@@ -88,6 +89,10 @@ public class UpdateHoardingController extends HoardingControllerSupport {
 
     @Autowired
     private AdvertisementWorkFlowService advertisementWorkFlowService;
+    
+    @Autowired
+    private ReassignAdvertisementService reassignAdvertisementService;
+    
 
     @ModelAttribute("advertisementPermitDetail")
     public AdvertisementPermitDetail advertisementPermitDetail(@PathVariable final String id) {
@@ -120,6 +125,9 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
             model.addAttribute("agency", advertisementPermitDetail.getAgency());
             model.addAttribute("advertisementDocuments", advertisementPermitDetail.getAdvertisement().getDocuments());
+            model.addAttribute("isReassignEnabled", reassignAdvertisementService.isReassignEnabled());
+            model.addAttribute("applicationType", advertisementPermitDetail.getApplicationtype().name());
+
             prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
         }
         return HOARDING_UPDATE;
@@ -151,6 +159,8 @@ public class UpdateHoardingController extends HoardingControllerSupport {
                 prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
                 model.addAttribute("stateType", advertisementPermitDetail.getClass().getSimpleName());
                 model.addAttribute("currentState", advertisementPermitDetail.getCurrentState().getValue());
+                model.addAttribute("isReassignEnabled", reassignAdvertisementService.isReassignEnabled());
+                model.addAttribute("applicationType", advertisementPermitDetail.getApplicationtype().name());
             }
             return HOARDING_UPDATE;
         }
