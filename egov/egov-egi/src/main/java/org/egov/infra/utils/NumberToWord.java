@@ -40,22 +40,24 @@
 
 package org.egov.infra.utils;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.FieldPosition;
 
-/**
- * @deprecated use {@link NumberToWordConverter#convertNumberToWords(BigDecimal)} instead.
- * */
-@Deprecated
-public class NumberToWord {
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.config.core.GlobalSettings.currencyName;
+import static org.egov.infra.config.core.GlobalSettings.currencyUnitName;
+import static org.egov.infra.utils.ApplicationConstant.WHITESPACE;
+import static org.egov.infra.utils.StringUtils.isUnsignedNumber;
+import static org.egov.infra.utils.StringUtils.stripExtraSpaces;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(NumberToWord.class);
+/**
+ * @deprecated use {@link NumberToWordConverter#amountInWordsWithCircumfix(BigDecimal)} instead.
+ */
+@Deprecated
+public final class NumberToWord {
 
     private static final long ZEROS = 0;
     private static final long UNITS = 1;
@@ -74,195 +76,140 @@ public class NumberToWord {
     private static final String[] CARDINAL = {"Zero", "One", "Two", "Three", "Four", "Five", "Six", "Seven", "Eight", "Nine", "Ten", "Eleven", "Twelve", "Thirteen", "Fourteen", "Fifteen", "Sixteen", "Seventeen", "Eighteen", "Nineteen", "Twenty", "Thirty",
             "Forty", "Fifty", "Sixty", "Seventy", "Eighty", "Ninety", "Hundred"};
 
-    /**
-     * Format decimal values.
-     *
-     * @param value the value
-     * @return the string
-     */
-    public static String formatDecimal(final Double value) {
-        final DecimalFormat formater = new DecimalFormat("###0.00");
-        final FieldPosition _fldPos = new FieldPosition(0);
-        final StringBuffer _adaptor = new StringBuffer();
-        formater.format(value, _adaptor, _fldPos);
-        return _adaptor.toString();
+    private static final String THOUSAND_CRORES = " Thousand Crore ";
+    private static final String HUNDRED_CRORES = " Hundred Crore ";
+    private static final String HUNDRED = " Hundred ";
+    private static final String THOUSAND = " Thousand ";
+    private static final String LAKH = " Lakh ";
+    private static final String CRORE = " Crore ";
+
+    private NumberToWord() {
+        //Util class with static methods
     }
 
-    /**
-     * Amount in words.
-     *
-     * @param number the number
-     * @return the string
-     */
-    public static String amountInWords(final Double number) {
-        return NumberToWord.convertToWord(formatDecimal(Double.valueOf(number)));
+    public static String amountInWords(Double amount) {
+        StringBuffer formattedAmount = new StringBuffer();
+        new DecimalFormat("###0.00").format(amount, formattedAmount, new FieldPosition(0));
+        return stripExtraSpaces(NumberToWord.convertToWord(formattedAmount.toString()));
     }
 
-    /**
-     * Number to string.
-     *
-     * @param strNumberToConvert the str number to convert
-     * @return the string
-     */
-    public static String numberToString(final String strNumberToConvert) {
-        if (StringUtils.contains(strNumberToConvert, ".")) {
-            throw new ApplicationRuntimeException("Can not pass decimal values");
-        } else {
-            return NumberToWord.convertToWord(strNumberToConvert).replace("Rupees", "").replace("Only", "");
-        }
-    }
-
-    /**
-     * Translate the given currency number to word .
-     *
-     * @param number the number
-     * @return the string
-     */
     public static String convertToWord(String number) {
 
-        String paise = "";
-
-        if (number.contains(".")) {
-            final String[] splitPaise = number.split("[.]");
-            if (splitPaise.length == 2) {
-                if (!splitPaise[1].equals("00")) {
-                    paise = "and " + paiseInWords(splitPaise[1]) + " " + "Paise Only";
-                }
-            }
-            number = splitPaise[0];
+        StringBuilder currencyUnitSuffix = new StringBuilder();
+        String[] currencyAndUnit = number.split("[.]");
+        if (currencyAndUnit.length == 2 && !currencyAndUnit[1].equals("00")) {
+            currencyUnitSuffix.append(" and ").append(paiseInWords(currencyAndUnit[1]))
+                    .append(WHITESPACE).append(currencyUnitName()).append(" Only");
         }
 
-        final String returnValue = translateToWord(number);
+        String returnValue = translateToWord(currencyAndUnit[0]);
 
-        return (paise.isEmpty() ? ("Rupees " + returnValue + " Only ") : ("Rupees " + returnValue + " " + paise));
+        return currencyUnitSuffix.length() < 1 ? new StringBuilder()
+                .append(currencyName()).append(WHITESPACE)
+                .append(returnValue).append(" Only").toString()
+                : new StringBuilder()
+                .append(currencyName()).append(WHITESPACE)
+                .append(returnValue).append(currencyUnitSuffix).toString();
 
     }
 
-    /**
-     * Translate the given number to word. Decimal places not allowed, for decimal use {@see NumberToWord#convertToWord(String)}
-     *
-     * @param String number
-     * @return String word
-     **/
-    public static String translateToWord(String number) {
-        long num = 0L;
-        try {
-            num = Long.parseLong(number);
-        } catch (final NumberFormatException e) {
-            LOGGER.error("Invalid Number, Please enter a valid Number.");
-            throw new ApplicationRuntimeException("Exception occurred in convertToWord", e);
+    public static String translateToWord(String value) {
+
+        if (!isUnsignedNumber(value))
+            throw new ApplicationRuntimeException("Provided value is not a valid number");
+
+        StringBuilder numberInWords = new StringBuilder();
+        long number = Long.parseLong(value);
+        if (number == ZEROS || value.length() > 12) {
+            numberInWords.append(getWord(number));
         }
 
-        Long subNum = 0L;
-        String returnValue = "";
-
-        if (Long.parseLong(number) == ZEROS || number.length() > 12) {
-            returnValue += getWord(Long.parseLong(number));
-        }
-
-        while (num > 0 && number.length() <= 12) {
-            number = "" + num;
-            final long place = getPlace(number);
+        Long subNum;
+        String numericPart = Long.toString(number);
+        while (number > 0 && numericPart.length() < 13) {
+            numericPart = Long.toString(number);
+            long place = getPlace(numericPart);
 
             if (place == HUNDREDCRORES || place == THOUSANDCRORES || place == TENTHOUSANDCRORES) {
-                subNum = Long.parseLong("" + number.charAt(0));
-                returnValue += getWord(subNum);
+                subNum = Long.parseLong(Character.toString(numericPart.charAt(0)));
+                numberInWords.append(getWord(subNum));
                 if (place == HUNDREDCRORES) {
-                    num -= subNum * HUNDREDCRORES;
-                    if (num == 0) {
-                        returnValue += " Hundred Crores ";
+                    number -= subNum * HUNDREDCRORES;
+                    if (number == 0) {
+                        numberInWords.append(HUNDRED_CRORES);
                     } else {
-                        returnValue += " Hundred ";
+                        numberInWords.append(HUNDRED);
                     }
                 } else if (place == THOUSANDCRORES) {
-                    num -= subNum * THOUSANDCRORES;
-                    if (num == 0) {
-                        returnValue += " Thousand Crores ";
+                    number -= subNum * THOUSANDCRORES;
+                    if (number == 0) {
+                        numberInWords.append(THOUSAND_CRORES);
                     } else {
-                        returnValue += " Thousand  ";
+                        numberInWords.append(THOUSAND);
                     }
                 } else {
-                    returnValue = "";
-                    subNum = Long.parseLong(number.charAt(0) + "" + number.charAt(1));
-                    num -= subNum * THOUSANDCRORES;
-                    if (subNum >= 21 && (subNum % 10) != 0 && num == 0) {
-                        returnValue += getWord(Long.parseLong(String.valueOf(number.charAt(0))) * 10) + " " + getWord(subNum % 10) + " Thousand Crores ";
-                    } else if (num == 0) {
-                        returnValue += getWord(Long.parseLong(String.valueOf(number.charAt(0))) * 10) + " " + " Thousand Crores ";
+                    numberInWords.setLength(0);
+                    subNum = Long.parseLong(Character.toString(numericPart.charAt(0)) + numericPart.charAt(1));
+                    number -= subNum * THOUSANDCRORES;
+                    if (subNum >= 21 && (subNum % 10) != 0 && number == 0) {
+                        numberInWords.append(getWord(Long.parseLong(String.valueOf(numericPart.charAt(0))) * 10))
+                                .append(WHITESPACE).append(getWord(subNum % 10)).append(THOUSAND_CRORES);
+                    } else if (number == 0) {
+                        numberInWords.append(getWord(Long.parseLong(String.valueOf(numericPart.charAt(0))) * 10))
+                                .append(THOUSAND_CRORES);
                     } else {
-                        returnValue += getWord(Long.parseLong(String.valueOf(number.charAt(0))) * 10) + " " + getWord(subNum % 10) + " Thousand  ";
+                        numberInWords.append(getWord(Long.parseLong(String.valueOf(numericPart.charAt(0))) * 10))
+                                .append(WHITESPACE).append(getWord(subNum % 10)).append(THOUSAND);
                     }
                 }
 
             } else if (place == TENS || place == TENTHOUSANDS || place == TENLAKHS || place == TENCRORES) {
-
-                subNum = Long.parseLong(String.valueOf(number.charAt(0)) + String.valueOf(number.charAt(1)));
+                subNum = Long.parseLong(String.valueOf(numericPart.charAt(0)) + String.valueOf(numericPart.charAt(1)));
 
                 if (subNum >= 21 && (subNum % 10) != 0) {
-                    returnValue += getWord(Long.parseLong(String.valueOf(number.charAt(0))) * 10) + " " + getWord(subNum % 10);
+                    numberInWords.append(getWord(Long.parseLong(String.valueOf(numericPart.charAt(0))) * 10))
+                            .append(WHITESPACE).append(getWord(subNum % 10));
                 } else {
-                    returnValue += getWord(subNum);
+                    numberInWords.append(getWord(subNum));
                 }
 
                 if (place == TENS) {
-                    num = 0;
+                    number = 0;
                 } else if (place == TENTHOUSANDS) {
-                    num -= subNum * THOUSANDS;
-                    returnValue += " Thousands ";
+                    number -= subNum * THOUSANDS;
+                    numberInWords.append(THOUSAND);
                 } else if (place == TENLAKHS) {
-                    num -= subNum * LAKHS;
-                    returnValue += " Lakhs ";
+                    number -= subNum * LAKHS;
+                    numberInWords.append(LAKH);
                 } else if (place == TENCRORES) {
-                    num -= subNum * CRORES;
-                    returnValue += " Crores ";
+                    number -= subNum * CRORES;
+                    numberInWords.append(CRORE);
                 }
-
             } else {
-                subNum = Long.parseLong(String.valueOf(number.charAt(0)));
-                returnValue += getWord(subNum);
+                subNum = Long.parseLong(String.valueOf(numericPart.charAt(0)));
+                numberInWords.append(getWord(subNum));
                 if (place == UNITS) {
-                    num = 0;
+                    number = 0;
                 } else if (place == HUNDREDS) {
-                    num -= subNum * HUNDREDS;
-                    returnValue += " Hundred ";
+                    number -= subNum * HUNDREDS;
+                    numberInWords.append(HUNDRED);
                 } else if (place == THOUSANDS) {
-                    num -= subNum * THOUSANDS;
-                    returnValue += " Thousand ";
+                    number -= subNum * THOUSANDS;
+                    numberInWords.append(THOUSAND);
                 } else if (place == LAKHS) {
-                    num -= subNum * LAKHS;
-                    returnValue += " Lakh ";
+                    number -= subNum * LAKHS;
+                    numberInWords.append(LAKH);
                 } else if (place == CRORES) {
-                    num -= subNum * CRORES;
-                    returnValue += " Crore ";
+                    number -= subNum * CRORES;
+                    numberInWords.append(CRORE);
                 }
             }
         }
-        return returnValue;
+        return numberInWords.toString();
     }
 
-    /**
-     * Normalize the unformatted number by removing comma and space.
-     *
-     * @param number the number
-     * @return the string
-     */
-    private static String normalize(final String number) {
-        final String cleanedNumber = number.replace(',', ' ').replaceAll(" ", "");
-        if (number.length() > 1 && cleanedNumber.startsWith("0")) {
-            return cleanedNumber.replaceFirst("0", "");
-        }
-        return cleanedNumber;
-    }
-
-    /**
-     * this method returns the place where the number exists. it does by checking number length. Gets the place.
-     *
-     * @param number the number
-     * @return the place
-     */
-    private static long getPlace(final String number) {
+    private static long getPlace(String number) {
         switch (number.length()) {
-
             case 1:
                 return UNITS;
             case 2:
@@ -287,18 +234,16 @@ public class NumberToWord {
                 return THOUSANDCRORES;
             case 12:
                 return TENTHOUSANDCRORES;
+            default:
+                return ZEROS;
         }
-        return 0;
     }
 
-    /**
-     * Gets the word.
-     *
-     * @param number the number
-     * @return the word
-     */
-    public static String getWord(final Long number) {
-        final int value = number.intValue();
+    private static String getWord(Long number) {
+        int value = number.intValue();
+        if (value < 0)
+            throw new ApplicationRuntimeException("Number is out of bound");
+
         switch (value) {
             case 30:
                 return CARDINAL[21];
@@ -317,40 +262,35 @@ public class NumberToWord {
             case 100:
                 return CARDINAL[28];
             default:
-                if ((value < 21)) {
+                if (value < 21) {
                     return CARDINAL[value];
                 } else {
-                    return "";
+                    return EMPTY;
                 }
         }
 
     }
 
-    /**
-     * Paise in words.
-     *
-     * @param paise the paise
-     * @return the string
-     */
-    private static String paiseInWords(final String paise) {
+    private static String paiseInWords(String paise) {
 
-        Long subNum = 0L;
-        String returnValue = "";
+        Long subNum;
+        StringBuilder returnValue = new StringBuilder();
 
         if (paise.length() >= 2) {
-            subNum = Long.parseLong(paise.charAt(0) + "" + paise.charAt(1));
+            subNum = Long.parseLong(Character.toString(paise.charAt(0)) + paise.charAt(1));
         } else {
-            subNum = Long.parseLong(paise.charAt(0) + "");
+            subNum = Long.parseLong(Character.toString(paise.charAt(0)));
         }
 
         if (subNum >= 21 && (subNum % 10) != 0) {
-            returnValue += getWord(Long.parseLong("" + paise.charAt(0)) * 10) + " " + getWord(subNum % 10);
+            returnValue.append(getWord(Long.parseLong(Character.toString(paise.charAt(0))) * 10))
+                    .append(WHITESPACE).append(getWord(subNum % 10));
 
         } else {
-            returnValue += getWord(subNum);
+            returnValue.append(getWord(subNum));
 
         }
 
-        return returnValue;
+        return returnValue.toString();
     }
 }
