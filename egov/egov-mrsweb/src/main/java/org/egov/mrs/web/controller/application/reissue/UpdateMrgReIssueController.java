@@ -208,17 +208,17 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 if (marriageUtils.isDigitalSignEnabled()) {
                     model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
                     workflowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
-                    reIssueService.approveReIssue(reIssue, workflowContainer);
+                    reIssueService.approveReIssue(reIssue, workflowContainer,request);
                     message = messageSource.getMessage("msg.approved.reissue",
                             new String[] { reIssue.getApplicationNo() }, null);
                 } else {
                     model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
                     workflowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
-                    reIssueService.approveReIssue(reIssue, workflowContainer);
+                    reIssueService.approveReIssue(reIssue, workflowContainer, request);
                     message = messageSource.getMessage(
-                            "msg.approved.forwarded.reissue",
-                            new String[] { reIssue.getApplicationNo(),
-                                    approverName.concat("~").concat(nextDesignation) },
+                            "msg.approved.reissue",
+                            new String[] { reIssue.getApplicationNo()
+                            },
                             null);
                 }
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN)) {

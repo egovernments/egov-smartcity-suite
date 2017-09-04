@@ -71,5 +71,10 @@
 	</div>
 </form:form>
 <div class="buttonbottom" align="center">
+<c:if test="${marriageRegistration.status.code == 'REGISTERED'}">
+		<input type="button" name="printbutton" id="printbutton" value="print" class="btn btn-default" onclick="window.open('/mrs/certificate/registration?id=${marriageRegistration.id}','_blank');" />
+
+</c:if>
+
 		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 </div>

@@ -174,10 +174,8 @@ public class MarriageRegistrationService {
     private MarriageRegistrationUpdateIndexesService marriageRegistrationUpdateIndexesService;
     @Autowired
     private MarriageRegistrationReportsService marriageRegistrationReportsService;
-
     @Autowired
-    private SecurityUtils securityUtils;
-    
+    private SecurityUtils securityUtils;    
     @Autowired
     private AppConfigValueService appConfigValuesService;
     
@@ -432,21 +430,26 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration approveRegistration(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer) {
+            final WorkflowContainer workflowContainer, HttpServletRequest request) throws IOException {
         marriageRegistration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
         marriageRegistration.setRegistrationNo(marriageRegistrationNumberGenerator
                 .generateMarriageRegistrationNumber(marriageRegistration));
         User user = securityUtils.getCurrentUser();
-        if(user!=null)
-        marriageRegistration.setRegistrarName(user.getName());
-        
+        if (user != null)
+            marriageRegistration.setRegistrarName(user.getName());
+
         updateRegistrationdata(marriageRegistration);
         updateDocuments(marriageRegistration);
         update(marriageRegistration);
-        workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
-        marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
+        if (marriageUtils.isDigitalSignEnabled()) {
+            workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+            marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
+        } else {
+            printCertificate(marriageRegistration, workflowContainer, request);
+
+        }
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         return marriageRegistration;
@@ -468,13 +471,12 @@ public class MarriageRegistrationService {
                 MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
-        // FixMe : send sms and email after digital sign is done
-        /*
-         * marriageSmsAndEmailService.sendSMS(marriageRegistration,
-         * MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
-         * marriageSmsAndEmailService.sendEmail(marriageRegistration,
-         * MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
-         */
+
+        marriageSmsAndEmailService.sendSMS(marriageRegistration,
+                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
+        marriageSmsAndEmailService.sendEmail(marriageRegistration,
+                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
+
         return marriageRegistration;
     }
 

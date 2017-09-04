@@ -182,15 +182,20 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer) {
+    public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
+            final HttpServletRequest request) throws IOException {
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
         final ReIssue reissue1 = update(reissue);
-        workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments());
+        if (marriageUtils.isDigitalSignEnabled()) {
+            workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments());
+            reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue1);
+        } else {
+            printCertificate(reissue1, workflowContainer, request);
+        }
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue1);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue1);
-        reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue1);
         return reissue1;
     }
 

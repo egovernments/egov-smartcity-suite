@@ -280,7 +280,7 @@
 		<jsp:param value="subheading.wife.info" name="header" />
 	</jsp:include>
 
-		<c:if test="${isDigitalSignEnabled ne true && (marriageRegistration.status.code =='APPROVED' && pendingActions == 'Certificate Print Pending') 
+		<%-- <c:if test="${isDigitalSignEnabled ne true && (marriageRegistration.status.code =='APPROVED' && pendingActions == 'Certificate Print Pending') 
 		 || marriageRegistration.status.code =='APPROVED' || marriageRegistration.status.code =='DIGITALSIGNED' || currentState == 'DATAENTRY' }">
 		
 		<div class="form-group">
@@ -305,8 +305,8 @@
 				<form:errors path="pageNo" cssClass="add-margin error-msg" />
 			</div>
 		</div>
-		</c:if>
-		<c:if test="${isDigitalSignEnabled eq true && marriageRegistration.status.code =='CREATED'}">
+		</c:if> --%>
+		<c:if test="${(marriageRegistration.status.code =='CREATED' && nextActn!='Junior/Senior Assistance approval pending')|| currentState == 'DATAENTRY'|| marriageRegistration.status.code =='DIGITALSIGNED'|| marriageRegistration.status.code == 'APPROVED'}">
 			<div class="form-group">
 			<label class="col-sm-3 control-label validate-madatory"> <spring:message
 					code="lbl.serial.no" /> <span class="mandatory"></span>

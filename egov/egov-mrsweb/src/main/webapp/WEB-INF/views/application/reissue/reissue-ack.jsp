@@ -71,5 +71,10 @@
 	</div>
 </form:form>
 <div class="buttonbottom" align="center">
+<c:if test="${reIssue.status.code == 'CERTIFICATEREISSUED'}">
+		<input type="button" name="printbutton" id="printbutton" value="print" class="btn btn-default" onclick="window.open('/mrs/certificate/reissue?id=${reIssue.id}','_blank');" />
+
+</c:if>
+
 		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
 </div>

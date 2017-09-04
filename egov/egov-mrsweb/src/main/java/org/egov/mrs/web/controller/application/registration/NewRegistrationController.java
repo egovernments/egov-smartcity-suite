@@ -43,6 +43,7 @@ import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -245,7 +246,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             @ModelAttribute final WorkflowContainer workflowContainer,
             final Model model,
             final HttpServletRequest request,
-            final BindingResult errors) {
+            final BindingResult errors) throws IOException {
 
         if (errors.hasErrors())
             return "registration-view";
@@ -258,7 +259,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             result = marriageRegistrationService.forwardRegistration(marriageRegistration, workflowContainer);
             break;
         case "Approve":
-            result = marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
+            result = marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer,request);
             break;
         case "Reject":
             result = marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);

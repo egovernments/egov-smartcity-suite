@@ -46,7 +46,10 @@ import java.util.List;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.messaging.MessagingService;
+import org.egov.mrs.application.service.MarriageCertificateService;
+import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -58,7 +61,9 @@ import org.springframework.stereotype.Service;
 public class MarriageSmsAndEmailService {
     private static final String MSG_KEY_SMS_REGISTRATION_NEW = "msg.newregistration.sms";
     private static final String MSG_KEY_SMS_REGISTRATION_REJECTION = "msg.rejectregistration.sms";
+    private static final String MSG_KEY_SMS_REGISTRATION_APPROVED= "msg.registration.approved.sms";
     private static final String MSG_KEY_SMS_REGISTRATION_REGISTERED = "msg.registration.registered.sms";
+    private static final String MSG_KEY_SMS_REISSUE_REGISTERED  ="msg.reissue.registered.sms";
     private static final String MSG_KEY_EMAIL_REGISTRATION_NEW_EMAIL = "msg.newregistration.mail";
     private static final String MSG_KEY_EMAIL_REGISTRATION_NEW_SUBJECT = "msg.newregistration.mail.subject";
     private static final String MSG_KEY_EMAIL_REGISTRATION_REJECTION_EMAIL = "msg.rejectionregistration.mail";
@@ -84,6 +89,8 @@ public class MarriageSmsAndEmailService {
     private MessageSource mrsMessageSource;
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    @Autowired
+    private MarriageCertificateService marriageCertificateService;
 
     public void sendSMS(final MarriageRegistration registration, String status) {
         String msgKey = MSG_KEY_SMS_REGISTRATION_NEW;
@@ -95,11 +102,19 @@ public class MarriageSmsAndEmailService {
                     .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.CANCELLED.toString())) {
                 msgKey = MSG_KEY_SMS_REGISTRATION_REJECTION;
 
-            } else if (registration.getStatus() != null && registration.getStatus().getCode()
-                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString())) {
-                msgKey = MSG_KEY_SMS_REGISTRATION_REGISTERED;
+            } else if (registration.getStatus() != null && (registration.getStatus().getCode()
+                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.REGISTERED.toString())
+                    || registration.getStatus().getCode()
+                            .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString()))) {
+                msgKey = MSG_KEY_SMS_REGISTRATION_REGISTERED; 
                 referenceNumber = registration.getRegistrationNo();
+            } else if (registration.getStatus() != null && (registration.getStatus().getCode()
+                    .equalsIgnoreCase(MarriageRegistration.RegistrationStatus.APPROVED.toString()))){
+                msgKey = MSG_KEY_SMS_REGISTRATION_APPROVED;
+                referenceNumber = registration.getRegistrationNo();
+                
             }
+                
             final String message = buildEmailMessage(registration, msgKey, referenceNumber);
             if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
                     && registration.getHusband().getContactInfo().getMobileNo() != null)
@@ -141,12 +156,17 @@ public class MarriageSmsAndEmailService {
     public void sendSMSForReIssueApplication(final ReIssue reIssue) {
         String msgKey = MSG_KEY_SMS_REISSUE_NEW;
 
-        if (isSmsEnabled() && null != reIssue.getApplicationNo() && null != reIssue.getApplicant().getContactInfo().getEmail()) {
+        if (isSmsEnabled() && null != reIssue.getApplicationNo() && null != reIssue.getApplicant().getContactInfo().getMobileNo()) {
             if (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.CANCELLED.toString()))
                 msgKey = MSG_KEY_SMS_REISSUE_REJECTION;
             else if (reIssue.getStatus() != null
                     && reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.APPROVED.toString())) {
                 msgKey = MSG_KEY_SMS_REISSUE_APPROVED;
+            }
+            else if (null!=reIssue.getStatus() && 
+                    (reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString())||
+                            reIssue.getStatus().getCode().equalsIgnoreCase(ReIssue.ReIssueStatus.DIGITALSIGNED.toString()))){
+                msgKey= MSG_KEY_SMS_REISSUE_REGISTERED;
             }
             final String message = buildMessageForIssueCertificate(reIssue, msgKey);
             messagingService.sendSMS(reIssue.getApplicant().getContactInfo().getMobileNo(), message);
@@ -174,14 +194,22 @@ public class MarriageSmsAndEmailService {
     }
 
     private String buildEmailMessage(final MarriageRegistration registration, String msgKeyMail, String number) {
-        return mrsMessageSource.getMessage(msgKeyMail,
-                new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(), number },
+        MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedCertificate(registration);
+        String pdfLink = null;
+        if(null!=marriageCertificate && marriageCertificate.getId()!=null)
+         pdfLink = ApplicationThreadLocals.getDomainURL()+"/mrs/registration/printcertficate/"+marriageCertificate.getId();
+       return mrsMessageSource.getMessage(msgKeyMail,
+                new String[] { registration.getHusband().getFullName(), registration.getWife().getFullName(), registration.getApplicationNo(), pdfLink,ApplicationThreadLocals.getMunicipalityName() },
                 null);
     }
 
     private String buildMessageForIssueCertificate(final ReIssue reIssue, String msgKeyMail) {
+        MarriageCertificate marriageCertificate = marriageCertificateService.getGeneratedReIssueCertificateForPrint(reIssue);
+        String pdfLink = null;
+        if(null!=marriageCertificate && marriageCertificate.getId()!=null)
+         pdfLink = ApplicationThreadLocals.getDomainURL()+"/mrs/registration/printcertficate/"+marriageCertificate.getId();
         return mrsMessageSource.getMessage(msgKeyMail,
-                new String[] { reIssue.getApplicant().getFullName(), reIssue.getApplicationNo() }, null);
+                new String[] { reIssue.getApplicant().getFullName(), reIssue.getApplicationNo(), pdfLink,ApplicationThreadLocals.getMunicipalityName()}, null);
     }
 
     public Boolean isSmsEnabled() {

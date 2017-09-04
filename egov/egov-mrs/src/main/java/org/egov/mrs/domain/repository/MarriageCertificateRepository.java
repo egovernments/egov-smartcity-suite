@@ -40,10 +40,16 @@
 package org.egov.mrs.domain.repository;
 
 import org.egov.mrs.domain.entity.MarriageCertificate;
+import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
 @Repository
 public interface MarriageCertificateRepository extends JpaRepository<MarriageCertificate, Long> {
-	
+
+    MarriageCertificate findByRegistration(MarriageRegistration registration);
+
+    MarriageCertificate findByReIssue(ReIssue reIssue);
+
 }
