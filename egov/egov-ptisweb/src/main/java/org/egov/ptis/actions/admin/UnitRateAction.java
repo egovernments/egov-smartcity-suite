@@ -275,7 +275,7 @@ public class UnitRateAction extends BaseFormAction {
         Category oldCategory = null;
         Category existingCategory = (Category) getPersistenceService()
                 .find("select bc.category from BoundaryCategory bc where bc.bndry.id = ? "
-                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.categoryAmount = ? ",
+                        + "and bc.category.propUsage.id = ? and bc.category.structureClass.id = ? and bc.category.fromDate = ? and bc.category.categoryAmount = ? and bc.category.isActive = true ",
                         zoneId, usageId, structureClassId, category.getFromDate(), category.getCategoryAmount());
         if (existingCategory != null) {
             addActionError(getText("unit.rate.exists.for.combination"));
