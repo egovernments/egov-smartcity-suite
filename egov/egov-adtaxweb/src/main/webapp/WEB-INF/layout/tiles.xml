@@ -350,11 +350,11 @@
         <put-attribute name="body" value="/WEB-INF/views/citizen/onlinepayment-redirection.jsp"/>
     </definition>
         <definition name="advertisement-reassign" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/advertisement-reassign.jsp"/>
     </definition>
             <definition name="reassign-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+    	<put-attribute name="page-title" value="lbl.reassign.success" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/reassign-success.jsp"/>
     </definition>
     

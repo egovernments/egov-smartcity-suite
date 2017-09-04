@@ -86,8 +86,10 @@ public class ReassignAdvertisementService {
 
     private String updateAdtaxPermitDetails(final AdvertisementReassignDetails advertisementReassignDetails,
             final Position position) {
-        AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService.findBy(advertisementReassignDetails.getApplicationId());
-        advertisementPermitDetail.transition().progressWithStateCopy().withOwner(position).withInitiator(position);
+        AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService
+                .findBy(advertisementReassignDetails.getApplicationId());
+        advertisementPermitDetail.changeProcessInitiator(position);
+        advertisementPermitDetail.changeProcessOwner(position);
         advertisementPermitDetailService.updateAdvertisementPermitDetail(advertisementPermitDetail);
         return advertisementPermitDetail.getApplicationNumber();
     }

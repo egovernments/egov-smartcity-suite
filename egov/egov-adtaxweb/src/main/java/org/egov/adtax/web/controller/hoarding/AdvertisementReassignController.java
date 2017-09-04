@@ -139,8 +139,8 @@ public class AdvertisementReassignController {
                             designation.getId(), new Date());
                     if (!assignments.isEmpty()) {
                         for (Assignment assignment : assignments) {
-                            if (assignment != null && assignment.getPosition() != null) {
-                                if (!getLoggedInPositiontionId().equals(assignment.getPosition().getId())) {
+                            if (assignment != null && assignment.getPosition() != null && !getLoggedInPositiontionId().equals(assignment.getPosition().getId())) 
+                                {
                                     employeeWithPosition.put(assignment.getPosition().getId(),
                                             assignment.getEmployee().getName().concat("/")
                                                     .concat(assignment.getPosition().getName()));
@@ -151,7 +151,7 @@ public class AdvertisementReassignController {
                     }
                 }
             }
-        }
+        
         if (employeeWithPosition.isEmpty()) {
             model.addAttribute("message", messageSource.getMessage("notexists.position",
                     new String[] {}, null));
