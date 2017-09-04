@@ -158,7 +158,8 @@ public class BaseRegisterVLTResultAdaptor implements DataTableJsonAdapter<Proper
 			jsonObject.addProperty("arrearPropertyTax",
 					baseRegisterResultObj.getAggrArrDmd() != null
 							&& baseRegisterResultObj.getAggrArrDmd().compareTo(BigDecimal.ZERO) >= 1
-									? baseRegisterResultObj.getAggrArrDmd().subtract(valuesMap.get("arrLibCess"))
+									? baseRegisterResultObj.getAggrArrDmd().subtract(
+											valuesMap != null ? (valuesMap.get("arrLibCess")) : BigDecimal.ZERO)
 									: BigDecimal.ZERO);
 			jsonObject.addProperty("arrearPenaltyFines", baseRegisterResultObj.getAggrArrearPenaly() != null
 					? baseRegisterResultObj.getAggrArrearPenaly() : BigDecimal.ZERO);

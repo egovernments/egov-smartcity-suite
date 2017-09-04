@@ -107,6 +107,8 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "generalTax", "title": "Current property tax"},
 						  { "data" : "libraryCessTax", "title": "Current library cess"},
 						  { "data" : "eduCessTax", "title": "Current Educational tax"},
+						  { "data" : "arrearUACPenalty", "title": "Arrear UAC Penalty"},
+						  { "data" : "UACpenalty", "title": "Current UAC Penalty"},
 						  { "data" : "currTotal", "title": "Current Total"},
 						  { "data" : "penaltyFinesTax", "title": "Penalty on current tax"},
 						  { "data" : "arrearColl", "title": "Arrear Collection"},

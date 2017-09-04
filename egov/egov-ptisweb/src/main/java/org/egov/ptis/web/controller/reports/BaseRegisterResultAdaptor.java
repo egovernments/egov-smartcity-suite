@@ -98,8 +98,8 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 			final BigDecimal totalColl = currColl.add(baseRegisterResultObj.getArrearCollection() != null
 					? baseRegisterResultObj.getArrearCollection() : BigDecimal.ZERO);
 			if (!valuesMap.isEmpty())
-				currTotal = valuesMap.get("totalCurrPropertyTax")
-						.add(valuesMap.get("totalCurrEduCess").add(valuesMap.get("totalCurrLibCess")));
+				currTotal = valuesMap.get("totalCurrPropertyTax").add(valuesMap.get("totalCurrEduCess")
+						.add(valuesMap.get("totalCurrLibCess").add(valuesMap.get("currentUACPenalty"))));
 
 			jsonObject.addProperty("assessmentNo", baseRegisterResultObj.getPropertyId());
 			jsonObject.addProperty("ownerName", baseRegisterResultObj.getOwnerName());
@@ -126,6 +126,8 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 				jsonObject.addProperty("libraryCessTax", valuesMap.get("totalCurrLibCess"));
 				jsonObject.addProperty("eduCessTax", valuesMap.get("totalCurrEduCess"));
 				jsonObject.addProperty("penaltyFinesTax", valuesMap.get("currPenaltyFine"));
+				jsonObject.addProperty("UACpenalty", valuesMap.get("currentUACPenalty"));
+				jsonObject.addProperty("arrearUACPenalty", valuesMap.get("arrearUACPenalty"));
 
 				jsonObject.addProperty("arrearPropertyTax", valuesMap.get("totalArrearPropertyTax"));
 				jsonObject.addProperty("arrearlibCess", valuesMap.get("totalArreaLibCess"));
@@ -147,47 +149,71 @@ public class BaseRegisterResultAdaptor implements DataTableJsonAdapter<PropertyM
 
 	private Map<String, BigDecimal> getTaxDetails(final PropertyMVInfo propMatView) {
 
-		final BigDecimal totalArrearPropertyTax = BigDecimal.ZERO;
-		final BigDecimal totalArrearEduCess = BigDecimal.ZERO;
-		final BigDecimal totalArreaLibCess = BigDecimal.ZERO;
-		final BigDecimal arrearPenaltyFine = BigDecimal.ZERO;
-
-		final BigDecimal totalCurrPropertyTax = BigDecimal.ZERO;
-		final BigDecimal totalCurrEduCess = BigDecimal.ZERO;
-		final BigDecimal totalCurrLibCess = BigDecimal.ZERO;
-		final BigDecimal currPenaltyFine = BigDecimal.ZERO;
+		BigDecimal totalArrearPropertyTax = BigDecimal.ZERO;
+		BigDecimal totalArrearEduCess = BigDecimal.ZERO;
+		BigDecimal totalArreaLibCess = BigDecimal.ZERO;
+		BigDecimal arrearPenaltyFine = BigDecimal.ZERO;
+		BigDecimal totalCurrPropertyTax = BigDecimal.ZERO;
+		BigDecimal totalCurrEduCess = BigDecimal.ZERO;
+		BigDecimal totalCurrLibCess = BigDecimal.ZERO;
+		BigDecimal currPenaltyFine = BigDecimal.ZERO;
+		BigDecimal currentUACPenalty = BigDecimal.ZERO;
+		BigDecimal arrearUACPenalty = BigDecimal.ZERO;
 
 		final List<InstDmdCollInfo> instDemandCollList = new LinkedList<>(propMatView.getInstDmdColl());
 		final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 		final Map<String, BigDecimal> values = new LinkedHashMap<>();
 		for (final InstDmdCollInfo instDmdCollObj : instDemandCollList)
 			if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_FIRST_HALF).getId())) {
-				values.put("totalCurrPropertyTax", totalCurrPropertyTax.add(
-						instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO));
-				values.put("totalCurrEduCess", totalCurrEduCess.add(
-						instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO));
-				values.put("totalCurrLibCess", totalCurrLibCess.add(
-						instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO));
-				values.put("currPenaltyFine", currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
-						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO));
+				totalCurrPropertyTax = totalCurrPropertyTax
+						.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO);
+				values.put("totalCurrPropertyTax", totalCurrPropertyTax);
+				totalCurrEduCess = totalCurrEduCess
+						.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO);
+				values.put("totalCurrEduCess", totalCurrEduCess);
+				totalCurrLibCess = totalCurrLibCess
+						.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
+				values.put("totalCurrLibCess", totalCurrLibCess);
+				currPenaltyFine = currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
+						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO);
+				values.put("currPenaltyFine", currPenaltyFine);
+				currentUACPenalty = currentUACPenalty.add(instDmdCollObj.getUnauthPenaltyTax() != null
+						? instDmdCollObj.getUnauthPenaltyTax() : BigDecimal.ZERO);
+				values.put("currentUACPenalty", currentUACPenalty);
+
 			} else if (instDmdCollObj.getInstallment().equals(currYearInstMap.get(CURRENTYEAR_SECOND_HALF).getId())) {
-				values.put("totalCurrPropertyTax", totalCurrPropertyTax.add(
-						instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO));
-				values.put("totalCurrEduCess", totalCurrEduCess.add(
-						instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO));
-				values.put("totalCurrLibCess", totalCurrLibCess.add(
-						instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO));
-				values.put("currPenaltyFine", currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
-						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO));
+				totalCurrPropertyTax = totalCurrPropertyTax
+						.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO);
+				values.put("totalCurrPropertyTax", totalCurrPropertyTax);
+				totalCurrEduCess = totalCurrEduCess
+						.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO);
+				values.put("totalCurrEduCess", totalCurrEduCess);
+				totalCurrLibCess = totalCurrLibCess
+						.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
+				values.put("totalCurrLibCess", totalCurrLibCess);
+				currPenaltyFine = currPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
+						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO);
+				values.put("currPenaltyFine", currPenaltyFine);
+				currentUACPenalty = currentUACPenalty.add(instDmdCollObj.getUnauthPenaltyTax() != null
+						? instDmdCollObj.getUnauthPenaltyTax() : BigDecimal.ZERO);
+				values.put("currentUACPenalty", currentUACPenalty);
+				
 			} else {
-				values.put("totalArrearPropertyTax", totalArrearPropertyTax.add(
-						instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO));
-				values.put("totalArrearEduCess", totalArrearEduCess.add(
-						instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO));
-				values.put("totalArreaLibCess", totalArreaLibCess.add(
-						instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO));
-				values.put("arrearPenaltyFine", arrearPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
-						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO));
+				totalArrearPropertyTax = totalArrearPropertyTax
+						.add(instDmdCollObj.getGeneralTax() != null ? instDmdCollObj.getGeneralTax() : BigDecimal.ZERO);
+				values.put("totalArrearPropertyTax", totalArrearPropertyTax);
+				totalArrearEduCess = totalArrearEduCess
+						.add(instDmdCollObj.getEduCessTax() != null ? instDmdCollObj.getEduCessTax() : BigDecimal.ZERO);
+				values.put("totalArrearEduCess", totalArrearEduCess);
+				totalArreaLibCess = totalArreaLibCess
+						.add(instDmdCollObj.getLibCessTax() != null ? instDmdCollObj.getLibCessTax() : BigDecimal.ZERO);
+				values.put("totalArreaLibCess", totalArreaLibCess);
+				arrearPenaltyFine = arrearPenaltyFine.add(instDmdCollObj.getPenaltyFinesTax() != null
+						? instDmdCollObj.getPenaltyFinesTax() : BigDecimal.ZERO);
+				values.put("arrearPenaltyFine", arrearPenaltyFine);
+				arrearUACPenalty = arrearUACPenalty.add(instDmdCollObj.getUnauthPenaltyTax() != null
+						? instDmdCollObj.getUnauthPenaltyTax() : BigDecimal.ZERO);
+				values.put("arrearUACPenalty", arrearUACPenalty);
 			}
 		return values;
 	}
