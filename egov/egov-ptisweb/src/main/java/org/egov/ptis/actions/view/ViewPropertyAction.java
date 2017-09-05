@@ -68,6 +68,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -98,6 +99,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -152,7 +154,9 @@ public class ViewPropertyAction extends BaseFormAction {
     private transient EntityManager entityManager;
 
     private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
-
+                
+    private List<Hashtable<String, Object>> historyMap = new ArrayList<>();
+    
     @Override
     public StateAware getModel() {
         return property;
@@ -269,6 +273,9 @@ public class ViewPropertyAction extends BaseFormAction {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("viewForm : viewMap : " + viewMap);
                 LOGGER.debug("Exit from method viewForm");
+            }
+            if (null != property.getState() && !(property.getStatus().toString().equalsIgnoreCase("C"))) {
+                setHistoryMap(propService.populateHistory(property));
             }
            
             return "view";
@@ -509,6 +516,14 @@ public class ViewPropertyAction extends BaseFormAction {
     public void setPropService(PropertyService propService) {
         this.propService = propService;
     }
+
+	public List<Hashtable<String, Object>> getHistoryMap() {
+		return historyMap;
+	}
+
+	public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
+		this.historyMap = historyMap;
+	}
     
 
 }
