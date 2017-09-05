@@ -50,6 +50,42 @@ public class VacantLandDetails implements Serializable {
 	private Double marketValue;
 	private Double currentCapitalValue;
 	private String effectiveDate;
+	private String vacantLandPlot;
+	private String layoutApprovalAuthority;
+	private String layoutPermitNumber;
+	private String layoutPermitDate;
+
+	public String getVacantLandPlot() {
+		return vacantLandPlot;
+	}
+
+	public void setVacantLandPlot(String vacantLandPlot) {
+		this.vacantLandPlot = vacantLandPlot;
+	}
+
+	public String getLayoutApprovalAuthority() {
+		return layoutApprovalAuthority;
+	}
+
+	public void setLayoutApprovalAuthority(String layoutApprovalAuthority) {
+		this.layoutApprovalAuthority = layoutApprovalAuthority;
+	}
+
+	public String getLayoutPermitNumber() {
+		return layoutPermitNumber;
+	}
+
+	public void setLayoutPermitNumber(String layoutPermitNumber) {
+		this.layoutPermitNumber = layoutPermitNumber;
+	}
+
+	public String getLayoutPermitDate() {
+		return layoutPermitDate;
+	}
+
+	public void setLayoutPermitDate(String layoutPermitDate) {
+		this.layoutPermitDate = layoutPermitDate;
+	}
 
 	@Override
 	public String toString() {

@@ -42,6 +42,7 @@ package org.egov.restapi.util;
 
 import static org.egov.restapi.constants.RestApiConstants.*;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -63,6 +64,7 @@ import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
+import org.egov.restapi.model.DocumentTypeDetails;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.PropertyTransferDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
@@ -77,6 +79,12 @@ public class ValidationUtil {
     
     @Autowired
     private PropertyExternalService propertyExternalService;
+    
+	private static final String EMAIL_PATTERN ="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
+	private static final String PINCODE_PATTERN ="^[1-9][0-9]{5}$";
+	private static final String GUARDIAN_PATTERN ="^[\\p{L} .'-]+$";
+	private static final String DIGITS_ONLY="^(0|[1-9][0-9]*)$";
+	private static final String DIGITS_FLOAT_INT_DBL="[-+]?[0-9]*\\.?[0-9]+";
     
     /**
      * Validates Property Transfer request
@@ -194,6 +202,7 @@ public class ValidationUtil {
     public ErrorDetails validateCreateRequest(final CreatePropertyDetails createPropDetails, final String mode) throws ParseException {
         ErrorDetails errorDetails = null;
         final String propertyTypeMasterCode = createPropDetails.getPropertyTypeMasterCode();
+        final DocumentTypeDetails documentTypeDetails = createPropDetails.getDocumentTypeDetails();
         if (StringUtils.isBlank(propertyTypeMasterCode)) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(OWNERSHIP_CATEGORY_TYPE_REQ_CODE);
@@ -265,37 +274,7 @@ public class ValidationUtil {
                     return errorDetails;
                 }
                 areaOfPlot = Double.valueOf(assessmentsDetails.getExtentOfSite());
-                if (assessmentsDetails.getIsExtentAppurtenantLand()) {
-                	if (StringUtils.isBlank(assessmentsDetails.getExtentAppartenauntLand())) {
-                        errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(EXTENT_OF_SITE_REQ_CODE);
-                        errorDetails.setErrorMessage(EXTENT_OF_SITE_REQ_MSG);
-                        return errorDetails;
-                    } else if(Double.valueOf(assessmentsDetails.getExtentAppartenauntLand()) == 0){
-                    	errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(AREA_GREATER_THAN_ZERO_CODE);
-                        errorDetails.setErrorMessage(AREA_GREATER_THAN_ZERO_MSG);
-                        return errorDetails;
-                    }
-                }
             } 
-            if (StringUtils.isBlank(assessmentsDetails.getRegdDocNo())) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(REG_DOC_NO_REQ_CODE);
-                errorDetails.setErrorMessage(REG_DOC_NO_REQ_MSG);
-                return errorDetails;
-            } else if (StringUtils.isBlank(assessmentsDetails.getRegdDocDate())) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(REG_DOC_DATE_REQ_CODE);
-                errorDetails.setErrorMessage(REG_DOC_DATE_REQ_MSG);
-                return errorDetails;
-            }
-            if(propertyExternalService.convertStringToDate(assessmentsDetails.getRegdDocDate()).after(new Date())){
-            	errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(FUTURE_DATES_NOT_ALLOWED_CODE);
-                errorDetails.setErrorMessage(FUTURE_DATES_NOT_ALLOWED_MSG);
-                return errorDetails;
-            }
             
         	//Vacant Land validations
             if(propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
@@ -349,6 +328,15 @@ public class ValidationUtil {
                 errorDetails.setErrorCode(PIN_CODE_REQ_CODE);
                 errorDetails.setErrorMessage(PIN_CODE_REQ_MSG);
                 return errorDetails;
+        	}else{
+        		Pattern pattern = Pattern.compile(PINCODE_PATTERN);
+	        	Matcher matcher = pattern.matcher(propertyAddressDetails.getPinCode());
+	            if(!matcher.matches()){
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(PIN_CODE_ALPHASPL_ERROR_CODE);
+		            errorDetails.setErrorMessage(PIN_CODE_ALPHASPL_ERROR_MSG);
+		            return errorDetails;
+		        }
         	}
         	if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
 	        	if(StringUtils.isBlank(propertyAddressDetails.getDoorNo())){
@@ -407,13 +395,11 @@ public class ValidationUtil {
                         errorDetails.setErrorMessage(NATURE_OF_USAGES_REQ_MSG);
                         return errorDetails;
                     }
-                    if(!floorDetails.getNatureOfUsageCode().equalsIgnoreCase(PropertyTaxConstants.PROPTYPE_RESD)){
-                    	if (StringUtils.isBlank(floorDetails.getFirmName())) {
+                    if(!floorDetails.getNatureOfUsageCode().equalsIgnoreCase(PropertyTaxConstants.PROPTYPE_RESD) && StringUtils.isBlank(floorDetails.getFirmName())){
                             errorDetails = new ErrorDetails();
                             errorDetails.setErrorCode(FIRMNAME_REQ_CODE);
                             errorDetails.setErrorMessage(FIRMNAME_REQ_MSG);
                             return errorDetails;
-                        }
                     }
                     if (StringUtils.isBlank(floorDetails.getOccupancyCode())) {
                         errorDetails = new ErrorDetails();
@@ -448,64 +434,176 @@ public class ValidationUtil {
                         errorDetails.setErrorMessage(OCCUPANCY_DATE_BEFORE_CONSTRUCTION_DATE_MSG);
                         return errorDetails;
                     }
-                    if(!floorDetails.getUnstructuredLand()){
-                    	if (floorDetails.getPlinthLength() == null) {
-                            errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PLINTH_LENGTH_REQ_CODE);
-                            errorDetails.setErrorMessage(PLINTH_LENGTH_REQ_MSG);
-                            return errorDetails;
-                        }
-                        if(Float.valueOf(floorDetails.getPlinthLength()) == 0.0){
-                        	errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PLINTH_LENGTH_GREATER_THAN_ZERO_CODE);
-                            errorDetails.setErrorMessage(PLINTH_LENGTH_GREATER_THAN_ZERO_MSG);
-                            return errorDetails;
-                        }
-                        if (floorDetails.getPlinthBreadth() == null) {
-                            errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PLINTH_BREADTH_REQ_CODE);
-                            errorDetails.setErrorMessage(PLINTH_BREADTH_REQ_MSG);
-                            return errorDetails;
-                        }
-                        if(Float.valueOf(floorDetails.getPlinthBreadth()) == 0.0){
-                        	errorDetails = new ErrorDetails();
-                            errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_ZERO_CODE);
-                            errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_ZERO_MSG);
-                            return errorDetails;
-                        }
+                    if(floorDetails.getUnstructuredLand()== null){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(UNSTRUCTURED_LAND_REQ_CODE);
+                        errorDetails.setErrorMessage(UNSTRUCTURED_LAND_REQ_MSG);
+                        return errorDetails;
+                    }else{
+                    	 if(floorDetails.getUnstructuredLand()){
+
+                          	if (floorDetails.getPlinthArea() == null) {
+                                  errorDetails = new ErrorDetails();
+                                  errorDetails.setErrorCode(PLINTH_AREA_REQ_CODE);
+                                  errorDetails.setErrorMessage(PLINTH_AREA_REQ_MSG);
+                                  return errorDetails;
+                              }
+                          	if(Double.valueOf(floorDetails.getPlinthArea()) == 0.0){
+                              	errorDetails = new ErrorDetails();
+                                  errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_ZERO_CODE);
+                                  errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_ZERO_MSG);
+                                  return errorDetails;
+                              }
+                              if(Double.valueOf(floorDetails.getPlinthArea()) > areaOfPlot){
+                              	errorDetails = new ErrorDetails();
+                                  errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_PLOT_AREA_CODE);
+                                  errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_PLOT_AREA_MSG);
+                                  return errorDetails;
+                              }
+                          }else{
+                     		 
+                           	if (floorDetails.getPlinthLength() == null) {
+                                   errorDetails = new ErrorDetails();
+                                   errorDetails.setErrorCode(PLINTH_LENGTH_REQ_CODE);
+                                   errorDetails.setErrorMessage(PLINTH_LENGTH_REQ_MSG);
+                                   return errorDetails;
+                               }
+                               if(Float.valueOf(floorDetails.getPlinthLength()) == 0.0){
+                               	errorDetails = new ErrorDetails();
+                                   errorDetails.setErrorCode(PLINTH_LENGTH_GREATER_THAN_ZERO_CODE);
+                                   errorDetails.setErrorMessage(PLINTH_LENGTH_GREATER_THAN_ZERO_MSG);
+                                   return errorDetails;
+                               }
+                               if (floorDetails.getPlinthBreadth() == null) {
+                                   errorDetails = new ErrorDetails();
+                                   errorDetails.setErrorCode(PLINTH_BREADTH_REQ_CODE);
+                                   errorDetails.setErrorMessage(PLINTH_BREADTH_REQ_MSG);
+                                   return errorDetails;
+                               }
+                               if(Float.valueOf(floorDetails.getPlinthBreadth()) == 0.0){
+                               	errorDetails = new ErrorDetails();
+                                   errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_ZERO_CODE);
+                                   errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_ZERO_MSG);
+                                   return errorDetails;
+                               }
+                         }
                     }
-                    if (floorDetails.getPlinthArea() == null) {
+                   
+                    if (StringUtils.isBlank(floorDetails.getBuildingPermissionNo())) {
                         errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(PLINTH_AREA_REQ_CODE);
-                        errorDetails.setErrorMessage(PLINTH_AREA_REQ_MSG);
+                        errorDetails.setErrorCode(BUILDING_PERMISSION_NO_REQ_CODE);
+                        errorDetails.setErrorMessage(BUILDING_PERMISSION_NO_REQ_MSG);
                         return errorDetails;
                     }
-                    if(Double.valueOf(floorDetails.getPlinthArea()) == 0.0){
-                    	errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_ZERO_CODE);
-                        errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_ZERO_MSG);
+                    if (StringUtils.isBlank(floorDetails.getBuildingPermissionDate())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(BUILDING_PERMISSION_DATE_REQ_CODE);
+                        errorDetails.setErrorMessage(BUILDING_PERMISSION_DATE_REQ_MSG);
                         return errorDetails;
                     }
-                    if(Double.valueOf(floorDetails.getPlinthArea()) > areaOfPlot){
-                    	errorDetails = new ErrorDetails();
-                        errorDetails.setErrorCode(PLINTH_AREA_GREATER_THAN_PLOT_AREA_CODE);
-                        errorDetails.setErrorMessage(PLINTH_AREA_GREATER_THAN_PLOT_AREA_MSG);
-                        return errorDetails;
-                    }
+					if(propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate()).after(propertyExternalService.convertStringToDate(floorDetails.getOccupancyDate()))){
+		    					errorDetails = new ErrorDetails();
+								errorDetails.setErrorCode(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE);
+								errorDetails.setErrorMessage(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG);
+								return errorDetails;
+		    				} 
                 }
         }
+        
+     // Document Type level validations
+        if(!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)){
+        	final VacantLandDetails vlt=createPropDetails.getVacantLandDetails();
+    		//final DocumentTypeDetails documentTypeDetails = createPropDetails.getDocumentTypeDetails();
+    		if (documentTypeDetails == null) {
+    			errorDetails = new ErrorDetails();
+    			errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_REQ_CODE);
+    			errorDetails.setErrorMessage(DOCUMENT_TYPE_DETAILS_REQ_MSG);
+    			return errorDetails;
+    		} else {
+    			if (StringUtils.isBlank(documentTypeDetails.getDocumentName())) {
+    				errorDetails = new ErrorDetails();
+    				errorDetails.setErrorCode(DOCUMENT_TYPE_DETAILS_NAME_REQ_CODE);
+    				errorDetails.setErrorMessage(DOCUMENT_TYPE_DETAILS_NAME_REQ_MSG);
+    				return errorDetails;
+    			} else {
+    				if (!documentTypeDetails.getDocumentName().equals(DOCUMENT_NAME_NOTARY_DOCUMENT)) {
+    					if (StringUtils.isBlank(documentTypeDetails.getDocumentNumber())) {
+    						errorDetails = new ErrorDetails();
+    						errorDetails.setErrorCode(REG_DOC_NO_REQ_CODE);
+    						errorDetails.setErrorMessage(REG_DOC_NO_REQ_MSG);
+    						return errorDetails;
+    					}
+    					
+    					if (StringUtils.isBlank(documentTypeDetails.getDocumentDate())) {
+    						errorDetails = new ErrorDetails();
+    						errorDetails.setErrorCode(REG_DOC_DATE_REQ_CODE);
+    						errorDetails.setErrorMessage(REG_DOC_DATE_REQ_MSG);
+    						return errorDetails;
+    					} else if (propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate())
+    							.after(new Date())) {
+    						errorDetails = new ErrorDetails();
+    						errorDetails.setErrorCode(FUTURE_DATES_NOT_ALLOWED_CODE);
+    						errorDetails.setErrorMessage(FUTURE_DATES_NOT_ALLOWED_MSG);
+    						return errorDetails;
+    				}
+    					 if(propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND) && propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate()).before(propertyExternalService.convertStringToDate(vlt.getEffectiveDate())) ){
+    						
+    		    					errorDetails = new ErrorDetails();
+    								errorDetails.setErrorCode(DOCUMENT_DATE_LESS_EFFECTIVE_DATE_CODE);
+    								errorDetails.setErrorMessage(DOCUMENT_DATE_LESS_EFFECTIVE_DATE_REQ_MSG);
+    								return errorDetails;
+    					 }
+    				}
+
+    				if (documentTypeDetails.getDocumentName().equals(DOCUMENT_NAME_PATTA_CERTIFICATE)) {
+
+    					if (StringUtils.isBlank(documentTypeDetails.getMroProceedingNumber())) {
+    						errorDetails = new ErrorDetails();
+    						errorDetails.setErrorCode(MRO_PROCC_NO_REQ_CODE);
+    						errorDetails.setErrorMessage(MRO_PROCC_NO_REQ_MSG);
+    						return errorDetails;
+    					} else if (StringUtils.isBlank(documentTypeDetails.getMroProceedingDate())) {
+    						errorDetails = new ErrorDetails();
+    						errorDetails.setErrorCode(MRO_PROCC_DATE_REQ_CODE);
+    						errorDetails.setErrorMessage(MRO_PROCC_DATE_REQ_MSG);
+    						return errorDetails;
+    					}
+
+    					else if (documentTypeDetails.getDocumentName().equals(DOCUMENT_NAME_DECREE_BY_CIVILCOURT)) {
+
+    						if (StringUtils.isBlank(documentTypeDetails.getCourtName())) {
+    							errorDetails = new ErrorDetails();
+    							errorDetails.setErrorCode(COURT_NAME_REQ_CODE);
+    							errorDetails.setErrorMessage(COURT_NAME_REQ_MSG);
+    							return errorDetails;
+    						}
+
+    					}
+    				}
+
+    			}
+    		}
+        }
+		
         
         return errorDetails;
     }
 
+    public Date convertStringToDate(final String dateInString) throws ParseException {
+		final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
+		final Date stringToDate = sdf.parse(dateInString);
+		return stringToDate;
+	}
+    
     /**
      * Validates Vacant Land details
      * @param createPropDetails
      * @param errorDetails
      * @return ErrorDetails
+     * @throws ParseException 
      */
 	public ErrorDetails validateVacantLandDetails(final CreatePropertyDetails createPropDetails,
-			ErrorDetails errorDetails) {
+			ErrorDetails errorDetails) throws ParseException {
 		final VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
 		if (vacantLandDetails == null) {
 		    errorDetails = new ErrorDetails();
@@ -513,6 +611,7 @@ public class ValidationUtil {
 		    errorDetails.setErrorMessage(VACANT_LAND_DETAILS_REQ_MSG);
 		    return errorDetails;
 		} else {
+			
 		    if (StringUtils.isBlank(vacantLandDetails.getSurveyNumber())) {
 		        errorDetails = new ErrorDetails();
 		        errorDetails.setErrorCode(SURVEY_NO_REQ_CODE);
@@ -523,7 +622,8 @@ public class ValidationUtil {
 		        errorDetails.setErrorCode(PATTA_NO_REQ_CODE);
 		        errorDetails.setErrorMessage(PATTA_NO_REQ_MSG);
 		        return errorDetails;
-		    } else if (vacantLandDetails.getVacantLandArea() == null) {
+		    } 
+		    if (vacantLandDetails.getVacantLandArea() == null) {
 		        errorDetails = new ErrorDetails();
 		        errorDetails.setErrorCode(VACANT_LAND_AREA_REQ_CODE);
 		        errorDetails.setErrorMessage(VACANT_LAND_AREA_REQ_MSG);
@@ -533,7 +633,18 @@ public class ValidationUtil {
 		        errorDetails.setErrorCode(AREA_GREATER_THAN_ZERO_CODE);
 		        errorDetails.setErrorMessage(AREA_GREATER_THAN_ZERO_MSG);
 		        return errorDetails;
-		    } else if (vacantLandDetails.getMarketValue() == null) {
+		    }else { 
+		    	Pattern pattern = Pattern.compile(DIGITS_FLOAT_INT_DBL);
+	        	Matcher matcher = pattern.matcher(Float.toString(vacantLandDetails.getVacantLandArea()));
+	            if(!matcher.matches()){
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(VL_AREA_NUMBER_REQ_CODE);
+		            errorDetails.setErrorMessage(VL_AREA_NUMBER_REQ_MSG);
+		            return errorDetails;
+		        }
+		    	
+		    }
+		    if (vacantLandDetails.getMarketValue() == null) {
 		        errorDetails = new ErrorDetails();
 		        errorDetails.setErrorCode(MARKET_AREA_VALUE_REQ_CODE);
 		        errorDetails.setErrorMessage(MARKET_AREA_VALUE_REQ_MSG);
@@ -543,7 +654,18 @@ public class ValidationUtil {
 		        errorDetails.setErrorCode(MARKET_VALUE_GREATER_THAN_ZERO_CODE);
 		        errorDetails.setErrorMessage(MARKET_VALUE_GREATER_THAN_ZERO_MSG);
 		        return errorDetails;
-		    } else if (vacantLandDetails.getCurrentCapitalValue() == null) {
+		    }else { 
+		    	Pattern pattern = Pattern.compile(DIGITS_FLOAT_INT_DBL);
+	        	Matcher matcher = pattern.matcher(Double.toString(vacantLandDetails.getMarketValue()));
+	            if(!matcher.matches()){
+		            errorDetails = new ErrorDetails();
+		            errorDetails.setErrorCode(MKT_VAL_NUMBER_REQ_CODE);
+		            errorDetails.setErrorMessage(MKT_VAL__NUMBER_REQ_MSG);
+		            return errorDetails;
+		        }
+		    	
+		    } 
+		    if (vacantLandDetails.getCurrentCapitalValue() == null) {
 		        errorDetails = new ErrorDetails();
 		        errorDetails.setErrorCode(CURRENT_CAPITAL_VALUE_REQ_CODE);
 		        errorDetails.setErrorMessage(CURRENT_CAPITAL_VALUE_REQ_MSG);
@@ -618,22 +740,45 @@ public class ValidationUtil {
 		                errorDetails.setErrorCode(MOBILENO_MAX_LENGTH_ERROR_CODE);
 		                errorDetails.setErrorMessage(MOBILENO_MAX_LENGTH_ERROR_MSG);
 		                return errorDetails;
+		        	}else{
+		        		Pattern pattern = Pattern.compile("\\d{10}");
+			            Matcher matcher = pattern.matcher(ownerDetails.getMobileNumber());
+			            if(!matcher.matches()){
+			            	errorDetails = new ErrorDetails();
+			                errorDetails.setErrorCode(MOBILENO_ALPHANUMERIC_ERROR_CODE);
+			                errorDetails.setErrorMessage(MOBILENO_ALPHANUMERIC_ERROR_MSG);
+			                return errorDetails;
+			            }
 		        	}
-		        	Pattern pattern = Pattern.compile("\\d{10}");
-		            Matcher matcher = pattern.matcher(ownerDetails.getMobileNumber());
+		        	
+		        }
+		        if(StringUtils.isNotBlank(ownerDetails.getEmailId())){
+		        	Pattern pattern = Pattern.compile(EMAIL_PATTERN);
+		        	Matcher matcher = pattern.matcher(ownerDetails.getEmailId());
 		            if(!matcher.matches()){
-		            	errorDetails = new ErrorDetails();
-		                errorDetails.setErrorCode(MOBILENO_ALPHANUMERIC_ERROR_CODE);
-		                errorDetails.setErrorMessage(MOBILENO_ALPHANUMERIC_ERROR_MSG);
-		                return errorDetails;
-		            }
+			            errorDetails = new ErrorDetails();
+			            errorDetails.setErrorCode(EMAIL_ERROR_CODE);
+			            errorDetails.setErrorMessage(EMAIL_INVALID_MSG);
+			            return errorDetails;
+			        }
 		        }
 		        if (StringUtils.isBlank(ownerDetails.getName())) {
 		            errorDetails = new ErrorDetails();
 		            errorDetails.setErrorCode(OWNER_NAME_REQ_CODE);
 		            errorDetails.setErrorMessage(OWNER_NAME_REQ_MSG);
 		            return errorDetails;
-		        } else if (StringUtils.isBlank(ownerDetails.getGender())) {
+		        }else {
+		        	Pattern pattern = Pattern.compile("\\w+\\.?");
+		            Matcher matcher = pattern.matcher(ownerDetails.getMobileNumber());
+		            if(!matcher.matches()){
+			            errorDetails = new ErrorDetails();
+			            errorDetails.setErrorCode(OWNER_NAME_ALPHANUMERIC_ERROR_CODE);
+			            errorDetails.setErrorMessage(OWNER_NAME_ALPHANUMERIC_ERROR_MSG);
+			            return errorDetails;
+			        }
+		        }
+		        
+		        if (StringUtils.isBlank(ownerDetails.getGender())) {
 		            errorDetails = new ErrorDetails();
 		            errorDetails.setErrorCode(GENDER_REQ_CODE);
 		            errorDetails.setErrorMessage(GENDER_REQ_MSG);
@@ -643,11 +788,22 @@ public class ValidationUtil {
 		            errorDetails.setErrorCode(GUARDIAN_RELATION_REQ_CODE);
 		            errorDetails.setErrorMessage(GUARDIAN_RELATION_REQ_MSG);
 		            return errorDetails;
-		        } else if (StringUtils.isBlank(ownerDetails.getGuardian())) {
+		        } 
+		        if (StringUtils.isBlank(ownerDetails.getGuardian())) {
 		            errorDetails = new ErrorDetails();
 		            errorDetails.setErrorCode(GUARDIAN_REQ_CODE);
 		            errorDetails.setErrorMessage(GUARDIAN_REQ_MSG);
 		            return errorDetails;
+		        }else{
+		        	
+		        	Pattern pattern = Pattern.compile(GUARDIAN_PATTERN);
+		            Matcher matcher = pattern.matcher(ownerDetails.getGuardian());
+		            if(!matcher.matches()){
+			            errorDetails = new ErrorDetails();
+			            errorDetails.setErrorCode(GUARDIAN_NAME_NUMERICSPL_ERROR_CODE);
+			            errorDetails.setErrorMessage(GUARDIANNAME_NUMERICSPL_ERROR_MSG);
+			            return errorDetails;
+			        }
 		        }
 		    }
 		}
@@ -798,6 +954,7 @@ public class ValidationUtil {
                 errorDetails.setErrorMessage(PROPERTIES_LIST_EXCEED_LIMIT_MSG);
         	}
     	}
+    	
     	return errorDetails;
     }
 }

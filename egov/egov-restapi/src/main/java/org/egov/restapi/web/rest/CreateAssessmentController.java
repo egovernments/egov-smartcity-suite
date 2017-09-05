@@ -55,12 +55,14 @@ import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
+import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CorrespondenceAddressDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
+import org.egov.restapi.model.DocumentTypeDetails;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
@@ -80,97 +82,152 @@ public class CreateAssessmentController {
 
 	@Autowired
 	private ValidationUtil validationUtil;
-	
+
 	@Autowired
-    private PropertyExternalService propertyExternalService;
-	
+	private PropertyExternalService propertyExternalService;
+
 	/**
-     * This method is used to create property.
-     * 
-     * @param createPropertyDetails - Property details request
-     * @return
-     * @throws IOException
-     * @throws ParseException
-     */
+	 * This method is used to create property.
+	 * 
+	 * @param createPropertyDetails
+	 *            - Property details request
+	 * @return
+	 * @throws IOException
+	 * @throws ParseException
+	 */
+	
 	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
 	public String createProperty(@RequestBody String createPropertyDetails)
 			throws IOException, ParseException {
 		String responseJson;
 		ApplicationThreadLocals.setUserId(2L);
-		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(
-                createPropertyDetails, CreatePropertyDetails.class);
-		
-		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_CREATE);
+		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
+		NewPropertyDetails newPropertyDetails;
+		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
 		if (errorDetails != null) {
 			responseJson = JsonConvertor.convert(errorDetails);
-        } else {
-		
-        AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
-        PropertyAddressDetails propAddressDetails = createPropDetails.getPropertyAddressDetails();
-        Boolean isCorrAddrDiff = propAddressDetails.getIsCorrAddrDiff();
-        CorrespondenceAddressDetails corrAddressDetails = propAddressDetails.getCorrAddressDetails();
-        String corrAddr1 = StringUtils.EMPTY;
-        String corrAddr2 = StringUtils.EMPTY;
-        String corrPinCode = StringUtils.EMPTY;
-        if(corrAddressDetails != null){
-        	corrAddr1 = corrAddressDetails.getCorrAddr1();
-            corrAddr2 = corrAddressDetails.getCorrAddr2();
-            corrPinCode = corrAddressDetails.getCorrPinCode();
-        }
-
-        List<Document> documents = null;
-        NewPropertyDetails newPropertyDetails;
-        if(createPropDetails.getPropertyTypeMasterCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
-        	VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
-            SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
-
-            newPropertyDetails = propertyExternalService.createNewProperty(createPropDetails.getPropertyTypeMasterCode(),
-            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), createPropDetails.getOwnerDetails(), assessmentsDetails.getMutationReasonCode(), null,
-            		false, null, assessmentsDetails.getRegdDocNo(), assessmentsDetails.getRegdDocDate(), propAddressDetails.getLocalityNum(), propAddressDetails.getBlockNum(),
-            		propAddressDetails.getZoneNum(), propAddressDetails.getStreetNum(), propAddressDetails.getElectionWardNum(), propAddressDetails.getDoorNo(), propAddressDetails.getEnumerationBlockCode(),
-            		propAddressDetails.getPinCode(), isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode, false, false, false, false,
-            		false, false, false, null, null, null, null, Collections.emptyList(),
-            		vacantLandDetails.getSurveyNumber(), vacantLandDetails.getPattaNumber(), vacantLandDetails.getVacantLandArea(), vacantLandDetails.getMarketValue(),
-            		vacantLandDetails.getCurrentCapitalValue(), vacantLandDetails.getEffectiveDate(), surroundingBoundaryDetails.getNorthBoundary(), 
-            		surroundingBoundaryDetails.getSouthBoundary(), surroundingBoundaryDetails.getEastBoundary(),
-            		surroundingBoundaryDetails.getWestBoundary(), assessmentsDetails.getParentPropertyAssessmentNo(), documents);
-        } else {
-            AmenitiesDetails amenitiesDetails = createPropDetails.getAmenitiesDetails();
-            ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
-            List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
-            
-            newPropertyDetails = propertyExternalService.createNewProperty(createPropDetails.getPropertyTypeMasterCode(),
-            		createPropDetails.getCategoryCode(), null, createPropDetails.getApartmentCmplxCode(), createPropDetails.getOwnerDetails(), 
-            		assessmentsDetails.getMutationReasonCode(), assessmentsDetails.getExtentOfSite(), assessmentsDetails.getIsExtentAppurtenantLand(),
-            		assessmentsDetails.getOccupancyCertificationNo(), assessmentsDetails.getRegdDocNo(),assessmentsDetails.getRegdDocDate(), 
-            		propAddressDetails.getLocalityNum(), propAddressDetails.getBlockNum(), propAddressDetails.getZoneNum(), 
-            		propAddressDetails.getStreetNum(), propAddressDetails.getElectionWardNum(), propAddressDetails.getDoorNo(), 
-            		propAddressDetails.getEnumerationBlockCode(), propAddressDetails.getPinCode(), isCorrAddrDiff, corrAddr1, corrAddr2, corrPinCode,
-            		amenitiesDetails.hasLift(), amenitiesDetails.hasToilet(), amenitiesDetails.hasWaterTap(), amenitiesDetails.hasElectricity(),
-            		amenitiesDetails.hasAttachedBathroom(), amenitiesDetails.hasWaterHarvesting(), amenitiesDetails.hasCableConnection(), 
-            		constructionTypeDetails.getFloorTypeId(), constructionTypeDetails.getRoofTypeId(), constructionTypeDetails.getWallTypeId(),
-            		constructionTypeDetails.getWoodTypeId(), floorDetailsList, null, null, null, null,
-            		null, floorDetailsList.get(0).getOccupancyDate(), null, null, null, null, assessmentsDetails.getParentPropertyAssessmentNo(), documents);
-        }
-        responseJson = JsonConvertor.convert(newPropertyDetails);
-        }
+	    } else {
+	     	ViewPropertyDetails viewPropertyDetails = setRequestParameters(createPropDetails);
+	     	
+	     	if (createPropDetails.isAppurtenantLandChecked()) {
+	     		newPropertyDetails=propertyExternalService.createAppurTenantProperties(viewPropertyDetails);
+	     	}else{
+	     		newPropertyDetails = propertyExternalService.createNewProperty(viewPropertyDetails);
+	     	}
+	     	
+	        responseJson = JsonConvertor.convert(newPropertyDetails);
+	    }
         return responseJson;
 	}
 	
+	
 	/**
-     * This method is used to get POJO object from JSON request.
-     * 
-     * @param jsonString - request JSON string
-     * @return
-     * @throws IOException
-     */
-    private Object getObjectFromJSONRequest(String jsonString, Class cls)
-            throws IOException {
-        ObjectMapper mapper = new ObjectMapper();
-        mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
-        mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
-        return mapper.readValue(jsonString, cls);
+	 * Prepares the ViewPropertyDetails bean for modification
+	 * @param createPropDetails
+	 * @return
+	 */
+	public ViewPropertyDetails setRequestParameters(CreatePropertyDetails createPropDetails){
+    	ViewPropertyDetails viewPropertyDetails = new ViewPropertyDetails();
+    	viewPropertyDetails.setAssessmentNumber(createPropDetails.getAssessmentNumber());
+    	viewPropertyDetails.setPropertyTypeMaster(createPropDetails.getPropertyTypeMasterCode());
+    	viewPropertyDetails.setCategory(createPropDetails.getCategoryCode());
+    	viewPropertyDetails.setApartmentCmplx(createPropDetails.getApartmentCmplxCode());
+    	viewPropertyDetails.setPropertyDepartment(createPropDetails.getPropertyDepartment());
+    	viewPropertyDetails.setFloorDetailsEntered(createPropDetails.getFloorDetailsEntered());
+    	viewPropertyDetails.setIsExtentAppurtenantLand(createPropDetails.getFloorDetailsEntered());
+    	
+    	viewPropertyDetails.setOwnerDetails(createPropDetails.getOwnerDetails());
+  
+    	PropertyAddressDetails propertyAddressDetails=createPropDetails.getPropertyAddressDetails();
+    	viewPropertyDetails.setLocalityName(propertyAddressDetails.getLocalityNum());
+    	viewPropertyDetails.setStreetName(propertyAddressDetails.getStreetNum());
+    	viewPropertyDetails.setElectionWardName(propertyAddressDetails.getElectionWardNum());
+    	viewPropertyDetails.setDoorNo(propertyAddressDetails.getDoorNo());
+    	viewPropertyDetails.setEnumerationBlockName(propertyAddressDetails.getEnumerationBlockCode());
+    	viewPropertyDetails.setWardName(propertyAddressDetails.getWardNum());
+    	viewPropertyDetails.setZoneName(propertyAddressDetails.getZoneNum());
+    	viewPropertyDetails.setBlockName(propertyAddressDetails.getBlockNum());
+    	viewPropertyDetails.setPinCode(propertyAddressDetails.getPinCode());
+    	viewPropertyDetails.setIsCorrAddrDiff(propertyAddressDetails.getIsCorrAddrDiff());
+    	viewPropertyDetails.setCorrAddr1(propertyAddressDetails.getCorrAddressDetails().getCorrAddr1());
+    	viewPropertyDetails .setCorrAddr2(propertyAddressDetails.getCorrAddressDetails().getCorrAddr2());
+    	viewPropertyDetails.setCorrPinCode(propertyAddressDetails.getCorrAddressDetails().getCorrPinCode());
+    	
+    	AssessmentsDetails assessmentDetails = createPropDetails.getAssessmentDetails();
+    	viewPropertyDetails.setMutationReason(assessmentDetails.getMutationReasonCode());
+    	viewPropertyDetails.setExtentOfSite(assessmentDetails.getExtentOfSite());
+    	viewPropertyDetails.setOccupancyCertificationNo(assessmentDetails.getOccupancyCertificationNo());
+    	
+    	//Amenities Details
+    	AmenitiesDetails amenities = createPropDetails.getAmenitiesDetails();
+    	if(amenities != null){
+    		viewPropertyDetails.setHasLift(amenities.hasLift());
+    		viewPropertyDetails.setHasToilet(amenities.hasToilet());
+    		viewPropertyDetails.setHasWaterTap(amenities.hasWaterTap());
+    		viewPropertyDetails.setHasElectricity(amenities.hasElectricity());
+    		viewPropertyDetails.setHasAttachedBathroom(amenities.hasAttachedBathroom());
+    		viewPropertyDetails.setHasWaterHarvesting(amenities.hasWaterHarvesting());
+    		viewPropertyDetails.setHasCableConnection(amenities.hasCableConnection());
+    	}
+    	
+    	//Construction Type Details
+    	ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
+    	if(constructionTypeDetails != null){
+    		viewPropertyDetails.setFloorType(constructionTypeDetails.getFloorTypeId());
+    		viewPropertyDetails.setRoofType(constructionTypeDetails.getRoofTypeId());
+    		viewPropertyDetails.setWallType(constructionTypeDetails.getWallTypeId());
+    		viewPropertyDetails.setWoodType(constructionTypeDetails.getWoodTypeId());
+    	}
+    	
+    	if(createPropDetails.getPropertyTypeMasterCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
+    		VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
+    		viewPropertyDetails.setSurveyNumber(vacantLandDetails.getSurveyNumber());
+    		viewPropertyDetails.setPattaNumber(vacantLandDetails.getPattaNumber());
+    		viewPropertyDetails.setVacantLandArea(vacantLandDetails.getVacantLandArea());
+    		viewPropertyDetails.setMarketValue(vacantLandDetails.getMarketValue());
+    		viewPropertyDetails.setCurrentCapitalValue(vacantLandDetails.getCurrentCapitalValue());
+    		viewPropertyDetails.setEffectiveDate(vacantLandDetails.getEffectiveDate());
+    		viewPropertyDetails.setVlPlotArea(vacantLandDetails.getVacantLandPlot());
+    		viewPropertyDetails.setLaAuthority(vacantLandDetails.getLayoutApprovalAuthority());
+    		viewPropertyDetails.setLpNo(vacantLandDetails.getLayoutPermitNumber());
+    		viewPropertyDetails.setLpDate(vacantLandDetails.getLayoutPermitDate());
+    		
+    		//Surrounding Boundary Details
+    		SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
+    		viewPropertyDetails.setNorthBoundary(surroundingBoundaryDetails.getNorthBoundary());
+    		viewPropertyDetails.setSouthBoundary(surroundingBoundaryDetails.getSouthBoundary());
+    		viewPropertyDetails.setEastBoundary(surroundingBoundaryDetails.getEastBoundary());
+    		viewPropertyDetails.setWestBoundary(surroundingBoundaryDetails.getWestBoundary());
+    	} else {
+    		viewPropertyDetails.setFloorDetails(createPropDetails.getFloorDetails());
+    		viewPropertyDetails.setEffectiveDate(createPropDetails.getFloorDetails().get(0).getOccupancyDate());
+    	}
+    	
+    	//Documents Type
+    	DocumentTypeDetails documentTypeDetails=createPropDetails.getDocumentTypeDetails();
+    	viewPropertyDetails.setDocType(documentTypeDetails.getDocumentName());
+    	viewPropertyDetails.setRegdDocNo(documentTypeDetails.getDocumentNumber());
+    	viewPropertyDetails.setRegdDocDate(documentTypeDetails.getDocumentDate());
+    	viewPropertyDetails.setMroProcNo(documentTypeDetails.getMroProceedingNumber());
+    	viewPropertyDetails .setMroProcDate(documentTypeDetails.getMroProceedingDate());
+    	viewPropertyDetails.setTwSigned(documentTypeDetails.getSigned()== null? Boolean.FALSE:documentTypeDetails.getSigned());
+    	return viewPropertyDetails;
     }
-    
+
+	/**
+	 * This method is used to get POJO object from JSON request.
+	 * 
+	 * @param jsonString
+	 *            - request JSON string
+	 * @return
+	 * @throws IOException
+	 */
+	private Object getObjectFromJSONRequest(String jsonString, Class cls) throws IOException {
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
+		mapper.configure(SerializationConfig.Feature.AUTO_DETECT_FIELDS, true);
+		mapper.setDateFormat(ChequePayment.CHEQUE_DATE_FORMAT);
+		return mapper.readValue(jsonString, cls);
+	}
+
 }
