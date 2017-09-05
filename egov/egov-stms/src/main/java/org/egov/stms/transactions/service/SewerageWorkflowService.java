@@ -44,6 +44,7 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGEROLEFORNONEMPLOYEE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -196,13 +197,13 @@ public class SewerageWorkflowService {
 
     }
 
-    private String getDepartmentForCscOperatorWorkFlow() {
+    public String getDepartmentForCscOperatorWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 SEWERAGE_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
-    private String getDesignationForCscOperatorWorkFlow() {
+    public String getDesignationForCscOperatorWorkFlow() {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
                 SEWERAGE_WORKFLOWDESIGNATION_FOR_CSCOPERATOR);
         return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
@@ -283,6 +284,12 @@ public class SewerageWorkflowService {
             if (role != null && rolesForNonEmployee != null && role.getName().equalsIgnoreCase(rolesForNonEmployee))
                 return true;
         return false;
+    }
+    
+    public String getDepartmentForReassignment() {
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT);
+        return !appConfigValue.isEmpty() ? appConfigValue.get(0).getValue() : null;
     }
 
 }

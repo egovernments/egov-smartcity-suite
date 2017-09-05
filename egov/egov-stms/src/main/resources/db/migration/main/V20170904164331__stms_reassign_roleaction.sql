@@ -1,0 +1,11 @@
+INSERT INTO eg_action (id, name, url, queryparams, parentmodule, ordernumber, displayname, enabled, contextroot, "version", createdby, createddate, lastmodifiedby, lastmodifieddate, application) VALUES (nextval('seq_eg_action'),'ReassignSewerageTax','/reassignseweragetax', NULL, (SELECT id FROM eg_module WHERE name = 'SewerageTransactions'),(select max(ordernumber)+1 from eg_module WHERE name='Sewerage Tax Management'), 'Reassign New Sewerage Connection', false, 'stms', 0, 1, now(), 1, now(), (select id from eg_module where name='Sewerage Tax Management'));
+
+INSERT INTO EG_ROLEACTION (roleid, actionid) VALUES ((SELECT id FROM eg_role WHERE name = 'Sewerage Tax Approver'), (select id from eg_action where name='ReassignSewerageTax'));
+
+INSERT INTO eg_appconfig (id,key_name,description,version,createdby,lastmodifiedby,createddate,lastmodifieddate,module)  values (nextval('SEQ_EG_APPCONFIG'),'REASSIGN_BUTTONENABLED_SEWERAGE','Key to enable/disable reassign button for sewerage', 0, (select id from eg_user where username='egovernments'),(select id from eg_user where username='egovernments'),now(),now(),(select id from eg_module where name='Sewerage Tax Management'));
+
+INSERT INTO eg_appconfig_values (id, key_id, effective_from, createdby,lastmodifiedby,createddate,lastmodifieddate,value, version) values  (nextval('SEQ_EG_APPCONFIG_VALUES'), (select id from eg_appconfig where key_name = 'REASSIGN_BUTTONENABLED_SEWERAGE' and module = (select id from eg_module where name='Sewerage Tax Management')),now(), (select id from eg_user where username='egovernments'),(select id from eg_user where username='egovernments'),now(),now(), 'YES', 0);
+
+INSERT INTO eg_appconfig ( ID, KEY_NAME, DESCRIPTION, VERSION, MODULE ) VALUES (nextval('SEQ_EG_APPCONFIG'), 'SEWERAGEDEPARTMENTFORREASSIGNMENT', 'Department for Reassignment',0, (select id from eg_module where name='Sewerage Tax Management'));
+
+INSERT INTO eg_appconfig_values ( ID, KEY_ID, EFFECTIVE_FROM, VALUE, VERSION ) VALUES (nextval('SEQ_EG_APPCONFIG_VALUES'), (SELECT id FROM EG_APPCONFIG WHERE KEY_NAME='SEWERAGEDEPARTMENTFORREASSIGNMENT'), current_date, 'ENGINEERING',0);

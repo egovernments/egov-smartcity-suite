@@ -40,6 +40,8 @@
 package org.egov.stms.web.controller.transactions;
 
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED;
 
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -87,6 +89,7 @@ import org.egov.stms.transactions.service.SewerageConnectionService;
 import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.transactions.service.SewerageEstimationDetailsService;
 import org.egov.stms.transactions.service.SewerageFieldInspectionDetailsService;
+import org.egov.stms.transactions.service.SewerageReassignService;
 import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.transactions.service.SewerageWorkflowService;
 import org.egov.stms.utils.SewerageInspectionDetailsComparatorById;
@@ -113,6 +116,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/transactions")
 public class SewerageUpdateConnectionController extends GenericWorkFlowController {
 
+    private static final String NEW = "NEW";
     private static final String IS_INSPECTION_FEE_PAID = "isInspectionFeePaid";
     private static final String ADDITIONAL_RULE = "additionalRule";
     private static final String CURRENT_USER = "currentUser";
@@ -122,6 +126,9 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
     private static final String INSPECTIONDATE = "inspectionDate";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final Logger LOG = LoggerFactory.getLogger(SewerageUpdateConnectionController.class);
+    
+    @Autowired
+    private SewerageReassignService  sewerageReassignService;
 
     @Autowired
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
@@ -314,6 +321,13 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
                     LOG.error("Exception while parsing date" + e);
                 }
 
+        }
+        if (sewerageApplicationDetails != null
+                && sewerageApplicationDetails.getStatus() != null
+                && (APPLICATION_STATUS_CSCCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                        ||APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()))
+                &&  NEW.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())) {
+            model.addAttribute("isReassignEnabled", sewerageReassignService.isReassignEnabled());
         }
         // Pending: To Support Documents Re-Attachment on Edit mode
         if ("editOnReject".equals(modelParams.get("mode"))) {

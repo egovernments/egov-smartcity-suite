@@ -69,6 +69,8 @@
 	<form:hidden path="connection.demand" id="connection.demand" value="${sewerageApplicationDetails.connection.demand}"/> --%>
 	<input type="hidden" value="" id="removedInspectRowId" name="removedInspectRowId" />
 	<input type="hidden" value="" id="removedEstimationDtlRowId" name="removedEstimationDtlRowId" />
+	<input type="hidden" id="applicationNumber" value="${sewerageApplicationDetails.applicationNumber}"/>  
+	
 	<c:if test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}"> 
 	 <div  data-collapsed="0">
 		<div class="panel-heading">

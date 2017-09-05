@@ -346,5 +346,9 @@ public class SewerageTaxConstants {
     public static final String BILLTYPE_MANUAL = "MANUAL";
     public static final String PAYMENT_TYPE_PARTIALLY = "Partially";
     public static final String PAYMENT_TYPE_FULLY = "Fully";
+    //reassignment
+    public static final String APPCONFKEY_REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED_SEWERAGE";
+    public static final String SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT = "SEWERAGEDEPARTMENTFORREASSIGNMENT";
+
     
 }
