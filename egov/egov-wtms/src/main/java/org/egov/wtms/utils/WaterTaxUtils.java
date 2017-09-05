@@ -47,6 +47,8 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -729,5 +731,12 @@ public class WaterTaxUtils {
                     }
         }
         return approverPosition;
+    }
+
+    public boolean reassignEnabled() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
+                REASSIGNMENT);
+        return !appConfigValues.isEmpty() && "Yes".equalsIgnoreCase(appConfigValues.get(0).getValue());
+
     }
 }

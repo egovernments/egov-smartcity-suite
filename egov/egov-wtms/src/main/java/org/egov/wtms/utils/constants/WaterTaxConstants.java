@@ -390,4 +390,8 @@ public class WaterTaxConstants {
     public static final String APPLICATIONINITIATORROLE = "WCMSDESIGNATIONFORINITIATOR";
     public static final String PROCEEDWITHOUTDONATIONAMOUNTPAID = "PROCEEDWITHOUTDONATIONAMOUNTPAID";
 
+    public static final String ENGINEERING_CODE = "ENG";
+    public static final String JUNIOR_ASSISTANT_DESIGN_CODE = "JASST";
+    public static final String SENIOR_ASSISTANT_DESIGN_CODE = "SASST";
+    public static final String REASSIGNMENT = "REASSIGNMENT";
 }

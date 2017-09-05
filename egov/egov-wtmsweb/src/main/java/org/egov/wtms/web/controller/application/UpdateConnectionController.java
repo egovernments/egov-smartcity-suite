@@ -345,6 +345,10 @@ public class UpdateConnectionController extends GenericConnectionController {
             if ("YES".equals(appConfig.getConfValues().get(0).getValue()))
                 model.addAttribute("proceedWithoutDonation", "true");
         }
+        model.addAttribute("hasJuniorOrSeniorAssistantRole",
+                waterTaxUtils.isLoggedInUserJuniorOrSeniorAssistant(ApplicationThreadLocals.getUserId()));
+        model.addAttribute("reassignEnabled", waterTaxUtils.reassignEnabled());
+        model.addAttribute("applicationState", waterConnectionDetails.getState().getValue());
         model.addAttribute("statuscode", waterConnectionDetails.getStatus().getCode());
         model.addAttribute("isCommissionerLoggedIn", isCommissionerLoggedIn);
         model.addAttribute("isSanctionedDetailEnable", isSanctionedDetailEnable);

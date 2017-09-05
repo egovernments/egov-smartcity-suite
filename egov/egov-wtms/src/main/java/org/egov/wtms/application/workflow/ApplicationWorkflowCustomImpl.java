@@ -225,7 +225,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             waterConnectionDetailsService.updateIndexes(waterConnectionDetails, null);
 
         } else if (WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction)) {
-            if (wfInitiator.equals(userAssignment)) {
+            if (wfInitiator != null && wfInitiator.equals(userAssignment)) {
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.INACTIVE);
                 if (waterConnectionDetails.getStatus() != null && waterConnectionDetails.getStatus().getCode()
                         .equals(WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN)) {
@@ -251,7 +251,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetails.transition().progressWithStateCopy()
                         .withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(stateValue).withDateInfo(currentDate.toDate())
-                        .withOwner(wfInitiator.getPosition()).withNextAction("Application Rejected")
+                        .withOwner(wfInitiator != null && wfInitiator.getPosition() != null ? wfInitiator.getPosition() : null)
+                        .withNextAction("Application Rejected")
                         .withNatureOfTask(natureOfwork);
             }
         } else {

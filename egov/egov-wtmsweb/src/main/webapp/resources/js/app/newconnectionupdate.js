@@ -377,7 +377,10 @@ $(document)
 														}
 													}
 												}
-											} else {
+											} else if (action=='' && status=='CREATED') {
+												return false;
+											}
+											else {
 												validateWorkFlowApprover(action);
 												if ($('form').valid())
 													document.forms[0].submit();

@@ -49,10 +49,11 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 <div class="page-container" id="page-container">
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
 	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
-			<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/> 
+	<form:hidden path="" id="wfstateDesc" value="${waterConnectionDetails.state.value}"/> 
 	<form:hidden path="" id="statuscode" value="${waterConnectionDetails.status.code}"/>
 	<form:hidden path="" id="isCommissionerLoggedIn" value="${isCommissionerLoggedIn}"/>
 	<form:hidden path="" id="wfstate" value="${waterConnectionDetails.state.id}"/> 
+	<form:hidden path="" id="waterconnectiondetailid" value="${waterConnectionDetails.id}"/>
 	<input type="hidden" id="closerConnection" value="${waterConnectionDetails.closeConnectionType}"/> 
 	<input type="hidden" id="currentUser" value="${currentUser}"/>  
 	<input type="hidden" id="waterTaxDueforParent" value="${waterTaxDueforParent}" name="waterTaxDueforParent"/>  
@@ -118,9 +119,10 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 		<c:if test="${(waterConnectionDetails.status.code =='RECONNECTIONINPROGRESS'    || waterConnectionDetails.status.code =='RECONNECTIONSANCTIONED'||waterConnectionDetails.status.code =='RECONNECTIONINITIATED') }">			
 	<jsp:include page="reconnection-details.jsp"></jsp:include> 
 	<jsp:include page="closuredocumentdetails-view.jsp"></jsp:include>
-	
 	</c:if>
-	
+	<c:if test="${hasJuniorOrSeniorAssistantRole}">
+		<jsp:include page="application-reassignment.jsp"></jsp:include>
+	</c:if>
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 	

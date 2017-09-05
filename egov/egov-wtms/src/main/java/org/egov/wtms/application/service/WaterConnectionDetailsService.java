@@ -734,7 +734,7 @@ public class WaterConnectionDetailsService {
                 && waterConnectionDetails.getStatus().getCode() != null)
             if (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_CREATED)
                     && waterConnectionDetails.getState() != null)
-                if ("edit".equals(mode))
+                if ("edit".equals(mode) && !waterConnectionDetails.getStateHistory().isEmpty())
                     approvalPosition = waterConnectionDetails.getState().getOwnerPosition().getId();
                 else
                     approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
@@ -747,7 +747,9 @@ public class WaterConnectionDetailsService {
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING))
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING) ||
+                    WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING
+                            .equals(waterConnectionDetails.getStatus().getCode()))
                 approvalPosition = waterTaxUtils.getApproverPosition(
                         WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN, waterConnectionDetails);
             else if (wfmatrix.getNextDesignation() != null
@@ -904,7 +906,7 @@ public class WaterConnectionDetailsService {
                     applicationIndex.setChannel(Source.CITIZENPORTAL.toString());
                 else if (sourceChannel == null)
                     applicationIndex.setChannel(WaterTaxConstants.SYSTEM);
-                else if (MEESEVA.toString().equals(waterConnectionDetails.getSource()))
+                else if (MEESEVA.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString()))
                     applicationIndex.setChannel(MEESEVA.toString());
                 else
                     applicationIndex.setChannel(sourceChannel);
@@ -1114,7 +1116,7 @@ public class WaterConnectionDetailsService {
 
     public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, final String code, final String workFlowAction,
-            final HashMap<String, String> meesevaParams, final String sourceChannel) {
+            final Map<String, String> meesevaParams, final String sourceChannel) {
         return createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent, code, workFlowAction,
                 sourceChannel);
 
