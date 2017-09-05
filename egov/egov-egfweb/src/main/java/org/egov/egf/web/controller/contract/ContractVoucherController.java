@@ -87,9 +87,7 @@ import org.egov.services.masters.SchemeService;
 import org.egov.services.masters.SubSchemeService;
 import org.egov.services.voucher.GeneralLedgerDetailService;
 import org.egov.services.voucher.GeneralLedgerService;
-import org.egov.services.voucher.VoucherService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -123,10 +121,6 @@ public class ContractVoucherController {
 
     @Autowired
     private DepartmentService departmentService;
-
-    @Autowired
-    @Qualifier("voucherService")
-    private VoucherService voucherService;
 
     @Autowired
     private GeneralLedgerDetailService generalLedgerDetailService;
