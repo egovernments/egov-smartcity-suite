@@ -56,6 +56,10 @@ public interface StructureClassificationRepository extends JpaRepository<Structu
 	@Query(value = "select * from egpt_struc_cl where upper(code) = upper(:constrTypeCode) and id <> :id", nativeQuery = true)
 	List<StructureClassification> findByCodeAndNotInId(@Param("constrTypeCode") String constrTypeCode,
 			@Param("id") Long id);
+	
+	@Query(value = "select * from egpt_struc_cl where upper(constr_type) = upper(:constrType) and id <> :id", nativeQuery = true)
+        List<StructureClassification> findByNameAndNotInId(@Param("constrType") String constrType,
+                        @Param("id") Long id);
 
 	@Query(value = "from Category where structureClass.id = :id and isActive = true")
 	List<Category> findByUsageUnitRateActive(@Param("id") Long id);

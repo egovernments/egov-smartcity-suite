@@ -112,22 +112,35 @@ public class UnitRateAction extends BaseFormAction {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     @SkipValidation
     public void prepare() {
-
-        List<Boundary> zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
-                REVENUE_HIERARCHY_TYPE);
-        List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
-        List<StructureClassification> structureClassificationList = getPersistenceService().findAllBy(
-                "from StructureClassification order by typeName");
-        addDropdownData("ZoneList", zoneList);
-        addDropdownData("UsageList", usageList);
-        addDropdownData("StructureClassificationList", structureClassificationList);
-
+        populateDropdowns();
         final Long userId = (Long) session().get(SESSIONLOGINID);
         if (userId != null)
             setRoleName(propertyTaxUtil.getRolesForUserId(userId));
+    }
+
+    @SuppressWarnings("unchecked")
+    private void populateDropdowns() {
+      List<Boundary> zoneList;
+      List<PropertyUsage> usageList;
+      List<StructureClassification> structureClassificationList;
+        if (mode.equalsIgnoreCase(EDIT)) {
+            zoneList = boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
+                    REVENUE_HIERARCHY_TYPE);
+            usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
+            structureClassificationList = getPersistenceService().findAllBy(
+                    "from StructureClassification order by typeName");
+        } else {
+            zoneList = boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE,
+                    REVENUE_HIERARCHY_TYPE);
+            usageList = getPersistenceService().findAllBy("from PropertyUsage  where isactive = true order by usageName");
+            structureClassificationList = getPersistenceService().findAllBy(
+                    "from StructureClassification  where isactive = true order by typeName");
+        }
+        addDropdownData("ZoneList", zoneList);
+        addDropdownData("UsageList", usageList);
+        addDropdownData("StructureClassificationList", structureClassificationList);
     }
 
     @SkipValidation

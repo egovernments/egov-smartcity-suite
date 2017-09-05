@@ -69,7 +69,7 @@
 											<th class="text-left"><spring:message
 													code="lbl.fromDate" /></th>
 											<th class="text-left"><spring:message code="lbl.toDate" /></th>
-
+											<th class="text-left"><spring:message code="lbl.status" /></th>
 										</tr>
 									</thead>
 									<tbody>
@@ -90,6 +90,18 @@
 												<td><fmt:formatDate
 														value="${structureclassification.toDate}"
 														pattern="dd-MM-yyyy" /></td>
+												<td >
+								<div align="center">
+								<c:choose>
+									<c:when test="${structureclassification.isActive == 'true'}">
+										<c:out value="ACTIVE" />
+									</c:when> 
+									<c:otherwise>
+										<c:out value="INACTIVE" />
+									</c:otherwise>
+								</c:choose>
+								</div>
+							</td>		
 											</tr>
 											<c:set var="count" value="${count+1}" />
 										</c:forEach>

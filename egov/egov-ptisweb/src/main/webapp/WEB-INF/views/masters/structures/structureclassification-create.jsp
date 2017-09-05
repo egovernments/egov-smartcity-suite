@@ -133,7 +133,7 @@
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary add-margin">
-						<spring:message code="lbl.button.add" />
+						<spring:message code="lbl.button.create" />
 					</button>
 					<button type="reset" class="btn btn-default">
 						<spring:message code="lbl.reset" />

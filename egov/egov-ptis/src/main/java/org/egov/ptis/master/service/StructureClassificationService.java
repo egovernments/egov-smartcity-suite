@@ -101,10 +101,18 @@ public class StructureClassificationService {
 		if (!structureClassificationRepository
 				.findByCodeAndNotInId(structureClassification.getConstrTypeCode(), structureClassification.getId())
 				.isEmpty())
-			errors.add("error.duplicate.code");
+			errors.add("error.duplicate.struc.code");
+		else if (!structureClassificationRepository
+                        .findByNameAndNotInId(structureClassification.getTypeName(), structureClassification.getId())
+                        .isEmpty())
+                        errors.add("error.duplicate.structure");
 		else if (!structureClassificationRepository.findByUsageUnitRateActive(structureClassification.getId()).isEmpty()
 				&& !structureClassification.getIsActive())
 			errors.add("error.active.unitrates.exist.forstructure");
 		return errors;
 	}
+	
+	public List<StructureClassification> getAllStructureTypes() {
+            return structureClassificationRepository.findAll();
+    }
 }

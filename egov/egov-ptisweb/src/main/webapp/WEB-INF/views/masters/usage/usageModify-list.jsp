@@ -64,9 +64,13 @@ cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 							<th colspan="1" class="text-center">
 								<spring:message code="lbl.status"/>
 							</th>
+							.<c:choose>
+							<c:when test="${mode == 'edit'}">
 							<th colspan="1" class="text-center">
 								<spring:message code="lbl.edit" />
 							</th>
+							</c:when>
+							</c:choose>
 						</tr>
 					</thead>
 					<c:forEach var="propertyUsage" items="${propertyUsages}">
@@ -105,11 +109,15 @@ cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 								</c:choose>
 								</div>
 							</td>
+							<c:choose>
+							<c:when test="${mode == 'edit'}">
 							<td colspan="1">
 								<div align="center">
 									<a href="javascript:void(0);" onclick="edit('<c:out value="${propertyUsage.id}" />');">Edit</a>
 								</div>
 							</td>
+							</c:when>
+							</c:choose>
 						</tr>
 					</c:forEach>
 				</table>

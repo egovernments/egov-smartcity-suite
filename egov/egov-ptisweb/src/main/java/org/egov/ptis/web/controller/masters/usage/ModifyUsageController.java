@@ -65,6 +65,14 @@ public class ModifyUsageController {
     @RequestMapping(value = "/modify", method = GET)
     public String getUsageMaster(final Model model) {
         model.addAttribute("propertyUsages", propertyUsageService.getAllActivePropertyUsages());
+        model.addAttribute("mode", "edit");
+        return "usageModify-list";
+    }
+
+    @RequestMapping(value = "/view", method = GET)
+    public String getUsageMasters(final Model model) {
+        model.addAttribute("propertyUsages", propertyUsageService.getAllActivePropertyUsages());
+        model.addAttribute("mode", "view");
         return "usageModify-list";
     }
 

@@ -78,7 +78,7 @@ public class CreateAndViewStructureClassificationController {
 
 	@ModelAttribute(value = "structuretypes")
 	public List<StructureClassification> listStructures() {
-		return structureClassificationService.getAllActiveStructureTypes();
+		return structureClassificationService.getAllStructureTypes();
 	}
 
 	@RequestMapping(value = "/create", method = RequestMethod.GET)
@@ -89,7 +89,7 @@ public class CreateAndViewStructureClassificationController {
 
 	@RequestMapping(value = "/view", method = RequestMethod.GET)
 	public String showStructureType(final Model model) {
-		model.addAttribute("structureclassifications", structureClassificationService.getAllActiveStructureTypes());
+		model.addAttribute("structureclassifications", structureClassificationService.getAllStructureTypes());
 		return "structureclassification-view";
 	}
 

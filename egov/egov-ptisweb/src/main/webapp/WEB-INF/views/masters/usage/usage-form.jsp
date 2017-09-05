@@ -120,7 +120,7 @@
 				<c:if test="${roleName.contains('PROPERTY ADMINISTRATOR')}">
 					<button type="submit" 
 						class="btn btn-primary add-margin">
-						<spring:message code="lbl.button.add" />
+						<spring:message code="lbl.button.create" />
 					</button>	
 				</c:if>	
 					<button type="button" id="btnusagesearch"

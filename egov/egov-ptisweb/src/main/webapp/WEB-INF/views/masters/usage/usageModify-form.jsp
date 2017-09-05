@@ -77,7 +77,21 @@
 						required="required" />
 				</div>
 			</div>
-
+			<div class="form-group">
+						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.propertytype" /><span class="mandatory"></span>
+						</label>
+						<div class="col-sm-6 add-margin">							
+							<div class="radio-inline">
+							  <label><input type="radio" id="optNonResd" name="propertyType" checked="checked" value="NON_RESIDENTIAL">
+							  	<spring:message code="lbl.propertytype.nonresd" />
+							  </label>
+							</div>
+							<div class="radio-inline">
+							  <label><input type="radio" id="optResd" name="propertyType" value="RESIDENTIAL"><spring:message code="lbl.propertytype.resd" /></label>
+							</div>
+							<input id="isResidential" name="isResidential" type="hidden" value="isResidential" />
+						</div>
+					</div>
 			<div class="form-group">
 				<div class="form-group" id="statusdiv">
 					<label class="col-sm-3 control-label text-right"><spring:message
