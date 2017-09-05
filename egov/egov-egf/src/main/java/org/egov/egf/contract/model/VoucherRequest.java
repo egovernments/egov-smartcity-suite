@@ -58,6 +58,11 @@ public class VoucherRequest {
     private String cgvn;
     private Long moduleId;
     private Long department;
+    private String source;
+    private SchemeContract scheme;
+    private SchemeContract subScheme;
+    private FunctionaryContract functionary;
+    private FundsourceContract fundsource;
     private List<AccountDetailContract> ledgers = new ArrayList<>(0);
 
     public String getName() {
@@ -178,6 +183,46 @@ public class VoucherRequest {
 
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
+    public SchemeContract getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(final SchemeContract scheme) {
+        this.scheme = scheme;
+    }
+
+    public FunctionaryContract getFunctionary() {
+        return functionary;
+    }
+
+    public void setFunctionary(final FunctionaryContract functionary) {
+        this.functionary = functionary;
+    }
+
+    public FundsourceContract getFundsource() {
+        return fundsource;
+    }
+
+    public void setFundsource(final FundsourceContract fundsource) {
+        this.fundsource = fundsource;
+    }
+
+    public SchemeContract getSubScheme() {
+        return subScheme;
+    }
+
+    public void setSubScheme(final SchemeContract subScheme) {
+        this.subScheme = subScheme;
     }
 
 }

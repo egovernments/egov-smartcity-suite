@@ -60,7 +60,9 @@ import org.egov.commons.CGeneralLedgerDetail;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
 import org.egov.commons.service.FunctionService;
+import org.egov.commons.service.FunctionaryService;
 import org.egov.commons.service.FundService;
+import org.egov.commons.service.FundsourceService;
 import org.egov.egf.contract.model.AccountDetailContract;
 import org.egov.egf.contract.model.AccountDetailKeyContract;
 import org.egov.egf.contract.model.AccountDetailTypeContract;
@@ -68,6 +70,9 @@ import org.egov.egf.contract.model.ErrorDetail;
 import org.egov.egf.contract.model.FinancialYearContract;
 import org.egov.egf.contract.model.FiscalPeriodContract;
 import org.egov.egf.contract.model.FunctionContract;
+import org.egov.egf.contract.model.FunctionaryContract;
+import org.egov.egf.contract.model.FundsourceContract;
+import org.egov.egf.contract.model.SchemeContract;
 import org.egov.egf.contract.model.SubledgerDetailContract;
 import org.egov.egf.contract.model.VoucherContract;
 import org.egov.egf.contract.model.VoucherContractResponse;
@@ -78,6 +83,8 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.services.masters.SchemeService;
+import org.egov.services.masters.SubSchemeService;
 import org.egov.services.voucher.GeneralLedgerDetailService;
 import org.egov.services.voucher.GeneralLedgerService;
 import org.egov.services.voucher.VoucherService;
@@ -124,10 +131,21 @@ public class ContractVoucherController {
     @Autowired
     private GeneralLedgerDetailService generalLedgerDetailService;
 
+    @Autowired
+    private SchemeService schemeService;
+
+    @Autowired
+    private SubSchemeService subSchemeService;
+
+    @Autowired
+    private FundsourceService fundsourceService;
+
+    @Autowired
+    private FunctionaryService functionaryService;
+
     @RequestMapping(value = "/_create", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public @ResponseBody String createVoucher(@RequestBody final VoucherContract voucherRequest,
-            @RequestParam final String tenantId,
-            final HttpServletResponse response) throws Exception {
+            @RequestParam final String tenantId, final HttpServletResponse response) throws Exception {
 
         List<ErrorDetail> errorList = new ArrayList<>(0);
         final ErrorDetail re = new ErrorDetail();
@@ -150,6 +168,10 @@ public class ContractVoucherController {
 
             prepairHeaderDetail(headerDetails, request);
 
+            prepairSchemeAndSubScheme(headerDetails, request);
+
+            prepairFunctionaryFundsource(headerDetails, request);
+
             final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
             try {
                 headerDetails.put(VoucherConstant.VOUCHERDATE, formatter.parse(request.getVoucherDate()));
@@ -162,13 +184,13 @@ public class ContractVoucherController {
                     prepairAccountDetail(accountCodeDetails, accountDetailContract);
 
                     if (!accountDetailContract.getSubledgerDetails().isEmpty())
-                        for (final SubledgerDetailContract subledgerDetailContract : accountDetailContract.getSubledgerDetails())
+                        for (final SubledgerDetailContract subledgerDetailContract : accountDetailContract
+                                .getSubledgerDetails())
                             prepairSubledgerDetails(subledgerDetails, accountDetailContract, subledgerDetailContract);
                 }
 
             try {
-                cVoucherHeader = createVoucher.createVoucher(headerDetails,
-                        accountCodeDetails, subledgerDetails);
+                cVoucherHeader = createVoucher.createVoucher(headerDetails, accountCodeDetails, subledgerDetails);
             } catch (final ApplicationRuntimeException e) {
                 re.setErrorCode(e.getMessage());
                 re.setErrorMessage(e.getMessage());
@@ -207,10 +229,12 @@ public class ContractVoucherController {
 
             accountDetailContracts.add(accountDetailContract);
 
-            cGeneralLedgerDetails = generalLedgerDetailService.findCGeneralLedgerDetailByLedgerId(cGeneralLedger.getId());
+            cGeneralLedgerDetails = generalLedgerDetailService
+                    .findCGeneralLedgerDetailByLedgerId(cGeneralLedger.getId());
             if (!cGeneralLedgerDetails.isEmpty()) {
                 for (final CGeneralLedgerDetail cGeneralLedgerDetail : cGeneralLedgerDetails) {
-                    final SubledgerDetailContract subledgerDetailContract1 = prepairSubledgerDetailResponse(cGeneralLedgerDetail);
+                    final SubledgerDetailContract subledgerDetailContract1 = prepairSubledgerDetailResponse(
+                            cGeneralLedgerDetail);
                     subledgerDetailContracts.add(subledgerDetailContract1);
                 }
 
@@ -280,13 +304,15 @@ public class ContractVoucherController {
         headerDetails.put(VoucherConstant.VOUCHERNAME, request.getName());
         headerDetails.put(VoucherConstant.VOUCHERTYPE, request.getType());
         headerDetails.put(VoucherConstant.DESCRIPTION, request.getDescription());
+        headerDetails.put(VoucherConstant.SOURCEPATH, request.getSource());
         if (request.getDepartment() != null)
             headerDetails.put(VoucherConstant.DEPARTMENTCODE,
                     departmentService.getDepartmentById(request.getDepartment()).getCode());
         headerDetails.put(VoucherConstant.MODULEID, request.getModuleId());
         headerDetails.put(VoucherConstant.VOUCHERNUMBER, request.getVoucherNumber());
         if (request.getFund() != null && request.getFund().getId() != null)
-            headerDetails.put(VoucherConstant.FUNDCODE, fundService.findOne(request.getFund().getId().intValue()).getCode());
+            headerDetails.put(VoucherConstant.FUNDCODE,
+                    fundService.findOne(request.getFund().getId().intValue()).getCode());
         else if (request.getFund() != null && !request.getFund().getCode().isEmpty())
             headerDetails.put(VoucherConstant.FUNDCODE, request.getFund().getCode());
         else if (request.getFund() != null && !request.getFund().getName().isEmpty())
@@ -325,13 +351,35 @@ public class ContractVoucherController {
 
     private VoucherResponse prepairVoucherResponse(final CVoucherHeader cVoucherHeader) {
         final VoucherResponse voucherResponse = new VoucherResponse();
-
         voucherResponse.setFund(cVoucherHeader.getFundId());
+
+        if (cVoucherHeader.getVouchermis().getFunctionary() != null) {
+            final FunctionaryContract functionaryContract = new FunctionaryContract();
+            functionaryContract.setCode(cVoucherHeader.getVouchermis().getFunctionary().getCode().toString());
+            voucherResponse.setFunctionary(functionaryContract);
+        }
+        if (cVoucherHeader.getVouchermis().getFundsource() != null) {
+            final FundsourceContract fundsourceContract = new FundsourceContract();
+            fundsourceContract.setCode(cVoucherHeader.getVouchermis().getFundsource().getCode());
+            voucherResponse.setFundsource(fundsourceContract);
+        }
+        if (cVoucherHeader.getVouchermis().getSchemeid() != null) {
+            final SchemeContract schemeContract = new SchemeContract();
+            schemeContract.setCode(cVoucherHeader.getVouchermis().getSchemeid().getCode());
+            voucherResponse.setScheme(schemeContract);
+        }
+        if (cVoucherHeader.getVouchermis().getSubschemeid() != null) {
+            final SchemeContract subSchemeContract = new SchemeContract();
+            subSchemeContract.setCode(cVoucherHeader.getVouchermis().getSubschemeid().getCode());
+            voucherResponse.setSubScheme(subSchemeContract);
+        }
+
+        voucherResponse.setSource(cVoucherHeader.getVouchermis().getSourcePath());
         voucherResponse.setCgvn(cVoucherHeader.getCgvn());
         voucherResponse.setVoucherNumber(cVoucherHeader.getVoucherNumber());
         voucherResponse.setDescription(cVoucherHeader.getDescription());
-        voucherResponse
-                .setVoucherDate(org.egov.infra.utils.DateUtils.getFormattedDate(cVoucherHeader.getVoucherDate(), "dd-MM-yyyy"));
+        voucherResponse.setVoucherDate(
+                org.egov.infra.utils.DateUtils.getFormattedDate(cVoucherHeader.getVoucherDate(), "dd-MM-yyyy"));
         voucherResponse.setName(cVoucherHeader.getName());
         voucherResponse.setType(cVoucherHeader.getType());
         voucherResponse.setOriginalVhId(cVoucherHeader.getOriginalvcId());
@@ -339,7 +387,8 @@ public class ContractVoucherController {
         voucherResponse.setStatus("Approved");
         voucherResponse.setId(cVoucherHeader.getId());
 
-        final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO.getFiscalPeriodByDate(cVoucherHeader.getVoucherDate());
+        final CFiscalPeriod fiscalPeriod = fiscalPeriodHibernateDAO
+                .getFiscalPeriodByDate(cVoucherHeader.getVoucherDate());
         final FiscalPeriodContract fiscalPeriodContract = new FiscalPeriodContract();
         final FinancialYearContract financialYearContract = new FinancialYearContract();
         financialYearContract.setActive(fiscalPeriod.getcFinancialYear().getIsActive());
@@ -365,6 +414,40 @@ public class ContractVoucherController {
         objectMapper.setDateFormat(new SimpleDateFormat("dd-MM-yyyy"));
         final String jsonResponse = objectMapper.writeValueAsString(obj);
         return jsonResponse;
+    }
+
+    private void prepairSchemeAndSubScheme(final HashMap<String, Object> headerDetails, final VoucherRequest request) {
+        if (request.getScheme() != null && request.getScheme().getId() != null)
+            headerDetails.put(VoucherConstant.SCHEMECODE,
+                    schemeService.findById(request.getScheme().getId().intValue(), false) != null
+                            ? schemeService.findById(request.getScheme().getId().intValue(), false).getCode() : null);
+        else if (request.getScheme() != null && !request.getScheme().getCode().isEmpty())
+            headerDetails.put(VoucherConstant.SCHEMECODE, request.getScheme().getCode());
+        if (request.getScheme() != null && request.getScheme().getCode() != null && request.getSubScheme() != null
+                && request.getSubScheme().getId() != null)
+            headerDetails.put(VoucherConstant.SUBSCHEMECODE,
+                    subSchemeService.findById(request.getSubScheme().getId().intValue(), false) != null
+                            ? subSchemeService.findById(request.getSubScheme().getId().intValue(), false).getCode()
+                            : null);
+        else if (request.getScheme() != null && request.getScheme().getCode() != null && request.getSubScheme() != null
+                && !request.getSubScheme().getCode().isEmpty())
+            headerDetails.put(VoucherConstant.SUBSCHEMECODE, request.getSubScheme().getCode());
+    }
+
+    private void prepairFunctionaryFundsource(final HashMap<String, Object> headerDetails,
+            final VoucherRequest request) {
+        if (request.getFundsource() != null && request.getFundsource().getId() != null)
+            headerDetails.put(VoucherConstant.FUNDSOURCECODE,
+                    fundsourceService.findOne(request.getFundsource().getId()) != null
+                            ? fundsourceService.findOne(request.getFundsource().getId()).getCode() : null);
+        else if (request.getFundsource() != null && !request.getFundsource().getCode().isEmpty())
+            headerDetails.put(VoucherConstant.FUNDSOURCECODE, request.getFundsource().getCode());
+        if (request.getFunctionary() != null && request.getFunctionary().getId() != null)
+            headerDetails.put(VoucherConstant.FUNCTIONARYCODE,
+                    functionaryService.findOne(request.getFunctionary().getId()) != null
+                            ? functionaryService.findOne(request.getFunctionary().getId()).getCode() : null);
+        else if (request.getFunctionary() != null && !request.getFunctionary().getCode().isEmpty())
+            headerDetails.put(VoucherConstant.FUNCTIONARYCODE, request.getFunctionary().getCode());
     }
 
 }

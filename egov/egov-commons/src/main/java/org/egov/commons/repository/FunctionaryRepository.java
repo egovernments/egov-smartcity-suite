@@ -37,28 +37,15 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.egf.contract.model;
 
-public class Role {
+package org.egov.commons.repository;
 
-    private long id;
+import org.egov.commons.Functionary;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-    private String name;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(final long id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
+@Repository
+public interface FunctionaryRepository extends JpaRepository<Functionary, Integer> {
+	Functionary findByCode(final String code);
 
 }

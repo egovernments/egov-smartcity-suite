@@ -39,25 +39,10 @@
  */
 package org.egov.egf.contract.model;
 
-import java.util.List;
-
-public class UserInfo {
+public class SchemeContract {
 
     private Long id;
-
-    private String userName;
-
-    private String name;
-
-    private String type;
-
-    private String mobileNumber;
-
-    private String emailId;
-
-    private List<Role> roles;
-
-    private String tenantId;
+    private String code;
 
     public Long getId() {
         return id;
@@ -67,60 +52,11 @@ public class UserInfo {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getCode() {
+        return code;
     }
 
-    public void setUserName(final String userName) {
-        this.userName = userName;
+    public void setCode(final String code) {
+        this.code = code;
     }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public String getType() {
-        return type;
-    }
-
-    public void setType(final String type) {
-        this.type = type;
-    }
-
-    public String getMobileNumber() {
-        return mobileNumber;
-    }
-
-    public void setMobileNumber(final String mobileNumber) {
-        this.mobileNumber = mobileNumber;
-    }
-
-    public String getEmailId() {
-        return emailId;
-    }
-
-    public void setEmailId(final String emailId) {
-        this.emailId = emailId;
-    }
-
-    public List<Role> getRoles() {
-        return roles;
-    }
-
-    public void setRoles(final List<Role> roles) {
-        this.roles = roles;
-    }
-
-    public String getTenantId() {
-        return tenantId;
-    }
-
-    public void setTenantId(final String tenantId) {
-        this.tenantId = tenantId;
-    }
-
 }

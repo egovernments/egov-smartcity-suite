@@ -59,13 +59,18 @@ public class VoucherResponse {
     private Long refVhId;
     private String cgvn;
     private Long moduleId;
+    private String source;
+    private SchemeContract scheme;
+    private SchemeContract subScheme;
+    private FunctionaryContract functionary;
+    private FundsourceContract fundsource;
     private List<AccountDetailContract> ledgers = new ArrayList<>(0);
 
     public String getName() {
         return name;
     }
 
-    public void setName(String name) {
+    public void setName(final String name) {
         this.name = name;
     }
 
@@ -73,7 +78,7 @@ public class VoucherResponse {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(final String type) {
         this.type = type;
     }
 
@@ -81,7 +86,7 @@ public class VoucherResponse {
         return voucherNumber;
     }
 
-    public void setVoucherNumber(String voucherNumber) {
+    public void setVoucherNumber(final String voucherNumber) {
         this.voucherNumber = voucherNumber;
     }
 
@@ -89,7 +94,7 @@ public class VoucherResponse {
         return description;
     }
 
-    public void setDescription(String description) {
+    public void setDescription(final String description) {
         this.description = description;
     }
 
@@ -97,7 +102,7 @@ public class VoucherResponse {
         return voucherDate;
     }
 
-    public void setVoucherDate(String voucherDate) {
+    public void setVoucherDate(final String voucherDate) {
         this.voucherDate = voucherDate;
     }
 
@@ -105,7 +110,7 @@ public class VoucherResponse {
         return fund;
     }
 
-    public void setFund(Fund fund) {
+    public void setFund(final Fund fund) {
         this.fund = fund;
     }
 
@@ -113,7 +118,7 @@ public class VoucherResponse {
         return fiscalPeriod;
     }
 
-    public void setFiscalPeriod(FiscalPeriodContract fiscalPeriod) {
+    public void setFiscalPeriod(final FiscalPeriodContract fiscalPeriod) {
         this.fiscalPeriod = fiscalPeriod;
     }
 
@@ -121,7 +126,7 @@ public class VoucherResponse {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(final String status) {
         this.status = status;
     }
 
@@ -129,7 +134,7 @@ public class VoucherResponse {
         return originalVhId;
     }
 
-    public void setOriginalVhId(Long originalVhId) {
+    public void setOriginalVhId(final Long originalVhId) {
         this.originalVhId = originalVhId;
     }
 
@@ -137,7 +142,7 @@ public class VoucherResponse {
         return refVhId;
     }
 
-    public void setRefVhId(Long refVhId) {
+    public void setRefVhId(final Long refVhId) {
         this.refVhId = refVhId;
     }
 
@@ -145,7 +150,7 @@ public class VoucherResponse {
         return cgvn;
     }
 
-    public void setCgvn(String cgvn) {
+    public void setCgvn(final String cgvn) {
         this.cgvn = cgvn;
     }
 
@@ -153,7 +158,7 @@ public class VoucherResponse {
         return moduleId;
     }
 
-    public void setModuleId(Long moduleId) {
+    public void setModuleId(final Long moduleId) {
         this.moduleId = moduleId;
     }
 
@@ -161,7 +166,7 @@ public class VoucherResponse {
         return id;
     }
 
-    public void setId(Long id) {
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -169,8 +174,48 @@ public class VoucherResponse {
         return ledgers;
     }
 
-    public void setLedgers(List<AccountDetailContract> ledgers) {
+    public void setLedgers(final List<AccountDetailContract> ledgers) {
         this.ledgers = ledgers;
+    }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(final String source) {
+        this.source = source;
+    }
+
+    public SchemeContract getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(final SchemeContract scheme) {
+        this.scheme = scheme;
+    }
+
+    public SchemeContract getSubScheme() {
+        return subScheme;
+    }
+
+    public void setSubScheme(final SchemeContract subScheme) {
+        this.subScheme = subScheme;
+    }
+
+    public FunctionaryContract getFunctionary() {
+        return functionary;
+    }
+
+    public void setFunctionary(final FunctionaryContract functionary) {
+        this.functionary = functionary;
+    }
+
+    public FundsourceContract getFundsource() {
+        return fundsource;
+    }
+
+    public void setFundsource(final FundsourceContract fundsource) {
+        this.fundsource = fundsource;
     }
 
 }
