@@ -131,9 +131,6 @@
 			value="org.egov.commons.entity.BankAccountServiceMap" />
 	</bean>
 
-	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
-	</bean>
-
 	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor" />
 
 	<bean id="SBIMOPSPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.SbimopsAdaptor" />

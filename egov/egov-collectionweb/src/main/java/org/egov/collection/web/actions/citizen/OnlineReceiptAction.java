@@ -50,7 +50,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
-import org.egov.collection.handler.BillCollectXmlHandler;
+import org.egov.collection.handler.BillInfoMarshaller;
 import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.pgi.PaymentRequest;
 import org.egov.collection.integration.pgi.PaymentResponse;
@@ -117,7 +117,6 @@ public class OnlineReceiptAction extends BaseFormAction {
     private BigDecimal onlineInstrumenttotal = BigDecimal.ZERO;
     private List<ReceiptDetail> receiptDetailList = new ArrayList<>(0);
     private BillInfoImpl collDetails = new BillInfoImpl();
-    private BillCollectXmlHandler xmlHandler;
     private String collectXML;
     private String serviceName;
     private List<String> collectionModesNotAllowed = new ArrayList<>(0);
@@ -430,7 +429,7 @@ public class OnlineReceiptAction extends BaseFormAction {
         if (StringUtils.isNotBlank(getCollectXML())) {
             final String decodedCollectXml = decodeBillXML();
             try {
-                collDetails = (BillInfoImpl) xmlHandler.toObject(decodedCollectXml);
+                collDetails = BillInfoMarshaller.toObject(decodedCollectXml);
                 final Fund fund = fundDAO.fundByCode(collDetails.getFundCode());
                 if (fund == null)
                     addActionError(getText("billreceipt.improperbilldata.missingfund"));
@@ -760,13 +759,6 @@ public class OnlineReceiptAction extends BaseFormAction {
      */
     public void setPartPaymentAllowed(final Boolean partPaymentAllowed) {
         this.partPaymentAllowed = partPaymentAllowed;
-    }
-
-    /**
-     * @param xmlHandler the xmlHandler to set
-     */
-    public void setXmlHandler(final BillCollectXmlHandler xmlHandler) {
-        this.xmlHandler = xmlHandler;
     }
 
     /**
