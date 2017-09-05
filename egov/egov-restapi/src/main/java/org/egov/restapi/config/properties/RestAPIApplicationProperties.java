@@ -89,4 +89,9 @@ public class RestAPIApplicationProperties {
         return environment.getProperty("smartvizag.ipaddress") == null ? emptyList()
                 : Arrays.asList(environment.getProperty("smartvizag.ipaddress").split(","));
     }
+    
+    public List<String> anyemiIPAddress() {
+        return environment.getProperty("anyemi.ipaddress") == null ? emptyList()
+                : Arrays.asList(environment.getProperty("anyemi.ipaddress").split(","));
+    }
 }

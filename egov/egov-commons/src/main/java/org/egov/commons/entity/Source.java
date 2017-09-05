@@ -43,7 +43,7 @@ import org.apache.commons.lang3.StringUtils;
 
 public enum Source {
 
-    APONLINE, ESEVA, MEESEVA, SYSTEM, SOFTTECH, CARD, MOBILE, LEADWINNER ,CSC, CITIZENPORTAL, SMARTVIZAG;
+    APONLINE, ESEVA, MEESEVA, SYSTEM, SOFTTECH, CARD, MOBILE, LEADWINNER ,CSC, CITIZENPORTAL, SMARTVIZAG, ANYEMI;
 
     @Override
     public String toString() {
