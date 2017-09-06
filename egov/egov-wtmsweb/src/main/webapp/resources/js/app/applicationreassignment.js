@@ -47,13 +47,6 @@
 
 $(document).ready(function(){
 	$('#reassign').click(function() {
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
-		
-		$('#approvalDepartment').val('');
-		$('#approvalDesignation').val('');
-		$('#approvalPosition').val('');
 			$('#approvalPositionVal').find('option:gt(0)').remove();
 			var result=[];
 			$.ajax({
@@ -65,8 +58,6 @@ $(document).ready(function(){
 						 var obj = {};
 		                    obj['id'] = i;
 		                    obj['text'] = data[i];
-		                    console.log("id--"+obj['id']);
-		                    console.log("text--"+obj['text']);
 		                    result.push(obj);
 					});
 					$.each(result, function(i) {

@@ -50,7 +50,6 @@
   <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
   <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-  <%@ include file="/includes/taglibs.jsp" %>
   
   <div class="modal fade reassign-screen" data-backdrop="static">
   	<div class="modal-dialog">
@@ -97,24 +96,3 @@
   	</div>
   </div>
   <script src="<cdn:url value='/resources/js/app/applicationreassignment.js?rnd=${app_release_no}'/>"></script>
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  
-  

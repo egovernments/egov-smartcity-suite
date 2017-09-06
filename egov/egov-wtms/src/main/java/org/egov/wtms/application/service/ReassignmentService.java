@@ -116,10 +116,5 @@ public class ReassignmentService {
         return true;
     }
 
-    public Boolean reassignEnabled() {
-        final List<AppConfigValues> appConfigList = appConfigValuesService.getConfigValuesByModuleAndKey(MODULE_NAME,
-                REASSIGNMENT);
-        return !appConfigList.isEmpty() && "YES".equalsIgnoreCase(appConfigList.get(0).getValue());
-    }
 
 }
