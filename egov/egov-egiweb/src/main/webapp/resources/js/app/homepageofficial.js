@@ -193,9 +193,7 @@ $(document).ready(function () {
 
     $('.check-password').blur(function () {
         if (($('#new-pass').val() != "") && ($('#retype-pass').val() != "")) {
-            if ($('#new-pass').val() === $('#retype-pass').val()) {
-
-            } else {
+            if ($('#new-pass').val() !== $('#retype-pass').val()) {
                 $('.password-error').show();
                 $('#retype-pass').addClass('error');
             }
@@ -412,6 +410,14 @@ var counts = {};
 var now_json = [];
 var currentCondition;
 
+Array.prototype.find = Array.prototype.find || function (callback) {
+    for (var i = 0; i < this.length; i++) {
+        if (callback(this[i], i)) {
+            return this[i];
+        }
+    }
+};
+
 function clearnow() {
     $('#natureofwork').html('');
     response_json = [];
@@ -462,13 +468,19 @@ function worklist() {
 
                     var taskItem;
                     if (obj[item.moduleName].length > 0)
-                        taskItem = obj[item.moduleName].find((task) => Object.keys(task)[0] == item.task);
+                        taskItem = obj[item.moduleName].find(
+                            function (task) {
+                                return Object.keys(task)[0] == item.task;
+                            });
 
                     if (taskItem) {
                         taskItem[Object.keys(taskItem)[0]] += 1;
                     }
                     else {
-                        obj[item.moduleName].push({[item.task]: 1});
+                        var task = item.task;
+                        var moduleValJson = {};
+                        moduleValJson[task] = 1;
+                        obj[item.moduleName].push(moduleValJson);
                     }
 
                     return obj;
@@ -490,7 +502,7 @@ function loadGroupMenusModuleWise(moduleArray) {
 
         Object.keys(moduleArray)
             .sort()
-            .forEach(function(moduleName, i) {
+            .forEach(function (moduleName, i) {
                 var key = escape(moduleName);
                 var count = 0;
                 var taskItems = "";
@@ -602,7 +614,9 @@ function worklistwrtnow(json) {
 
 function refreshnow(taskName, moduleName) {
     if (taskName != 'Reset' && taskName != undefined) {
-        now_json = JSON.parse(response_json).filter((task) => (taskName ? task.task == taskName : true) && (moduleName ? task.moduleName == moduleName : true));
+        now_json = JSON.parse(response_json).filter(function (task) {
+            return (taskName ? task.task == taskName : true) && (moduleName ? task.moduleName == moduleName : true);
+        });
         worklistwrtnow(now_json);
         currentCondition = {taskName: taskName, moduleName: moduleName};
     } else {
