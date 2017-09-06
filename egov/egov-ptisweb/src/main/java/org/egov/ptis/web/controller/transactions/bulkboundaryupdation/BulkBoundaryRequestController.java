@@ -89,18 +89,18 @@ public class BulkBoundaryRequestController {
 
 	@ModelAttribute("zonelist")
 	public List<Boundary> zones() {
-		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
 	}
 
 	@ModelAttribute("localityList")
 	public List<Boundary> localities() {
-		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
 				LOCATION_HIERARCHY_TYPE);
 	}
 
 	@ModelAttribute("electionWardList")
 	public List<Boundary> electionWards() {
-		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
 	}
 
 	@GetMapping("/form")
