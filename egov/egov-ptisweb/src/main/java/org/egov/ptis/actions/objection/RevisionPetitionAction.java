@@ -401,9 +401,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				.findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
 		final List<PropertyMutationMaster> propMutList = getPersistenceService()
 				.findAllBy("from PropertyMutationMaster where type = 'MODIFY' and code in('OBJ')");
-		final List<String> structureList = getPersistenceService().findAllBy("from StructureClassification");
+		final List<String> structureList = getPersistenceService().findAllBy("from StructureClassification where isActive = true order by typeName ");
 		final List<PropertyUsage> usageList = getPersistenceService()
-				.findAllBy("from PropertyUsage order by usageName");
+				.findAllBy("from PropertyUsage where isActive = true order by usageName");
 		final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
 		final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
 		setFloorNoMap(FLOOR_MAP);
