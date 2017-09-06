@@ -49,6 +49,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS
 import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -451,7 +452,8 @@ public class WaterTaxUtils {
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
-                    if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER)) {
+                    if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER) ||
+                            ROLE_APPROVERROLE.equalsIgnoreCase(userrole.getName())) {
                         final Position positionuser = getZonalLevelClerkForLoggedInUser(
                                 waterConnectionDetails.getConnection().getPropertyIdentifier());
                         if (positionuser != null) {
