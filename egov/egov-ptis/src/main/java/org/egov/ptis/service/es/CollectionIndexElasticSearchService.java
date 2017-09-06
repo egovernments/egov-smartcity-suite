@@ -2584,13 +2584,23 @@ public class CollectionIndexElasticSearchService {
         List<CollTableData> citywiseTableData = new ArrayList<>();
         List<CollTableData> wardWiseData;
         String cityName;
+        String regionName;
+        String districtName;
+        String ulbGrade;
         for (CityIndex city : cities) {
             cityName = city.getName();
             collectionDetailsRequest.setUlbCode(city.getCitycode());
             collectionDetailsRequest.setType(DASHBOARD_GROUPING_WARDWISE);
+            regionName = city.getRegionname();
+            districtName = city.getDistrictname();
+            ulbGrade = city.getCitygrade();
             wardWiseData = getResponseTableData(collectionDetailsRequest, false);
-            for (CollTableData wardData : wardWiseData)
+            for (CollTableData wardData : wardWiseData){
                 wardData.setUlbName(cityName);
+                wardData.setRegionName(regionName);
+                wardData.setDistrictName(districtName);
+                wardData.setUlbGrade(ulbGrade);
+            }
 
             citywiseTableData.addAll(wardWiseData);
         }
