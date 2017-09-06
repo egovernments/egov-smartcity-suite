@@ -167,8 +167,8 @@ public class ReportController {
         if (advertisementPermitDetail.getLength() != null)
             measurement.append(" Length : ").append(advertisementPermitDetail.getLength());
 
-        if (advertisementPermitDetail.getBreadth() != null)
-            measurement.append(" Breadth : ").append(advertisementPermitDetail.getBreadth());
+        if (advertisementPermitDetail.getWidth() != null)
+            measurement.append(" Breadth : ").append(advertisementPermitDetail.getWidth());
 
         if (advertisementPermitDetail.getTotalHeight() != null)
             measurement.append(" Height : ").append(advertisementPermitDetail.getTotalHeight());
