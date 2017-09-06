@@ -377,16 +377,17 @@ $(document)
 														}
 													}
 												}
-											} else if (action=='' && status=='CREATED') {
+											} else if (action=='' && (status=='CREATED' || status=='CLOSERINITIATED' || status=='RECONNECTIONINITIATED')) {
 												return false;
 											}
 											else {
 												validateWorkFlowApprover(action);
 												if ($('form').valid())
 													document.forms[0].submit();
+												return true;
 											}
 										}
-										return;
+										return false;
 									});
 
 					changeCategory();
