@@ -1101,7 +1101,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		final List<PropertyTypeMaster> propTypeList = getPersistenceService()
 				.findAllBy("from PropertyTypeMaster where type != 'EWSHS' order by orderNo");
 		final List<PropertyOccupation> propOccList = getPersistenceService().findAllBy("from PropertyOccupation");
-		final List<String> structureList = getPersistenceService().findAllBy("from StructureClassification");
+		final List<String> structureList = getPersistenceService().findAllBy("from StructureClassification where isActive = true order by typeName ");
 		final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
 		final List<String> taxExemptionReasonList = getPersistenceService()
 				.findAllBy("from TaxExemptionReason where isActive = true order by name");
