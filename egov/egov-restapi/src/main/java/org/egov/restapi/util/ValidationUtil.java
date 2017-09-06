@@ -286,67 +286,71 @@ public class ValidationUtil {
         }
 
     	//Property Address validations
+        
         PropertyAddressDetails propertyAddressDetails = createPropDetails.getPropertyAddressDetails();
-        if(propertyAddressDetails == null){
-        	errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(ADDRESS_DETAILS_REQ_CODE);
-            errorDetails.setErrorMessage(ADDRESS_DETAILS_REQ_MSG);
-            return errorDetails;
-        } else {
-        	if(StringUtils.isBlank(propertyAddressDetails.getLocalityNum())){
-        		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(LOCALITY_REQ_CODE);
-                errorDetails.setErrorMessage(LOCALITY_REQ_MSG);
+        if(!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)){
+        	if(propertyAddressDetails == null){
+            	errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(ADDRESS_DETAILS_REQ_CODE);
+                errorDetails.setErrorMessage(ADDRESS_DETAILS_REQ_MSG);
                 return errorDetails;
-        	}
-        	if(StringUtils.isBlank(propertyAddressDetails.getZoneNum())){
-        		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(ZONE_NO_REQ_CODE);
-                errorDetails.setErrorMessage(ZONE_NO_REQ_MSG);
-                return errorDetails;
-        	}
-        	if(StringUtils.isBlank(propertyAddressDetails.getWardNum())){
-        		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(WARD_NO_REQ_CODE);
-                errorDetails.setErrorMessage(WARD_NO_REQ_MSG);
-                return errorDetails;
-        	}
-        	if(StringUtils.isBlank(propertyAddressDetails.getBlockNum())){
-        		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(BLOCK_NO_REQ_CODE);
-                errorDetails.setErrorMessage(BLOCK_NO_REQ_MSG);
-                return errorDetails;
-        	}
-        	if(StringUtils.isBlank(propertyAddressDetails.getElectionWardNum())){
-        		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(ELECTION_WARD_REQ_CODE);
-                errorDetails.setErrorMessage(ELECTION_WARD_REQ_MSG);
-                return errorDetails;
-        	}
-        	if(StringUtils.isBlank(propertyAddressDetails.getPinCode())){
-        		errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(PIN_CODE_REQ_CODE);
-                errorDetails.setErrorMessage(PIN_CODE_REQ_MSG);
-                return errorDetails;
-        	}else{
-        		Pattern pattern = Pattern.compile(PINCODE_PATTERN);
-	        	Matcher matcher = pattern.matcher(propertyAddressDetails.getPinCode());
-	            if(!matcher.matches()){
-		            errorDetails = new ErrorDetails();
-		            errorDetails.setErrorCode(PIN_CODE_ALPHASPL_ERROR_CODE);
-		            errorDetails.setErrorMessage(PIN_CODE_ALPHASPL_ERROR_MSG);
-		            return errorDetails;
-		        }
-        	}
-        	if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
-	        	if(StringUtils.isBlank(propertyAddressDetails.getDoorNo())){
-	        		errorDetails = new ErrorDetails();
-	                errorDetails.setErrorCode(DOOR_NO_REQ_CODE);
-	                errorDetails.setErrorMessage(DOOR_NO_REQ_MSG);
-	                return errorDetails;
-	        	}
-        	}
+            } else {
+            	if(StringUtils.isBlank(propertyAddressDetails.getLocalityNum())){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(LOCALITY_REQ_CODE);
+                    errorDetails.setErrorMessage(LOCALITY_REQ_MSG);
+                    return errorDetails;
+            	}
+            	if(StringUtils.isBlank(propertyAddressDetails.getZoneNum())){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(ZONE_NO_REQ_CODE);
+                    errorDetails.setErrorMessage(ZONE_NO_REQ_MSG);
+                    return errorDetails;
+            	}
+            	if(StringUtils.isBlank(propertyAddressDetails.getWardNum())){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(WARD_NO_REQ_CODE);
+                    errorDetails.setErrorMessage(WARD_NO_REQ_MSG);
+                    return errorDetails;
+            	}
+            	if(StringUtils.isBlank(propertyAddressDetails.getBlockNum())){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(BLOCK_NO_REQ_CODE);
+                    errorDetails.setErrorMessage(BLOCK_NO_REQ_MSG);
+                    return errorDetails;
+            	}
+            	if(StringUtils.isBlank(propertyAddressDetails.getElectionWardNum())){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(ELECTION_WARD_REQ_CODE);
+                    errorDetails.setErrorMessage(ELECTION_WARD_REQ_MSG);
+                    return errorDetails;
+            	}
+            	if(StringUtils.isBlank(propertyAddressDetails.getPinCode())){
+            		errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(PIN_CODE_REQ_CODE);
+                    errorDetails.setErrorMessage(PIN_CODE_REQ_MSG);
+                    return errorDetails;
+            	}else{
+            		Pattern pattern = Pattern.compile(PINCODE_PATTERN);
+    	        	Matcher matcher = pattern.matcher(propertyAddressDetails.getPinCode());
+    	            if(!matcher.matches()){
+    		            errorDetails = new ErrorDetails();
+    		            errorDetails.setErrorCode(PIN_CODE_ALPHASPL_ERROR_CODE);
+    		            errorDetails.setErrorMessage(PIN_CODE_ALPHASPL_ERROR_MSG);
+    		            return errorDetails;
+    		        }
+            	}
+            	if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
+    	        	if(StringUtils.isBlank(propertyAddressDetails.getDoorNo())){
+    	        		errorDetails = new ErrorDetails();
+    	                errorDetails.setErrorCode(DOOR_NO_REQ_CODE);
+    	                errorDetails.setErrorMessage(DOOR_NO_REQ_MSG);
+    	                return errorDetails;
+    	        	}
+            	}
+            }
         }
+        
         if(!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
         	ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
         	if(constructionTypeDetails == null){

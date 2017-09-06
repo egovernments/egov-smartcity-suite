@@ -2570,7 +2570,6 @@ public class PropertyExternalService {
 		PropertyImpl nonVacantProperty = null;
 		try {
 			nonVacantProperty = createNonVacantProperty(nonVacantBasicProperty,viewPropertyDetails, propService);
-
 			vacantBasicProperty = createBasicProp(viewPropertyDetails,propService);
 			updatePropertyStatusValuesRefProperty(nonVacantBasicProperty, vacantBasicProperty);
 			createVacantProperty(nonVacantProperty, vacantBasicProperty, viewPropertyDetails, propService);
@@ -2593,7 +2592,10 @@ public class PropertyExternalService {
 
 	private PropertyImpl createNonVacantProperty(final BasicProperty nonVacantBasicProperty,ViewPropertyDetails viewPropertyDetails, final PropertyService propService)
 			throws TaxCalculatorExeption, ParseException {
-		return createAppurTenantProperty(nonVacantBasicProperty, Boolean.TRUE,viewPropertyDetails, propService);
+	PropertyImpl nonVacProp=	createAppurTenantProperty(nonVacantBasicProperty, Boolean.TRUE,viewPropertyDetails, propService);
+	persistAndMessage(nonVacantBasicProperty, nonVacProp, propService);
+	saveDocumentTypeDetails(nonVacantBasicProperty, viewPropertyDetails);
+	return nonVacProp;
 	}
 
 	private void createVacantProperty(final PropertyImpl nonVacantProperty, final BasicProperty vacantBasicProperty,
@@ -2724,7 +2726,7 @@ public class PropertyExternalService {
 			propertyImpl.getPropertyDetail().setMarketValue(viewPropertyDetails.getMarketValue());
 			propertyImpl = propService.createProperty(propertyImpl, viewPropertyDetails.getExtentOfSite(), viewPropertyDetails.getMutationReason(),
 					propertyTypeMaster.getId().toString(), null, null, STATUS_ISACTIVE, viewPropertyDetails.getRegdDocNo(), null, null,
-					null, null, null, null, null, Long.valueOf((viewPropertyDetails.getVlPlotArea())), Long.valueOf((viewPropertyDetails.getVlPlotArea())),
+					null, null, null, null, null, StringUtils.isNotBlank(viewPropertyDetails.getVlPlotArea())?Long.valueOf((viewPropertyDetails.getVlPlotArea())):null, StringUtils.isNotBlank(viewPropertyDetails.getVlPlotArea())?Long.valueOf((viewPropertyDetails.getVlPlotArea())):null,
 					Boolean.FALSE);
 		}
 		propertyImpl.setBasicProperty(basicProperty);
@@ -2755,5 +2757,5 @@ public class PropertyExternalService {
 		propService.processAndStoreDocument(propertyImpl.getAssessmentDocuments());
 		return propertyImpl;
 	}
-
+	
 }
