@@ -1077,17 +1077,17 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	 */
 	@SuppressWarnings("unchecked")
 	private void populateUsages() {
-		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage order by usageName");
+		List<PropertyUsage> usageList = getPersistenceService().findAllBy("from PropertyUsage where isActive = true order by usageName");
 		// Loading property usages based on property category
 		if (StringUtils.isNoneBlank(propertyCategory))
 			if (propertyCategory.equals(CATEGORY_MIXED))
-				usageList = getPersistenceService().findAllBy("From PropertyUsage order by usageName");
+				usageList = getPersistenceService().findAllBy("From PropertyUsage  where isActive=true order by usageName");
 			else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
 				usageList = getPersistenceService()
-						.findAllBy("From PropertyUsage where isResidential = true order by usageName");
+						.findAllBy("From PropertyUsage where isResidential = true and isActive=true order by usageName");
 			else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
 				usageList = getPersistenceService()
-						.findAllBy("From PropertyUsage where isResidential = false order by usageName");
+						.findAllBy("From PropertyUsage where isResidential = false and isActive=true order by usageName");
 
 		addDropdownData("UsageList", usageList);
 	}

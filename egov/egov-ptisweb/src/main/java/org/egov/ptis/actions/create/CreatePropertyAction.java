@@ -1137,13 +1137,13 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         // Loading property usages based on property category
         if (StringUtils.isNoneBlank(propertyCategory))
             if (propertyCategory.equals(CATEGORY_MIXED))
-                usageList = getPersistenceService().findAllBy("From PropertyUsage order by usageName");
+                usageList = getPersistenceService().findAllBy("From PropertyUsage where isActive = true order by usageName");
             else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
                 usageList = getPersistenceService()
-                        .findAllBy("From PropertyUsage where isResidential = true order by usageName");
+                        .findAllBy("From PropertyUsage where isResidential = true and isActive = true order by usageName");
             else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
                 usageList = getPersistenceService()
-                        .findAllBy("From PropertyUsage where isResidential = false order by usageName");
+                        .findAllBy("From PropertyUsage where isResidential = false and isActive = true  order by usageName");
 
         addDropdownData(USAGE_LIST, usageList);
         // tax exempted properties
