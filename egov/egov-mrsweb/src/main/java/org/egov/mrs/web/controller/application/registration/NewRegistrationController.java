@@ -90,6 +90,7 @@ import org.springframework.web.servlet.view.RedirectView;
 @RequestMapping(value = { "/registration" })
 public class NewRegistrationController extends MarriageRegistrationController {
 
+    private static final String IS_EMPLOYEE = "isEmployee";
     private static final String ACKOWLEDGEMENT = "acknowledgement";
     private static final String MESSAGE = "message";
     private static final String APPROVAL_POSITION = "approvalPosition";
@@ -127,15 +128,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
             if (meesevaApplicationNumber == null) {
                 throw new ApplicationRuntimeException("MEESEVA.005");
             } else {
-                marriageRegistration.setApplicationNo(meesevaApplicationNumber);                
+                marriageRegistration.setApplicationNo(meesevaApplicationNumber);
             }
 
         }
-
-        model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
+        model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser()));
+        model.addAttribute(IS_EMPLOYEE, !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser));
-        
-        
+
         marriageRegistration.setFeePaid(calculateMarriageFee(new Date()));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
@@ -161,6 +161,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         validateApplicationDate(marriageRegistration, errors, request);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
+        boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null,
@@ -174,7 +175,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         String message;
         String approverName = null;
         String nextDesignation = null;
-        if (!isEmployee) {
+        if (!isEmployee || citizenPortalUser) {
             final Assignment assignment = registrationWorkFlowService.getMappedAssignmentForCscOperator(marriageRegistration,
                     null);
             if (assignment != null) {
@@ -197,17 +198,19 @@ public class NewRegistrationController extends MarriageRegistrationController {
         if (loggedUserIsMeesevaUser) {
             marriageRegistration.setSource(MarriageConstants.SOURCE_MEESEVA);
             appNo = marriageRegistrationService
-                    .createMeesevaRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser)
+                    .createMeesevaRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser,
+                            citizenPortalUser)
                     .getApplicationNo();
         } else {
             appNo = marriageRegistrationService
-                    .createRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser).getApplicationNo();
+                    .createRegistration(marriageRegistration, workflowContainer, loggedUserIsMeesevaUser, citizenPortalUser)
+                    .getApplicationNo();
         }
         message = messageSource.getMessage("msg.success.forward",
                 new String[] { approverName.concat("~").concat(nextDesignation), appNo }, null);
         model.addAttribute(MESSAGE, message);
         model.addAttribute("applnNo", appNo);
-        model.addAttribute("isEmployee", isEmployee);
+        model.addAttribute(IS_EMPLOYEE, isEmployee);
         if (!isEmployee && !loggedUserIsMeesevaUser) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
             return "redirect:/registration/new-mrgregistration-ackowledgement/" + appNo;
@@ -220,7 +223,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
             final Boolean isEmployee, final Model model) {
-        model.addAttribute("isEmployee", isEmployee);
+        model.addAttribute(IS_EMPLOYEE, isEmployee);
         model.addAttribute("message", messageSource.getMessage("notexists.position",
                 new String[] {}, null));
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
@@ -228,7 +231,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
         return "registration-form";
     }
-    
+
     @RequestMapping(value = "/generate-meesevareceipt", method = RequestMethod.GET)
     public RedirectView generateMeesevaReceipt(final HttpServletRequest request, final Model model) {
         final String keyNameArray = request.getParameter("transactionServiceNumber");
@@ -259,7 +262,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             result = marriageRegistrationService.forwardRegistration(marriageRegistration, workflowContainer);
             break;
         case "Approve":
-            result = marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer,request);
+            result = marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer, request);
             break;
         case "Reject":
             result = marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);

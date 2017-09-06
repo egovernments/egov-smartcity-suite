@@ -42,6 +42,7 @@ package org.egov.mrs.domain.service;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -55,8 +56,11 @@ import org.egov.commons.entity.Source;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.mrs.application.MarriageConstants;
@@ -74,6 +78,9 @@ import org.egov.mrs.domain.repository.ReIssueRepository;
 import org.egov.mrs.masters.service.MarriageFeeService;
 import org.egov.mrs.service.es.ReIssueCertificateUpdateIndexesService;
 import org.egov.pims.commons.Position;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.portal.entity.PortalInboxBuilder;
+import org.egov.portal.service.PortalInboxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -84,6 +91,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ReIssueService {
 
+    private static final String REISSUE_APPLICATION_VIEW = "/mrs/reissue/view/%s";
     private static final String USER = "user";
     private static final String DEPARTMENT = "department";
     private final ReIssueRepository reIssueRepository;
@@ -115,6 +123,14 @@ public class ReIssueService {
     private ReIssueCertificateUpdateIndexesService reiSsueUpdateIndexesService;
     @Autowired
     protected AppConfigValueService appConfigValuesService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private ModuleService moduleDao;
+    @Autowired
+    private PortalInboxService portalInboxService;
+    @Autowired
+    private MarriageRegistrationService marriageRegistrationService;
 
     @Autowired
     public ReIssueService(final ReIssueRepository reIssueRepository) {
@@ -134,14 +150,14 @@ public class ReIssueService {
     public ReIssue get(final Long id) {
         return reIssueRepository.findById(id);
     }
-    
+
     public ReIssue findByApplicationNo(final String applicationNo) {
         return reIssueRepository.findByApplicationNo(applicationNo);
     }
 
     @Transactional
     public String createReIssueApplication(final ReIssue reIssue, final WorkflowContainer workflowContainer) {
-
+        final boolean citizenPortalUser = workflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         if (StringUtils.isBlank(reIssue.getApplicationNo())) {
             reIssue.setApplicationNo(marriageRegistrationApplicationNumberGenerator.getNextReIssueApplicationNumber(reIssue));
             reIssue.setApplicationDate(new Date());
@@ -165,6 +181,8 @@ public class ReIssueService {
         create(reIssue);
         reiSsueUpdateIndexesService.createReIssueAppIndex(reIssue);
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
+        if (citizenPortalUser)
+            pushPortalMessage(reIssue);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);
         return reIssue.getApplicationNo();
     }
@@ -178,6 +196,10 @@ public class ReIssueService {
                         MarriageConstants.MODULE_NAME));
         update(reissue);
         workflowService.transition(reissue, workflowContainer, reissue.getApprovalComent());
+        if (reissue.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
+                && getPortalInbox(reissue.getApplicationNo()) != null)
+            updatePortalMessage(reissue);
         return reissue;
     }
 
@@ -191,9 +213,12 @@ public class ReIssueService {
         if (marriageUtils.isDigitalSignEnabled()) {
             workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments());
             reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue1);
-        } else {
+        } else
             printCertificate(reissue1, workflowContainer, request);
-        }
+        if (reissue.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
+                && getPortalInbox(reissue.getApplicationNo()) != null)
+            updatePortalMessage(reissue);
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue1);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue1);
         return reissue1;
@@ -222,6 +247,10 @@ public class ReIssueService {
             }
         }
         reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue);
+        if (reissue.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
+                && getPortalInbox(reissue.getApplicationNo()) != null)
+            updatePortalMessage(reissue);
         marriageSmsAndEmailService.sendSMSForReIssueApplication(reissue);
         marriageSmsAndEmailService.sendEmailForReIssueApplication(reissue);
         reissue.setRejectionReason(workflowContainer.getApproverComments());
@@ -253,7 +282,7 @@ public class ReIssueService {
 
         marriageApplicantService.addDocumentsToFileStore(reissue.getApplicant(), individualDocumentAndId);
     }
-    
+
     @Transactional
     public MarriageCertificate generateReIssueCertificate(final ReIssue reIssue,
             final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
@@ -262,7 +291,7 @@ public class ReIssueService {
         reIssue.addCertificate(marriageCertificate);
         return marriageCertificate;
     }
-    
+
     @Transactional
     public ReIssue digiSignCertificate(final ReIssue reIssue,
             final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
@@ -270,6 +299,10 @@ public class ReIssueService {
                 MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
         reiSsueUpdateIndexesService.updateReIssueAppIndex(reIssue);
+        if (reIssue.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(reIssue.getSource())
+                && getPortalInbox(reIssue.getApplicationNo()) != null)
+            updatePortalMessage(reIssue);
         return reIssue;
     }
 
@@ -278,15 +311,19 @@ public class ReIssueService {
             final HttpServletRequest request)
             throws IOException {
         if (reIssue.getMarriageCertificate().isEmpty()) {
-                  final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
-                          reIssue, request, MarriageCertificateType.REISSUE);
-                  reIssue.addCertificate(marriageCertificate);
+            final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
+                    reIssue, request, MarriageCertificateType.REISSUE);
+            reIssue.addCertificate(marriageCertificate);
         }
         reIssue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(),
                         MarriageConstants.MODULE_NAME));
         reIssue.setActive(true);
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
+        if (reIssue.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(reIssue.getSource())
+                && getPortalInbox(reIssue.getApplicationNo()) != null)
+            updatePortalMessage(reIssue);
         return reIssue;
     }
 
@@ -350,9 +387,50 @@ public class ReIssueService {
     }
 
     public boolean checkAnyWorkFlowInProgressForRegistration(final MarriageRegistration registration) {
-        if (reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo()) == null)
-            return false;
-        return true;
+        return reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo()) == null ? true : false;
+    }
+
+    /**
+     * Method to push data for citizen portal inbox
+     */
+
+    @Transactional
+    public void pushPortalMessage(final ReIssue reIssue) {
+        final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
+
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+                reIssue.getState().getNatureOfTask() + " : " + module.getDisplayName(),
+                reIssue.getApplicationNo(), reIssue.getRegistration().getRegistrationNo(), reIssue.getId(),
+                null, "Success",
+                String.format(REISSUE_APPLICATION_VIEW, reIssue.getId()),
+                isResolved(reIssue), reIssue.getStatus().getDescription(),
+                marriageRegistrationService.calculateDueDateForMrgReIssue(), reIssue.getState(),
+                Arrays.asList(securityUtils.getCurrentUser()));
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+
+    private boolean isResolved(final ReIssue reIssue) {
+        return "END".equalsIgnoreCase(reIssue.getState().getValue())
+                || "CLOSED".equalsIgnoreCase(reIssue.getState().getValue());
+    }
+
+    public PortalInbox getPortalInbox(final String applicationNumber) {
+        final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
+        return portalInboxService.getPortalInboxByApplicationNo(applicationNumber, module.getId());
+    }
+
+    /**
+     * Method to update data for citizen portal inbox
+     */
+    public void updatePortalMessage(final ReIssue reIssue) {
+        final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
+        portalInboxService.updateInboxMessage(reIssue.getApplicationNo(), module.getId(),
+                reIssue.getStatus().getDescription(),
+                isResolved(reIssue), marriageRegistrationService.calculateDueDateForMrgReIssue(), reIssue.getState(),
+                null,
+                reIssue.getApplicationNo(),
+                String.format(REISSUE_APPLICATION_VIEW, reIssue.getId()));
     }
 
 }

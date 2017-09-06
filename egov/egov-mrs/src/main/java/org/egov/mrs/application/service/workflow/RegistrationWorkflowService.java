@@ -131,9 +131,10 @@ public class RegistrationWorkflowService {
 
         final Boolean isCscOperator = isCscOperator(user);
         boolean loggedUserIsMeesevaUser = isMeesevaUser(user);
+        boolean citizenPortalUser = isCitizenPortalUser(user);
 
         // In case of CSC Operator or online user or meeseva  will execute this block 
-        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser) {
+        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser||citizenPortalUser ) {
             currentState = MarriageConstants.CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -145,8 +146,12 @@ public class RegistrationWorkflowService {
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
             if(org.apache.commons.lang.StringUtils.isBlank(registration.getSource()) || !loggedUserIsMeesevaUser)
-            registration.setSource(isCscOperator ? Source.CSC.toString() : MarriageConstants.SOURCE_ONLINE);
-
+             if(isCscOperator)
+                 registration.setSource(Source.CSC.toString());
+             else if(citizenPortalUser)
+                 registration.setSource(Source.CITIZENPORTAL.toString());
+             else
+                 registration.setSource(MarriageConstants.SOURCE_ONLINE);    
         }
 
         else if (workflowContainer == null) {
@@ -231,8 +236,9 @@ public class RegistrationWorkflowService {
         String currentState;
         Assignment assignment = getWorkFlowInitiatorForReissue(reIssue);
         final Boolean isCscOperator = isCscOperator(user);
+        boolean citizenPortalUser = isCitizenPortalUser(user);
         // In case of CSC Operator will execute this block
-        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())) {
+        if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())|| citizenPortalUser) {
             currentState = MarriageConstants.CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
@@ -243,7 +249,10 @@ public class RegistrationWorkflowService {
                     REGISTRATION_ADDNL_RULE, currentState, null);
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
-            reIssue.setSource(isCscOperator ? Source.CSC.toString() : MarriageConstants.SOURCE_ONLINE);
+            if (citizenPortalUser)
+                reIssue.setSource(Source.CITIZENPORTAL.name());
+            else
+                reIssue.setSource(isCscOperator ? Source.CSC.name() : MarriageConstants.SOURCE_ONLINE);
 
         } else if (workflowContainer == null) {
             nextStateOwner = assignment != null ? assignment.getPosition() : null;
@@ -314,7 +323,7 @@ public class RegistrationWorkflowService {
                     .withNextAction(nextAction)
                     .withNatureOfTask(natureOfTask);
         else if (nextAction != null && nextAction.equalsIgnoreCase(STATE_END))
-            itemInWorkflow.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+            itemInWorkflow.transition().end().withSenderName(user.getUsername() + "::" + user.getName()).withNextAction(STATE_END)
                     .withComments(approvalComent).withDateInfo(new Date());
         else
             itemInWorkflow.transition().progressWithStateCopy()
@@ -378,7 +387,20 @@ public class RegistrationWorkflowService {
                 return true;
         return false;
     }
-
+    
+    /**
+     * Checks whether user is csc operator or not
+     *
+     * @param user
+     * @return
+     */
+    public Boolean isCitizenPortalUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(MarriageConstants.ROLE_CITIZEN))
+                return true;
+        return false;
+    }
+    
     /**
      * Returns Designation for property tax csc operator workflow
      *

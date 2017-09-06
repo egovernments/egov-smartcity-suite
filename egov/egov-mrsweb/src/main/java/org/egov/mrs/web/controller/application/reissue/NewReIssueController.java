@@ -158,6 +158,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         }
         model.addAttribute(IS_EMPLOYEE,
                 !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()) && registrationWorkFlowService.isEmployee(logedinUser));
+        model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser()));
         final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
         prepareNewForm(model, reIssue);
@@ -182,7 +183,7 @@ public class NewReIssueController extends GenericWorkFlowController {
             final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
         final User logedinUser = securityUtils.getCurrentUser();
-
+        boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
         marriageFormValidator.validateReIssue(reIssue, errors);
@@ -202,7 +203,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
 
-        if (!isEmployee) {
+        if (!isEmployee ||citizenPortalUser ) {
             final Assignment assignment = registrationWorkFlowService.getMappedAssignmentForCscOperator(null, reIssue);
             if (assignment != null) {
                 workflowContainer.setApproverPositionId(assignment.getPosition().getId());

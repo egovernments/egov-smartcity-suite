@@ -106,6 +106,10 @@ public class MarriageConstants {
 
     public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
     public static final String APPCONFKEY_REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED";
+    
+    //CITIZEN
+    public static final String ROLE_CITIZEN = "CITIZEN";
+    
 
 
     public static final List<String> venuelist = new ArrayList<String>() {

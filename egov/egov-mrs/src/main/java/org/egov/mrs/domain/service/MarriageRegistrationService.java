@@ -50,6 +50,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.Collections;
 import java.util.Date;
@@ -70,8 +71,10 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -100,6 +103,9 @@ import org.egov.mrs.domain.repository.MarriageRegistrationRepository;
 import org.egov.mrs.domain.repository.WitnessRepository;
 import org.egov.mrs.service.es.MarriageRegistrationUpdateIndexesService;
 import org.egov.pims.commons.Position;
+import org.egov.portal.entity.PortalInbox;
+import org.egov.portal.entity.PortalInboxBuilder;
+import org.egov.portal.service.PortalInboxService;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
 import org.hibernate.criterion.MatchMode;
@@ -139,6 +145,7 @@ public class MarriageRegistrationService {
     private static final String DEPARTMENT = "department";
     private static final String STATUS = "status";
     private static final String ERROR_WHILE_COPYING_MULTIPART_FILE_BYTES = "Error while copying Multipart file bytes";
+    private static final String MRS_APPLICATION_VIEW = "/mrs/registration/view/%s";
 
     @Autowired
     private final MarriageRegistrationRepository registrationRepository;
@@ -175,14 +182,16 @@ public class MarriageRegistrationService {
     @Autowired
     private MarriageRegistrationReportsService marriageRegistrationReportsService;
     @Autowired
-    private SecurityUtils securityUtils;    
+    private SecurityUtils securityUtils;
     @Autowired
     private AppConfigValueService appConfigValuesService;
-    
+    @Autowired
+    private ModuleService moduleDao;
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource marriageMessageSource;
-
+    @Autowired
+    private PortalInboxService portalInboxService;
     @Autowired
     private ReportService reportService;
 
@@ -197,13 +206,13 @@ public class MarriageRegistrationService {
 
     @Transactional
     public void create(final MarriageRegistration registration) {
-         registrationRepository.save(registration);
+        registrationRepository.save(registration);
     }
-    
+
     @Transactional
     public MarriageRegistration createMeesevaMarriageReg(final MarriageRegistration marriageRegistration) {
-           registrationRepository.save(marriageRegistration);
-           return marriageRegistration;
+        registrationRepository.save(marriageRegistration);
+        return marriageRegistration;
     }
 
     @Transactional
@@ -265,36 +274,38 @@ public class MarriageRegistrationService {
     }
 
     @Transactional
-    public MarriageRegistration createRegistration(final MarriageRegistration registration, final WorkflowContainer workflowContainer,boolean loggedUserIsMeesevaUser) {
+    public MarriageRegistration createRegistration(final MarriageRegistration registration,
+            final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
         if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
                     .getNextApplicationNumberForMarriageRegistration(registration));
-
+        MarriageRegistration savedMarriageRegistration = null;
         setMarriageRegData(registration);
         registration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CREATED.toString(),
                         MarriageConstants.MODULE_NAME));
-        if (loggedUserIsMeesevaUser){
+        if (loggedUserIsMeesevaUser)
             createMeesevaMarriageReg(registration);
-        }
-        else
-        {
-            registration.setSource(Source.SYSTEM.toString());
+        else if (citizenPortalUser) {
+            registration.setSource(Source.CITIZENPORTAL.name());
+            savedMarriageRegistration = registrationRepository.save(registration);
+        } else {
+            registration.setSource(Source.SYSTEM.name());
             create(registration);
         }
         workflowService.transition(registration, workflowContainer, registration.getApprovalComent());
+        if (citizenPortalUser)
+            pushPortalMessage(savedMarriageRegistration);
         marriageRegistrationUpdateIndexesService.updateIndexes(registration);
         marriageSmsAndEmailService.sendSMS(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
         marriageSmsAndEmailService.sendEmail(registration, MarriageRegistration.RegistrationStatus.CREATED.toString());
-
         return registration;
     }
-    
 
     @Transactional
     public MarriageRegistration createMeesevaRegistration(final MarriageRegistration registration,
-            final WorkflowContainer workflowContainer, boolean loggedUserIsMeesevaUser) {
-        createRegistration(registration, workflowContainer, loggedUserIsMeesevaUser);
+            final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
+        createRegistration(registration, workflowContainer, loggedUserIsMeesevaUser, citizenPortalUser);
         return registration;
     }
 
@@ -328,6 +339,10 @@ public class MarriageRegistrationService {
                         MarriageConstants.MODULE_NAME));
 
         workflowService.transition(marriageRegistration, workflowContainer, marriageRegistration.getApprovalComent());
+        if (marriageRegistration.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
+                && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
+            updatePortalMessage(marriageRegistration);
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         return update(marriageRegistration);
     }
@@ -430,13 +445,13 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration approveRegistration(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer, HttpServletRequest request) throws IOException {
+            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
         marriageRegistration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
         marriageRegistration.setRegistrationNo(marriageRegistrationNumberGenerator
                 .generateMarriageRegistrationNumber(marriageRegistration));
-        User user = securityUtils.getCurrentUser();
+        final User user = securityUtils.getCurrentUser();
         if (user != null)
             marriageRegistration.setRegistrarName(user.getName());
 
@@ -446,10 +461,13 @@ public class MarriageRegistrationService {
         if (marriageUtils.isDigitalSignEnabled()) {
             workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
             marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
-        } else {
+            if (marriageRegistration.getSource() != null
+                    && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
+                    && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
+                updatePortalMessage(marriageRegistration);
+        } else
             printCertificate(marriageRegistration, workflowContainer, request);
 
-        }
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         return marriageRegistration;
@@ -471,7 +489,10 @@ public class MarriageRegistrationService {
                 MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
-
+        if (marriageRegistration.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
+                && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
+            updatePortalMessage(marriageRegistration);
         marriageSmsAndEmailService.sendSMS(marriageRegistration,
                 MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration,
@@ -493,6 +514,10 @@ public class MarriageRegistrationService {
         marriageRegistration.setActive(true);
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
+        if (marriageRegistration.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
+                && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
+            updatePortalMessage(marriageRegistration);
         return marriageRegistration;
     }
 
@@ -507,6 +532,9 @@ public class MarriageRegistrationService {
                                 MarriageConstants.MODULE_NAME));
         marriageRegistration.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+        if (marriageRegistration.getSource() != null
+                && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
+                && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
@@ -817,8 +845,9 @@ public class MarriageRegistrationService {
         final Date currentDate = new Date();
         final AppConfigValues marriageSla = getSlaAppConfigValuesForMarriageReg(
                 MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREGISTRATION);
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate,( marriageSla != null && marriageSla.getValue() != null)
-                ? Integer.valueOf(marriageSla.getValue()) : 0);
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate,
+                marriageSla != null && marriageSla.getValue() != null
+                        ? Integer.valueOf(marriageSla.getValue()) : 0);
         return dueDate;
 
     }
@@ -828,14 +857,59 @@ public class MarriageRegistrationService {
         final Date currentDate = new Date();
         final AppConfigValues reissuemarriageSla = getSlaAppConfigValuesForMarriageReg(
                 MarriageConstants.MODULE_NAME, MarriageConstants.SLAFORMARRIAGEREISSUE);
-        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate, (reissuemarriageSla != null && reissuemarriageSla.getValue() != null)
-                ? Integer.valueOf(reissuemarriageSla.getValue()) : 0);
+        dueDate = org.apache.commons.lang3.time.DateUtils.addDays(currentDate,
+                reissuemarriageSla != null && reissuemarriageSla.getValue() != null
+                        ? Integer.valueOf(reissuemarriageSla.getValue()) : 0);
         return dueDate;
 
     }
+
     public AppConfigValues getSlaAppConfigValuesForMarriageReg(final String moduleName, final String keyName) {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
         return !appConfigValues.isEmpty() ? appConfigValues.get(0) : null;
     }
 
+    /**
+     * Method to push data for citizen portal inbox
+     */
+
+    @Transactional
+    public void pushPortalMessage(final MarriageRegistration marriageRegistration) {
+        final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
+
+        final PortalInboxBuilder portalInboxBuilder = new PortalInboxBuilder(module,
+                marriageRegistration.getState().getNatureOfTask() + " : " + module.getDisplayName(),
+                marriageRegistration.getApplicationNo(), marriageRegistration.getRegistrationNo(), marriageRegistration.getId(),
+                null, "Success",
+                String.format(MRS_APPLICATION_VIEW, marriageRegistration.getId()),
+                isResolved(marriageRegistration), marriageRegistration.getStatus().getDescription(),
+                calculateDueDateForMrgReg(), marriageRegistration.getState(),
+                Arrays.asList(securityUtils.getCurrentUser()));
+        final PortalInbox portalInbox = portalInboxBuilder.build();
+        portalInboxService.pushInboxMessage(portalInbox);
+    }
+
+    private boolean isResolved(final MarriageRegistration marriageRegistration) {
+        return "END".equalsIgnoreCase(marriageRegistration.getState().getValue())
+                || "CLOSED".equalsIgnoreCase(marriageRegistration.getState().getValue());
+    }
+
+    public PortalInbox getPortalInbox(final String applicationNumber) {
+        final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
+        return portalInboxService.getPortalInboxByApplicationNo(applicationNumber, module.getId());
+    }
+
+    /**
+     * Method to update data for citizen portal inbox
+     */
+    @Transactional
+    public void updatePortalMessage(final MarriageRegistration marriageRegistration) {
+        final Module module = moduleDao.getModuleByName(MarriageConstants.MODULE_NAME);
+        portalInboxService.updateInboxMessage(marriageRegistration.getApplicationNo(), module.getId(),
+                marriageRegistration.getStatus().getDescription(),
+                isResolved(marriageRegistration), calculateDueDateForMrgReg(), marriageRegistration.getState(),
+                null,
+                marriageRegistration.getApplicationNo(),
+                String.format(MRS_APPLICATION_VIEW, marriageRegistration.getId()));
+    }
 }

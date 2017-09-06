@@ -160,7 +160,7 @@
 					</div>
 				</div>
 			</c:if>	 --%>
-			<c:if test="${isEmployee}">
+			<c:if test="${isEmployee && !citizenPortalUser}">
 				<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
 			</c:if>
 			<div class="buttonbottom" align="center">
