@@ -162,7 +162,7 @@
                                                 <spring:message code="lbl.boundary.name"/><span class="mandatory"></span>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+                                                <form:input path="name" id="name" type="text" class="form-control low-width patternvalidation" data-pattern="specialName" placeholder="" autocomplete="off" required="required"/>
                                                 <form:errors path="name" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
@@ -171,7 +171,7 @@
                                                 <spring:message code="lbl.boundary.nameLocal"/>
                                             </label>
                                             <div class="col-sm-6">
-                                                <form:input path="localName" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off"/>
+                                                <form:input path="localName" id="name" type="text" class="form-control low-width patternvalidation" data-pattern="specialName" placeholder="" autocomplete="off"/>
                                                 <form:errors path="localName" cssClass="add-margin error-msg"/>
                                             </div>
                                         </div>
