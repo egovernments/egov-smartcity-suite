@@ -121,7 +121,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         if (!(o instanceof FileStoreMapper))
             return false;
         final FileStoreMapper that = (FileStoreMapper) o;
-        return Objects.equals(id, that.id);
+        return that.id != null && Objects.equals(id, that.id);
     }
 
     @Override
