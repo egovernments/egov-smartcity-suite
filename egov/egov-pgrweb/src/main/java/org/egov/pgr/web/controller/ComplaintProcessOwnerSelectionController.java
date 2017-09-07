@@ -92,7 +92,7 @@ public class ComplaintProcessOwnerSelectionController {
     @GetMapping(value = "/ajax-getChildLocation", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<Boundary> getChildBoundariesById(@RequestParam Long id) {
-        return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
+        return crossHierarchyService.getActiveChildBoundariesByParentId(id);
     }
 
     @GetMapping(value = {"/ajax-approvalDesignations", "/ajax-designationsByDepartment"},

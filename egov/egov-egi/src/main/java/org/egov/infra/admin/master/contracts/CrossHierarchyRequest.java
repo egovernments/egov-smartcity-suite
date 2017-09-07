@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -37,29 +37,41 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.infra.admin.master.contracts;
 
-function populateBoundary(dropdown) {
-	populateboundarySelect({
-		boundaryTypeId : dropdown.value
-	});
-	
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+
+import java.util.List;
+
+public class CrossHierarchyRequest {
+
+    private List<Boundary> boundaries;
+    private Boundary boundary;
+    private BoundaryType boundaryType;
+
+    public List<Boundary> getBoundaries() {
+        return boundaries;
+    }
+
+    public void setBoundaries(final List<Boundary> boundaries) {
+        this.boundaries = boundaries;
+    }
+
+    public Boundary getBoundary() {
+        return boundary;
+    }
+
+    public void setBoundary(final Boundary boundary) {
+        this.boundary = boundary;
+    }
+
+    public BoundaryType getBoundaryType() {
+        return boundaryType;
+    }
+
+    public void setBoundaryType(final BoundaryType boundaryType) {
+        this.boundaryType = boundaryType;
+    }
+
 }
-
-$(document).ready(function()
-{
-
-$('#crosshierarchysave').unbind('click').bind('click', function(e) {
-	
-       $('#multiselect_to option').prop('selected', true);
-
-	   bootbox.confirm("Existing Cross hierarchy mapping will be overridden, Are you sure?", function(result) {
-		  if(result){
-			  document.forms["crossHierarchyForm"].submit();//submit it
-		  }else{
-			  //leave it.. Don't submit
-		  }
-		}); 
-		
-});
-});
-	

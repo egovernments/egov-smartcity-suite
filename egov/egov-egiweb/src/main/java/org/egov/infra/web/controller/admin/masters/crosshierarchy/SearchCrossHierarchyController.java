@@ -40,54 +40,47 @@
 
 package org.egov.infra.web.controller.admin.masters.crosshierarchy;
 
+import org.egov.infra.admin.master.contracts.CrossHierarchyRequest;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.entity.CrossHierarchy;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 @Controller
 @RequestMapping("/crosshierarchy/update")
 public class SearchCrossHierarchyController {
 
+    private static final String CROSS_HIERARCHY_UPDATE_VIEW = "redirect:/crosshierarchy/update/%s/%s";
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
     @ModelAttribute
-    public CrossHierarchy crossHierarchyModel() {
-        return new CrossHierarchy();
+    public CrossHierarchyRequest crossHierarchyRequest() {
+        return new CrossHierarchyRequest();
     }
 
-    @ModelAttribute(value = "boundaryTypeList")
-    public List<BoundaryType> findAllBoundaryType() {
-        final List<BoundaryType> boundaryType = crossHierarchyService.getCrossHierarchyBoundaryTypes();
-        return boundaryType;
+    @ModelAttribute(value = "boundaryTypes")
+    public List<BoundaryType> boundaryTypes() {
+        return crossHierarchyService.getCrossHierarchyBoundaryTypes();
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String showCrossHierarchyValues(final Model model) {
-
-        return "crossHierarchy-list";
+    @GetMapping
+    public String showCrossHierarchySearchForm() {
+        return "cross-hierarchy-search";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String search(@ModelAttribute final CrossHierarchy crossHierarchy, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) {
-
+    @PostMapping
+    public String searchCrossHierarchy(@ModelAttribute CrossHierarchyRequest crossHierarchyRequest, BindingResult errors) {
         if (errors.hasErrors())
-            return "crossHierarchy-list";
-
-        return "redirect:/crosshierarchy/update/" + crossHierarchy.getParent().getName() + ","
-                + crossHierarchy.getParentType().getName();
+            return "cross-hierarchy-search";
+        return String.format(CROSS_HIERARCHY_UPDATE_VIEW, crossHierarchyRequest.getBoundaryType().getId(),
+                crossHierarchyRequest.getBoundary().getId());
     }
-
 }

@@ -37,41 +37,31 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.infra.web.controller.admin.masters.crosshierarchy;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
-
-import java.util.List;
-
-public class CrossHierarchyGenerator {
-
-    private List<Boundary> boundaries;
-    private Boundary boundary;
-    private BoundaryType boundaryType;
-
-    public List<Boundary> getBoundaries() {
-        return boundaries;
-    }
-
-    public void setBoundaries(final List<Boundary> boundaries) {
-        this.boundaries = boundaries;
-    }
-
-    public Boundary getBoundary() {
-        return boundary;
-    }
-
-    public void setBoundary(final Boundary boundary) {
-        this.boundary = boundary;
-    }
-
-    public BoundaryType getBoundaryType() {
-        return boundaryType;
-    }
-
-    public void setBoundaryType(final BoundaryType boundaryType) {
-        this.boundaryType = boundaryType;
-    }
+function populateBoundary(dropdown) {
+    populateboundarySelect({
+        boundaryTypeId: dropdown.value
+    });
 
 }
+
+$(document).ready(function () {
+
+    $('#crosshierarchysave').unbind('click').bind('click', function (e) {
+
+        $('#multiselect_to option').prop('selected', true);
+
+        bootbox.confirm("Existing Cross hierarchy mapping will be overridden, Are you sure?", function (result) {
+            if (result) {
+                document.forms["crossHierarchyForm"].submit();
+            }
+        });
+
+    });
+
+    $("#searchbtn").click(function () {
+        document.location = "..";
+    });
+    $('#multiselect').multiselect();
+});
+	

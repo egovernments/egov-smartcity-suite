@@ -221,17 +221,13 @@
         <put-attribute name="page-title" value="title.reset.password" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/admin/masters/user/reset-password.jsp"/>
     </definition>
-    <definition name="crossHierarchy-list" extends="base_layout">
+    <definition name="cross-hierarchy-search" extends="base_layout">
         <put-attribute name="page-title" value="title.search.crosshierarchy" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-list.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/cross-hierarchy-search.jsp"/>
     </definition>
-    <definition name="crossHierarchy-editform" extends="base_layout">
-        <put-attribute name="page-title" value="title.updateCrosshierarchy" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-editform.jsp"/>
-    </definition>
-    <definition name="crossHierarchy-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.successCrosshierarchy" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/crossHierarchy-success.jsp"/>
+    <definition name="cross-hierarchy-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.update.crosshierarchy" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/admin/masters/crosshierarchy/cross-hierarchy-edit.jsp"/>
     </definition>
     <definition name="accesscontrol-search" extends="base_layout">
         <put-attribute name="page-title" value="title.accesscontrol.search" cascade="true"/>
