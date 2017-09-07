@@ -274,7 +274,7 @@ public class Complaint extends StateAware {
         this.supportDocs = supportDocs;
     }
 
-    public Set<FileStoreMapper> getOrderedSupportDocs() {
+    public Set<FileStoreMapper> supportDocsOrderById() {
         return this.supportDocs
                 .stream()
                 .sorted(Comparator.comparing(FileStoreMapper::getId))
