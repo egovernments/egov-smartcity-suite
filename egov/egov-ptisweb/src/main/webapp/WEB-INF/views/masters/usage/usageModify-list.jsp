@@ -49,6 +49,18 @@ cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 <input type="hidden" name="propertyUsages" id="propertyUsages" value="${propertyUsages}">
 <input type="hidden" id="propertyUsageid" name="propertyUsageid" value="${propertyUsage.id}" />
 
+				<div class="panel-heading">
+					<div class="panel-title">
+					<c:choose>
+							<c:when test="${mode == 'edit'}">
+						<spring:message code="lbl.modify.uasge" />
+						</c:when>
+						<c:otherwise>
+						<spring:message code="lbl.view.uasge" />
+						</c:otherwise>
+							</c:choose>
+					</div>
+				</div>
 				<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered datatable" id="propertyUsageTbl">
 					<thead>
 						<tr>
@@ -64,7 +76,7 @@ cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">
 							<th colspan="1" class="text-center">
 								<spring:message code="lbl.status"/>
 							</th>
-							.<c:choose>
+							<c:choose>
 							<c:when test="${mode == 'edit'}">
 							<th colspan="1" class="text-center">
 								<spring:message code="lbl.edit" />

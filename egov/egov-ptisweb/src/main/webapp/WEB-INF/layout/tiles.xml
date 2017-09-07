@@ -65,7 +65,7 @@
     </definition>
     
     <definition name="usage-form" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage/usage-form.jsp"/>
     </definition>
     
@@ -530,17 +530,17 @@
     </definition>
     
      <definition name="usageModify-form" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-form.jsp"/>
     </definition>
     
      <definition name="usageModify-list" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-list.jsp"/>
     </definition>
     
      <definition name="usageModify-success" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-success.jsp"/>
     </definition>
 </tiles-definitions> 

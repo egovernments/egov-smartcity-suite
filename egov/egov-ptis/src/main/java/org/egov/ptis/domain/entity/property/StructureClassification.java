@@ -80,7 +80,7 @@ import org.hibernate.envers.Audited;
  */
 @Entity
 @Table(name = "EGPT_STRUC_CL")
-@Unique(columnName = { "CODE" }, fields = { "constrTypeCode" }, enableDfltMsg = true)
+@Unique(columnName = { "CODE", "CONSTR_TYPE"}, fields = { "constrTypeCode", "typeName" }, enableDfltMsg = true)
 @SequenceGenerator(name = StructureClassification.SEQ_STRUCTURE_CLASSIFICATION, sequenceName = StructureClassification.SEQ_STRUCTURE_CLASSIFICATION, allocationSize = 1)
 public class StructureClassification extends AbstractAuditable {
 
