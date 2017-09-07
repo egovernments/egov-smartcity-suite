@@ -137,7 +137,7 @@
 						id="links">
 						<c:choose>
 							<c:when test="${!complaint.getSupportDocs().isEmpty()}">
-								<c:forEach items="${complaint.getSupportDocs()}" var="file">
+								<c:forEach items="${complaint.getOrderedSupportDocs()}" var="file">
 									<c:choose>
 										<c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'image/gif')|| 
 										(file.contentType == 'image/png')}">

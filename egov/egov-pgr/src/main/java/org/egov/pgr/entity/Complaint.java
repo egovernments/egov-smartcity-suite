@@ -56,12 +56,15 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static org.egov.infra.utils.ApplicationConstant.HYPHEN;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.pgr.entity.Complaint.SEQ_COMPLAINT;
 import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
 import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
@@ -73,9 +76,9 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 @SequenceGenerator(name = SEQ_COMPLAINT, sequenceName = SEQ_COMPLAINT, allocationSize = 1)
 @Unique(fields = "crn", enableDfltMsg = true)
 public class Complaint extends StateAware {
-
-    public static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
+    protected static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
     private static final long serialVersionUID = 4020616083055647372L;
+
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINT, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -136,7 +139,8 @@ public class Complaint extends StateAware {
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"),
+            inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private double lng;
@@ -270,6 +274,13 @@ public class Complaint extends StateAware {
         this.supportDocs = supportDocs;
     }
 
+    public Set<FileStoreMapper> getOrderedSupportDocs() {
+        return this.supportDocs
+                .stream()
+                .sorted(Comparator.comparing(FileStoreMapper::getId))
+                .collect(Collectors.toSet());
+    }
+
     public Boundary getLocation() {
         return this.location;
     }
@@ -377,7 +388,7 @@ public class Complaint extends StateAware {
     public boolean completed() {
         return Stream
                 .of(WITHDRAWN, COMPLETED, REJECTED)
-                .anyMatch(status -> status.toString().equalsIgnoreCase(getStatus().getName()));
+                .anyMatch(complaintStatus -> complaintStatus.toString().equalsIgnoreCase(getStatus().getName()));
     }
 
     public boolean inprogress() {
@@ -403,10 +414,9 @@ public class Complaint extends StateAware {
 
     @Override
     public String getStateDetails() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
         return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s. Priority is %s", this.getCrn(),
-                this.getComplaintType().getName(), formatter.format(this.getCreatedDate()),
-                formatter.format(this.getEscalationDate()), this.getPriority() != null ? this.getPriority().getName() : "-");
+                this.getComplaintType().getName(), toDefaultDateTimeFormat(this.getCreatedDate()),
+                toDefaultDateTimeFormat(this.getEscalationDate()), this.getPriority() != null ? this.getPriority().getName() : HYPHEN);
     }
 
     @Override

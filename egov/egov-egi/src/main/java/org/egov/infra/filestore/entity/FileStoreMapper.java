@@ -50,6 +50,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.util.Objects;
 
 import static org.egov.infra.filestore.entity.FileStoreMapper.SEQ_FILESTOREMAPPER;
 
@@ -76,7 +77,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         // For JPA
     }
 
-    public FileStoreMapper(final String fileStoreId, final String fileName) {
+    public FileStoreMapper(String fileStoreId, String fileName) {
         this.fileStoreId = fileStoreId;
         this.fileName = fileName;
     }
@@ -85,7 +86,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -93,7 +94,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         return fileStoreId;
     }
 
-    public void setFileStoreId(final String fileStoreId) {
+    public void setFileStoreId(String fileStoreId) {
         this.fileStoreId = fileStoreId;
     }
 
@@ -101,7 +102,7 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         return fileName;
     }
 
-    public void setFileName(final String fileName) {
+    public void setFileName(String fileName) {
         this.fileName = fileName;
     }
 
@@ -109,8 +110,22 @@ public class FileStoreMapper extends AbstractPersistable<Long> {
         return contentType;
     }
 
-    public void setContentType(final String contentType) {
+    public void setContentType(String contentType) {
         this.contentType = contentType;
     }
 
+    @Override
+    public boolean equals(final Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof FileStoreMapper))
+            return false;
+        final FileStoreMapper that = (FileStoreMapper) o;
+        return Objects.equals(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id);
+    }
 }
