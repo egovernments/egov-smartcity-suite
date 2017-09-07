@@ -387,7 +387,6 @@ $(document)
 												return true;
 											}
 										}
-										return false;
 									});
 
 					changeCategory();
