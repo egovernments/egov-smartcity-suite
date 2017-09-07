@@ -40,19 +40,12 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
@@ -65,189 +58,166 @@ import org.egov.infra.persistence.validator.annotation.Unique;
 @SequenceGenerator(name = Apartment.SEQ_APARTMENT, sequenceName = Apartment.SEQ_APARTMENT, allocationSize = 1)
 public class Apartment extends AbstractAuditable {
 
-    private static final long serialVersionUID = 1L;
-    public static final String SEQ_APARTMENT = "SEQ_EGPT_APARTMENT";
+	private static final long serialVersionUID = 1L;
+	public static final String SEQ_APARTMENT = "SEQ_EGPT_APARTMENT";
 
-    @Id
-    @GeneratedValue(generator = SEQ_APARTMENT, strategy = GenerationType.SEQUENCE)
-    private Long id;
+	@Id
+	@GeneratedValue(generator = SEQ_APARTMENT, strategy = GenerationType.SEQUENCE)
+	private Long id;
 
-    @OneToMany(mappedBy = "apartment", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ApartmentHouse> apartmentHouse = new ArrayList<>();
+	@NotNull
+	private String name;
 
-    @Transient
-    private List<ApartmentHouse> apartmentHouseProxy = new ArrayList<>(0);
+	@NotNull
+	private String code;
 
-    @NotNull
-    private String name;
+	private Double builtUpArea;
 
-    @NotNull
-    private String code;
+	@NotNull
+	private Integer totalProperties;
 
-    @NotNull
-    private Double builtUpArea;
+	@NotNull
+	private Integer totalFloors;
 
-    @NotNull
-    private Integer totalProperties;
+	private Double openSpaceArea;
 
-    @NotNull
-    private Integer totalFloors;
+	private Boolean liftFacility;
 
-    @NotNull
-    private Double openSpaceArea;
+	private Boolean powerBackup;
 
-    private Boolean liftFacility;
+	private Boolean parkingFacility;
 
-    private Boolean powerBackup;
+	private Boolean fireFightingFacility;
 
-    private Boolean parkingFacility;
+	private Integer totalResidentialProperties;
 
-    private Boolean fireFightingFacility;
+	private Integer totalNonResidentialProperties;
 
-    @NotNull
-    private Integer totalResidentialProperties;
+	@NotNull
+	private String sourceOfWater;
 
-    private Integer totalNonResidentialProperties;
+	@NotNull
+	private String type;
 
-    private String sourceOfWater;
+	public String getName() {
+		return name;
+	}
 
-    private Boolean isResidential;
+	public void setName(final String name) {
+		this.name = name;
+	}
 
-    public String getName() {
-        return name;
-    }
+	public Double getBuiltUpArea() {
+		return builtUpArea;
+	}
 
-    public void setName(final String name) {
-        this.name = name;
-    }
+	public String getCode() {
+		return code;
+	}
 
-    public Double getBuiltUpArea() {
-        return builtUpArea;
-    }
+	public void setCode(final String code) {
+		this.code = code.toUpperCase();
+	}
 
-    public String getCode() {
-        return code;
-    }
+	public void setBuiltUpArea(final Double builtUpArea) {
+		this.builtUpArea = builtUpArea;
+	}
 
-    public void setCode(final String code) {
-        this.code = code.toUpperCase();
-    }
+	public Integer getTotalProperties() {
+		return totalProperties;
+	}
 
-    public void setBuiltUpArea(final Double builtUpArea) {
-        this.builtUpArea = builtUpArea;
-    }
+	public void setTotalProperties(final Integer totalProperties) {
+		this.totalProperties = totalProperties;
+	}
 
-    public Integer getTotalProperties() {
-        return totalProperties;
-    }
+	public Integer getTotalFloors() {
+		return totalFloors;
+	}
 
-    public void setTotalProperties(final Integer totalProperties) {
-        this.totalProperties = totalProperties;
-    }
+	public void setTotalFloors(final Integer totalFloors) {
+		this.totalFloors = totalFloors;
+	}
 
-    public Integer getTotalFloors() {
-        return totalFloors;
-    }
+	public Double getOpenSpaceArea() {
+		return openSpaceArea;
+	}
 
-    public void setTotalFloors(final Integer totalFloors) {
-        this.totalFloors = totalFloors;
-    }
+	public void setOpenSpaceArea(final Double openSpaceArea) {
+		this.openSpaceArea = openSpaceArea;
+	}
 
-    public Double getOpenSpaceArea() {
-        return openSpaceArea;
-    }
+	public Boolean getLiftFacility() {
+		return liftFacility;
+	}
 
-    public void setOpenSpaceArea(final Double openSpaceArea) {
-        this.openSpaceArea = openSpaceArea;
-    }
+	public void setLiftFacility(final Boolean liftFacility) {
+		this.liftFacility = liftFacility;
+	}
 
-    public Boolean getLiftFacility() {
-        return liftFacility;
-    }
+	public Boolean getPowerBackup() {
+		return powerBackup;
+	}
 
-    public void setLiftFacility(final Boolean liftFacility) {
-        this.liftFacility = liftFacility;
-    }
+	public void setPowerBackup(final Boolean powerBackup) {
+		this.powerBackup = powerBackup;
+	}
 
-    public Boolean getPowerBackup() {
-        return powerBackup;
-    }
+	public Boolean getParkingFacility() {
+		return parkingFacility;
+	}
 
-    public void setPowerBackup(final Boolean powerBackup) {
-        this.powerBackup = powerBackup;
-    }
+	public void setParkingFacility(final Boolean parkingFacility) {
+		this.parkingFacility = parkingFacility;
+	}
 
-    public Boolean getParkingFacility() {
-        return parkingFacility;
-    }
+	public Boolean getFireFightingFacility() {
+		return fireFightingFacility;
+	}
 
-    public void setParkingFacility(final Boolean parkingFacility) {
-        this.parkingFacility = parkingFacility;
-    }
+	public void setFireFightingFacility(final Boolean fireFightingFacility) {
+		this.fireFightingFacility = fireFightingFacility;
+	}
 
-    public Boolean getFireFightingFacility() {
-        return fireFightingFacility;
-    }
+	public Integer getTotalResidentialProperties() {
+		return totalResidentialProperties;
+	}
 
-    public void setFireFightingFacility(final Boolean fireFightingFacility) {
-        this.fireFightingFacility = fireFightingFacility;
-    }
+	public void setTotalResidentialProperties(final Integer totalResidentialProperties) {
+		this.totalResidentialProperties = totalResidentialProperties;
+	}
 
-    public Integer getTotalResidentialProperties() {
-        return totalResidentialProperties;
-    }
+	public Integer getTotalNonResidentialProperties() {
+		return totalNonResidentialProperties;
+	}
 
-    public void setTotalResidentialProperties(final Integer totalResidentialProperties) {
-        this.totalResidentialProperties = totalResidentialProperties;
-    }
+	public void setTotalNonResidentialProperties(final Integer totalNonResidentialProperties) {
+		this.totalNonResidentialProperties = totalNonResidentialProperties;
+	}
 
-    public Integer getTotalNonResidentialProperties() {
-        return totalNonResidentialProperties;
-    }
+	public String getSourceOfWater() {
+		return sourceOfWater;
+	}
 
-    public void setTotalNonResidentialProperties(final Integer totalNonResidentialProperties) {
-        this.totalNonResidentialProperties = totalNonResidentialProperties;
-    }
+	public void setSourceOfWater(final String sourceOfWater) {
+		this.sourceOfWater = sourceOfWater;
+	}
 
-    public String getSourceOfWater() {
-        return sourceOfWater;
-    }
+	@Override
+	public Long getId() {
+		return id;
+	}
 
-    public void setSourceOfWater(final String sourceOfWater) {
-        this.sourceOfWater = sourceOfWater;
-    }
+	@Override
+	public void setId(final Long id) {
+		this.id = id;
+	}
 
-    public Boolean getIsResidential() {
-        return isResidential;
-    }
+	public String getType() {
+		return type;
+	}
 
-    public void setIsResidential(final Boolean isResidential) {
-        this.isResidential = isResidential;
-    }
-
-    @Override
-    public Long getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
-    }
-
-    public List<ApartmentHouse> getApartmentHouse() {
-        return apartmentHouse;
-    }
-
-    public void setApartmentHouse(final List<ApartmentHouse> apartmentHouse) {
-        this.apartmentHouse = apartmentHouse;
-    }
-
-    public List<ApartmentHouse> getApartmentHouseProxy() {
-        return apartmentHouseProxy;
-    }
-
-    public void setApartmentHouseProxy(final List<ApartmentHouse> apartmentHouseProxy) {
-        this.apartmentHouseProxy = apartmentHouseProxy;
-    }
+	public void setType(final String type) {
+		this.type = type;
+	}
 }
