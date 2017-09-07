@@ -583,6 +583,36 @@ public class RestApiConstants {
     public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE = "98";
     public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG = "Document Date Should be greter than Construction Date";
     
+    public static final String INVALID_GUARDIAN_RELATION_CODE = "100";
+    public static final String INVALID_GUARDIAN_RELATION_REQ_MSG = "Invalid Guardian Relation";
+    
+    public static final String DEMAND_INACTIVE_CODE = "101";
+    public static final String DEMAND_INACTIVE_REQ_MSG = "Demand is Inactive Foe given Property";
+    
+    public static final String PROPERTY_UNDERWORKFLOW_CODE = "102";
+    public static final String PROPERTY_UNDERWORKFLOW_REQ_MSG = "Property is Under workflow";
+    
+    public static final String INACTIVE_ZONE_CODE = "103";
+    public static final String INACTIVE_ZONE_REQ_MSG = "Selected Zone is Inactive";
+    
+    public static final String INACTIVE_LOCALITY_CODE = "104";
+    public static final String INACTIVE_LOCALITY_REQ_MSG = "Selected Locality is Inactive";
+    
+    public static final String INACTIVE_BLOCK_CODE = "105";
+    public static final String INACTIVE_BLOCK_REQ_MSG = "Selected Block is Inactive";
+    
+    public static final String INACTIVE_WARD_CODE = "106";
+    public static final String INACTIVE_WARD_REQ_MSG = "Selected ward is Inactive";
+    
+    public static final String INACTIVE_ELECTION_WARD_CODE = "107";
+    public static final String INACTIVE_ELECTION_WARD_REQ_MSG = "Selected Election Ward is Inactive";
+    
+    public static final String INACTIVE_USAGE_CODE = "108";
+    public static final String INACTIVE_USAGE_REQ_MSG = "Usage Code is Inactive";
+    
+    public static final String INACTIVE_CLASSIFICATION_CODE = "109";
+    public static final String INACTIVE_CLASSIFICATION_REQ_MSG = "Building Classification is Inactive";
+    
     public static final String DOCUMENT_NAME_PATTA_CERTIFICATE = "Patta Certificate (Issued by Revenue Department)";
     public static final String DOCUMENT_NAME_REGD_WILL_DOCUMENT = "Registered Will Document";
     public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";

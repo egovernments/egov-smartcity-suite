@@ -103,7 +103,7 @@ public class CreateAssessmentController {
 		ApplicationThreadLocals.setUserId(2L);
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
 		NewPropertyDetails newPropertyDetails;
-		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
+		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_CREATE);
 		if (errorDetails != null) {
 			responseJson = JsonConvertor.convert(errorDetails);
 	    } else {
@@ -149,9 +149,11 @@ public class CreateAssessmentController {
     	viewPropertyDetails.setBlockName(propertyAddressDetails.getBlockNum());
     	viewPropertyDetails.setPinCode(propertyAddressDetails.getPinCode());
     	viewPropertyDetails.setIsCorrAddrDiff(propertyAddressDetails.getIsCorrAddrDiff());
-    	viewPropertyDetails.setCorrAddr1(propertyAddressDetails.getCorrAddressDetails().getCorrAddr1());
-    	viewPropertyDetails .setCorrAddr2(propertyAddressDetails.getCorrAddressDetails().getCorrAddr2());
-    	viewPropertyDetails.setCorrPinCode(propertyAddressDetails.getCorrAddressDetails().getCorrPinCode());
+    	if(viewPropertyDetails.getIsCorrAddrDiff()){
+    		viewPropertyDetails.setCorrAddr1(propertyAddressDetails.getCorrAddressDetails().getCorrAddr1());
+        	viewPropertyDetails .setCorrAddr2(propertyAddressDetails.getCorrAddressDetails().getCorrAddr2());
+        	viewPropertyDetails.setCorrPinCode(propertyAddressDetails.getCorrAddressDetails().getCorrPinCode());
+    	}
     	
     	AssessmentsDetails assessmentDetails = createPropDetails.getAssessmentDetails();
     	viewPropertyDetails.setMutationReason(assessmentDetails.getMutationReasonCode());

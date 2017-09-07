@@ -40,7 +40,17 @@
 
 package org.egov.restapi.util;
 
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY_BNDRY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 import static org.egov.restapi.constants.RestApiConstants.*;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -50,6 +60,10 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
+import org.egov.commons.Installment;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.ptis.client.service.calculator.APTaxCalculator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -60,6 +74,8 @@ import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
+import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
@@ -80,11 +96,28 @@ public class ValidationUtil {
     @Autowired
     private PropertyExternalService propertyExternalService;
     
+    @Autowired
+    private BoundaryService boundaryService;
+    
+    @Autowired
+    PropertyUsageService propertyUsageService;
+    
+    @Autowired
+    StructureClassificationService structureClassificationService;
+    
+    @Autowired 
+    PropertyTaxUtil propertyTaxUtil;
+    
+    @Autowired 
+    APTaxCalculator aPTaxCalculator;
+    
 	private static final String EMAIL_PATTERN ="^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
 	private static final String PINCODE_PATTERN ="^[1-9][0-9]{5}$";
 	private static final String GUARDIAN_PATTERN ="^[\\p{L} .'-]+$";
 	private static final String DIGITS_ONLY="^(0|[1-9][0-9]*)$";
+	private static final String CAMEL_CASE_PATTERN = "([a-z]+[A-Z]+\\w+)+";
 	private static final String DIGITS_FLOAT_INT_DBL="[-+]?[0-9]*\\.?[0-9]+";
+	private static final String UPPERCASE_PATTERN = "([A-Z])";
     
     /**
      * Validates Property Transfer request
@@ -202,6 +235,7 @@ public class ValidationUtil {
     public ErrorDetails validateCreateRequest(final CreatePropertyDetails createPropDetails, final String mode) throws ParseException {
         ErrorDetails errorDetails = null;
         final String propertyTypeMasterCode = createPropDetails.getPropertyTypeMasterCode();
+       
         final DocumentTypeDetails documentTypeDetails = createPropDetails.getDocumentTypeDetails();
         if (StringUtils.isBlank(propertyTypeMasterCode)) {
             errorDetails = new ErrorDetails();
@@ -393,10 +427,21 @@ public class ValidationUtil {
                         errorDetails.setErrorMessage(CLASSIFICATION_OF_BUILDING_REQ_MSG);
                         return errorDetails;
                     }
+                    if (!structureClassificationService.isActiveClassification(floorDetails.getBuildClassificationCode())) {
+                        errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(INACTIVE_CLASSIFICATION_CODE);
+                        errorDetails.setErrorMessage(INACTIVE_CLASSIFICATION_REQ_MSG);
+                        return errorDetails;
+                    }
                     if (StringUtils.isBlank(floorDetails.getNatureOfUsageCode())) {
                         errorDetails = new ErrorDetails();
                         errorDetails.setErrorCode(NATURE_OF_USAGES_REQ_CODE);
                         errorDetails.setErrorMessage(NATURE_OF_USAGES_REQ_MSG);
+                        return errorDetails;
+                    }if(!propertyUsageService.isActiveUsage(floorDetails.getNatureOfUsageCode())){
+                    	errorDetails = new ErrorDetails();
+                        errorDetails.setErrorCode(INACTIVE_USAGE_CODE);
+                        errorDetails.setErrorMessage(INACTIVE_USAGE_REQ_MSG);
                         return errorDetails;
                     }
                     if(!floorDetails.getNatureOfUsageCode().equalsIgnoreCase(PropertyTaxConstants.PROPTYPE_RESD) && StringUtils.isBlank(floorDetails.getFirmName())){
@@ -787,12 +832,22 @@ public class ValidationUtil {
 		            errorDetails.setErrorCode(GENDER_REQ_CODE);
 		            errorDetails.setErrorMessage(GENDER_REQ_MSG);
 		            return errorDetails;
-		        } else if (StringUtils.isBlank(ownerDetails.getGuardianRelation())) {
+		        } 
+		        if (StringUtils.isBlank(ownerDetails.getGuardianRelation())) {
 		            errorDetails = new ErrorDetails();
 		            errorDetails.setErrorCode(GUARDIAN_RELATION_REQ_CODE);
 		            errorDetails.setErrorMessage(GUARDIAN_RELATION_REQ_MSG);
 		            return errorDetails;
-		        } 
+		        } else{
+		        	Pattern pattern = Pattern.compile(CAMEL_CASE_PATTERN);
+		            Matcher matcher = pattern.matcher(ownerDetails.getGuardian());
+		            if(!matcher.matches()){
+			            errorDetails = new ErrorDetails();
+			            errorDetails.setErrorCode(INVALID_GUARDIAN_RELATION_CODE);
+			            errorDetails.setErrorMessage(INVALID_GUARDIAN_RELATION_REQ_MSG);
+			            return errorDetails;
+			        }
+		        }
 		        if (StringUtils.isBlank(ownerDetails.getGuardian())) {
 		            errorDetails = new ErrorDetails();
 		            errorDetails.setErrorCode(GUARDIAN_REQ_CODE);
@@ -961,4 +1016,108 @@ public class ValidationUtil {
     	
     	return errorDetails;
     }
+    
+    
+	public ErrorDetails validateUpdateRequest(final CreatePropertyDetails createPropDetails, final String mode)
+			throws ParseException {
+		ErrorDetails errorDetails = null;
+		BasicProperty bp = propertyExternalService
+				.getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
+		if (bp.isUnderWorkflow()) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(PROPERTY_UNDERWORKFLOW_CODE);
+			errorDetails.setErrorMessage(PROPERTY_UNDERWORKFLOW_REQ_MSG);
+		} else {
+			Property prop = propertyExternalService.getPropertyByBasicPropertyID(bp);
+			if (prop.getStatus().equals(PropertyTaxConstants.STATUS_DEMAND_INACTIVE)) {
+				errorDetails = new ErrorDetails();
+				errorDetails.setErrorCode(DEMAND_INACTIVE_CODE);
+				errorDetails.setErrorMessage(DEMAND_INACTIVE_REQ_MSG);
+			}
+		}
+		return errorDetails;
+
+	}
+	
+	public ErrorDetails validateBoundaries(final CreatePropertyDetails createPropDetails, final String mode)
+			throws ParseException {
+		
+		PropertyAddressDetails propertyAddressDetails = createPropDetails.getPropertyAddressDetails();
+		ErrorDetails errorDetails = null;
+		
+		if (StringUtils.isBlank(propertyAddressDetails.getElectionWardNum())) {
+			errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(ELECTION_WARD_REQ_CODE);
+            errorDetails.setErrorMessage(ELECTION_WARD_REQ_MSG);
+            return errorDetails;
+		} else {
+			if(propertyExternalService.isBoundaryActive(propertyAddressDetails.getWardNum(),
+					ELECTIONWARD_BNDRY_TYPE, ELECTION_HIERARCHY_TYPE)){
+				errorDetails = new ErrorDetails();
+				errorDetails.setErrorCode(INACTIVE_ELECTION_WARD_CODE);
+				errorDetails.setErrorMessage(INACTIVE_ELECTION_WARD_REQ_MSG);
+			}
+		}
+		
+		if (StringUtils.isBlank(propertyAddressDetails.getLocalityNum())) {
+			errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(LOCALITY_REQ_CODE);
+            errorDetails.setErrorMessage(LOCALITY_REQ_MSG);
+            return errorDetails;
+		} else {
+			if(propertyExternalService.isBoundaryActive(propertyAddressDetails.getLocalityNum(),
+					LOCALITY_BNDRY_TYPE, LOCATION_HIERARCHY_TYPE)){
+				errorDetails = new ErrorDetails();
+				errorDetails.setErrorCode(INACTIVE_LOCALITY_CODE);
+				errorDetails.setErrorMessage(INACTIVE_LOCALITY_REQ_MSG);
+			}
+		}
+		
+		if (StringUtils.isBlank(propertyAddressDetails.getBlockNum())) {
+			errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(BLOCK_NO_REQ_CODE);
+            errorDetails.setErrorMessage(BLOCK_NO_REQ_MSG);
+            return errorDetails;
+		} else {
+			if(propertyExternalService.isBoundaryActive(propertyAddressDetails.getBlockNum(),
+					BLOCK, REVENUE_HIERARCHY_TYPE)){
+						errorDetails = new ErrorDetails();
+						errorDetails.setErrorCode(INACTIVE_BLOCK_CODE);
+						errorDetails.setErrorMessage(INACTIVE_BLOCK_REQ_MSG);
+					}
+		}
+		
+		if (StringUtils.isBlank(propertyAddressDetails.getZoneNum())) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(ZONE_NO_REQ_CODE);
+            errorDetails.setErrorMessage(ZONE_NO_REQ_MSG);
+            return errorDetails;
+		} else {
+			if(propertyExternalService.isBoundaryActive(propertyAddressDetails.getZoneNum(),
+					ZONE, REVENUE_HIERARCHY_TYPE)){
+				errorDetails = new ErrorDetails();
+				errorDetails.setErrorCode(INACTIVE_ZONE_CODE);
+				errorDetails.setErrorMessage(INACTIVE_ZONE_REQ_MSG);
+			}
+		}
+		
+		if (StringUtils.isBlank(propertyAddressDetails.getWardNum())) {
+			errorDetails = new ErrorDetails();
+			 errorDetails.setErrorCode(WARD_NO_REQ_CODE);
+	            errorDetails.setErrorMessage(WARD_NO_REQ_MSG);
+            
+            return errorDetails;
+		} else {
+			if(propertyExternalService.isBoundaryActive(propertyAddressDetails.getElectionWardNum(),
+					WARD, REVENUE_HIERARCHY_TYPE)){
+			
+				errorDetails = new ErrorDetails();
+				errorDetails.setErrorCode(INACTIVE_WARD_CODE);
+				errorDetails.setErrorMessage(INACTIVE_WARD_REQ_MSG);
+			}
+		}
+		
+		return errorDetails;
+		
+	}
 }

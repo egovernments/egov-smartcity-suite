@@ -100,6 +100,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKF
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_COLLECTION_SERVICE_CODE;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCCUPANCY_ZONE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
@@ -207,6 +208,7 @@ import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.BoundaryCategory;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -251,7 +253,9 @@ import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.FloorTypeService;
+import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.RoofTypeService;
+import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.hibernate.Session;
@@ -317,6 +321,13 @@ public class PropertyExternalService {
 	private InstallmentHibDao installmentDao;
 	@Autowired
 	private ModuleService moduleService;
+
+	@Autowired
+	PropertyUsageService propertyUsageService;
+
+	@Autowired
+	StructureClassificationService structureClassificationService;
+
 	private PropertyImpl propty = new PropertyImpl();
 
 	public PropertyImpl getPropty() {
@@ -2660,7 +2671,7 @@ public class PropertyExternalService {
 		// need to pass parent property index, in case of bifurcation
 		if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR) || viewPropertyDetails.getIsExtentAppurtenantLand())
 			basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
-					null, null, null, viewPropertyDetails.getParentPropertyAssessmentNo()));
+					null, null, null, viewPropertyDetails.getParentPropertyAssessmentNo()!=null ? viewPropertyDetails.getParentPropertyAssessmentNo():null));
 		// Set isBillCreated property value as false
 		basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
 		basicProperty.setBoundary(propertyID.getElectionBoundary());
@@ -2756,6 +2767,39 @@ public class PropertyExternalService {
 		propService.updateIndexes(propertyImpl, APPLICATION_TYPE_NEW_ASSESSENT);
 		propService.processAndStoreDocument(propertyImpl.getAssessmentDocuments());
 		return propertyImpl;
+	}
+	
+	public BasicProperty getBasicPropertyByPropertyID(String propertyId) {
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
+		BasicProperty basicProperty = null;
+		final Query qry = entityManager.createQuery(queryString.toString());
+			qry.setParameter("propertyId", propertyId);
+			basicProperty = (BasicProperty) qry.getSingleResult();
+		return basicProperty;
+	}
+	
+	public Property getPropertyByBasicPropertyID(BasicProperty basicpropertyId) {
+		StringBuilder queryString = new StringBuilder();
+		queryString.append("from PropertyImpl prop where prop.basicProperty =:basicpropertyId and BP.active='Y' ");
+		Property property = null;
+		final Query qry = entityManager.createQuery(queryString.toString());
+			qry.setParameter("basicpropertyId", basicpropertyId);
+			property = (Property) qry.getSingleResult();
+		return property;
+	}
+	
+	public Boolean isBoundaryActive(final String boundaryNum, final String boundaryTypeName,
+			final String hierarchyName) {
+		Boolean isActive = Boolean.FALSE;
+		final BoundaryType boundaryType = boundaryTypeService
+				.getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeName, hierarchyName);
+		final Boundary boundary = boundaryService.getBoundaryByTypeAndNo(boundaryType, Long.valueOf(boundaryNum));
+
+		if (boundary != null && boundary.isActive()) {
+			isActive = Boolean.TRUE;
+		}
+		return isActive;
 	}
 	
 }

@@ -185,4 +185,11 @@ public class PropertyUsageService {
             errors.add("error.active.unitrates.exist");
         return errors;
     }
+    
+    public Boolean isActiveUsage(String code){
+    	return propertyUsageRepository.findIsActiveByCode(code);
+    }
+    public PropertyUsage  getUsageByCode(String code){
+    	return propertyUsageRepository.findUsageByCode(code);
+    }
 }

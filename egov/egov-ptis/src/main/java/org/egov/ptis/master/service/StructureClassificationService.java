@@ -115,4 +115,12 @@ public class StructureClassificationService {
 	public List<StructureClassification> getAllStructureTypes() {
             return structureClassificationRepository.findAll();
     }
+	
+	 public Boolean isActiveClassification(String code){
+	    	return structureClassificationRepository.findIsActiveByCode(code);
+	    }
+	 
+	 public StructureClassification getClassificationByCode(String code){
+	    	return structureClassificationRepository.findClassificationByCode(code);
+	    }
 }
