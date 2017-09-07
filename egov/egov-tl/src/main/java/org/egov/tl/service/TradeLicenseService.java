@@ -88,6 +88,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -95,23 +96,25 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import java.util.Arrays;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.egov.infra.config.core.GlobalSettings.currencySymbolUtf8;
+import static org.egov.infra.security.utils.SecureCodeUtils.generateQRCode;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -259,11 +262,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("district", cityService.getDistrictName());
         reportParams.put("category", license.getCategory().getName());
         reportParams.put("subCategory", license.getTradeName().getName());
-
-        if (license.getStatus() != null && license.getStatus().getName().equals(LICENSE_STATUS_UNDERWORKFLOW)) {
-            reportParams.put("certificateType", "provisional");
-        }
-
         reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         reportParams.put("carporationulbType", ApplicationThreadLocals.getMunicipalityName().contains("Corporation"));
@@ -286,6 +284,22 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", amtPaid);
+
+        if (license.getStatus() != null && LICENSE_STATUS_UNDERWORKFLOW.equals(license.getStatus().getName())) {
+            reportParams.put("certificateType", "provisional");
+        } else {
+            StringBuilder qrCodeValue = new StringBuilder();
+            qrCodeValue.append("License Number : ").append(license.getLicenseNumber()).append(System.lineSeparator());
+            qrCodeValue.append("Trade Title : ").append(license.getNameOfEstablishment()).append(System.lineSeparator());
+            qrCodeValue.append("Owner Name : ").append(license.getLicensee().getApplicantName()).append(System.lineSeparator());
+            qrCodeValue.append("Valid Till : ").append(toDefaultDateTimeFormat(license.getDateOfExpiry())).append(System.lineSeparator());
+            qrCodeValue.append("Installment Year : ").append(reportParams.get("installMentYear")).append(System.lineSeparator());
+            qrCodeValue.append("Paid Amount : ").append(currencySymbolUtf8()).append(amtPaid).append(System.lineSeparator());
+            qrCodeValue.append("More : ").append(ApplicationThreadLocals.getDomainURL())
+                    .append("/tl/viewtradelicense/viewTradeLicense-view.action?id=").append(license.getId());
+            reportParams.put("qrCode", generateQRCode(qrCodeValue.toString()));
+        }
+
         return reportParams;
     }
 

@@ -41,7 +41,6 @@ package org.egov.tl.web.controller;
 
 import org.apache.commons.io.FileUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
@@ -77,15 +76,12 @@ public class DigitalSignatureTradeLicenseController {
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
-    @Autowired
-    private FileStoreMapperRepository fileStoreMapperRepository;
-
     @RequestMapping(value = "/tradeLicense/transitionWorkflow")
-    public String transitionWorkflow(final HttpServletRequest request, final Model model) {
-        final String fileStoreIds = request.getParameter("fileStoreId");
-        final HttpSession session = request.getSession();
+    public String transitionWorkflow(HttpServletRequest request, Model model) {
+        String fileStoreIds = request.getParameter("fileStoreId");
+        HttpSession session = request.getSession();
 
-        final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
+        Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(Constants.FILE_STORE_ID_APPLICATION_NUMBER);
 
         tradeLicenseService.digitalSignTransition(fileStoreIds, appNoFileStoreIdsMap);
@@ -99,20 +95,21 @@ public class DigitalSignatureTradeLicenseController {
     @RequestMapping(value = "/tradeLicense/downloadSignedLicenseCertificate", produces = APPLICATION_PDF_VALUE)
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file, @RequestParam String applnum) {
-        final File signedFile = fileStoreService.fetch(file, Constants.FILESTORE_MODULECODE);
-        byte[] bytes;
+
         try {
-            bytes = FileUtils.readFileToByteArray(signedFile);
+            File signedFile = fileStoreService.fetch(file, Constants.FILESTORE_MODULECODE);
+            byte[] bytes = FileUtils.readFileToByteArray(signedFile);
+
+            return ResponseEntity.
+                    ok().
+                    contentType(MediaType.parseMediaType("application/pdf")).
+                    cacheControl(CacheControl.noCache()).
+                    contentLength(bytes.length).
+                    header("content-disposition", "inline;filename=\"" + applnum + ".pdf\"").
+                    body(new InputStreamResource(new ByteArrayInputStream(bytes)));
         } catch (IOException e) {
             throw new ApplicationRuntimeException("Error while reading file", e);
         }
-        return ResponseEntity.
-                ok().
-                contentType(MediaType.parseMediaType("application/pdf")).
-                cacheControl(CacheControl.noCache()).
-                contentLength(bytes.length).
-                header("content-disposition", "inline;filename=\"" + applnum + ".pdf\"").
-                body(new InputStreamResource(new ByteArrayInputStream(bytes)));
     }
 
 }
