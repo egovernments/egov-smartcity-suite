@@ -76,7 +76,7 @@ public class CrossHierarchyService {
     private AppConfigValueService appConfigValueService;
 
     @Transactional
-    public void addOrRemoveCrossHeirarchy(CrossHierarchyRequest crossHierarchyRequest) {
+    public void addOrRemoveCrossHierarchy(CrossHierarchyRequest crossHierarchyRequest) {
         Boundary boundary = crossHierarchyRequest.getBoundary();
         List<Boundary> existingBoundaries = getActiveChildBoundariesByParentId(boundary.getId());
         List<Boundary> mappedBoundaries = crossHierarchyRequest.getBoundaries();

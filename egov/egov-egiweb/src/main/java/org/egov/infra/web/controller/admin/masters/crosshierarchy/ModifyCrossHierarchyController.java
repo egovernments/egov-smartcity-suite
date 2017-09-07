@@ -96,7 +96,7 @@ public class ModifyCrossHierarchyController {
                                        BindingResult bindResult, RedirectAttributes redirectAttrs) {
         if (bindResult.hasErrors())
             return "cross-hierarchy-edit";
-        crossHierarchyService.addOrRemoveCrossHeirarchy(crossHierarchyRequest);
+        crossHierarchyService.addOrRemoveCrossHierarchy(crossHierarchyRequest);
         redirectAttrs.addFlashAttribute("message", "msg.crosshierarchy.update.success");
         return "redirect:/crosshierarchy/update";
     }
