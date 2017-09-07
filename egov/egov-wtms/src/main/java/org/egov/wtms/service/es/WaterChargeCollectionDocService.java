@@ -62,6 +62,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
@@ -1716,4 +1717,31 @@ public class WaterChargeCollectionDocService {
         return billCollectorWiseTableData;
 
     }
-}
+    
+    public List<WaterChargeDashBoardResponse> getWardWiseTableDataAcrossCities(
+            final WaterChargeDashBoardRequest waterChargeDashBoardRequest, Iterable<CityIndex> cities) {
+        List<WaterChargeDashBoardResponse> citywiseTableData = new ArrayList<>();
+        List<WaterChargeDashBoardResponse> wardWiseData = new ArrayList<>();
+        String cityName;
+        String regionName;
+        String districtName;
+        String ulbGrade;
+        for (CityIndex city : cities) {
+            cityName = city.getName();
+            waterChargeDashBoardRequest.setUlbCode(city.getCitycode());
+            waterChargeDashBoardRequest.setType(DASHBOARD_GROUPING_WARDWISE);
+            regionName = city.getRegionname();
+            districtName = city.getDistrictname();
+            ulbGrade = city.getCitygrade();
+            wardWiseData = getResponseTableData(waterChargeDashBoardRequest);
+            for (WaterChargeDashBoardResponse wardData : wardWiseData) {
+                wardData.setUlbName(cityName);
+                wardData.setRegionName(regionName);
+                wardData.setDistrictName(districtName);
+                wardData.setUlbGrade(ulbGrade);
+            }
+            citywiseTableData.addAll(wardWiseData);
+        }
+        return citywiseTableData;
+    }
+    }
