@@ -92,12 +92,12 @@ public final class SecureCodeUtils {
             Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
             hints.put(CHARACTER_SET, encoding());
             hints.put(MARGIN, 1);
-            BitMatrix qrBitMatrix = new MultiFormatWriter().encode(content, format, qrImgWidth, qrImgHeight, hints);
-            Path qrCodeFile = Files.createTempFile(RandomStringUtils.randomAlphabetic(5), PNG_EXTN);
-            MatrixToImageWriter.writeToPath(qrBitMatrix, PNG_FORMAT_NAME, qrCodeFile);
-            return qrCodeFile.toFile();
+            BitMatrix secureCodeMatrix = new MultiFormatWriter().encode(content, format, qrImgWidth, qrImgHeight, hints);
+            Path secureCodePath = Files.createTempFile(RandomStringUtils.randomAlphabetic(5), PNG_EXTN);
+            MatrixToImageWriter.writeToPath(secureCodeMatrix, PNG_FORMAT_NAME, secureCodePath);
+            return secureCodePath.toFile();
         } catch (WriterException | IOException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating QR Code", e);
+            throw new ApplicationRuntimeException("Error occurred while generating Secure Code", e);
         }
     }
 }
