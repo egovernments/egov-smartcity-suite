@@ -101,7 +101,7 @@ import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.egov.infra.config.core.GlobalSettings.currencySymbolUtf8;
-import static org.egov.infra.security.utils.SecureCodeUtils.generateQRCode;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
@@ -297,7 +297,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             qrCodeValue.append("Paid Amount : ").append(currencySymbolUtf8()).append(amtPaid).append(System.lineSeparator());
             qrCodeValue.append("More : ").append(ApplicationThreadLocals.getDomainURL())
                     .append("/tl/viewtradelicense/viewTradeLicense-view.action?id=").append(license.getId());
-            reportParams.put("qrCode", generateQRCode(qrCodeValue.toString()));
+            reportParams.put("qrCode", generatePDF417Code(qrCodeValue.toString()));
         }
 
         return reportParams;
