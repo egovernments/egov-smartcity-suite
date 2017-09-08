@@ -1,8 +1,55 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~ accountability and the service delivery of the government  organizations.
+  ~
+  ~  Copyright (C) <2017>  eGovernments Foundation
+  ~
+  ~  The updated version of eGov suite of products as by eGovernments Foundation
+  ~  is available at http://www.egovernments.org
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~  http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~  In addition to the terms of the GPL license to be adhered to in using this
+  ~  program, the following additional terms are to be complied with:
+  ~
+  ~      1) All versions of this program, verbatim or modified must carry this
+  ~         Legal Notice.
+  ~ 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~         derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~ 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~ 	For any further queries on attribution, including queries on brand guidelines,
+  ~         please contact contact@egovernments.org
+  ~
+  ~      2) Any misrepresentation of the origin of the material is prohibited. It
+  ~         is required that all modified versions of this material be marked in
+  ~         reasonable ways as different from the original version.
+  ~
+  ~      3) This license does not grant any rights to any user of the program
+  ~         with regards to rights under trademark law for use of the trade names
+  ~         or trademarks of eGovernments Foundation.
+  ~
+  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="336"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
@@ -21,6 +68,7 @@
 	<parameter name="subCategory" class="java.lang.String"/>
 	<parameter name="certificateType" class="java.lang.String"/>
 	<parameter name="appType" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.File"/>
 	<parameter name="currentDate" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
@@ -139,8 +187,8 @@
 				<textFieldExpression><![CDATA["2. License Fee Rs: "+$P{demandTotalamt}+"/- is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}+".\n\n"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="181"/>
-		<band height="91">
+		<band height="165"/>
+		<band height="231">
 			<staticText>
 				<reportElement x="352" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -177,6 +225,10 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="277" y="56" width="260" height="70" uuid="2b22371f-417f-42af-bb21-16b7dca8a245"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
 		</band>
 	</detail>
 </jasperReport>
