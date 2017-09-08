@@ -49,7 +49,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="336"/>
+	<property name="ireport.y" value="192"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
@@ -76,35 +76,35 @@
 	<background>
 		<band height="780" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="62" width="555" height="689" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+				<reportElement x="0" y="0" width="555" height="775" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
 			</rectangle>
 		</band>
 	</background>
 	<title>
-		<band height="174" splitType="Stretch">
+		<band height="109" splitType="Stretch">
 			<staticText>
-				<reportElement x="3" y="81" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
+				<reportElement x="3" y="46" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TRADE  LICENSE]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="124" width="547" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
+				<reportElement x="3" y="89" width="547" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["for the year "+$P{installMentYear}+""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="60" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
+				<reportElement x="3" y="25" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="3" y="102" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
+				<reportElement x="3" y="67" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -188,7 +188,7 @@
 			</textField>
 		</band>
 		<band height="165"/>
-		<band height="231">
+		<band height="126">
 			<staticText>
 				<reportElement x="352" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
