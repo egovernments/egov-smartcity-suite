@@ -47,16 +47,15 @@
 
 package org.egov.tl.web.controller.report;
 
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.dto.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
 import org.egov.tl.web.response.adaptor.DCBReportResponseAdaptor;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -73,6 +72,8 @@ import java.util.Map;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.tl.utils.Constants.REVENUE_WARD;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -88,6 +89,9 @@ public class DCBReportController {
     @Autowired
     private ReportService reportService;
 
+    @Autowired
+    private BoundaryService boundaryService;
+
     @ModelAttribute("dCBReportResult")
     public DCBReportResult dCBReportResultModel() {
         return new DCBReportResult();
@@ -97,6 +101,8 @@ public class DCBReportController {
     public String dcbSearchForm(final Model model) {
         model.addAttribute("mode", LICENSE);
         model.addAttribute(REPORT_TYPE_ATTRIB_NAME, LICENSE);
+        model.addAttribute("wardList", boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD,
+                REVENUE_HIERARCHY_TYPE));
         return "dCBReport-search";
     }
 

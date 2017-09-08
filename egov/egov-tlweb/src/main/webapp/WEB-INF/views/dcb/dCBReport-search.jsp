@@ -80,6 +80,14 @@
                         </select>
                     </div>
                 </div>
+                <div class="form-group">
+                    <label class="col-sm-3 control-label text-right"> <spring:message code='baseregister.ward'/></label>
+                    <div class="col-sm-6 add-margin">
+                        <form:select multiple="true" path="wardid" id="ward" cssClass="form-control">
+                            <form:options items="${wardList}" itemLabel="name" itemValue="id"/>
+                        </form:select>
+                    </div>
+                </div>
             </div>
             <div class="row">
                 <div class="text-center">

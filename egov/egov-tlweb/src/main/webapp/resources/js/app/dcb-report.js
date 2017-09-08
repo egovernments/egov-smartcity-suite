@@ -52,11 +52,19 @@ $(document).ready(function (e) {
     drillDowntableContainer = $("#tbldcbdrilldown");
     $('#report-backbutton').hide();
     $('form').submit(function (e) {
-		var table = $('#tbldcbdrilldown').DataTable();
-		var info = table.page.info();
-		if (info.start == 0)
-			getSumOfRecords();
-		searchDCBReport(e);
+        var table = $('#tbldcbdrilldown').DataTable();
+        if ($('#ward').val() != null) {
+            var wardid = "";
+            $("#ward option:selected").each(function () {
+                var $this = $(this);
+                wardid = wardid + $this.val() + ",";
+            });
+            wardid = wardid.substring(0, wardid.length - 1);
+        }
+        var info = table.page.info();
+        if (info.start == 0)
+            getSumOfRecords(wardid);
+        searchDCBReport(wardid);
     });
 
     $('#backButton').click(function (e) {
@@ -65,16 +73,17 @@ $(document).ready(function (e) {
 
 });
 
-function getSumOfRecords() {
+function getSumOfRecords(wardid) {
 
     $.ajax({
         url: "grand-total",
-        data:{
+        data: {
             'licensenumber': $('#licensenumber').val(),
             'activeLicense': $('#activeLicense').val(),
+            'wardId': wardid
         },
         type: 'GET',
-        async:false,
+        async: false,
         success: function (data) {
             recordTotal = [];
             for (var i = 0; i < data.length; i++) {
@@ -99,7 +108,7 @@ function jasonParam(obj) {
     return "?" + parts.join('&');
 }
 
-function searchDCBReport(event) {
+function searchDCBReport(wardid) {
     $('#report-backbutton').show();
     var licenseNumbertemp = $('#licensenumber').val();
     $('.report-section').removeClass('display-hide');
@@ -108,132 +117,133 @@ function searchDCBReport(event) {
     $("#tbldcbdrilldown").dataTable().fnDestroy();
 
     reportdatatable = drillDowntableContainer
-        .on('preXhr.dt', function ( e, settings, data ) {
-            param=data;
+        .on('preXhr.dt', function (e, settings, data) {
+            param = data;
         }).dataTable({
-        processing: true,
-        serverSide: true,
-        sort: true,
-        filter: true,
-        "searching": false,
-        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
-        "autoWidth": false,
-        "bDestroy": true,
-        buttons: [
-            {
-                text: 'PDF',
-                action: function (e, dt, node, config) {
-                    var url = "download"+jasonParam(param)+ "&printFormat=PDF";
-                    window.open(url, '_self');
+            processing: true,
+            serverSide: true,
+            sort: true,
+            filter: true,
+            "searching": false,
+            dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+            "autoWidth": false,
+            "bDestroy": true,
+            buttons: [
+                {
+                    text: 'PDF',
+                    action: function (e, dt, node, config) {
+                        var url = "download" + jasonParam(param) + "&printFormat=PDF";
+                        window.open(url, '_self');
+                    }
+                },
+                {
+                    text: 'XLS',
+                    action: function (e, dt, node, config) {
+                        var url = "download" + jasonParam(param) + "&printFormat=XLS";
+                        window.open(url, '_self');
+                    }
+                }],
+            responsive: true,
+            destroy: true,
+            "order": [[0, 'asc']],
+            ajax: {
+                url: "search",
+                type: 'POST',
+                data: function (args) {
+                    return {
+                        "args": JSON.stringify(args), 'licensenumber': licenseNumbertemp,
+                        'activeLicense': $('#activeLicense').val(),
+                        'wardId': wardid
+                    }
                 }
             },
-            {
-                text: 'XLS',
-                action: function (e, dt, node, config) {
-                    var url = "download"+jasonParam(param)+ "&printFormat=XLS";
-                    window.open(url, '_self');
-                }
-            }],
-        responsive: true,
-        destroy: true,
-        "order": [[0, 'asc']],
-        ajax: {
-            url: "search",
-            type: 'POST',
-            data: function (args) {
-                return {
-                    "args": JSON.stringify(args), 'licensenumber': licenseNumbertemp,
-                    'activeLicense':$('#activeLicense').val()
-                }
-            }
-        },
 
-        columns: [
-            {
-                "data": function (row, type, set, meta) {
-                    return {
-                        name: row.licensenumber,
-                        id: row.licenseid
-                    };
-                },
-                "render": function (data, type, row) {
-                    return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
-                        + data.id + '">' + data.name + '</a>';
-                },
-                "sTitle": "License No.",
-                "name": "licensenumber",
-                "width":10
-            }, {
-                "data": "active",
-                "name": "active",
-                "sTitle": "Active",
-                "width":10
-            }, {
-                "data": "arreardemand",
-                "name": "arreardemand",
-                "sTitle": "Arrears"
-            }, {
-                "data": "currentdemand",
-                "name": "currentdemand",
-                "sTitle": "Current"
-            }, {
-                "data": "totaldemand",
-                "orderable": false,
-                "sortable": false,
-                "sTitle": "Total"
-            }, {
-                "data": "arrearcollection",
-                "name": "arrearcollection",
-                "sTitle": "Arrears"
-            }, {
-                "data": "currentcollection",
-                "name": "currentcollection",
-                "sTitle": "Current"
-            }, {
-                "data": "totalcollection",
-                "orderable": false,
-                "sortable": false,
-                "sTitle": "Total"
-            }, {
-                "data": "arrearbalance",
-                "name": "arrearbalance",
-                "sTitle": "Arrears"
-            }, {
-                "data": "currentbalance",
-                "name": "currentbalance",
-                "sTitle": "Current"
-            }, {
-                "data": "totalbalance",
-                "orderable": false,
-                "sortable": false,
-                "sTitle": "Total"
-            }],
-        "footerCallback": function (row, data, start, end, display) {
-            var api = this.api(), data;
-            if (data.length == 0) {
-                $('#report-footer').hide();
-            } else {
-                $('#report-footer').show();
-            }
-            if (data.length > 0) {
-                updateTotalFooter(2, api, true);
-                updateTotalFooter(3, api, true);
-                updateTotalFooter(4, api, true);
-                updateTotalFooter(5, api, true);
-                updateTotalFooter(6, api, true);
-                updateTotalFooter(7, api, true);
-                updateTotalFooter(8, api, true);
-                updateTotalFooter(9, api, true);
-                updateTotalFooter(10, api, true);
-            }
-        },
-        "aoColumnDefs": [{
-            "aTargets": [2, 3, 4, 5, 6, 7, 8, 9,10],
-            "mRender": function (data, type, full) {
-                return formatNumberInr(data);
-            }
-        }]
-    });
+            columns: [
+                {
+                    "data": function (row, type, set, meta) {
+                        return {
+                            name: row.licensenumber,
+                            id: row.licenseid
+                        };
+                    },
+                    "render": function (data, type, row) {
+                        return '<a href="javascript:void(0);" onclick="openTradeLicense(this);" data-hiddenele="id" data-eleval="'
+                            + data.id + '">' + data.name + '</a>';
+                    },
+                    "sTitle": "License No.",
+                    "name": "licensenumber",
+                    "width": 10
+                }, {
+                    "data": "active",
+                    "name": "active",
+                    "sTitle": "Active",
+                    "width": 10
+                }, {
+                    "data": "arreardemand",
+                    "name": "arreardemand",
+                    "sTitle": "Arrears"
+                }, {
+                    "data": "currentdemand",
+                    "name": "currentdemand",
+                    "sTitle": "Current"
+                }, {
+                    "data": "totaldemand",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle": "Total"
+                }, {
+                    "data": "arrearcollection",
+                    "name": "arrearcollection",
+                    "sTitle": "Arrears"
+                }, {
+                    "data": "currentcollection",
+                    "name": "currentcollection",
+                    "sTitle": "Current"
+                }, {
+                    "data": "totalcollection",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle": "Total"
+                }, {
+                    "data": "arrearbalance",
+                    "name": "arrearbalance",
+                    "sTitle": "Arrears"
+                }, {
+                    "data": "currentbalance",
+                    "name": "currentbalance",
+                    "sTitle": "Current"
+                }, {
+                    "data": "totalbalance",
+                    "orderable": false,
+                    "sortable": false,
+                    "sTitle": "Total"
+                }],
+            "footerCallback": function (row, data, start, end, display) {
+                var api = this.api(), data;
+                if (data.length == 0) {
+                    $('#report-footer').hide();
+                } else {
+                    $('#report-footer').show();
+                }
+                if (data.length > 0) {
+                    updateTotalFooter(2, api, true);
+                    updateTotalFooter(3, api, true);
+                    updateTotalFooter(4, api, true);
+                    updateTotalFooter(5, api, true);
+                    updateTotalFooter(6, api, true);
+                    updateTotalFooter(7, api, true);
+                    updateTotalFooter(8, api, true);
+                    updateTotalFooter(9, api, true);
+                    updateTotalFooter(10, api, true);
+                }
+            },
+            "aoColumnDefs": [{
+                "aTargets": [2, 3, 4, 5, 6, 7, 8, 9, 10],
+                "mRender": function (data, type, full) {
+                    return formatNumberInr(data);
+                }
+            }]
+        });
     $('.loader-class').modal('hide');
 
     if ($('#mode').val() == 'property') {
