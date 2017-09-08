@@ -63,7 +63,12 @@
 			<groupId>org.egov</groupId>
 			<artifactId>egov-config</artifactId>
 			<version>3.0.0-SNAPSHOT</version>
-		</dependency>		
+		</dependency>	
+		<dependency>
+			<groupId>org.egov</groupId>
+			<artifactId>egov-portal</artifactId>
+			<version>3.0.0-SNAPSHOT</version>
+		</dependency>	
 		<dependency>
 			<groupId>org.egov</groupId>
 			<artifactId>egov-demand</artifactId>
@@ -89,7 +94,7 @@
 		</dependency>
 		<dependency>
 			<groupId>javax.validation</groupId>
-			<artifactId>validation-api</artifactId>
+			<artifactId>validation-api</artifactId>	
 		</dependency>
 		
 			<!-- REPORTS START -->

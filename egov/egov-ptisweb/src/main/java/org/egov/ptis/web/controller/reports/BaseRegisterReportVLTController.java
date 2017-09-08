@@ -40,69 +40,66 @@
 
 package org.egov.ptis.web.controller.reports;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.domain.entity.property.BaseRegisterVLTResult;
-import org.egov.ptis.domain.service.report.ReportService;
+import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
+import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
+import org.egov.ptis.domain.service.report.PTBaseRegisterReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "report/baseRegisterVlt")
 public class BaseRegisterReportVLTController {
 
-    @Autowired
-    private BoundaryService boundaryService;
+	@Autowired
+	private BoundaryService boundaryService;
 
-    @Autowired
-    private ReportService reportService;
+	@Autowired
+	private PTBaseRegisterReportService ptbaseRegisterReportService;
 
-    @ModelAttribute
-    public void getPropertyModel(final Model model) {
-        final BaseRegisterVLTResult baseRegisterVLTResult = new BaseRegisterVLTResult();
-        model.addAttribute("baseRegisterVLTResult", baseRegisterVLTResult);
-    }
+	@Autowired
+	private PropertyTypeMasterDAO propertyTypeMasterDAO;
 
-    @ModelAttribute("wards")
-    public List<Boundary> wardBoundaries() {
-        return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
-                PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
-    }
+	@ModelAttribute
+	public void getPropertyModel(final Model model) {
+		final PropertyMVInfo propertyInfo = new PropertyMVInfo();
+		model.addAttribute("propertyInfo", propertyInfo);
+	}
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String searchForm(final Model model) {
-        model.addAttribute("currDate", new Date());
-        return "baseRegisterVLT-form";
-    }
+	@ModelAttribute("wards")
+	public List<Boundary> wardBoundaries() {
+		return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(PropertyTaxConstants.WARD,
+				PropertyTaxConstants.REVENUE_HIERARCHY_TYPE);
+	}
 
-    @ResponseBody
-    @RequestMapping(value = "/result", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public  void springPaginationDataTablesUpdate(@RequestParam final String ward,
-            @RequestParam final String block, final HttpServletRequest request, final HttpServletResponse response, @RequestParam final boolean exemptedCase)
-            throws IOException {
+	@RequestMapping(method = RequestMethod.GET)
+	public String searchForm(final Model model) {
+		model.addAttribute("currDate", new Date());
+		return "baseRegisterVLT-form";
+	}
 
-        final List<BaseRegisterVLTResult> propertyList = reportService.getVLTPropertyByWardAndBlock(ward, block, exemptedCase);
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toJSON(propertyList, BaseRegisterVLTResult.class, BaseRegisterVLTResultAdaptor.class)).append("}")
-                .toString();
-        IOUtils.write(result, response.getWriter());
-    }
+	@GetMapping(value = "/result", produces = MediaType.TEXT_PLAIN_VALUE)
+	@ResponseBody
+	public String searchBaseRegister(final BaseRegisterReportRequest baseRegisterReportRequest) {
+		final PropertyTypeMaster propertyType = propertyTypeMasterDAO.getPropertyTypeMasterByCode("VAC_LAND");
+		baseRegisterReportRequest.setVacantLand(propertyType.getId());
+		return new DataTable<>(ptbaseRegisterReportService.pagedBaseRegisterRecords(baseRegisterReportRequest),
+				baseRegisterReportRequest.draw()).toJson(BaseRegisterVLTResultAdaptor.class);
+	}
+
 }

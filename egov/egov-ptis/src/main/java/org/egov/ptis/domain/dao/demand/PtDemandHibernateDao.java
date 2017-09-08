@@ -39,13 +39,28 @@
  */
 package org.egov.ptis.domain.dao.demand;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.EgBill;
-import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -61,22 +76,6 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 
 @Repository(value = "ptDemandDAO")
 public class PtDemandHibernateDao implements PtDemandDao {
@@ -97,7 +96,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @PersistenceContext
     private EntityManager entityManager;
-    
+
     @Autowired
     private FinancialYearDAO financialYearDAO;
 
@@ -106,14 +105,12 @@ public class PtDemandHibernateDao implements PtDemandDao {
     }
 
     /**
-     * This method called getCurrentDemandforProperty gets Total Current Demand
-     * Amount .
+     * This method called getCurrentDemandforProperty gets Total Current Demand Amount .
      * <p>
      * This method returns Total Current Demand for given property.
      * </p>
      *
-     * @param org
-     *            .egov.ptis.property.model.Property property
+     * @param org .egov.ptis.property.model.Property property
      * @return a BigDecimal.
      */
 
@@ -140,12 +137,9 @@ public class PtDemandHibernateDao implements PtDemandDao {
      * This method returns Character for given Property , billnum and Module.
      * </p>
      *
-     * @param org
-     *            .egov.ptis.property.model.Property property
-     * @param java
-     *            .lang.Integer billnum
-     * @param org
-     *            .egov.infstr.commons.Module module
+     * @param org .egov.ptis.property.model.Property property
+     * @param java .lang.Integer billnum
+     * @param org .egov.infstr.commons.Module module
      * @return Character of 'Y' or 'N'.
      */
 
@@ -181,14 +175,12 @@ public class PtDemandHibernateDao implements PtDemandDao {
     }
 
     /**
-     * This method called getNonHistoryDemandForProperty gets EgptPtdemand
-     * Object which is NonHistory.
+     * This method called getNonHistoryDemandForProperty gets EgptPtdemand Object which is NonHistory.
      * <p>
      * This method returns EgptPtdemand Object for given property .
      * </p>
      *
-     * @param org
-     *            .egov.ptis.property.model.Property property
+     * @param org .egov.ptis.property.model.Property property
      * @return EgptPtdemand Object.
      */
 
@@ -209,17 +201,13 @@ public class PtDemandHibernateDao implements PtDemandDao {
     }
 
     /**
-     * This method called getDmdDetailsByPropertyIdBoundary gets DemandDetails
-     * List .
+     * This method called getDmdDetailsByPropertyIdBoundary gets DemandDetails List .
      * <p>
-     * This method returns DemandDetails List for given BasicProperty Object &
-     * Boundary Object(Optional) .
+     * This method returns DemandDetails List for given BasicProperty Object & Boundary Object(Optional) .
      * </p>
      *
-     * @param org
-     *            .egov.ptis.property.model.BasicProperty basicProperty
-     * @param org
-     *            .egov.lib.admbndry.Boundary divBoundary
+     * @param org .egov.ptis.property.model.BasicProperty basicProperty
+     * @param org .egov.lib.admbndry.Boundary divBoundary
      * @return DemandDetails List.
      */
 
@@ -276,14 +264,11 @@ public class PtDemandHibernateDao implements PtDemandDao {
     /**
      * This method called getAllDemands gets Map<EgDemandReason,Amount> .
      * <p>
-     * This method returns Map of DemandReason Objects and DemandDetails amount
-     * for given BasicProperty & divBoundary .
+     * This method returns Map of DemandReason Objects and DemandDetails amount for given BasicProperty & divBoundary .
      * </p>
      *
-     * @param org
-     *            .egov.ptis.property.model.BasicProperty BasicProperty
-     * @param org
-     *            .egov.lib.admbndry.Boundary divBoundary
+     * @param org .egov.ptis.property.model.BasicProperty BasicProperty
+     * @param org .egov.lib.admbndry.Boundary divBoundary
      * @return Map<EgDemandReason,Amount>.
      */
 
@@ -309,8 +294,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
     }
 
     /**
-     * Gets the current 1) demand amount, 2) collected amount, 3) rebate amount
-     * for the demand associated with the given bill ID.
+     * Gets the current 1) demand amount, 2) collected amount, 3) rebate amount for the demand associated with the given bill ID.
      */
     @Override
     public List<BigDecimal> getCurrentAmountsFromBill(final Long billId) {
@@ -357,7 +341,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         if (currDemand != null)
             dmdCollList = propertyDAO.getDmdCollAmtInstWise(currDemand);
 
-        Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
@@ -365,7 +349,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
             demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
             collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
 
-            installment = (Installment) installmentDao.findById(instId, false);
+            installment = installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
                 if (collection.compareTo(BigDecimal.ZERO) == 1)
                     currFirstHalfCollection = currFirstHalfCollection.add(collection);
@@ -391,11 +375,105 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @SuppressWarnings("rawtypes")
     @Override
+    public Map<String, BigDecimal> getDemandCollMapIncludingPenaltyAndAdvance(final Property property) {
+        final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
+        Installment installment = null;
+        List dmdCollList = new ArrayList();
+        Integer instId = null;
+        String code = "";
+        BigDecimal currFirstHalfDmd = BigDecimal.ZERO;
+        BigDecimal currSecondHalfDmd = BigDecimal.ZERO;
+        BigDecimal arrDmd = BigDecimal.ZERO;
+        BigDecimal currFirstHalfCollection = BigDecimal.ZERO;
+        BigDecimal currSecondHalfCollection = BigDecimal.ZERO;
+        BigDecimal arrColelection = BigDecimal.ZERO;
+        BigDecimal demand;
+        BigDecimal collection;
+        BigDecimal currFirstHalfPenalty = BigDecimal.ZERO;
+        BigDecimal currSecondHalfPenalty = BigDecimal.ZERO;
+        final BigDecimal currFirstHalfPenaltyColllection = BigDecimal.ZERO;
+        final BigDecimal currSecondHalfPenaltyCollection = BigDecimal.ZERO;
+        final BigDecimal arrPenaltyCollection = BigDecimal.ZERO;
+        final BigDecimal arrPenalty = BigDecimal.ZERO;
+        BigDecimal advance = BigDecimal.ZERO;
+
+        final Map<String, BigDecimal> retMap = new HashMap<>();
+
+        if (currDemand != null)
+            dmdCollList = propertyDAO.getInstallmentAndReasonWiseDemandDetails(currDemand);
+
+        final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+
+        for (final Object object : dmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            instId = Integer.valueOf(listObj[0].toString());
+            code = listObj[1].toString();
+            demand = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
+            collection = listObj[3] != null ? new BigDecimal((Double) listObj[3]) : BigDecimal.ZERO;
+            installment = installmentDao.findById(instId, false);
+
+            if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment) && installment.getId().equals(instId)) {
+                if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
+                        && !code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                    currFirstHalfDmd = currFirstHalfDmd.add(demand);
+                    if (collection.compareTo(BigDecimal.ZERO) > 0)
+                        currFirstHalfCollection = currFirstHalfCollection.add(collection);
+                } else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
+                        && code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                    currFirstHalfPenalty = currFirstHalfPenalty.add(demand);
+                    if (collection.compareTo(BigDecimal.ZERO) > 0)
+                        currFirstHalfCollection = currFirstHalfCollection.add(collection);
+                }
+            } else if (currYearInstMap.get(CURRENTYEAR_SECOND_HALF).equals(installment) && installment.getId().equals(instId)) {
+
+                if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
+                        && !code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                    currSecondHalfDmd = currSecondHalfDmd.add(demand);
+                    if (collection.compareTo(BigDecimal.ZERO) > 0)
+                        currSecondHalfCollection = currSecondHalfCollection.add(collection);
+                    else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
+                            && code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                        currSecondHalfPenalty = currSecondHalfPenalty.add(demand);
+                        if (collection.compareTo(BigDecimal.ZERO) > 0)
+                            currSecondHalfCollection = currSecondHalfCollection.add(collection);
+                    }
+                }
+            } else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
+                    && !code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+                arrDmd = arrDmd.add(demand);
+                if (collection.compareTo(BigDecimal.ZERO) > 0)
+                    arrColelection = arrColelection.add(collection);
+            } else if (!code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE)
+                    && code.equals(PropertyTaxConstants.PENALTY_DMD_RSN_CODE)) {
+            }
+            if (code.equals(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE))
+                advance = advance.add(collection);
+        }
+
+        retMap.put(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR, currFirstHalfDmd);
+        retMap.put(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR, currSecondHalfDmd);
+        retMap.put(PropertyTaxConstants.ARR_DMD_STR, arrDmd);
+        retMap.put(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR, currFirstHalfCollection);
+        retMap.put(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR, currSecondHalfCollection);
+        retMap.put(PropertyTaxConstants.ARR_COLL_STR, arrColelection);
+        retMap.put(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR, currFirstHalfPenalty);
+        retMap.put(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_DMD_STR, currSecondHalfPenalty);
+        retMap.put(PropertyTaxConstants.ARR_PENALTY_DMD_STR, arrPenalty);
+        retMap.put(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR, currFirstHalfPenaltyColllection);
+        retMap.put(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_COLL_STR, currSecondHalfPenaltyCollection);
+        retMap.put(PropertyTaxConstants.ARR_PENALTY_COLL_STR, arrPenaltyCollection);
+        retMap.put(PropertyTaxConstants.ADVANCE_DMD_RSN_CODE, advance);
+
+        return retMap;
+    }
+
+    @SuppressWarnings("rawtypes")
+    @Override
     public Map<String, BigDecimal> getPenaltyDemandCollMap(final Property property) {
         final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
         Installment installment = null;
         List penaltyDmdCollList = new ArrayList();
-        Installment currInst = null;
+        final Installment currInst = null;
         Integer instId = null;
         BigDecimal currPenalty = BigDecimal.ZERO;
         BigDecimal arrPenalty = BigDecimal.ZERO;
@@ -408,7 +486,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         for (final Object object : penaltyDmdCollList) {
             final Object[] listObj = (Object[]) object;
             instId = Integer.valueOf(listObj[0].toString());
-            installment = (Installment) installmentDao.findById(instId, false);
+            installment = installmentDao.findById(instId, false);
             if (installment.equals(currInst)) {
                 if (listObj[2] != null && !new BigDecimal((Double) listObj[2]).equals(BigDecimal.ZERO))
                     currPenaltyColl = currPenaltyColl.add(new BigDecimal((Double) listObj[2]));
@@ -436,8 +514,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
      * This method returns EgptPtdemand Object for given property .
      * </p>
      *
-     * @param org
-     *            .egov.ptis.property.model.Property property
+     * @param org .egov.ptis.property.model.Property property
      * @return EgptPtdemand Object.
      */
     @Override
@@ -446,7 +523,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         Ptdemand egptPtdemand = null;
 
         if (property != null) {
-            CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
+            final CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
             qry = getCurrentSession()
                     .createQuery(
                             "from  Ptdemand egptDem left join fetch egptDem.egDemandDetails dd left join fetch dd.egDemandReason dr "
@@ -485,7 +562,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
 
     @Override
     public Ptdemand update(final Ptdemand ptdemand) {
-    	getCurrentSession().update(ptdemand);
+        getCurrentSession().update(ptdemand);
         return ptdemand;
     }
 
@@ -493,7 +570,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
     @SuppressWarnings("unchecked")
     public List<Object> getPropertyTaxDetails(final String assessmentNo) {
         List<Object> list = new ArrayList<Object>();
-        CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
+        final CFinancialYear currentFinancialYear = financialYearDAO.getFinancialYearByDate(new Date());
         String selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
                 + " from egpt_basic_property bp, egpt_property prop, egpt_ptdemand ptd, eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                 + " where bp.id = prop.id_basic_property and prop.status  in ('A','I') "
@@ -518,7 +595,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
     public List<Object> getTaxDetailsForWaterConnection(final String consumerNo, final String connectionType) {
         List<Object> list = new ArrayList<Object>();
         String selectQuery = "";
-        if (connectionType.equals("METERED")) {
+        if (connectionType.equals("METERED"))
             selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
                     + " from  egwtr_connection conn,egwtr_connectiondetails bp, egwtr_demand_connection demconn ,eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
                     + " where conn.id =bp.connection "
@@ -529,19 +606,18 @@ public class PtDemandHibernateDao implements PtDemandDao {
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
                     + " and dd.amount > dd.amt_collected  "
                     + " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Water Tax Management' ) and installment_type='Monthly' )  ";
-        } else {
-
+        else
             selectQuery = " select drm.code, inst.description, dd.amount, dd.amt_collected "
                     + " from  egwtr_connection conn,egwtr_connectiondetails bp,egwtr_demand_connection demconn , eg_demand d, eg_demand_details dd, eg_demand_reason dr, eg_demand_reason_master drm, eg_installment_master inst "
-                    + " where conn.id =bp.connection " + " and demconn.connectiondetails = bp.id " + " and demconn.demand = d.id " + " and d.id = dd.id_demand "
+                    + " where conn.id =bp.connection " + " and demconn.connectiondetails = bp.id " + " and demconn.demand = d.id "
+                    + " and d.id = dd.id_demand "
                     + " and dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
                     + " and d.is_history='N' "
                     + " and dr.id_installment = inst.id and conn.consumercode =:consumerNo"
                     + " and dd.amount > dd.amt_collected  ";
-            // +
-            // " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and id_module=(select id from eg_module where name='Property Tax' ) )  ";
-
-        }
+        // +
+        // " and d.id_installment =(select id from eg_installment_master where now() between start_date and end_date and
+        // id_module=(select id from eg_module where name='Property Tax' ) ) ";
         selectQuery = selectQuery + " order by inst.description desc ";
 
         final Query qry = getCurrentSession().createSQLQuery(selectQuery).setString("consumerNo", consumerNo);
@@ -566,7 +642,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
             demandYears.add((String) record);
         return demandYears;
     }
-    
+
     @Override
     public Map<String, BigDecimal> getDemandIncludingPenaltyCollMap(final Property property) {
         final Ptdemand currDemand = getNonHistoryCurrDmdForProperty(property);
@@ -586,7 +662,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
         if (currDemand != null)
             dmdCollList = propertyDAO.getTotalDemandDetailsIncludingPenalty(currDemand);
 
-        Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
 
         for (final Object object : dmdCollList) {
             final Object[] listObj = (Object[]) object;
@@ -594,7 +670,7 @@ public class PtDemandHibernateDao implements PtDemandDao {
             demand = listObj[1] != null ? new BigDecimal((Double) listObj[1]) : BigDecimal.ZERO;
             collection = listObj[2] != null ? new BigDecimal((Double) listObj[2]) : BigDecimal.ZERO;
 
-            installment = (Installment) installmentDao.findById(instId, false);
+            installment = installmentDao.findById(instId, false);
             if (currYearInstMap.get(CURRENTYEAR_FIRST_HALF).equals(installment)) {
                 if (collection.compareTo(BigDecimal.ZERO) == 1)
                     currFirstHalfCollection = currFirstHalfCollection.add(collection);

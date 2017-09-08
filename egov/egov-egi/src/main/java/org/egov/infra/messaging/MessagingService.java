@@ -42,9 +42,9 @@ package org.egov.infra.messaging;
 
 import org.egov.infra.admin.common.service.MessageTemplateService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.jms.core.JmsTemplate;
 import org.springframework.stereotype.Service;
 
@@ -79,19 +79,22 @@ public class MessagingService {
     @Autowired
     private MessageTemplateService messageTemplateService;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    @Value("${mail.enabled}")
+    private boolean mailEnabled;
 
-    public void sendEmail(final User user, final String subject, final String templateName,
-                          final Object... messageValues) {
+    @Value("${sms.enabled}")
+    private boolean smsEnabled;
+
+    public void sendEmail(User user, String subject, String templateName,
+                          Object... messageValues) {
         sendEmail(user.getEmailId(), subject, messageTemplateService.realizeMessage(
                 messageTemplateService.getByTemplateName(templateName), messageValues));
     }
 
-    public void sendEmail(final String email, final String subject, final String message) {
-        if (applicationProperties.emailEnabled() && isNoneBlank(email, subject, message))
+    public void sendEmail(String email, String subject, String message) {
+        if (mailEnabled && isNoneBlank(email, subject, message))
             jmsTemplate.send(emailQueue, session -> {
-                final MapMessage mapMessage = session.createMapMessage();
+                MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString(EMAIL, email);
                 mapMessage.setString(MESSAGE, message);
                 mapMessage.setString(SUBJECT, subject);
@@ -99,11 +102,11 @@ public class MessagingService {
             });
     }
 
-    public void sendEmailWithAttachment(final String email, final String subject, final String message,
-                                        final String fileType, final String fileName, final byte[] attachment) {
-        if (applicationProperties.emailEnabled() && isNoneBlank(email, subject, message))
+    public void sendEmailWithAttachment(String email, String subject, String message,
+                                        String fileType, String fileName, byte[] attachment) {
+        if (mailEnabled && isNoneBlank(email, subject, message))
             jmsTemplate.send(emailQueue, session -> {
-                final MapMessage mapMessage = session.createMapMessage();
+                MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString(EMAIL, email);
                 mapMessage.setString(MESSAGE, message);
                 mapMessage.setString(SUBJECT, subject);
@@ -114,19 +117,19 @@ public class MessagingService {
             });
     }
 
-    public void sendSMS(final String mobileNo, final String message) {
+    public void sendSMS(String mobileNo, String message) {
         sendSMS(mobileNo, message, MEDIUM);
     }
 
-    public void sendSMS(final User user, final String templateName, final Object... messageValues) {
+    public void sendSMS(User user, String templateName, Object... messageValues) {
         sendSMS(user.getMobileNumber(), messageTemplateService.realizeMessage(
                 messageTemplateService.getByTemplateName(templateName), messageValues), MEDIUM);
     }
 
-    public void sendSMS(final String mobileNo, final String message, MessagePriority priority) {
-        if (applicationProperties.smsEnabled() && isNoneBlank(mobileNo, message))
+    public void sendSMS(String mobileNo, String message, MessagePriority priority) {
+        if (smsEnabled && isNoneBlank(mobileNo, message))
             jmsTemplate.send(smsQueue, session -> {
-                final MapMessage mapMessage = session.createMapMessage();
+                MapMessage mapMessage = session.createMapMessage();
                 mapMessage.setString(MOBILE, mobileNo);
                 mapMessage.setString(MESSAGE, message);
                 mapMessage.setString(PRIORITY, priority.name());

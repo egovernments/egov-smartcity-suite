@@ -47,6 +47,8 @@ import static org.egov.commons.entity.Source.CARD;
 import static org.egov.commons.entity.Source.ESEVA;
 import static org.egov.commons.entity.Source.SOFTTECH;
 import static org.egov.commons.entity.Source.LEADWINNER;
+import static org.egov.commons.entity.Source.SMARTVIZAG;
+import static org.egov.commons.entity.Source.ANYEMI;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setCityCode;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainName;
@@ -151,6 +153,8 @@ public class ApiFilter implements Filter {
         SOURCE_IP_MAPPING.put(SOFTTECH, restAPIProperties.softtechIPAddress());
         SOURCE_IP_MAPPING.put(CARD, restAPIProperties.cardIPAddress());
         SOURCE_IP_MAPPING.put(LEADWINNER, restAPIProperties.leadwinnerIPAddress());
+        SOURCE_IP_MAPPING.put(SMARTVIZAG, restAPIProperties.smartvizagIPAddress());
+        SOURCE_IP_MAPPING.put(ANYEMI, restAPIProperties.anyemiIPAddress());
     }
 
     @Override

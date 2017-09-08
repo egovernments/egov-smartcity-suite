@@ -40,6 +40,7 @@
 package org.egov.wtms.entity.es;
 
 public class ConnectionSearchRequest {
+    private String applicationType;
     private String searchText;
     private String consumerCode;
     private String oldConsumerNumber;
@@ -82,6 +83,15 @@ public class ConnectionSearchRequest {
     private Long currentDue;
     private Long arrearsDemand;
     private Long currentDemand;
+    public String meesevaApplicationNumber;
+
+    public String getMeesevaApplicationNumber() {
+        return meesevaApplicationNumber;
+    }
+
+    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+        this.meesevaApplicationNumber = meesevaApplicationNumber;
+    }
 
     public String getConsumerCode() {
         return consumerCode;
@@ -433,6 +443,14 @@ public class ConnectionSearchRequest {
 
     public void setOldConsumerNumber(String oldConsumerNumber) {
         this.oldConsumerNumber = oldConsumerNumber;
+    }
+    
+    public String getApplicationType() {
+        return applicationType;
+    }
+
+    public void setApplicationType(String applicationType) {
+        this.applicationType = applicationType;
     }
 
 }

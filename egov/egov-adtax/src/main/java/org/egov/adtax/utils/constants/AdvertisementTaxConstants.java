@@ -132,4 +132,6 @@ public class AdvertisementTaxConstants {
     
     public static final String ANONYMOUS_USER= "Anonymous";
     public static final String ONLINE_SOURCE="Online";
+    public static final String APPCONFIG_REASSIGN="REASSIGN_BUTTONENABLED_ADTAX";
+
 }

@@ -105,6 +105,12 @@ public class MarriageConstants {
 
 
     public static final String APPCONFKEY_DIGITALSIGNINWORKFLOW = "DIGITALSIGN_IN_WORKFLOW";
+    public static final String APPCONFKEY_REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED";
+    
+    //CITIZEN
+    public static final String ROLE_CITIZEN = "CITIZEN";
+    
+
 
     public static final List<String> venuelist = new ArrayList<String>() {
         private static final long serialVersionUID = -6112513531476444226L;
@@ -151,6 +157,22 @@ public class MarriageConstants {
     
     public static final String SLAFORMARRIAGEREGISTRATION = "SLAFORMARRIAGEREGISTRATION";
     public static final String SLAFORMARRIAGEREISSUE = "SLAFORMARRIAGEREISSUE";
+    
+    public static final String MEESEVA_OPERATOR_ROLE = "MeeSeva Operator";
+    public static final String MEESEVA_REDIRECT_URL = "/meeseva/generatereceipt?transactionServiceNumber=";
+    public static final String SOURCE_MEESEVA = "MEESEVA";
+    public static final String OPEN = "OPEN";
+    public static final String REJECTED = "REJECTED";
+    public static final String DIGITALSIGNED = "DIGITALSIGNED";
+    public static final String REGISTERED = "REGISTERED";
+    public static final String CANCELLED = "CANCELLED";
+    
+    public static final String STATETYPE_REGISTRATION = "MarriageRegistration";
+    public static final String STATETYPE_REISSUE = "ReIssue";
+
+
+
+
     
     private MarriageConstants() {
         // To hide implicit public

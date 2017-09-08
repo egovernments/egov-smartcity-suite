@@ -40,6 +40,14 @@
 
 package org.egov.collection.config;
 
+import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
+
+import java.util.HashMap;
+import java.util.Map;
+
+import javax.sql.DataSource;
+
+import org.egov.collection.scheduler.AtomReconciliationJob;
 import org.egov.collection.scheduler.AxisReconciliationJob;
 import org.egov.collection.scheduler.RemittanceInstrumentJob;
 import org.egov.infra.config.scheduling.QuartzSchedulerConfiguration;
@@ -50,12 +58,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.quartz.CronTriggerFactoryBean;
 import org.springframework.scheduling.quartz.JobDetailFactoryBean;
 import org.springframework.scheduling.quartz.SchedulerFactoryBean;
-
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.quartz.CronTrigger.MISFIRE_INSTRUCTION_DO_NOTHING;
 
 @Configuration
 @Conditional(SchedulerConfigCondition.class)
@@ -73,6 +75,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         collectionScheduler.setOverwriteExistingJobs(true);
         collectionScheduler.setTriggers(
                 axisReconciliationCronTrigger().getObject(),
+                atomReconciliationCronTrigger().getObject(),
                 remittanceCashInstrumentCronTrigger0().getObject(),
                 remittanceCashInstrumentCronTrigger1().getObject(),
                 remittanceDDInstrumentCronTrigger0().getObject(),
@@ -253,5 +256,38 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         remittanceCron.setCronExpression("0 */5 * * * ?");
         remittanceCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return remittanceCron;
+    }
+    
+    @Bean
+    public JobDetailFactoryBean atomReconciliationJobDetail() {
+        JobDetailFactoryBean atomReconciliationJobDetail = new JobDetailFactoryBean();
+        atomReconciliationJobDetail.setGroup("COLLECTION_JOB_GROUP");
+        atomReconciliationJobDetail.setName("COLLECTION_ATOM_RECON_JOB");
+        atomReconciliationJobDetail.setDurability(true);
+        atomReconciliationJobDetail.setJobClass(AtomReconciliationJob.class);
+        atomReconciliationJobDetail.setRequestsRecovery(true);
+        Map<String, String> jobDetailMap = new HashMap<>();
+        jobDetailMap.put("jobBeanName", "atomReconciliationJob");
+        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("cityDataRequired", "true");
+        jobDetailMap.put("moduleName", "collection");
+        atomReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
+        return atomReconciliationJobDetail;
+    }
+
+    @Bean
+    public CronTriggerFactoryBean atomReconciliationCronTrigger() {
+        CronTriggerFactoryBean atomReconciliationCron = new CronTriggerFactoryBean();
+        atomReconciliationCron.setJobDetail(atomReconciliationJobDetail().getObject());
+        atomReconciliationCron.setGroup("COLLECTION_TRIGGER_GROUP");
+        atomReconciliationCron.setName("COLLECTION_ATOM_RECON_TRIGGER");
+        atomReconciliationCron.setCronExpression("0 */30 * * * ?");
+        atomReconciliationCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
+        return atomReconciliationCron;
+    }
+    
+    @Bean("atomReconciliationJob")
+    public AtomReconciliationJob atomReconciliationJob() {
+        return new AtomReconciliationJob();
     }
 }

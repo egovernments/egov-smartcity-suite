@@ -45,3 +45,8 @@ $(':radio').change( function () {
 		$('#isResidential').val('false');
 	}
 })
+
+function edit(usageId)
+{
+	window.open("/ptis/usage/modify/"+usageId, "_self");
+}

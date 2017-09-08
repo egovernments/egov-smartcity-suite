@@ -65,7 +65,7 @@
     </definition>
     
     <definition name="usage-form" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.property.usageMaster" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage/usage-form.jsp"/>
     </definition>
     
@@ -401,6 +401,21 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-create.jsp"/>
     </definition>
     
+    <definition name="structureclassification-edit" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-edit.jsp"/>
+    </definition>
+    
+    <definition name="structureclassification-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureclassification-search.jsp"/>
+    </definition>
+    
+    <definition name="structureedit-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.structureclassification" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/structures/structureedit-success.jsp"/>
+    </definition>
+    
     <definition name="inventorynotice-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.title.inventory.notice" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/inventorynotice-form.jsp"/>
@@ -490,5 +505,42 @@
     <definition name="arrdmdrgstr-vlt-form" extends="base_layout">
     	<put-attribute name="page-title" value="lbl.arrear.dmd.register" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/reports/arreardmdregister-form.jsp"/>
+    </definition>
+    
+    <definition name="reassign" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/reassign.jsp"/>
+    </definition>
+    
+     <definition name="reassign-success" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/reassign-success.jsp"/>
+    </definition> 
+    
+    <definition name="bulkboundary-form" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.bulkBoundaryUpdation.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/bulkBoundaryUpdation/bulkboundary-form.jsp" />
+	</definition>
+    
+     <definition name="endorsement_history" extends="base_layout">
+    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/common/endorsement_history.jsp"/>
+    </definition>
+    
+     <definition name="usageModify-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-form.jsp"/>
+    </definition>
+    
+     <definition name="usageModify-list" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-list.jsp"/>
+    </definition>
+    
+     <definition name="usageModify-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-success.jsp"/>
     </definition>
 </tiles-definitions> 

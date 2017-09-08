@@ -40,15 +40,15 @@
 
 package org.egov.tl.entity.view;
 
-import java.io.Serializable;
-import java.math.BigInteger;
+import org.hibernate.annotations.Immutable;
+import org.hibernate.annotations.Type;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
-
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.math.BigInteger;
 
 @Entity
 @Immutable
@@ -81,6 +81,9 @@ public class DCBReportResult implements Serializable {
 
     @Column(name = "arr_balance")
     private BigInteger arrearbalance;
+
+    @Type(type="true_false")
+    private Boolean active;
 
     private String licaddress;
 
@@ -210,4 +213,11 @@ public class DCBReportResult implements Serializable {
         this.arrearcollection = arrearcollection;
     }
 
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
+    }
 }

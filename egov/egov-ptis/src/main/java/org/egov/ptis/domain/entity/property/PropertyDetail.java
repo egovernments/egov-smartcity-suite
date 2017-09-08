@@ -352,6 +352,10 @@ public interface PropertyDetail extends Property {
     public String getOccupancyCertificationNo();
 
     public void setOccupancyCertificationNo(String occupancyCertificationNo);
+    
+    public Date getOccupancyCertificationDate();
+    
+    public void setOccupancyCertificationDate(Date occupancyCertificationDate);
 
     public Boolean isAppurtenantLandChecked();
 

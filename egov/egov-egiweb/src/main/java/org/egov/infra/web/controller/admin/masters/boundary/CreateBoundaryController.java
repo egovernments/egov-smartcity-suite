@@ -42,56 +42,82 @@ package org.egov.infra.web.controller.admin.masters.boundary;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.HierarchyTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
+@RequestMapping("boundary/create")
 public class CreateBoundaryController {
 
-    private static final String REDIRECT_URL_VIEW = "redirect:/view-boundary/";
-
-    private final BoundaryService boundaryService;
+    private static final String BOUNDARY_CREATE_VIEW = "boundary-create";
 
     @Autowired
-    public CreateBoundaryController(final BoundaryService boundaryService) {
-        this.boundaryService = boundaryService;
+    private BoundaryService boundaryService;
+
+    @Autowired
+    private BoundaryTypeService boundaryTypeService;
+
+    @Autowired
+    private HierarchyTypeService hierarchyTypeService;
+
+    @ModelAttribute
+    public Boundary boundary() {
+        return new Boundary();
     }
 
-    @RequestMapping(value = "/boundary/create", method = RequestMethod.POST)
-    public String createOrUpdateBoundary(@Valid @ModelAttribute final Boundary boundary, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, Model model) {
-        BoundaryType boundaryType = boundary.getBoundaryType();
+    @ModelAttribute("hierarchyTypes")
+    public List<HierarchyType> hierarchyTypes() {
+        return hierarchyTypeService.getAllHierarchyTypes();
+    }
+
+    @GetMapping
+    public String showCreateBoundarySearchForm(Model model) {
+        model.addAttribute("search", true);
+        return BOUNDARY_CREATE_VIEW;
+    }
+
+    @GetMapping("{boundaryTypeId}")
+    public String showCreateBoundaryForm(@PathVariable Long boundaryTypeId, Model model, RedirectAttributes redirectAttributes) {
+        BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeById(boundaryTypeId);
+        if (boundaryService.validateBoundary(boundaryType)) {
+            redirectAttributes.addFlashAttribute("warning", "err.root.bndry.exists");
+            return "redirect:/boundary/create";
+        }
+
+        model.addAttribute("boundaryType", boundaryType);
+        if (boundaryType.getParent() != null)
+            model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
+        model.addAttribute("search", false);
+        return BOUNDARY_CREATE_VIEW;
+    }
+
+    @PostMapping
+    public String createBoundary(@Valid @ModelAttribute Boundary boundary, BindingResult errors,
+                                 RedirectAttributes redirectAttributes, Model model) {
         if (errors.hasErrors()) {
+            BoundaryType boundaryType = boundary.getBoundaryType();
             model.addAttribute("boundaryType", boundaryType);
             model.addAttribute("parentBoundary", boundaryService.getActiveBoundariesByBoundaryTypeId(boundaryType.getParent().getId()));
-            return "boundary-create";
+            return BOUNDARY_CREATE_VIEW;
         }
         boundaryService.createBoundary(boundary);
-        redirectAttributes.addFlashAttribute("boundary", boundary);
         redirectAttributes.addFlashAttribute("message", "msg.bndry.create.success");
-        return REDIRECT_URL_VIEW + boundaryType.getHierarchyType().getId() + "," + boundaryType.getId();
+        redirectAttributes.addFlashAttribute("create", true);
+        return "redirect:/boundary/view/" + boundary.getId();
     }
-
-    @RequestMapping(value = "/wards-by-zone", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody List<Boundary> getWardByZone(@RequestParam final Long zoneId) throws IOException {
-        return boundaryService.getActiveChildBoundariesByBoundaryId(zoneId);
-
-    }
-
 }

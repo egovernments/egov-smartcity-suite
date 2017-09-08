@@ -178,7 +178,7 @@ public class AjaxLineEstimateController {
 
     @RequestMapping(value = "/ajax-getlocation", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     public @ResponseBody List<Boundary> getChildBoundariesById(@RequestParam final Long id) {
-        return crossHierarchyService.getActiveChildBoundariesByBoundaryId(id);
+        return crossHierarchyService.getActiveChildBoundariesByParentId(id);
     }
 
     @RequestMapping(value = "/getsubtypeofwork", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)

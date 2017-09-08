@@ -84,7 +84,8 @@
 										 				<input type="hidden" id="currentState" name="currentState" value="${record.status}" />
 										 			</td>
 										 			<td class="blueborderfortd" >	
-										 				<c:out value="${record.type}"/>	
+										 				<c:out value="${record.type}"/>
+										 				<input type="hidden" id="natureOfTask" name="natureOfTask" value="${record.type}" />	
 										 			</td> 
 										 			<td class="blueborderfortd" >	
 										 				<c:out value="${record.details}"/>

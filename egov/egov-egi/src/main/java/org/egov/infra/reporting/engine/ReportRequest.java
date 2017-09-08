@@ -56,6 +56,8 @@ public class ReportRequest {
     private Object reportInputData;
     private Map<String, Object> reportParams = new HashMap<>();
     private boolean printDialogOnOpenReport = false;
+    private ReportDisposition reportDisposition = ReportDisposition.INLINE;
+
 
     public ReportRequest(String reportTemplate, Object reportInputData, Map<String, Object> reportParams) {
         initialize(reportTemplate, reportParams);
@@ -126,7 +128,13 @@ public class ReportRequest {
         this.reportName = reportName;
     }
 
-    public String reportOutputFileName() {
-        return new StringBuilder().append(reportName).append(".").append(reportFormat).toString();
+    public void setReportDisposition(ReportDisposition reportDisposition) {
+        this.reportDisposition = reportDisposition;
+    }
+
+    public String reportDisposition() {
+        return new StringBuilder()
+                .append(this.reportDisposition.toString()).append(";filename=\"")
+                .append(reportName).append(".").append(reportFormat).append("\"").toString();
     }
 }

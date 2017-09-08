@@ -39,6 +39,9 @@
  */
 package org.egov.ptis.web.controller.masters.usage;
 
+import javax.validation.Valid;
+
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.master.service.PropertyUsageService;
@@ -50,8 +53,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
 
 /**
  * Controller to Create a new Usage Master
@@ -93,7 +94,7 @@ public class CreateUsageController {
         if (errors.hasErrors())
             return "usage-form";
         
-        propertyUsageService.create(propertyUsage);
+        propertyUsageService.create(propertyUsage, ApplicationThreadLocals.getUserId());
         redirectAttributes.addFlashAttribute("message", "msg.usage.create.success");
 
         return "redirect:/usage/create";

@@ -39,9 +39,10 @@
  */
 package org.egov.stms.elasticSearch.entity;
 
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.jboss.logging.Logger;
 
-public class SewerageCollectFeeSearchRequest {
+public class SewerageCollectFeeSearchRequest extends DataTableSearchRequest{
     private String consumerNumber;
     private String searchText;
     private String shscNumber;

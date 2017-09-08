@@ -77,14 +77,8 @@
 											<label for="field-1" class="col-sm-4 control-label"><spring:message code="lbl.original.consumerno" /></label>
 				
 											<div class="col-sm-4 add-margin">
-											<select id="selectBox" class="form-control action-dropdown">
-												<!-- <select class="form-control"> -->
-												<c:forEach var="consumercode" items="${duplicateConnection.consumerCodes}">
-												<c:out value="${consumercode}" />	
-												 <option value="<c:out value="${consumercode}" />"><c:out value="${consumercode}" /></option>
-													<option>select</option>
-													</c:forEach>
-												</select>
+											<form:input class="form-control patternvalidation" data-pattern="number" maxlength="50" id="originalConsumerNo" path="originalConsumerNo" />
+											<form:errors path="originalConsumerNo" cssClass="add-margin error-msg" />
 											</div>
 				
 										</div>

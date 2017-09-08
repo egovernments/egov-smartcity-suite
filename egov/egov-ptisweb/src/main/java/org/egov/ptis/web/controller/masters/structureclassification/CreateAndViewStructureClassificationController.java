@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.web.controller.masters.structureclassification;
 
+import java.util.List;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -58,47 +60,60 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/structureclassification")
 public class CreateAndViewStructureClassificationController {
 
-    private final StructureClassificationService structureClassificationService;
+	private final StructureClassificationService structureClassificationService;
 
-    @Autowired
-    public UserService userService;
+	@Autowired
+	public UserService userService;
 
-    @Autowired
-    public CreateAndViewStructureClassificationController(final StructureClassificationService structureClassificationService) {
-        this.structureClassificationService = structureClassificationService;
-    }
+	@Autowired
+	public CreateAndViewStructureClassificationController(
+			final StructureClassificationService structureClassificationService) {
+		this.structureClassificationService = structureClassificationService;
+	}
 
-    @ModelAttribute
-    public StructureClassification structureClassificationModel() {
-        return new StructureClassification();
-    }
+	@ModelAttribute
+	public StructureClassification structureClassificationModel() {
+		return new StructureClassification();
+	}
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create(final Model model) {
-        model.addAttribute("structureclassification", structureClassificationModel());
-        return "structureclassification-create";
-    }
+	@ModelAttribute(value = "structuretypes")
+	public List<StructureClassification> listStructures() {
+		return structureClassificationService.getAllStructureTypes();
+	}
 
-    @RequestMapping(value = "/view", method = RequestMethod.GET)
-    public String showStructureType(final Model model) {
-        model.addAttribute("structureclassifications", structureClassificationService.getAllActiveStructureTypes());
-        return "structureclassification-view";
-    }
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	public String create(final Model model) {
+		model.addAttribute("structureclassification", structureClassificationModel());
+		return "structureclassification-create";
+	}
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final StructureClassification structureClassification, final BindingResult errors,
-            final RedirectAttributes redirectAttributes, final HttpServletRequest request, final Model model) {
+	@RequestMapping(value = "/view", method = RequestMethod.GET)
+	public String showStructureType(final Model model) {
+		model.addAttribute("structureclassifications", structureClassificationService.getAllStructureTypes());
+		return "structureclassification-view";
+	}
 
-        if (errors.hasErrors())
-            return "structureclassification-create";
-        structureClassification.setNumber(1);
-        structureClassification.setStartInstallment(structureClassificationService.getInstallment());
-        structureClassification.setIsHistory('N');
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public String create(@Valid @ModelAttribute final StructureClassification structureClassification,
+			final BindingResult errors, final RedirectAttributes redirectAttributes, final HttpServletRequest request,
+			final Model model) {
 
-        structureClassificationService.create(structureClassification);
-        redirectAttributes.addFlashAttribute("message", "msg.structcls.create.success");
-        return "redirect:/structureclassification/create";
+		if (errors.hasErrors())
+			return "structureclassification-create";
+		structureClassification.setNumber(1);
+		structureClassification.setStartInstallment(structureClassificationService.getInstallment());
+		structureClassification.setIsHistory('N');
 
-    }
+		structureClassificationService.create(structureClassification);
+		redirectAttributes.addFlashAttribute("message", "msg.structcls.create.success");
+		return "redirect:/structureclassification/create";
+
+	}
+
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String search(final Model model) {
+		return "structureclassification-search";
+
+	}
 
 }

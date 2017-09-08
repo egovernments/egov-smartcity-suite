@@ -170,6 +170,8 @@ public interface PtDemandDao {
 	 **/
 	public Map<String, BigDecimal> getDemandCollMap(Property property);
 	
+	public Map<String, BigDecimal> getDemandCollMapIncludingPenaltyAndAdvance(final Property property);
+	
 	public Map<String, BigDecimal> getDemandIncludingPenaltyCollMap(Property property); 
 	
 	public Map<String, BigDecimal> getPenaltyDemandCollMap(Property property);

@@ -46,57 +46,43 @@
 
 <div class="row">
 	<div class="col-md-12">
-
 		<div class="panel panel-primary" data-collapsed="0">
-
 			<div class="panel-heading">
 				<div class="panel-title">
 					<strong><spring:message code='title.watertaxSearch' />
 					</strong>
 				</div>
-
 			</div>
-
 			<div class="panel-body">
-
 				<form:form  class="form-horizontal form-groups-bordered"
-					id="waterSearchRequestForm" modelAttribute="connectionSearchRequest" action="">
+					id="waterSearchRequestForm" modelAttribute="connectionSearchRequest" method="post" action="/wtms/search/waterSearch/commonSearch-form/">
 					
-			<input type="hidden"  id="validMessage" name="validMessage"  value="${validMessage}" />
-			<input type="hidden"  id="mode" name="mode"  value="${mode}" />
-				
-						<div class="form-group">
-				<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
-										  <div class="col-md-4 add-margin">
+					<input type="hidden"  id="validMessage" name="validMessage" name="validMessage"  value="${validMessage}" />
+					<input type="hidden"  id="mode" name="mode" name="mode"  value="${mode}" />
+					<input type="hidden"  id="applicationType" name="applicationType" value="${applicationType}" />
+					<input type="hidden"  id="meesevaApplicationNumber" name="meesevaApplicationNumber" value="${meesevaApplicationNumber}" />
+					<div class="form-group">
+					<label for="field-1" class="col-md-4 control-label"><spring:message code='lbl1.consumer.number'/></label>
+						<div class="col-md-4 add-margin">
 							<form:input type="text" path="consumerCode" name="consumerCode" class="form-control patternvalidation" data-pattern="number" maxlength="15" id="app-appcodo" required="required"/>
 						</div>
 						<form:errors path="consumerCode" cssClass="add-margin error-msg" />
-						</div>
+					</div>
 					<div class="form-group">
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submitButtonId">
 								<spring:message code="lbl.submit" />
 							</button>
-								
 							<button class="btn btn-danger" type="reset"><spring:message code='lbl.reset'/></button>
 							<a href="javascript:void(0);" id="closeComplaints"
 								class="btn btn-default" onclick="self.close()"><spring:message code='lbl.close' /></a>
 						</div>
 				</div>
-
-
 				</form:form>
 			</div>
-
-
 		</div>
-
 	</div>
 </div>
-
-
-
-
 
 <script src="<cdn:url value='/resources/js/app/connectionCommonsearch.js?rnd=${app_release_no}'/>"
 	type="text/javascript"></script>

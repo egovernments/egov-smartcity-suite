@@ -43,6 +43,7 @@ package org.egov.commons.service;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.repository.CFinancialYearRepository;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -127,5 +128,11 @@ public class CFinancialYearService {
         return cFinancialYearRepository.getFinancialYearByDate(cal.getTime());
     }
 
+    public CFinancialYear getCurrentFinancialYear() {
+        return getFinancialYearByDate(new Date());
+    }
 
+    public CFinancialYear getLatestFinancialYear() {
+        return getFinancialYearByDate(new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
+    }
 }

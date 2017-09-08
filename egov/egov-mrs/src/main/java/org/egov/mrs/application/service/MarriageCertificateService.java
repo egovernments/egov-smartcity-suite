@@ -495,4 +495,12 @@ public class MarriageCertificateService {
         return criteriaReissue.list();
     }
 
+    public MarriageCertificate getGeneratedCertificate(final MarriageRegistration registration) {
+        return marriageCertificateRepository.findByRegistration(registration);
+    }
+
+    public MarriageCertificate getGeneratedReIssueCertificateForPrint(final ReIssue reIssue) {
+        return marriageCertificateRepository.findByReIssue(reIssue);
+    }
+
 }

@@ -78,12 +78,28 @@ public class PortalServiceTypeService {
         portalServiceTypeRepository.save(portalService);
     }
 
+    public List<String> getDistinctModuleNamesForCitizen() {
+        return portalServiceTypeRepository.getDistinctModuleNamesForCitizen();
+    }
+
+    public List<String> getDistinctModuleNamesForBusinessUser() {
+        return portalServiceTypeRepository.getDistinctModuleNamesForBusinessUser();
+    }
+
     public List<String> getDistinctModuleNames() {
         return portalServiceTypeRepository.getDistinctModuleNames();
     }
 
     public List<PortalServiceType> getAllPortalService() {
         return portalServiceTypeRepository.findAll();
+    }
+
+    public List<PortalServiceType> findAllServiceTypesForBusinessUser() {
+        return portalServiceTypeRepository.findAllServiceTypesForBusinessUser();
+    }
+
+    public List<PortalServiceType> findAllServiceTypesForCitizenUser() {
+        return portalServiceTypeRepository.findAllServiceTypesForCitizenUser();
     }
 
 }

@@ -481,8 +481,7 @@ public class PropertyImpl extends StateAware implements Property {
                     getPropertyDetail().getSiteOwner(), getPropertyDetail().getApartment(),
                     getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
                     getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(), getPropertyDetail()
-
-                            .getOccupancyCertificationNo(),
+                    .getOccupancyCertificationNo(), getPropertyDetail().getOccupancyCertificationDate(), 
                     getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail().isCorrAddressDiff(),
                     getPropertyDetail().getPropertyDepartment(), getPropertyDetail().getVacantLandPlotArea(),
                     getPropertyDetail().getLayoutApprovalAuthority(), getPropertyDetail().getLayoutPermitNo(),
@@ -512,7 +511,8 @@ public class PropertyImpl extends StateAware implements Property {
                     getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner(),
                     getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
                     getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(),
-                    getPropertyDetail().getOccupancyCertificationNo(), getPropertyDetail().isAppurtenantLandChecked(),
+                    getPropertyDetail().getOccupancyCertificationNo(),getPropertyDetail().getOccupancyCertificationDate(),
+                    getPropertyDetail().isAppurtenantLandChecked(),
                     getPropertyDetail().isCorrAddressDiff(), getPropertyDetail().getPropertyDepartment(),
                     getPropertyDetail().getVacantLandPlotArea(), getPropertyDetail().getLayoutApprovalAuthority(),
                     getPropertyDetail().getLayoutPermitNo(), getPropertyDetail().getLayoutPermitDate());

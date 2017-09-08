@@ -39,6 +39,16 @@
  */
 package org.egov.collection.web.actions.citizen.reports;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import org.apache.commons.io.IOUtils;
 import org.egov.collection.entity.OnlinePaymentResult;
 import org.egov.collection.service.CollectionReportService;
@@ -53,15 +63,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 public class OnlinePaymentReportController {
@@ -80,7 +81,7 @@ public class OnlinePaymentReportController {
         return reportService.getDistrictNames();
     }
 
-    @RequestMapping(value = "/citizen/onlinePaymentReport",method = RequestMethod.GET)
+    @RequestMapping(value = "/citizen/onlinePaymentReport", method = RequestMethod.GET)
     public String searchForm(final Model model) {
         model.addAttribute("fromdate", new Date());
         model.addAttribute("todate", new Date());
@@ -99,7 +100,9 @@ public class OnlinePaymentReportController {
         final SQLQuery query = reportService.getOnlinePaymentReportData(districtname, ulbname, fromdate, todate,
                 transid);
         List<OnlinePaymentResult> onlinePaymentList = query.list();
-        final String result = new StringBuilder("{ \"data\":").append(toJSON(onlinePaymentList, OnlinePaymentResult.class, OnlinePaymentResultAdaptor.class )).append("}").toString();
+        final String result = new StringBuilder("{ \"data\":")
+                .append(toJSON(onlinePaymentList, OnlinePaymentResult.class, OnlinePaymentResultAdaptor.class)).append("}")
+                .toString();
         IOUtils.write(result, response.getWriter());
     }
 
@@ -108,9 +111,11 @@ public class OnlinePaymentReportController {
         List ulbnames = new ArrayList();
         ulbnames = reportService.getUlbNames(districtname);
         final List<JSONObject> jsonObjects = new ArrayList<JSONObject>();
+        for (Object ulb : ulbnames) {
             final JSONObject jsonObj = new JSONObject();
-            jsonObj.put("ulbname", ulbnames);
+            jsonObj.put("ulbname", ulb);
             jsonObjects.add(jsonObj);
+        }
         IOUtils.write(jsonObjects.toString(), response.getWriter());
     }
 }

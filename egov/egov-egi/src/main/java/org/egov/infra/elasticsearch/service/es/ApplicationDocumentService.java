@@ -880,18 +880,20 @@ public class ApplicationDocumentService {
     private void prepareMonthwiseDetails(Map<Integer, String> monthValuesMap, Map<String, Long> applications,
             Histogram dateaggs) {
         String[] dateArr;
-        Integer month;
+        Integer month,year;
         ValueCount countAggr;
         String monthName;
+        Map <String,Long> map = new LinkedHashMap<>();
         for (Histogram.Bucket entry : dateaggs.getBuckets()) {
             dateArr = entry.getKeyAsString().split("T");
+            year = Integer.valueOf(dateArr[0].split("-", 3)[0]);
             month = Integer.valueOf(dateArr[0].split("-", 3)[1]);
             monthName = monthValuesMap.get(month);
             countAggr = entry.getAggregations().get(TOTAL_COUNT);
-            applications.put(monthName, countAggr.getValue());
+            map.put(monthName + " " + year, countAggr.getValue());
         }
+        applications.putAll(map);
     }
-
     private Aggregations getMonthwiseApplications(ApplicationIndexRequest applicationIndexRequest,
             Date fromDate, Date toDate, String status) {
         BoolQueryBuilder boolQuery = prepareWhereClause(applicationIndexRequest, fromDate, toDate);
@@ -1219,7 +1221,7 @@ public class ApplicationDocumentService {
                 .setQuery(boolQuery).setSize(size)
                 .addSort(APPLICATION_DATE, SortOrder.DESC)
                 .setFetchSource(new String[] { APPLICATION_DATE, APPLICATION_NUMBER, APPLICATION_TYPE, "applicantName",
-                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME }, null)
+                        "applicantAddress", "status", CHANNEL, SLA, MODULE_NAME, SLA_GAP, CITY_NAME, OWNER_NAME,"url",CITY_CODE }, null)
                 .execute().actionGet();
 
         for (SearchHit hit : response.getHits())
@@ -1240,6 +1242,8 @@ public class ApplicationDocumentService {
                 appInfo.setAge(details.get(SLA_GAP) == null ? 0 : (int) details.get(SLA_GAP));
                 appInfo.setPendingWith(details.get(OWNER_NAME).toString());
                 appInfo.setUlbName(details.get(CITY_NAME).toString());
+                appInfo.setUrl(details.get("url").toString());
+                appInfo.setCityCode(details.get(CITY_CODE).toString());
                 applications.add(appInfo);
             }
         }

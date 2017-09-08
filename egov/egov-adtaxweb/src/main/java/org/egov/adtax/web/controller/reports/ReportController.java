@@ -167,8 +167,8 @@ public class ReportController {
         if (advertisementPermitDetail.getLength() != null)
             measurement.append(" Length : ").append(advertisementPermitDetail.getLength());
 
-        if (advertisementPermitDetail.getBreadth() != null)
-            measurement.append(" Breadth : ").append(advertisementPermitDetail.getBreadth());
+        if (advertisementPermitDetail.getWidth() != null)
+            measurement.append(" Breadth : ").append(advertisementPermitDetail.getWidth());
 
         if (advertisementPermitDetail.getTotalHeight() != null)
             measurement.append(" Height : ").append(advertisementPermitDetail.getTotalHeight());
@@ -404,6 +404,7 @@ public class ReportController {
         reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
         reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
         reportParams.put("subjectMatter",advertisementPermitDetail.getAdvertisementParticular());
+        reportParams.put("subCategory",advertisementPermitDetail.getAdvertisement().getSubCategory().getCode());       
         buildMeasurementDetailsForJasper(advertisementPermitDetail, measurement, reportParams, NOTMENTIONED);
         
         reportParams.put("permitStartDate", formatter.format( advertisementPermitDetail.getPermissionstartdate()));

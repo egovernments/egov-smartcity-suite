@@ -53,8 +53,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.apache.commons.lang3.StringUtils.isBlank;
-
 @Service
 @Transactional(readOnly = true)
 public class DCBReportService {
@@ -67,8 +65,7 @@ public class DCBReportService {
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
                 searchRequest.pageSize(),
                 searchRequest.orderDir(), searchRequest.orderBy());
-        return isBlank(searchRequest.getLicensenumber()) ? dCBReportRepository.findAll(pageable)
-                : dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest), pageable);
+        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest), pageable);
 
     }
 

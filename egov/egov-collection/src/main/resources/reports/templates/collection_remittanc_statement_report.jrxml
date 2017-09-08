@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-19T15:12:20 -->
+<!-- 2017-06-02T14:35:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -110,6 +109,13 @@
 	<parameter name="EGOV_TO_DATE_PLUS_ONE" class="java.util.Date" isForPrompting="false">
 		<defaultValueExpression><![CDATA[ReportUtil.add($P{EGOV_TO_DATE}, Calendar.DAY_OF_MONTH, 1)]]></defaultValueExpression>
 	</parameter>
+	<parameter name="EGOV_BANKCOLL_BANKBRANCH_ID" class="java.lang.Integer">
+		<defaultValueExpression><![CDATA[-1]]></defaultValueExpression>
+	</parameter>
+	<parameter name="Q_EGOV_BANKCOLL_BANKBRANCH_ID" class="java.lang.String" isForPrompting="false">
+		<parameterDescription><![CDATA[where clause query for bank collection bank branch id]]></parameterDescription>
+		<defaultValueExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKCOLL_BANKBRANCH_ID} == -1) ? "" : "AND CHMIS.depositedbranch = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID}]]></defaultValueExpression>
+	</parameter>
 	<queryString>
 		<![CDATA[select * from (select distinct CH.receiptnumber as RECEIPT_NUMBER ,to_char(date(CH.receiptdate),'DD/mm/YYYY')as RECEIPT_DATE,
  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' WHEN  EGF_INSTRUMENTTYPE.TYPE='cheque' THEN 'cheque' WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN 'dd' END) as PAY_MODE,
@@ -143,6 +149,7 @@ $P!{Q_BRANCH_ID}
 $P!{Q_BANKACCOUNT_ID}
 $P!{Q_MODEOFPAYMENT_ID}
 $P!{Q_DEPT_ID}
+$P!{Q_EGOV_BANKCOLL_BANKBRANCH_ID}
 union
 select distinct CH.receiptnumber as RECEIPT_NUMBER ,to_char(date(CH.receiptdate),'DD/mm/YYYY')as RECEIPT_DATE,
  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN 'cheque' WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN 'dd' END) as PAY_MODE,
@@ -171,7 +178,8 @@ $P!{Q_SERVICE_ID}
 $P!{Q_BRANCH_ID}
 $P!{Q_BANKACCOUNT_ID}
 $P!{Q_MODEOFPAYMENT_ID}
-$P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
+$P!{Q_DEPT_ID} 
+$P!{Q_EGOV_BANKCOLL_BANKBRANCH_ID}) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 	</queryString>
 	<field name="RECEIPT_NUMBER" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
@@ -366,7 +374,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="192">
+		<band height="269">
 			<staticText>
 				<reportElement style="Title" x="163" y="58" width="487" height="31" uuid="0cebcbf2-9c57-41c7-80d6-f15f1491b03f"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -602,6 +610,34 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<reportElement stretchType="RelativeToBandHeight" x="69" y="17" width="91" height="92" isRemoveLineWhenBlank="true" uuid="45e36de2-66fe-4c96-8503-4b7b0091e1ac"/>
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
+			<staticText>
+				<reportElement x="52" y="192" width="112" height="20" uuid="f5bd8043-ea6b-40d4-aed1-aba32837b998"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Bank Collection Bank Branch:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="164" y="192" width="227" height="20" uuid="f32f2d41-a869-4b78-9a87-939e97bc1479"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "All Bank Branch" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT b.NAME||'-'||bb.BRANCHNAME as branchname  FROM bankbranch BR,BANK B WHERE B.ID= br.bankid AND br.id = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID})]]></textFieldExpression>
+			</textField>
 		</band>
 	</title>
 	<detail>
@@ -790,7 +826,7 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 		<band height="30" splitType="Stretch"/>
 	</summary>
 	<noData>
-		<band height="211">
+		<band height="212">
 			<staticText>
 				<reportElement x="231" y="180" width="368" height="31" uuid="1ebea870-04dd-466d-b284-46fdfc7124be"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
@@ -1033,6 +1069,34 @@ $P!{Q_DEPT_ID} ) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<reportElement x="177" y="6" width="60" height="60" uuid="d1cda97a-1840-4174-8354-892eaff8b3e7"/>
 				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
 			</image>
+			<textField>
+				<reportElement x="164" y="151" width="227" height="20" uuid="0fdda9bb-20a4-4182-9601-12bf934aedaa"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "All Bank Branch" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT b.NAME||'-'||bb.BRANCHNAME as branchname FROM bankbranch BR,BANK B WHERE B.ID= br.bankid AND br.id = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID})]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="52" y="151" width="112" height="20" uuid="4988575f-4009-4081-9baf-bba084552761"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.0"/>
+					<topPen lineWidth="0.0"/>
+					<leftPen lineWidth="0.0"/>
+					<bottomPen lineWidth="0.0"/>
+					<rightPen lineWidth="0.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
+				</textElement>
+				<text><![CDATA[Bank Collection Bank Branch:]]></text>
+			</staticText>
 		</band>
 	</noData>
 </jasperReport>

@@ -59,6 +59,7 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.List;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -92,6 +93,9 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
         }
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
             resultBinder.rejectValue("location", "location.required");
+
+        if (isBlank(complaint.getComplainant().getMobile()))
+            resultBinder.rejectValue("complainant.mobile", "mobile.ismandatory");
 
         if (resultBinder.hasErrors()) {
             if (null != complaint.getCrossHierarchyId())

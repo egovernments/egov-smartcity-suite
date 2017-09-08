@@ -41,8 +41,6 @@ package org.egov.portal.web.controller.citizen;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.portal.entity.CitizenInbox;
 import org.egov.portal.entity.PortalInboxUser;
@@ -56,12 +54,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import static org.egov.infra.persistence.entity.enums.UserType.BUSINESS;
+import static org.egov.infra.persistence.entity.enums.UserType.CITIZEN;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.util.List;
-
-import static org.egov.infra.web.utils.WebUtils.setUserLocale;
 
 @Controller
 @RequestMapping(value = "/home")
@@ -74,9 +70,6 @@ public class HomeController {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
-
-    @Autowired
     private PortalInboxUserService portalInboxUserService;
 
     @Autowired
@@ -86,16 +79,12 @@ public class HomeController {
     private CityService cityService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public String LoginForm(HttpServletRequest request, HttpServletResponse response, ModelMap modelData) {
-        User user = securityUtils.getCurrentUser();
-        setUserLocale(user, request, response);
+    public String showHomePage(ModelMap modelData) {
         return setupHomePage(modelData);
-
     }
 
     @RequestMapping(value = "/refreshInbox", method = RequestMethod.GET)
-    public @ResponseBody
-    Integer refreshInbox(@RequestParam final Long citizenInboxId) {
+    public @ResponseBody Integer refreshInbox(@RequestParam final Long citizenInboxId) {
         final CitizenInbox citizenInbox = citizenInboxService.getInboxMessageById(citizenInboxId);
         citizenInbox.setRead(true);
         citizenInboxService.updateMessage(citizenInbox);
@@ -103,17 +92,30 @@ public class HomeController {
     }
 
     private String setupHomePage(final ModelMap modelData) {
+        String moduleName = "moduleNames";
+        String services = "services";
         final User user = securityUtils.getCurrentUser();
         modelData.addAttribute("unreadMessageCount", getUnreadMessageCount());
         modelData.addAttribute("inboxMessages", getAllInboxMessages());
         modelData.addAttribute("myAccountMessages", getMyAccountMessages());
         modelData.addAttribute("cityLogo", cityService.getCityLogoPath());
         modelData.addAttribute("cityName", cityService.getMunicipalityName());
-        modelData.addAttribute("enabledFeatures", applicationProperties.portalEnabledFeatures());
         modelData.addAttribute("userName", user.getName() == null ? "Anonymous" : user.getName());
 
-        modelData.addAttribute("moduleNames", portalServiceTypeService.getDistinctModuleNames());
-        modelData.addAttribute("services", portalServiceTypeService.getAllPortalService());
+        if (null != user) {
+
+            if (user.getType().equals(BUSINESS)) {
+                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNamesForBusinessUser());
+                modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForBusinessUser());
+            } else if (user.getType().equals(CITIZEN)) {
+                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNamesForCitizen());
+                modelData.addAttribute(services, portalServiceTypeService.findAllServiceTypesForCitizenUser());
+            } else {
+                modelData.addAttribute(moduleName, portalServiceTypeService.getDistinctModuleNames());
+                modelData.addAttribute(services, portalServiceTypeService.getAllPortalService());
+            }
+        }
+
         modelData.addAttribute("distinctModuleNames", portalServiceTypeService.getAllModules());
         modelData.addAttribute("userId", user.getId());
 

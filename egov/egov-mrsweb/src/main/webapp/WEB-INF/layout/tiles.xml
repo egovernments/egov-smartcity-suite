@@ -477,4 +477,14 @@
     	<put-attribute name="page-title" value="title.registration" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/application/registration/acknowledgement.jsp"/>
      </definition>
+          
+     <definition name="marriage-reassign" extends="base_layout">
+    	<put-attribute name="page-title" value="title.reassign" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/application/registration/marriage-reassign.jsp"/>
+     </definition>
+
+               <definition name="reassign-success" extends="base_layout">
+    	<put-attribute name="page-title" value="title.reassign" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/application/registration/reassign-success.jsp"/>
+     </definition>
 </tiles-definitions>

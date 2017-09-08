@@ -148,13 +148,20 @@ function callAjaxSearch() {
 				"fnRowCallback" : function(row, data, index) {
 					var mode = $('#mode').val();
 					if (mode == 'edit')
-						$('td:eq(5)',row).html('<input type="text" readonly="readonly" data='+ data.implementationStatus +' value="'+ data.implementationStatus +'"/>');				
+						$('td:eq(5)',row).html(data.implementationStatus);				
 					else
-						$('td:eq(5)',row).html('<input type="text" readonly="readonly "data='+ data.status +' value="'+ data.status +'"/>');
+						$('td:eq(5)',row).html(data.status);
 					return row;
 				},
 				aaSorting : [],
 				columns : [
+						{
+							 "data":null,
+							 "sClass" : "text-center",
+				        	   render: function (data, type, row, meta) {
+				        	        return meta.row + meta.settings._iDisplayStart + 1;
+			                },   
+				        },
 						{
 							"data" : "department",
 							"width" : "8%",
@@ -162,7 +169,7 @@ function callAjaxSearch() {
 						},
 						{
 							"data" : "ward",
-							"width" : "28%",
+							"width" : "29%",
 							"sClass" : "text-left"
 						},
 						{
@@ -171,18 +178,18 @@ function callAjaxSearch() {
 						},
 						{
 							"data" : "gistOfPreamble",
-							"width" : "38%",
+							"width" : "29%",
 							"sClass" : "text-left"
 						},
 						{
-							"data" : "sanctionAmount",
-							"sClass" : "text-right"
+							"data" : "status",
+							"width" : "15",
+							"sClass" : "text-left"
 						},
 						{
 
-							"data" : null,
-							"width" : "8%",
-							"sClass" : "text-left"
+							"data" : "sanctionAmount",
+							"sClass" : "text-right"
 						},
 						{
 							"data" : null,
@@ -192,9 +199,9 @@ function callAjaxSearch() {
 							"render" : function(data, type, full, meta) {
 								var mode = $('#mode').val();
 								if (mode == 'edit')
-									return '<button type="button" class="btn btn-xs btn-secondary changeStatus"><span class="glyphicon glyphicon-change Status"></span>&nbsp;change Status</button>';
+									return '<button type="button" class="btn btn-xs btn-secondary changeStatus"><span class="glyphicon glyphicon-change Status"></span>&nbsp;&nbsp;Change Status</button>';
 								else
-									return '<button type="button" class="btn btn-xs btn-secondary view"><span class="glyphicon glyphicon-tasks"></span>&nbsp;View</button>';
+									return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>';
 							}
 						}, {
 							"data" : "id",
@@ -205,7 +212,7 @@ function callAjaxSearch() {
 					     	                	   
 					     	                	  return type === 'display' && '<div><span>'+(data.length > 500 ? data.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(data)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : data+"</p>");
 					     	                   },
-					     	                   "targets": [1]
+					     	                   "targets": [2]
 						     	           },
 						     	           {
 							     	        	  "render" : function(data, type, row) {
@@ -216,7 +223,7 @@ function callAjaxSearch() {
 											          });
 							     	        		  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");;
 							     	        	  },
-						     	                   "targets": [3]
+						     	                   "targets": [4]
 							     	           }
 						     	          ] 
 			});
@@ -251,6 +258,13 @@ function callAjaxSearchForAgendaPreamble() {
 				aaSorting : [],
 				columns : [
 						{
+							 "data":null,
+							 "sClass" : "text-center",
+				        	   render: function (data, type, row, meta) {
+				        	        return meta.row + meta.settings._iDisplayStart + 1;
+			                },   
+				        },
+						{
 							"data" : "department",
 							"sClass" : "text-left"
 						},
@@ -263,7 +277,7 @@ function callAjaxSearchForAgendaPreamble() {
 							"sClass" : "text-left"
 						},
 						{
-							"data" : "expectedAmount",
+							"data" : "sanctionAmount",
 							"sClass" : "text-right"
 						},
 						{
@@ -290,7 +304,7 @@ function callAjaxSearchForAgendaPreamble() {
 											          });
 							     	        		  return type === 'display' && '<div><span>'+(str.length > 500 ? str.substr( 0, 500 )+'</span> <button class="details" data-text="'+escape(str)+'" class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></div>' : str+"</p>");
 							     	        	  },
-						     	                   "targets": [2]
+						     	                   "targets": [3]
 							     	           }
 						     	          ] 
 			});
@@ -315,7 +329,7 @@ $("#resultTable").on(
 		'click',
 		'tbody tr td  .view',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 8);
 			window.open('/council/councilpreamble/' + $('#mode').val() + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 
@@ -325,16 +339,11 @@ $("#resultTable").on(
 		'click',
 		'tbody tr td  .changeStatus',
 		function(event) {
-			var id = reportdatatable.fnGetData($(this).parent().parent(), 7);
+			var id = reportdatatable.fnGetData($(this).parent().parent(), 8);
 			window.open('/council/councilpreamble/updateimplimentaionstatus' + '/'
 					+ id, '', 'width=800, height=600,scrollbars=yes');
 
 		});
-
-//To Select all wards
-$('#selectall').click( function() {
-    $('select#wards > option').prop('selected', 'selected');
-});
 
 $("#momdetails").on(
 		'click',

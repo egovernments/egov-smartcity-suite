@@ -92,10 +92,10 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "agendaNumber", "sClass" : "text-left"} ,{ 
-"data" : "committeeType", "sClass" : "text-left"} ,{ 
-"data" : "status", "sClass" : "text-left"}
-,{ "data" : null, "target":-1,
+"data" : "agendaNumber", "sClass" : "text-center"} ,{ 
+"data" : "committeeType", "sClass" : "text-center"} ,{ 
+"data" : "status", "sClass" : "text-center"}
+,{ "data" : null, "sClass" : "text-center", "target":-1,
 	
     sortable: false,
     "render": function ( data, type, full, meta ) {

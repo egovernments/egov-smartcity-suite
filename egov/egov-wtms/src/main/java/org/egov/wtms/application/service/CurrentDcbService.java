@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,8 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.utils.DateUtils;
+import org.egov.wtms.application.entity.DonationChargesDCBReportSearch;
 import org.egov.wtms.application.entity.WaterChargesReceiptInfo;
 import org.egov.wtms.reports.entity.DCBReportResult;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -172,4 +175,29 @@ public class CurrentDcbService {
         return sqlQuery.list();
     }
 
+    public List<Object[]> getDonationDCBReportDetails(final DonationChargesDCBReportSearch chargesDCBReportSearch) {
+        StringBuilder selectQuery = new StringBuilder();
+        StringBuilder fromQuery = new StringBuilder();
+        final StringBuilder whereQuery = new StringBuilder();
+        selectQuery.append(
+                "select consumernumber, propertyid, username, mobileno, address, donation_demand, donation_coll, donation_balance");
+        fromQuery = new StringBuilder(" from egwtr_mv_donation_dcb_view ");
+        whereQuery.append(" where donation_demand is not null ");
+
+        if (chargesDCBReportSearch.getFromDate() != null)
+            whereQuery.append(" and applicationdate >= '" + chargesDCBReportSearch.getFromDate() + "' ");
+        if (chargesDCBReportSearch.getToDate() != null)
+            whereQuery.append(" and applicationdate <= '" + DateUtils.endOfDay(chargesDCBReportSearch.getToDate()) + "' ");
+        if (chargesDCBReportSearch.getFromAmount() != null && !chargesDCBReportSearch.getFromAmount().equals(BigDecimal.ZERO))
+            whereQuery.append(" and donation_demand >= " + chargesDCBReportSearch.getFromAmount());
+        if (chargesDCBReportSearch.getToAmount() != null && !chargesDCBReportSearch.getToAmount().equals(BigDecimal.ZERO))
+            whereQuery.append(" and donation_demand <= " + chargesDCBReportSearch.getToAmount());
+        if (chargesDCBReportSearch.getPendingForPaymentOnly() != null && chargesDCBReportSearch.getPendingForPaymentOnly())
+            whereQuery.append(" and (donation_demand-donation_coll) >0 ");
+        else
+            whereQuery.append(" and (donation_demand-donation_coll) >=0 ");
+        selectQuery = selectQuery.append(fromQuery).append(whereQuery);
+        final SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(selectQuery.toString());
+        return sqlQuery.list();
+    }
 }

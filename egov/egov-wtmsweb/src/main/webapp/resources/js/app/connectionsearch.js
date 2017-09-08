@@ -184,6 +184,15 @@ $("#aplicationSearchResults").on('click','tbody tr td .collect-hoardingWiseFee',
 
 });
 
+$('#aplicationSearchResults').on('click', 'tbody tr td .viewdcbscreen', function(event){
+	var consumerNumber = tableContainer.fnGetData($(this).parent().parent(), 1);
+	var url = '/wtms/viewDcb/consumerCodeWis/'+consumerNumber;
+	$('#waterSearchRequestForm').attr('method', 'get');
+	$('#waterSearchRequestForm').attr('action', url);
+	$('#waterSearchRequestForm').attr('name', 'myform');
+	document.forms["myform"].submit();
+});
+
 $(document).on("keypress", 'form', function (e) {
     var code = e.keyCode || e.which;
     if (code == 13) {
@@ -268,7 +277,7 @@ function submitButton()
  			   if (full.status == 'ACTIVE' ) {
  				   if ( citizenRole== 'true'   ) { 
  					   if(full.waterTaxDue > 0)
- 					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+ 					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button><br><br/><button type="button" class="btn btn-xs btn-secondary viewdcbscreen"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB</button>');   
  					   else{
  						   return ('');   
  					   }
@@ -342,7 +351,7 @@ function submitButton()
  				   && full.applicationcode == 'NEWCONNECTION') {
  			   if (full.status == 'ACTIVE') {
  				   if ( citizenRole== 'true'   ) { 
- 					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+ 					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button><br><br/><button type="button" class="btn btn-xs btn-secondary viewdcbscreen"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB</button>');   
  					  
  				   }
  				   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole==""))    && full.waterTaxDue > 0  ) {
@@ -406,7 +415,7 @@ function submitButton()
  				   full.applicationcode == 'CHANGEOFUSE') {
  			  
  			   if ( citizenRole== 'true'   ) { 
-					  return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+					  return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button><br><br/><button type="button" class="btn btn-xs btn-secondary viewdcbscreen"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB</button>');   
 					   
 				   }
  			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.waterTaxDue > 0  ) {
@@ -460,7 +469,7 @@ function submitButton()
  		   if (full != null&& full != undefined && full.applicationcode != undefined &&
  				   full.applicationcode == 'RECONNECTION') {
  			   if ( citizenRole== 'true'   ) { 
-					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button>&nbsp;');   
+					   return ('<button type="button" class="btn btn-xs btn-secondary collect-hoardingWiseFee"><span class="glyphicon glyphicon-edit"></span>&nbsp;Pay</button><br><br/><button type="button" class="btn btn-xs btn-secondary viewdcbscreen"><span class="glyphicon glyphicon-edit"></span>&nbsp;View DCB</button>');   
 					   
 				   }
  			   else if ((billcollector!=null &&  billcollector!="" && (ulbUserRole == null || ulbUserRole =="") && (cscUserRole==null || cscUserRole=="")) && full.waterTaxDue > 0  ) {

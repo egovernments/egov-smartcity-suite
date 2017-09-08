@@ -98,8 +98,9 @@ public final class PGRConstants {
     public static final String COMPLAINT_REGISTERED = "REGISTERED";
     public static final String COMPLAINT_CLOSED = "CLOSED";
     public static final String COMPLAINT_WITHDRAWN = "WITHDRAWN";
+    public static final String COMPLAINT_REOPENED = "REOPENED";
 
-    public static final String[] PENDING_STATUS = {COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", "REOPENED"};
+    public static final String[] PENDING_STATUS = {COMPLAINT_REGISTERED, "FORWARDED", "PROCESSING", "NOTCOMPLETED", COMPLAINT_REOPENED};
     public static final String[] COMPLETED_STATUS = {COMPLAINT_COMPLETED, COMPLAINT_WITHDRAWN, COMPLAINT_CLOSED};
     public static final String[] REJECTED_STATUS = {COMPLAINT_REJECTED};
     public static final String[] RESOLVED_STATUS = {COMPLAINT_COMPLETED, COMPLAINT_WITHDRAWN, COMPLAINT_CLOSED, COMPLAINT_REJECTED};

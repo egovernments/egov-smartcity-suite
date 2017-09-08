@@ -49,6 +49,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.repository.PositionHierarchyRepository;
 import org.egov.eis.repository.PositionMasterRepository;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,10 +193,16 @@ public class PositionMasterService {
         final List<Assignment> assignmentList = assignmentService
                 .getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, givenDate);
 
-        for (final Assignment assignmentObj : assignmentList)
-            positionList.add(assignmentObj.getPosition());
+        for (final Assignment assignmentObj : assignmentList) {
+            //Unproxing position due lazy initialization
+            positionList.add(PersistenceUtils.unproxy(assignmentObj.getPosition()));
+        }
 
         return positionList;
+    }
+
+    public List<Position> getPositionsByDepartmentAndDesignationId(Long departmentId, Long designationId) {
+        return getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, new Date());
     }
 
 	public Position getCurrentPositionForUser(final Long userId) {

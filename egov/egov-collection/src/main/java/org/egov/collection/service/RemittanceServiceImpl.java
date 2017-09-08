@@ -501,7 +501,6 @@ public class RemittanceServiceImpl extends RemittanceService {
                     + boundaryIdList + "))");
 
         queryStringForCashChequeDDCard.append(groupByClause);
-        collectionsUtil.getUserByUserName(CollectionConstants.CITIZEN_USER_NAME);
 
         final Query query = receiptHeaderService.getSession()
                 .createSQLQuery(queryStringForCashChequeDDCard.toString() + orderBy);

@@ -1,0 +1,1 @@
+update eg_wf_matrix  set nextstate='Close forwared By Approver' where objecttype ='WaterConnectionDetails' and additionalrule ='CLOSECONNECTION' and currentState = 'Close Connection By AE';

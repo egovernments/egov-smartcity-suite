@@ -47,25 +47,24 @@ import com.google.gson.JsonSerializer;
 import org.egov.infra.admin.master.entity.Boundary;
 
 import java.lang.reflect.Type;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
+
+import static org.egov.infra.utils.ApplicationConstant.NA;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
 public class BoundaryAdapter implements JsonSerializer<Boundary> {
 
-	@Override
-	public JsonElement serialize(final Boundary boundary, final Type type, final JsonSerializationContext jsc) {
-		final DateFormat dateFormatter = new SimpleDateFormat("dd-MM-yyyy");
-		final JsonObject jsonObject = new JsonObject();
-		jsonObject.addProperty("name", boundary.getName());
-		jsonObject.addProperty("boundaryNameLocal", boundary.getLocalName());
-		jsonObject.addProperty("boundaryNum", boundary.getBoundaryNum());
-		jsonObject.addProperty("fromDate", dateFormatter.format(boundary.getFromDate()));
-		jsonObject.addProperty("boundaryParentName", (boundary.getParent()!=null?boundary.getParent().getName():""));
-		if (boundary.getToDate() == null)
-			jsonObject.addProperty("toDate", "NA");
-		else
-			jsonObject.addProperty("toDate", dateFormatter.format(boundary.getToDate()));
+    @Override
+    public JsonElement serialize(final Boundary boundary, final Type type, final JsonSerializationContext jsc) {
+        JsonObject boundaryJson = new JsonObject();
+        boundaryJson.addProperty("id", boundary.getId());
+        boundaryJson.addProperty("name", boundary.getName());
+        boundaryJson.addProperty("boundaryNameLocal", defaultIfBlank(boundary.getLocalName()));
+        boundaryJson.addProperty("boundaryParentName", (boundary.getParent() == null ? NA : boundary.getParent().getName()));
+        boundaryJson.addProperty("boundaryNum", boundary.getBoundaryNum());
+        boundaryJson.addProperty("fromDate", toDefaultDateFormat(boundary.getFromDate()));
+        boundaryJson.addProperty("toDate", boundary.getToDate() == null ? NA : toDefaultDateFormat(boundary.getToDate()));
 
-		return jsonObject;
-	}
+        return boundaryJson;
+    }
 }

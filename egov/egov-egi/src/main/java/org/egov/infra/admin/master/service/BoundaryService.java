@@ -43,12 +43,12 @@ package org.egov.infra.admin.master.service;
 import com.vividsolutions.jts.geom.Coordinate;
 import com.vividsolutions.jts.geom.Geometry;
 import com.vividsolutions.jts.geom.Point;
+import org.egov.infra.admin.master.contracts.BoundarySearchRequest;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.entity.HierarchyType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.StringUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
@@ -59,9 +59,13 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.validation.ValidationException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -77,6 +81,7 @@ import java.util.Set;
 public class BoundaryService {
 
     private static final Logger LOG = LoggerFactory.getLogger(BoundaryService.class);
+    private static final String GIS_SHAPE_FILE_LOCATION = "gis/%s/wards.shp";
 
     private final BoundaryRepository boundaryRepository;
 
@@ -93,14 +98,12 @@ public class BoundaryService {
 
     @Transactional
     public Boundary createBoundary(final Boundary boundary) {
-        boundary.setHistory(false);
         boundary.setMaterializedPath(getMaterializedPath(null, boundary.getParent()));
         return boundaryRepository.save(boundary);
     }
 
     @Transactional
     public void updateBoundary(final Boundary boundary) {
-        boundary.setHistory(false);
         boundary.setMaterializedPath(getMaterializedPath(boundary, boundary.getParent()));
         boundaryRepository.save(boundary);
     }
@@ -114,16 +117,17 @@ public class BoundaryService {
     }
 
     public List<Boundary> getAllBoundariesByBoundaryTypeId(final Long boundaryTypeId) {
-        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
+        return boundaryRepository.findByBoundaryTypeId(boundaryTypeId);
     }
 
-    public List<Boundary> getPageOfBoundaries(final Long boundaryTypeId) {
-
-        return boundaryRepository.findBoundariesByBoundaryType(boundaryTypeId);
+    public Page<Boundary> getPageOfBoundaries(BoundarySearchRequest searchRequest) {
+        Pageable pageable = new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+                searchRequest.orderDir(), searchRequest.orderBy());
+        return boundaryRepository.findByBoundaryTypeId(searchRequest.getBoundaryTypeId(), pageable);
     }
 
     public Boundary getBoundaryByTypeAndNo(final BoundaryType boundaryType, final Long boundaryNum) {
-        return boundaryRepository.findBoundarieByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
+        return boundaryRepository.findByBoundaryTypeAndBoundaryNum(boundaryType, boundaryNum);
     }
 
     public List<Boundary> getParentBoundariesByBoundaryId(final Long boundaryId) {
@@ -234,9 +238,9 @@ public class BoundaryService {
         return mpath;
     }
 
-    public Long getBoundaryIdFromShapefile(final Double latitude, final Double longitude) {
-        Optional<Boundary> boundary = getBoundary(latitude, longitude);
-        return boundary.isPresent() ? boundary.get().getId() : 0;
+    public Boundary getBoundaryByGisCoordinates(final Double latitude, final Double longitude) {
+        return getBoundary(latitude, longitude)
+                .orElseThrow(() -> new ValidationException("gis.location.info.not.found"));
     }
 
     public Optional<Boundary> getBoundary(final Double latitude, final Double longitude) {
@@ -244,20 +248,18 @@ public class BoundaryService {
             if (latitude != null && longitude != null) {
                 final Map<String, URL> map = new HashMap<>();
                 map.put("url", Thread.currentThread().getContextClassLoader()
-                        .getResource("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.shp"));
+                        .getResource(String.format(GIS_SHAPE_FILE_LOCATION, ApplicationThreadLocals.getTenantID())));
                 final DataStore dataStore = DataStoreFinder.getDataStore(map);
                 final FeatureCollection<SimpleFeatureType, SimpleFeature> collection = dataStore
                         .getFeatureSource(dataStore.getTypeNames()[0]).getFeatures();
                 final Iterator<SimpleFeature> iterator = collection.iterator();
                 final Point point = JTSFactoryFinder.getGeometryFactory(null)
                         .createPoint(new Coordinate(longitude, latitude));
-                LOG.debug("Fetching boundary data for coordinates lng {}, lat {}", longitude, latitude);
                 try {
                     while (iterator.hasNext()) {
                         final SimpleFeature feature = iterator.next();
                         final Geometry geom = (Geometry) feature.getDefaultGeometry();
                         if (geom.contains(point)) {
-                            LOG.debug("Found coordinates in shape file");
                             return getBoundaryByNumberAndType((Long) feature.getAttribute("bndrynum"), (String) feature.getAttribute("bndrytype"));
                         }
                     }
@@ -268,7 +270,8 @@ public class BoundaryService {
 
             return Optional.empty();
         } catch (final Exception e) {
-            throw new ApplicationRuntimeException("Error occurred while fetching boundary from GIS data", e);
+            LOG.error("Error occurred while fetching boundary from GIS data", e);
+            return Optional.empty();
         }
     }
 

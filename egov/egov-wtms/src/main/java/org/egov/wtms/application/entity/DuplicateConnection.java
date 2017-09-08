@@ -46,7 +46,9 @@ public class DuplicateConnection {
 
     private String consumerNo;
 
-    private List<String> consumerCodes = new ArrayList<String>();
+    private String originalConsumerNo;
+
+    private List<String> consumerCodes = new ArrayList<>();
 
     private String referenceNumber;
 
@@ -82,6 +84,14 @@ public class DuplicateConnection {
 
     public void setConsumerCodes(final List<String> consumerCodes) {
         this.consumerCodes = consumerCodes;
+    }
+
+    public String getOriginalConsumerNo() {
+        return originalConsumerNo;
+    }
+
+    public void setOriginalConsumerNo(final String originalConsumerNo) {
+        this.originalConsumerNo = originalConsumerNo;
     }
 
 }

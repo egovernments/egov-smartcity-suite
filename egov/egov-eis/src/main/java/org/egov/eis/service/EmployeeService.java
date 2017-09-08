@@ -39,27 +39,13 @@
  */
 package org.egov.eis.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFunction;
 import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
-import org.egov.eis.entity.EmployeeSearchDTO;
-import org.egov.eis.entity.HeadOfDepartments;
-import org.egov.eis.entity.Jurisdiction;
+import org.egov.eis.entity.*;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.EmployeeRepository;
@@ -85,6 +71,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @Transactional(readOnly = true)
@@ -413,7 +404,7 @@ public class EmployeeService implements EntityTypeService {
      * @return List of employee objects
      */
     public List<Employee> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
-            final Long boundaryId) {
+                                                                 final Long boundaryId) {
         final Set<Long> bndIds = new HashSet<Long>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
         boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
@@ -461,7 +452,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Override
     public List<? extends EntityType> filterActiveEntities(final String filterKey, final int maxRecords,
-            final Integer accountDetailTypeId) {
+                                                           final Integer accountDetailTypeId) {
         return employeeRepository.findByNameLikeOrCodeLike(filterKey + "%", filterKey + "%");
     }
 
@@ -569,6 +560,17 @@ public class EmployeeService implements EntityTypeService {
                 count++;
         }
         return count > 1 ? true : false;
+    }
+
+
+    public Boolean isPositionExistsInWF(String positionName, Boolean isPositionChanged, Date fromDate, Date toDate) {
+        Position position = positionMasterService.getPositionByName(positionName);
+        if (isPositionChanged) {
+            return stateService.isPositionUnderWorkflow(position.getId(), fromDate);
+        } else {
+            Date maxCreatedDate = stateService.getMaxCreatedDateByPositionId(position.getId());
+            return (maxCreatedDate != null && maxCreatedDate.after(toDate)) ? true : false;
+        }
     }
 
 }

@@ -40,17 +40,9 @@
 
 package org.egov.tl.web.controller.legacy;
 
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-
-import java.util.List;
-import java.util.Map;
-
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.BoundaryTypeService;
-import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
@@ -59,12 +51,17 @@ import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LegacyLicenseService;
 import org.egov.tl.service.LicenseCategoryService;
-import org.egov.tl.service.LicenseSubCategoryService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.tl.utils.Constants.LOCALITY;
+import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 
 @Controller
 public class LegacyLicenseController extends GenericWorkFlowController {
@@ -79,16 +76,7 @@ public class LegacyLicenseController extends GenericWorkFlowController {
     protected BoundaryService boundaryService;
 
     @Autowired
-    protected BoundaryTypeService boundaryTypeService;
-
-    @Autowired
     protected LicenseCategoryService licenseCategoryService;
-
-    @Autowired
-    protected CrossHierarchyService crossHierarchyService;
-
-    @Autowired
-    protected LicenseSubCategoryService licenseSubCategoryService;
 
     @Autowired
     protected LicenseRepository licenseRepository;

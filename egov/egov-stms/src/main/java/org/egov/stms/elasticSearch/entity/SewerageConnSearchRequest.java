@@ -40,7 +40,9 @@
 
 package org.egov.stms.elasticSearch.entity;
 
-public class SewerageConnSearchRequest {
+import org.egov.infra.web.support.search.DataTableSearchRequest;
+
+public class SewerageConnSearchRequest extends DataTableSearchRequest {
     private String consumerNumber;
     private String searchText;
     private String shscNumber;

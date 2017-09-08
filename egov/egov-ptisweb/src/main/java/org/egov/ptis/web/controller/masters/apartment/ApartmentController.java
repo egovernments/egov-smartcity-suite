@@ -45,7 +45,6 @@ import javax.validation.Valid;
 
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.ptis.domain.entity.property.Apartment;
-import org.egov.ptis.domain.entity.property.ApartmentHouse;
 import org.egov.ptis.master.service.ApartmentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -60,62 +59,56 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/apartment")
 public class ApartmentController {
-    
-    private static final String APARTMENT_SEARCH = "apartment-search";
 
-    private final ApartmentService apartmentService;
+	private static final String APARTMENT_SEARCH = "apartment-search";
 
-    @Autowired
-    public UserService userService;
+	private final ApartmentService apartmentService;
 
-    @Autowired
-    public ApartmentController(final ApartmentService apartmentService) {
-        this.apartmentService = apartmentService;
-    }
+	@Autowired
+	public UserService userService;
 
-    @ModelAttribute
-    public Apartment apartmentModel() {
-        return new Apartment();
-    }
+	@Autowired
+	public ApartmentController(final ApartmentService apartmentService) {
+		this.apartmentService = apartmentService;
+	}
 
-    @ModelAttribute(value = "apartmenttype")
-    public List<Apartment> listApartment() {
-        return apartmentService.getAllApartments();
-    }
+	@ModelAttribute
+	public Apartment apartmentModel() {
+		return new Apartment();
+	}
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String search(final Model model) {
-        return APARTMENT_SEARCH;
-    }
+	@ModelAttribute(value = "apartmenttype")
+	public List<Apartment> listApartment() {
+		return apartmentService.getAllApartments();
+	}
 
-    @RequestMapping(value = "/create", method = RequestMethod.GET)
-    public String create(final Model model) {
-        model.addAttribute("apartment", apartmentModel());
-        return "apartment-create";
-    }
+	@RequestMapping(value = "/search", method = RequestMethod.GET)
+	public String search(final Model model) {
+		return APARTMENT_SEARCH;
+	}
 
-    @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
-    public String view(@PathVariable final Long id, final Model model) {
-        model.addAttribute("apartment", apartmentService.getApartmentById(id));
-        return "apartment-view";
-    }
+	@RequestMapping(value = "/create", method = RequestMethod.GET)
+	public String create(final Model model) {
+		model.addAttribute("apartment", apartmentModel());
+		return "apartment-create";
+	}
 
-    @RequestMapping(value = "/create", method = RequestMethod.POST)
-    public String create(@Valid @ModelAttribute final Apartment apartment, final BindingResult errors,
-            final RedirectAttributes redirectAttrs, final Model model) {
+	@RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
+	public String view(@PathVariable final Long id, final Model model) {
+		model.addAttribute("apartment", apartmentService.getApartmentById(id));
+		return "apartment-view";
+	}
 
-        if (errors.hasErrors())
-            return "apartment-create";
+	@RequestMapping(value = "/create", method = RequestMethod.POST)
+	public String create(@Valid @ModelAttribute final Apartment apartment, final BindingResult errors,
+			final RedirectAttributes redirectAttrs, final Model model) {
 
-        for (final ApartmentHouse apartmentHouse : apartment.getApartmentHouseProxy())
-            if (apartmentHouse.getFloorNo() != null) {
-                apartmentHouse.setApartment(apartment);
-                apartment.getApartmentHouse().add(apartmentHouse);
-            }
+		if (errors.hasErrors())
+			return "apartment-create";
 
-        apartmentService.create(apartment);
-        model.addAttribute("successMessage", "Apartment/Complex Details Added successfully!");
-        return "apartment-success";
+		apartmentService.create(apartment);
+		model.addAttribute("successMessage", "Apartment/Complex Details Added successfully!");
+		return "apartment-success";
 
-    }
+	}
 }

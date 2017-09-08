@@ -39,6 +39,7 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
@@ -50,7 +51,7 @@ import org.apache.commons.lang.WordUtils;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -167,6 +168,6 @@ public class EstimationNoticeController {
     }
 
     public String getTotalAmntInWords(final Double totalCharges) {
-        return NumberToWord.amountInWords(totalCharges);
+        return NumberToWordConverter.amountInWordsWithCircumfix(BigDecimal.valueOf(totalCharges));
     }
 }

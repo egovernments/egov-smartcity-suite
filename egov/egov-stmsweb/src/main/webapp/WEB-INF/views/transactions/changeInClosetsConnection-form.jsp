@@ -60,6 +60,7 @@
 			<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 			<input type="hidden" name="approvalPosOnValidate" id="approvalPosOnValidate" value="${approvalPosOnValidate}">  
 			<input type="hidden" name="ptAssessmentNo" id="ptAssessmentNo" value="${ptAssessmentNo}">  
+			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 		   <form:hidden id="documentName" path="" value="${documentName}"/> 
 		   
 			<div class="panel-body custom-form ">
@@ -68,8 +69,10 @@
 				<c:if test="${inspectionFeesCollectionRequired == 'true'}"> 
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
 				</c:if>
-				 <jsp:include page="documentdetails.jsp"></jsp:include>	 
-				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+				 <jsp:include page="documentdetails.jsp"></jsp:include>
+				<c:if test="${!isCitizenPortalUser}">
+					<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+				</c:if>
 			</div>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />

@@ -148,7 +148,7 @@ public abstract class AdtaxWorkflowCustomImpl implements AdtaxWorkflowCustom {
         } else if (AdvertisementTaxConstants.WF_APPROVE_BUTTON.equalsIgnoreCase(workFlowAction)) {
 
             wfmatrix = advertisementPermitDetailWorkflowService.getWfMatrix(advertisementPermitDetail.getStateType(), null,
-                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), null);
+                    null, additionalRule, advertisementPermitDetail.getCurrentState().getValue(), advertisementPermitDetail.getState().getNextAction());
             advertisementPermitDetail.setStatus(egwStatusHibernateDAO
                     .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_MODULE_TYPE,
                             AdvertisementTaxConstants.APPLICATION_STATUS_APPROVED));

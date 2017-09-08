@@ -47,11 +47,16 @@ public class AssessmentsDetails implements Serializable {
 	private String mutationReasonCode;
 	private String parentPropertyAssessmentNo;
 	private String extentOfSite;
-	private Boolean isExtentAppurtenantLand;
 	private String occupancyCertificationNo;
 	private String extentAppartenauntLand;
-	private String regdDocNo;
-	private String regdDocDate;
+	
+	@Override
+	public String toString() {
+		return "AssessmentsDetails [mutationReasonCode=" + mutationReasonCode + ", parentPropertyAssessmentNo="
+				+ parentPropertyAssessmentNo + ", extentOfSite=" + extentOfSite +  ", occupancyCertificationNo=" + occupancyCertificationNo + ", occupancyCertificationNo=" + occupancyCertificationNo
+				 + "]";
+	}
+	
 	public String getMutationReasonCode() {
 		return mutationReasonCode;
 	}
@@ -70,37 +75,15 @@ public class AssessmentsDetails implements Serializable {
 	public void setExtentOfSite(String extentOfSite) {
 		this.extentOfSite = extentOfSite;
 	}
-	public Boolean getIsExtentAppurtenantLand() {
-		return isExtentAppurtenantLand;
-	}
-	public void setIsExtentAppurtenantLand(Boolean isExtentAppurtenantLand) {
-		this.isExtentAppurtenantLand = isExtentAppurtenantLand;
-	}
+	
 	public String getOccupancyCertificationNo() {
 		return occupancyCertificationNo;
 	}
 	public void setOccupancyCertificationNo(String occupancyCertificationNo) {
 		this.occupancyCertificationNo = occupancyCertificationNo;
 	}
-	public String getRegdDocNo() {
-		return regdDocNo;
-	}
-	public void setRegdDocNo(String regdDocNo) {
-		this.regdDocNo = regdDocNo;
-	}
-	public String getRegdDocDate() {
-		return regdDocDate;
-	}
-	public void setRegdDocDate(String regdDocDate) {
-		this.regdDocDate = regdDocDate;
-	}
-	@Override
-	public String toString() {
-		return "AssessmentsDetails [mutationReasonCode=" + mutationReasonCode + ", parentPropertyAssessmentNo="
-				+ parentPropertyAssessmentNo + ", extentOfSite=" + extentOfSite + ", isExtentAppurtenantLand="
-				+ isExtentAppurtenantLand + ", occupancyCertificationNo=" + occupancyCertificationNo
-				+ ", regdDocNo=" + regdDocNo + ", regdDocDate=" + regdDocDate + "]";
-	}
+	
+	
 	public String getExtentAppartenauntLand() {
 		return extentAppartenauntLand;
 	}

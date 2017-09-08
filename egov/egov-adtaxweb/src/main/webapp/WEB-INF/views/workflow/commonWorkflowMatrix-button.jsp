@@ -42,7 +42,35 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script>
+var popupWindow;
+function openReassignWindow() {
+	var applicationId;
+	if ($("#adtaxpermitId").val()) {
+		applicationId = $("#adtaxpermitId").val();
+	} else if ($("#renewpermitId").val()) {
+		applicationId = $("#renewpermitId").val();
+	}
 
+	var applicationType = $("#applicationType").val();
+
+	popupWindow = window.open('/adtax/reassignadvertisement/'
+				+applicationId + "/" + applicationType, '_blank',
+			'width=650, height=500, scrollbars=yes', false);
+	jQuery('.loader-class').modal('show', {
+		backdrop : 'static'
+	});
+}
+
+function closeAllWindows() {
+	popupWindow.close();
+	window.opener.inboxloadmethod();
+	self.close();
+}
+
+function closeChildWindow() {
+	jQuery('.loader-class').modal('hide');
+	popupWindow.close();
+}
 
 	function validateWorkFlowApprover(name) {
 		document.getElementById("workFlowAction").value=name;
@@ -67,7 +95,14 @@
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>
-			<td>
+			<td><c:if
+					test="${advertisementPermitDetail.currentState.value == 'NEW'}">
+					<c:if test="${isReassignEnabled}">
+						<input type="button" value="Reassign" class="btn btn-primary"
+							id="Reassign" name="Reassign"
+							onclick="return openReassignWindow();" />
+					</c:if>
+				</c:if> 
 		<c:forEach items="${validActionList}" var="validButtons">
 				<form:button type="submit" id="${validButtons}" class="btn btn-primary workflow-submit"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>

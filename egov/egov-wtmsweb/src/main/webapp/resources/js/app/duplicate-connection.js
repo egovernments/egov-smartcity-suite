@@ -38,14 +38,64 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 $(document).ready(function(){
+	$('#originalConsumerNo').val("");
 	
-	  $('#buttonid').click(function() {
-		  if ($( "#duplicateConnectionform" ).valid())
-			  {
-			  document.forms[0].submit();
-			  }
-		  		});
+	$('#originalConsumerNo').on('blur', function() {
+		validateOriginalConsumerNo();
+	});
+	
+	
+	$('#buttonid').click(function() {
+		  if ($("#duplicateConnectionform").valid()) {
+			       if(validateOriginalConsumerNo())
+			    	   document.forms[0].submit();
+			       else 
+			    	   return false;
+		  }
+		  
+	});
 
 	$("#consumerNo").attr('disabled','disabled');
-	
  });
+
+
+function validateOriginalConsumerNo() {
+	var isSubmitForm = false;
+	var originalConsumerNumber = $('#originalConsumerNo').val();
+	var duplicateConsumerNo = $('#consumerNo').val();
+	if(duplicateConsumerNo!=undefined && originalConsumerNumber!=undefined && originalConsumerNumber!=""){
+		
+		if(duplicateConsumerNo===originalConsumerNumber) {
+			bootbox.alert("The Original Consumer Number should not be equal to Duplicate Consumer Number");
+			return isSubmitForm;
+		}
+		else {
+			$.ajax ({
+				"url" : "/wtms/application/originalconnectionnumber-validate",
+				"type" : "GET",
+				"data" : {
+					originalConsumerNumber,
+					duplicateConsumerNo
+				},
+				async : false,
+				dataType : "json",
+			 	success : function(response) {
+					if(response!="" && response){
+						isSubmitForm = true;
+					}
+					else {
+						bootbox.alert("The Duplicate Consumer Number and the entered Original Consumer Number are not associated with same assessment number");
+						isSubmitForm = false;
+					}
+				}
+			});
+		}
+	}
+	else if(originalConsumerNumber==="") {
+		bootbox.alert("Please enter Original Consumer Number");
+		isSubmitForm=false;
+	}
+		
+	return isSubmitForm;
+	
+}

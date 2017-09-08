@@ -44,11 +44,20 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYP
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CLOSECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEE_INSPECTIONCHARGE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.GROUPBYFIELD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,8 +66,11 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.collection.repository.es.CollectionDocumentRepository;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -67,23 +79,32 @@ import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.entity.es.SewerageIndex;
+import org.egov.stms.masters.pojo.SewerageRateDCBResult;
+import org.egov.stms.reports.entity.SewerageBaseRegisterResult;
 import org.egov.stms.reports.entity.SewerageNoOfConnReportResult;
 import org.egov.stms.repository.es.SewerageIndexRepository;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
+import org.egov.stms.transactions.service.SewerageDCBReporService;
+import org.egov.stms.transactions.service.SewerageDemandService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
+import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms;
 import org.elasticsearch.search.aggregations.bucket.terms.Terms.Bucket;
 import org.elasticsearch.search.aggregations.bucket.terms.TermsBuilder;
+import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
@@ -110,12 +131,28 @@ public class SewerageIndexService {
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
+    @Autowired
+    private SewerageDemandService sewerageDemandService;
+
+    @Autowired
+    private SewerageDCBReporService sewerageDCBReporService;
+
+    @Autowired
+    private InstallmentDao installmentDao;
+
+    @Autowired
+    private ModuleService moduleDao;
+
     public SewerageIndex createSewarageIndex(final SewerageApplicationDetails sewerageApplicationDetails,
             final AssessmentDetails assessmentDetails) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
 
         final SewerageIndex sewarageIndex = new SewerageIndex();
         sewarageIndex.setUlbName(cityWebsite.getName());
+        sewarageIndex.setDistrictName(cityWebsite.getDistrictName());
+        sewarageIndex.setRegionName(cityWebsite.getRegionName());
+        sewarageIndex.setUlbGrade(cityWebsite.getGrade());
+        sewarageIndex.setUlbCode(cityWebsite.getCode());
         sewarageIndex.setApplicationCreatedBy(sewerageApplicationDetails.getCreatedBy().getName());
         sewarageIndex.setId(cityWebsite.getCode().concat("-").concat(sewerageApplicationDetails.getApplicationNumber()));
         sewarageIndex.setApplicationDate(sewerageApplicationDetails.getApplicationDate());
@@ -160,6 +197,13 @@ public class SewerageIndexService {
                 .setClosureNoticeNumber(
                         sewerageApplicationDetails.getClosureNoticeNumber() != null ? sewerageApplicationDetails
                                 .getClosureNoticeNumber() : "");
+        if (sewerageApplicationDetails.getRejectionDate() != null)
+            sewarageIndex
+                    .setRejectionNoticeDate(sewerageApplicationDetails.getRejectionDate());
+        sewarageIndex
+                .setRejectionNoticeNumber(
+                        sewerageApplicationDetails.getRejectionNumber() != null ? sewerageApplicationDetails
+                                .getRejectionNumber() : "");
         Iterator<OwnerName> ownerNameItr = null;
         if (null != assessmentDetails.getOwnerNames())
             ownerNameItr = assessmentDetails.getOwnerNames().iterator();
@@ -187,8 +231,65 @@ public class SewerageIndexService {
                 assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getLocalityName() : "");
         sewarageIndex
                 .setAddress(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
+        sewarageIndex.setSource(sewerageApplicationDetails.getSource() != null ? sewerageApplicationDetails.getSource()
+                : Source.SYSTEM.toString());
         // Setting application status is active or in-active
         sewarageIndex.setActive(sewerageApplicationDetails.isActive());
+
+        // setting connection fees details
+        for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()) {
+
+            if (scf.getFeesDetail().getCode().equals(FEES_SEWERAGETAX_CODE))
+                sewarageIndex.setSewerageTax(BigDecimal.valueOf(scf.getAmount()));
+            if (scf.getFeesDetail().getCode().equals(FEES_DONATIONCHARGE_CODE))
+                sewarageIndex.setDonationAmount(BigDecimal.valueOf(scf.getAmount()));
+            if (scf.getFeesDetail().getCode().equals(FEE_INSPECTIONCHARGE))
+                sewarageIndex.setInspectionCharge(BigDecimal.valueOf(scf.getAmount()));
+            if (scf.getFeesDetail().getCode().equals(FEES_ESTIMATIONCHARGES_CODE))
+                sewarageIndex.setEstimationCharge(BigDecimal.valueOf(scf.getAmount()));
+        }
+
+        // setting demand details
+        final List<SewerageRateDCBResult> rateResultList = sewerageDCBReporService
+                .getSewerageRateDCBReport(sewerageApplicationDetails);
+        final Date currentInstallmentYear = sewerageDemandService.getCurrentInstallment().getInstallmentYear();
+        BigDecimal totalDemandAmount = BigDecimal.ZERO;
+        BigDecimal totalCollectedDemandamount = BigDecimal.ZERO;
+        BigDecimal totalArrearamount = BigDecimal.ZERO;
+        BigDecimal totalCollectedArearamount = BigDecimal.ZERO;
+        final Calendar calendar = new GregorianCalendar();
+
+        for (final SewerageRateDCBResult demand : rateResultList) {// FIXME: SORT BASED ON INSTALLMENT DESCRIPTION
+            final Date installmentYear = installmentDao
+                    .getInsatllmentByModuleAndDescription(moduleDao.getModuleByName(MODULE_NAME),
+                            demand.getInstallmentYearDescription())
+                    .getInstallmentYear();
+
+            String period = null;
+            if (sewerageApplicationDetails.getConnection().getExecutionDate() != null)
+                calendar.setTime(sewerageApplicationDetails.getConnection().getExecutionDate());
+            final int year = calendar.get(Calendar.YEAR);
+            period = year + "-" + demand.getInstallmentYearDescription().substring(5, 9);
+            sewarageIndex.setPeriod(period != null ? period : StringUtils.EMPTY);
+
+            if (installmentYear.equals(currentInstallmentYear) || installmentYear.after(currentInstallmentYear)) {
+                totalDemandAmount = totalDemandAmount.add(demand.getDemandAmount());
+                totalCollectedDemandamount = totalCollectedDemandamount.add(demand.getCollectedDemandAmount());
+
+            }
+            if (installmentYear.before(currentInstallmentYear)) {
+                totalArrearamount = totalArrearamount.add(demand.getDemandAmount());
+                totalCollectedArearamount = totalCollectedArearamount.add(demand.getCollectedDemandAmount());
+
+            }
+            if (demand.getCollectedAdvanceAmount() != null)
+                sewarageIndex.setExtraAdvanceAmount(demand.getCollectedAdvanceAmount());
+        }
+        sewarageIndex.setDemandAmount(totalDemandAmount != null ? totalDemandAmount : BigDecimal.ZERO);
+        sewarageIndex.setCollectedDemandAmount(totalCollectedDemandamount != null ? totalCollectedDemandamount : BigDecimal.ZERO);
+        sewarageIndex.setArrearAmount(totalArrearamount != null ? totalArrearamount : BigDecimal.ZERO);
+        sewarageIndex.setCollectedArrearAmount(totalCollectedArearamount != null ? totalCollectedArearamount : BigDecimal.ZERO);
+        sewarageIndex.setTotalAmount(totalDemandAmount.add(totalArrearamount));
         sewerageIndexRepository.save(sewarageIndex);
         return sewarageIndex;
     }
@@ -196,6 +297,9 @@ public class SewerageIndexService {
     // TODO: CHECK LIKE CASES WORKING OR NOT IN CASE OF SEARCH BY CONSUMER NAME
     public BoolQueryBuilder getQueryFilter(final SewerageConnSearchRequest searchRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("active", true));
+
+        if (StringUtils.isNotBlank(searchRequest.getUlbName()))
+            boolQuery.filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
         if (StringUtils.isNotBlank(searchRequest.getConsumerNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("consumerNumber", searchRequest.getConsumerNumber()));
         if (StringUtils.isNotBlank(searchRequest.getShscNumber()))
@@ -208,16 +312,19 @@ public class SewerageIndexService {
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", searchRequest.getRevenueWard()));
         if (StringUtils.isNotBlank(searchRequest.getDoorNumber()))
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("doorNo", searchRequest.getDoorNumber()));
-        if(searchRequest.getLegacy()!=null)
+        if (searchRequest.getLegacy() != null)
             boolQuery = boolQuery.filter(QueryBuilders.matchQuery("islegacy", searchRequest.getLegacy()));
         return boolQuery;
     }
 
-    public List<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList;
+    public Page<SewerageIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
+            final SewerageConnSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(), searchRequest.orderDir(),
+                        searchRequest.orderBy()))
                 .withSort(sort).build();
-        resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
@@ -239,12 +346,15 @@ public class SewerageIndexService {
         return boolQuery;
     }
 
-    public List<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        List<SewerageIndex> resultList;
+    public Page<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
+            final SewerageCollectFeeSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+                        searchRequest.orderDir(), searchRequest.orderBy()))
                 .withSort(sort).build();
 
-        resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
@@ -337,6 +447,10 @@ public class SewerageIndexService {
                 boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("closureNoticeDate")
                         .from(searchRequest.getNoticeGeneratedFrom())
                         .to(searchRequest.getNoticeGeneratedTo()));
+            else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_REJECTION))
+                boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.rangeQuery("rejectionNoticeDate")
+                        .from(searchRequest.getNoticeGeneratedFrom())
+                        .to(searchRequest.getNoticeGeneratedTo()));
         if (boolQuery != null) {
             if (StringUtils.isNotBlank(searchRequest.getUlbName()))
                 boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
@@ -359,6 +473,17 @@ public class SewerageIndexService {
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
                 .withSort(new FieldSortBuilder("consumerName").order(SortOrder.DESC)).build();
         resultList = elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        return resultList;
+    }
+
+    public Page<SewerageIndex> getPagedNoticeSearchResultByBoolQuery(final BoolQueryBuilder boolQuery,
+            final SewerageNoticeSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(), searchRequest.orderDir(),
+                        searchRequest.orderBy()))
+                .build();
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
     }
 
@@ -484,4 +609,86 @@ public class SewerageIndexService {
         }
         return aggregation;
     }
+
+    public Page<SewerageIndex> wardwiseBaseRegisterQueryFilter(final String ulbName,
+            final List<String> wardList, final SewerageBaseRegisterResult sewerageBaseRegisterResult) {
+
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
+
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(sewerageBaseRegisterResult.pageNumber(), sewerageBaseRegisterResult.pageSize(),
+                        sewerageBaseRegisterResult.orderDir(), sewerageBaseRegisterResult.orderBy()))
+                .build();
+        return elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
+
+    }
+
+    public List<SewerageIndex> getAllwardwiseBaseRegisterOrderByShscNumberAsc(final String ulbName,
+            final List<String> wardList) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("active", true));
+        final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.ASC);
+
+        final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery).build();
+        final long count = elasticsearchTemplate.queryForPage(countQuery, SewerageIndex.class).getTotalElements();
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage")
+                .withPageable(new PageRequest(0, (int) count)).withSort(sort).withQuery(boolQuery).build();
+        return elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+
+    }
+
+    public List<BigDecimal> getGrandTotal(final String ulbName,
+            final List<String> wardList) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
+        boolQuery = boolQuery.filter(QueryBuilders.termsQuery("ward", wardList));
+        final List<BigDecimal> totalValues = new ArrayList<>();
+
+        final SearchRequestBuilder searchRequestBuilder = elasticsearchTemplate.getClient()
+                .prepareSearch("sewerage").setQuery(boolQuery)
+                .addAggregation(AggregationBuilders.sum("arrearssum").field("arrearAmount"))
+                .addAggregation(AggregationBuilders.sum("demandAmountSum").field("demandAmount"))
+                .addAggregation(AggregationBuilders.sum("totaldemandAmountSum").field("totalAmount"))
+                .addAggregation(AggregationBuilders.sum("collectedArrearAmount").field("collectedArrearAmount"))
+                .addAggregation(AggregationBuilders.sum("collectedDemandAmount").field("collectedDemandAmount"))
+                .addAggregation(AggregationBuilders.sum("extraAdvanceAmount").field("extraAdvanceAmount"));
+
+        final SearchResponse searchResponse = searchRequestBuilder.execute().actionGet();
+        if (searchResponse != null && searchResponse.getAggregations() != null) {
+
+            final Aggregations collAggr = searchResponse.getAggregations();
+            final Sum arresrsaggr = collAggr.get("arrearssum");
+            final Sum demanAmountagr = collAggr.get("demandAmountSum");
+            final Sum totalDemandaggr = collAggr.get("totaldemandAmountSum");
+            final Sum collectedArrearAmount = collAggr.get("collectedArrearAmount");
+            final Sum collectedDemandAmount = collAggr.get("collectedDemandAmount");
+            final Sum extraAdvanceAmount = collAggr.get("extraAdvanceAmount");
+
+            totalValues.add(BigDecimal.valueOf(arresrsaggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(demanAmountagr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(totalDemandaggr.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(collectedArrearAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(collectedDemandAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+            totalValues.add(BigDecimal.valueOf(collectedArrearAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)
+                    .add(BigDecimal.valueOf(collectedDemandAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP)));
+            totalValues.add(BigDecimal.valueOf(extraAdvanceAmount.getValue()).setScale(0, BigDecimal.ROUND_HALF_UP));
+        }
+        return totalValues;
+
+    }
+    
+    public Page<SewerageIndex> getOnlinePaymentSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
+            final SewerageConnSearchRequest searchRequest) {
+        Page<SewerageIndex> resultList;
+        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery)
+                .withPageable(new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize(),
+                        searchRequest.orderDir(), searchRequest.orderBy()))
+                .withSort(sort).build();
+
+        resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
+        return resultList;
+    }
+
 }

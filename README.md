@@ -66,42 +66,11 @@ $ git checkout develop
  elasticsearch.port=9300
  elasticsearch.cluster.name=elasticsearch-<username>
  
- ##Enables or disabled email sending, this is disabled by default
- mail.enabled=false
- mail.port=465
- mail.host=smtp.gmail.com
- mail.protocol=smtps
- mail.sender.username=abc123@gmail.com
- mail.sender.password=12345
- 
- ##Enables or disables SMS sending, this is disabled by default
- sms.enabled=false
- sms.provider.url=http://some.sms.provider.url
- sms.sender.username=sms_username
- sms.sender.password=sms_user_password
- sms.sender=sms_sender_id
-
- #Following are the http sms request parameter names, replace with sms provider specific request param name.
- sms.sender.req.param.name=senderid
- sms.sender.username.req.param.name=username
- sms.sender.password.req.param.name=password
- sms.destination.mobile.req.param.name=mobileno
- sms.message.req.param.name=content
-
- #In addition to the above standard parameters, any additional static parameters can be added here with 
- #respective key=value, delimit with &
- sms.extra.req.params=foo=bar
-
- #SMS response error codes, replace with sms provider specific error code
- sms.error.codes=401,403,404,405,406,407,408,409,410,411,412,413,414
-
-#If sms gategway response doesn't contain error message, to log error messages for the above code then add error message entry like following
-#<sms_errorcode>=<sms_error_message>
-#eg:401=Invalid Username or Password
-
  ```
-One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
+ One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
+
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
+
 4. Run the following commands, this will cleans, compiles, tests, migrates database and generates ear artifact along with jars and wars appropriately
 
  ```bash
@@ -289,8 +258,8 @@ Browser:-
 [Maven]: http://maven.apache.org/download.cgi
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
-[GHPAGE]:http://egovernments.github.io/eGov/
+[GHPAGE]:https://egovernments.org/solutions.php
 [versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
 [versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
 [codacy]:https://www.codacy.com/app/egovernments/eGov
-[codacy img]:https://api.codacy.com/project/badge/Grade/5415cc7717a349c3a72c349a24dace35
+[codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987

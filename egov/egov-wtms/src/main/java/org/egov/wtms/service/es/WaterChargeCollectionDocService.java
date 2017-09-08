@@ -62,6 +62,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.es.BillCollectorIndex;
@@ -161,7 +162,7 @@ public class WaterChargeCollectionDocService {
          * between 2 dates, add a day to the endDate and fetch the results
          */
         final Map<String, BigDecimal> consolidatedCollValues = new HashMap<>();
-        final CFinancialYear currFinYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear currFinYear = cFinancialYearService.getCurrentFinancialYear();
         // For current year results
         consolidatedCollValues.put("cytdColln", getConsolidatedCollForYears(currFinYear.getStartingDate(),
                 org.apache.commons.lang3.time.DateUtils.addDays(new Date(), 1), billingService));
@@ -344,7 +345,7 @@ public class WaterChargeCollectionDocService {
         BigDecimal todayColl;// need to test
         BigDecimal tillDateColl;// need to test
         final Long startTime = System.currentTimeMillis();
-        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialyear = cFinancialYearService.getCurrentFinancialYear();
 
         /**
          * As per Elastic Search functionality, to get the total collections
@@ -526,7 +527,7 @@ public class WaterChargeCollectionDocService {
         BigDecimal variance;
         String aggregationField = WaterTaxConstants.REGIONNAMEAGGREGATIONFIELD;
         Map<String, BillCollectorIndex> wardWiseBillCollectors = new HashMap<>();
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         /**
          * Select the grouping based on the type parameter, by default the
          * grouping is done based on Regions. If type is region, group by
@@ -723,7 +724,7 @@ public class WaterChargeCollectionDocService {
         String[] dateArr;
         Integer month;
         Sum aggregateSum;
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
         final Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
@@ -834,7 +835,7 @@ public class WaterChargeCollectionDocService {
         String[] dateArr;
         Integer month;
         Sum aggregateSum;
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
         final Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
@@ -1057,7 +1058,7 @@ public class WaterChargeCollectionDocService {
             final WaterChargeDashBoardRequest collectionDetailsRequest) {
         Date fromDate;
         Date toDate;
-        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialyear = cFinancialYearService.getCurrentFinancialYear();
 
         final List<WaterChargeDashBoardResponse> receiptDetailsList = new ArrayList<>();
         final WaterChargeDashBoardResponse receiptDetails = new WaterChargeDashBoardResponse();
@@ -1151,7 +1152,7 @@ public class WaterChargeCollectionDocService {
         Long rcptCount;
         String monthName;
         Map<String, Long> monthwiseCount;
-        final CFinancialYear financialYear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialYear = cFinancialYearService.getCurrentFinancialYear();
         Date finYearStartDate = financialYear.getStartingDate();
         Date finYearEndDate = financialYear.getEndingDate();
         final Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
@@ -1301,7 +1302,7 @@ public class WaterChargeCollectionDocService {
          * by ULB
          */
         final String aggregationField = getaggregationFiledByType(collectionDetailsRequest);
-        final CFinancialYear financialyear = cFinancialYearService.getFinancialYearByDate(new Date());
+        final CFinancialYear financialyear = cFinancialYearService.getCurrentFinancialYear();
 
         /**
          * For Current day's collection if dates are sent in the request,
@@ -1716,4 +1717,31 @@ public class WaterChargeCollectionDocService {
         return billCollectorWiseTableData;
 
     }
-}
+    
+    public List<WaterChargeDashBoardResponse> getWardWiseTableDataAcrossCities(
+            final WaterChargeDashBoardRequest waterChargeDashBoardRequest, Iterable<CityIndex> cities) {
+        List<WaterChargeDashBoardResponse> citywiseTableData = new ArrayList<>();
+        List<WaterChargeDashBoardResponse> wardWiseData = new ArrayList<>();
+        String cityName;
+        String regionName;
+        String districtName;
+        String ulbGrade;
+        for (CityIndex city : cities) {
+            cityName = city.getName();
+            waterChargeDashBoardRequest.setUlbCode(city.getCitycode());
+            waterChargeDashBoardRequest.setType(DASHBOARD_GROUPING_WARDWISE);
+            regionName = city.getRegionname();
+            districtName = city.getDistrictname();
+            ulbGrade = city.getCitygrade();
+            wardWiseData = getResponseTableData(waterChargeDashBoardRequest);
+            for (WaterChargeDashBoardResponse wardData : wardWiseData) {
+                wardData.setUlbName(cityName);
+                wardData.setRegionName(regionName);
+                wardData.setDistrictName(districtName);
+                wardData.setUlbGrade(ulbGrade);
+            }
+            citywiseTableData.addAll(wardWiseData);
+        }
+        return citywiseTableData;
+    }
+    }

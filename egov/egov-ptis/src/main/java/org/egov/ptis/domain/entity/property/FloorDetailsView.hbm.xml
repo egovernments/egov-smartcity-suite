@@ -43,7 +43,7 @@
    "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.ptis.domain.entity.property.FloorDetailsView"	table="EGPT_MV_CURRENT_FLOOR_DETAIL" polymorphism="explicit">
+	<class name="org.egov.ptis.domain.entity.property.FloorDetailsView"	table="EGPT_VIEW_CURRENT_FLOOR_DETAIL" polymorphism="explicit" mutable="false">
 		<composite-id>
 			<key-many-to-one name="propMatView" class="org.egov.ptis.domain.entity.property.PropertyMaterlizeView" 
 				column="basicPropertyId"  />

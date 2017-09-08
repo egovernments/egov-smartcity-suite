@@ -52,44 +52,52 @@
 			<div class="panel-body">
 				<table class="table table-bordered">
 					<thead>
-						<th align="center"><spring:message code="lbl.serial.number" /></th>
-						<th><spring:message code="lbl.gistofpreamble" /></th>
-						<th><spring:message code="lbl.agenda.number" /></th>
-						<th><spring:message code="lbl.preamble.number" /></th>
-						<th><spring:message code="lbl.department" /></th>
+						<tr>
+							<th align="center"><spring:message code="lbl.serial.no" /></th>
+							<th><spring:message code="lbl.gistofpreamble" /></th>
+							<th width="7%"><spring:message code="lbl.agenda.number" /></th>
+							<th width="9%"><spring:message code="lbl.preamble.number" /></th>
+							<th width="14%"><spring:message code="lbl.department" /></th>
+						</tr>
 					</thead>
 					<tbody>
-						<c:choose>
-							<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
-								<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
-									varStatus="counter">
-									<tr>
-										<div class="row add-margin">
+						<tr>
+							<c:choose>
+								<c:when test="${!councilMeeting.meetingMOMs.isEmpty()}">
+									<c:forEach items="${councilMeeting.meetingMOMs}" var="mom"
+										varStatus="counter">
+										<tr>
 											<td align="center">
-											
-								<%-- 	<input type="hidden" value="${mom.id}" id="meetingMOMs${counter.index}" name="meetingMOMs[${counter.index}].id" />
+												<%-- 	<input type="hidden" value="${mom.id}" id="meetingMOMs${counter.index}" name="meetingMOMs[${counter.index}].id" />
 								<input type="hidden" value="${mom.preamble}" id="meetingMOMspreamble${counter.index}" name="meetingMOMs[${counter.index}].preamble" />
 									<input type="hidden" value="${mom.agenda}" id="meetingMOMsagenda${counter.index}" name="meetingMOMs[${counter.index}].agenda" />
-						 --%>	<%-- 		<form:hidden path="meetingMOMs[${counter.index}]" id="meetingMOMs[${counter.index}].id" value="${mom.id}" />
-							 --%> 		<form:hidden path="meetingMOMs[${counter.index}].preamble" id="meetingMOMspreamble${counter.index}" value="${mom.preamble.id}" />	
-									<form:hidden path="meetingMOMs[${counter.index}].agenda" id="meetingMOMsagenda${counter.index}" value="${mom.agenda.id}" />		 			
-									<form:hidden path="meetingMOMs[${counter.index}].itemNumber" id="meetingMOMsitemNumber${counter.index}" value="${mom.itemNumber}" />
-						<%-- 			<form:hidden path="meetingMOMs[${counter.index}].meeting.id" id="meetingMOMmeeting${counter.index}" value="${mom.meeting.id}" />
-						 --%>						${counter.count}</td>
-										<td><span class="more"><c:out value="${mom.preamble.gistOfPreamble}" /></span></td>
-										<td><c:out value="${mom.agenda.agendaNumber}" /></td>
-										<td><c:out value="${mom.preamble.preambleNumber}" /></td>
-										<td><c:out value="${mom.preamble.department.name}" /></td>
-										</div>
-									</tr>
-								</c:forEach>
-							</c:when>
-							<c:otherwise>
-								<div class="col-md-3 col-xs-6 add-margin">
-									<spring:message code="lbl.noAgenda.Detail" />
-								</div>
-							</c:otherwise>
-						</c:choose>
+						 --%> <%-- 		<form:hidden path="meetingMOMs[${counter.index}]" id="meetingMOMs[${counter.index}].id" value="${mom.id}" />
+							 --%> <form:hidden path="meetingMOMs[${counter.index}].preamble"
+													id="meetingMOMspreamble${counter.index}"
+													value="${mom.preamble.id}" /> <form:hidden
+													path="meetingMOMs[${counter.index}].agenda"
+													id="meetingMOMsagenda${counter.index}"
+													value="${mom.agenda.id}" /> <form:hidden
+													path="meetingMOMs[${counter.index}].itemNumber"
+													id="meetingMOMsitemNumber${counter.index}"
+													value="${mom.itemNumber}" /> <%-- 			<form:hidden path="meetingMOMs[${counter.index}].meeting.id" id="meetingMOMmeeting${counter.index}" value="${mom.meeting.id}" />
+						 --%> ${counter.count}
+											</td>
+											<td><span class="more"><c:out
+														value="${mom.preamble.gistOfPreamble}" /></span></td>
+											<td class="text-center"><c:out
+													value="${mom.agenda.agendaNumber}" /></td>
+											<td><c:out value="${mom.preamble.preambleNumber}" /></td>
+											<td><c:out value="${mom.preamble.department.name}" /></td>
+										</tr>
+									</c:forEach>
+								</c:when>
+								<c:otherwise>
+									<div class="col-md-3 col-xs-6 add-margin">
+										<spring:message code="lbl.noAgenda.Detail" />
+									</div>
+								</c:otherwise>
+							</c:choose>
 					</tbody>
 				</table>
 			</div>

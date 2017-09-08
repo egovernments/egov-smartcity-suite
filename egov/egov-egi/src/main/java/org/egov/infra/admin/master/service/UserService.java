@@ -43,6 +43,8 @@ package org.egov.infra.admin.master.service;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.persistence.entity.enums.Gender;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -60,81 +62,79 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private MicroserviceUtils microserviceUtils;
+
     @Transactional
-    public User updateUser(final User user) {
+    public User updateUser(User user) {
         return userRepository.saveAndFlush(user);
     }
 
     @Transactional
-    public User createUser(final User user) {
-        return userRepository.save(user);
+    public User createUser(User user) {
+        User savedUser = userRepository.save(user);
+        microserviceUtils.createUserMicroservice(user);
+        return savedUser;
     }
 
-    public Set<User> getUsersByUsernameLike(final String userName) {
-        return userRepository.findByUsernameContainingIgnoreCase(userName);
-    }
-
-    public Set<Role> getRolesByUsername(final String userName) {
+    public Set<Role> getRolesByUsername(String userName) {
         return userRepository.findUserRolesByUserName(userName);
     }
 
-    public User getUserById(final Long id) {
+    public User getUserById(Long id) {
         return userRepository.findOne(id);
     }
 
-    public User getUserRefById(final Long id) {
+    public User getUserRefById(Long id) {
         return userRepository.getOne(id);
     }
 
-    public List<User> getAllUsers() {
-        return userRepository.findAll();
+    public User getCurrentUser() {
+        return userRepository.findOne(ApplicationThreadLocals.getUserId());
     }
 
-    public Set<User> getActiveUsers() {
-        return userRepository.findByActiveTrue();
-    }
-
-    public User getUserByUsername(final String userName) {
+    public User getUserByUsername(String userName) {
         return userRepository.findByUsername(userName);
     }
 
-    public User getUserByEmailId(final String emailId) {
+    public List<User> getUsersByNameLike(String userName) {
+        return userRepository.findByNameContainingIgnoreCase(userName);
+    }
+
+    public User getUserByEmailId(String emailId) {
         return userRepository.findByEmailId(emailId);
     }
 
-    public User getUserByAadhaarNumber(final String aadhaarNumber) {
+    public User getUserByAadhaarNumber(String aadhaarNumber) {
         return userRepository.findByAadhaarNumber(aadhaarNumber);
     }
 
-    public List<User> getUserByAadhaarNumberAndType(final String aadhaarNumber, final UserType type) {
+    public List<User> getUserByAadhaarNumberAndType(String aadhaarNumber, UserType type) {
         return userRepository.findByAadhaarNumberAndType(aadhaarNumber, type);
     }
-    
-    public User getUserByMobileNumber(final String mobileNumber) {
-        return userRepository.findByMobileNumber(mobileNumber);
-    }
 
-    public Optional<User> checkUserWithIdentity(final String identity) {
+    public Optional<User> checkUserWithIdentity(String identity) {
         return Optional.ofNullable(getUserByUsername(identity));
     }
 
-    public List<User> findAllByMatchingUserNameForType(final String username, final UserType type) {
+    public List<User> findAllByMatchingUserNameForType(String username, UserType type) {
         return userRepository.findByUsernameContainingIgnoreCaseAndTypeAndActiveTrue(username, type);
     }
 
-    public Set<User> getUsersByRoleName(final String roleName) {
+    public Set<User> getUsersByRoleName(String roleName) {
         return userRepository.findUsersByRoleName(roleName);
     }
 
-    public List<User> getAllEmployeeUsers() {
-        return userRepository.findByTypeAndActiveTrueOrderByNameAsc(UserType.EMPLOYEE);
+    public List<User> getAllEmployeeNameLike(String name) {
+        return userRepository.findByNameContainingIgnoreCaseAndTypeAndActiveTrue(name, UserType.EMPLOYEE);
     }
 
-    public List<User> getUsersByUsernameAndRolename(final String userName, final String roleName) {
+    public List<User> getUsersByUsernameAndRolename(String userName, String roleName) {
         return userRepository.findUsersByUserAndRoleName(userName, roleName);
     }
-    
-    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender){
+
+    public User getUserByNameAndMobileNumberForGender(String name, String mobileNumber, Gender gender) {
         return userRepository.findByNameAndMobileNumberAndGender(name, mobileNumber, gender);
     }
+
 }

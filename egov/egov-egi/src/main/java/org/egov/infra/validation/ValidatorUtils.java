@@ -40,9 +40,8 @@
 
 package org.egov.infra.validation;
 
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.regex.Pattern;
@@ -57,19 +56,17 @@ import static org.egov.infra.validation.regex.Constants.STRONG_PASSWORD;
 @Service("validatorUtils")
 public class ValidatorUtils {
 
-    private static Pattern passwordPattern;
+    private Pattern passwordPattern;
 
-    @Autowired
-    public ValidatorUtils(ApplicationProperties applicationProperties) {
-        String passwordStrength = applicationProperties.passwordStrength();
+    public ValidatorUtils(@Value("${user.pwd.strength}") String passwordStrength) {
         if ("high".equals(passwordStrength))
-            passwordPattern = Pattern.compile(STRONG_PASSWORD);
+            this.passwordPattern = Pattern.compile(STRONG_PASSWORD);
         else if ("medium".equals(passwordStrength))
-            passwordPattern = Pattern.compile(MEDIUM_PASSWORD);
+            this.passwordPattern = Pattern.compile(MEDIUM_PASSWORD);
         else if ("low".equals(passwordStrength))
-            passwordPattern = Pattern.compile(LOW_PASSWORD);
+            this.passwordPattern = Pattern.compile(LOW_PASSWORD);
         else
-            passwordPattern = Pattern.compile(NONE_PASSWORD);
+            this.passwordPattern = Pattern.compile(NONE_PASSWORD);
     }
 
     public static void assertNotNull(Object value, String message) {

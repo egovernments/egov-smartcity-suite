@@ -214,6 +214,16 @@
 			</span>
 		</td>
 	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="Zone"></s:text>:</td>
+		<td class="greybox">
+			<span class="bold">
+				<s:property value="%{zoneName}" default="N/A"/>
+			</span>
+		</td>
+		<td class="greybox" colspan=2>&nbsp;</td>
+	</tr>
 	
 	<!-- Amenities section -->
 	

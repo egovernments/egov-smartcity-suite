@@ -48,19 +48,21 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.CitizenFeedback;
+import org.egov.pgr.service.ComplaintHistoryService;
+import org.egov.pgr.service.ComplaintMessagingService;
+import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.ModelAndView;
@@ -70,6 +72,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Collections;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.pgr.utils.constants.PGRConstants.APPROVAL_COMMENT_ATTRIB;
 import static org.egov.pgr.utils.constants.PGRConstants.APPROVAL_POSITION_ATTRIB;
 import static org.egov.pgr.utils.constants.PGRConstants.CITIZEN_RATING_ATTRIB;
@@ -85,9 +88,14 @@ public class ComplaintUpdationController {
     private static final String COMPLAINT_EDIT = "complaint-edit";
     private static final String COMPLAINT_CITIZEN_EDIT = "complaint-citizen-edit";
 
-    private final ComplaintService complaintService;
-    private final ComplaintTypeService complaintTypeService;
-    private final ComplaintStatusMappingService complaintStatusMappingService;
+    @Autowired
+    private ComplaintService complaintService;
+
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
+
+    @Autowired
+    private ComplaintStatusMappingService complaintStatusMappingService;
 
     @Autowired
     private DepartmentService departmentService;
@@ -102,30 +110,27 @@ public class ComplaintUpdationController {
     private FileStoreUtils fileStoreUtils;
 
     @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
     private CrossHierarchyService crossHierarchyService;
 
     @Autowired
-    public ComplaintUpdationController(final ComplaintService complaintService,
-                                       final ComplaintTypeService complaintTypeService,
-                                       final ComplaintStatusMappingService complaintStatusMappingService) {
-        this.complaintService = complaintService;
-        this.complaintTypeService = complaintTypeService;
-        this.complaintStatusMappingService = complaintStatusMappingService;
+    private ComplaintHistoryService complaintHistoryService;
 
-    }
+    @Autowired
+    private ComplaintMessagingService complaintMessagingService;
+
+    @Autowired
+    private ComplaintProcessFlowService complaintProcessFlowService;
+
+    @Autowired
+    private ComplaintValidator complaintValidator;
 
     @ModelAttribute
-    public void getComplaint(@PathVariable final String crnNo, final Model model) {
-        final Complaint complaint = complaintService.getComplaintByCRN(crnNo);
+    public void getComplaint(@PathVariable String crnNo, Model model) {
+        Complaint complaint = complaintService.getComplaintByCRN(crnNo);
         model.addAttribute(COMPLAINT_ATTRIB, complaint);
-        model.addAttribute("complaintHistory", complaintService.getHistory(complaint));
-        model.addAttribute("skippableForward", complaintService.canSendToPreviousAssignee(complaint));
-        model.addAttribute("status",
-                complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(),
-                        complaint.getStatus()));
+        model.addAttribute("complaintHistory", complaintHistoryService.getHistory(complaint));
+        model.addAttribute("skippableForward", complaintProcessFlowService.canSendToPreviousAssignee(complaint));
+        model.addAttribute("status", complaintStatusMappingService.getStatusByRoleAndCurrentStatus(securityUtils.getCurrentUser().getRoles(), complaint.getStatus()));
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("complaintType", complaintTypeService.findActiveComplaintTypes());
         model.addAttribute("ward", Collections.emptyList());
@@ -149,38 +154,39 @@ public class ComplaintUpdationController {
         }
         if (null != complaint.getComplaintType()) {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
-            model.addAttribute("mailBody", complaintService.getEmailBody(complaint));
+            model.addAttribute("mailBody", complaintMessagingService.getEmailBody(complaint));
         }
         if (complaint.getStatus() != null)
             model.addAttribute("complaintStatus", complaint.getStatus().getName());
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String edit(final Model model, @PathVariable final String crnNo) {
-        return securityUtils.currentUserType().equals(UserType.CITIZEN) ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
+    @GetMapping
+    public String edit() {
+        return securityUtils.currentUserIsCitizen() ? COMPLAINT_CITIZEN_EDIT : COMPLAINT_EDIT;
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute Complaint complaint, final BindingResult errors,
-                         final RedirectAttributes redirectAttrs, final Model model, final HttpServletRequest request,
-                         @RequestParam("files") final MultipartFile[] files) {
-        // this validation is common for citizen and official. Any more specific validation required for official then write
-        // different method
-        validateUpdate(complaint, errors, request);
+    @PostMapping
+    public String update(@Valid @ModelAttribute Complaint complaint, BindingResult errors,
+                         RedirectAttributes redirectAttrs, HttpServletRequest request,
+                         @RequestParam("files") MultipartFile[] files) {
+        complaintValidator.validate(complaint, errors, request);
 
-        Long approvalPosition = 0l;
+        Long approvalPosition = 0L;
         String approvalComent = "";
         String result;
-        if (request.getParameter(APPROVAL_COMMENT_ATTRIB) != null && !request.getParameter(APPROVAL_COMMENT_ATTRIB).trim().isEmpty())
+        if (isNotBlank(request.getParameter(APPROVAL_COMMENT_ATTRIB)))
             approvalComent = request.getParameter(APPROVAL_COMMENT_ATTRIB);
-        if (request.getParameter(APPROVAL_POSITION_ATTRIB) != null && !request.getParameter(APPROVAL_POSITION_ATTRIB).isEmpty())
+        if (isNotBlank(request.getParameter(APPROVAL_POSITION_ATTRIB)))
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION_ATTRIB));
-        if (request.getParameter(CITIZEN_RATING_ATTRIB) != null && !request.getParameter(CITIZEN_RATING_ATTRIB).isEmpty())
+        if (isNotBlank(request.getParameter(CITIZEN_RATING_ATTRIB)))
             complaint.setCitizenFeedback(CitizenFeedback.values()[Integer.valueOf(request.getParameter(CITIZEN_RATING_ATTRIB))]);
         if (!errors.hasErrors()) {
             if (!securityUtils.currentUserType().equals(UserType.CITIZEN) && files != null)
                 complaint.getSupportDocs().addAll(fileStoreUtils.addToFileStore(files, MODULE_NAME, false));
-            complaintService.update(complaint, approvalPosition, approvalComent, false);
+            complaint.sendToPreviousOwner(false);
+            complaint.approverComment(approvalComent);
+            complaint.nextOwnerId(approvalPosition);
+            complaintService.updateComplaint(complaint);
             redirectAttrs.addFlashAttribute(COMPLAINT_ATTRIB, complaint);
             result = "redirect:" + complaint.getCrn() + COMPLAINT_UPDATE_SUCCESS;
         } else
@@ -188,24 +194,9 @@ public class ComplaintUpdationController {
         return result;
     }
 
-    @RequestMapping(COMPLAINT_UPDATE_SUCCESS)
-    public ModelAndView successView(@ModelAttribute final Complaint complaint) {
+    @GetMapping(COMPLAINT_UPDATE_SUCCESS)
+    public ModelAndView successView(@ModelAttribute Complaint complaint) {
         return new ModelAndView("complaint/reg-success", COMPLAINT_ATTRIB, complaint);
     }
 
-    private void validateUpdate(final Complaint complaint, final BindingResult errors,
-                                final HttpServletRequest request) {
-        if (complaint.getStatus() == null)
-            errors.rejectValue("status", "status.requried");
-
-        if (request.getParameter(APPROVAL_COMMENT_ATTRIB) == null || request.getParameter(APPROVAL_COMMENT_ATTRIB).trim().isEmpty())
-            errors.addError(new ObjectError(APPROVAL_COMMENT_ATTRIB, messageSource.getMessage("comment.not.null", null, null)));
-
-        if (complaint.getLocation() == null && complaint.getLat() > 0D && complaint.getLng() > 0D)
-            errors.rejectValue(LOCATION_ATTRIB, "location.info.not.found");
-
-        if ((complaint.getLocation() == null || complaint.getChildLocation() == null) && complaint.getLat() <= 0D
-                && complaint.getLng() <= 0D)
-            errors.rejectValue(LOCATION_ATTRIB, "location.info.not.found");
-    }
 }

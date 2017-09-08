@@ -38,157 +38,222 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-jQuery(document)
-		.ready(
-				function($) {
+var pramdata="";
+jQuery(document).ready(function($) {
 
-					tableContainer1 = $("#ageingReport-table");
-					$('#ageingReportSearch').click(function(e) {
-						console.log('calling inside ajax');
-						callajaxdatatable(e);
-					});
-					
-					function callajaxdatatable(e) {
-						var startDate = "";
-						var endDate = "";
-						var modeVal = "";
-						var when_dateVal="";
-						startDate = $('#start_date').val();
-						endDate = $('#end_date').val();
-						modeVal = $('#mode').val();
-						when_dateVal = $('#when_date').val();
-						
-						var groupByobj="";
-						groupByobj=$('input[name="groupBy"]:checked').val();
-						//bootbox.alert($('input[name="groupBy"]:checked').val());
-						if ($('#start_date').val() == "")
-							startDate = "";
-						
-						if ($('#end_date').val() == "")
-							endDate = "";
+tableContainer1 = $("#ageingReport-table");
+$('#ageingReportSearch').click(function(e) {
+	 var table = $('#ageingReport-table').DataTable();
+	    var info = table.page.info();
+	    if (info.start == 0)
+	        getSumOfRecords();
+	    	callajaxdatatable();
+});
+	
+var recordTotal = [];
+function getSumOfRecords() {
+    $.ajax({
+    	
+        url: "../report/ageing/grand-total",
+        type: 'GET',
+        async:false,
+        data : {
+			fromDate : $('#start_date').val(),
+			toDate : $('#end_date').val(),
+			status : $('#status').val(),
+			mode : $('#mode').val(),
+			complaintDateType :$('#when_date').val()
+		},
+        success: function (data) {
+            recordTotal = [];
+            for (var i = 0; i < data.length; i++) {
+                recordTotal.push(data[i]);
+            }
+        }
+    })
+}
 
-						$('.report-section').removeClass('display-hide');
-						$('#report-footer').show(); 
-						//$('.report-footer').removeClass('display-hide');
-						
-						tableContainer1
-						.dataTable({
-							ajax : {
-								url : "ageing/resultList-update",
-								data : {
-									fromDate : startDate,
-									toDate : endDate,
-									status : $('#status').val(),
-									mode : modeVal,
-									complaintDateType : when_dateVal
-								}
-							},
-							"autoWidth" : false,
-							"bDestroy": true,
-							"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-							"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
-							"oTableTools": {
-								"sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
-								"aButtons": ["xls", "pdf", "print"]
-							},
-							columns : [ {
-								"data" : "complainttype"
+function obj_to_query(obj) {
+    var parts = [];
+    for (var key in obj) {
+        if (obj.hasOwnProperty(key)) {
+            parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+        }
+    }
+    return "?" + parts.join('&');
+}
 
-							}, {
-								"data" : "grtthn30","sClass": "text-right"
-							}, {
-								"data" : "btw10to30","sClass": "text-right"
-							}, {
-								"data" : "btw5to10","sClass": "text-right"
-							},{
-                                "data" : "btw2to5","sClass": "text-right"
-                            }, {
-								"data" : "lsthn2","sClass": "text-right"
+function callajaxdatatable() {
+	var startDate = "";
+	var endDate = "";
+	var modeVal = "";
+	var when_dateVal="";
+	startDate = $('#start_date').val();
+	endDate = $('#end_date').val();
+	modeVal = $('#mode').val();
+	when_dateVal = $('#when_date').val();
+	
+	var groupByobj="";
+	groupByobj=$('input[name="groupBy"]:checked').val();
+	//bootbox.alert($('input[name="groupBy"]:checked').val());
+	if ($('#start_date').val() == "")
+		startDate = "";
+	
+	if ($('#end_date').val() == "")
+		endDate = "";
 
-							}, {
-								"data" : "total","sClass": "text-right"
+	$('.report-section').removeClass('display-hide');
+	$('#report-footer').show(); 
+	//$('.report-footer').removeClass('display-hide');
+	
+	tableContainer1
+	.on('preXhr.dt', function ( e, settings, data ) {
+		pramdata=data;
+	 })
+	.dataTable({
+		 processing : true,
+         serverSide : true,
+         sort : true,
+         filter : true,
+        "searching":false,
+        "order": [[0, 'asc']],
+        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+        "autoWidth": false,
+        "bDestroy": true,
+        buttons: [
+		            {
+		                text: 'PDF',
+		                action: function (e, dt, node, config) {
+		                	console.log(pramdata);
+		                    window.open("/pgr/report/ageing/download"+obj_to_query(pramdata)+"&printFormat=PDF", '', 'scrollbars=yes,width=1300,height=700,status=yes');
+		             }
+		            },
+		            {
+		                text: 'XLS',
+		                action: function (e, dt, node, config) {
+		                    window.open("/pgr/report/ageing/download"+obj_to_query(pramdata)+ "&printFormat=XLS", '_self');
+		                }
+		            }],
+		ajax : {
+			url : "ageing/resultList-update",
+			 data:function (args) {
+        		 return {
+        			 "args": JSON.stringify(args),
+        			 	"fromDate" : startDate,
+						"toDate" : endDate,
+						"status" : $('#status').val(),
+						"mode" : modeVal,
+						"complaintDateType" : when_dateVal
+        			 };
+        		}
+			
+		},
+		columns : [ {
+			"data" : "complainttype",
+			"name":$('#byboundary').val()
+			
+		}, {
+			"data" : "grtthn30",
+			"sTitle": ">30(Days)",
+			"name":"greater30",
+		}, {
+			"data" : "btw10to30",
+			"sTitle": "10-30(Days)",
+			"name":"btw10to30"
+		}, {
+			"data" : "btw5to10",
+			"sTitle" : "5-10(Days)",
+			"name":"btw5to10"
+		},{
+            "data" : "btw2to5",
+            "sTitle": "2-5(Days)", 
+            "name":"btw2to5"
+        }, {
+			"data" : "lsthn2",
+			"sTitle": "0-2(Days)",
+			"name":"lsthn2"
+		}, {
+			"data" : "total",
+			"sTitle":"Total(Days)",
+			"orderable": false,
+            "sortable": false,
+			"sClass": "text-right"
 
-							} ],
-							"footerCallback": function ( row, data, start, end, display ) {
-							    var api = this.api(), data;
-								if(data.length==0)
-								{
-									$('#report-footer').hide();
-								}else
-									{$('#report-footer').show();} 
-								if (data.length > 0) {
-							    updateTotalFooter(1, api);
-							    updateTotalFooter(2, api);
-							    updateTotalFooter(3, api);
-							    updateTotalFooter(4, api);
-							    updateTotalFooter(5, api);
-							    updateTotalFooter(6, api);
-								}
-							},
-					                "aoColumnDefs": [ {
-							      "aTargets": [1,2,3,4,5,6],
-							      "mRender": function ( data, type, full ) {
-								return formatNumberInr(data);
-							      }
-							} ]
+		} ],
+		"footerCallback": function ( row, data, start, end, display ) {
+		    var api = this.api(), data;
+			if(data.length==0)
+			{
+				$('#report-footer').hide();
+			}else
+				{$('#report-footer').show();} 
+			if (data.length > 0) {
+		    updateTotalFooter(1, api);
+		    updateTotalFooter(2, api);
+		    updateTotalFooter(3, api);
+		    updateTotalFooter(4, api);
+		    updateTotalFooter(5, api);
+		    updateTotalFooter(6, api);
+			}
+		},
+                "aoColumnDefs": [ {
+		      "aTargets": [1,2,3,4,5,6],
+		      "mRender": function ( data, type, full ) {
+			return formatNumberInr(data);
+		      }
+		} ]
 
-						});
-						e.stopPropagation();
-					}
+	});
+	e.stopPropagation();
+}
 
-					  function updateTotalFooter(colidx, api)
-					    {
-					    	// Remove the formatting to get integer data for summation
-					        var intVal = function ( i ) {
-					            return typeof i === 'string' ?
-					                i.replace(/[\$,]/g, '')*1 :
-					                typeof i === 'number' ?
-					                    i : 0;
-					        };
+ function updateTotalFooter(colidx, api)
+    {
+    	// Remove the formatting to get integer data for summation
+    var intVal = function ( i ) {
+        return typeof i === 'string' ?
+            i.replace(/[\$,]/g, '')*1 :
+            typeof i === 'number' ?
+                i : 0;
+    };
 
-					        // Total over all pages
-					        total = api
-					            .column(colidx)
-					            .data()
-					            .reduce( function (a, b) {
-					                return intVal(a) + intVal(b);
-					            } );
+    // Total over all pages
+    total = recordTotal[colidx-1];
 
-					        // Total over this page
-					        pageTotal = api
-					            .column( colidx, { page: 'current'} )
-					            .data()
-					            .reduce( function (a, b) {
-					                return intVal(a) + intVal(b);
-					            }, 0 );
+    // Total over this page
+    pageTotal = api
+        .column( colidx, { page: 'current'} )
+        .data()
+        .reduce( function (a, b) {
+            return intVal(a) + intVal(b);
+        }, 0 );
 
-					        // Update footer
-					        $( api.column( colidx ).footer() ).html(
-					            '<b>'+formatNumberInr(pageTotal) +' ('+ formatNumberInr(total) +')</b>'
-					        );
-					    }
-					
+    // Update footer
+    $( api.column( colidx ).footer() ).html(
+        '<b>'+formatNumberInr(pageTotal) +' ('+ formatNumberInr(total) +')</b>'
+    );
+}
 
-					//inr formatting number
-					function formatNumberInr(x){
-						   if(x)
-						   {
-								x=x.toString();
-								var afterPoint = '';
-								if(x.indexOf('.') > 0)
-								   afterPoint = x.substring(x.indexOf('.'),x.length);
-								x = Math.floor(x);
-								x=x.toString();
-								var lastThree = x.substring(x.length-3);
-								var otherNumbers = x.substring(0,x.length-3);
-								if(otherNumbers != '')
-								    lastThree = ',' + lastThree;
-								var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
-							    return res;
-						   }
-						   return x;
-					}	
-				});
+	//inr formatting number
+function formatNumberInr(x){
+	   if(x)
+	   {
+		x=x.toString();
+		var afterPoint = '';
+		if(x.indexOf('.') > 0)
+		   afterPoint = x.substring(x.indexOf('.'),x.length);
+		x = Math.floor(x);
+		x=x.toString();
+		var lastThree = x.substring(x.length-3);
+		var otherNumbers = x.substring(0,x.length-3);
+		if(otherNumbers != '')
+		    lastThree = ',' + lastThree;
+		var res = otherNumbers.replace(/\B(?=(\d{2})+(?!\d))/g, ",") + lastThree + afterPoint;
+	    return res;
+	   }
+	   return x;
+	}	
+});
 
 function showChangeDropdown(dropdown) 
 {

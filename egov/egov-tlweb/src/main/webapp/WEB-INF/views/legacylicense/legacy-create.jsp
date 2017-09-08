@@ -47,33 +47,16 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<c:set var="now" value="<%=new java.util.Date()%>"/>
-
 <div id="enterLicense_error" class="error-msg" style="display: none;"></div>
 <div class="row">
     <div class="col-md-12">
-        <div class="text-right error-msg" style="font-size: 14px;">
-            <spring:message code="dateofapplication.lbl"/>
-            :
-            <fmt:formatDate type="date" value="${now}" pattern="dd/MM/yyyy"/>
-        </div>
-        <c:if test="${applicationNumber!=null}">
-            <div class="text-right error-msg" style="font-size: 14px;">
-                <spring:message code="license.applicationnumber"/>
-                :
-                <c:out value="${applicationNumber}"/>
-            </div>
-        </c:if>
 
         <form:form role="form" id="legacyLicenseForm"
-                   modelAttribute="tradeLicense" method="POST"
+                   modelAttribute="tradeLicense" commandName="tradeLicense" method="POST"
                    class="form-horizontal form-groups-bordered"
                    enctype="multipart/form-data">
-
         <div class="panel panel-primary" data-collapsed="0">
-            <form:hidden path="applicationNumber" id="applicationNumber" value="${TL-007}"/>
-            <form:hidden path="licenseAppType.name" id="licenseAppType.name" value="NEW"/>
-            <form:hidden path="applicationDate" id="DATE"/>
+        
             <input type="hidden" id="feeTypeId" value="${feeTypeId}"/>
             <div class="panel-heading">
                 <div class="panel-title" style="text-align: center">
@@ -131,30 +114,44 @@
                                 <c:set value="" var="startfinyear"/>
                                 <c:forEach items="${legacyInstallmentwiseFees}" var="LIFee"
                                            varStatus="stat">
+                                    <c:if test="${stat.index < legacyInstallmentwiseFees.size()}">
                                     <tr>
                                         <c:set
                                                 value="${fn:substring(LIFee.key,0, 4)}-${fn:substring(LIFee.key,2, 4)+1}"
                                                 var="finyear"/>
-
+												<c:forEach items="${legacyFeePayStatus}" var="status" varStatus="check">
+													<c:if test="${stat.index==check.index}">
+														<c:set value="${status.value}" var="checkbox"></c:set>
+													</c:if>
+												</c:forEach>
                                         <c:if test="${stat.index == 0}">
                                             <c:set value="${finyear}" var="startfinyear"/>
                                         </c:if>
                                         <input type="hidden" name="financialyear[${stat.index}]"
                                                value="${LIFee.key}">
                                         <td><input type="text" class="form-control feeyear"
-                                                   readonly="readonly" value="${finyear}" tabindex="-1"/></td>
-                                        <td><input type="text"
+                                                   readonly="readonly" value="${finyear}" 
+                                                   tabindex="-1"/></td>
+                                        <td ><input type="text"
                                                    name="legacyInstallmentwiseFees[${stat.index}]"
                                                    id="amountpaid${stat.index}"
                                                    class="form-control patternvalidation feeamount"
-                                                   value="${LIFee.value}" data-pattern="number"
+                                                   value="${LIFee.value}" 
+                                                   data-pattern="number" maxlength="7"
                                                 <c:if test="${stat.index > 5}">
                                                     readonly="readonly"
-                                                </c:if>/></td>
+                                                </c:if>/>
+                                        </td>
                                         <td class="text-center"><input type="checkbox"
-                                                                       name="legacyFeePayStatus[${stat.index}]"
-                                                                       id="feestatus" class="case"/></td>
+													name="legacyFeePayStatus[${stat.index}]" 
+													class="case"
+													id="feestatus" 
+													value="true"
+													<c:if test="${checkbox==true}">
+													 checked="checked"</c:if> />
+										</td>
                                     </tr>
+                                 </c:if>   
                                 </c:forEach>
                                 </tbody>
                                 <tfoot>

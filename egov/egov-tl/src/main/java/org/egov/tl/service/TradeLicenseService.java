@@ -45,6 +45,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.service.CFinancialYearService;
+import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
@@ -54,12 +55,12 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
@@ -87,6 +88,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -98,14 +100,18 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.egov.infra.config.core.GlobalSettings.currencySymbolUtf8;
+import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
@@ -137,7 +143,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     @Autowired
     private EisCommonService eisCommonService;
 
-    @Override
     protected NatureOfBusiness getNatureOfBusiness() {
         return natureOfBusinessService.getNatureOfBusinessByName("Permanent");
     }
@@ -177,8 +182,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     public void updateStatusInWorkFlowProgress(TradeLicense license, final String workFlowAction) {
 
-        final Assignment userAssignment = assignmentService.getPrimaryAssignmentForUser(securityUtils.getCurrentUser().getId());
-        final Position wfInitiator = getWorkflowInitiator(license);
+        List<Position> userPositions = positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId());
         if (BUTTONAPPROVE.equals(workFlowAction)) {
             if (isEmpty(license.getLicenseNumber()) && license.isNewApplication())
                 license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
@@ -212,7 +216,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                     Constants.APPLICATION_STATUS_GENECERT_CODE);
         }
         if (BUTTONREJECT.equals(workFlowAction))
-            if (license.getLicenseAppType() != null && wfInitiator.equals(userAssignment.getPosition())
+            if (license.getLicenseAppType() != null && userPositions.contains(license.getCurrentState().getInitiatorPosition())
                     && ("Rejected".equals(license.getState().getValue()))
                     || "License Created".equals(license.getState().getValue())) {
                 license.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
@@ -258,11 +262,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("district", cityService.getDistrictName());
         reportParams.put("category", license.getCategory().getName());
         reportParams.put("subCategory", license.getTradeName().getName());
-
-        if (license.getState() != null && license.getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)) {
-            reportParams.put("certificateType", "provisional");
-        }
-
         reportParams.put("appType", license.isNewApplication() ? "New Trade" : "Renewal");
         reportParams.put("currentDate", currentDateToDefaultDateFormat());
         reportParams.put("carporationulbType", ApplicationThreadLocals.getMunicipalityName().contains("Corporation"));
@@ -272,8 +271,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         Optional<EgDemandDetails> demandDetails = license.getCurrentDemand().getEgDemandDetails().stream()
                 .sorted(Comparator.comparing(EgDemandDetails::getInstallmentEndDate).reversed())
                 .filter(demandDetail -> demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster().equals(LICENSE_FEE_TYPE))
-                .filter(demandDetail -> demandDetail.getAmount().subtract(demandDetail.getAmtCollected())
-                        .doubleValue() <= 0)
+                .filter(demandDetail -> demandDetail.getAmtCollected().doubleValue() > 0)
                 .findFirst();
         if (demandDetails.isPresent()) {
             amtPaid = demandDetails.get().getAmtCollected();
@@ -286,6 +284,22 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("applicationdate", getDefaultFormattedDate(license.getApplicationDate()));
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", amtPaid);
+
+        if (license.getStatus() != null && LICENSE_STATUS_UNDERWORKFLOW.equals(license.getStatus().getName())) {
+            reportParams.put("certificateType", "provisional");
+        } else {
+            StringBuilder qrCodeValue = new StringBuilder();
+            qrCodeValue.append("License Number : ").append(license.getLicenseNumber()).append(System.lineSeparator());
+            qrCodeValue.append("Trade Title : ").append(license.getNameOfEstablishment()).append(System.lineSeparator());
+            qrCodeValue.append("Owner Name : ").append(license.getLicensee().getApplicantName()).append(System.lineSeparator());
+            qrCodeValue.append("Valid Till : ").append(toDefaultDateTimeFormat(license.getDateOfExpiry())).append(System.lineSeparator());
+            qrCodeValue.append("Installment Year : ").append(reportParams.get("installMentYear")).append(System.lineSeparator());
+            qrCodeValue.append("Paid Amount : ").append(currencySymbolUtf8()).append(amtPaid).append(System.lineSeparator());
+            qrCodeValue.append("More : ").append(ApplicationThreadLocals.getDomainURL())
+                    .append("/tl/viewtradelicense/viewTradeLicense-view.action?id=").append(license.getId());
+            reportParams.put("qrCode", generatePDF417Code(qrCodeValue.toString()));
+        }
+
         return reportParams;
     }
 
@@ -351,33 +365,19 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public BigDecimal[] getDemandColl(License license) {
-        Module module = moduleService.getModuleByName(TRADE_LICENSE);
-        final Installment currInstallment = getCurrentInstallment(module);
         BigDecimal[] dmdColl = new BigDecimal[3];
-        BigDecimal currDmd = BigDecimal.ZERO;
-        BigDecimal totColl = BigDecimal.ZERO;
-        BigDecimal arrDmd = BigDecimal.ZERO;
-        for (EgDemandDetails dmddtls : license.getCurrentDemand().getEgDemandDetails()) {
-            if (dmddtls.getInstallmentStartDate().before(currInstallment.getFromDate()) || dmddtls.getInstallmentStartDate().equals(currInstallment.getFromDate())) {
-                arrDmd = arrDmd.add(dmddtls.getAmount());
-                totColl = totColl.add(dmddtls.getAmtCollected());
-            } else {
-                currDmd = currDmd.add(dmddtls.getAmount());
-                totColl = totColl.add(dmddtls.getAmtCollected());
-            }
-        }
-        dmdColl[0] = arrDmd;
-        dmdColl[1] = currDmd;
-        dmdColl[2] = totColl;
+        Arrays.fill(dmdColl, BigDecimal.ZERO);
+        license.getCurrentDemand().getEgDemandDetails().stream().forEach(egDemandDetails -> {
+                    if (license.getCurrentDemand().getEgInstallmentMaster().equals(egDemandDetails.getEgDemandReason().getEgInstallmentMaster())) {
+                        dmdColl[1] = dmdColl[1].add(egDemandDetails.getAmount());
+                        dmdColl[2] = dmdColl[2].add(egDemandDetails.getAmtCollected());
+                    } else {
+                        dmdColl[0] = dmdColl[0].add(egDemandDetails.getAmount());
+                        dmdColl[2] = dmdColl[2].add(egDemandDetails.getAmtCollected());
+                    }
+                }
+        );
         return dmdColl;
-    }
-
-    public Installment getInstallmentForDate(final Date date, final Module module) {
-        return installmentDao.getInsatllmentByModuleForGivenDate(module, date);
-    }
-
-    public Installment getCurrentInstallment(final Module module) {
-        return getInstallmentForDate(new Date(), module);
     }
 
     @ReadOnly
@@ -434,13 +434,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     }
 
-    public List<HashMap<String, Object>> populateHistory(final StateAware stateAware) {
+    public List<HashMap<String, Object>> populateHistory(final TradeLicense tradeLicense) {
         final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
-        if (stateAware.hasState()) {
-            State state = stateAware.getCurrentState();
+        if (tradeLicense.hasState()) {
+            State state = tradeLicense.getCurrentState();
+            User lastModifiedUser = state.getLastModifiedBy();
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
-            currentStateDetail.put("updatedBy", state.getLastModifiedBy().getName());
+            currentStateDetail.put("updatedBy", !lastModifiedUser.getType().equals(UserType.EMPLOYEE) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
             currentStateDetail.put("status", "END".equals(state.getValue()) ? "Completed" : state.getValue());
             currentStateDetail.put("comments", defaultString(state.getComments()));
             User ownerUser = state.getOwnerUser();
@@ -453,15 +454,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
             processHistoryDetails.add(currentStateDetail);
             state.getHistory().stream().sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed()).
-                    forEach(sh -> processHistoryDetails.add(constructHistory(sh)));
+                    forEach(sh -> processHistoryDetails.add(constructHistory(sh, tradeLicense)));
         }
         return processHistoryDetails;
     }
 
-    private HashMap<String, Object> constructHistory(StateHistory stateHistory) {
+    private HashMap<String, Object> constructHistory(StateHistory stateHistory, TradeLicense tradeLicense) {
         final HashMap<String, Object> processHistory = new HashMap<>();
+        User lastModifiedUser = stateHistory.getLastModifiedBy();
         processHistory.put("date", stateHistory.getLastModifiedDate());
-        processHistory.put("updatedBy", stateHistory.getLastModifiedBy().getName());
+        processHistory.put("updatedBy", !lastModifiedUser.getType().equals(UserType.EMPLOYEE) ? tradeLicense.getLicensee().getApplicantName() : lastModifiedUser.getName());
         processHistory.put("status", "END".equals(stateHistory.getValue()) ? "Completed" : stateHistory.getValue());
         processHistory.put("comments", defaultString(stateHistory.getComments()));
         Position ownerPosition = stateHistory.getOwnerPosition();
@@ -470,7 +472,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             User userPos = eisCommonService.getUserForPosition(ownerPosition.getId(), stateHistory.getLastModifiedDate());
             processHistory.put("user", userPos == null ? EMPTY : userPos.getName());
         } else
-            processHistory.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
+            processHistory.put("user",
+                    ownerUser == null ? EMPTY : ownerUser.getName());
         return processHistory;
     }
 
@@ -478,4 +481,10 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<License> getLicenses(Example license) {
         return licenseRepository.findAll(license);
     }
+
+    public List<BillReceipt> getReceipts(License license) {
+        List<BillReceipt> billReceipts = demandGenericDao.getBillReceipts(license.getCurrentDemand());
+        return billReceipts;
+    }
+
 }

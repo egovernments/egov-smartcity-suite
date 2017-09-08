@@ -54,21 +54,30 @@ public class JsonUtils {
         //Since utils are with static methods
     }
 
-    public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, Class<? extends JsonSerializer<T>> adptorClazz) {
+
+    public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, JsonSerializer<T> adapter) {
+        return new GsonBuilder().
+                registerTypeAdapterFactory(FACTORY).
+                registerTypeAdapter(objectClazz, adapter).create().toJson(objects);
+    }
+
+    public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, Class<? extends JsonSerializer<T>> adapterClazz) {
         try {
-            return new GsonBuilder().
-                    registerTypeAdapterFactory(FACTORY).
-                    registerTypeAdapter(objectClazz, adptorClazz.newInstance()).create().toJson(objects);
+            return toJSON(objects, objectClazz, adapterClazz.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw new ApplicationRuntimeException("Could not convert object list to json string", e);
         }
     }
 
-    public static <T> String toJSON(T object, Class<? extends JsonSerializer<T>> adptorClazz) {
+    public static <T> String toJSON(T object, JsonSerializer<T> adapter) {
+        return new GsonBuilder().
+                registerTypeAdapterFactory(FACTORY).
+                registerTypeAdapter(object.getClass(), adapter).create().toJson(object);
+    }
+
+    public static <T> String toJSON(T object, Class<? extends JsonSerializer<T>> adapterClazz) {
         try {
-            return new GsonBuilder().
-                    registerTypeAdapterFactory(FACTORY).
-                    registerTypeAdapter(object.getClass(), adptorClazz.newInstance()).create().toJson(object);
+            return toJSON(object, adapterClazz.newInstance());
         } catch (InstantiationException | IllegalAccessException e) {
             throw new ApplicationRuntimeException("Could not convert object to json string", e);
         }

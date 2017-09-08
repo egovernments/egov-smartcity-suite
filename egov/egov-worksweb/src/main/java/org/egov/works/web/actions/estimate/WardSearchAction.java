@@ -77,7 +77,7 @@ public class WardSearchAction extends BaseFormAction {
         boundaryListQuery.append(" from Boundary where upper(boundaryType.name) in ('CITY','ZONE','WARD') "
                 + " and upper(boundaryType.hierarchyType.name)='ADMINISTRATION' and upper(name) like '%' || ? || '%' ");
         if (!isBoundaryHistory)
-            boundaryListQuery.append(" and isHistory = false ");
+            boundaryListQuery.append(" and active = true ");
         boundaryListQuery.append(" order by name ");
         return getPersistenceService().findAllBy(boundaryListQuery.toString(), query.toUpperCase());
     }

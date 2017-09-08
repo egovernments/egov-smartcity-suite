@@ -40,12 +40,14 @@
 
 package org.egov.tl.entity.dto;
 
+import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.Constants;
@@ -81,7 +83,7 @@ public class SearchForm extends DataTableSearchRequest {
         setLicenseId(license.getId());
         setApplicationNumber(license.getApplicationNumber());
         setLicenseNumber(license.getLicenseNumber());
-        setOldLicenseNumber(license.getOldLicenseNumber());
+        setOldLicenseNumber(StringUtils.defaultIfEmpty(license.getOldLicenseNumber(), ""));
         setCategoryName(license.getCategory().getName());
         setSubCategoryName(license.getTradeName().getName());
         setTradeTitle(license.getNameOfEstablishment());
@@ -120,7 +122,7 @@ public class SearchForm extends DataTableSearchRequest {
         else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
             if (license.isStatusActive() && !license.isLegacy())
                 licenseActions.add("Print Certificate");
-            if (license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
+            if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.getStatus().getStatusCode().equals(Constants.STATUS_UNDERWORKFLOW))
                 licenseActions.add("Print Provisional Certificate");
             if (license.isReadyForRenewal())
                 licenseActions.add("Renew License");

@@ -40,11 +40,13 @@
 
 package org.egov.tl.repository.specs;
 
-import javax.persistence.criteria.Predicate;
-
 import org.egov.tl.entity.dto.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.Predicate;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class DCBReportSpec {
 
@@ -55,9 +57,12 @@ public class DCBReportSpec {
     public static Specification<DCBReportResult> dCBReportSpecification(final DCBReportSearchRequest dCBReportSearchRequest) {
         return (root, query, builder) -> {
             final Predicate result = builder.conjunction();
-            if (dCBReportSearchRequest.getLicensenumber() != null)
+            if (isNotBlank(dCBReportSearchRequest.getLicensenumber()))
                 result.getExpressions().add(builder.equal(root.get("licensenumber"), dCBReportSearchRequest.getLicensenumber()));
-
+            if (dCBReportSearchRequest.getLicenseid() != null)
+                result.getExpressions().add(builder.equal(root.get("licenseid"), dCBReportSearchRequest.getLicenseid()));
+            if (dCBReportSearchRequest.getActiveLicense() > 0)
+                result.getExpressions().add(builder.equal(root.get("active"), dCBReportSearchRequest.getActiveLicense() == 1));
             return result;
         };
     }

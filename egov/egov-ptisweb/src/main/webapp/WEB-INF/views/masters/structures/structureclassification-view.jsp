@@ -52,7 +52,8 @@
 					<div class="panel panel-primary" data-collapsed="0">
 						<div class="panel-heading">
 							<div class="panel-title">
-								<strong><spring:message code="lbl.structureclassification.view" /></strong>
+								<strong><spring:message
+										code="lbl.structureclassification.view" /></strong>
 							</div>
 						</div>
 						<div class="panel-body history-slide">
@@ -63,25 +64,44 @@
 											<th class="text-left"><spring:message code="lbl.sno" /></th>
 											<th class="text-left"><spring:message code="lbl.code" /></th>
 											<th class="text-left"><spring:message code="lbl.name" /></th>
-											<th class="text-left"><spring:message code="lbl.description" /></th>			
-											<th class="text-left"><spring:message code="lbl.fromDate" /></th>
+											<th class="text-left"><spring:message
+													code="lbl.description" /></th>
+											<th class="text-left"><spring:message
+													code="lbl.fromDate" /></th>
 											<th class="text-left"><spring:message code="lbl.toDate" /></th>
-
+											<th class="text-left"><spring:message code="lbl.status" /></th>
 										</tr>
 									</thead>
 									<tbody>
 										<c:set var="count" value="1" />
 
-										<c:forEach var="structureclassification" items="${structureclassifications}">
+										<c:forEach var="structureclassification"
+											items="${structureclassifications}">
 											<tr>
 												<td><c:out value="${count}" /></td>
+												<td><c:out
+														value="${structureclassification.constrTypeCode}" /></td>
 												<td><c:out value="${structureclassification.typeName}" /></td>
-												<td><c:out value="${structureclassification.description}" /></td>
-												<td><c:out value="${structureclassification.constrTypeCode}" /></td>
-												<td><fmt:formatDate value="${structureclassification.fromDate}"
+												<td><c:out
+														value="${structureclassification.description}" /></td>
+												<td><fmt:formatDate
+														value="${structureclassification.fromDate}"
 														pattern="dd-MM-yyyy" /></td>
-												<td><fmt:formatDate value="${structureclassification.toDate}"
+												<td><fmt:formatDate
+														value="${structureclassification.toDate}"
 														pattern="dd-MM-yyyy" /></td>
+												<td >
+								<div align="center">
+								<c:choose>
+									<c:when test="${structureclassification.isActive == 'true'}">
+										<c:out value="ACTIVE" />
+									</c:when> 
+									<c:otherwise>
+										<c:out value="INACTIVE" />
+									</c:otherwise>
+								</c:choose>
+								</div>
+							</td>		
 											</tr>
 											<c:set var="count" value="${count+1}" />
 										</c:forEach>

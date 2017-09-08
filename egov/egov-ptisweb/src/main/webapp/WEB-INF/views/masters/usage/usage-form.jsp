@@ -61,7 +61,7 @@
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-						<spring:message code="lbl.property.usageMaster" />
+						<spring:message code="lbl.create.uasge" />
 					</div>
 				</div>
 				
@@ -71,8 +71,19 @@
 								code="lbl.usage.nature" /><span class="mandatory"></span></label>
 
 						<div class="col-sm-6 add-margin">
-							<form:input id="usageName" path="usageName" type="text" cssClass="form-control is_valid_alphabet" autocomplete="off" required="required" />
+							<form:input id="usageName" path="usageName" type="text" cssClass="form-control is_valid_alphanumericspecialcharacters" autocomplete="off" required="required" />
 							<form:errors path="usageName" cssClass="error-msg"/>
+						</div>
+
+					</div>
+					
+					<div class="form-group">
+						<label for="usageCode" class="col-sm-3 control-label"><spring:message
+								code="lbl.code" /><span class="mandatory"></span></label>
+
+						<div class="col-sm-6 add-margin">
+							<form:input id="usageCode" path="usageCode" type="text" style="text-transform:uppercase" cssClass="form-control is_valid_alphanumeric" autocomplete="off" required="required" />
+							<form:errors path="usageCode" cssClass="error-msg"/>
 						</div>
 
 					</div>
@@ -109,7 +120,7 @@
 				<c:if test="${roleName.contains('PROPERTY ADMINISTRATOR')}">
 					<button type="submit" 
 						class="btn btn-primary add-margin">
-						<spring:message code="lbl.button.add" />
+						<spring:message code="lbl.button.create" />
 					</button>	
 				</c:if>	
 					<button type="button" id="btnusagesearch"

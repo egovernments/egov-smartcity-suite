@@ -41,6 +41,7 @@ package org.egov.ptis.master.service;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -51,6 +52,7 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
@@ -59,6 +61,7 @@ import org.egov.ptis.domain.repository.master.usage.PropertyUsageRepository;
 import org.egov.ptis.report.bean.PropertyUsageSearchResult;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Service for PropertyUsage
@@ -84,15 +87,15 @@ public class PropertyUsageService {
         this.propertyUsageHibernateDAO = propertyUsageHibernateDAO;
     }
 
-    public PropertyUsage create(PropertyUsage propertyUsage) {
+    public PropertyUsage create(PropertyUsage propertyUsage, Long Id) {
 
-        if (propertyUsage.getIsResidential()) {
-            propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_RESD);
-        } else {
-            propertyUsage.setUsageCode(PropertyTaxConstants.PROPTYPE_NON_RESD);
-        }
-
+        propertyUsage.setLastModifiedDate(new Date());
+        propertyUsage.setCreatedDate(new Date());
+        propertyUsage.setIsActive(true);
         propertyUsage.setIsEnabled(1);
+        final User createdBy = userService.getUserById(ApplicationThreadLocals.getUserId());
+        propertyUsage.setCreatedBy(createdBy);
+        propertyUsage.setLastModifiedBy(createdBy);
         propertyUsageHibernateDAO.create(propertyUsage);
 
         return propertyUsage;
@@ -162,5 +165,31 @@ public class PropertyUsageService {
     @ReadOnly
     public List<PropertyUsage> getNonResidentialPropertyUsages(){
         return propertyUsageRepository.findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
+    }
+    
+    @Transactional
+    public void updateUsage(final PropertyUsage propertyUsage) {
+        propertyUsageRepository.save(propertyUsage);
+    }
+
+    public List<String> validateModifyPropertyUsage(final PropertyUsage propertyUsage) {
+        final List<String> errors = new ArrayList<>();
+        if (!propertyUsageRepository.findByCodeAndNotInId(propertyUsage.getUsageCode().toUpperCase(), propertyUsage.getId())
+                .isEmpty())
+            errors.add("error.duplicate.code");
+        else if (!propertyUsageRepository.findByNameAndNotInId(propertyUsage.getUsageName().toUpperCase(), propertyUsage.getId())
+                .isEmpty())
+            errors.add("error.duplicate.usage");
+        else if (!propertyUsageRepository.findByUsageUnitRateActive(propertyUsage.getId()).isEmpty()
+                && !propertyUsage.getIsActive())
+            errors.add("error.active.unitrates.exist");
+        return errors;
+    }
+    
+    public Boolean isActiveUsage(String code){
+    	return propertyUsageRepository.findIsActiveByCode(code);
+    }
+    public PropertyUsage  getUsageByCode(String code){
+    	return propertyUsageRepository.findUsageByCode(code);
     }
 }

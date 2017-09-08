@@ -40,14 +40,10 @@
 
 package org.egov.pgr.web.controller.masters.escalationTime;
 
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
-import org.egov.eis.service.DesignationService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.entity.dto.EscalationTimeSearchRequest;
-import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.EscalationService;
+import org.egov.pgr.service.ComplaintEscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -57,24 +53,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 @Controller
 @RequestMapping(value = "/escalationTime")
 public class ViewEscalationTimeController {
-    public static final String CONTENTTYPE_JSON = "application/json";
-
-    protected ComplaintTypeService complaintTypeService;
-    protected EscalationService escalationService;
-    protected DesignationService designationService;
 
     @Autowired
-    public ViewEscalationTimeController(
-            final ComplaintTypeService complaintTypeService,
-            EscalationService escalationService,
-            DesignationService designationService) {
-        this.complaintTypeService = complaintTypeService;
-        this.escalationService = escalationService;
-        this.designationService = designationService;
-    }
+    private ComplaintEscalationService escalationService;
 
     @ModelAttribute
     public Escalation escalation() {
@@ -83,7 +69,7 @@ public class ViewEscalationTimeController {
 
     @GetMapping("/search")
     public String searchForm(@ModelAttribute Escalation escalation,
-            final Model model) {
+                             final Model model) {
         model.addAttribute("mode", "new");
         return "escalationTime-search";
     }

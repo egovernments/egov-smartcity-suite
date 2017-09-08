@@ -145,7 +145,8 @@ public class MarriageUtils {
             asignList.add(assignment);
         } else if (assignment == null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
+        return !asignList.isEmpty()
+                ? asignList.get(0).getEmployee().getUsername().concat(":: " + asignList.get(0).getEmployee().getName()) : "";
     }
 
     public Boolean isDigitalSignEnabled() {
@@ -153,7 +154,6 @@ public class MarriageUtils {
                 MarriageConstants.MODULE_NAME, MarriageConstants.APPCONFKEY_DIGITALSIGNINWORKFLOW).get(0);
         return "YES".equalsIgnoreCase(appConfigValue.getValue());
     }
-    
     
     public @ResponseBody ResponseEntity<byte[]> viewReport(@PathVariable final Long id, String objType,final HttpSession session,
             final HttpServletRequest request) throws IOException {
@@ -168,8 +168,7 @@ public class MarriageUtils {
             reportOutput = marriageCertificateService.generateCertificate(reIssueObj, objType,cityName, cityLogo, "");
         } else if(objType!=null && objType.equalsIgnoreCase(MarriageCertificateType.REGISTRATION.toString())){
             final MarriageRegistration marriageRegistrationObj = marriageRegistrationService.get(id);
-            reportOutput = marriageCertificateService.generate(marriageRegistrationObj, cityName, cityLogo, "");
-        }
+            reportOutput = marriageCertificateService.generate(marriageRegistrationObj, cityName, cityLogo, "");     }
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             headers.setContentType(MediaType.parseMediaType("application/pdf"));
             headers.add("content-disposition", "inline;filename=WorkOrderNotice.pdf");
@@ -286,4 +285,13 @@ public class MarriageUtils {
         }
         return outputStream.toByteArray();
     }
+    
+
+    public boolean isReassignEnabled() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
+                MarriageConstants.MODULE_NAME,
+                MarriageConstants.APPCONFKEY_REASSIGN_BUTTONENABLED);
+        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue()) ? true : false;
+    }
+
 }

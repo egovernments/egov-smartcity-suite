@@ -111,17 +111,17 @@ public class UpdateAssessmentController {
 	 */
 	public ViewPropertyDetails setRequestParameters(CreatePropertyDetails createPropDetails){
     	ViewPropertyDetails viewPropertyDetails = new ViewPropertyDetails();
-    	viewPropertyDetails.setAssessmentNumber(createPropDetails.getAssessmentNo());
+    	viewPropertyDetails.setAssessmentNumber(createPropDetails.getAssessmentNumber());
     	viewPropertyDetails.setPropertyTypeMaster(createPropDetails.getPropertyTypeMasterCode());
     	viewPropertyDetails.setCategory(createPropDetails.getCategoryCode());
     	
     	AssessmentsDetails assessmentDetails = createPropDetails.getAssessmentDetails();
     	viewPropertyDetails.setMutationReason(assessmentDetails.getMutationReasonCode());
     	viewPropertyDetails.setExtentOfSite(assessmentDetails.getExtentOfSite());
-    	viewPropertyDetails.setIsExtentAppurtenantLand(assessmentDetails.getIsExtentAppurtenantLand());
     	viewPropertyDetails.setOccupancyCertificationNo(assessmentDetails.getOccupancyCertificationNo());
     	viewPropertyDetails.setExtentAppartenauntLand(assessmentDetails.getExtentAppartenauntLand());
     	
+    	//Amenities Details
     	AmenitiesDetails amenities = createPropDetails.getAmenitiesDetails();
     	if(amenities != null){
     		viewPropertyDetails.setHasLift(amenities.hasLift());
@@ -133,6 +133,7 @@ public class UpdateAssessmentController {
     		viewPropertyDetails.setHasCableConnection(amenities.hasCableConnection());
     	}
     	
+    	//Construction Type Details
     	ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
     	if(constructionTypeDetails != null){
     		viewPropertyDetails.setFloorType(constructionTypeDetails.getFloorTypeId());
@@ -148,7 +149,12 @@ public class UpdateAssessmentController {
     		viewPropertyDetails.setMarketValue(vacantLandDetails.getMarketValue());
     		viewPropertyDetails.setCurrentCapitalValue(vacantLandDetails.getCurrentCapitalValue());
     		viewPropertyDetails.setEffectiveDate(vacantLandDetails.getEffectiveDate());
+    		viewPropertyDetails.setVlPlotArea(vacantLandDetails.getVacantLandPlot());
+    		viewPropertyDetails.setLaAuthority(vacantLandDetails.getLayoutApprovalAuthority());
+    		viewPropertyDetails.setLpNo(vacantLandDetails.getLayoutPermitNumber());
+    		viewPropertyDetails.setLpDate(vacantLandDetails.getLayoutPermitDate());
     		
+    		//Surrounding Boundary Details
     		SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
     		viewPropertyDetails.setNorthBoundary(surroundingBoundaryDetails.getNorthBoundary());
     		viewPropertyDetails.setSouthBoundary(surroundingBoundaryDetails.getSouthBoundary());

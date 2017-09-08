@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -57,13 +64,15 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.GlobalSettings.defaultDatePattern;
-import static org.egov.infra.config.core.GlobalSettings.defaultDateTimePattern;
+import static org.egov.infra.config.core.GlobalSettings.datePattern;
+import static org.egov.infra.config.core.GlobalSettings.dateTimePattern;
+import static org.egov.infra.config.core.GlobalSettings.jodaTimeZone;
 import static org.egov.infra.config.core.GlobalSettings.locale;
 
 public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     private static final String DEFAULT_YEAR_PATTERN = "yyyy";
+    private static final String FILE_NAME_DATE_PATTERN = "yyyyMMddhhmm";
     private static final Map<String, DateTimeFormatter> DATE_FORMATTER_HOLDER = new ConcurrentHashMap<>(3);
 
     private static final String[] DATE_IN_WORDS = {
@@ -94,7 +103,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static String toDefaultDateFormat(LocalDate date) {
-        return formatter(defaultDatePattern()).print(date);
+        return formatter(datePattern()).print(date);
     }
 
     public static String toDefaultDateFormat(Date date) {
@@ -102,7 +111,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static DateTime toDateTimeUsingDefaultPattern(String date) {
-        return formatter(defaultDatePattern()).parseDateTime(date);
+        return formatter(datePattern()).parseDateTime(date);
     }
 
     public static Date toDateUsingDefaultPattern(String date) {
@@ -110,7 +119,11 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static String toDefaultDateTimeFormat(Date date) {
-        return formatter(defaultDateTimePattern()).print(new DateTime(date));
+        return formatter(dateTimePattern()).print(new DateTime(date, jodaTimeZone()));
+    }
+
+    public static String currentDateToFileNameFormat() {
+        return formatter(FILE_NAME_DATE_PATTERN).print(new DateTime(now(), jodaTimeZone()));
     }
 
     public static Date endOfDay(Date date) {
@@ -296,7 +309,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static DateTimeFormatter defaultDateFormatter() {
-        return formatter(defaultDatePattern());
+        return formatter(datePattern());
     }
 
     public static DateTimeFormatter formatter(String pattern) {

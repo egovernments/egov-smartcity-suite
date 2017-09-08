@@ -68,7 +68,7 @@
 
 						<div class="col-sm-6 add-margin">
 							<form:input id="typeName" path="typeName" type="text"
-								cssClass="form-control is_valid_alphabet" autocomplete="off"
+								cssClass="form-control is_valid_alphanumericspecialcharacters" autocomplete="off"
 								required="required" />
 							<form:errors path="typeName" cssClass="error-msg" />
 						</div>
@@ -89,7 +89,7 @@
 
 						<div class="col-sm-6 add-margin">
 							<form:input id="description" path="description" type="text" 
-								cssClass="form-control is_valid_alphanumeric" autocomplete="off"/>
+								cssClass="form-control is_valid_alphanumericspecialcharacters" autocomplete="off"/>
 							<form:errors path="description" cssClass="error-msg" />
 						</div>
 					</div>
@@ -133,7 +133,7 @@
 			<div class="row">
 				<div class="text-center">
 					<button type="submit" class="btn btn-primary add-margin">
-						<spring:message code="lbl.button.add" />
+						<spring:message code="lbl.button.create" />
 					</button>
 					<button type="reset" class="btn btn-default">
 						<spring:message code="lbl.reset" />

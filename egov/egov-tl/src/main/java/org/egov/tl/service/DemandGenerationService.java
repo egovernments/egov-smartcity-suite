@@ -208,10 +208,6 @@ public class DemandGenerationService {
         return generationSuccess;
     }
 
-    public CFinancialYear getLatestFinancialYear() {
-        return financialYearService.getFinancialYearByDate(new DateTime().withMonthOfYear(4).withDayOfMonth(1).toDate());
-    }
-
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)
     public DemandGenerationLog generateMissingDemand(String installmentYearRange) {
 

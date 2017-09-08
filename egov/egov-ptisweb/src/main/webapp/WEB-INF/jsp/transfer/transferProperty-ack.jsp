@@ -50,6 +50,9 @@
 			  var mutationId = document.getElementById("mutationId").value;
 			  window.location="printAck.action?mutationId="+mutationId;
 		  }
+          function payment() {
+		      window.location="collect-fee.action?applicationNo="+'<s:property value="%{applicationNo}"/>';
+          }
 		</script>
 	</head>
 	<body onload=" refreshParentInbox(); ">
@@ -83,12 +86,12 @@
 						</tr>
 					</table>
 					<div class="buttonbottom" align="center">
-					<s:if test="%{(@org.egov.ptis.constants.PropertyTaxConstants@WF_STATE_ASSISTANT_APPROVED.equalsIgnoreCase(model.state.value) && !model.state.createdBy.name.equals('CSCUSER'))
-					||	model.state.lastModifiedBy.name.equals('CSCUSER') || applicationSource == 'online'}">
-					    <s:if test="%{initiatorIsActive}">
+					<s:if test="%{showAckBtn}">
 						<input type="button" name="button2" id="button2" value="Generate Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
-						</s:if>
-						</s:if>
+                        <s:if test="%{showPayBtn}">
+                            <input type="button" name="button2" id="button2" value="Pay Mutation Fee" class="buttonsubmit" onclick="payment()" />
+                        </s:if>
+                    </s:if>
 						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 					</div>
 				</div>

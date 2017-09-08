@@ -1,62 +1,44 @@
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * accountability and the service delivery of the government  organizations.
+ * <p>
+ * Copyright (C) <2015>  eGovernments Foundation
+ * <p>
+ * The updated version of eGov suite of products as by eGovernments Foundation
+ * is available at http://www.egovernments.org
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/ or
+ * http://www.gnu.org/licenses/gpl.html .
+ * <p>
+ * In addition to the terms of the GPL license to be adhered to in using this
+ * program, the following additional terms are to be complied with:
+ * <p>
+ * 1) All versions of this program, verbatim or modified must carry this
+ * Legal Notice.
+ * <p>
+ * 2) Any misrepresentation of the origin of the material is prohibited. It
+ * is required that all modified versions of this material be marked in
+ * reasonable ways as different from the original version.
+ * <p>
+ * 3) This license does not grant any rights to any user of the program
+ * with regards to rights under trademark law for use of the trade names
+ * or trademarks of eGovernments Foundation.
+ * <p>
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.stms.web.controller.masters;
 
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ALL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MIXED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NONRESIDENTIAL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.RESIDENTIAL;
-
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
+import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -64,7 +46,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.GlobalSettings;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.pojo.DCBReportWardwiseResult;
@@ -76,7 +58,6 @@ import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -84,7 +65,21 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ALL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MIXED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NONRESIDENTIAL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.RESIDENTIAL;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -102,14 +97,8 @@ public class SewerageRateDCBReportController {
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
 
-    @PersistenceContext
-    EntityManager entityManager;
-
     @Autowired
     private CityService cityService;
-
-    @Autowired
-    private ApplicationProperties applicationProperties;
 
     @Autowired
     private SewerageIndexService sewerageIndexService;
@@ -121,8 +110,8 @@ public class SewerageRateDCBReportController {
 
     @RequestMapping(value = "/sewerageRateReportView/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
     public ModelAndView getSewerageRateReport(@PathVariable final String consumernumber,
-            @PathVariable final String assessmentnumber, final Model model,
-            final ModelMap modelMap, final HttpServletRequest request) {
+                                              @PathVariable final String assessmentnumber, final Model model,
+                                              final HttpServletRequest request) {
         SewerageApplicationDetails sewerageApplicationDetails = null;
         final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy");
         final String currentDate = formatter.format(new Date());
@@ -162,7 +151,7 @@ public class SewerageRateDCBReportController {
     @RequestMapping(value = "/dcbReportWardwiseList", method = RequestMethod.GET)
     @ResponseBody
     public void searchApplication(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
-            final HttpServletResponse response) throws IOException {
+                                  final HttpServletResponse response) throws IOException {
         final List<Boundary> wardList = new ArrayList<>();
         List<DCBReportWardwiseResult> wardwiseResultList;
         final List<Boundary> wards = new ArrayList<>();
@@ -206,7 +195,7 @@ public class SewerageRateDCBReportController {
         dcbMap = sewerageIndexService.wardWiseBoolQueryFilter(searchRequest.getUlbName(), wardNames, propertyTypeList);
         wardwiseResultList = sewerageDCBReporService.getSewerageRateDCBWardwiseReport(dcbMap, searchRequest.getPropertyType());
 
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(applicationProperties.defaultDatePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
                 .toJson(wardwiseResultList)
                 + "}", response.getWriter());
 
@@ -214,7 +203,7 @@ public class SewerageRateDCBReportController {
 
     @RequestMapping(value = "/dcbViewWardConnections/{id}", method = RequestMethod.GET)
     public String getConnectionDCBReport(@ModelAttribute final DCBReportWardwiseResult searchRequest, final Model model,
-            @PathVariable final String id, final HttpServletRequest request) {
+                                         @PathVariable final String id, final HttpServletRequest request) {
         String propType = null;
         String ulbName;
         Long wardId;

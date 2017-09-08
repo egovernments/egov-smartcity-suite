@@ -62,7 +62,6 @@ import java.util.TreeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.service.FinancialYearService;
@@ -202,8 +201,9 @@ public class SewerageDCBReporService {
                 receiptMap = new TreeMap<>();
                 if (detail.getCurrentDemand() != null && !detail.getCurrentDemand().getEgDemandDetails().isEmpty())
                     for (final EgDemandDetails demandDetail : detail.getCurrentDemand().getEgDemandDetails()) {
-                        receiptDtlMap = new HashMap<>();
                         for (final EgdmCollectedReceipt receipt : demandDetail.getEgdmCollectedReceipts()) {
+                            receiptDtlMap = new HashMap<>();
+
                             receiptDtlMap.put(receipt.getReceiptDate(),
                                     receipt.getAmount().setScale(2, BigDecimal.ROUND_HALF_UP));
                             receiptMap.put(receipt.getReceiptNumber(), receiptDtlMap);

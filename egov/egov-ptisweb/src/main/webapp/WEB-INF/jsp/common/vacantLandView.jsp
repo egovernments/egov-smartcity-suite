@@ -39,6 +39,7 @@
   --%>
 
 <%@ include file="/includes/taglibs.jsp"%>
+<%@ taglib prefix = "fmt" uri = "http://java.sun.com/jsp/jstl/fmt" %>
 <!-- <div align="center" class="overflow-x-scroll"> -->
 <table width="100%" border="0" cellspacing="0" cellpadding="0" class="tablebottom" id="vacantLandTable">
 	
@@ -66,10 +67,10 @@
         	<span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd" align="center">
-        	<span class="bold"><s:property value="%{propertyDetail.marketValue}" default="N/A"/></span>
+        	<span class="bold"><fmt:formatNumber type = "number" value = "${propertyDetail.marketValue}" /></span>
 		</td>
         <td class="blueborderfortd" align="center">
-        	<span class="bold"><s:property value="%{propertyDetail.currentCapitalValue}" default="N/A"/></span>
+        	<span class="bold"><fmt:formatNumber type = "number" value = "${propertyDetail.currentCapitalValue}" /></span>
         </td>
         <td class="blueborderfortd" align="center">
         <s:date name="%{property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />
@@ -102,10 +103,10 @@
         	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.sitalArea.area}" default="N/A"/></span>
         </td>
         <td class="blueborderfortd" align="center">
-        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.marketValue}" default="N/A"/></span>
+        	<span class="bold"><fmt:formatNumber type = "number" value = "${basicProperty.property.propertyDetail.marketValue}" /></span>
 		</td>
         <td class="blueborderfortd">
-        	<span class="bold"><s:property value="%{basicProperty.property.propertyDetail.currentCapitalValue}" default="N/A"/></span>
+        	<span class="bold"><fmt:formatNumber type = "number" value = "${basicProperty.property.propertyDetail.currentCapitalValue}" />" default="N/A"/></span>
         </td>
         <td class="blueborderfortd">
         <s:date name="%{basicProperty.property.propertyDetail.dateOfCompletion}" var="occupationDate" format="dd/MM/yyyy" />

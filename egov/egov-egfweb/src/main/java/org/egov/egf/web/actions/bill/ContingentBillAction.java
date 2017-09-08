@@ -1165,6 +1165,7 @@ public class ContingentBillAction extends BaseBillAction {
         mis.setFundsource(voucherHeader.getVouchermis().getFundsource());
         mis.setFunction(voucherHeader.getVouchermis().getFunction());
         bill.setNarration(voucherHeader.getDescription());
+        mis.setNarration(voucherHeader.getDescription());
         // mis.setSourcePath("/EGF/bill/contingentBill!beforeView.action?billRegisterId=");
         final EgBillSubType egBillSubType = (EgBillSubType) persistenceService.find("from EgBillSubType where id=?",
                 commonBean.getBillSubType().longValue());

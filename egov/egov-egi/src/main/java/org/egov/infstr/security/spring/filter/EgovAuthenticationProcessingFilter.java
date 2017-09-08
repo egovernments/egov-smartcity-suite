@@ -57,45 +57,48 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.USERNAME_KEY;
+
 public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenticationFilter {
 
-    private List<String> credentialFields = new ArrayList<String>();
+    private List<String> credentialFields = new ArrayList<>();
 
-    public void setCredentialFields(final List<String> credentialFields) {
+    public void setCredentialFields(List<String> credentialFields) {
         this.credentialFields = credentialFields;
     }
 
     @Override
-    protected void setDetails(final HttpServletRequest request, final UsernamePasswordAuthenticationToken authToken) {
+    protected void setDetails(HttpServletRequest request, UsernamePasswordAuthenticationToken authToken) {
         authToken.setDetails(authenticationDetailsSource.buildDetails(request));
     }
 
     @Override
-    protected void successfulAuthentication(final HttpServletRequest request, final HttpServletResponse response,
-            final FilterChain filterChain, final Authentication authResult) throws IOException, ServletException {
+    protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
+                                            FilterChain filterChain, Authentication authResult) throws IOException, ServletException {
         // Add information to session variables
-        final String location = request.getParameter(SecurityConstants.LOCATION_FIELD);
-        final HttpSession session = request.getSession();
+        String location = request.getParameter(SecurityConstants.LOCATION_FIELD);
+        HttpSession session = request.getSession();
         if (StringUtils.isNotBlank(location))
             session.setAttribute(SecurityConstants.LOCATION_FIELD, location);
 
         if (authResult != null) {
-            final SecureUser principal = (SecureUser) authResult.getPrincipal();
-            session.setAttribute("userid", principal.getUserId());
-            session.setAttribute("username", principal.getUsername());
+            SecureUser principal = (SecureUser) authResult.getPrincipal();
+            session.setAttribute(USERID_KEY, principal.getUserId());
+            session.setAttribute(USERNAME_KEY, principal.getUsername());
         }
         super.successfulAuthentication(request, response, filterChain, authResult);
     }
 
     @Override
-    public Authentication attemptAuthentication(final HttpServletRequest request, final HttpServletResponse response) {
-        final HashMap<String, String> credentials = new HashMap<String, String>();
-        for (final String credential : credentialFields) {
-            final String field = request.getParameter(credential) == null ? "" : request.getParameter(credential);
+    public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
+        HashMap<String, String> credentials = new HashMap<>();
+        for (String credential : credentialFields) {
+            String field = request.getParameter(credential) == null ? "" : request.getParameter(credential);
             credentials.put(credential, field);
         }
-        final String username = request.getParameter(SecurityConstants.USERNAME_FIELD);
-        final UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, credentials);
+        String username = request.getParameter(SecurityConstants.USERNAME_FIELD);
+        UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(username, credentials);
         request.getSession().setAttribute(SecurityConstants.USERNAME_FIELD, username);
         setDetails(request, authToken);
 

@@ -44,12 +44,13 @@ import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.Feature;
 import org.egov.infra.admin.master.entity.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.history.RevisionRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
 
 @Repository
-public interface FeatureRepository extends JpaRepository<Feature, Long> {
+public interface FeatureRepository extends JpaRepository<Feature, Long>, RevisionRepository<Feature, Long, Integer> {
 
     Long countByRolesInAndActionsIn(Role role, Action action);
 

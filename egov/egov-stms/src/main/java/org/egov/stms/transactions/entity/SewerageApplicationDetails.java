@@ -129,6 +129,13 @@ public class SewerageApplicationDetails extends StateAware {
     private Date workOrderDate;
     
     @SafeHtml
+    @Length(min = 3, max = 50)
+    private String rejectionNumber;
+    
+    @Temporal(value = TemporalType.DATE)
+    private Date rejectionDate;
+    
+    @SafeHtml
     private String closureNoticeNumber;
     
     @Temporal (value=TemporalType.DATE)
@@ -147,6 +154,9 @@ public class SewerageApplicationDetails extends StateAware {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "filestoreid") 
     private FileStoreMapper fileStore;
+    
+   
+    private String source;
     
     @OneToMany(mappedBy = "applicationDetails", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<SewerageApplicationDetailsDocument> appDetailsDocument = new ArrayList<SewerageApplicationDetailsDocument>(
@@ -471,5 +481,30 @@ public class SewerageApplicationDetails extends StateAware {
     public void setClosureNoticeDate(Date closureNoticeDate) {
         this.closureNoticeDate = closureNoticeDate;
     }
+
+    public String getSource() {
+        return source;
+    }
+
+    public void setSource(String source) {
+        this.source = source;
+    }
+
+    public String getRejectionNumber() {
+        return rejectionNumber;
+    }
+
+    public void setRejectionNumber(String rejectionNumber) {
+        this.rejectionNumber = rejectionNumber;
+    }
+
+    public Date getRejectionDate() {
+        return rejectionDate;
+    }
+
+    public void setRejectionDate(Date rejectionDate) {
+        this.rejectionDate = rejectionDate;
+    }
+    
     
 }

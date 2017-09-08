@@ -631,4 +631,9 @@
 		<put-attribute name="body" value="/WEB-INF/views/bankaccount/bankaccount-search.jsp" />
 	</definition>
 
+	<definition name="bankstatement-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.search.bankstatement" cascade="true" />
+		<put-attribute name="body" value="/WEB-INF/views/bankstatement/bankstatement-search.jsp" />
+	</definition>
+
 </tiles-definitions>

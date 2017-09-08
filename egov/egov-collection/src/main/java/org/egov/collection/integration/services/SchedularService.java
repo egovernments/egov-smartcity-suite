@@ -39,25 +39,29 @@
  */
 package org.egov.collection.integration.services;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.entity.ReceiptHeader;
+import org.egov.collection.integration.pgi.AtomAdaptor;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 public class SchedularService {
@@ -73,6 +77,9 @@ public class SchedularService {
 
     @Autowired
     private AxisAdaptor axisAdaptor;
+
+    @Autowired
+    private AtomAdaptor atomAdaptor;
 
     @Transactional
     public void reconcileAXIS() {
@@ -97,7 +104,6 @@ public class SchedularService {
                 final long startTimeInMilis = System.currentTimeMillis();
                 LOGGER.info("AXIS Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
                 PaymentResponse paymentResponse = axisAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
-
                 if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
                     LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
                     LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
@@ -105,6 +111,7 @@ public class SchedularService {
                     ReceiptHeader onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
                             CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE, Long.valueOf(paymentResponse.getReceiptId()),
                             ApplicationThreadLocals.getCityCode());
+
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
                     else
@@ -114,10 +121,71 @@ public class SchedularService {
                     LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
                             + onlinePaymentReceiptHeader.getReceiptnumber()
                             + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
-                            + onlinePaymentReceiptHeader.getConsumerCode() : "") + "; Time taken(ms) = "
+                                    + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                            + "; Time taken(ms) = "
                             + elapsedTimeInMillis);
                 }
             }
         }
     }
+
+    @Transactional
+    public void reconcileATOM() {
+        LOGGER.debug("Inside reconcileATOM");
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.MINUTE, -30);
+        final Query qry = persistenceService
+                .getSession()
+                .createQuery(
+                        "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
+                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
+                .setMaxResults(50);
+        qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
+        qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
+        qry.setParameter("thirtyminslesssysdate", new Date(cal.getTimeInMillis()));
+        final List<OnlinePayment> reconcileList = qry.list();
+        LOGGER.debug("Thread ID = " + Thread.currentThread().getId() + ": got " + reconcileList.size() + " results.");
+        if (!reconcileList.isEmpty()) {
+            for (final OnlinePayment onlinePaymentObj : reconcileList) {
+                final long startTimeInMilis = System.currentTimeMillis();
+                LOGGER.info("ATOM Receiptid::::" + onlinePaymentObj.getReceiptHeader().getId());
+                PaymentResponse paymentResponse = atomAdaptor.createOfflinePaymentRequest(onlinePaymentObj);
+                if (paymentResponse != null && isNotBlank(paymentResponse.getReceiptId())) {
+                    LOGGER.info("paymentResponse.getReceiptId():" + paymentResponse.getReceiptId());
+                    LOGGER.info("paymentResponse.getAdditionalInfo6():" + paymentResponse.getAdditionalInfo6());
+                    LOGGER.info("paymentResponse.getAuthStatus():" + paymentResponse.getAuthStatus());
+                    ReceiptHeader onlinePaymentReceiptHeader = null;
+                    if (paymentResponse.getAdditionalInfo2() != null && !paymentResponse.getAdditionalInfo2().isEmpty()) {
+                        if (paymentResponse.getAdditionalInfo2().equals(ApplicationThreadLocals.getCityCode()))
+                            onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                                    CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
+                                    Long.valueOf(paymentResponse.getReceiptId()),
+                                    paymentResponse.getAdditionalInfo2());
+                        else {
+                            LOGGER.error("City code is not match");
+                            throw new ValidationException(Arrays.asList(new ValidationError("City code is not match",
+                                    "City code is not match")));
+                        }
+                    } else
+                        onlinePaymentReceiptHeader = (ReceiptHeader) persistenceService.findByNamedQuery(
+                                CollectionConstants.QUERY_RECEIPT_BY_ID_AND_CITYCODE,
+                                Long.valueOf(paymentResponse.getReceiptId()),
+                                ApplicationThreadLocals.getCityCode());
+                    if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
+                        reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
+                    else
+                        reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
+
+                    final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
+                    LOGGER.info("$$$$$$ Online Receipt Persisted with Receipt Number: "
+                            + onlinePaymentReceiptHeader.getReceiptnumber()
+                            + (onlinePaymentReceiptHeader.getConsumerCode() != null ? " and consumer code: "
+                                    + onlinePaymentReceiptHeader.getConsumerCode() : "")
+                            + "; Time taken(ms) = "
+                            + elapsedTimeInMillis);
+                }
+            }
+        }
+    }
+
 }

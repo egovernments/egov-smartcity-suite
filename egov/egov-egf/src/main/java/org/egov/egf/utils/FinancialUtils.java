@@ -39,17 +39,6 @@
  */
 package org.egov.egf.utils;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -60,9 +49,12 @@ import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.model.bills.DocumentUpload;
 import org.egov.model.masters.AccountCodePurpose;
 import org.egov.pims.commons.Position;
 import org.egov.utils.FinancialConstants;
@@ -72,39 +64,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.*;
+
 /**
  * @author venki
- *
  */
 
 @Service
 @Transactional(readOnly = true)
 public class FinancialUtils {
-
-    @PersistenceContext
-    private EntityManager entityManager;
-
-    @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private PositionMasterService positionMasterService;
-
-    @Autowired
-    private AppConfigService appConfigService;
-
-    @Autowired
-    private EisCommonService eisCommonService;
-
-    public Session getCurrentSession() {
-        return entityManager.unwrap(Session.class);
-    }
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
 
     public static final Map<String, String> VOUCHER_SUBTYPES = new HashMap<String, String>() {
         private static final long serialVersionUID = -2168753508482839041L;
@@ -117,6 +90,27 @@ public class FinancialUtils {
             put(FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT, FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT);
         }
     };
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private AssignmentService assignmentService;
+    @Autowired
+    private SecurityUtils securityUtils;
+    @Autowired
+    private PositionMasterService positionMasterService;
+    @Autowired
+    private AppConfigService appConfigService;
+    @Autowired
+    private EisCommonService eisCommonService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+
+    @Autowired
+    private FileStoreService fileStoreService;
+
+    public Session getCurrentSession() {
+        return entityManager.unwrap(Session.class);
+    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, readOnly = true)
     public EgwStatus getStatusByModuleAndCode(final String moduleType, final String code) {
@@ -284,6 +278,32 @@ public class FinancialUtils {
 
         return getCurrentSession().load(AccountCodePurpose.class, id);
 
+    }
+
+    public List<DocumentUpload> getDocumentDetails(final List<DocumentUpload> files, final Object object, final String objectType)
+            throws IOException {
+        final List<DocumentUpload> documentDetailsList = new ArrayList<>();
+
+        Long id;
+        Method method;
+        try {
+            method = object.getClass().getMethod("getId", null);
+            id = (Long) method.invoke(object, null);
+        } catch (NoSuchMethodException | SecurityException | IllegalAccessException | IllegalArgumentException
+                | InvocationTargetException e) {
+            throw new ApplicationRuntimeException("error.expense.bill.document.error", e);
+        }
+
+        for (DocumentUpload doc : files) {
+            final DocumentUpload documentDetails = new DocumentUpload();
+            documentDetails.setObjectId(id);
+            documentDetails.setObjectType(objectType);
+            documentDetails.setFileStore(fileStoreService.store(doc.getInputStream(), doc.getFileName(),
+                    doc.getContentType(), FinancialConstants.FILESTORE_MODULECODE));
+            documentDetailsList.add(documentDetails);
+
+        }
+        return documentDetailsList;
     }
 
 }

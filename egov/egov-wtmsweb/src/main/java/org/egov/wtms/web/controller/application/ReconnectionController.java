@@ -39,16 +39,23 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
@@ -126,14 +133,17 @@ public class ReconnectionController extends GenericConnectionController {
     @RequestMapping(value = "/reconnection/{applicationCode}", method = RequestMethod.GET)
     public String newForm(final Model model, @PathVariable final String applicationCode,
             final HttpServletRequest request) {
+
+        final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.CLOSED);
-        return loadViewData(model, request, waterConnectionDetails);
+        return loadViewData(model, request, waterConnectionDetails, meesevaApplicationNumber);
 
     }
 
     private String loadViewData(final Model model, final HttpServletRequest request,
-            final WaterConnectionDetails waterConnectionDetails) {
+            final WaterConnectionDetails waterConnectionDetails, final String meesevaApplicationNumber) {
+        Boolean loggedUserIsMeesevaUser;
         model.addAttribute("stateType", waterConnectionDetails.getClass().getSimpleName());
         model.addAttribute("additionalRule", WaterTaxConstants.RECONNECTIONCONNECTION);
         model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
@@ -156,6 +166,15 @@ public class ReconnectionController extends GenericConnectionController {
         model.addAttribute("typeOfConnection", WaterTaxConstants.RECONNECTIONCONNECTION);
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
+        model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
+
+        loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
+        if (loggedUserIsMeesevaUser)
+            if (meesevaApplicationNumber == null && meesevaApplicationNumber != "")
+                throw new ApplicationRuntimeException("MEESEVA.005");
+            else
+                waterConnectionDetails.setMeesevaApplicationNumber(meesevaApplicationNumber);
+        model.addAttribute("loggedUserIsMeesevaUser", loggedUserIsMeesevaUser);
         return "reconnection-newForm";
     }
 
@@ -164,12 +183,21 @@ public class ReconnectionController extends GenericConnectionController {
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final Model model, @RequestParam("files") final MultipartFile[] files) {
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
-        if (!isCSCOperator) {
+        final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
+        final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
+        if (loggedUserIsMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
+            waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
+        model.addAttribute("citizenPortalUser", citizenPortalUser);
+        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
                 throw new ValidationException("err.creator.application");
         }
+
+        if (waterConnectionDetails != null
+                && CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+            waterConnectionDetails.getApplicationType().setCode(RECONNECTIONCONNECTION);
 
         final String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
@@ -185,7 +213,7 @@ public class ReconnectionController extends GenericConnectionController {
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
 
-        if (applicationByOthers != null && applicationByOthers.equals(true)) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || loggedUserIsMeesevaUser) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition == null) {
@@ -214,10 +242,29 @@ public class ReconnectionController extends GenericConnectionController {
         // waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
         final String addrule = request.getParameter("additionalRule");
         // waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
-        final WaterConnectionDetails savedWaterConnectionDetails = reconnectionService.updateReConnection(
-                waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
+        if (citizenPortalUser)
+            if (waterConnectionDetails.getSource() == null || StringUtils.isBlank(waterConnectionDetails.getSource().toString()))
+                waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+        WaterConnectionDetails savedWaterConnectionDetails = null;
+        if (loggedUserIsMeesevaUser) {
+            final HashMap<String, String> meesevaParams = new HashMap<>();
+            meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
+            waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
+            waterConnectionDetails.setSource(MEESEVA);
+            savedWaterConnectionDetails = reconnectionService.updateReConnection(
+                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, meesevaParams,
+                    sourceChannel);
+
+        } else
+            savedWaterConnectionDetails = reconnectionService.updateReConnection(
+                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
         model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
-        return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber();
+
+        if (loggedUserIsMeesevaUser)
+            return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="
+                    + waterConnectionDetails.getApplicationNumber();
+        else
+            return "redirect:/application/citizeenAcknowledgement?pathVars=" + waterConnectionDetails.getApplicationNumber();
 
     }
 }

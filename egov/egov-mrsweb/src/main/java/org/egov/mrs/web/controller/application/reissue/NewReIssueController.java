@@ -158,6 +158,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         }
         model.addAttribute(IS_EMPLOYEE,
                 !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName()) && registrationWorkFlowService.isEmployee(logedinUser));
+        model.addAttribute("citizenPortalUser", registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser()));
         final ReIssue reIssue = new ReIssue();
         reIssue.setRegistration(registration);
         prepareNewForm(model, reIssue);
@@ -182,19 +183,19 @@ public class NewReIssueController extends GenericWorkFlowController {
             final BindingResult errors,
             final RedirectAttributes redirectAttributes) {
         final User logedinUser = securityUtils.getCurrentUser();
+        boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean isEmployee = !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
                 && registrationWorkFlowService.isEmployee(logedinUser);
         marriageFormValidator.validateReIssue(reIssue, errors);
-        registrationWorkFlowService.validateAssignmentForCscUser(null, reIssue, isEmployee, errors);
+        boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(null, reIssue, isEmployee);
+        if (!isAssignmentPresent) {
+            model.addAttribute("message", messageSource.getMessage("notexists.position",
+                    new String[] {}, null));
+
+            return buildFormOnValidation(reIssue, isEmployee, model);
+        }
         if (errors.hasErrors()) {
-            final MarriageRegistration registration = marriageRegistrationService.get(reIssue.getRegistration().getId());
-            reIssue.setRegistration(registration);
-            final Double fees = reIssue.getFeePaid();
-            model.addAttribute(IS_EMPLOYEE, !ANONYMOUS_USER.equalsIgnoreCase(logedinUser.getName())
-                    && registrationWorkFlowService.isEmployee(logedinUser));
-            prepareNewForm(model, reIssue);
-            reIssue.setFeePaid(fees);
-            return "reissue-form";
+            return buildFormOnValidation(reIssue, isEmployee, model);
         }
         String approverName = null;
         String nextDesignation = null;
@@ -202,7 +203,7 @@ public class NewReIssueController extends GenericWorkFlowController {
         reIssue.setRegistration(marriageRegistrationService.get(reIssue.getRegistration().getId()));
         obtainWorkflowParameters(workflowContainer, request);
 
-        if (!isEmployee) {
+        if (!isEmployee ||citizenPortalUser ) {
             final Assignment assignment = registrationWorkFlowService.getMappedAssignmentForCscOperator(null, reIssue);
             if (assignment != null) {
                 workflowContainer.setApproverPositionId(assignment.getPosition().getId());
@@ -224,10 +225,20 @@ public class NewReIssueController extends GenericWorkFlowController {
         model.addAttribute("feepaid", reIssue.getFeePaid().doubleValue());
         if (!isEmployee) {
             redirectAttributes.addFlashAttribute(MESSAGE, message);
-                return "redirect:/reissue/reissue-certificate-ackowledgement/" + appNo;
+            return "redirect:/reissue/reissue-certificate-ackowledgement/" + appNo;
 
         } else
             return "reissue-ack";
+    }
+
+    private String buildFormOnValidation(final ReIssue reIssue, final Boolean isEmployee, final Model model) {
+        final MarriageRegistration registration = marriageRegistrationService.get(reIssue.getRegistration().getId());
+        reIssue.setRegistration(registration);
+        prepareNewForm(model, reIssue);
+        model.addAttribute(IS_EMPLOYEE, isEmployee);
+        final Double fees = reIssue.getFeePaid();
+        reIssue.setFeePaid(fees);
+        return "reissue-form";
     }
 
     @RequestMapping(value = "/workflow", method = RequestMethod.POST)

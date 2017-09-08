@@ -509,26 +509,23 @@ function addDemandDetailRow(instlmntDesc,reasondsc,demandamount,collectionamount
 }
 
 $("#amountCollected,#feesDetail1amount")
-	.blur(
-		function() {
-			var amountCollected = $('#amountCollected').val();
-			var donationCharge = $('#feesDetail1amount').val();
-			if(donationCharge=='') donationCharge=0;
-			if(amountCollected=='') amountCollected=0;
-			var amountToBeCollected = parseFloat(donationCharge)
-					- parseFloat(amountCollected);
-			if (parseFloat(amountCollected) > parseFloat(donationCharge)) {
-				alert("Collected Donation Charge should not be greater than the actual donation charge");
-				$('#amountCollected').val('');
-				
-				if($('#amountCollected').val()=='')
-					amountCollected=0;
-				$("#amountForCollection").val( parseFloat(donationCharge)
-						- parseFloat(amountCollected));
-			} else {
-				$("#amountForCollection").val(amountToBeCollected);
-			}
-	});
+.blur(
+	function() {
+		var amountCollected = $('#amountCollected').val();
+		var donationCharge = $('#feesDetail1amount').val();
+		if(amountCollected){
+		if (parseFloat(amountCollected) > parseFloat(donationCharge)) {
+			alert("Collected Donation Charge should not be greater than the actual donation charge");
+			$('#amountCollected').val('');
+			$('#pendingAmtForCollection').val('');
+		}
+		else{
+			$("#pendingAmtForCollection").val( parseFloat(donationCharge)
+					- parseFloat(amountCollected));
+		}
+		
+	}
+});
 
 function validateDemand(obj) {
 	$( "input[name$='actualAmount']" ).on("keyup", function(){

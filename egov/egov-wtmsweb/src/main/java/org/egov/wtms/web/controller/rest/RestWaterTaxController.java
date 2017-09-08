@@ -118,14 +118,6 @@ public class RestWaterTaxController {
 
     }
 
-    @RequestMapping(value = "rest/watertax/connectiondetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
-    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(
-            final WaterTaxDetailRequest waterTaxDetailRequest) throws IOException {
-        return connectionDetailService.getWaterTaxDetailsByPropertyId(waterTaxDetailRequest.getAssessmentNumber(),
-                waterTaxDetailRequest.getUlbCode(), waterTaxDetailRequest.getConsumerNumber());
-
-    }
-
     @RequestMapping(value = "rest/watertax/updateConnectionForAmulgamation", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String updateWaterConnectionForAmalagamation(@RequestBody final WaterTaxDetailRequest waterTaxDetailRequest)
             throws IOException {

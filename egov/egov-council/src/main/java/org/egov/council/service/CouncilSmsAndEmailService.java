@@ -125,7 +125,7 @@ public class CouncilSmsAndEmailService {
             }
             List<User> listOfUsers = councilMeetingService.getUserListForMeeting(councilMeeting);
             for (User user : listOfUsers) {
-                if (user.getMobileNumber() != null) {
+                if (user.getEmailId() != null) {
                     buildEmailForMeetingForCouncilRoles(user.getUsername(), user.getEmailId(), councilMeeting, customMessage,
                             attachment);
                 }

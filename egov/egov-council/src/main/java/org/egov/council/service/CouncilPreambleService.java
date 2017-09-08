@@ -40,6 +40,7 @@
 package org.egov.council.service;
 import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
 import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 
@@ -134,12 +135,14 @@ public class CouncilPreambleService {
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchPreambleForWardwiseReport(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
+        criteria.add(Restrictions.ne("status.code",  REJECTED));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> search(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
+        criteria.add(Restrictions.ne("status.code",  REJECTED));
         return criteria.list();
     }
 

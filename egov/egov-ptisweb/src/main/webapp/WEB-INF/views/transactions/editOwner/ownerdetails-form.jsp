@@ -385,7 +385,7 @@ body {
 													id="guardianRelation" name="guardianRelation"
 													data-first-option="false" cssClass="form-control">
 													<option value="">--select--</option>
-													<form:options items="${guardianRelationMap}" />
+													<form:options items="${guardianRelations}" />
 												</form:select>
 												<form:hidden path="ownerAudit[${status.index}].guardianRelation" /></td>
 											<td class="blueborderfortd" align="center"><form:input

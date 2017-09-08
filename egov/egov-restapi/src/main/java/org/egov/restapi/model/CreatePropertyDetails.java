@@ -50,17 +50,22 @@ import java.util.List;
 public class CreatePropertyDetails implements Serializable {
 	
 	private String ulbCode;
+	private String assessmentNumber;
 	private String propertyTypeMasterCode;
+	private String propertyDepartment;
 	private String categoryCode;
 	private String apartmentCmplxCode;
+	private Boolean appurtenantLandChecked=false;
 	private List<OwnerInformation> ownerDetails;
 	private AssessmentsDetails assessmentDetails;
 	private PropertyAddressDetails propertyAddressDetails;
 	private AmenitiesDetails amenitiesDetails;
 	private ConstructionTypeDetails constructionTypeDetails;
 	private List<FloorDetails> floorDetails;
+	private Boolean floorDetailsEntered=false;
 	private VacantLandDetails vacantLandDetails;
 	private SurroundingBoundaryDetails surroundingBoundaryDetails;
+	private DocumentTypeDetails  documentTypeDetails;
 	private String assessmentNo;
 	
 	@Override
@@ -70,8 +75,11 @@ public class CreatePropertyDetails implements Serializable {
 				+ ", propertyAddressDetails=" + propertyAddressDetails + ", amenitiesDetails=" + amenitiesDetails
 				+ ", constructionTypeDetails=" + constructionTypeDetails + ", floorDetails=" + floorDetails
 				+ ", vacantLandDetails=" + vacantLandDetails + ", surroundingBoundaryDetails="
-				+ surroundingBoundaryDetails + "]";
+				+ surroundingBoundaryDetails + ", documentTypeDetails="
+						+ documentTypeDetails + "]";
 	}
+	
+
 	
 	public String getPropertyTypeMasterCode() {
 		return propertyTypeMasterCode;
@@ -152,6 +160,57 @@ public class CreatePropertyDetails implements Serializable {
 
 	public void setAssessmentNo(String assessmentNo) {
 		this.assessmentNo = assessmentNo;
+	}
+	
+	public String getPropertyDepartment() {
+		return propertyDepartment;
+	}
+
+
+	public void setPropertyDepartment(String propertyDepartment) {
+		this.propertyDepartment = propertyDepartment;
+	}
+
+
+	public DocumentTypeDetails getDocumentTypeDetails() {
+		return documentTypeDetails;
+	}
+
+
+	public void setDocumentTypeDetails(DocumentTypeDetails documentTypeDetails) {
+		this.documentTypeDetails = documentTypeDetails;
+	}
+	
+	public Boolean getFloorDetailsEntered() {
+		return floorDetailsEntered;
+	}
+
+	public void setFloorDetailsEntered(Boolean floorDetailsEntered) {
+		this.floorDetailsEntered = floorDetailsEntered;
+	}
+
+
+
+	public boolean isAppurtenantLandChecked() {
+		return appurtenantLandChecked;
+	}
+
+
+
+	public void setAppurtenantLandChecked(Boolean appurtenantLandChecked) {
+		this.appurtenantLandChecked = appurtenantLandChecked;
+	}
+
+
+
+	public String getAssessmentNumber() {
+		return assessmentNumber;
+	}
+
+
+
+	public void setAssessmentNumber(String assessmentNumber) {
+		this.assessmentNumber = assessmentNumber;
 	}
 
 }

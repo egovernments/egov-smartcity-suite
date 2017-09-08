@@ -41,6 +41,7 @@
 package org.egov.infra.web.support.ui;
 
 import com.google.gson.JsonSerializer;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.springframework.data.domain.Page;
 
 import java.util.List;
@@ -95,7 +96,11 @@ public class DataTable<T> {
         this.data = data;
     }
 
-    public String toJson(Class<? extends JsonSerializer<DataTable<T>>> jsonSerializer) {
+    public String toJson(Class<? extends JsonSerializer<DataTable<T>>> jsonSerializerClazz) {
+        return toJSON(this, jsonSerializerClazz);
+    }
+
+    public String toJson(DataTableJsonAdapter jsonSerializer) {
         return toJSON(this, jsonSerializer);
     }
 }

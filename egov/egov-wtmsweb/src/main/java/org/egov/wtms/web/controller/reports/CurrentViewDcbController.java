@@ -107,8 +107,9 @@ public class CurrentViewDcbController {
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
-    @Autowired(required = true)
+    @Autowired
     protected WaterConnectionDetailsService waterConnectionDetailsService;
+
     @Autowired
     private PropertyExtnUtils propertyExtnUtils;
 
@@ -130,10 +131,9 @@ public class CurrentViewDcbController {
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
         return waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.ACTIVE);
+                .findByApplicationNumberOrConsumerCodeAndStatus(applicationCode, ConnectionStatus.ACTIVE);
     }
 
-    @Autowired
     @ModelAttribute("connectionTypes")
     public Map<String, String> connectionTypes() {
         return waterConnectionDetailsService.getConnectionTypesMap();
@@ -170,7 +170,11 @@ public class CurrentViewDcbController {
         final Map<Installment, DCBRecord> finalResultMap = new TreeMap<>();
         final List<String> installmentList = new ArrayList<>();
 
-        model.addAttribute(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getApplicationNumber());
+        if (waterConnectionDetails != null)
+            if (waterConnectionDetails.getApplicationNumber() != null)
+                model.addAttribute(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getApplicationNumber());
+            else if (waterConnectionDetails.getMeesevaApplicationNumber() != null)
+                model.addAttribute(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getMeesevaApplicationNumber());
 
         model.addAttribute("connectionType", waterConnectionDetailsService.getConnectionTypesMap()
                 .get(waterConnectionDetails.getConnectionType().name()));

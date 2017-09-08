@@ -155,21 +155,21 @@
 
 			<c:choose>
 				<c:when
-					test="${currentState != 'NEW' && currentState != 'DATAENTRY'}">
+					test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending') || (currentState != 'NEW' && currentState != 'DATAENTRY')}">
 					<form:hidden path="${witness}.photoFileStore" />
 					<form:hidden class="encodedPhoto" path="${witness}.encodedPhoto" />
 					<img id="${witness}.photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="${witness}-photo"
-						name="${witness}.photoFile" class="file-ellipsis upload-file"
-						data-fileto="${witness}.photo">
+						name="${witness}.photoFile" class="file-ellipsis upload-file validate-file"
+						data-fileto="${witness}.photo" accept="image/*">
 				</c:when>
 				<c:otherwise>
 					<img id="${witness}.photo" class="add-margin marriage-img"
 						height="150" width="130" />
 					<input type="file" id="${witness}-photo"
-						name="${witness}.photoFile" class="file-ellipsis upload-file"
-						data-fileto="${witness}.photo">
+						name="${witness}.photoFile" class="file-ellipsis upload-file validate-file"
+						data-fileto="${witness}.photo" accept="image/*">
 				</c:otherwise>
 			</c:choose>
 		</div>

@@ -50,7 +50,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENT
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.GUARDIAN_RELATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
@@ -68,6 +67,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
@@ -79,12 +79,15 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
+import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Namespace;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -92,7 +95,6 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.apache.struts2.interceptor.validation.SkipValidation;
-import org.apache.struts2.ServletActionContext;
 import org.egov.commons.Area;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
@@ -117,6 +119,7 @@ import org.egov.ptis.domain.entity.property.Amalgamation;
 import org.egov.ptis.domain.entity.property.AmalgamationOwner;
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.BuiltUpProperty;
 import org.egov.ptis.domain.entity.property.DocumentType;
 import org.egov.ptis.domain.entity.property.Floor;
@@ -132,6 +135,7 @@ import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.ApartmentService;
 import org.egov.ptis.master.service.FloorTypeService;
@@ -149,7 +153,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 @Results({ @Result(name = AmalgamationAction.NEW, location = "amalgamation/amalgamation-new.jsp"),
         @Result(name = AmalgamationAction.RESULT_ACK, location = "amalgamation/amalgamation-ack.jsp"),
         @Result(name = AmalgamationAction.VIEW, location = "amalgamation/amalgamation-view.jsp"),
-        @Result(name = AmalgamationAction.NOTICE, location = "amalgamation/amalgamation-notice.jsp") })
+        @Result(name = AmalgamationAction.NOTICE, location = "amalgamation/amalgamation-notice.jsp"),
+        @Result(name = "error", location = "common/meeseva-errorPage.jsp"),
+        @Result(name = AmalgamationAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp") })
 public class AmalgamationAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = 1L;
@@ -161,8 +167,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_MODIFY_APPROVE_SUCCESS = "property.modify.approve.success";
     private static final String PROPERTY_FORWARD_SUCCESS = "property.forward.success";
     protected static final String NOTICE = "notice";
+    private static final String RESULT_ERROR = "error";
 
-    private BasicProperty basicProp;
+    private BasicProperty basicProp = new BasicPropertyImpl();
     private PropertyImpl oldProperty = new PropertyImpl();
     private PropertyImpl propertyModel = new PropertyImpl();
     private PropertyImpl propWF;// would be current property workflow obj
@@ -195,6 +202,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private String reportId;
     private Boolean showAckBtn = Boolean.FALSE;
     private String instStartDt;
+    private List<String> guardianRelations;
+    private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
 
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
@@ -229,6 +238,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private ReportViewerUtil reportViewerUtil;
     @Autowired
     private transient PropertyService propertyService;
+    @Autowired
+    private ReassignService reassignService;
 
     public AmalgamationAction() {
         super();
@@ -279,7 +290,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         List<PropertyUsage> usageList = propertyUsageService.getAllActivePropertyUsages();
 
         setFloorNoMap(FLOOR_MAP);
-        setGuardianRelationMap(GUARDIAN_RELATION);
+        setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
         addDropdownData("floorType", floorTypeService.getAllFloors());
         addDropdownData("roofType", roofTypeService.getAllRoofTypes());
         addDropdownData("wallType", wallTypeService.getAllWalls());
@@ -309,6 +320,15 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     public String newForm() {
         mode = EDIT;
         populateFormData();
+        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
+        if (loggedUserIsMeesevaUser) {
+            final HttpServletRequest request = ServletActionContext.getRequest();
+            if (request.getParameter("meesevaApplicationNumber") == null) {
+                addActionMessage(getText("MEESEVA.005"));
+                return RESULT_ERROR;
+            } else
+                propertyModel.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
+        }
         return NEW;
     }
 
@@ -444,6 +464,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         setOldPropertyTypeCode(basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode());
         validate();
         final long startTimeMillis = System.currentTimeMillis();
+        loggedUserIsMeesevaUser = propService.isMeesevaUser(securityUtils.getCurrentUser());
         if (getModelId() != null && !getModelId().trim().isEmpty()) {
             propWF = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_WORKFLOW_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
@@ -456,8 +477,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         oldProperty = (PropertyImpl) basicProp.getProperty();
         setSitalArea();
         validateVacantLandConversion();
+        if (loggedUserIsMeesevaUser && StringUtils.isBlank(propertyModel.getMeesevaApplicationNumber()))
+            propertyModel.setApplicationNo(propertyModel.getMeesevaApplicationNumber());
         if (hasErrors())
-            if (checkDesignationsForEdit()) {
+            if (getModelId() == null || getModelId().isEmpty() || checkDesignationsForEdit()) {
                 allowEditDocument = Boolean.TRUE;
                 return NEW;
             } else if (checkDesignationsForView())
@@ -482,7 +505,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             logger.info("forwardModify: Amalgamation forwarded successfully; Time taken(ms) = " + elapsedTimeMillis);
         if (logger.isDebugEnabled())
             logger.debug("forwardModify: Amalgamation forward ended");
-        return RESULT_ACK;
+        return loggedUserIsMeesevaUser ? MEESEVA_RESULT_ACK : RESULT_ACK;
     }
 
     private void validateVacantLandConversion() {
@@ -499,11 +522,21 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 && !basicProp.getWFProperty().getPtDemandSet().isEmpty())
             for (final Ptdemand ptDemand : basicProp.getWFProperty().getPtDemandSet())
                 basicPropertyService.applyAuditing(ptDemand.getDmdCalculations());
-        basicPropertyService.update(basicProp);
+        if (!propService.isMeesevaUser(securityUtils.getCurrentUser()))
+            basicPropertyService.update(basicProp);
+        else {
+            final HashMap<String, String> meesevaParams = new HashMap<>();
+            meesevaParams.put("ADMISSIONFEE", "0");
+            meesevaParams.put("APPLICATIONNUMBER", propertyModel.getMeesevaApplicationNumber());
+            basicProp.getWFProperty().setApplicationNo(propertyModel.getMeesevaApplicationNumber());
+            basicPropertyService.updateBasicProperty(basicProp, meesevaParams);
+        }
+
     }
 
     private boolean checkDesignationsForView() {
         return StringUtils.containsIgnoreCase(userDesignationList, BILL_COLLECTOR_DESGN)
+                || StringUtils.containsIgnoreCase(userDesignationList, TAX_COLLECTOR_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, COMMISSIONER_DESGN)
                 || StringUtils.containsIgnoreCase(userDesignationList, REVENUE_OFFICER_DESGN);
     }
@@ -552,6 +585,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             propertyModel = (PropertyImpl) getPersistenceService().findByNamedQuery(QUERY_PROPERTYIMPL_BYID,
                     Long.valueOf(getModelId()));
             setModifyRsn(propertyModel.getPropertyDetail().getPropertyMutationMaster().getCode());
+            isReassignEnabled = reassignService.isReassignEnabled();
+            stateAwareId = propertyModel.getId();
+            transactionType = APPLICATION_TYPE_AMALGAMATION;
             if (logger.isDebugEnabled())
                 logger.debug("view: PropertyModel by model id: " + propertyModel);
         }
@@ -1288,5 +1324,13 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setInstStartDt(final String instStartDt) {
         this.instStartDt = instStartDt;
+    }
+
+    public List<String> getGuardianRelations() {
+        return guardianRelations;
+    }
+
+    public void setGuardianRelations(List<String> guardianRelations) {
+        this.guardianRelations = guardianRelations;
     }
 }

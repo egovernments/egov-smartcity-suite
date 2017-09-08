@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *     accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *      Copyright (C) 2017  eGovernments Foundation
  *
  *      The updated version of eGov suite of products as by eGovernments Foundation
  *      is available at http://www.egovernments.org
@@ -43,75 +43,56 @@ package org.egov.tl.service;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.tl.entity.dto.InstallmentWiseDCBForm;
-import org.hibernate.SQLQuery;
-import org.hibernate.Session;
-import org.hibernate.transform.AliasToBeanResultTransformer;
+import org.egov.infstr.services.Page;
+import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
+import org.egov.tl.entity.view.InstallmentWiseDCB;
+import org.egov.tl.repository.InstallmentwiseDCBReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isNotEmpty;
 
 
 @Service
 @Transactional(readOnly = true)
 public class InstallmentwiseDCBReportService {
 
-    @PersistenceContext
-    private EntityManager entityManager;
-
     @Autowired
     private CFinancialYearService cFinancialYearService;
 
+    @Autowired
+    private InstallmentwiseDCBReportRepository installmentwiseDCBReportRepository;
+
     public List<CFinancialYear> getFinancialYears() {
-        List<CFinancialYear> financialYearList = cFinancialYearService.findAll();
+        final List<CFinancialYear> financialYearList = cFinancialYearService.findAll();
         Collections.reverse(financialYearList);
         return financialYearList;
     }
 
     @ReadOnly
-    public List<InstallmentWiseDCBForm> getReportResult(String licenseNumber, String financialYear) {
-        CFinancialYear cFinancialYear = cFinancialYearService.getFinacialYearByYearRange(financialYear);
-        final SQLQuery finalQuery = prepareQuery(licenseNumber, cFinancialYear);
-        if (cFinancialYear != null) {
-            finalQuery.setResultTransformer(new AliasToBeanResultTransformer(InstallmentWiseDCBForm.class));
-            finalQuery.setParameter("fromDate", cFinancialYear.getStartingDate());
-        }
-        if (isNotEmpty(licenseNumber))
-            finalQuery.setParameter("licenseNumber", licenseNumber);
-
-        return finalQuery.list();
+    public Date financialYearStartDate(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+        return cFinancialYearService
+                .getFinacialYearByYearRange(installmentWiseDCBRequest.getInstallment()).getStartingDate();
     }
 
-    private SQLQuery prepareQuery(String licenseNumber, CFinancialYear financialYear) {
-        StringBuilder selectQry = new StringBuilder();
-        StringBuilder whereQry = new StringBuilder();
-        if (financialYear != null) {
-            selectQry.append("select mv.licensenumber as licensenumber,cast(mv.licenseid as integer) as licenseid,")
-                    .append("coalesce(cast(sum(mv.curr_demand) as bigint),0) as currentdemand,coalesce(cast(sum(mv.curr_coll) as bigint),0) as currentcoll,")
-                    .append("coalesce(cast(sum(mv.curr_balance) as bigint),0) as currentbalance ,coalesce(cast(sum(mv.arr_demand) as bigint),0) as arreardemand,")
-                    .append("coalesce(cast(sum(mv.arr_coll) as bigint),0) as arrearcoll,coalesce(cast(sum(arr_balance) as bigint),0) as arrearbalance ")
-                    .append("from (select aggrdcb.licensenumber,aggrdcb.licenseid,")
-                    .append("case when aggrdcb.installment = :fromDate then aggrdcb.curr_demand end as curr_demand,")
-                    .append("case when aggrdcb.installment = :fromDate then aggrdcb.curr_coll end as curr_coll,")
-                    .append("case when aggrdcb.installment = :fromDate then aggrdcb.curr_balance end as curr_balance,")
-                    .append("case when aggrdcb.installment < :fromDate then aggrdcb.curr_demand end as arr_demand,")
-                    .append("case when aggrdcb.installment < :fromDate then aggrdcb.curr_coll end as arr_coll,")
-                    .append("case when aggrdcb.installment < :fromDate then aggrdcb.curr_balance end as arr_balance ")
-                    .append("from egtl_dcb_aggr_view aggrdcb where 1=1 ");
-            whereQry.append("and aggrdcb.installment <=:fromDate ");
-            if (isNotEmpty(licenseNumber))
-                whereQry.append("and aggrdcb.licensenumber =:licenseNumber ");
+    @ReadOnly
+    public Page<InstallmentWiseDCB> getReportResult(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+        return installmentwiseDCBReportRepository.findByInstallmentWiseDCB(installmentWiseDCBRequest,
+                financialYearStartDate(installmentWiseDCBRequest));
+    }
 
-            whereQry.append("order by aggrdcb.licenseid) as mv group by mv.licensenumber,mv.licenseid order by mv.licenseid");
-        }
-        selectQry.append(whereQry);
-        return entityManager.unwrap(Session.class).createSQLQuery(selectQry.toString());
+    @ReadOnly
+    public List<InstallmentWiseDCB> prepareReport(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+        return installmentwiseDCBReportRepository.findInstallmentWiseReport(installmentWiseDCBRequest,
+                financialYearStartDate(installmentWiseDCBRequest));
+    }
+
+    @ReadOnly
+    public Object[] reportGrandTotal(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
+        return installmentwiseDCBReportRepository.findReportTotal(installmentWiseDCBRequest,
+                financialYearStartDate(installmentWiseDCBRequest));
     }
 }

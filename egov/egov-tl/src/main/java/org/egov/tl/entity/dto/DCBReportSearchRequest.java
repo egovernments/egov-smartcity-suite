@@ -51,6 +51,8 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
 
     private ReportFormat printFormat;
 
+    private Integer activeLicense = Integer.valueOf(0);
+
     public String getLicensenumber() {
         return licensenumber;
     }
@@ -73,6 +75,14 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
 
     public void setLicenseid(final Long licenseid) {
         this.licenseid = licenseid;
+    }
+
+    public Integer getActiveLicense() {
+        return activeLicense;
+    }
+
+    public void setActiveLicense(Integer activeLicense) {
+        this.activeLicense = activeLicense;
     }
 
 }

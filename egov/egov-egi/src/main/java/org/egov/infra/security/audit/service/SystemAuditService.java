@@ -40,9 +40,14 @@
 
 package org.egov.infra.security.audit.service;
 
+import org.egov.infra.security.audit.contract.LoginAuditReportRequest;
 import org.egov.infra.security.audit.entity.SystemAudit;
 import org.egov.infra.security.audit.repository.SystemAuditRepository;
+import org.egov.infra.security.audit.repository.specs.LoginAuditSpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,5 +65,12 @@ public class SystemAuditService {
 
     public SystemAudit getSystemAuditById(final Long id) {
         return systemAuditRepository.findOne(id);
+    }
+
+    public Page<SystemAudit> getAllSystemAudit(LoginAuditReportRequest loginAuditReportRequest) {
+        final Pageable pageable = new PageRequest(loginAuditReportRequest.pageNumber(),
+                loginAuditReportRequest.pageSize(),
+                loginAuditReportRequest.orderDir(), loginAuditReportRequest.orderBy());
+        return systemAuditRepository.findAll(LoginAuditSpec.loginAuditSearchSpec(loginAuditReportRequest), pageable);
     }
 }

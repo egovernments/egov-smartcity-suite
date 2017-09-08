@@ -53,6 +53,7 @@
     <div class="col-sm-3 add-margin">
         <s:select name="boundary" id="boundary" list="dropdownData.localityList"
                   listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true" value="%{boundary.id}" class="form-control"/>
+        <div id="locality_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
 </div>
 <div class="form-group">
@@ -69,10 +70,12 @@
         <s:select headerKey="-1" headerValue="%{getText('default.select')}" name="ownershipType"
                   id="ownershipType" listKey="key" listValue="value"
                   list="ownerShipTypeMap" cssClass="form-control" value="%{ownershipType}" required="true"/>
+        <div id="ownership_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
     <label class="col-sm-2 control-label text-right"><s:text name='license.address'/><span class="mandatory"></span></label>
     <div class="col-sm-3 add-margin">
         <s:textarea name="address" id="address" maxlength="250" onblur="checkLength(this,250)" class="form-control" required="true"/>
+        <div id="address_error" class="error-msg" style="display:none;" align="left"></div>
     </div>
 </div>
 <script>

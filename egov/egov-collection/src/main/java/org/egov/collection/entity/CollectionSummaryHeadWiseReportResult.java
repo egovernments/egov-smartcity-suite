@@ -42,19 +42,11 @@ package org.egov.collection.entity;
 
 import java.util.List;
 
-
 public class CollectionSummaryHeadWiseReportResult {
-    private List<CollectionSummaryHeadWiseReport> collectionSummaryReportList;
-    
+
     private List<CollectionSummaryHeadWiseReport> aggrCollectionSummaryReportList;
 
-    public List<CollectionSummaryHeadWiseReport> getCollectionSummaryReportList() {
-        return collectionSummaryReportList;
-    }
-
-    public void setCollectionSummaryReportList(List<CollectionSummaryHeadWiseReport> collectionSummaryReportList) {
-        this.collectionSummaryReportList = collectionSummaryReportList;
-    }
+    private List<CollectionSummaryHeadWiseReport> rebateCollectionSummaryReportList;
 
     public List<CollectionSummaryHeadWiseReport> getAggrCollectionSummaryReportList() {
         return aggrCollectionSummaryReportList;
@@ -64,6 +56,12 @@ public class CollectionSummaryHeadWiseReportResult {
         this.aggrCollectionSummaryReportList = aggrCollectionSummaryReportList;
     }
 
-    
-}
+    public List<CollectionSummaryHeadWiseReport> getRebateCollectionSummaryReportList() {
+        return rebateCollectionSummaryReportList;
+    }
 
+    public void setRebateCollectionSummaryReportList(List<CollectionSummaryHeadWiseReport> rebateCollectionSummaryReportList) {
+        this.rebateCollectionSummaryReportList = rebateCollectionSummaryReportList;
+    }
+
+}

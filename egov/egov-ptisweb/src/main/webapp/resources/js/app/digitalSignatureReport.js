@@ -100,7 +100,7 @@ jQuery('#submitButton')
 						for (var i = 1; i <= lastRow; i++) {
 							if (getControlInBranch(tbl.rows[i], 'rowCheckBox').checked) {
 								idArray[j++] = getControlInBranch(tbl.rows[i],'objectId').value
-										+ "~" + getControlInBranch(tbl.rows[i],'currentState').value.split(":")[0];
+										+ "~" + getControlInBranch(tbl.rows[i],'currentState').value.split(":")[0]+"~"+getControlInBranch(tbl.rows[i],'natureOfTask').value;
 							}
 						}
 						window.location = "/ptis/notice/propertyTaxNotice-generateBulkNotice.action?basicPropertyIds="

@@ -70,7 +70,9 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @Controller
 @RequestMapping(value = "/escalation")
 public class ViewEscalationController {
-    public static final String CONTENTTYPE_JSON = "application/json";
+    private static final String ESCALATIONSEARCHVIEW = "escalation-searchView";
+    private static final String ESCALATIONFORM = "escalationForm";
+    private static final String MESSAGE = "message";
 
     protected final ComplaintTypeService complaintTypeService;
     private final PositionMasterService positionMasterService;
@@ -81,6 +83,14 @@ public class ViewEscalationController {
 
     @Autowired
     private PositionHierarchyService positionHierarchyService;
+
+    @Autowired
+    public ViewEscalationController(final ComplaintTypeService complaintTypeService,
+                                    final PositionMasterService positionMasterService, final ObjectTypeService objectTypeService) {
+        this.complaintTypeService = complaintTypeService;
+        this.positionMasterService = positionMasterService;
+        this.objectTypeService = objectTypeService;
+    }
 
     @ModelAttribute
     public EscalationForm escalationForm() {
@@ -113,12 +123,12 @@ public class ViewEscalationController {
             }
         } else
             escalationForm.addPositionHierarchyList(new PositionHierarchy());
-        return "escalation-searchView";
+        return ESCALATIONSEARCHVIEW;
     }
 
     @RequestMapping(value = "/search-view", method = RequestMethod.POST)
     public String searchForm(@ModelAttribute final EscalationForm escalationForm,
-            final RedirectAttributes redirectAttrs, final Model model) {
+                             final RedirectAttributes redirectAttrs, final Model model) {
         if (escalationForm.getPosition() != null && escalationForm.getPosition().getId() != null) {
             final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
 
@@ -130,11 +140,7 @@ public class ViewEscalationController {
                 model.addAttribute("mode", "dataFound");
 
             } else {
-                // escalationForm.getPositionHierarchyList().clear();
-                // escalationForm.addPositionHierarchyList(new
-                // PositionHierarchy());
-
-                positionHeirarchyList = new ArrayList<PositionHierarchy>();
+                positionHeirarchyList = new ArrayList<>();
                 final PositionHierarchy posHierarchy = new PositionHierarchy();
                 posHierarchy.setFromPosition(positionMasterService
                         .getPositionById(escalationForm.getPosition().getId()));
@@ -143,34 +149,26 @@ public class ViewEscalationController {
                 positionHeirarchyList.add(posHierarchy);
                 escalationForm.setPositionHierarchyList(positionHeirarchyList);
                 model.addAttribute("mode", "noDataFound");
-                model.addAttribute("escalationForm", escalationForm);
+                model.addAttribute(ESCALATIONFORM, escalationForm);
             }
         } else {
             final String message = "Position is mandatory. Please enter correct position name.";
-            redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-            model.addAttribute("message", message);
+            redirectAttrs.addFlashAttribute(ESCALATIONFORM, escalationForm);
+            model.addAttribute(MESSAGE, message);
 
         }
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
-        return "escalation-searchView";
-    }
-
-    @Autowired
-    public ViewEscalationController(final ComplaintTypeService complaintTypeService,
-            final PositionMasterService positionMasterService, final ObjectTypeService objectTypeService) {
-        this.complaintTypeService = complaintTypeService;
-        this.positionMasterService = positionMasterService;
-        this.objectTypeService = objectTypeService;
+        return ESCALATIONSEARCHVIEW;
     }
 
     @RequestMapping(value = "/update/{id}", method = POST)
     public String saveEscalationForm(@ModelAttribute final EscalationForm escalationForm, final Model model,
-            final BindingResult errors, final RedirectAttributes redirectAttrs, @PathVariable final Long id) {
+                                     final BindingResult errors, final RedirectAttributes redirectAttrs, @PathVariable final Long id) {
 
         if (id == null) {
-            redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-            model.addAttribute("message", "escalation.pos.required");
-            return "escalation-searchView";
+            redirectAttrs.addFlashAttribute(ESCALATIONFORM, escalationForm);
+            model.addAttribute(MESSAGE, "escalation.pos.required");
+            return ESCALATIONSEARCHVIEW;
         }
         final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
         final List<PositionHierarchy> existingPosHierarchy = positionHierarchyService
@@ -189,13 +187,13 @@ public class ViewEscalationController {
                 posHierarchy.setObjectSubType(posHierarchy.getObjectSubType());
                 positionHierarchyService.createPositionHierarchy(posHierarchy);
             } else {
-                redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-                model.addAttribute("message", "escaltion.pos.mandatory");
-                return "escalation-searchView";
+                redirectAttrs.addFlashAttribute(ESCALATIONFORM, escalationForm);
+                model.addAttribute(MESSAGE, "escaltion.pos.mandatory");
+                return ESCALATIONSEARCHVIEW;
             }
 
-        redirectAttrs.addFlashAttribute("escalationForm", escalationForm);
-        model.addAttribute("message", "msg.escaltion.success");
+        redirectAttrs.addFlashAttribute(ESCALATIONFORM, escalationForm);
+        model.addAttribute(MESSAGE, "msg.escaltion.success");
 
         return "escalation-success";
 

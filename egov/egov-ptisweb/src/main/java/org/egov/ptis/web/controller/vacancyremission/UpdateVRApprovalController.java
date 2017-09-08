@@ -39,25 +39,27 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
+import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Designation;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -89,11 +91,6 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     private final PropertyTaxUtil propertyTaxUtil;
 
-    private Designation designation;
-
-    @Autowired
-    private PropertyService propertyService;
-
     @Autowired
     private AssignmentService assignmentService;
 
@@ -104,17 +101,18 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
     private SecurityUtils securityUtils;
 
     @Autowired
+    private PropertyService propertyService;
+
+    @Autowired
     public UpdateVRApprovalController(final VacancyRemissionService vacancyRemissionService,
-            final PropertyTaxUtil propertyTaxUtil) {
+                                      final PropertyTaxUtil propertyTaxUtil) {
         this.propertyTaxUtil = propertyTaxUtil;
         this.vacancyRemissionService = vacancyRemissionService;
     }
 
     @ModelAttribute
     public VacancyRemissionApproval vacancyRemissionApprovalModel(@PathVariable final Long id) {
-        final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemissionService.getVacancyRemissionApprovalById(id);
-        designation = propertyTaxUtil.getDesignationForUser(vacancyRemissionService.getLoggedInUser().getId());
-        return vacancyRemissionApproval;
+        return vacancyRemissionService.getVacancyRemissionApprovalById(id);
     }
 
     @RequestMapping(method = RequestMethod.GET)
@@ -122,6 +120,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
         final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemissionService.getVacancyRemissionApprovalById(id);
         VacancyRemission vacancyRemission = null;
         String userDesgn = "";
+        Designation designation = propertyTaxUtil.getDesignationForUser(vacancyRemissionService.getLoggedInUser().getId());
         final String userDesignationList = propertyTaxCommonUtils
                 .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
         if (null != designation)
@@ -157,8 +156,8 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
 
     @RequestMapping(method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final VacancyRemissionApproval vacancyRemissionApproval,
-            final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
-            final HttpServletRequest request, final Model model) {
+                         final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
+                         final HttpServletRequest request, final Model model) {
 
         final String senderName = vacancyRemissionApproval.getCurrentState().getSenderName();
         if (!resultBinder.hasErrors()) {
@@ -192,6 +191,11 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                 else
                     successMsg = "Vacancy Remission Saved Successfully in the System and forwarded to : "
                             + propertyTaxUtil.getApproverUserName(approvalPosition);
+                if (Source.CITIZENPORTAL.toString().equalsIgnoreCase(vacancyRemissionApproval.getVacancyRemission().getSource())
+                        && propertyService.getPortalInbox(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber()) != null) {
+                    propertyService.updatePortal(vacancyRemissionApproval.getVacancyRemission(),
+                            APPLICATION_TYPE_VACANCY_REMISSION);
+                }
             }
 
             model.addAttribute("successMessage", successMsg);
@@ -224,23 +228,23 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
     }
 
     private String wfReject(final VacancyRemissionApproval vacancyRemissionApproval, final String workFlowAction,
-            final Long approvalPosition,
-            final String approvalComent) {
+                            final Long approvalPosition,
+                            final String approvalComent) {
         String successMsg;
-        Assignment assignment;
         String loggedInUserDesignation = "";
         Assignment wfInitiator;
         final User user = securityUtils.getCurrentUser();
         List<Assignment> loggedInUserAssign;
+        Designation designation = propertyTaxUtil.getDesignationForUser(vacancyRemissionService.getLoggedInUser().getId());
         if (vacancyRemissionApproval.getState() != null) {
             loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
                     vacancyRemissionApproval.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            if(!loggedInUserAssign.isEmpty())
+            if (!loggedInUserAssign.isEmpty())
                 loggedInUserDesignation = loggedInUserAssign.get(0).getDesignation().getName();
         }
-        final List<StateHistory> history = vacancyRemissionApproval.getStateHistory();
-        if (!history.isEmpty() && vacancyRemissionService.isRoOrCommissioner(loggedInUserDesignation))
-            wfInitiator = propertyService.getUserOnRejection(vacancyRemissionApproval);
+
+        if (propertyTaxCommonUtils.isRoOrCommissioner(loggedInUserDesignation))
+            wfInitiator = vacancyRemissionService.getWorkflowInitiatorAssignment(vacancyRemissionApproval.getCreatedBy().getId(), Arrays.asList(PropertyTaxConstants.REVENUE_INSPECTOR_DESGN));
         else
             wfInitiator = vacancyRemissionService.getWorkflowInitiator(vacancyRemissionApproval);
 
@@ -249,14 +253,14 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
                     approvalComent, null, workFlowAction);
             if (designation.getName().equalsIgnoreCase(REVENUE_INSPECTOR_DESGN))
                 successMsg = "Vacancy Remission rejected successfully";
-            else {
-                assignment = assignmentService
-                        .getPrimaryAssignmentForUser(vacancyRemissionApproval.getCreatedBy().getId());
+            else
                 successMsg = "Vacancy Remission rejected successfully and forwarded to : "
-                        + assignment.getEmployee().getName().concat("~").concat(assignment.getPosition().getName());
-            }
+                        + (wfInitiator != null
+                        ? wfInitiator.getEmployee().getName().concat("~").concat(wfInitiator.getPosition().getName())
+                        : "");
         } else
-            successMsg = PROPERTY_MODIFY_REJECT_FAILURE+vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo();
+            successMsg = PROPERTY_MODIFY_REJECT_FAILURE
+                    + vacancyRemissionApproval.getVacancyRemission().getBasicProperty().getUpicNo();
         return successMsg;
     }
 }

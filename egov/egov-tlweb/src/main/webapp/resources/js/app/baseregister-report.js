@@ -110,7 +110,7 @@ function onSubmitEvent(event) {
             {
                 text: 'PDF',
                 action: function (e, dt, node, config) {
-                    window.open("download?" + $("#baseregisterform").serialize() + "&printFormat=PDF", '', 'scrollbars=yes,width=1300,height=700,status=yes');
+                    window.open("download?" + $("#baseregisterform").serialize() + "&printFormat=PDF", '_self');
                 }
             },
             {

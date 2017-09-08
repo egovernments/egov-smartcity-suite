@@ -137,9 +137,10 @@ public class AssessmentService {
                 AssessmentRequest.class);
         try {
             String assessmentNo = assessmentReq.getAssessmentNo();
+            String oldAssessmentNo = assessmentReq.getOldAssessmentNo();
             String category = assessmentReq.getCategory();
-            if (null != assessmentNo) {
-                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, category);
+            if (StringUtils.isNotBlank(assessmentNo) || StringUtils.isNotBlank(oldAssessmentNo)) {
+                propertyTaxDetails = propertyExternalService.getPropertyTaxDetails(assessmentNo, oldAssessmentNo, category);
             } else {
                 ErrorDetails errorDetails = getInvalidCredentialsErrorDetails();
                 propertyTaxDetails.setErrorDetails(errorDetails);

@@ -97,6 +97,7 @@ public class ViewConnectionController {
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(details);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("mode", "search");
+        model.addAttribute("citizenPortal", waterTaxUtils.isCitizenPortalUser(ApplicationThreadLocals.getUserId() != null ?userService.getUserById(ApplicationThreadLocals.getUserId()):securityUtils.getCurrentUser()));
         return "application-view";
     }
 

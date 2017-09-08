@@ -53,6 +53,7 @@ import javax.persistence.Transient;
 import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
+import org.springframework.web.multipart.MultipartFile;
 
 @Entity
 @Table(name = "egtl_trade_license")
@@ -61,11 +62,13 @@ public class TradeLicense extends License {
 
     private static final long serialVersionUID = 986289058758315223L;
     @Transient
-    private List<String> financialyear = new ArrayList<>();
+    private List<Integer> financialyear = new ArrayList<>();
     @Transient
-    private List<String> legacyInstallmentwiseFees = new ArrayList<>();
+    private List<Integer> legacyInstallmentwiseFees = new ArrayList<>();
     @Transient
-    private List<String> legacyFeePayStatus = new ArrayList<>();
+    private List<Boolean> legacyFeePayStatus = new ArrayList<>();
+    @Transient
+    private MultipartFile[] files;
 
     @Override
     public String getStateDetails() {
@@ -86,28 +89,36 @@ public class TradeLicense extends License {
             return "/tl/newtradelicense/newTradeLicense-showForApproval.action?model.id=" + id;
     }
 
-    public List<String> getFinancialyear() {
+    public List<Integer> getFinancialyear() {
         return financialyear;
     }
 
-    public void setFinancialyear(final List<String> financialyear) {
+    public void setFinancialyear(final List<Integer> financialyear) {
         this.financialyear = financialyear;
     }
 
-    public List<String> getLegacyInstallmentwiseFees() {
+    public List<Integer> getLegacyInstallmentwiseFees() {
         return legacyInstallmentwiseFees;
     }
 
-    public void setLegacyInstallmentwiseFees(final List<String> legacyInstallmentwiseFees) {
+    public void setLegacyInstallmentwiseFees(final List<Integer> legacyInstallmentwiseFees) {
         this.legacyInstallmentwiseFees = legacyInstallmentwiseFees;
     }
 
-    public List<String> getLegacyFeePayStatus() {
+    public List<Boolean> getLegacyFeePayStatus() {
         return legacyFeePayStatus;
     }
 
-    public void setLegacyFeePayStatus(final List<String> legacyFeePayStatus) {
+    public void setLegacyFeePayStatus(final List<Boolean> legacyFeePayStatus) {
         this.legacyFeePayStatus = legacyFeePayStatus;
+    }
+
+    public MultipartFile[] getFiles() {
+        return files;
+    }
+
+    public void setFiles(MultipartFile[] files) {
+        this.files = files;
     }
 
 }

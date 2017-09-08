@@ -93,8 +93,9 @@
 				<s:text name="objection.details"/>
 				</s:else>
 				<span class="mandatory1">*</span></td>
-				<td class="greybox" width="25%"><s:textarea name="details" id="details" cols="40" rows="2"  onblur="checkLength(this)" ></s:textarea></td>
-			 
+
+				<td class="greybox" width="25%"><s:textarea cssClass="form-control" name="details" id="details" cols="40" rows="2"  onblur="checkLength(this)" >
+				</s:textarea></td>
 				<%-- <td class="greybox" width="25%"><s:text name="objection.upload.document"/></td>
 				<td class="greybox" width="25%"><input type="button" class="button" value="Upload Document" id="docUploadButton" onclick="showDocumentManager();" /></td>
 				<s:hidden name="docNumberObjection" id="docNumber" /> --%>

@@ -41,9 +41,8 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+
 <script>
-
-
 
 	function validateWorkFlowApprover(name) {
 		document.getElementById("workFlowAction").value=name;
@@ -54,7 +53,14 @@
 			validateWorkFlowApprover('Forward');
 		}   */
 		var rejectbutton=document.getElementById("workFlowAction").value;
-		if(rejectbutton!=null && rejectbutton=='Reject')
+		if(rejectbutton!=null && rejectbutton=='Proceed Without Donation') {
+			
+			$('#approvalDepartment').attr('required', 'required');
+			$('#approvalDesignation').attr('required', 'required');
+			$('#approvalPosition').attr('required', 'required');
+			$('#approvalComent').removeAttr('required');
+		}
+		if(rejectbutton!=null && (rejectbutton=='Reject' || rejectbutton == 'Cancel'))
 			{
 			$('#approvalDepartment').removeAttr('required');
 			$('#approvalDesignation').removeAttr('required');
@@ -62,9 +68,9 @@
 			$('#approvalComent').attr('required', 'required');	
 			} 
 		 if(rejectbutton!=null && rejectbutton=='Forward'){
-			if($('#currentUser'))
+			if($('#currentUser') || $('#citizenPortalUser') )
 			{
-				if($('#currentUser').val()=="true")
+				if($('#currentUser').val()=="true" || $('#citizenPortalUser').val()=="true")
 				{
 					$('#approvalDepartment').removeAttr('required');
 					$('#approvalDesignation').removeAttr('required');
@@ -81,17 +87,26 @@
 		 if(rejectbutton!=null && rejectbutton=='Approve'){
 				$('#approvalComent').removeAttr('required');
 			} 
-	   document.forms[0].submit;
-	   return true;
+		if(rejectbutton!='' && rejectbutton!=null && rejectbutton!='Reassign') {
+		   document.forms[0].submit;
+		   return true;
+		}
+		else
+	   		return false;
 	}
 </script>
-
 <div class="buttonbottom" align="center">
 	<table>
 		<tr>
 			<td>
+				<c:if test="${hasJuniorOrSeniorAssistantRole  && reassignEnabled  && applicationState=='NEW'}">
+					<button type="button" class="btn btn-primary" id="reassign">Reassign</button>
+				</c:if>
+				<c:if test="${proceedWithoutDonation==true && statuscode=='ESTIMATIONNOTICEGENERATED'}">
+					<form:button  type="submit" id="proceedwithoutdonation" class="btn btn-primary workAction" onclick="validateWorkFlowApprover('Proceed Without Donation');"><c:out value="Proceed Without Donation"/></form:button>
+				</c:if>
 		<c:forEach items="${validActionList}" var="validButtons">
-				<form:button type="submit" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
+			<form:button type="submit" id="${validButtons}" class="btn btn-primary workAction"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>
 			</c:forEach>
 				<input type="button" name="button2" id="button2" value="Close"

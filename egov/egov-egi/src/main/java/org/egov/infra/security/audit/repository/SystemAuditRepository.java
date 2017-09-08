@@ -42,7 +42,8 @@ package org.egov.infra.security.audit.repository;
 
 import org.egov.infra.security.audit.entity.SystemAudit;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-public interface SystemAuditRepository extends JpaRepository<SystemAudit, Long> {
+public interface SystemAuditRepository extends JpaRepository<SystemAudit, Long>, JpaSpecificationExecutor<SystemAudit> {
 
 }

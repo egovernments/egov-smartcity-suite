@@ -164,6 +164,10 @@
 					<tr>
 						<display:table name="bndryCatList" id="linksTables" pagesize="10" export="true" requestURI="" class="tablebottom"
 							style="width:100%" uid="currentRowObject">
+							<display:caption>
+							 Unit Rates
+							</display:caption> 
+							
 							<display:column property="category.categoryName" title="Category Name" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="text-align:left" />
 							<display:column property="bndry.name" title="Zone" headerClass="bluebgheadtd" class="blueborderfortd"
@@ -177,7 +181,6 @@
 							<display:column property="category.fromDate" format="{0,date,dd/MM/yyyy}" title="Effective From"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="text-align:left" />
-								id<s:property value="%{category.id}"/>
 							<s:if test="%{mode == 'edit'}">
 							  <display:column title=""
 									 media="html"
@@ -211,4 +214,5 @@
 			</div>
 		</s:push>
 	</s:form>
+	
 </body>

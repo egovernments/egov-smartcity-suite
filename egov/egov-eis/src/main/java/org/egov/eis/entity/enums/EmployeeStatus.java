@@ -43,8 +43,9 @@ package org.egov.eis.entity.enums;
 import org.apache.commons.lang3.StringUtils;
 
 public enum EmployeeStatus {
+    
     EMPLOYED, RETIRED, SUSPENDED, DECEASED, TRANSFERRED, APPLIED, APPROVED, REJECTED, CANCELLED, RESUBMITTED;
-
+    
     @Override
     public String toString() {
         return StringUtils.capitalize(name());

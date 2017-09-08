@@ -39,27 +39,6 @@
  */
 package org.egov.ptis.domain.service.revisionPetition;
 
-import static java.lang.String.format;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
-
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -99,49 +78,68 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.String.format;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_GENERAL_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_REVISION_PETITION;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.domain.service.property.PropertyService.APPLICATION_VIEW_URL;
+
 public class RevisionPetitionService extends PersistenceService<RevisionPetition, Long> {
+    private static final String REVISION_PETITION_CREATED = "CREATED";
+    @Autowired
+    protected AssignmentService assignmentService;
+    @Autowired
+    @Qualifier("workflowService")
+    protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
+    @Autowired
+    DesignationService designationService;
     @Autowired
     private ApplicationNumberGenerator applicationNumberGenerator;
     @Autowired
     private PropertyStatusDAO propertyStatusDAO;
     @Autowired
-    DesignationService designationService;
-    @Autowired
     private SecurityUtils securityUtils;
     @Autowired
-    protected AssignmentService assignmentService;
-    @Autowired
     private EgwStatusHibernateDAO egwStatusDAO;
-    @Autowired
-    @Qualifier("workflowService")
-    protected SimpleWorkflowService<RevisionPetition> revisionPetitionWorkFlowService;
     @Autowired
     private EisCommonService eisCommonService;
     @Autowired
     private ApplicationIndexService applicationIndexService;
-    private static final String REVISION_PETITION_CREATED = "CREATED";
-
     @Autowired
     private MessagingService messagingService;
     private SMSEmailService sMSEmailService;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    
+
     @Autowired
     private PropertyService propertyService;
-    
+
     @Autowired
     private ReportService reportService;
-    
+
     @Autowired
     private PtDemandDao ptDemandDAO;
-    
+
     public RevisionPetitionService() {
         super(RevisionPetition.class);
     }
 
-    public RevisionPetitionService(Class<RevisionPetition> type) {
+    public RevisionPetitionService(final Class<RevisionPetition> type) {
         super(type);
     }
 
@@ -152,7 +150,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @return
      */
     @Transactional
-    public RevisionPetition createRevisionPetition(RevisionPetition objection) {
+    public RevisionPetition createRevisionPetition(final RevisionPetition objection) {
         RevisionPetition revisionPetition;
         propertyService.processAndStoreDocument(objection.getDocuments());
         if (objection.getId() == null)
@@ -204,9 +202,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                     user = eisCommonService.getUserForPosition(position.getId(), new Date());
 
                 objection.transition().start().withNextAction(wfmatrix.getPendingActions())
-                .withStateValue(wfmatrix.getCurrentState()).withOwner(position)
-                .withSenderName(user != null && user.getName() != null ? user.getName() : "").withOwner(user)
-                .withComments("");
+                        .withStateValue(wfmatrix.getCurrentState()).withOwner(position)
+                        .withSenderName(user != null && user.getName() != null ? user.getName() : "").withOwner(user)
+                        .withComments("");
             }
 
             applyAuditing(objection.getState());
@@ -234,9 +232,12 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             applicationIndex = ApplicationIndex.builder().withModuleName(PTMODULENAME)
                     .withApplicationNumber(objection.getObjectionNumber()).withApplicationDate(
                             objection.getCreatedDate() != null ? objection.getCreatedDate() : new Date())
-                    .withApplicationType(APPLICATION_TYPE_REVISION_PETITION).withApplicantName(objection.getBasicProperty().getFullOwnerName())
-                    .withStatus(objection.getState().getValue()).withUrl(format(APPLICATION_VIEW_URL, objection.getObjectionNumber(), ""))
-                    .withApplicantAddress(objection.getBasicProperty().getAddress().toString()).withOwnername(user.getUsername() + "::" + user.getName())
+                    .withApplicationType(APPLICATION_TYPE_REVISION_PETITION)
+                    .withApplicantName(objection.getBasicProperty().getFullOwnerName())
+                    .withStatus(objection.getState().getValue())
+                    .withUrl(format(APPLICATION_VIEW_URL, objection.getObjectionNumber(), ""))
+                    .withApplicantAddress(objection.getBasicProperty().getAddress().toString())
+                    .withOwnername(user.getUsername() + "::" + user.getName())
                     .withChannel(Source.SYSTEM.toString()).build();
             applicationIndexService.createApplicationIndex(applicationIndex);
         } else {
@@ -251,10 +252,10 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param status
      */
     private void updateRevisionPetitionStatus(final WorkFlowMatrix wfmatrix, final RevisionPetition objection,
-            final String status) {
+                                              final String status) {
 
         EgwStatus egwStatus = null;
-        if (status != null && !"".equals(status))
+        if (isNotBlank(status))
             egwStatus = egwStatusDAO.getStatusByModuleAndCode(PropertyTaxConstants.OBJECTION_MODULE, status);
 
         else if (wfmatrix != null && wfmatrix.getNextStatus() != null && objection != null)
@@ -273,7 +274,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      */
 
     @Transactional
-    public RevisionPetition updateRevisionPetition(RevisionPetition objection) {
+    public RevisionPetition updateRevisionPetition(final RevisionPetition objection) {
         RevisionPetition revisionPetition;
         if (objection.getId() == null)
             revisionPetition = persist(objection);
@@ -306,11 +307,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @param applicationType
      */
     public void sendEmailandSms(final RevisionPetition objection, final String applicationType) {
-        if (objection != null) {
-            for (PropertyOwnerInfo ownerInfo : objection.getBasicProperty().getPropertyOwnerInfo()) {
+        if (objection != null)
+            for (final PropertyOwnerInfo ownerInfo : objection.getBasicProperty().getPropertyOwnerInfo())
                 sendEmailAndSms(objection, ownerInfo.getOwner(), applicationType);
-            }
-        }
     }
 
     private void sendEmailAndSms(final RevisionPetition objection, final User user, final String applicationType) {
@@ -334,9 +333,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                         + " for future reference";
             }
         }
-        if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
+        if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
             messagingService.sendSMS(mobileNumber, smsMsg);
-        if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailBody))
+        if (isNotBlank(emailid) && isNotBlank(emailBody))
             messagingService.sendEmail(emailid, emailSubject, emailBody);
     }
 
@@ -347,38 +346,44 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     public void setsMSEmailService(final SMSEmailService sMSEmailService) {
         this.sMSEmailService = sMSEmailService;
     }
-    
-    public RevisionPetition createRevisionPetition(RevisionPetition objection, HashMap<String, String> meesevaParams){
+
+    public RevisionPetition createRevisionPetition(final RevisionPetition objection,
+                                                   final HashMap<String, String> meesevaParams) {
         createRevisionPetition(objection);
         return objection;
     }
-    
-    public Assignment getWorkflowInitiator(RevisionPetition objection) {
+
+    public Assignment getWorkflowInitiator(final RevisionPetition objection) {
         Assignment wfInitiator;
-        if (propertyService.isEmployee(objection.getCreatedBy()) && !ANONYMOUS_USER.equalsIgnoreCase(objection.getCreatedBy().getName())){
-                if(objection.getState() != null  && objection.getState().getInitiatorPosition() != null)
-                    wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
-                    .getCreatedBy(),objection.getState().getInitiatorPosition());
-                else 
-                	wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(objection.getCreatedBy().getId()).get(0);
-        }
-        else if (!objection.getStateHistory().isEmpty())
-            wfInitiator = assignmentService.getAssignmentsForPosition(objection.getStateHistory().get(0)
-                    .getOwnerPosition().getId(), new Date()).get(0);
-        else{
+        if (propertyService.isEmployee(objection.getCreatedBy())
+                && !ANONYMOUS_USER.equalsIgnoreCase(objection.getCreatedBy().getName())
+                && !propertyService.isCitizenPortalUser(objection.getCreatedBy())) {
+            if (objection.getState() != null && objection.getState().getInitiatorPosition() != null)
+                wfInitiator = propertyTaxCommonUtils.getUserAssignmentByPassingPositionAndUser(objection
+                        .getCreatedBy(), objection.getState().getInitiatorPosition());
+            else
+                wfInitiator = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(objection.getCreatedBy().getId()).get(0);
+        } else if (!objection.getStateHistory().isEmpty()) {
+            if (objection.getState().getInitiatorPosition() == null)
+                wfInitiator = assignmentService.getAssignmentsForPosition(
+                        objection.getStateHistory().get(0).getOwnerPosition().getId(), new Date()).get(0);
+            else
+                wfInitiator = assignmentService.getAssignmentsForPosition(
+                        objection.getState().getInitiatorPosition().getId(), new Date()).get(0);
+        } else
             wfInitiator = assignmentService.getAssignmentsForPosition(objection.getState().getOwnerPosition()
                     .getId(), new Date()).get(0);
-        }
         return wfInitiator;
     }
-    
-    public RevisionPetition getExistingObjections(BasicProperty basicProperty){
-            return find("from RevisionPetition rp where rp.basicProperty = ?" ,basicProperty);
+
+    public RevisionPetition getExistingObjections(final BasicProperty basicProperty) {
+        return find("from RevisionPetition rp where rp.basicProperty = ?", basicProperty);
     }
-    public RevisionPetition getExistingGRP(BasicProperty basicProperty){
-        return find("from RevisionPetition rp where rp.basicProperty = ? and rp.type = ?" ,basicProperty,PropertyTaxConstants.NATURE_OF_WORK_GRP);
-}
-    
+
+    public RevisionPetition getExistingGRP(final BasicProperty basicProperty) {
+        return find("from RevisionPetition rp where rp.basicProperty = ? and rp.type = ?", basicProperty,
+                PropertyTaxConstants.NATURE_OF_WORK_GRP);
+    }
 
     /**
      * @param reportOutput
@@ -386,7 +391,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
      * @return ReportOutput
      */
     public ReportOutput createHearingNoticeReport(ReportOutput reportOutput, final RevisionPetition objection,
-            final String noticeNo) {
+                                                  final String noticeNo) {
         reportOutput.setReportFormat(ReportFormat.PDF);
         final HashMap<String, Object> reportParams = new HashMap<>();
         final SimpleDateFormat dateformat = new SimpleDateFormat("dd/MM/yyyy");
@@ -397,16 +402,10 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
             final String cityGrade = request.getSession().getAttribute("cityGrade") != null
                     ? request.getSession().getAttribute("cityGrade").toString() : null;
-            Boolean isCorporation;
-            if (cityGrade != null && cityGrade != ""
-                    && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION)) {
-                isCorporation = true;
-            } else
-                isCorporation = false;
-            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())) {
+            Boolean isCorporation = isNotBlank(cityGrade) && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION);
+            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
                 natureOfWork = NATURE_REVISION_PETITION;
-
-            } else
+            else
                 natureOfWork = NATURE_GENERAL_REVISION_PETITION;
             reportParams.put("isCorporation", isCorporation);
             reportParams.put("cityName", cityName);
@@ -435,7 +434,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         }
         return reportOutput;
     }
-    
+
     /**
      * @param reportOutput
      * @param objection
@@ -457,10 +456,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo"));
             final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())) {
+            if (NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType()))
                 natureOfWork = NATURE_REVISION_PETITION;
-
-            } else
+            else
                 natureOfWork = NATURE_GENERAL_REVISION_PETITION;
             reportParams.put("logoPath", cityLogo);
             reportParams.put("cityName", cityName);

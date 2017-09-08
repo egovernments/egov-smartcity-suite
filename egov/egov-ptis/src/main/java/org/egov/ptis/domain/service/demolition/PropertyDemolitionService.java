@@ -197,7 +197,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     }
 
     @Transactional
-    public void saveProperty(final Property oldProperty, final Property newProperty, final Character status,
+    public BasicProperty saveProperty(final Property oldProperty, final Property newProperty, final Character status,
             final String comments,
             final String workFlowAction, final Long approverPosition, final String additionalRule) throws TaxCalculatorExeption {
         PropertyImpl propertyModel;
@@ -260,6 +260,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         propertyService.updateIndexes(propertyModel, APPLICATION_TYPE_DEMOLITION);
         propertyPerService.update(basicProperty);
         getSession().flush();
+        return basicProperty;
     }
 
     private Ptdemand adjustCollection(final Ptdemand oldCurrPtDmd, final Ptdemand currPtDmd, final Installment effectiveInstall) {
@@ -425,7 +426,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         String nextAction;
         if (wfInitiator != null && wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approvarComments).withDateInfo(currentDate.toDate());
+                    .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
         } else {
@@ -651,6 +652,14 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
 
     public Assignment getWfInitiator(final PropertyImpl property) {
         return propertyService.getWorkflowInitiator(property);
+    }
+    
+    public BasicProperty saveProperty(final Property oldProperty, final Property newProperty, final Character status,
+            final String comments,
+            final String workFlowAction, final Long approverPosition, final String additionalRule,
+            final Map<String, String> meesevaParams) throws TaxCalculatorExeption {
+         return saveProperty(oldProperty, newProperty, status, comments, workFlowAction,
+                approverPosition, DEMOLITION);
     }
 
 }

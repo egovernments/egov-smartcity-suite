@@ -40,36 +40,37 @@
 
 package org.egov.pgr.web.controller.reports;
 
+import java.lang.reflect.Type;
+import java.util.List;
+
+import org.egov.infra.utils.StringUtils;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.dto.AgeingReportForm;
+
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
 
-import java.lang.reflect.Type;
+public class AgeingReportHelperAdaptor implements DataTableJsonAdapter<AgeingReportForm> {
 
-public class AgeingReportHelperAdaptor implements JsonSerializer<AgeingReportResult> {
-
-    @Override
-    public JsonElement serialize(final AgeingReportResult ageingReportObject, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        if (ageingReportObject != null) {
-
-            jsonObject.addProperty("complainttype", null != ageingReportObject.getName() ? ageingReportObject.getName() : "Not Available");
-            jsonObject.addProperty("grtthn30", null != ageingReportObject.getGrtthn30() ? ageingReportObject
-                    .getGrtthn30().toString() : "0");
-            jsonObject.addProperty("btw10to30", null != ageingReportObject.getBtw10to30() ? ageingReportObject
-                    .getBtw10to30().toString() : "0");
-            jsonObject.addProperty("btw5to10", null != ageingReportObject.getBtw5to10() ? ageingReportObject
-                    .getBtw5to10().toString() : "0");
-            jsonObject.addProperty("btw2to5", null != ageingReportObject.getBtw2to5() ? ageingReportObject
-                    .getBtw2to5().toString() : "0");
-            jsonObject.addProperty("lsthn2", null != ageingReportObject.getLsthn2() ? ageingReportObject.getLsthn2()
-                    .toString() : "0");
-            jsonObject.addProperty("total", null != ageingReportObject.getTotal() ? ageingReportObject.getTotal()
-                    .toString() : "0");
-        }
-        return jsonObject;
+    public JsonElement serialize(final DataTable<AgeingReportForm> ageingReportResponse, final Type type,
+            final JsonSerializationContext jsc) {
+        final List<AgeingReportForm> ageingreportResult = ageingReportResponse.getData();
+        final JsonArray ageingReportFormData = new JsonArray();
+        ageingreportResult.forEach(ageingReportObject -> {
+            final JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("complainttype",
+                    StringUtils.defaultIfBlank(ageingReportObject.getDepartment(), "Not Available"));
+            jsonObject.addProperty("grtthn30", ageingReportObject.getGreater30());
+            jsonObject.addProperty("btw10to30", ageingReportObject.getBtw10to30());
+            jsonObject.addProperty("btw5to10", ageingReportObject.getBtw5to10());
+            jsonObject.addProperty("btw2to5", ageingReportObject.getBtw2to5());
+            jsonObject.addProperty("lsthn2", ageingReportObject.getLsthn2());
+            jsonObject.addProperty("total", ageingReportObject.getTotal());
+            ageingReportFormData.add(jsonObject);
+        });
+        return enhance(ageingReportFormData, ageingReportResponse);
     }
-
 }

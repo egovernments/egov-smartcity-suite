@@ -269,15 +269,15 @@
 									</tr>
 						</tr>
 						<tr class="documentDetRow">
-							<td class="bluebox2">&nbsp;</td>
-							<td class="bluebox"><s:text name="docNum" /><span
+							<td class="bluebox2 deedDetailsRow">&nbsp;</td>
+							<td class="bluebox deedDetailsRow"><s:text name="docNum" /><span
 								class="mandatory1">*</span> :</td>
-							<td class="bluebox"><s:textfield name="deedNo" id="docNum"
+							<td class="bluebox deedDetailsRow"><s:textfield name="deedNo" id="docNum"
 									maxlength="64"
 									onblur="checkZero(this);validateRegDocNumber(this,'Registration Document Number')" /></td>
-							<td class="bluebox"><s:text name="docDate" /><span
+							<td class="bluebox deedDetailsRow"><s:text name="docDate" /><span
 								class="mandatory1">*</span> :</td>
-							<td class="bluebox"><s:date name="deedDate" var="docDate"
+							<td class="bluebox deedDetailsRow"><s:date name="deedDate" var="docDate"
 									format="dd/MM/yyyy" /> <s:textfield name="deedDate"
 									id="deedDate" maxlength="10" value="%{docDate}"
 									autocomplete="off"
@@ -310,7 +310,7 @@
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>
 					</s:if>
-				<s:if test="%{propertyByEmployee == true && applicationSource != 'online'}">
+				<s:if test="%{propertyByEmployee == true && applicationSource != 'online' && !citizenPortalUser}">
 					<table width="100%" border="0" cellspacing="0" cellpadding="0">
 						<tr>
 							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
@@ -367,10 +367,14 @@
 				} else {
 					jQuery("td.reasonRow").hide();
 				}
-				if (selectedValue == 'Decree by Civil Court') 
+				if (selectedValue == '<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@MUTATIONRS_DECREE_BY_CIVIL_COURT}" />') {
 					jQuery("td.decreeDetailsRow").show();
+				jQuery("td.deedDetailsRow").hide();
+			}
 				 else 
-					jQuery("td.decreeDetailsRow").hide();
+				 {	jQuery("td.decreeDetailsRow").hide();
+				jQuery("td.deedDetailsRow").show();
+				 }
 			}
 		}
 		

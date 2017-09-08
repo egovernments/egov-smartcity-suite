@@ -40,8 +40,8 @@
 
 package org.egov.tl.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.view.DCBReportResult;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -49,9 +49,10 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
+import java.util.ArrayList;
+import java.util.List;
 
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
-import org.egov.tl.entity.view.DCBReportResult;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 public class DCBReportRepositoryImpl implements DCBReportRepositoryCustom {
 
@@ -65,8 +66,10 @@ public class DCBReportRepositoryImpl implements DCBReportRepositoryCustom {
         final CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
         final Root<DCBReportResult> root = criteriaQuery.from(DCBReportResult.class);
         final List<Predicate> predicates = new ArrayList<>();
-        if (dCBReportSearchRequest.getLicensenumber() != null)
+        if (isNotBlank(dCBReportSearchRequest.getLicensenumber()))
             predicates.add(criteriaBuilder.equal(root.get("licensenumber"), dCBReportSearchRequest.getLicensenumber()));
+        if (dCBReportSearchRequest.getActiveLicense() > 0)
+            predicates.add(criteriaBuilder.equal(root.get("active"), dCBReportSearchRequest.getActiveLicense() == 1));
 
         criteriaQuery.multiselect(criteriaBuilder.sumAsLong(root.get("arreardemand")),
                 criteriaBuilder.sumAsLong(root.get("currentdemand")),
@@ -78,7 +81,7 @@ public class DCBReportRepositoryImpl implements DCBReportRepositoryCustom {
                 criteriaBuilder.sumAsLong(root.get("arrearbalance")),
                 criteriaBuilder.sumAsLong(root.get("currentbalance")),
                 criteriaBuilder.sumAsLong(criteriaBuilder.sum(root.get("arrearbalance"), root.get("currentbalance"))))
-                .where(predicates.toArray(new Predicate[] {}));
+                .where(predicates.toArray(new Predicate[]{}));
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }

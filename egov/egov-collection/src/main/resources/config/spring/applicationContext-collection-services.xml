@@ -131,12 +131,11 @@
 			value="org.egov.commons.entity.BankAccountServiceMap" />
 	</bean>
 
-	<bean id="xmlHandler" class="org.egov.collection.handler.BillCollectXmlHandler">
-	</bean>
-
 	<bean id="AXISPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AxisAdaptor" />
 
 	<bean id="SBIMOPSPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.SbimopsAdaptor" />
+		
+	<bean id="ATOMPaymentGatewayAdaptor" class="org.egov.collection.integration.pgi.AtomAdaptor" />
 
 	<bean id="challanPersistenceService" class="org.egov.infstr.services.PersistenceService">
 		<constructor-arg index="0"

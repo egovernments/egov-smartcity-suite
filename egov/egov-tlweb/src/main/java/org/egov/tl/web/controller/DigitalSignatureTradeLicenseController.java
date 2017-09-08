@@ -40,35 +40,30 @@
 package org.egov.tl.web.controller;
 
 import org.apache.commons.io.FileUtils;
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.service.AssignmentService;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.tl.entity.License;
+import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
-import org.egov.tl.utils.LicenseUtils;
-import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.Map;
+
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Controller
 @RequestMapping(value = "/digitalSignature")
@@ -79,84 +74,41 @@ public class DigitalSignatureTradeLicenseController {
     private FileStoreService fileStoreService;
 
     @Autowired
-    private AssignmentService assignmentService;
-
-    @Autowired
-    @Qualifier("tradeLicenseWorkflowService")
-    private SimpleWorkflowService tradeLicenseWorkflowService;
-
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
-
-    @Autowired
-    private LicenseUtils licenseUtils;
-
-    @Autowired
-    private FileStoreMapperRepository fileStoreMapperRepository;
+    private TradeLicenseService tradeLicenseService;
 
     @RequestMapping(value = "/tradeLicense/transitionWorkflow")
-    public String transitionWorkflow(final HttpServletRequest request, final Model model) {
-        final String fileStoreIds = request.getParameter("fileStoreId");
-        final String[] fileStoreIdArr = fileStoreIds.split(",");
-        final HttpSession session = request.getSession();
+    public String transitionWorkflow(HttpServletRequest request, Model model) {
+        String fileStoreIds = request.getParameter("fileStoreId");
+        HttpSession session = request.getSession();
 
-        final Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
+        Map<String, String> appNoFileStoreIdsMap = (Map<String, String>) session
                 .getAttribute(Constants.FILE_STORE_ID_APPLICATION_NUMBER);
-        final User user = securityUtils.getCurrentUser();
-        for (final String fileStoreId : fileStoreIdArr) {
-            final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
-            if (null != applicationNumber && !applicationNumber.isEmpty()) {
-                License license = (License) persistenceService.find("from License where applicationNumber=?",
-                        applicationNumber);
-                final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(license.getCreatedBy()
-                        .getId());
-                final DateTime currentDate = new DateTime();
-                license = licenseUtils.applicationStatusChange(license, Constants.APPLICATION_STATUS_APPROVED_CODE);
-                WorkFlowMatrix wfmatrix;
-                if (license.isReNewApplication())
-                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(Constants.TRADELICENSE, null, null,
-                            Constants.RENEW_ADDITIONAL_RULE,
-                            Constants.WF_DIGI_SIGNED, null);
-                else
-                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(Constants.TRADELICENSE, null, null,
-                            Constants.NEW_ADDITIONAL_RULE,
-                            Constants.WF_DIGI_SIGNED, null);
 
-                license.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(Constants.WF_DIGI_SIGNED).withStateValue(wfmatrix.getCurrentState())
-                        .withDateInfo(currentDate.toDate()).withOwner(wfInitiator.getPosition())
-                        .withNextAction(wfmatrix.getCurrentStatus());
-                persistenceService.persist(license);
-
-            }
-        }
+        tradeLicenseService.digitalSignTransition(fileStoreIds, appNoFileStoreIdsMap);
         model.addAttribute("successMessage", "Digitally Signed Successfully");
-        model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
+        model.addAttribute("fileStoreId", !fileStoreIds.isEmpty() ? fileStoreIds : "");
+        model.addAttribute("applnum", appNoFileStoreIdsMap.get(fileStoreIds));
         return "digitalSignature-success";
     }
 
-    @RequestMapping(value = "/tradeLicense/downloadSignedLicenseCertificate")
-    public void downloadSignedLicenseCertificate(final HttpServletRequest request, final HttpServletResponse response) {
-        final String signedFileStoreId = request.getParameter("signedFileStoreId");
-        final File file = fileStoreService.fetch(signedFileStoreId, Constants.FILESTORE_MODULECODE);
-        final FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
-        response.setContentType("application/pdf");
-        response.setContentType("application/octet-stream");
-        response.setHeader("content-disposition",
-                "attachment; filename=\"" + (fileStoreMapper != null ? fileStoreMapper.getFileName() : null) + "\"");
 
-        try (FileInputStream inStream = new FileInputStream(file);
-             OutputStream outStream = response.getOutputStream()) {
-            int bytesRead;
-            final byte[] buffer = FileUtils.readFileToByteArray(file);
-            while ((bytesRead = inStream.read(buffer)) != -1)
-                outStream.write(buffer, 0, bytesRead);
-        } catch (final IOException e) {
-            throw new ApplicationRuntimeException("Exception while downloading license certificate file", e);
+    @RequestMapping(value = "/tradeLicense/downloadSignedLicenseCertificate", produces = APPLICATION_PDF_VALUE)
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file, @RequestParam String applnum) {
+
+        try {
+            File signedFile = fileStoreService.fetch(file, Constants.FILESTORE_MODULECODE);
+            byte[] bytes = FileUtils.readFileToByteArray(signedFile);
+
+            return ResponseEntity.
+                    ok().
+                    contentType(MediaType.parseMediaType("application/pdf")).
+                    cacheControl(CacheControl.noCache()).
+                    contentLength(bytes.length).
+                    header("content-disposition", "inline;filename=\"" + applnum + ".pdf\"").
+                    body(new InputStreamResource(new ByteArrayInputStream(bytes)));
+        } catch (IOException e) {
+            throw new ApplicationRuntimeException("Error while reading file", e);
         }
     }
 

@@ -42,16 +42,18 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+
 <form:form role="form" action="create" modelAttribute="councilPreamble"
-	id="councilPreambleform" cssClass="form-horizontal form-groups-bordered"
+	id="councilPreambleform"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
-	 
-	<jsp:include page="councilpreamble-form.jsp"/>
-	
-	<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
-		<div class="buttonbottom" align="center">
-			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" /> 
-		</div>
+
+	<jsp:include page="councilpreamble-form.jsp" />
+
+	<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+	<div class="buttonbottom" align="center">
+		<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
+	</div>
 	<%-- <div class="form-group">
 		<div class="text-center">
 			<button type='submit' class='btn btn-primary' id="buttonSubmit">
@@ -64,11 +66,6 @@
 	</div> --%>
 </form:form>
 
-<script
-	src="<cdn:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script
-	src="<cdn:url value='/resources/app/js/documentsupload.js?rnd=${app_release_no}'/>"></script>
 <script>
 	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
@@ -78,3 +75,14 @@
 	});
 	
 </script>
+
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/app/css/council-style.css?rnd=${app_release_no}'/>" />
+<script
+	src="<cdn:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/app/js/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/common-util-helper.js?rnd=${app_release_no}'/>"></script>

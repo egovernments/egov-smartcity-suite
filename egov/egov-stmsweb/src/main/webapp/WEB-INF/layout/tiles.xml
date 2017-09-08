@@ -321,4 +321,44 @@
     	<put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
     	<put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status-view.jsp"/>
     </definition>
+    	    <definition name="sewerage-acknowledgement" extends="base_layout">
+    	<put-attribute name="page-title" value="title.newconnection" cascade="true"/>
+    	<put-attribute name="body" value="/WEB-INF/views/transactions/new-sewerage-ackowledgement.jsp"/>
+    </definition>
+    <definition name="baseRegisterSearch-form" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerage.BaseRegisterReport" 
+			cascade="true"/>
+		<put-attribute name="body" 
+			value="/WEB-INF/views/reports/baseRegisterSearch-form.jsp" />	
+	</definition>
+	<definition name="search-sewerage-online-payment" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageTaxSearch"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/citizen/search-sewearge-online-payment.jsp" />
+	</definition>	
+	<definition name="sewerage-onlinepayment-redirection" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageTaxSearch"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/citizen/sewerage-onlinepayment-redirection.jsp" />
+	</definition>
+	<definition name="citizen/sewerage-citizen-dcbview" extends="base_layout">
+		<put-attribute name="page-title" value="title.sewerageTaxSearch"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/citizen/sewerage-citizen-dcbview.jsp" />
+	</definition>
+	<definition name="sewerage-reassign" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.reassign.title"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/sewerage-reassign.jsp" />
+	</definition>
+	<definition name="reassign-success" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.reassign.success"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/seweragereassign-success.jsp" />
+	</definition>
 </tiles-definitions>

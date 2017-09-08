@@ -273,7 +273,7 @@ public class CouncilMeetingController {
     }
 
     private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
-        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> f1.getItemNumber().compareTo(f2.getItemNumber()));
+        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> Long.valueOf(f1.getItemNumber()).compareTo(Long.valueOf(f2.getItemNumber())));
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)

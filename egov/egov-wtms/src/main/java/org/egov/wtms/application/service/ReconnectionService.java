@@ -39,9 +39,14 @@
  */
 package org.egov.wtms.application.service;
 
+import java.util.HashMap;
+
+import org.egov.commons.entity.Source;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.WaterConnectionDetailsRepository;
 import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
+import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -57,6 +62,12 @@ public class ReconnectionService {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
+    @Autowired
+    private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+
     public static final String CHANGEOFUSEALLOWEDIFWTDUE = "CHANGEOFUSEALLOWEDIFWTDUE";
 
     /**
@@ -71,7 +82,7 @@ public class ReconnectionService {
      */
     @Transactional
     public WaterConnectionDetails updateReConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent,  String additionalRule,
+            final Long approvalPosition, final String approvalComent, String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
         waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
@@ -81,11 +92,24 @@ public class ReconnectionService {
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        additionalRule=WaterTaxConstants.RECONNECTIONCONNECTION;
+        additionalRule = WaterTaxConstants.RECONNECTIONCONNECTION;
 
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
                 approvalPosition, approvalComent, additionalRule, workFlowAction);
+        if (waterConnectionDetails.getSource() != null
+                && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+                && waterConnectionDetailsService.getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null)
+            waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
+        else if (waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()))
+            waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
+    }
+
+    public WaterConnectionDetails updateReConnection(final WaterConnectionDetails closeConnection,
+            final Long approvalPosition, final String approvalComent, final String additionalRule,
+            final String workFlowAction, final HashMap<String, String> meesevaParams, final String sourceChannel) {
+        return updateReConnection(closeConnection, approvalPosition, approvalComent, additionalRule, workFlowAction,
+                sourceChannel);
     }
 }

@@ -1,41 +1,48 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.tl.web.actions;
@@ -64,6 +71,7 @@ import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseCategory;
@@ -75,6 +83,7 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.ProcessOwnerReassignmentService;
 import org.egov.tl.service.LicenseSubCategoryService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
@@ -105,13 +114,16 @@ import static org.egov.tl.utils.Constants.*;
                 "/viewtradelicense", "method", "showForApproval"}),
         @Result(name = "tl_generateRejCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
                 "namespace", "/viewtradelicense", "method", "generateRejCertificate"}),
-        @Result(name = "tl_generateCertificate", type = "redirectAction", location = "viewTradeLicense", params = {
-                "namespace", "/viewtradelicense", "method", "generateCertificate"}),
+        @Result(name = "tl_generateCertificate", type = "redirectAction", location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
         @Result(name = "report", location = "newTradeLicense-report.jsp"),
-        @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp")})
+        @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp"),
+        @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect",
+                params = {"prependServletContext", "false", "transactionServiceNumber", "${applicationNo}"})})
 public abstract class BaseLicenseAction<T extends License> extends GenericWorkFlowAction {
     private static final long serialVersionUID = 1L;
+    private static final String WF_ITEM_PROCESSED = "wf.item.processed";
+    private static final String MESSAGE = "message";
 
     protected transient WorkflowBean workflowBean = new WorkflowBean();
     protected transient List<String> buildingTypeList;
@@ -119,6 +131,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient String reportId;
     protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
     protected transient boolean showAgreementDtl;
+    protected transient String applicationNo;
+
     @Autowired
     protected transient LicenseUtils licenseUtils;
     @Autowired
@@ -155,6 +169,9 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Qualifier("feeTypeService")
     private transient FeeTypeService feeTypeService;
 
+    @Autowired
+    private transient ProcessOwnerReassignmentService processOwnerReassignmentService;
+
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("parentBoundary", Boundary.class);
@@ -171,11 +188,16 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @ValidationErrorPage(NEW)
     public String create(final T license) {
         populateWorkflowBean();
-        licenseService().create(license, workflowBean);
-        addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-        setHasCscOperatorRole(
-                securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
-        return ACKNOWLEDGEMENT;
+        if (tradeLicenseService.currentUserIsMeeseva()) {
+            licenseService().createWithMeseva(license, workflowBean);
+            applicationNo = license.getApplicationNumber();
+        } else {
+            licenseService().create(license, workflowBean);
+            addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
+            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
+        }
+
+        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
 
     // sub class should get the object of the model and set to license()
@@ -186,12 +208,24 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (SIGNWORKFLOWACTION.equals(workFlowAction))
             return digitalSignRedirection();
         tradeLicenseService.updateStatusInWorkFlowProgress((TradeLicense) license(), workFlowAction);
+        populateWorkflowBean();
+        if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
+            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
+                addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                return MESSAGE;
+            }
+        }
+        if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
+            addActionMessage(this.getText(WF_ITEM_PROCESSED));
+            return MESSAGE;
+        }
         processWorkflow(NEW);
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
         if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            return redirectToPrintCertificate();
+            return GENERATE_CERTIFICATE;
         else
-            return "message";
+            return MESSAGE;
 
     }
 
@@ -210,14 +244,31 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             licenseService().save(license());
             setFileStoreIds(fileStore.getFileStoreId());
             setUlbCode(ApplicationThreadLocals.getCityCode());
+
+            final Map<String, String> fileStoreIdsApplicationNoMap = new HashMap<>();
+            fileStoreIdsApplicationNoMap.put(license().getDigiSignedCertFileStoreId(),
+                    license().getApplicationNumber());
+            getSession().put(FILE_STORE_ID_APPLICATION_NUMBER, fileStoreIdsApplicationNoMap);
         }
         return "digitalSignatureRedirection";
     }
 
     @SkipValidation
     public String approveRenew() {
+        populateWorkflowBean();
+        if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
+            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
+                addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                return MESSAGE;
+            }
+        }
+        if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
+            addActionMessage(this.getText(WF_ITEM_PROCESSED));
+            return MESSAGE;
+        }
         processWorkflow(RENEWAL_LIC_APPTYPE);
-        return "message";
+        return MESSAGE;
     }
 
     protected void populateWorkflowBean() {
@@ -236,11 +287,15 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @SkipValidation
     public String renew() {
         populateWorkflowBean();
-        licenseService().renew(license(), workflowBean);
-        addActionMessage(this.getText("license.renew.submission.succesful") + license().getApplicationNumber());
-        setHasCscOperatorRole(
-                securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR) ? true : false);
-        return ACKNOWLEDGEMENT_RENEW;
+        if (tradeLicenseService.currentUserIsMeeseva()) {
+            licenseService().renewWithMeeseva(license(), workflowBean);
+            applicationNo = license().getApplicationNumber();
+        } else {
+            licenseService().renew(license(), workflowBean);
+            addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
+            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
+        }
+        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
 
     @SkipValidation
@@ -306,7 +361,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
      * instead it sends to the creator in approved state
      */
     public void processWorkflow(final String processType) {
-        populateWorkflowBean();
+
         // Both New And Renew Workflow handling in same API(transitionWorkFlow)
         if (NEW.equalsIgnoreCase(processType) && !BUTTONSUBMIT.equals(workFlowAction))
             licenseService().transitionWorkFlow(license(), workflowBean);
@@ -322,17 +377,18 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             rejectActionMessage();
         } else if (BUTTONGENERATEDCERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
+
     }
 
     private void rejectActionMessage() {
         User user = getInitiatorUserObj();
-        if (user != null && user.getRoles().toString().contains(CSCOPERATOR)) {
+        if (user != null && (!UserType.EMPLOYEE.equals(user.getType()))) {
             List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
             user = assignments.get(0).getEmployee();
         }
         if (license().getState().getValue().contains(WORKFLOW_STATE_REJECTED)) {
             Position creatorPosition = license().getState().getInitiatorPosition();
-            addActionMessage(this.getText("license.rejectedfirst") + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ")
+            addActionMessage(this.getText("license.rejectedfirst") + " " + (creatorPosition.getDeptDesig().getDesignation().getName() + " - ")
                     + (user != null ? user.getName() : ""));
 
         } else
@@ -380,6 +436,18 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         workflowBean.setDepartmentList(licenseUtils.getAllDepartments());
         workflowBean.setDesignationList(Collections.emptyList());
         workflowBean.setAppoverUserList(Collections.emptyList());
+    }
+
+    public Boolean hasJuniorOrSeniorAssistantRole() {
+        List<Position> userPositions = positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId());
+        return userPositions
+                .stream()
+                .anyMatch(position -> (position.getDeptDesig().getDesignation().getName().equalsIgnoreCase(JA_DESIGNATION)
+                        || position.getDeptDesig().getDesignation().getName().equalsIgnoreCase(SA_DESIGNATION)));
+    }
+
+    public Boolean reassignEnabled(){
+        return processOwnerReassignmentService.reassignmentEnabled();
     }
 
     public LicenseDemand getCurrentYearDemand() {
@@ -462,6 +530,14 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     public void setTradeLicenseSmsAndEmailService(final TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService) {
         this.tradeLicenseSmsAndEmailService = tradeLicenseSmsAndEmailService;
+    }
+
+    public String getApplicationNo() {
+        return applicationNo;
+    }
+
+    public void setApplicationNo(final String applicationNo) {
+        this.applicationNo = applicationNo;
     }
 
     public boolean isHasCscOperatorRole() {

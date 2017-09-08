@@ -111,6 +111,7 @@ public class VacantProperty extends AbstractProperty {
     private Double marketValue;
     private String categoryType;
     private String occupancyCertificationNo;
+    private Date occupancyCertificationDate;
     private transient Boolean appurtenantLandChecked = FALSE;
     private Boolean corrAddressDiff;
     private PropertyDepartment propertyDepartment;
@@ -131,7 +132,7 @@ public class VacantProperty extends AbstractProperty {
             RoofType roofType, WallType wallType, WoodType woodType, boolean lift, boolean toilets, boolean waterTap,
             boolean structure, boolean electricity, boolean attachedBathRoom, boolean waterHarvesting, boolean cable,
             String siteOwner, String pattaNumber, Double currentCapitalValue, Double marketValue, String categoryType,
-            String occupancyCertificationNo, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
+            String occupancyCertificationNo,Date occupancyCertificationDate, Boolean appurtenantLandChecked, Boolean corrAddressDiff,
             PropertyDepartment propertyDepartment, VacantLandPlotArea vacantLandPlotArea,
             LayoutApprovalAuthority layoutApprovalAuthority, String layoutPermitNo, Date layoutPermitDate) {
         super();
@@ -182,6 +183,7 @@ public class VacantProperty extends AbstractProperty {
         this.marketValue = marketValue;
         this.categoryType = categoryType;
         this.occupancyCertificationNo = occupancyCertificationNo;
+        this.occupancyCertificationDate= occupancyCertificationDate;
         this.appurtenantLandChecked = appurtenantLandChecked;
         this.corrAddressDiff = corrAddressDiff;
         this.propertyDepartment = propertyDepartment;
@@ -942,6 +944,16 @@ public class VacantProperty extends AbstractProperty {
     @Override
     public void setOccupancyCertificationNo(String occupancyCertificationNo) {
         this.occupancyCertificationNo = occupancyCertificationNo;
+    }
+    
+    @Override
+    public Date getOccupancyCertificationDate() {
+        return occupancyCertificationDate;
+    }
+
+    @Override
+    public void setOccupancyCertificationDate(Date occupancyCertificationDate) {
+        this.occupancyCertificationDate = occupancyCertificationDate;
     }
 
     @Override

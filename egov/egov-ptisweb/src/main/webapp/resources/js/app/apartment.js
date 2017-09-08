@@ -36,94 +36,62 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */			
+ */
 
-jQuery(document).ready(function() {
-			jQuery('#view').click(function() {
-						if (jQuery("#name").val() == '') {
-							bootbox.alert("Apartment type Required");
-							return false;
-							}	else {
-								var apartment = jQuery("#name").val();
-								jQuery('#apartmentTypeForm').attr('method', 'get');
-								jQuery('#apartmentTypeForm').attr('action','/ptis/apartment/view/'+ apartment);
+jQuery(document)
+		.ready(
+				function() {
+					jQuery('#view').click(
+							function() {
+								if (jQuery("#name").val() == '') {
+									bootbox.alert("Apartment type Required");
+									return false;
+								} else {
+									var apartment = jQuery("#name").val();
+									jQuery('#apartmentTypeForm').attr('method',
+											'get');
+									jQuery('#apartmentTypeForm')
+											.attr(
+													'action',
+													'/ptis/apartment/view/'
+															+ apartment);
 								}
 							});
-					datefun();
-					jQuery('#isResidential').change(function() {
-						if ($(this).is(":checked")) {
-							jQuery('#shopdetails').removeClass('hide');
-							
-							$("#shopTable").find("input[type='text']").attr("required","required" );
-						}
-						else{
-							jQuery('#shopdetails').addClass('hide');
-							$("#shopTable").find("input[type='text']").removeAttr("required");
-							}
-				    	});
-					
-					jQuery('#licenseStatus').change(function() {
-						$(this).val($(this).is(":checked") ? true : false);
-				    	});
-					
-				
-				jQuery(document).on('click',"#add_row",function (){	
-					
-					var rowCount = $('#shopTable tbody tr').length;
-					var valid = true;
-					$('#shopTable tbody tr').each(function(index,value){
-						$('#shopTable tbody tr:eq('+index+') td input[type="text"]').each(function(i,v){
-							if(!$.trim($(v).val())){
-								valid = false;
-								bootbox.alert("Enter all values for existing rows!",function(){
-									$(v).focus();
-								});
-								return false;
-							}
-						});
-					});
-					if(valid){
-					var newRow = $('#shopTable tbody tr:first').clone();
-					newRow.find("input").each(function(){
-		    	        $(this).attr({
-		    	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ rowCount +']'); }
-		    	        });
-		    	    });
-					$('#shopTable tbody').append(newRow);
-					$('#shopTable tbody tr:last').find('input[type="text"]').val('');
-					patternvalidation();
-					datefun();
-					}
-				});								
-				
-				
-				
-				$('#shopTable tbody').on('click','tr td .delete_row',function(e){
-					$(this).closest( 'tr').remove();
-					$('#shopTable tbody tr').each(function(index,value){
-						$(this).find("input").each(function(){
-			    	        $(this).attr({
-			    	        	'name': function(_, name) { return name.replace(/\[.\]/g, '['+ index +']'); }
-			    	        });
-			    	    });
-					});
-					
-					$(this).closest( 'tr').remove();
-					});				
-				
-				});		
-			function datefun(){
-				$(".licenseValidity").datepicker( {
-				    format: "mm-yyyy",
-				    viewMode: "months", 
-				    minViewMode: "months"
+					$("#type")
+							.blur(
+									function() {
+										if ($("#type option:selected").val() == "Mixed") {
+											$('#totalResidentialProperties')
+													.prop("disabled", false);
+											$('#totalNonResidentialProperties')
+													.prop("disabled", false);
+										} else {
+											$('#totalResidentialProperties')
+													.prop("disabled", true);
+											$('#totalNonResidentialProperties')
+													.prop("disabled", true);
+										}
+									})
+					$("#apartmentsubmit")
+							.click(
+									function() {
+										if ($("#type").val() == "Mixed") {
+											var residentialFlats = $(
+													"#totalResidentialProperties")
+													.val();
+											var nonResidentialFlats = $(
+													"#totalNonResidentialProperties")
+													.val();
+											var totalFlats = $(
+													"#totalProperties").val();
+											if (parseInt(totalFlats) != (parseInt(residentialFlats) + parseInt(nonResidentialFlats))) {
+												bootbox
+														.alert("No of flats should be equal to the sum of no of Non Residential flats and Residential flats");
+												return false;
+											} else {
+												return true;
+											}
+										}
+									})
+
 				});
-				}
-					
-
-				
-				
-
-
-
-

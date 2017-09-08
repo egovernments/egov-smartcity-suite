@@ -143,7 +143,7 @@ $(document).ready(function () {
                             leftColumns: 1
                         },
                         ajax: {
-                            type:"POST",
+                            type: "POST",
                             data: {
                                 applicationNumber: applicationNumber,
                                 licenseNumber: licenseNumber,
@@ -171,6 +171,9 @@ $(document).ready(function () {
                         }, {
                             "data": "mobileNumber",
                             "sTitle": "Mobile Number"
+                        }, {
+                            "data": "status",
+                            "sTitle": "Status"
                         }, {
                             "data": "propertyAssmntNo",
                             "sTitle": "PT Assessment No."
@@ -211,4 +214,10 @@ function goToAction(obj, id) {
         window.open("/tl/pay/online/" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'View DCB')
         window.open("/tl/dcb/view/" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
+        window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
+        window.open("/tl/viewtradelicense/showclosureform.action?id=" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate' || obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
+        window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'gc' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
 }

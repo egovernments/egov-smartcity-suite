@@ -56,6 +56,7 @@ import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
+import java.util.Collections;
 
 @Service
 @Transactional(readOnly = true)
@@ -84,9 +85,10 @@ public class ValidityService {
 
     @ReadOnly
     public List<Validity> search(Long natureOfBusiness, Long licenseCategory) {
-        if (natureOfBusiness != null && licenseCategory != null)
-            return Arrays.asList(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(natureOfBusiness, licenseCategory));
-        else if (natureOfBusiness != null)
+        if (natureOfBusiness != null && licenseCategory != null) {
+            Validity validity = validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(natureOfBusiness, licenseCategory);
+            return validity != null ? Arrays.asList(validity) : Collections.emptyList();
+        } else if (natureOfBusiness != null)
             return validityRepository.findByNatureOfBusinessId(natureOfBusiness);
         else if (licenseCategory != null)
             return validityRepository.findByLicenseCategoryId(licenseCategory);

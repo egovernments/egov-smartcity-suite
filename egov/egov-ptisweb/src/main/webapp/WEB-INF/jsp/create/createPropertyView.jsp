@@ -130,18 +130,30 @@
 		<td class="greybox parentIndexText"><s:text name="prntPropAssessmentNum" />:</td>
 		<td class="greybox parentIndexText"><span class="bold"><s:property value="%{parentIndex}" default="N/A"/></span></td>
 	</tr>
+	<tr class="occupancydetails">
+		<td class="greybox" width="5%">&nbsp;</td>
+		<td class="greybox" width="20%"><s:text
+				name="certificationNumber" />:</td>
+		<td class="greybox" width="20%"><span class="bold"> <s:if
+					test='%{propertyDetail.occupancyCertificationNo == ""}'>N/A</s:if>
+				<s:else>
+					<s:property value="%{propertyDetail.occupancyCertificationNo}"
+						default="N/A" />
+				</s:else>
+		</span></td>
+		<td class="greybox" width="25%"><s:text name="certificationDate" />
+			:</td>
+		<td class="greybox"><s:date
+				name="%{propertyDetail.occupancyCertificationDate}"
+				var="occupancyCertificationDate" format="dd/MM/yyyy" /> <span
+			class="bold"><s:property
+					value="%{#occupancyCertificationDate}" default="N/A" /></span></td>
+	</tr>
 	<tr class="extentSite">
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="20%"><s:text name="extent.site"/> :</td>
 		<td class="greybox" width="20%">
 		   <span class="bold"><s:property value="%{propertyDetail.sitalArea.area}" default="N/A"/></span>
-		</td>
-		<td class="greybox" width="20%"><s:text name="certificationNumber"/>:</td>
-		<td class="greybox" width="20%">
-			<span class="bold">
-				<s:if test='%{propertyDetail.occupancyCertificationNo == ""}'>N/A</s:if>
-				<s:else><s:property value="%{propertyDetail.occupancyCertificationNo}" default="N/A"/></s:else>
-			</span>
 		</td>
 	</tr>
 	<%-- <tr class="superStructureRow">

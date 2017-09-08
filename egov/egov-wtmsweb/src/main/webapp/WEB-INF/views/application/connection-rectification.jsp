@@ -208,8 +208,6 @@
 									<select id="selectBox" class="form-control action-dropdown">
 									    <option value="">Select any value</option>
                                         <option value="/wtms/application/activateConsumerCode/<c:out value="${connectionDetail.consumerNumber}" />">Activate Connection</option>
-                                        <option value="/wtms/application/duplicateConsumerCode/<c:out value="${connectionDetail.consumerNumber}"/>">Inactivate - Duplicate Connection</option>
-                                        <option value="/wtms/application/closedConsumerCode/<c:out value="${connectionDetail.consumerNumber}"/>">Inactivate - Closed Connection</option>
 
                                      </select>
 								</div>

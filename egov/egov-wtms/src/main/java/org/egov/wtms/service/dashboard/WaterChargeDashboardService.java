@@ -41,8 +41,8 @@
 package org.egov.wtms.service.dashboard;
 
 import static java.lang.String.format;
-
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -50,8 +50,11 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.entity.es.CityIndex;
+import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.web.utils.WebUtils;
+import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.wtms.bean.dashboard.WaterChargeConnectionTypeResponse;
@@ -62,6 +65,7 @@ import org.egov.wtms.service.es.WaterChargeCollectionDocService;
 import org.egov.wtms.service.es.WaterChargeElasticSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DASHBOARD_GROUPING_ALLWARDS;
 
 /**
  * Service to provide APIs for CM Dashboard
@@ -115,6 +119,11 @@ public class WaterChargeDashboardService {
                 .equalsIgnoreCase(PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE))
          collIndexData = waterChargeCollDocService
                 .getResponseTableDataForBillCollector(waterChargeDashBoardRequest);
+        else if (DASHBOARD_GROUPING_ALLWARDS.equalsIgnoreCase(waterChargeDashBoardRequest.getType())) {
+            Iterable<CityIndex> cities = cityIndexService.findAll();
+            collIndexData = waterChargeCollDocService.getWardWiseTableDataAcrossCities(waterChargeDashBoardRequest,
+                    cities);
+        }
         else
             collIndexData = waterChargeCollDocService
             .getResponseTableData(waterChargeDashBoardRequest);
@@ -196,5 +205,28 @@ public class WaterChargeDashboardService {
 
     public List<WaterTaxDefaulters> getTaxDefaulters(final WaterChargeDashBoardRequest waterChargeDashBoardRequest) {
         return waterChargeElasticSearchService.getTopDefaulters(waterChargeDashBoardRequest);
+    }
+    @Autowired
+    private CityIndexService cityIndexService;
+
+    /**
+     * Gives the State-City information across all ULBs
+     * 
+     * @return List
+     */
+    public List<StateCityInfo> getStateCityDetails() {
+        List<StateCityInfo> stateCityDetails = new ArrayList<>();
+        StateCityInfo cityInfo;
+        Iterable<CityIndex> cities = cityIndexService.findAll();
+        for (CityIndex city : cities) {
+            cityInfo = new StateCityInfo();
+            cityInfo.setRegion(city.getRegionname());
+            cityInfo.setDistrict(city.getDistrictname());
+            cityInfo.setCity(city.getName());
+            cityInfo.setGrade(city.getCitygrade());
+            cityInfo.setUlbCode(city.getCitycode());
+            stateCityDetails.add(cityInfo);
+        }
+        return stateCityDetails;
     }
 }

@@ -122,7 +122,7 @@ public class WebUtils {
                 contentType(mediaType).
                 cacheControl(CacheControl.noCache()).
                 contentLength(reportOutput.getReportOutputData().length).
-                header("content-disposition", "inline;filename=" + reportRequest.reportOutputFileName()).
+                header("content-disposition", reportRequest.reportDisposition()).
                 body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
     }
 

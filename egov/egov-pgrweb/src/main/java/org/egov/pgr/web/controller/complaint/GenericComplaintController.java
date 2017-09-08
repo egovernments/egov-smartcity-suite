@@ -42,13 +42,13 @@ package org.egov.pgr.web.controller.complaint;
 
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.pgr.config.properties.PgrApplicationProperties;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.ConfigurationService;
 import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.utils.constants.PGRConstants;
@@ -70,24 +70,31 @@ public class GenericComplaintController {
 
     @Autowired
     protected ComplaintTypeService complaintTypeService;
+
     @Autowired
     protected ComplaintService complaintService;
+
     @Autowired
     protected CrossHierarchyService crossHierarchyService;
+
     @Autowired
     protected ReceivingCenterService receivingCenterService;
+
     @Autowired
     protected ReceivingModeService receivingModeService;
+
     @Autowired
     protected ComplaintTypeCategoryService complaintTypeCategoryService;
+
     @Autowired
     protected FileStoreUtils fileStoreUtils;
+
     @Autowired
-    private PgrApplicationProperties applicationProperties;
+    protected ConfigurationService configurationService;
 
     @ModelAttribute("useAutoCompleteComplaintType")
     public boolean useAutoCompleteComplaintType() {
-        return applicationProperties.complaintTypeAutoComplete();
+        return configurationService.useAutoCompleteForComplaintType();
     }
 
     @ModelAttribute("categories")

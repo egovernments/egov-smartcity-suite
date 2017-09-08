@@ -71,10 +71,10 @@ public class BillInfoImpl implements BillInfo {
     private List<String> collectionModesNotAllowed;
 
     @XStreamAlias("payees")
-    private List<BillPayeeDetails> payees = new ArrayList<BillPayeeDetails>(0);
-    
+    private List<BillPayeeDetails> payees = new ArrayList<>(0);
+
     private String transactionReferenceNumber;
-    
+
     private String source;
 
     @Override
@@ -175,7 +175,7 @@ public class BillInfoImpl implements BillInfo {
     public void setCallbackForApportioning(final Boolean callbackForApportioning) {
         this.callbackForApportioning = callbackForApportioning;
     }
-    
+
     @Override
     public boolean equals(final Object obj) {
         if (!(obj instanceof BillInfoImpl))

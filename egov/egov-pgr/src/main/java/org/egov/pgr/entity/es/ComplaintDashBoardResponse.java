@@ -74,7 +74,7 @@ public class ComplaintDashBoardResponse {
     private long ageingGroup7;
     private long ageingGroup8;
     private long reOpenedComplaintCount;
-
+    private long functionaryCount;
     public String getDistrictName() {
         return districtName;
     }
@@ -305,5 +305,13 @@ public class ComplaintDashBoardResponse {
 
     public void setAgeingGroup8(long ageingGroup8) {
         this.ageingGroup8 = ageingGroup8;
+    }
+
+    public long getFunctionaryCount() {
+        return functionaryCount;
+    }
+
+    public void setFunctionaryCount(long functionaryCount) {
+        this.functionaryCount = functionaryCount;
     }
 }

@@ -68,6 +68,7 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.dao.FunctionHibernateDAO;
+import org.egov.commons.entity.Source;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
@@ -183,6 +184,13 @@ public class WaterTaxCollection extends TaxCollection {
                 updateCollForChequeBounce(demand, billRcptInfo);
                 updateWaterTaxIndexes(demand);
             }
+            final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                    .getWaterConnectionDetailsByDemand(demand);
+            if (waterConnectionDetails.getSource() != null
+                    && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
+                    && waterConnectionDetailsService.getPortalInbox(waterConnectionDetails.getApplicationNumber()) != null) {
+                waterConnectionDetailsService.updatePortalMessage(waterConnectionDetails);
+            }
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("updateDemandDetails : Demand after processed : " + demand);
         } catch (final Exception e) {
@@ -260,7 +268,6 @@ public class WaterTaxCollection extends TaxCollection {
             applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(waterConnectionDetails,
                     approvalPosition, WaterTaxConstants.FEE_COLLECTION_COMMENT,
                     waterConnectionDetails.getApplicationType().getCode(), null);
-
             waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
         }
@@ -654,7 +661,7 @@ public class WaterTaxCollection extends TaxCollection {
                 if (waterConnectionDetails != null
                         && (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED)
                                 || waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.INPROGRESS))) {
-                    if (installsplit1[0].trim()
+                    if (installsplit1!=null && installsplit1[0].trim()
                             .equals(financialyear != null ? financialyear.getFinYearRange().split("-")[0] : null))
                         currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
 
@@ -662,7 +669,7 @@ public class WaterTaxCollection extends TaxCollection {
                         advanceInstallmentAmount = advanceInstallmentAmount.add(rcptAccInfo.getCrAmount());
                     else
                         arrearAmount = arrearAmount.add(rcptAccInfo.getCrAmount());
-                } else if (installsplit[0].split("/")[1].split("-")[1].trim()
+                } else if (installsplit!=null && installsplit[0].split("-")[1].trim()
                         .equals(financialyear.getFinYearRange().split("-")[1].trim()))
                     currentInstallmentAmount = currentInstallmentAmount.add(rcptAccInfo.getCrAmount());
                 else if (rcptAccInfo.getDescription().contains("Advance"))

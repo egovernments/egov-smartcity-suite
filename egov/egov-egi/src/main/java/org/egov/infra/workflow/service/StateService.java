@@ -40,14 +40,14 @@
 
 package org.egov.infra.workflow.service;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.repository.StateRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -70,6 +70,10 @@ public class StateService {
 
     public State getStateById(final Long id) {
         return stateRepository.findOne(id);
+    }
+
+    public Date getMaxCreatedDateByPositionId(final Long posId) {
+        return stateRepository.findMaxCreatedDateByOwnerPosId(posId);
     }
 
 }

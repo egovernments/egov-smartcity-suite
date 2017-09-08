@@ -39,6 +39,7 @@
  */
 package org.egov.stms.notice.service;
 
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_DEMAND_BILL_NOTICE;
 
@@ -47,7 +48,6 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
@@ -101,6 +101,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class SewerageNoticeService {
 
     public static final String ESTIMATION_NOTICE = "sewerageEstimationNotice";
+    public static final String REJECTION_NOTICE = "sewerageRejectionNotice";
     public static final String WORKORDERNOTICE = "sewerageWorkOrderNotice";
     public static final String CLOSECONNECTIONNOTICE = "sewerageCloseConnectionNotice";
     private static final Logger LOGGER = Logger.getLogger(SewerageNoticeService.class);
@@ -158,6 +159,24 @@ public class SewerageNoticeService {
         return sewerageNotice;
     }
 
+    public SewerageNotice saveRejectionNotice(final SewerageApplicationDetails sewerageApplicationDetails,
+            final InputStream fileStream) {
+        SewerageNotice sewerageNotice = null;
+
+        if (sewerageApplicationDetails != null) {
+            sewerageNotice = new SewerageNotice();
+
+            final String rejectionNoticeNo = sewerageApplicationDetails.getRejectionNumber();
+            buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, rejectionNoticeNo,
+                    sewerageApplicationDetails.getEstimationDate(), SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE);
+            final String fileName = rejectionNoticeNo + ".pdf";
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+                    SewerageTaxConstants.FILESTORE_MODULECODE);
+            sewerageNotice.setFileStore(fileStore);
+        }
+        return sewerageNotice;
+    }
+
     private void buildSewerageNotice(final SewerageApplicationDetails sewerageApplicationDetails,
             final SewerageNotice sewerageNotice, final String noticeNumber, final Date noticeDate, final String noticeType) {
         final Module module = moduleDao.getModuleByName(SewerageTaxConstants.MODULE_NAME);
@@ -200,6 +219,18 @@ public class SewerageNoticeService {
         return sewerageNotice;
     }
 
+    public SewerageNotice generateReportForRejection(final SewerageApplicationDetails sewerageApplicationDetails,
+            final HttpSession session, final HttpServletRequest request) {
+        ReportOutput reportOutput = null;
+        SewerageNotice sewerageNotice = null;
+        reportOutput = generateReportOutputDataForRejection(sewerageApplicationDetails, session, request);
+        if (reportOutput != null && reportOutput.getReportOutputData() != null) {
+            generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+            sewerageNotice = saveRejectionNotice(sewerageApplicationDetails, generateNoticePDF);
+        }
+        return sewerageNotice;
+    }
+
     public SewerageNotice generateReportForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session, final HttpServletRequest request) {
         ReportOutput reportOutput = null;
@@ -218,7 +249,6 @@ public class SewerageNoticeService {
         ReportRequest reportInput = null;
         final Map<String, Object> reportParams = new HashMap<String, Object>();
         if (sewerageApplicationDetails != null) {
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
@@ -241,7 +271,7 @@ public class SewerageNoticeService {
                         WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
-            reportParams.put("estimationDate", formatter.format(sewerageApplicationDetails.getApplicationDate()));
+            reportParams.put("estimationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             final String url = WebUtils.extractRequestDomainURL(request, false);
             reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
                     .concat((String) request.getSession().getAttribute("citylogo")));
@@ -258,7 +288,7 @@ public class SewerageNoticeService {
             reportParams.put("estimationCharges", estimationCharges);
             reportParams.put("donationCharges", donationCharges);
             reportParams.put("totalCharges", estimationCharges.add(donationCharges));
-            reportParams.put("applicationDate", formatter.format(sewerageApplicationDetails.getApplicationDate()));
+            reportParams.put("applicationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("inspectionDetails", sewerageApplicationDetails.getFieldInspections().get(0)
@@ -266,6 +296,46 @@ public class SewerageNoticeService {
             reportParams.put("houseNo", doorNo != null ? doorNo[0] : "");
             reportInput = new ReportRequest(ESTIMATION_NOTICE, sewerageApplicationDetails.getEstimationDetails(),
                     reportParams);
+        }
+        return reportService.createReport(reportInput);
+    }
+
+    public ReportOutput generateReportOutputDataForRejection(final SewerageApplicationDetails sewerageApplicationDetails,
+            final HttpSession session,
+            final HttpServletRequest request) {
+
+        ReportRequest reportInput = null;
+        final Map<String, Object> reportParams = new HashMap<String, Object>();
+
+        if (sewerageApplicationDetails != null) {
+            final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
+                    sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
+                    PropertyExternalService.FLAG_FULL_DETAILS);
+            String ownerName = "";
+            if (null != assessmentDetails.getOwnerNames())
+                for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                    ownerName = names.getOwnerName();
+                    break;
+                }
+            reportParams.put("applicationType",
+                    WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
+
+            reportParams.put("applicantName", ownerName);
+            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
+            reportParams.put("remarks", request.getParameter("approvalComent"));
+            reportParams.put("rejectionDate", getDefaultFormattedDate(sewerageApplicationDetails.getRejectionDate()));
+            reportParams.put("rejectionNumber", sewerageApplicationDetails.getRejectionNumber());
+            reportParams.put(
+                    "presentCommissioner",
+                    assignmentService
+                            .getAllActiveAssignments(
+                                    designationService.getDesignationByName(
+                                            SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId())
+                            .get(0)
+                            .getEmployee().getName());// FIXME: IF ASSIGNMENT NOT PRESENT THEN ?
+            reportInput = new ReportRequest(REJECTION_NOTICE, sewerageApplicationDetails,
+                    reportParams);
+
         }
         return reportService.createReport(reportInput);
     }
@@ -278,7 +348,6 @@ public class SewerageNoticeService {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
@@ -340,14 +409,14 @@ public class SewerageNoticeService {
             reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
 
             reportParams.put("workorderdate", sewerageApplicationDetails.getWorkOrderDate() != null
-                    ? formatter.format(sewerageApplicationDetails.getWorkOrderDate()) : "");
+                    ? getDefaultFormattedDate(sewerageApplicationDetails.getWorkOrderDate()) : "");
             reportParams.put("workorderno", sewerageApplicationDetails.getWorkOrderNumber());
             if (sewerageApplicationDetails.getConnection().getShscNumber() != null)
                 reportParams.put("consumerNumber", sewerageApplicationDetails.getConnection().getShscNumber());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
-            reportParams.put("applicationDate", formatter.format(sewerageApplicationDetails.getApplicationDate()));
+            reportParams.put("applicationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportInput = new ReportRequest(WORKORDERNOTICE, sewerageApplicationDetails, reportParams);
         }
         return reportService.createReport(reportInput);
@@ -433,7 +502,6 @@ public class SewerageNoticeService {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
@@ -462,12 +530,12 @@ public class SewerageNoticeService {
             reportParams.put("revenueWardNo", assessmentDetails.getBoundaryDetails().getWardName());
             reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
 
-            reportParams.put("eeApprovalDate", formatter.format(sewerageApplicationDetails.getLastModifiedDate()));
+            reportParams.put("eeApprovalDate", getDefaultFormattedDate(sewerageApplicationDetails.getLastModifiedDate()));
             reportParams.put("consumerNumber", sewerageApplicationDetails.getConnection().getShscNumber());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
-            reportParams.put("applicationDate", formatter.format(sewerageApplicationDetails.getApplicationDate()));
+            reportParams.put("applicationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportInput = new ReportRequest(CLOSECONNECTIONNOTICE, sewerageApplicationDetails, reportParams);
         }
         return reportService.createReport(reportInput);

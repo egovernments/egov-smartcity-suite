@@ -75,7 +75,7 @@ public abstract class BillServiceInterface {
     public String generateXML(EgBill bill) {
         if (bill == null)
             throw new ApplicationRuntimeException("Bill object can't be null");
-        return new DemandUtils().generateBillXML(bill, bill.getDisplayMessage());
+        return DemandUtils.generateBillXML(bill, bill.getDisplayMessage());
     }
 
     public final EgBill generateBill(Billable billObj) {

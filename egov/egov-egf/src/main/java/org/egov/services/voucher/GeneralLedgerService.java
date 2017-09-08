@@ -65,4 +65,12 @@ public class GeneralLedgerService extends PersistenceService<CGeneralLedger, Lon
         query.setString("glcode", glcode);
         return query.list();
     }
+
+    public List<CGeneralLedger> findCGeneralLedgerByVoucherHeaderId(final Long voucherHeaderId) {
+        final Query qry = getSession().createQuery(
+                "from CGeneralLedger gen where gen.voucherHeaderId.id = :voucherHeaderId");
+        qry.setLong("voucherHeaderId", voucherHeaderId);
+        return qry.list();
+    }
+
 }

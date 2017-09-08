@@ -105,7 +105,11 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
+import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
+import org.egov.infra.web.utils.EgovPaginatedList;
+import org.egov.infstr.search.SearchQuery;
+import org.egov.infstr.search.SearchQueryHQL;
 import org.egov.ptis.actions.common.CommonServices;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -131,8 +135,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = SearchPropertyAction.TARGET, location = "searchProperty-result.jsp"),
         @Result(name = SearchPropertyAction.COMMON_FORM, location = "searchProperty-commonForm.jsp"),
         @Result(name = APPLICATION_TYPE_ALTER_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
-                "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER",
-                "applicationType",
+                "namespace", "${actionNamespace}", "indexNumber", "${assessmentNum}", "modifyRsn", "ADD_OR_ALTER", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "applicationType",
                 "${applicationType}", "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
@@ -164,7 +168,8 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
         @Result(name = APPLICATION_TYPE_ADD_DEMAND, type = "redirectAction", location = "addDemand-newAddForm", params = {
                 "namespace", "/edit", "propertyId", "${assessmentNum}" }),
         @Result(name = APPLICATION_TYPE_EDIT_COLLECTION, type = "redirect", location = "../editCollection/editForm/${assessmentNum}"),
-        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}"),
+        @Result(name = APPLICATION_TYPE_DEMOLITION, type = "redirect", location = "../property/demolition/${assessmentNum}/${applicationSource}", params = {
+                "meesevaApplicationNumber", "${meesevaApplicationNumber}"}),
         @Result(name = APPLICATION_TYPE_EDIT_OWNER, type = "redirect", location = "../editowner/${assessmentNum}"),
         @Result(name = SearchPropertyAction.USER_DETAILS, location = "searchProperty-ownerDetails.jsp"),
         @Result(name = APPLICATION_TYPE_MODIFY_DATA_ENTRY, type = "redirectAction", location = "createProperty-editDataEntryForm", params = {
@@ -179,12 +184,13 @@ import com.opensymphony.xwork2.validator.annotations.Validations;
                 "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "applicationType",
                 "${applicationType}", "wfType", "RP" }),
         @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirectAction", location = "amalgamation-newForm", params = {
-                "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "applicationType", "${applicationType}",
+                "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "applicationType", "${applicationType}",
                 "modifyRsn", "AMALG" }) })
 
 // @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirect", location = "../amalgamation/new/${assessmentNum}")})
 
-public class SearchPropertyAction extends BaseFormAction {
+public class SearchPropertyAction extends SearchFormAction {
     /**
      *
      */
@@ -195,14 +201,11 @@ public class SearchPropertyAction extends BaseFormAction {
     protected static final String USER_DETAILS = "ownerDetails";
     protected static final String UPDATEMOBILE_FORM = "updateMobileNo";
     public static final String TARGET = "result";
-
     private Long zoneId;
     private Long wardId;
     private Long propertyTypeMasterId;
-
     private Integer locationId;
     private Integer areaName;
-
     private String assessmentNum;
     private String houseNumBndry;
     private String ownerNameBndry;
@@ -225,7 +228,6 @@ public class SearchPropertyAction extends BaseFormAction {
     private String meesevaServiceCode;
     private String applicationSource;
     private String actionNamespace;
-
     private List<Map<String, String>> searchResultList;
     List<Map<String, String>> searchList = new ArrayList<Map<String, String>>();
     private Map<Long, String> ZoneBndryMap;
@@ -237,6 +239,7 @@ public class SearchPropertyAction extends BaseFormAction {
     private boolean isDemandActive;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String activePropertyId;
+    private Map<String, Object> queryMap;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -499,10 +502,13 @@ public class SearchPropertyAction extends BaseFormAction {
         try {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("srchByAssessment : BasicProperty : " + basicProperty);
-            if (basicProperty != null) {
+            setQueryMap(propertyService.getAssessmentNumQuery(assessmentNum));
+            super.search();
+            for (final BasicProperty basicProperty : (List<BasicProperty>) searchResult.getList()) {
                 setSearchResultList(getSearchResults(basicProperty.getUpicNo()));
                 checkIsMarkForDeactive(basicProperty);
             }
+            ((EgovPaginatedList) searchResult).setList(searchList);
             if (assessmentNum != null && !assessmentNum.equals(""))
                 setSearchValue("Assessment Number : " + assessmentNum);
             setSearchUri("../search/searchProperty-srchByAssessment.action");
@@ -527,12 +533,14 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("Entered into srcByOldAssesementNum  method. Old Assessment Number : " + oldMuncipalNum);
         if (oldMuncipalNum != null)
             try {
-                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByOldMunicipalNo(oldMuncipalNum);
-                for (final PropertyMaterlizeView propMatview : propertyList) {
+                setQueryMap(propertyService.getOldMunicipalNumQuery(oldMuncipalNum));
+                super.search();
+                for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByBndry : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
+                ((EgovPaginatedList) searchResult).setList(searchList);
                 if (oldMuncipalNum != null && !oldMuncipalNum.equals(""))
                     setSearchValue("Assessment Number : " + oldMuncipalNum);
                 setSearchUri("../search/searchProperty-srchByOldMuncipalNumber.action");
@@ -556,14 +564,17 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("Entered into srchByDoorNo  method. Door No : " + doorNo);
         if (null != doorNo)
             try {
-                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByDoorNo(doorNo);
-                for (final PropertyMaterlizeView propMatview : propertyList) {
+                setQueryMap(propertyService.getDoorNoQuery(doorNo));
+                super.search();
+                for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
                     if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("srchByBndry : Property : " + propMatview);
+                        LOGGER.debug("srchByDoorNo : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
-                if (assessmentNum != null && !assessmentNum.equals(""))
-                    setSearchValue("Assessment Number : " + assessmentNum);
+                ((EgovPaginatedList) searchResult).setList(searchList);
+
+                if (doorNo != null && !doorNo.equals(""))
+                    setSearchValue("Door Number : " + doorNo);
                 setSearchUri("../search/searchProperty-srchByDoorNo.action");
                 setSearchCriteria("Search By Door Number");
                 setSearchValue("Door number :" + doorNo);
@@ -584,13 +595,15 @@ public class SearchPropertyAction extends BaseFormAction {
             LOGGER.debug("Entered into srchByMobileNumber  method. Mobile No : " + mobileNumber);
         if (StringUtils.isNotBlank(mobileNumber))
             try {
-                final List<PropertyMaterlizeView> propertyList = propertyService
-                        .getPropertyByMobileNumber(mobileNumber);
-                for (final PropertyMaterlizeView propMatview : propertyList) {
+                setQueryMap(propertyService.getMobileNumberQuery(mobileNumber));
+                super.search();
+                for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
                     if (LOGGER.isDebugEnabled())
-                        LOGGER.debug("srchByBndry : Property : " + propMatview);
+                        LOGGER.debug("srchByMobileNumber : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
+                ((EgovPaginatedList) searchResult).setList(searchList);
+
                 if (mobileNumber != null && !mobileNumber.equals(""))
                     setSearchValue("Mobile Number : " + mobileNumber);
                 setSearchUri("../search/searchProperty-srchByMobileNumber.action");
@@ -627,19 +640,15 @@ public class SearchPropertyAction extends BaseFormAction {
 
         if (zoneId != null && zoneId != -1 || wardId != null && wardId != -1)
             try {
-
-                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByBoundary(zoneId, wardId,
-                        ownerNameBndry, houseNumBndry);
-
-                if (!propertyList.isEmpty()
-                        && propertyList.size() > Integer.parseInt(PropertyTaxConstants.SEARCH_RESULT_COUNT))
-                    throw new ValidationException(Arrays.asList(new ValidationError("resultCountValidation",
-                            getText("search.validate.resultcountexceed500"))));
-                for (final PropertyMaterlizeView propMatview : propertyList) {
+                setQueryMap(propertyService.getBoundaryQuery(zoneId, wardId, ownerNameBndry, houseNumBndry));
+                super.search();
+                for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByBndry : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
+                ((EgovPaginatedList) searchResult).setList(searchList);
+
                 setSearchUri("../search/searchProperty-srchByBndry.action");
                 setSearchCriteria("Search By Zone, Ward, Plot No/House No, Owner Name");
                 setSearchValue("Zone Num: " + strZoneNum + ", Ward Num: " + strWardNum + ", Plot No/House No: "
@@ -671,19 +680,15 @@ public class SearchPropertyAction extends BaseFormAction {
         if (null != ownerName && org.apache.commons.lang.StringUtils.isNotEmpty(ownerName) && locationId != null
                 && locationId != -1)
             try {
-                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByLocation(locationId,
-                        houseNumArea, ownerName);
-                if (!propertyList.isEmpty()
-                        && propertyList.size() > Integer.parseInt(PropertyTaxConstants.SEARCH_RESULT_COUNT)) {
-                    final ValidationError vr = new ValidationError("search.validate.resultcountexceed500",
-                            "search.validate.resultcountexceed500");
-                    throw new ValidationException(Arrays.asList(vr));
-                }
-                for (final PropertyMaterlizeView propMatview : propertyList) {
+                setQueryMap(propertyService.getLocationQuery(locationId.longValue(), houseNumArea, ownerName));
+                super.search();
+                for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("srchByLocation : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
+                ((EgovPaginatedList) searchResult).setList(searchList);
+
                 setSearchUri("../search/searchProperty-srchByLocation.action");
                 setSearchCriteria("Search By Location, Owner Name");
                 setSearchValue("Location : " + strLocationNum + ", Owner Name : " + ownerName);
@@ -711,19 +716,16 @@ public class SearchPropertyAction extends BaseFormAction {
         }
         if (fromDemand != null && fromDemand != "" && toDemand != null && toDemand != "")
             try {
-                final List<PropertyMaterlizeView> propertyList = propertyService.getPropertyByDemand(fromDemand,
-                        toDemand);
-                if (!propertyList.isEmpty()
-                        && propertyList.size() > Integer.parseInt(PropertyTaxConstants.SEARCH_RESULT_COUNT)) {
-                    final ValidationError vr = new ValidationError("search.validate.resultcountexceed500",
-                            "search.validate.resultcountexceed500");
-                    throw new ValidationException(Arrays.asList(vr));
-                }
-                for (final PropertyMaterlizeView propMatview : propertyList) {
+
+                setQueryMap(propertyService.getDemandQuery(fromDemand, toDemand));
+                super.search();
+                for (final PropertyMaterlizeView propMatview : (List<PropertyMaterlizeView>) searchResult.getList()) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("searchByDemand : Property : " + propMatview);
                     setSearchResultList(getResultsFromMv(propMatview));
                 }
+                ((EgovPaginatedList) searchResult).setList(searchList);
+
                 setSearchUri("../search/searchProperty-searchByDemand.action");
                 setSearchCriteria("Search By FromDemand, ToDemand");
                 setSearchValue("From Demand: " + fromDemand + ", To Demand: " + toDemand);
@@ -761,6 +763,11 @@ public class SearchPropertyAction extends BaseFormAction {
 
         if (StringUtils.isNotBlank(assessmentNum))
             basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNum);
+    }
+
+    @Override
+    public SearchQuery prepareQuery(String sortField, String sortOrder) {
+        return new SearchQueryHQL((String) queryMap.get("search"), (String) queryMap.get("count"), (List<Object>) queryMap.get("params"));
     }
 
     /**
@@ -992,6 +999,17 @@ public class SearchPropertyAction extends BaseFormAction {
     @ValidationErrorPage(value = "new")
     @Action(value = "/search/searchProperty-searchOwnerDetails")
     public String searchOwnerDetails() {
+
+        if(basicProperty == null && StringUtils.isNotBlank(oldMuncipalNum)) {
+            final List<BasicProperty> properties = basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldMuncipalNum);
+            if (properties.size() > 1) {
+                addActionError(getText("validation.multiple.oldassessmentno"));
+                return NEW;
+            } else if (properties.size() == 1) {
+                basicProperty = properties.get(0);
+            }
+        }
+
         if (basicProperty == null) {
             addActionError(getText("validation.property.doesnot.exists"));
             return NEW;
@@ -1002,6 +1020,8 @@ public class SearchPropertyAction extends BaseFormAction {
                 propertyOwner.setMobileNumber("N/A");
             setDoorNo(basicProperty.getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
                     : basicProperty.getAddress().getHouseNoBldgApt());
+            if (StringUtils.isBlank(assessmentNum))
+                setAssessmentNum(basicProperty.getUpicNo());
             return USER_DETAILS;
         }
     }
@@ -1393,5 +1413,13 @@ public class SearchPropertyAction extends BaseFormAction {
 
     public void setActionNamespace(final String actionNamespace) {
         this.actionNamespace = actionNamespace;
+    }
+
+    public Map<String, Object> getQueryMap() {
+        return queryMap;
+    }
+
+    public void setQueryMap(Map<String, Object> queryMap) {
+        this.queryMap = queryMap;
     }
 }

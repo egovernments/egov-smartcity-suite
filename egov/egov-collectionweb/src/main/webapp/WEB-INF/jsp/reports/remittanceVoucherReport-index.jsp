@@ -38,9 +38,11 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
+  
 <head>
 <title><s:text name="remittanceVoucherReport.title" /></title>
+<link rel="stylesheet" type="text/css" href="/collection/resources/commonyui/yui2.8/assets/skins/sam/autocomplete.css" />
+
 <script>
 function onChangeBankAccount(branchId) {
 	populatebankAccountId({
@@ -57,50 +59,44 @@ function onChangeServiceList(bankAccountId) {
 
 function validate()
 {
-	var fromdate=dom.get("fromDate").value;
-	var todate=dom.get("toDate").value;
-	var valSuccess = true;
-	document.getElementById("report_error_area").innerHTML = "";
-	document.getElementById("report_error_area").style.display="none"; 
-	
-
-		if (fromdate == "") {
+		document.getElementById("report_error_area").innerHTML = "";
+		document.getElementById("report_error_area").style.display="none"; 
+		var valid = false;
+		if (document.getElementById('receiptNumber').value != ""
+			&& document.getElementById('receiptNumber').value != null) {
+			valid = true;
+		} else if (document.getElementById('remittanceNumber').value != ""
+				&& document.getElementById('remittanceNumber').value != null) {
+			valid = true;
+		} else if (document.getElementById("voucherNumber").value != null
+				&& document.getElementById("voucherNumber").value != "") {
+			valid = true;
+		} else if (document.getElementById("remittanceDate").value != null
+				&& document.getElementById("remittanceDate").value != "") {
+			valid = true;
+		} else if (document.getElementById("bankBranchMaster").value != null
+				&& document.getElementById("bankBranchMaster").value != -1) {
+			valid = true;
+		} else if (document.getElementById("bankAccountId").value != null
+				&& document.getElementById("bankAccountId").value != -1) {
+			valid = true;
+		} 
+		if (!valid) {
 			document.getElementById("report_error_area").style.display = "block";
-			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.fromdate" />'
+			document.getElementById("report_error_area").innerHTML += '<s:text name="remittanceVoucher.atleast.one.criteria" />'
 					+ '<br>';
-			valSuccess = false;
-		}
+			return false;
+		} 
 
-		if (todate == "") {
-			document.getElementById("report_error_area").style.display = "block";
-			document.getElementById("report_error_area").innerHTML += '<s:text name="common.datemandatory.todate" />'
-					+ '<br>';
-			valSuccess = false;
-		}
-
-		if (fromdate != "" && todate != "" && fromdate != todate) {
-			if (!checkFdateTdate(fromdate, todate)) {
-				document.getElementById("report_error_area").style.display = "block";
-				document.getElementById("report_error_area").innerHTML += '<s:text name="common.comparedate.errormessage" />'
-						+ '<br>';
-				valSuccess = false;
-			}
-			if (!validateNotFutureDate(fromdate, currDate)) {
-				document.getElementById("report_error_area").style.display = "block";
-				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.fromdate.futuredate.message" />'
-						+ '<br>';
-				valSuccess = false;
-			}
-			if (!validateNotFutureDate(todate, currDate)) {
-				document.getElementById("report_error_area").style.display = "block";
-				document.getElementById("report_error_area").innerHTML += '<s:text name="reports.todate.futuredate.message" />'
-						+ '<br>';
-				valSuccess = false;
-			}
-		}
-
-		return valSuccess;
-	}
+		return validate;
+}
+var receiptNumberSelectionEnforceHandler = function(sType, arguments) {
+		warn('improperreceiptNumberSelection');
+}
+var receiptNumberSelectionHandler = function(sType, arguments) { 
+	var oData = arguments[2];
+	dom.get("receiptNumber").value=oData[0];
+}
 </script>
 </head>
 <body>
@@ -112,42 +108,53 @@ function validate()
 	<div class="subheadsmallnew"><span class="subheadnew"><s:text
 		name="collectionReport.criteria" /></span></div>
 	<table width="100%" border="0" cellspacing="0" cellpadding="0">
-		<tr>
+	    <tr>
 			<td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.fromdate" /><span class="mandatory"></span></td>
-			<s:date name="fromDate" var="cdFormat" format="dd/MM/yyyy" />
-			<td width="24%" class="bluebox"><s:textfield id="fromDate"
-				name="fromDate" value="%{cdFormat}"
-				onfocus="javascript:vDateType='3';"
-				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-				href="javascript:show_calendar('forms[0].fromDate');"
-				onmouseover="window.status='Date Picker';return true;"
-				onmouseout="window.status='';return true;"><img
-				src="/egi/resources/erp2/images/calendaricon.gif"
-				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
+				name="remittanceVoucher.criteria.receiptnumber" /></td>
+			<td width="24%" class="bluebox">
+			   <div class="yui-skin-sam">
+                   <div id="receiptNumber_autocomplete">
+                      <div><s:textfield id="receiptNumber" type="text" name="receiptNumber"/>
+                      </div><span id="receiptNumberResults"></span>
+                    </div>
+                </div>
+                <egov:autocomplete name="receiptNumber" width="15" field="receiptNumber"
+                 url="${pageContext.request.contextPath}/receipts/receiptNumberSearch-searchAjax.action" 
+                 queryQuestionMark="true" results="receiptNumberResults" 
+                 handler="receiptNumberSelectionHandler"  id="improperreceiptNumberSelectionWarning" queryLength="3"/>
+                 <span class='warning' id="improperreceiptNumberSelectionWarning"></span>
+			</td>
+			<td width="21%" class="bluebox"> <s:text
+				name="remittanceVoucher.criteria.remittanceno" /> </td>
+			<td width="24%" class="bluebox"><s:textfield id="remittanceNumber" type="text" name="remittanceNumber"/></td>
+		</tr>
+		  <tr>
+			<td width="4%" class="bluebox">&nbsp;</td>
+			<td width="21%" class="bluebox"><s:text
+				name="remittanceVoucher.criteria.remittance.voucherno" /></td>
+			<td width="24%" class="bluebox"><s:textfield id="voucherNumber" type="text" name="voucherNumber"/>
 			</td>
 			<td width="21%" class="bluebox"><s:text
-				name="collectionReport.criteria.todate" /><span class="mandatory"></span></td>
-			<s:date name="toDate" var="cdFormat1" format="dd/MM/yyyy" />
-			<td width="24%" class="bluebox"><s:textfield id="toDate"
-				name="toDate" value="%{cdFormat1}"
+				name="remittanceVoucher.criteria.remittancedate" /></td>
+			<s:date name="remittanceDate" var="cdFormat" format="dd/MM/yyyy" />
+			<td width="24%" class="bluebox"><s:textfield id="remittanceDate"
+				name="remittanceDate" value="%{cdFormat}"
 				onfocus="javascript:vDateType='3';"
 				onkeyup="DateFormat(this,this.value,event,false,'3')" /><a
-				href="javascript:show_calendar('forms[0].toDate');"
+				href="javascript:show_calendar('forms[0].remittanceDate');"
 				onmouseover="window.status='Date Picker';return true;"
 				onmouseout="window.status='';return true;"><img
 				src="/egi/resources/erp2/images/calendaricon.gif"
 				alt="Date" width="18" height="18" border="0" align="absmiddle" /></a>
-			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div>
-			</td>
+			<div class="highlight2" style="width: 80px">DD/MM/YYYY</div></td>
+			
 		</tr>
 	
 		<tr>
 		 <td width="4%" class="bluebox">&nbsp;</td>
 			<td width="21%" class="bluebox2"><s:text
-								name="collectionReport.bank.name" />:</td>
+								name="remittanceVoucher.criteria.remittance.branchName" />:</td>
 						<td width="24%" class="bluebox"><s:select
 								headerValue="--Select--" headerKey="-1"
 								list="dropdownData.bankBranchList" listKey="id"
@@ -173,24 +180,7 @@ function validate()
 								url='receipts/ajaxBankRemittance-serviceListOfAccount.action'
 								selectedValue="%{serviceId}" /></td></td>
 		</tr>
-		<tr>
-         <td width="4%" class="bluebox">&nbsp;</td>
-			<td width="21%" class="bluebox2"><s:text
-				name="collectionReport.criteria.service" /></td>
-			<td width="24%" class="bluebox2"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.service.all')}" name="serviceId" id="serviceId" cssClass="selectwk"
-				list="dropdownData.collectionServiceList" listKey="id" listValue="name"
-				value="%{serviceId}" /></td>
-			<td width="21%" class="bluebox2">
-				<s:text name="collectionReport.criteria.user"/></td>
-	        	<td width="24%" class="bluebox2"><s:select headerKey="-1"
-				headerValue="%{getText('collectionReport.user.all')}" name="createdById" id="createdById" cssClass="selectwk"
-				list="dropdownData.remittanceVoucherCreatorList" listKey="id" listValue="name"
-				value="%{createdById}" /></td>
-		</tr>
 	</table>
-<div align="left" class="mandatorycoll"><s:text name="common.mandatoryfields"/></div>
-	</div>
 	
 	<div class="buttonbottom">
 			<label>

@@ -255,6 +255,12 @@
 		dom.get("selectremittanceerror").style.display = "none";
 		dom.get("approvalSelectionError").style.display = "none";
 
+		if (dom.get("accountNumberId").value != null
+				&& dom.get("accountNumberId").value == -1) {
+			dom.get("bankselectionerror").innerHTML = "";
+			dom.get("accountselectionerror").style.display = "block";
+			return false;
+		}
 		<s:if test="showRemittanceDate">
 		if (dom.get("remittanceDate") != null
 				&& dom.get("remittanceDate").value == "") {
@@ -284,7 +290,11 @@
 			}
 		}
 		</s:if>
-
+		if(document.getElementById('accountNumberId').options[document.getElementById('accountNumberId').selectedIndex].text != dom.get("remitAccountNumber").value.trim())
+			{
+				 alert("Account number for which search result has displayed and selected account number in search drop down are different. \n Please make sure account number in drop down and account number for which search has done are same.");
+				 return false;
+			}
 		var flag=confirm('Receipts once remitted cannot be modified, please verify before you proceed.');
         if(flag==false)
         {
@@ -665,7 +675,7 @@
 
 				<div align="center">
 					<table>
-						<tr>
+						<tr>					
 							<s:if test="showRemittanceDate">
 								<td class="bluebox" colspan="3">&nbsp;</td>
 								<td class="bluebox"><s:text
@@ -678,7 +688,11 @@
 							<td class="bluebox"><s:text
 									name="bankremittance.remittanceamount" /></td>
 							<td class="bluebox"><s:textfield id="remittanceAmount"
-									name="remittanceAmount" readonly="true" /></td>
+									name="remittanceAmount" readonly="true" /></td>								
+							<td class="bluebox"><s:text
+									name="bankremittance.accountnumber" /></td>
+							<td class="bluebox"><s:textfield id="remitAccountNumber"
+									name="remitAccountNumber" readonly="true" /></td>		
 						</tr>
 					</table>
 				</div>

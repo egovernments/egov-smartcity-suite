@@ -61,7 +61,6 @@ public class CreateRebatePeriodController {
 
     private RebatePeriodService rebatePeriodService;
     private PropertyTaxUtil propertyTaxUtil;
-    private Installment currentInstallment;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
@@ -73,13 +72,14 @@ public class CreateRebatePeriodController {
 
     @ModelAttribute
     public RebatePeriod rebatePeriodModel() {
-        currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
+        Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
         RebatePeriod rebatePeriod = null;
         if (currentInstallment != null) {
             rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(currentInstallment.getId());
             if (rebatePeriod != null) {
             } else {
                 rebatePeriod = new RebatePeriod();
+                rebatePeriod.setInstallment(currentInstallment);
             }
         }
         return rebatePeriod;
@@ -97,9 +97,6 @@ public class CreateRebatePeriodController {
         if (errors.hasErrors())
             return "rebatePeriod-form";
 
-        if (rebatePeriod.getId() == null) {
-            rebatePeriod.setInstallment(currentInstallment);
-        }
         rebatePeriodService.saveRebatePeriod(rebatePeriod);
         model.addAttribute("message", "Rebate period saved successfully !");
 

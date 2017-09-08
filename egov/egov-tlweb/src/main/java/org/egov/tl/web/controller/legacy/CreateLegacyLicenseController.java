@@ -40,9 +40,20 @@
 
 package org.egov.tl.web.controller.legacy;
 
-import org.egov.infra.validation.exception.ValidationException;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.LicenseAppTypeService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -50,13 +61,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.multipart.MultipartFile;
-
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Map;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
 @RequestMapping("/legacylicense")
@@ -64,9 +68,19 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
 
     private static final String CREATE_LEGACY_LICENSE = "create-legacylicense";
 
+    @Autowired
+    private LegacyLicenseValidator legacyLicenseValidator;
+
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
     @ModelAttribute("tradeLicense")
     public TradeLicense tradeLicense() {
-        return new TradeLicense();
+        TradeLicense license = new TradeLicense();
+        license.setLicenseAppType(licenseAppTypeService.getLicenseAppTypeByName(NEW_LIC_APPTYPE));
+        license.setApplicationDate(new Date());
+        license.setApplicationNumber("AC-123");
+        return license;
     }
 
     @ModelAttribute("legacyFeePayStatus")
@@ -85,18 +99,15 @@ public class CreateLegacyLicenseController extends LegacyLicenseController {
     }
 
     @PostMapping(value = "/create")
-    public String create(@Valid TradeLicense tradeLicense, BindingResult binding,
-                         @RequestParam("files") MultipartFile[] files) throws IOException {
-        if (binding.hasErrors())
-            return CREATE_LEGACY_LICENSE;
-
-        try {
-            legacyService.storeDocument(tradeLicense, files);
-            legacyService.createLegacy(tradeLicense);
-        } catch (ValidationException e) {
-            binding.reject(e.getErrors().get(0).getKey());
+    public String create(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model)
+            throws IOException {
+        legacyLicenseValidator.validate(tradeLicense, binding);
+        if (binding.hasErrors()) {
+            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
+            model.addAttribute("legacyFeePayStatus", legacyService.legacyFeeStatus(tradeLicense));
             return CREATE_LEGACY_LICENSE;
         }
+        legacyService.createLegacy(tradeLicense);
         return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
     }
 

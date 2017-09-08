@@ -40,27 +40,34 @@
 package org.egov.council.autonumber.impl;
 
 import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 import org.egov.council.autonumber.SumotoNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class SumotoNumberGeneratorImpl implements SumotoNumberGenerator {
-	 private static final String SUMOTO_NUMBER_SEQ = "SEQ_EGCNCL_SUMOTO_NUMBER";
-	 
-	 @Autowired
-	 private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
-	 
-	@Override
-	public String getNextNumber(CouncilPreamble councilpreamble) {
+    private static final String SUMOTO_NUMBER_SEQ = "SEQ_EGCNCL_SUMOTO_NUMBER";
+
+    @Autowired
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+
+    @Override
+    public String getNextNumber(CouncilPreamble councilpreamble) {
+
+        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
+        final String formattedDate = sdf.format(new Date());
         final String sequenceName = SUMOTO_NUMBER_SEQ;
+        final String currentYear = DateUtils.currentDateToYearFormat();
         Serializable sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        final String result = String.format("%s/%d", "SR", sequenceNumber);
+        final String result = String.format("SR-"+"%d-%s-%s", sequenceNumber, formattedDate, currentYear);
         return result;
-		
-	}
+
+    }
 
 }

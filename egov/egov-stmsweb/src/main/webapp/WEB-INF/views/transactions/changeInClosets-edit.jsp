@@ -44,81 +44,104 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-   
-<form:form role="form" method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageChangeInClosetsForm"
- cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">		 		
-	<form:hidden id="mode" path="" name="mode" value="${mode}"/>   
-	<form:hidden id="showApprovalDtls" path="" name="showApprovalDtls" value="${showApprovalDtls}"/> 
-	<form:hidden path="" id="approvalPositionExist" value="${approvalPositionExist}"/>
-	<form:hidden path="status.code" id="statuscode" value="${sewerageApplicationDetails.status.code}"/>
-	<form:hidden path="state" id="wfstate" value="${sewerageApplicationDetails.state.id}"/> 
-	<input type="hidden" id="sewerageInspectionDate"  value='<fmt:formatDate value="${sewerageApplicationDetails.fieldInspections[0].inspectionDate}" pattern="dd/MM/yyyy"/>' />
-	<input type="hidden" id="currentUser" value="${currentUser}"/>  
-	<input type="hidden" id="sewerageTaxDue" value="${sewerageTaxDue}" name="sewerageTaxDue"/>  
-	<input type="hidden" id="estimationChargesExists" value="${estimationChargesExists}"/>  
-	<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-	<form:hidden path="applicationType" id="applicationType" value="${sewerageApplicationDetails.applicationType.id}"/>
-	<form:hidden path="connection.status" id="connection.status" value="${sewerageApplicationDetails.connection.status}"/>
-	<input type="hidden" value="" id="removedInspectRowId" name="removedInspectRowId" />
-	<input type="hidden" value="" id="removedEstimationDtlRowId" name="removedEstimationDtlRowId" />
-	<c:if test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}"> 
-	 <div  data-collapsed="0">
-		<div class="panel-heading">
-			<div  style="color: red; font-size: 16px;" align="center">
-				<spring:message  code="lbl.collect.inspectionFee"/> 
+
+<form:form role="form"
+	action='/stms/transactions//modifyConnection-update/${sewerageApplicationDetails.applicationNumber}'
+	method="post" modelAttribute="sewerageApplicationDetails"
+	id="editSewerageChangeInClosetsForm"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<form:hidden id="mode" path="" name="mode" value="${mode}" />
+	<form:hidden id="showApprovalDtls" path="" name="showApprovalDtls"
+		value="${showApprovalDtls}" />
+	<form:hidden path="" id="approvalPositionExist"
+		value="${approvalPositionExist}" />
+	<form:hidden path="status.code" id="statuscode"
+		value="${sewerageApplicationDetails.status.code}" />
+	<form:hidden path="state" id="wfstate"
+		value="${sewerageApplicationDetails.state.id}" />
+	<input type="hidden" id="sewerageInspectionDate"
+		value='<fmt:formatDate value="${sewerageApplicationDetails.fieldInspections[0].inspectionDate}" pattern="dd/MM/yyyy"/>' />
+	<input type="hidden" id="currentUser" value="${currentUser}" />
+	<input type="hidden" id="sewerageTaxDue" value="${sewerageTaxDue}"
+		name="sewerageTaxDue" />
+	<input type="hidden" id="estimationChargesExists"
+		value="${estimationChargesExists}" />
+	<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+	<form:hidden path="applicationType" id="applicationType"
+		value="${sewerageApplicationDetails.applicationType.id}" />
+	<form:hidden path="connection.status" id="connection.status"
+		value="${sewerageApplicationDetails.connection.status}" />
+	<input type="hidden" value="" id="removedInspectRowId"
+		name="removedInspectRowId" />
+	<input type="hidden" value="" id="removedEstimationDtlRowId"
+		name="removedEstimationDtlRowId" />
+	<c:if
+		test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}">
+		<div data-collapsed="0">
+			<div class="panel-heading">
+				<div style="color: red; font-size: 16px;" align="center">
+					<spring:message code="lbl.collect.inspectionFee" />
+				</div>
 			</div>
 		</div>
-	</div>	
-	 </c:if>
-	 <c:if test="${sewerageApplicationDetails.status.code =='ESTIMATIONNOTICEGENERATED'}"> 
-	 <div  data-collapsed="0">
-		<div class="panel-heading">
-			<div  style="color: red; font-size: 16px;" align="center">
-				<spring:message  code="lbl.collect.donationFee"/> 
+	</c:if>
+	<c:if
+		test="${sewerageApplicationDetails.status.code =='ESTIMATIONNOTICEGENERATED'}">
+		<div data-collapsed="0">
+			<div class="panel-heading">
+				<div style="color: red; font-size: 16px;" align="center">
+					<spring:message code="lbl.collect.donationFee" />
+				</div>
 			</div>
 		</div>
-	</div>	
-	 </c:if>
-	
+	</c:if>
+
 	<c:choose>
-	<c:when test="${mode =='editOnReject'}">
-				<jsp:include page="applicantdetails.jsp"></jsp:include>
-				<jsp:include page="connectiondetails.jsp"></jsp:include>
-				<jsp:include page="documentdetails-view.jsp"></jsp:include>
-				<jsp:include page="inspectionCharges.jsp"></jsp:include>
-	</c:when>
-	<c:otherwise>
+		<c:when test="${mode =='editOnReject'}">
+			<jsp:include page="applicantdetails.jsp"></jsp:include>
+			<jsp:include page="connectiondetails.jsp"></jsp:include>
+			<jsp:include page="documentdetails-view.jsp"></jsp:include>
+			<jsp:include page="inspectionCharges.jsp"></jsp:include>
+		</c:when>
+		<c:otherwise>
 			<jsp:include page="commonApplicationDetails-view.jsp"></jsp:include>
-		<c:choose>
-			<c:when test="${mode =='edit'}">
-			 		<jsp:include page="connectiondetails.jsp"></jsp:include> 
+			<c:choose>
+				<c:when test="${mode =='edit'}">
+					<jsp:include page="connectiondetails.jsp"></jsp:include>
 					<jsp:include page="estimationdetails.jsp"></jsp:include>
-					<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+					<jsp:include page="documentdetails-view.jsp"></jsp:include>
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
-			</c:when>
-			<c:otherwise>
-				<jsp:include page="connectionDetails-view.jsp"></jsp:include> 
-				<jsp:include page="documentdetails-view.jsp"></jsp:include>
-				<jsp:include page="estimationdetails-view.jsp"></jsp:include>
-				<jsp:include page="seweragechargesdetails.jsp"/>
-			</c:otherwise>
-		</c:choose>
-		
-		<c:if test="${sewerageApplicationDetails.status.code == 'WORKORDERGENERATED'}">
-			<jsp:include page="connectionexecutiondetails-form.jsp"></jsp:include>
-		</c:if>
+				</c:when>
+				<c:otherwise>
+					<jsp:include page="connectionDetails-view.jsp"></jsp:include>
+					<jsp:include page="documentdetails-view.jsp"></jsp:include>
+					<jsp:include page="estimationdetails-view.jsp"></jsp:include>
+					<jsp:include page="seweragechargesdetails.jsp" />
+				</c:otherwise>
+			</c:choose>
+
+			<c:if
+				test="${sewerageApplicationDetails.status.code == 'WORKORDERGENERATED'}">
+				<jsp:include page="connectionexecutiondetails-form.jsp"></jsp:include>
+			</c:if>
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
-	</c:otherwise>
-	</c:choose>	
-	
-	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
-	 	<div class="row text-center">
-       <div class="add-margin">
-               <c:if test="${sewerageApplicationDetails.status.code == 'FINALAPPROVED' }">
-                       <a href="javascript:void(0)" class="btn btn-default" onclick="renderWorkOrderPdf()" >Generate Work Order</a>
-               </c:if>
-       </div>
+		</c:otherwise>
+	</c:choose>
+	<c:if test="${!isCitizenPortalUser}">
+		<jsp:include page="../common/commonWorkflowMatrix.jsp" />
+	</c:if>
+	<c:if test="${isInspectionFeePaid || isInspectionFeePaid==null}">
+		<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+	</c:if>
+	<div class="row text-center">
+		<div class="add-margin">
+			<c:if
+				test="${sewerageApplicationDetails.status.code == 'FINALAPPROVED' }">
+				<a href="javascript:void(0)" class="btn btn-default"
+					onclick="renderWorkOrderPdf()">Generate Work Order</a>
+			</c:if>
+		</div>
 	</div>
 </form:form>
 <script src="<cdn:url  value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>

@@ -244,7 +244,7 @@ public class LegalCase extends AbstractAuditable {
     private List<LegalCaseInterimOrder> legalCaseInterimOrder = new ArrayList<LegalCaseInterimOrder>(0);
 
     @Audited
-    @OrderBy("name asc")
+    @OrderBy("id asc")
     @OneToMany(mappedBy = "legalCase", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
     private List<BipartisanDetails> bipartisanDetails = new ArrayList<BipartisanDetails>(0);
 
@@ -282,12 +282,12 @@ public class LegalCase extends AbstractAuditable {
 
     @Transient
     @Audited
-    @OrderBy("name asc")
+    @OrderBy("id asc")
     private List<BipartisanDetails> bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(0);
 
     @Transient
     @Audited
-    @OrderBy("name asc")
+    @OrderBy("id asc")
     private List<BipartisanDetails> bipartisanPetitionerDetailsList = new ArrayList<BipartisanDetails>(0);
 
     @Transient
@@ -434,8 +434,7 @@ public class LegalCase extends AbstractAuditable {
         for (final BipartisanDetails temp : bipartisanDetails)
             if (temp.getIsRepondent())
                 tempList.add(temp);
-        final Set<BipartisanDetails> tempset = new HashSet<BipartisanDetails>(tempList);
-        bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(tempset);
+        bipartisanRespondentDetailsList = new ArrayList<BipartisanDetails>(tempList);
         return bipartisanRespondentDetailsList;
     }
 

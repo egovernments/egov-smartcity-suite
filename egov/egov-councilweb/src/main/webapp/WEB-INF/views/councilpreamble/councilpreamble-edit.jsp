@@ -44,22 +44,23 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<form:form role="form" action="../update" modelAttribute="councilPreamble" id="councilPreambleform" cssClass="form-horizontal form-groups-bordered"
+
+<form:form role="form" action="../update"
+	modelAttribute="councilPreamble" id="councilPreambleform"
+	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
 	<%@ include file="councilpreamble-form.jsp"%>
 	<div class="panel panel-primary" data-collapsed="0">
-							<jsp:include page="applicationhistory-view.jsp"></jsp:include>
-				</div> 
-		<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-		<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
-		<div class="buttonbottom" align="center">
-			<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
-		</div>
+		<jsp:include page="applicationhistory-view.jsp"></jsp:include>
+	</div>
+	<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+	<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
+	<div class="buttonbottom" align="center">
+		<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />
+	</div>
 
 </form:form>
 
-	<script src="<cdn:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 <script>
 	$('#buttonSubmit').click(function(e) {
 		if ($('form').valid()) {
@@ -68,3 +69,12 @@
 		}
 	});
 </script>
+
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/app/css/council-style.css?rnd=${app_release_no}'/>" />
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/councilPreambleHelper.js?rnd=${app_release_no}'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/app/js/common-util-helper.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

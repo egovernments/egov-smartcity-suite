@@ -210,6 +210,14 @@ public class WaterConnectionDetails extends StateAware {
     @JoinColumn(name = "filestoreid")
     private FileStoreMapper fileStore;
 
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "closurefilestoreid")
+    private FileStoreMapper closureFileStore;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "reconnectionfilestoreid")
+    private FileStoreMapper reconnectionFileStore;
+
     @ManyToOne
     @JoinColumn(name = "chairPerson")
     private ChairPerson chairPerson;
@@ -715,6 +723,22 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setBuildingName(final String buildingName) {
         this.buildingName = buildingName;
+    }
+
+    public FileStoreMapper getClosureFileStore() {
+        return closureFileStore;
+    }
+
+    public void setClosureFileStore(final FileStoreMapper closureFileStore) {
+        this.closureFileStore = closureFileStore;
+    }
+
+    public FileStoreMapper getReconnectionFileStore() {
+        return reconnectionFileStore;
+    }
+
+    public void setReconnectionFileStore(final FileStoreMapper reconnectionFileStore) {
+        this.reconnectionFileStore = reconnectionFileStore;
     }
 
 }

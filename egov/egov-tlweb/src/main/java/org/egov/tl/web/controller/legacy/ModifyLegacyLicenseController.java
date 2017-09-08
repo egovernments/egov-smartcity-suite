@@ -43,9 +43,9 @@ package org.egov.tl.web.controller.legacy;
 import java.io.IOException;
 
 import javax.validation.Valid;
-import javax.validation.ValidationException;
 
 import org.egov.tl.entity.TradeLicense;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -54,8 +54,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.multipart.MultipartFile;
 
 @Controller
 @RequestMapping("/legacylicense")
@@ -63,39 +61,32 @@ public class ModifyLegacyLicenseController extends LegacyLicenseController {
 
     private static final String UPDATE_LEGACY_FORM = "updateform-legacylicense";
 
+    @Autowired
+    private LegacyLicenseValidator legacyLicenseValidator;
+
     @ModelAttribute("tradeLicense")
     public TradeLicense tradeLicense(@PathVariable final Long id) {
         return tradeLicenseService.getLicenseById(id);
     }
 
-    @GetMapping(value = "/update/{id}")
-    public String update(@ModelAttribute final TradeLicense tradeLicense, final Model model) {
-
+    @GetMapping("/update/{id}")
+    public String update(@ModelAttribute TradeLicense tradeLicense, Model model) {
         model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFees(tradeLicense));
         model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
-        model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(tradeLicense));
-
         return UPDATE_LEGACY_FORM;
     }
 
-    @PostMapping(value = "/update/{id}")
-    public String update(@Valid @ModelAttribute final TradeLicense tradeLicense, final BindingResult errors,
-            @RequestParam("files") final MultipartFile[] files, final Model model) throws IOException {
-        if (errors.hasErrors()) {
-            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentwiseFees(tradeLicense));
-            model.addAttribute("legacyFeePayStatus", legacyService.legacyFeePayStatus(tradeLicense));
-            model.addAttribute("outstandingFee", tradeLicenseService.getOutstandingFee(tradeLicense));
-            return UPDATE_LEGACY_FORM;
-        }
-        try {
-            legacyService.storeDocument(tradeLicense, files);
-        } catch (final ValidationException e) {
-            errors.rejectValue("files", e.getMessage());
-            return UPDATE_LEGACY_FORM;
-        }
+    @PostMapping("/update/{id}")
+    public String update(@Valid @ModelAttribute TradeLicense tradeLicense, BindingResult binding, Model model)
+            throws IOException {
 
+        legacyLicenseValidator.validate(tradeLicense, binding);
+        if (binding.hasErrors()) {
+            model.addAttribute("legacyInstallmentwiseFees", legacyService.legacyInstallmentfee(tradeLicense));
+            model.addAttribute("legacyFeePayStatus", legacyService.legacyInstallmentStatus(tradeLicense));
+            return UPDATE_LEGACY_FORM;
+        }
         legacyService.updateLegacy(tradeLicense);
-
         return "redirect:/legacylicense/view/" + tradeLicense.getApplicationNumber();
     }
 

@@ -42,6 +42,8 @@ package org.egov.infra.elasticsearch.entity.bean;
 
 import java.util.List;
 
+import org.egov.infra.utils.StringUtils;
+
 public class ApplicationIndexResponse {
 
     private long totalReceived = 0;
@@ -58,6 +60,8 @@ public class ApplicationIndexResponse {
     private long totalOnline = 0;
     private long totalUlb = 0;
     private long totalOthers = 0;
+    private String url=StringUtils.EMPTY;
+    private String cityCode=StringUtils.EMPTY;
     private List<Trend> trend;
     private List<ApplicationDetails> details;
     private List<ServiceGroupDetails> serviceGroupDetails;
@@ -223,6 +227,22 @@ public class ApplicationIndexResponse {
 
     public void setSourceTrend(final List<SourceTrend> sourceTrend) {
         this.sourceTrend = sourceTrend;
+    }
+
+    public String getCityCode() {
+        return cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
     }
 
 }

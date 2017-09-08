@@ -42,42 +42,76 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <script>
 
+	var popupWindow ;
+	function openReassignWindow() {
+		var applicationNum;
+		if ($("#applicationNumber").val()) {
+			applicationNum = $("#applicationNumber").val();
+		} 
+		var appType = $("#appType").val();	
+		popupWindow = window.open('/stms/reassignseweragetax/'
+				+applicationNum + "/" + appType, '_blank',
+			'width=650, height=500, scrollbars=yes', false);
+	jQuery('.loader-class').modal('show', {
+		backdrop : 'static'
+	});
+	}
 
+	function closeAllWindows() {
+		popupWindow.close();
+		window.opener.inboxloadmethod();
+		self.close();
+	}
+
+	function closeChildWindow() {
+		jQuery('.loader-class').modal('hide');
+		popupWindow.close();
+	}
 
 	function validateWorkFlowApprover(name) {
-		document.getElementById("workFlowAction").value=name;
-	    var approverPosId = document.getElementById("approvalPosition");
-	    /* if(approverPosId && approverPosId.value != -1) {
+		document.getElementById("workFlowAction").value = name;
+		var approverPosId = document.getElementById("approvalPosition");
+		/* if(approverPosId && approverPosId.value != -1) {
 			var approver = approverPosId.options[approverPosId.selectedIndex].text; 
 			document.getElementById("approverName").value= approver.split('~')[0];
 			validateWorkFlowApprover('Forward');
 		}   */
-		var rejectbutton=document.getElementById("workFlowAction").value;
-		if(rejectbutton!=null && (rejectbutton=='Reject' || rejectbutton=='Cancel'))
-			{
+		var rejectbutton = document.getElementById("workFlowAction").value;
+		if (rejectbutton != null
+				&& (rejectbutton == 'Reject' || rejectbutton == 'Cancel')) {
 			$('#approvalDepartment').removeAttr('required');
 			$('#approvalDesignation').removeAttr('required');
 			$('#approvalPosition').removeAttr('required');
-			$('#approvalComent').attr('required', 'required');	
-			}  
-		 if(rejectbutton!=null && rejectbutton=='Forward'){
+			$('#approvalComent').attr('required', 'required');
+		}
+		if (rejectbutton != null && rejectbutton == 'Forward') {
 			$('#approvalDepartment').attr('required', 'required');
 			$('#approvalDesignation').attr('required', 'required');
 			$('#approvalPosition').attr('required', 'required');
 			$('#approvalComent').removeAttr('required');
-		} 
-		 if(rejectbutton!=null && rejectbutton=='Approve'){
-				$('#approvalComent').removeAttr('required');
-			} 
-	   document.forms[0].submit;
-	   return true;
+		}
+		if (rejectbutton != null && rejectbutton == 'Approve') {
+			$('#approvalComent').removeAttr('required');
+		}
+		document.forms[0].submit;
+		return true;
 	}
 </script>
 
 <div align="center">
 	<table>
 		<tr>
-			<td>
+			<td><c:if
+					test="${sewerageApplicationDetails.currentState.value == 'NEW'}">
+					<c:if test="${isReassignEnabled}">
+						<input type="hidden" id="applicationNumber" value="${sewerageApplicationDetails.applicationNumber}"/>  
+						<input type="hidden" id="appType" value="${sewerageApplicationDetails.applicationType.code}"/>  
+						
+						<input type="button" value="Reassign" class="btn btn-primary"
+							id="Reassign" name="Reassign"
+							onclick="return openReassignWindow();" />
+					</c:if>
+				</c:if> 
 		<c:forEach items="${validActionList}" var="validButtons">
 				<form:button type="submit" id="${validButtons}" class="btn btn-primary"  value="${validButtons}" onclick="validateWorkFlowApprover('${validButtons}');">
 						<c:out value="${validButtons}" /> </form:button>

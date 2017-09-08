@@ -39,11 +39,7 @@
  */
 package org.egov.demand.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.apache.log4j.Logger;
-import org.egov.collection.handler.BillCollectXmlHandler;
+import org.egov.collection.handler.BillInfoMarshaller;
 import org.egov.collection.integration.models.BillAccountDetails;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.collection.integration.models.BillDetails;
@@ -52,31 +48,39 @@ import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.collection.integration.models.BillPayeeDetails;
 import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DemandUtils {
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final Logger LOGGER = Logger.getLogger(DemandUtils.class);
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+public final class DemandUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(DemandUtils.class);
+
+    private DemandUtils() {
+        //static API's only
+    }
 
     /**
      * This is used to post the bill Collection details to the collection system
      * in an xml format
-     * 
-     * @param org.egov.demand.model.EgBill
-     *            bill(The bill object)
-     * @param java.lang.String
-     *            displayMsg
+     *
+     * @param bill(The bill object)
+     * @param displayMsg
      * @return String xmlData(it contains the complete bill collection data in
-     *         xml format) .
+     * xml format) .
      */
 
-    public String generateBillXML(EgBill bill, String displayMsg) {
+    public static String generateBillXML(EgBill bill, String displayMsg) {
         String xmlData = "";
-        BillCollectXmlHandler handler = new BillCollectXmlHandler();
         try {
             if (bill != null && displayMsg != null) {
-                LOGGER.info(" before preparing Bill XML xmlData===" + xmlData);
-                xmlData = handler.toXML(prepareBillInfoXml(bill, displayMsg));
-                LOGGER.info("xmlData===" + xmlData);
+                xmlData = BillInfoMarshaller.toXML(prepareBillInfoXml(bill, displayMsg));
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("Generated Bill XML \r\n {}", xmlData);
             }
         } catch (Exception ex) {
             LOGGER.error("Exception in postBillCollectionDetails", ex);
@@ -84,47 +88,42 @@ public class DemandUtils {
         return xmlData;
     }
 
-    public BillInfoImpl prepareBillInfoXml(EgBill bill, String displayMsg) {
-        List<BillPayeeDetails> billPayeeDetList = new ArrayList<BillPayeeDetails>();
-        BillDetails billDetails = null;
-        BillAccountDetails billAccDetails = null;
-        List<String> collModesList = new ArrayList<String>();
-        BillPayeeDetails billPayeeDet = null;
-        BillInfoImpl billInfoImpl = null;
+    public static BillInfoImpl prepareBillInfoXml(EgBill bill, String displayMsg) {
+        BillInfoImpl billInfo = null;
         try {
             if (bill != null) {
-                if (bill.getCollModesNotAllowed() != null) {
+                List<String> collectionModes = new ArrayList<>();
+                if (isNotBlank(bill.getCollModesNotAllowed())) {
                     String[] collModes = bill.getCollModesNotAllowed().split(",");
-                    for (String coll : collModes) {
-                        collModesList.add(coll);
+                    for (String collectionMode : collModes) {
+                        collectionModes.add(collectionMode);
                     }
                 }
-                billInfoImpl = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
+                billInfo = new BillInfoImpl(bill.getServiceCode(), bill.getFundCode(), bill.getFunctionaryCode(),
                         bill.getFundSourceCode(), bill.getDepartmentCode(), displayMsg, bill.getCitizenName(),
-                        bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collModesList,
+                        bill.getPartPaymentAllowed(), bill.getOverrideAccountHeadsAllowed(), collectionModes,
                         COLLECTIONTYPE.F);
-                billPayeeDet = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), bill.getEmailId());
-                billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(), bill.getConsumerId(),bill.getConsumerType(),
+                BillPayeeDetails billPayeeDetails = new BillPayeeDetails(bill.getCitizenName(), bill.getCitizenAddress(), bill.getEmailId());
+                BillDetails billDetails = new BillDetails(bill.getId().toString(), bill.getCreateDate(), bill.getConsumerId(), bill.getConsumerType(),
                         bill.getBoundaryNum().toString(), bill.getBoundaryType(), bill.getDescription(),
                         bill.getTotalAmount(), bill.getMinAmtPayable());
-                billPayeeDetList.add(billPayeeDet);
-                billInfoImpl.setPayees(billPayeeDetList);
-                billInfoImpl.setCallbackForApportioning(bill.getCallBackForApportion());
-                boolean isActualDemand = false;
-
+                List<BillPayeeDetails> billPayeeDetList = new ArrayList<>();
+                billPayeeDetList.add(billPayeeDetails);
+                billInfo.setPayees(billPayeeDetList);
+                billInfo.setCallbackForApportioning(bill.getCallBackForApportion());
                 for (EgBillDetails egBillDet : bill.getEgBillDetails()) {
-                    isActualDemand = egBillDet.getAdditionalFlag() == 1 ? true : false;
-                    billAccDetails = new BillAccountDetails(egBillDet.getGlcode(), egBillDet.getOrderNo(),
+                    boolean isActualDemand = egBillDet.getAdditionalFlag() == 1;
+                    BillAccountDetails billAccDetails = new BillAccountDetails(egBillDet.getGlcode(), egBillDet.getOrderNo(),
                             egBillDet.getCrAmount(), egBillDet.getDrAmount(), egBillDet.getFunctionCode(),
-                            egBillDet.getDescription(), isActualDemand,egBillDet.getPurpose()!=null?PURPOSE.valueOf(egBillDet.getPurpose()):PURPOSE.OTHERS);
+                            egBillDet.getDescription(), isActualDemand, egBillDet.getPurpose() != null ? PURPOSE.valueOf(egBillDet.getPurpose()) : PURPOSE.OTHERS);
                     billDetails.addBillAccountDetails(billAccDetails);
                 }
-                billPayeeDet.addBillDetails(billDetails);
+                billPayeeDetails.addBillDetails(billDetails);
             }
         } catch (Exception ex) {
-            LOGGER.error("Exception in prepareBillInfoXml method", ex);
+            LOGGER.error("Error occurred while preparing Bill Details", ex);
         }
-        return billInfoImpl;
+        return billInfo;
     }
 
 }

@@ -42,87 +42,115 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
- <form:form method ="post" action="" class="form-horizontal form-groups-bordered"  modelAttribute="closedConnection" id="closedConnectionform"
-			cssClass="form-horizontal form-groups-bordered"
-			enctype="multipart/form-data">
-				<div class="row">
-						<div class="col-md-12">
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<form:form method="post" action=""
+	class="form-horizontal form-groups-bordered"
+	modelAttribute="closedConnection" id="closedConnectionform"
+	cssClass="form-horizontal form-groups-bordered"
+	enctype="multipart/form-data">
+	<div class="row">
+		<div class="col-md-12">
 
-							<div class="panel panel-primary" data-collapsed="0">
-								
-								<div class="panel-heading">
-									<div class="panel-title">
-									<spring:message code="lbl.closedconnection" />
-									</div>
-									
-								</div>
-								
+			<div class="panel panel-primary" data-collapsed="0">
 
-			
-			
-								<div class="panel-body custom-form">
-									<form role="form" class="form-horizontal form-groups-bordered" method="POST">
-										<div class="form-group">
-											<label for="field-1" class="col-sm-4 control-label"><spring:message
-			code="lbl.closed.consumerno" /></label>
-				
-											<div class="col-sm-4 add-margin">
-											<form:input class="form-control patternvalidation" data-pattern="number" maxlength="50" id="consumerNo" path="consumerNo" />
-		<form:errors path="consumerNo" cssClass="add-margin error-msg" />
-											</div>
-				
-										</div>
-										<div class="form-group">
-											<label for="field-1" class="col-sm-4 control-label"><spring:message
-			code="lbl.closure.date" /></label>
-				
-											<div class="col-sm-4 add-margin">
-												<form:input  path="closedDate"  
-								class="form-control datepicker" 
-								id="closedDate" data-inputmask="'mask': 'd/m/y'" data-date-end-date="0d" required="required" />
+				<div class="panel-heading">
+					<div class="panel-title">
+						<spring:message code="lbl.closedconnection" />
+					</div>
+
+				</div>
+				<input type="hidden" id="waterTaxDueforParent"
+					value="${waterTaxDueforParent}" name="waterTaxDueforParent" /> <input
+					type="hidden" name="validationMessage" id="validationMessage"
+					value="${validationMessage}">
+
+
+
+				<div class="panel-body custom-form">
+					<form role="form" class="form-horizontal form-groups-bordered"
+						method="POST">
+						<div class="form-group">
+							<label for="field-1" class="col-sm-4 control-label"><spring:message
+									code="lbl.closed.consumerno" /></label>
+
+							<div class="col-sm-4 add-margin">
+								<form:input class="form-control patternvalidation"
+									data-pattern="number" maxlength="50" id="consumerNo"
+									path="consumerNo" />
+								<form:errors path="consumerNo" cssClass="add-margin error-msg" />
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label for="field-1" class="col-sm-4 control-label"><spring:message
+									code="lbl.closure.date" /></label>
+
+							<div class="col-sm-4 add-margin">
+								<form:input path="closedDate" class="form-control datepicker"
+									id="closedDate" data-inputmask="'mask': 'd/m/y'"
+									data-date-end-date="0d" required="required" />
 								<form:errors path="closedDate" cssClass="add-margin error-msg" />
-											</div>
-				
-										</div>
-										<div class="form-group">
-											<label for="field-1" class="col-sm-4 control-label"><spring:message
-			code="lbl.reference.number" /></label>
-											<div class="col-sm-4 add-margin">
-														<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspace" maxlength="50" id="referenceNo" path="referenceNo" />
-		<form:errors path="referenceNo" cssClass="add-margin error-msg" />		
-											</div>
-				
-										</div>
-										<div class="form-group">
-											<label for="field-1" class="col-sm-4 control-label"><spring:message code="lbl.deactivate.reason" /></label>
-																					<div class="col-sm-8 col-xs-12 add-margin">
-													<form:input class="form-control patternvalidation" data-pattern="alphanumericwithspace" maxlength="100" id="deactivateReason" path="deactivateReason" />
-		<form:errors path="deactivateReason" cssClass="add-margin error-msg" />
-											</div>
-												</div>
-										
-										<div class="form-group">
-											<div class="text-center">
-												<button type="submit" class="btn btn-primary"><spring:message
-			code="lbl.Submit.button" /></button>
-			<a onclick="self.close()" class="btn btn-default" href="javascript:void(0)"><spring:message code="lbl.close"/></a>
-											</div>
-										</div>
-									</form>
-								</div>
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label for="field-1" class="col-sm-4 control-label"><spring:message
+									code="lbl.reference.number" /></label>
+							<div class="col-sm-4 add-margin">
+								<form:input class="form-control patternvalidation"
+									data-pattern="alphanumericwithspace" maxlength="50"
+									id="referenceNo" path="referenceNo" />
+								<form:errors path="referenceNo" cssClass="add-margin error-msg" />
+							</div>
+
+						</div>
+						<div class="form-group">
+							<label for="field-1" class="col-sm-4 control-label"><spring:message
+									code="lbl.deactivate.reason" /></label>
+							<div class="col-sm-8 col-xs-12 add-margin">
+								<form:input class="form-control patternvalidation"
+									data-pattern="alphanumericwithspace" maxlength="100"
+									id="deactivateReason" path="deactivateReason" />
+								<form:errors path="deactivateReason"
+									cssClass="add-margin error-msg" />
 							</div>
 						</div>
+						<c:if test="${validationMessage==''}">
+							<div class="form-group">
+								<div class="text-center">
+									<button type="submit" class="btn btn-primary">
+										<spring:message code="lbl.Submit.button" />
+									</button>
+									<a onclick="self.close()" class="btn btn-default"
+										href="javascript:void(0)"><spring:message code="lbl.close" /></a>
+								</div>
+							</div>
+						</c:if>
+					</form>
 				</div>
-		</form:form>			
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-				<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
-	            type="text/javascript"></script>
-                <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
-	            type="text/javascript"></script>
-	            <script src="<cdn:url value='/resources/js/app/closed-connection.js?rnd=${app_release_no}'/>"></script>
+			</div>
+		</div>
+	</div>
+</form:form>
+	<script>
+		if($('#validationMessage').val()!='')
+			bootbox.alert($('#validationMessage').val());
+	</script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"
+	type="text/javascript"></script>
+<script
+	src="<cdn:url value='/resources/js/app/closed-connection.js?rnd=${app_release_no}'/>"></script>

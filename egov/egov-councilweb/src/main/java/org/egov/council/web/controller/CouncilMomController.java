@@ -49,7 +49,6 @@ import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_ADJURNED;
 import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_APPROVED;
@@ -157,7 +156,6 @@ public class CouncilMomController {
     @Autowired
     private FileStoreService fileStoreService;
 
-    @Autowired
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
         return committeeTypeService.getActiveCommiteeType();
@@ -195,7 +193,8 @@ public class CouncilMomController {
     }
 
     private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
-        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> f1.getItemNumber().compareTo(f2.getItemNumber()));
+        councilMeeting.getMeetingMOMs().sort(
+                (MeetingMOM f1, MeetingMOM f2) -> Long.valueOf(f1.getItemNumber()).compareTo(Long.valueOf(f2.getItemNumber())));
 
     }
 
@@ -207,23 +206,31 @@ public class CouncilMomController {
         if (errors.hasErrors()) {
             return COUNCILMEETING_EDIT;
         }
-        EgwStatus preambleApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
-                PREAMBLE_STATUS_APPROVED);
-        Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
+        EgwStatus preambleResolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
+                RESOLUTION_APPROVED_PREAMBLE);
+        Long itemNumber = Long.valueOf(0);
+        for (final MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs())
+            if (meetingMOM.getId() != null)
+                itemNumber++;
+
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
             if (meetingMOM.getPreamble().getId() == null) {
                 meetingMOM
                         .setPreamble(councilPreambleService
                                 .buildSumotoPreamble(meetingMOM,
-                                        preambleApprovedStatus));
+                                        preambleResolutionApprovedStatus));
                 meetingMOM.setMeeting(councilMeeting);
-                meetingMOM.setItemNumber(itemNumber.toString());
                 itemNumber++;
+                meetingMOM.setItemNumber(itemNumber.toString());
+
             }
         }
         councilMeeting
                 .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                         MEETING_MODULENAME, MEETINGUSEDINRMOM));
+        if (councilMeeting.getFiles() != null && councilMeeting.getFiles().length > 0) {
+            councilMeeting.setSupportDocs(councilMeetingService.addToFileStore(councilMeeting.getFiles()));
+        }
         councilMeetingService.update(councilMeeting);
 
         redirectAttrs.addFlashAttribute(MESSAGE, messageSource.getMessage(
@@ -332,8 +339,7 @@ public class CouncilMomController {
             final BindingResult errors, final Model model,
             final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws ParseException {
         byte[] reportOutput;
-        EgwStatus preambleApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
-                PREAMBLE_STATUS_APPROVED);
+
         EgwStatus resoulutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
                 RESOLUTION_STATUS_APPROVED);
         EgwStatus resoulutionAdjurnedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
@@ -343,13 +349,17 @@ public class CouncilMomController {
         EgwStatus resolutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(PREAMBLE_MODULENAME,
                 RESOLUTION_APPROVED_PREAMBLE);
 
-        Long itemNumber = Long.valueOf(councilMeeting.getMeetingMOMs().size());
+        Long itemNumber = Long.valueOf(0);
+        for (final MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs())
+            if (meetingMOM.getId() != null)
+                itemNumber++;
+
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
             if (meetingMOM.getPreamble().getId() == null) {
-                meetingMOM.setItemNumber(itemNumber.toString());
                 itemNumber++;
+                meetingMOM.setItemNumber(itemNumber.toString());
                 meetingMOM.setPreamble(councilPreambleService
-                        .buildSumotoPreamble(meetingMOM, preambleApprovedStatus));
+                        .buildSumotoPreamble(meetingMOM, resolutionApprovedStatus));
                 meetingMOM.setMeeting(councilMeeting);
             }
         }

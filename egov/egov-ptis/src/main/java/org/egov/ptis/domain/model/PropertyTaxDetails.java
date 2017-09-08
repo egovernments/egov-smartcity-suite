@@ -62,6 +62,9 @@ public class PropertyTaxDetails implements Serializable{
 	private String guardianName;
 	
 	private String assessmentNo="";
+
+	private String oldAssessmentNo;
+
 	@JsonIgnore
 	private String ownerAddress;
 	
@@ -222,6 +225,12 @@ public class PropertyTaxDetails implements Serializable{
 	public void setLocalityName(String localityName) {
 		this.localityName = localityName;
 	}
-	
-	
+
+	public String getOldAssessmentNo() {
+		return oldAssessmentNo;
+	}
+
+	public void setOldAssessmentNo(String oldAssessmentNo) {
+		this.oldAssessmentNo = oldAssessmentNo;
+	}
 }

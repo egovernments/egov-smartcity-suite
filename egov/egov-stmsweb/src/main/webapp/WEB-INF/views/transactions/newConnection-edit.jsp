@@ -45,7 +45,7 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<form:form role="form" method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageApplicationDetailsForm" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
+<form:form role="form" action="/stms/transactions/update/${sewerageApplicationDetails.applicationNumber}" method="post" modelAttribute="sewerageApplicationDetails" id="editSewerageApplicationDetailsForm" cssClass="form-horizontal form-groups-bordered" enctype="multipart/form-data">				
 	<form:hidden id="mode" path="" name="mode" value="${mode}"/> 
 	<form:hidden id="editdonationcharge" path="" name="editdonationcharge" value="${editdonationcharge}"/> 
 	
@@ -69,6 +69,8 @@
 	<form:hidden path="connection.demand" id="connection.demand" value="${sewerageApplicationDetails.connection.demand}"/> --%>
 	<input type="hidden" value="" id="removedInspectRowId" name="removedInspectRowId" />
 	<input type="hidden" value="" id="removedEstimationDtlRowId" name="removedEstimationDtlRowId" />
+	<input type="hidden" id="applicationNumber" value="${sewerageApplicationDetails.applicationNumber}"/>  
+	
 	<c:if test="${sewerageApplicationDetails.status.code =='COLLECTINSPECTIONFEE'}"> 
 	 <div  data-collapsed="0">
 		<div class="panel-heading">
@@ -87,7 +89,6 @@
 		</div>
 	</div>	
 	 </c:if>
-	
 	<c:choose>
 	<c:when test="${mode =='editOnReject'}">
 				<jsp:include page="applicantdetails.jsp"></jsp:include>
@@ -104,6 +105,10 @@
 					<jsp:include page="documentdetails-view.jsp"></jsp:include> 
 					<jsp:include page="inspectionCharges.jsp"></jsp:include>
 			</c:when>
+			<c:when test="${mode =='closetview'}">
+			 		<jsp:include page="connectiondetails.jsp"></jsp:include> 
+					<jsp:include page="documentdetails-view.jsp"></jsp:include> 
+			</c:when>
 			<c:otherwise>
 				<jsp:include page="connectionDetails-view.jsp"></jsp:include> 
 				<jsp:include page="documentdetails-view.jsp"></jsp:include>
@@ -118,16 +123,33 @@
 			<jsp:include page="applicationhistory-view.jsp"></jsp:include>
 	</c:otherwise>
 	</c:choose>	
-	
+		<c:if test="${!isCitizenPortalUser}">
 	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+	 	</c:if>
+	 	<c:if test="${isInspectionFeePaid || isInspectionFeePaid==null}">
+	 	
 	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
+	 	</c:if>
 	 	<div class="row text-center">
        <div class="add-margin">
                <c:if test="${sewerageApplicationDetails.status.code == 'FINALAPPROVED' }">
                        <a href="javascript:void(0)" class="btn btn-default" onclick="renderWorkOrderPdf()" >Generate Work Order</a>
                </c:if>
        </div>
+       
+       
 	</div>
+	
+	<div class="row text-center">
+       <div class="add-margin">
+       <c:if test="${isCitizenPortalUser && !isInspectionFeePaid}">
+				<a href="javascript:void(0)" class="btn btn-default"
+					onclick="window.open('/stms/citizen/search/sewerageGenerateonlinebill/${sewerageApplicationDetails.applicationNumber}/${sewerageApplicationDetails.connectionDetail.propertyIdentifier}','name','width=800, height=600,scrollbars=yes')">
+					 Pay Fee</a>
+	 	       </c:if>
+	 	       </div>
+	 	       </div>
+       
 </form:form>
 <script src="<cdn:url  value='/resources/js/transactions/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/transactions/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>

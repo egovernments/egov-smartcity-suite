@@ -76,9 +76,6 @@ public class RejectionAcknowledgementController {
     private ReportService reportService;
 
     public static final String REJECTION_ACK_TEMPLATE = "vacancyRemission_rejectionAck";
-    private final Map<String, Object> reportParams = new HashMap<String, Object>();
-    private ReportRequest reportInput = null;
-    private ReportOutput reportOutput = null;
 
     @Autowired
     private VacancyRemissionService vacancyRemissionService;
@@ -97,6 +94,9 @@ public class RejectionAcknowledgementController {
 
     private ResponseEntity<byte[]> generateReport(final VacancyRemission vacancyRemission,final HttpServletRequest request,
             final HttpSession session,String rejectingUser) {
+            final Map<String, Object> reportParams = new HashMap<String, Object>();
+            ReportRequest reportInput = null;
+            ReportOutput reportOutput = null;
     	if(vacancyRemission!=null){
             final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
     		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();

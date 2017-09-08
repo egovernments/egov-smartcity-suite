@@ -71,17 +71,17 @@
 							value="%{searchCreteria}" /> </span> /
 					<s:text name="totProp"></s:text>
 					<span class="mandatory"><s:property
-							value="%{searchResultList.size}" /> <s:text name="matchRecFound" />
+							value="%{searchResult.fullListSize}" /> <s:text name="matchRecFound" />
 					</span>
 					<div class="searchvalue1">
 						<s:text name="scrhVal"></s:text>
 						<s:property value="%{searchValue}" />
 					</div>
 				</div>
-				<s:if test="%{searchResultList != null && searchResultList.size >0}">
+				<s:if test="%{searchResult != null && searchResult.list.size > 0}">
 					<tr>
-						<display:table name="searchResultList" id="linksTables"
-							pagesize="10" requestURI="" class="tablebottom"
+						<display:table name="searchResult" id="linksTables"
+							pagesize="20" requestURI="" class="tablebottom"
 							style="width:100%" uid="currentRowObject">
 							<display:column title="Assessment Number"
 								headerClass="bluebgheadtd" media="html" class="blueborderfortd"
@@ -106,7 +106,7 @@
 							<display:column property="currFirstHalfDemandDue"
 								title="Current First Half Tax Due" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="width:5%;text-align:center" />
-							<display:column property="interestDueOnCurrFirstHalfDemandDue"
+							<display:column property="currFirstHalfPenaltyDue"
 								title="Interest Due on Current First Half Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
@@ -116,18 +116,21 @@
 							<display:column property="currSecondHalfDemandDue"
 								title="Current Second Half Tax Due" headerClass="bluebgheadtd"
 								class="blueborderfortd" style="width:6%;text-align:center" />
-							<display:column property="interestDueOnCurrSecondHalfDemandDue"
+							<display:column property="currSecondHalfPenaltyDue"
 								title="Interest Due on Current Second Half Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
 							<display:column property="arrDemandDue" title="Arrear Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
-							<display:column property="interestDueOnArrDemandDue"
+							<display:column property="arrearPenaltyDue"
 								title="Interest Due On Arrear Tax Due"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
 							<display:column property="rebateAmt" title="Rebate Amount"
+								headerClass="bluebgheadtd" class="blueborderfortd"
+								style="width:6%;text-align:center" />
+							<display:column property="advance" title="Advance"
 								headerClass="bluebgheadtd" class="blueborderfortd"
 								style="width:6%;text-align:center" />
 							<display:column property="netPayAmt" media="html"

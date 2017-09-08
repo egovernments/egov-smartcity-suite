@@ -39,36 +39,16 @@
  */
 package org.egov.model.bills;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.Inheritance;
-import javax.persistence.InheritanceType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.constraints.NotNull;
-
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
 import org.hibernate.validator.constraints.Length;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.*;
 
 @Entity
 @Table(name = "EG_BILLREGISTER")
@@ -76,13 +56,8 @@ import org.hibernate.validator.constraints.Length;
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
 public class EgBillregister extends StateAware implements java.io.Serializable {
 
-    public enum BillStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED
-    }
-
-    private static final long serialVersionUID = -4312140421386028968L;
-
     public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
+    private static final long serialVersionUID = -4312140421386028968L;
     @Id
     @GeneratedValue(generator = SEQ_EG_BILLREGISTER, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -93,94 +68,58 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private Date billdate;
     @NotNull
     private BigDecimal billamount;
-
     private BigDecimal fieldid;
-
     private String billstatus;
-
     private String narration;
-
     private BigDecimal passedamount;
-
     private String billtype;
     @NotNull
     private String expendituretype;
-
     private BigDecimal advanceadjusted;
-
     private String zone;
-
     private String division;
-
     private String workordernumber;
-
     private String billapprovalstatus;
-
     private Boolean isactive;
-
     private Date billpasseddate;
-
     private Date workorderdate;
-
     @ManyToOne
     @JoinColumn(name = "statusid", nullable = true)
     private EgwStatus status;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
     private EgBillregistermis egBillregistermis;
-
     private String worksdetailId;
     @Transient
     private User approver;
     @Transient
     private Date approvedOn;
-
     @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillregister", targetEntity = EgBilldetails.class)
     private Set<EgBilldetails> egBilldetailes = new LinkedHashSet<EgBilldetails>(0);
-
     @Transient
     private List<EgBilldetails> billDetails = new ArrayList<EgBilldetails>(0);
-
     @Transient
     private List<EgBilldetails> debitDetails = new ArrayList<EgBilldetails>(0);
-
     @Transient
     private List<EgBilldetails> creditDetails = new ArrayList<EgBilldetails>(0);
-
     @Transient
     private List<EgBilldetails> netPayableDetails = new ArrayList<EgBilldetails>(0);
-
     @Transient
     private List<EgBillPayeedetails> billPayeedetails = new ArrayList<EgBillPayeedetails>(0);
-
     @Transient
     private List<EgChecklists> checkLists = new ArrayList<EgChecklists>(0);
-
+    @Transient
+    private List<DocumentUpload> documentDetail = new ArrayList<>(0);
     @Transient
     private Long approvalDepartment;
-
     @Transient
     private String approvalComent;
-
-    /**
-     * @return the worksdetail
-     */
-    public String getWorksdetailId() {
-        return worksdetailId;
-    }
-
-    /**
-     * @param worksdetail the worksdetail to set
-     */
-    public void setWorksdetailId(final String worksdetail) {
-        worksdetailId = worksdetail;
-    }
 
     public EgBillregister() {
     }
 
     public EgBillregister(final String billnumber, final Date billdate, final BigDecimal billamount,
-            final String billstatus, final String expendituretype, final BigDecimal createdby, final Date createddate) {
+                          final String billstatus, final String expendituretype, final BigDecimal createdby, final Date createddate) {
         this.billnumber = billnumber;
         this.billdate = billdate;
         this.billamount = billamount;
@@ -191,13 +130,13 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     }
 
     public EgBillregister(final String billnumber, final Date billdate, final BigDecimal billamount,
-            final BigDecimal fieldid, final String billstatus, final String narration, final BigDecimal passedamount,
-            final String billtype, final String expendituretype, final BigDecimal advanceadjusted,
-            final BigDecimal createdby, final Date createddate, final BigDecimal lastmodifiedby,
-            final Date lastmodifieddate, final String zone, final String division, final String workordernumber,
-            final String billapprovalstatus, final Boolean isactive, final Date billpasseddate,
-            final Date workorderdate, final EgBillregistermis egBillregistermis,
-            final Set<EgBilldetails> egBilldetailes, final EgwStatus status) {
+                          final BigDecimal fieldid, final String billstatus, final String narration, final BigDecimal passedamount,
+                          final String billtype, final String expendituretype, final BigDecimal advanceadjusted,
+                          final BigDecimal createdby, final Date createddate, final BigDecimal lastmodifiedby,
+                          final Date lastmodifieddate, final String zone, final String division, final String workordernumber,
+                          final String billapprovalstatus, final Boolean isactive, final Date billpasseddate,
+                          final Date workorderdate, final EgBillregistermis egBillregistermis,
+                          final Set<EgBilldetails> egBilldetailes, final EgwStatus status) {
         this.billnumber = billnumber;
         this.billdate = billdate;
         this.billamount = billamount;
@@ -222,6 +161,20 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.egBillregistermis = egBillregistermis;
         this.egBilldetailes = egBilldetailes;
         this.status = status;
+    }
+
+    /**
+     * @return the worksdetail
+     */
+    public String getWorksdetailId() {
+        return worksdetailId;
+    }
+
+    /**
+     * @param worksdetail the worksdetail to set
+     */
+    public void setWorksdetailId(final String worksdetail) {
+        worksdetailId = worksdetail;
     }
 
     @Override
@@ -489,4 +442,17 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.approvalComent = approvalComent;
     }
 
+    public List<DocumentUpload> getDocumentDetail() {
+        return documentDetail;
+    }
+
+    public void setDocumentDetail(List<DocumentUpload> documentDetail) {
+        this.documentDetail.clear();
+        if (documentDetail != null)
+            this.documentDetail.addAll(documentDetail);
+    }
+
+    public enum BillStatus {
+        CREATED, APPROVED, REJECTED, CANCELLED
+    }
 }

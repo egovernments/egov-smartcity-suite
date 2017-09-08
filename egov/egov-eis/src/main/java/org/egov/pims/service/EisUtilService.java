@@ -40,6 +40,7 @@
 package org.egov.pims.service;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.EmployeeView;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -49,7 +50,6 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
@@ -63,6 +63,7 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -73,6 +74,7 @@ import java.util.List;
 import java.util.Map;
 
 @Service("eisService")
+@Transactional(readOnly = true)
 public class EisUtilService implements EISServeable {
     private static final Logger LOGGER = Logger.getLogger(EisUtilService.class);
     private final String EMPVIEWDEPTIDSLOGGEDINUSER = "EMPVIEW-DEPTIDS-LOGGEDINUSER";
@@ -80,13 +82,13 @@ public class EisUtilService implements EISServeable {
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
-    
+
     @Autowired
     private BoundaryService boundaryService;
-    
+
     @Autowired
     private PersonalInformationDAO personalInformationDAO;
-    	
+
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -279,7 +281,7 @@ public class EisUtilService implements EISServeable {
                 mainStr += " ((ev.toDate is null and ev.fromDate <= current_date ) OR (ev.fromDate <= current_date AND ev.toDate > current_date)) ";
             }
             mainStr += " and ev.userActive='1' "; // getting only active employees
-                                                // for any kind of search
+            // for any kind of search
             Query qry = null;
             qry = persistenceService.getSession().createQuery(mainStr);
             LOGGER.info("qryqryqryqry" + qry.toString());
@@ -385,12 +387,12 @@ public class EisUtilService implements EISServeable {
 
     /**
      * Use the API getAllDesignationsByDepartment in DesignationService.java
-     * 
+     * <p>
      * return all distinct Designations to which employees are assigned in the
      * given department for given date. This list includes primary as well as
      * secondary assignments. If there is No Designation for the given
      * department then returns the empty list
-     * 
+     *
      * @param departmentId
      * @param givenDate
      * @return DesignationMaster List
@@ -422,12 +424,9 @@ public class EisUtilService implements EISServeable {
      * Get all users for the given department and designation id's for the given
      * date
      *
-     * @param deptId
-     *            the Department Id
-     * @param desigId
-     *            the Designation Id
-     * @param date
-     *            the java.util.Date
+     * @param deptId  the Department Id
+     * @param desigId the Designation Id
+     * @param date    the java.util.Date
      * @return List of Users
      */
     public List<User> getUsersByDeptAndDesig(Integer deptId, Integer desigId, Date date) {
@@ -442,7 +441,7 @@ public class EisUtilService implements EISServeable {
         ProjectionList projections = Projections.projectionList().add(Projections.property("view.employee"));
         criteria.setProjection(projections);
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
-        return (List<User>)criteria.list();
+        return (List<User>) criteria.list();
     }
 
     /**
@@ -513,75 +512,67 @@ public class EisUtilService implements EISServeable {
         return validuser;
 
     }
-    
+
     /*
      * Gets all the DO users for the following params
      *      (non-Javadoc)
      * @see org.egov.infstr.services.EISServeable#getListOfDrawingOfficers(java.util.List, java.lang.String, java.lang.String)
      */
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    public List<HashMap> getListOfDrawingOfficers(List<Long> desigList,Date assignDate,String codeOrName)
-    {
-            ArrayList results = new ArrayList();
-            if(null==assignDate)
-                    assignDate = new Date();
-            Query query=getQueryForDrawingOfficer(desigList,null,assignDate,codeOrName);
-            List<Object[]> tmpList = (List<Object[]>) query.list();
-            int i=0;
-            for(Object[] objArray:tmpList)
-            {
-                    Map temp = new HashMap();
-                    temp.put("empid", objArray[0]);
-                    temp.put("empname",objArray[1]);
-                    temp.put("empcode", objArray[2]);
-                    temp.put("doid", objArray[3]);
-                    temp.put("doname", objArray[4]);
-                    temp.put("docode", objArray[5]);
-                    results.add(i, temp);
-                    i++;
-            }
-            
-            return results;
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public List<HashMap> getListOfDrawingOfficers(List<Long> desigList, Date assignDate, String codeOrName) {
+        ArrayList results = new ArrayList();
+        if (null == assignDate)
+            assignDate = new Date();
+        Query query = getQueryForDrawingOfficer(desigList, null, assignDate, codeOrName);
+        List<Object[]> tmpList = (List<Object[]>) query.list();
+        int i = 0;
+        for (Object[] objArray : tmpList) {
+            Map temp = new HashMap();
+            temp.put("empid", objArray[0]);
+            temp.put("empname", objArray[1]);
+            temp.put("empcode", objArray[2]);
+            temp.put("doid", objArray[3]);
+            temp.put("doname", objArray[4]);
+            temp.put("docode", objArray[5]);
+            results.add(i, temp);
+            i++;
+        }
+
+        return results;
     }
-    
-    private Query getQueryForDrawingOfficer(List<Long> desigList,Integer doId,Date assignDate,String codeOrName)
-    {
-            StringBuffer qry = new StringBuffer("select distinct eee.id as empid,eee.name as empname,eee.code as empcode," +
-                            " do.id as doid,do.name as doname,do.code as docode from eg_eis_employeeinfo eee" +
-                            " inner join eg_position pos on pos.id = eee.pos_id" +
-                            " inner join eg_drawingofficer do on do.id = pos.id_drawing_officer " +
-                            " where eee.isactive=1 and pos.id_drawing_officer is not null " +
-                            " and :enteredDate between eee.from_date and eee.to_date ");
-            
-            if((null!=desigList && !desigList.isEmpty()) )
-            {
-                    qry.append(" and eee.designationid in (:desList) ");
-            }
-            if(null!=codeOrName && !codeOrName.isEmpty())
-            {
-                    qry.append(" and (lower(do.name) like lower(:enteredString) or lower(do.code) like lower(:enteredString) " +
-                                    "        or lower(eee.name) like lower(:enteredString) or lower(eee.code) like lower(:enteredString)) ");
-            }
-            if(null!=doId)
-            {
-                    qry.append(" and do.id=:doId ");
-            }
-            qry.append(" order by eee.name ");
-            Query query=persistenceService.getSession().createSQLQuery(qry.toString());
-            query.setDate("enteredDate", assignDate);
-            if(null!=desigList && !desigList.isEmpty()){
-                    query.setParameterList("desList",desigList);
-            }
-            if(null!=doId)
-            {
-                    query.setInteger("doId", doId);
-            }
-            if(null!=codeOrName && !codeOrName.isEmpty())
-            {
-                    query.setString("enteredString", "%"+codeOrName+"%");
-            }
-            
-            return query;
+
+    private Query getQueryForDrawingOfficer(List<Long> desigList, Integer doId, Date assignDate, String codeOrName) {
+        StringBuffer qry = new StringBuffer("select distinct eee.id as empid,eee.name as empname,eee.code as empcode," +
+                " do.id as doid,do.name as doname,do.code as docode from eg_eis_employeeinfo eee" +
+                " inner join eg_position pos on pos.id = eee.pos_id" +
+                " inner join eg_drawingofficer do on do.id = pos.id_drawing_officer " +
+                " where eee.isactive=1 and pos.id_drawing_officer is not null " +
+                " and :enteredDate between eee.from_date and eee.to_date ");
+
+        if ((null != desigList && !desigList.isEmpty())) {
+            qry.append(" and eee.designationid in (:desList) ");
+        }
+        if (null != codeOrName && !codeOrName.isEmpty()) {
+            qry.append(" and (lower(do.name) like lower(:enteredString) or lower(do.code) like lower(:enteredString) " +
+                    "        or lower(eee.name) like lower(:enteredString) or lower(eee.code) like lower(:enteredString)) ");
+        }
+        if (null != doId) {
+            qry.append(" and do.id=:doId ");
+        }
+        qry.append(" order by eee.name ");
+        Query query = persistenceService.getSession().createSQLQuery(qry.toString());
+        query.setDate("enteredDate", assignDate);
+        if (null != desigList && !desigList.isEmpty()) {
+            query.setParameterList("desList", desigList);
+        }
+        if (null != doId) {
+            query.setInteger("doId", doId);
+        }
+        if (null != codeOrName && !codeOrName.isEmpty()) {
+            query.setString("enteredString", "%" + codeOrName + "%");
+        }
+
+        return query;
     }
 
 }

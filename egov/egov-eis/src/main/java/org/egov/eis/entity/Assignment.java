@@ -68,6 +68,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.GradeMaster;
+import org.hibernate.annotations.NamedQuery;
 import org.hibernate.envers.AuditOverride;
 import org.hibernate.envers.AuditOverrides;
 import org.hibernate.envers.Audited;
@@ -78,6 +79,7 @@ import org.hibernate.envers.RelationTargetAuditMode;
 @SequenceGenerator(name = SEQ_ASSIGNMENT, sequenceName = SEQ_ASSIGNMENT, allocationSize = 1)
 @AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+@NamedQuery(name = "getDesignationForActiveAssignmentsByListOfDesgNames", query = "select distinct A.designation from  Assignment A where A.fromDate<=current_date and A.toDate>=current_date and trim(upper(A.designation.name)) in(:param_0)")
 public class Assignment extends AbstractAuditable {
 
     public static final String SEQ_ASSIGNMENT = "SEQ_EGEIS_ASSIGNMENT";

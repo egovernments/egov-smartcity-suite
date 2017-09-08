@@ -54,6 +54,10 @@
 		<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
 		<form:hidden path="" id="statuscode" value="${advertisementPermitDetail.status.code}"/>
 		<form:hidden path="" id="wfstate" value="${advertisementPermitDetail.state.id}"/> 
+		<form:hidden path="" id="adtaxpermitId" value="${advertisementPermitDetail.id}"/> 
+		<form:hidden path="" id="isReassignEnabled" value="${isReassignEnabled}"/> 
+		<form:hidden path="" id="applicationType" value="${applicationType}"/> 
+		 
 		<div class="panel panel-primary" data-collapsed="0" id="adtaxdetailsbody">
 			<div class="panel-heading">
 				<ul class="nav nav-tabs" id="settingstab">
@@ -337,6 +341,7 @@
 	</div>
 </div>
 <script>
+
 //this is to reset the sub combobox upon field error
 var subcategory = '${advertisementPermitDetail.advertisement.subCategory.id}';
 var adminBoundry = '${advertisementPermitDetail.advertisement.ward.id}';
@@ -373,6 +378,7 @@ $( ".workflow-submit" ).click(function( e ) {
 		e.preventDefault();
 		return false;
 	}
+
 });
 	
 

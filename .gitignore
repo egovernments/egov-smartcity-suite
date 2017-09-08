@@ -1,8 +1,6 @@
 .idea
 dist
 *.iml
-modules/egi/egov-egi/build/
-modules/egi/egiweb/WebContent/help/
 target
 .project
 .settings

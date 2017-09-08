@@ -100,6 +100,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CHA
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_CREATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_DEACTIVATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_MODIFY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASONS_FOR_REBATE_CALCULATION;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -206,7 +207,6 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PtApplicationType;
-import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.entity.property.WorkflowBean;
@@ -215,6 +215,7 @@ import org.egov.ptis.domain.model.calculator.MiscellaneousTaxDetail;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 import org.egov.ptis.domain.service.property.RebatePeriodService;
+import org.egov.ptis.domain.service.property.RebateService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.egov.ptis.wtms.ConsumerConsumption;
 import org.egov.ptis.wtms.PropertyWiseConsumptions;
@@ -224,6 +225,7 @@ import org.hibernate.Session;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
+import org.python.google.common.collect.ImmutableList;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -296,6 +298,8 @@ public class PropertyTaxUtil {
     private ApplicationNumberGenerator applicationNumberGenerator;
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private RebateService rebateService;
 
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 
@@ -537,7 +541,7 @@ public class PropertyTaxUtil {
                 instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-" + reasonMasterCode);
             }
         }
-        if (isRebatePeriodActive()) {
+        if (rebateService.isEarlyPayRebateActive(billable.getReceiptDate() != null ? billable.getReceiptDate() : new Date())) {
             final Installment currFirstHalf = currYearInstMap.get(CURRENTYEAR_FIRST_HALF);
             final DateTime dateTime = new DateTime(currFirstHalf.getInstallmentYear());
             key = getOrder(currFirstHalf.getInstallmentYear(), DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_REBATE));
@@ -2248,7 +2252,7 @@ public class PropertyTaxUtil {
     public boolean checkForParentUsedInBifurcation(final String upicNo) {
         boolean isChildUnderWorkflow = false;
         final PropertyStatusValues statusValues = (PropertyStatusValues) persistenceService
-                .find("select psv from PropertyStatusValues psv where psv.referenceBasicProperty.upicNo=? and psv.basicProperty.underWorkflow = 't' and psv.remarks != ? ",
+                .find("select psv from PropertyStatusValues psv where psv.referenceBasicProperty.upicNo=? and psv.basicProperty.underWorkflow = 't' and (psv.remarks is null or psv.remarks != ? )",
                         upicNo, APPURTENANT_PROPERTY);
         if (statusValues != null)
             isChildUnderWorkflow = true;
@@ -2415,30 +2419,14 @@ public class PropertyTaxUtil {
         return currYearInstMap;
     }
 
-    /**
-     * Checks if we are within a rebate period.
-     *
-     * @return
-     */
-    public boolean isRebatePeriodActive() {
-        boolean isActive = false;
-        final Date today = new Date();
-        final RebatePeriod rebatePeriod = rebatePeriodService.getRebateForCurrInstallment(propertyTaxCommonUtils
-                .getCurrentInstallment().getId());
-        if (rebatePeriod != null && today.before(rebatePeriod.getRebateDate()))
-            isActive = true;
-        return isActive;
-    }
-
-    public Date getEffectiveDateForProperty() {
-        final Module module = moduleDao.getModuleByName(PTMODULENAME);
-        final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date()).getToDate();
-        final Date dateBefore6Installments = new Date();
-        dateBefore6Installments.setDate(1);
-        dateBefore6Installments.setMonth(currInstToDate.getMonth() + 1);
-        dateBefore6Installments.setYear(currInstToDate.getYear() - 3);
-        return dateBefore6Installments;
-    }
+	public Date getEffectiveDateForProperty() {
+		final Module module = moduleDao.getModuleByName(PTMODULENAME);
+		final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, new Date()).getToDate();
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(currInstToDate);
+		calendar.set(calendar.get(calendar.YEAR) - 3, calendar.get(Calendar.MONTH) + 1, 1, 0, 0, 0);
+		return calendar.getTime();
+	}
 
     /**
      * Returns map containing tax amount for demand reasons other than Penalty and Advance
@@ -2571,4 +2559,25 @@ public class PropertyTaxUtil {
         rebateAmt = qry.uniqueResult();
         return rebateAmt != null ? new BigDecimal((Double) rebateAmt) : BigDecimal.ZERO;
     }
+
+    @SuppressWarnings("unchecked")
+    public BigDecimal getCurrentDemandForRebateCalculation(BasicProperty basicProperty){
+        final EgDemand currentDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+        final Map<String, Installment> currInstallments = getInstallmentsForCurrYear(new Date());
+        final Installment currentFirstHalf = currInstallments.get(CURRENTYEAR_FIRST_HALF);
+        final Installment currentSecondHalf = currInstallments.get(CURRENTYEAR_SECOND_HALF);
+
+        final String selectQuery = " select sum(dd.amount) amount from eg_demand_details dd, eg_demand_reason dr,"
+                + " eg_demand_reason_master drm, eg_installment_master inst "
+                + " where dd.id_demand_reason = dr.id and drm.id = dr.id_demand_reason_master "
+                + " and dr.id_installment = inst.id and dd.id_demand =:currentDemandId and inst.id in (:installments) and drm.code in (:codes)";
+
+        final Object amount = persistenceService.getSession().createSQLQuery(selectQuery)
+                .setLong("currentDemandId", currentDemand.getId())
+                .setParameterList("installments", Arrays.asList(currentFirstHalf.getId(), currentSecondHalf.getId()))
+                .setParameterList("codes", DEMAND_REASONS_FOR_REBATE_CALCULATION).uniqueResult();
+
+        return amount != null ? new BigDecimal((Double) amount) : BigDecimal.ZERO;
+    }
+
 }

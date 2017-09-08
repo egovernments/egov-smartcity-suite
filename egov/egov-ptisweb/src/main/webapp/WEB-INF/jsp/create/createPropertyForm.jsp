@@ -154,17 +154,31 @@
 		  <s:textfield name="parentIndex" id="parentIndex" size="12" maxlength="10" onblur="validNumber(this);checkZero(this,'Parent Index');"></s:textfield>
 		  </div>
 		  </td>
-
 	</tr>
-
+	<tr class="occupancydetails">
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
+		<td class="greybox"><s:textfield maxlength="64"
+				title="Property certification number"
+				name="propertyDetail.occupancyCertificationNo"
+				id="propertyDetail.occupancyCertificationNo"
+				value="%{propertyDetail.occupancyCertificationNo}"></s:textfield></td>
+		<td class="greybox"><s:text name="certificationDate"></s:text>:</td>
+		<td class="greybox"><s:date
+				name="propertyDetail.occupancyCertificationDate"
+				var="certificationDate" format="dd/MM/yyyy" /> <s:textfield
+				name="propertyDetail.occupancyCertificationDate"
+				title="Certification Date"
+				id="propertyDetail.occupancyCertificationDate"
+				value="%{#certificationDate}" size="12" autocomplete="off"
+				maxlength="12" cssClass="datepicker"></s:textfield></td>
+	</tr>
 	<tr class="extentSite">
 		<td class="greybox">&nbsp;</td>
 		<td class="greybox"><s:text name="extent.site"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<td class="greybox" width=""><s:textfield name="areaOfPlot" title="Extent of Site of the Property" id="areaOfPlot" size="12" maxlength="8" value="%{areaOfPlot}" 
 		onblur="trim(this,this.value);checkForTwoDecimals(this,'extent of site');checkZero(this,'extent of site');"></s:textfield></td>
-		<td class="greybox"><s:text name="certificationNumber"></s:text>:</td>
-		<td class="greybox"><s:textfield maxlength="64" title="Property certification number" name="propertyDetail.occupancyCertificationNo" id="propertyDetail.occupancyCertificationNo" value="%{propertyDetail.occupancyCertificationNo}"></s:textfield></td>
 	</tr>
  	<s:hidden id="appurtenantLandChecked" name="propertyDetail.appurtenantLandChecked" value="%{propertyDetail.appurtenantLandChecked}"/>
  	<s:hidden id="extentAppartenauntLand" name="propertyDetail.extentAppartenauntLand" value="%{propertyDetail.extentAppartenauntLand}"/>

@@ -107,8 +107,12 @@ public class ViewPropertyDetails {
     private String mroProcDate;
     private String courtName;
     private boolean twSigned;
+    
+    private Boolean floorDetailsEntered = false;
+    private String propertyDepartment;
+    
 
-    public String getUlbCode() {
+	public String getUlbCode() {
         return ulbCode;
     }
 
@@ -611,5 +615,21 @@ public class ViewPropertyDetails {
     public void setLpDate(String lpDate) {
         this.lpDate = lpDate;
     }
+    
+    public Boolean getFloorDetailsEntered() {
+		return floorDetailsEntered;
+	}
+
+	public void setFloorDetailsEntered(Boolean floorDetailsEntered) {
+		this.floorDetailsEntered = floorDetailsEntered;
+	}
+
+	public String getPropertyDepartment() {
+		return propertyDepartment;
+	}
+
+	public void setPropertyDepartment(String propertyDepartment) {
+		this.propertyDepartment = propertyDepartment;
+	}
 
 }

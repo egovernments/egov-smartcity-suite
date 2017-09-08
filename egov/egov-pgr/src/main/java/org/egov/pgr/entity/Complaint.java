@@ -40,8 +40,10 @@
 
 package org.egov.pgr.entity;
 
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
@@ -54,22 +56,29 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import java.text.SimpleDateFormat;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
+import static org.egov.infra.utils.ApplicationConstant.HYPHEN;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.pgr.entity.Complaint.SEQ_COMPLAINT;
+import static org.egov.pgr.entity.enums.ComplaintStatus.COMPLETED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REJECTED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.REOPENED;
+import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 
 @Entity
 @Table(name = "egpgr_complaint")
 @SequenceGenerator(name = SEQ_COMPLAINT, sequenceName = SEQ_COMPLAINT, allocationSize = 1)
 @Unique(fields = "crn", enableDfltMsg = true)
 public class Complaint extends StateAware {
-
-    public static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
+    protected static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
     private static final long serialVersionUID = 4020616083055647372L;
+
     @Id
     @GeneratedValue(generator = SEQ_COMPLAINT, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -94,6 +103,10 @@ public class Complaint extends StateAware {
     @JoinColumn(name = "assignee")
     private Position assignee;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "currentOwner")
+    private User currentOwner;
+
     @ManyToOne
     @JoinColumn(name = "location")
     private Boundary location;
@@ -105,6 +118,7 @@ public class Complaint extends StateAware {
 
     @Length(min = 10, max = 500)
     @SafeHtml
+    @NotNull
     private String details;
 
     @Length(max = 200)
@@ -125,7 +139,8 @@ public class Complaint extends StateAware {
     private ReceivingCenter receivingCenter;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
-    @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
+    @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"),
+            inverseJoinColumns = @JoinColumn(name = "filestoreid"))
     private Set<FileStoreMapper> supportDocs = Collections.emptySet();
 
     private double lng;
@@ -143,17 +158,23 @@ public class Complaint extends StateAware {
     private CitizenFeedback citizenFeedback;
 
     @ManyToOne
-    @JoinColumn(name = "childLocation", nullable = true)
+    @JoinColumn(name = "childLocation")
     private Boundary childLocation;
 
     @Transient
     private String latlngAddress;
 
-    /*
-     * For indexing the below fields are kept. These will not be added to the database. This will be available only in index.
-     */
     @Transient
     private Long crossHierarchyId;
+
+    @Transient
+    private Long nextOwnerId;
+
+    @Transient
+    private String approverComment;
+
+    @Transient
+    private boolean sendToPreviousOwner;
 
     @Override
     public Long getId() {
@@ -195,6 +216,14 @@ public class Complaint extends StateAware {
 
     public void setAssignee(Position assignee) {
         this.assignee = assignee;
+    }
+
+    public User getCurrentOwner() {
+        return currentOwner;
+    }
+
+    public void setCurrentOwner(User currentOwner) {
+        this.currentOwner = currentOwner;
     }
 
     public ComplaintStatus getStatus() {
@@ -243,6 +272,13 @@ public class Complaint extends StateAware {
 
     public void setSupportDocs(Set<FileStoreMapper> supportDocs) {
         this.supportDocs = supportDocs;
+    }
+
+    public Set<FileStoreMapper> supportDocsOrderById() {
+        return this.supportDocs
+                .stream()
+                .sorted(Comparator.comparing(FileStoreMapper::getId))
+                .collect(Collectors.toSet());
     }
 
     public Boundary getLocation() {
@@ -325,6 +361,52 @@ public class Complaint extends StateAware {
         this.latlngAddress = latlngAddress;
     }
 
+    public Long nextOwnerId() {
+        return nextOwnerId;
+    }
+
+    public void nextOwnerId(Long nextOwnerId) {
+        this.nextOwnerId = nextOwnerId;
+    }
+
+    public String approverComment() {
+        return approverComment;
+    }
+
+    public void approverComment(String approverComment) {
+        this.approverComment = approverComment;
+    }
+
+    public boolean sendToPreviousOwner() {
+        return sendToPreviousOwner;
+    }
+
+    public void sendToPreviousOwner(boolean sendToPreviousOwner) {
+        this.sendToPreviousOwner = sendToPreviousOwner;
+    }
+
+    public boolean completed() {
+        return Stream
+                .of(WITHDRAWN, COMPLETED, REJECTED)
+                .anyMatch(complaintStatus -> complaintStatus.toString().equalsIgnoreCase(getStatus().getName()));
+    }
+
+    public boolean inprogress() {
+        return !transitionCompleted();
+    }
+
+    public boolean hasNextOwner() {
+        return nextOwnerId() != null && !nextOwnerId().equals(0L);
+    }
+
+    public boolean reopened() {
+        return transitionCompleted() && REOPENED.toString().equalsIgnoreCase(getStatus().getName());
+    }
+
+    public boolean hasGeoCoordinates() {
+        return getLat() > 0 && getLng() > 0;
+    }
+
     @Override
     public String myLinkId() {
         return this.crn;
@@ -332,10 +414,9 @@ public class Complaint extends StateAware {
 
     @Override
     public String getStateDetails() {
-        SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-yyyy hh:mm a");
         return String.format("Complaint Number %s for %s filed on %s. Date of resolution %s. Priority is %s", this.getCrn(),
-                this.getComplaintType().getName(), formatter.format(this.getCreatedDate()),
-                formatter.format(this.getEscalationDate()), this.getPriority()!=null?this.getPriority().getName():"-");
+                this.getComplaintType().getName(), toDefaultDateTimeFormat(this.getCreatedDate()),
+                toDefaultDateTimeFormat(this.getEscalationDate()), this.getPriority() != null ? this.getPriority().getName() : HYPHEN);
     }
 
     @Override

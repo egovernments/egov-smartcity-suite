@@ -58,7 +58,7 @@
                         </label>
                         <div class="col-sm-3 add-margin">
                             <form:input path="name" id="name" class="form-control text-left patternvalidation"
-                                        maxLength="100"/>
+                                        maxLength="50"/>
                         </div>
                         <label class="col-sm-2 control-label text-right">
                             <spring:message code="lbl.licenseAppType"/> <span class="mandatory"></span>
@@ -83,9 +83,11 @@
                             </div>
                         </div>
                     </div>
+                    <div class="text-left error-msg" style="font-size: 14px;">
                     <c:if test="${not empty message}">
                         <div><spring:message code="${message}"/></div>
                     </c:if>
+                    </div>
                 </div>
             </div>
         </div>

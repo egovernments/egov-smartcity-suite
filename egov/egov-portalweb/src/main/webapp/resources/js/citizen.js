@@ -67,7 +67,7 @@ $(document).ready(function(){
       $('.inbox-modules').show();
       $('.action-bar').addClass('hide');
       $('#showServiceGroup').show();
-      location.reload();
+      inboxloadmethod();
     }
     else{
       $('.inbox-modules').hide();
@@ -199,4 +199,8 @@ function resetValues() {
 		$('#new-pass').val('');
 		$('#old-pass').val('');
 		$('.password-error').hide();
+}
+
+function inboxloadmethod() {
+	location.reload();
 }

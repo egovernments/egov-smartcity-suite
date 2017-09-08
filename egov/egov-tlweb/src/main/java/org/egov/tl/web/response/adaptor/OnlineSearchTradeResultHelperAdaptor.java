@@ -54,7 +54,7 @@ public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<Onli
 
     @Override
     public JsonElement serialize(final OnlineSearchForm searchFormObj, final Type type,
-            final JsonSerializationContext jsc) {
+                                 final JsonSerializationContext jsc) {
         final JsonObject searchResult = new JsonObject();
         if (searchFormObj != null) {
             searchResult.addProperty("licenseId", searchFormObj.getLicenseId());
@@ -62,6 +62,7 @@ public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<Onli
             searchResult.addProperty("tlNumber", searchFormObj.getLicenseNumber());
             searchResult.addProperty("tradeOwner", searchFormObj.getTradeOwnerName());
             searchResult.addProperty("mobileNumber", searchFormObj.getMobileNo());
+            searchResult.addProperty("status", searchFormObj.getStatus());
             searchResult.addProperty("propertyAssmntNo", searchFormObj.getPropertyAssessmentNo());
             searchResult.addProperty("arrDmd", searchFormObj.getArrDmd());
             searchResult.addProperty("currDmd", searchFormObj.getCurrDmd());

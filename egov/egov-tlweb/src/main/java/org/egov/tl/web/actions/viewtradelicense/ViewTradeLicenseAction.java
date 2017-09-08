@@ -1,41 +1,48 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.tl.web.actions.viewtradelicense;
@@ -49,6 +56,7 @@ import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.service.AbstractLicenseService;
@@ -60,18 +68,26 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.io.IOException;
 import java.util.List;
 
+import static org.egov.tl.utils.Constants.BUTTONFORWARD;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
+import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
+import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 
 @ParentPackage("egov")
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
         @Result(name = "message", location = "viewTradeLicense-message.jsp"),
-        @Result(name = "closure", location = "viewTradeLicense-closure.jsp")})
+        @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
+        @Result(name = "digisigncertificate", type = "redirect", location = "/digitalSignature/tradeLicense/downloadSignedLicenseCertificate", params = {"file", "${digiSignedFile}", "applnum", "${applNum}"})
+})
 public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
-
     protected TradeLicense tradeLicense = new TradeLicense();
-    private String applicationNo;
     private Long licenseid;
+    private String url;
+    private Boolean enableState;
+    private String digiSignedFile;
+    private String applNum;
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
@@ -103,9 +119,15 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String generateCertificate() {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        reportId = reportViewerUtil
-                .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license()));
-        return "report";
+        if (tradeLicense.getDigiSignedCertFileStoreId() != null) {
+            setDigiSignedFile(license().getDigiSignedCertFileStoreId());
+            setApplNum(license().getApplicationNumber());
+            return "digisigncertificate";
+        } else {
+            reportId = reportViewerUtil
+                    .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license()));
+            return "report";
+        }
     }
 
     private void setLicenseIdIfServletRedirect() {
@@ -150,14 +172,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.workflowBean = workflowBean;
     }
 
-    public String getApplicationNo() {
-        return applicationNo;
-    }
-
-    public void setApplicationNo(final String applicationNo) {
-        this.applicationNo = applicationNo;
-    }
-
     @Override
     public String getReportId() {
         return reportId;
@@ -165,22 +179,53 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Action(value = "/viewtradelicense/showclosureform")
     public String showClosureForm() throws IOException {
-        if (license() != null && license().getId() != null)
-            tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        prepareClosureForm();
+        setUrl("viewtradelicense/saveclosure.action?model.id=");
         if (tradeLicense.hasState() && !tradeLicense.transitionCompleted()) {
             ServletActionContext.getResponse().setContentType("text/html");
-            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>Closure License workflow is in progress !</center>");
+            ServletActionContext.getResponse().getWriter().write("<center style='color:red;font-weight:bolder'>" + tradeLicense.getLicenseAppType().getName() + " License workflow is in progress !</center>");
             return null;
         }
         return "closure";
     }
 
-    @Action(value = "/viewtradelicense/viewTradeLicense-closure")
-    public String viewClosure() {
+    public void prepareClosureForm() {
         if (license() != null && license().getId() != null)
             tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+        if (tradeLicense.hasState() && tradeLicense.getCurrentState().getValue().equalsIgnoreCase("SI/SS Approved"))
+            setEnableState(true);
+    }
+
+    @Action(value = "/viewtradelicense/viewTradeLicense-closure")
+    public String viewClosure() {
+        prepareClosureForm();
+        setUrl("viewtradelicense/viewTradeLicense-cancelLicense.action?model.id=");
         licenseHistory = tradeLicenseService.populateHistory(tradeLicense);
         return "closure";
+    }
+
+    @ValidationErrorPageExt(action = "closure", makeCall = true, toMethod = "prepareClosureForm")
+    @Action(value = "/viewtradelicense/saveclosure")
+    public String saveClosure() {
+        populateWorkflowBean();
+        if (getLicenseid() != null) {
+            applicationNo = license().getApplicationNumber();
+            tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+            if (tradeLicenseService.currentUserIsMeeseva()) {
+                tradeLicense.setApplicationNumber(applicationNo);
+                tradeLicenseService.closureWithMeeseva(tradeLicense, workflowBean);
+            } else
+                tradeLicenseService.saveClosure(tradeLicense, workflowBean);
+        }
+        if (hasCSCPublicRole())
+            addActionMessage(this.getText("license.closure.initiated"));
+        else if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+            List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
+            String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
+            final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
+            addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
+        }
+        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : "message";
     }
 
     @Action(value = "/viewtradelicense/viewTradeLicense-cancelLicense")
@@ -188,15 +233,18 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         populateWorkflowBean();
         if (getLicenseid() != null) {
             tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
+            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
+            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
+                addActionMessage(this.getText("wf.item.processed"));
+                return "message";
+            }
             tradeLicenseService.cancelLicenseWorkflow(tradeLicense, workflowBean);
-            if (hasCSCOperatorRole())
-                addActionMessage(this.getText("license.closure.initiated"));
-            else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONFORWARD)) {
+            if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 List<Assignment> assignments = assignmentService.getAssignmentsForPosition(workflowBean.getApproverPositionId());
                 String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
                 final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
                 addActionMessage(this.getText("license.closure.sent") + " " + nextDesgn + " - " + userName);
-            } else if (workflowBean.getWorkFlowAction().contains(Constants.BUTTONREJECT)) {
+            } else if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED)) {
                     List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());
                     final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
@@ -221,9 +269,40 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.licenseid = licenseid;
     }
 
-    public Boolean hasCSCOperatorRole() {
+    public Boolean hasCSCPublicRole() {
         final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        return currentUserRoles.contains(CSCOPERATOR) ? true : false;
+        return currentUserRoles.contains(CSCOPERATOR) || currentUserRoles.contains(MEESEVAOPERATOR) || currentUserRoles.contains("PUBLIC");
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
+    public Boolean getEnableState() {
+        return enableState;
+    }
+
+    public void setEnableState(Boolean enableState) {
+        this.enableState = enableState;
+    }
+
+    public String getDigiSignedFile() {
+        return digiSignedFile;
+    }
+
+    public void setDigiSignedFile(String digiSignedFile) {
+        this.digiSignedFile = digiSignedFile;
+    }
+
+    public String getApplNum() {
+        return applNum;
+    }
+
+    public void setApplNum(String applNum) {
+        this.applNum = applNum;
+    }
 }

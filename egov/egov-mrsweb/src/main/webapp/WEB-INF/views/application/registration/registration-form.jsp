@@ -54,9 +54,10 @@
 
 <div class="row">
 	<div class="col-md-12">
+
 		<div class="text-right error-msg" style="font-size: 14px;"></div>		
 		<c:set value="/mrs/registration/register" var="actionUrl" />
-
+		<input type="hidden" id="message" value="${message}" />
 		<c:if test="${marriageRegistration.status == 'Rejected'}">
 			<c:set
 				value="/mrs/registration/workflow?id=${marriageRegistration.id}"
@@ -81,7 +82,9 @@
 				</spring:hasBindErrors>
 				<br />
 			</div>
-
+			<input type="hidden" name="applicationNo" value="${marriageRegistration.applicationNo}" />
+			<input type="hidden" name="source" value="${marriageRegistration.source}" />
+			<input type="hidden" name="stateType" id="stateType" value="${stateType}" />
 			<input type="hidden" id="currentState" value="${currentState}" />
 			<input type="hidden" id="registrationId"
 				value="${marriageRegistration.id}" />
@@ -157,7 +160,7 @@
 					</div>
 				</div>
 			</c:if>	 --%>
-			<c:if test="${isEmployee}">
+			<c:if test="${isEmployee && !citizenPortalUser}">
 				<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
 			</c:if>
 			<div class="buttonbottom" align="center">

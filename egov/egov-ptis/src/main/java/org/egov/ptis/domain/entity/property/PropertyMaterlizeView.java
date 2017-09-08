@@ -84,6 +84,7 @@ public class PropertyMaterlizeView implements Serializable {
     private Set<InstDmdCollMaterializeView> instDmdColl;
     private BigDecimal alv;
     private Boolean isExempted;
+    private String usage;
     private Character source;
     private Set<FloorDetailsView> floorDetails;
     private String mobileNumber;
@@ -294,7 +295,15 @@ public class PropertyMaterlizeView implements Serializable {
         this.isExempted = isExempted;
     }
 
-    public Character getSource() {
+    public String getUsage() {
+		return usage;
+	}
+
+	public void setUsage(String usage) {
+		this.usage = usage;
+	}
+
+	public Character getSource() {
         return source;
     }
 

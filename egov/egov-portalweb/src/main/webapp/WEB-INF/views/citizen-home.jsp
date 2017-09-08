@@ -68,7 +68,7 @@
                 <span><img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" height="52px">
                 
                 </span>
-                <span class="corporation-name"><spring:message code="lbl.citizenportalservices" /></span>
+                <span class="corporation-name"><spring:message code="lbl.portalservices" /></span>
               </div>
               <div class="col-md-6 col-sm-3 col-xs-12 right-section">
                 <span class="pull-right profile-dd"><a href="/egi/logout"><i class="fa fa-sign-out" aria-hidden="true"></i> Sign Out</a></span>

@@ -41,72 +41,60 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-<div>
-	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
-			<div class="panel-title">
-				<spring:message code="title.councilmeeting.create" />
+<div class="panel panel-primary" data-collapsed="0">
+	<div class="panel-heading">
+		<div class="panel-title">
+			<spring:message code="title.councilmeeting.create" />
+		</div>
+	</div>
+	<div class="panel-body">
+		<div class="form-group">
+			<div class="col-sm-3 control-label text-right">
+				<spring:message code="lbl.meeting.type" />
+			</div>
+			<div class="col-sm-3 add-margin view-content">
+				${councilMeeting.committeeType.name}
+				<form:hidden path="committeeType" id="committypeid" />
+			</div>
+			<label class="col-sm-2 control-label text-right"><spring:message
+					code="lbl.meeting.date" /> <span class="mandatory"></span> </label>
+			<div class="col-sm-3 add-margin">
+				<form:input type="text" cssClass="form-control datepicker"
+					path="meetingDate" id="meetingDate" data-date-start-date="0d"
+					required="required" />
+				<form:errors path="meetingDate" cssClass="error-msg" />
 			</div>
 		</div>
-		<div class="panel-body">
-			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.meeting.type" /> </label>
-				<div class="col-sm-3 add-margin">
-				<%-- 	<form:select path="committeeType" id="committeeType"
-						cssClass="form-control" cssErrorClass="form-control error"
-						disabled="false">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${commiteeTypes}" itemValue="id"
-							itemLabel="name" />
-					</form:select>  --%>
-					<b>${councilMeeting.committeeType.name}</b> 
-					<form:hidden path="committeeType" id="committypeid" /> 
-		    <%--         <form:hidden path="status" id="statusid" value="${councilMeeting.status.id}" /> 
-		 --%>
-					<form:errors path="committeeType" cssClass="error-msg" />
-				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.meeting.date" /> <span class="mandatory"></span> </label>
-				<div class="col-sm-2 add-margin">
-					<form:input type="text" cssClass="form-control datepicker"
-						path="meetingDate" id="meetingDate" data-date-start-date="0d" required="required" />
-					<form:errors path="meetingDate" cssClass="error-msg" />
-
-
-				</div>
+		<div class="form-group">
+			<label class="col-sm-3 control-label text-right"><spring:message
+					code="lbl.meeting.time" /> <span class="mandatory"></span></label>
+			<div class="col-sm-3 add-margin">
+				<form:select path="meetingTime" id="meetingTime"
+					cssClass="form-control" required="required"
+					cssErrorClass="form-control error">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${meetingTimingMap}" />
+				</form:select>
+				<form:errors path="meetingTime" cssClass="error-msg" />
 			</div>
-			<div class="form-group">
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.meeting.time" /> <span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin">
-					<form:select path="meetingTime" id="meetingTime"
-						cssClass="form-control" required="required"
-						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${meetingTimingMap}" />
-					</form:select>
-					<form:errors path="meetingTime" cssClass="error-msg" />
-				</div>
-				<label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.meeting.place" /><span class="mandatory"></span> </label>
-				<div class="col-sm-3 add-margin">
-					<form:textarea path="meetingLocation" id="meetingLocation" cols="5"
-						rows="2" class="form-control patternvalidation"
-						data-pattern="alphanumericwithspace" required="required" minlength="5" maxlength="32" />
+			<label class="col-sm-2 control-label text-right"><spring:message
+					code="lbl.meeting.place" /><span class="mandatory"></span> </label>
+			<div class="col-sm-3 add-margin">
+				<form:textarea path="meetingLocation" id="meetingLocation" cols="5"
+					rows="2" class="form-control patternvalidation"
+					data-pattern="alphanumericwithspace" required="required"
+					minlength="5" maxlength="32" />
 
-					<form:errors path="meetingLocation" cssClass="error-msg" />
-				</div>
+				<form:errors path="meetingLocation" cssClass="error-msg" />
 			</div>
-
-			 	<form:hidden path="id" id="id" value="${councilMeeting.id}" /> 
-					<form:hidden path="meetingNumber" id="meetingNumber" value="${councilMeeting.meetingNumber}" />	
-				
 		</div>
+
+		<form:hidden path="id" id="id" value="${councilMeeting.id}" />
+		<form:hidden path="meetingNumber" id="meetingNumber"
+			value="${councilMeeting.meetingNumber}" />
+
 	</div>
 </div>
 

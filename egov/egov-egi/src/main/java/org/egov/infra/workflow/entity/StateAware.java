@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -58,7 +65,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Collections;
-import java.util.Comparator;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
@@ -77,27 +83,9 @@ public abstract class StateAware extends AbstractAuditable {
     @JsonIgnore
     private Transition transition;
 
-    public static Comparator<StateAware> byCreatedDate() {
-        return (stateAware1, stateAware2) -> {
-            int returnVal = 1;
-            if (stateAware1 == null)
-                returnVal = stateAware2 == null ? 0 : -1;
-            else if (stateAware2 == null)
-                returnVal = 1;
-            else {
-                final Date createdDate1 = stateAware1.getState().getCreatedDate();
-                final Date createdDate2 = stateAware2.getState().getCreatedDate();
-                if (createdDate1.after(createdDate2))
-                    returnVal = -1;
-                else if (createdDate1.equals(createdDate2))
-                    returnVal = 0;
-            }
-            return returnVal;
-        };
-    }
-
     /**
-     * Need to overridden by the implementing class to give details about the State <I>Used by Inbox to fetch the State Detail at
+     * Need to overridden by the implementing class to give details about the State
+     * <I>Used by Inbox to fetch the State Detail at
      * runtime</I>
      *
      * @return String Detail
@@ -149,7 +137,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     public final boolean transitionInprogress() {
-        return hasState() && getCurrentState().isInprogress();
+        return hasState() && (transitionInitialized() || getCurrentState().isInprogress());
     }
 
     public final boolean hasState() {
@@ -160,6 +148,16 @@ public abstract class StateAware extends AbstractAuditable {
         if (this.transition == null)
             this.transition = new Transition();
         return this.transition;
+    }
+
+    public final void changeProcessOwner(Position position) {
+        if (transitionInprogress())
+            this.state.setOwnerPosition(position);
+    }
+
+    public final void changeProcessInitiator(Position position) {
+        if (transitionInprogress())
+            this.state.setInitiatorPosition(position);
     }
 
     protected StateInfoBuilder buildStateInfo() {
@@ -224,6 +222,8 @@ public abstract class StateAware extends AbstractAuditable {
 
         public final Transition progressWithStateCopy() {
             checkinTransition();
+            if (transitionCompleted())
+                throw new ApplicationRuntimeException("Transition already ended");
             if (hasState()) {
                 state.addStateHistory(new StateHistory(state));
                 state.setPreviousOwner(state.getOwnerPosition());
@@ -249,11 +249,10 @@ public abstract class StateAware extends AbstractAuditable {
         public final Transition reopen() {
             checkinTransition();
             if (transitionCompleted()) {
-                StateHistory stateHistory = new StateHistory(state);
+                state.addStateHistory(new StateHistory(state));
                 state.setPreviousOwner(state.getOwnerPosition());
-                stateHistory.setValue(State.STATE_REOPENED);
+                state.setValue(State.STATE_REOPENED);
                 state.setStatus(StateStatus.INPROGRESS);
-                state.addStateHistory(stateHistory);
             } else
                 throw new ApplicationRuntimeException("Transition can not be reopened, end the current transition first");
             return this;

@@ -793,8 +793,8 @@ public class ChartOfAccounts {
 						+ "  Debit Amount :"
 						+ String.valueOf(txn.getDrAmount()) + " Credit Amt :"
 						+ String.valueOf(txn.getCrAmount()));
-			if (String.valueOf(txn.getDrAmount()) == "0"
-					&& String.valueOf(txn.getCrAmount()) == "0") {
+			if ("0".equals(String.valueOf(txn.getDrAmount()))
+					&& "0".equals(String.valueOf(txn.getCrAmount()))) {
 				if (LOGGER.isInfoEnabled())
 					LOGGER.info("Comming in the zero  block");
 				return false;

@@ -52,14 +52,10 @@
 		</c:if>
 		<form:form method="post" class="form-horizontal form-groups-bordered"
 			modelAttribute="apartment" id="apartmentViewForm">
-
-
-
 			<div class="panel panel-primary" data-collapsed="0"
 				style="text-align: left">
 				<div class="panel-heading">
 					<div class="panel-title">Apartment Details</div>
-
 				</div>
 				<div class="panel-body">
 					<div class="row add-border">
@@ -78,31 +74,49 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<label><spring:message code="lbl.builtUpArea" /></label>
+							<label><spring:message code="lbl.apartment.type" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${apartment.builtUpArea}" /> </strong>
+							<strong><c:out value="${apartment.type}" /> </strong>
 						</div>
-						<div class="col-xs-3 add-margin">
-							<label><spring:message code="lbl.totalProperties" /></label>
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${apartment.totalProperties}" />
-							</strong>
-						</div>
-					</div>
-					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
 							<label><spring:message code="lbl.totalFloors" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out value="${apartment.totalFloors}" /> </strong>
 						</div>
+					</div>
+					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<label><spring:message code="lbl.openSpaceArea" /></label>
+							<label><spring:message code="lbl.totalFlats" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${apartment.openSpaceArea}" /> </strong>
+							<strong><c:out value="${apartment.totalProperties}" />
+							</strong>
+						</div>
+						<div class="col-xs-3 add-margin">
+							<label><spring:message code="lbl.sourceOfWater" /></label>
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<strong><c:out value="${apartment.sourceOfWater}" /> </strong>
+						</div>
+					</div>
+					<div class="row add-border">
+						<div class="col-xs-3 add-margin">
+							<label><spring:message code="lbl.totalResidentialFlats" /></label>
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<strong><c:out
+									value="${apartment.totalResidentialProperties}" /> </strong>
+						</div>
+						<div class="col-xs-3 add-margin">
+							<label><spring:message
+									code="lbl.totalNonResidentialFlats" /></label>
+						</div>
+						<div class="col-xs-3 add-margin view-content">
+							<strong><c:out
+									value="${apartment.totalNonResidentialProperties}"
+									default="N/A" /> </strong>
 						</div>
 					</div>
 					<div class="row add-border">
@@ -139,88 +153,18 @@
 					</div>
 					<div class="row add-border">
 						<div class="col-xs-3 add-margin">
-							<label><spring:message
-									code="lbl.totalResidentialProperties" /></label>
+							<label><spring:message code="lbl.builtUpArea" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out
-									value="${apartment.totalResidentialProperties}" /> </strong>
+							<strong><c:out value="${apartment.builtUpArea}" /> </strong>
 						</div>
 						<div class="col-xs-3 add-margin">
-							<label><spring:message
-									code="lbl.totalNonResidentialProperties" /></label>
+							<label><spring:message code="lbl.openSpaceArea" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out
-									value="${apartment.totalNonResidentialProperties}" default="N/A"/> </strong>
+							<strong><c:out value="${apartment.openSpaceArea}" /> </strong>
 						</div>
 					</div>
-					<div class="row add-border">
-						<div class="col-xs-3 add-margin">
-							<label><spring:message code="lbl.sourceOfWater" /></label>
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${apartment.sourceOfWater}" /> </strong>
-						</div>
-						<div class="col-xs-3 add-margin">
-							<label><spring:message code="lbl.isResidential" /></label>
-						</div>
-						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out
-									value="${apartment.isResidential ? 'Yes' :'No'}" /> </strong>
-						</div>
-					</div>
-
-					<c:if test="${apartment.apartmentHouse.size() > 0}">
-
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.shop.view" /></strong>
-							</div>
-						</div>
-						<div class="panel-body history-slide">
-							<div class="form-group col-sm-13 col-sm-offset-1">
-								<table align="left" Class="table table-bordered table-hover">
-									<thead>
-										<tr>
-											<th class="text-left"><spring:message code="lbl.shopno" /></th>
-											<th class="text-left"><spring:message code="lbl.floorno" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.shoparea" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.ownername" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.industryname" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.licensestatus" /></th>
-											<th class="text-left"><spring:message code="lbl.tinno" /></th>
-											<th class="text-left"><spring:message
-													code="lbl.validity" /></th>
-										</tr>
-									</thead>
-									<tbody>
-										<c:set var="count" value="1" />
-										<c:forEach var="apartmenthouse"
-											items="${apartment.apartmentHouse}">
-											<tr>
-												<td><c:out value="${apartmenthouse.shopNo}" /></td>
-												<td><c:out value="${apartmenthouse.floorNo}" /></td>
-												<td><c:out value="${apartmenthouse.shopArea}" /></td>
-												<td><c:out value="${apartmenthouse.ownerName}" /></td>
-												<td><c:out value="${apartmenthouse.shopOrIndustryName}" /></td>
-												<td><c:out
-														value="${apartmenthouse.licenseStatus ? 'Valid' :'Invalid'}" /></td>
-												<td><c:out value="${apartmenthouse.tinNo}" /></td>
-												<td><c:out value="${apartmenthouse.licenseValidity}" /></td>
-											</tr>
-											<c:set var="count" value="${count+1}" />
-										</c:forEach>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</c:if>
-
 					<div class="row">
 						<div class="text-center">
 

@@ -289,7 +289,9 @@ public class AjaxConnectionController {
     @ResponseBody
     public boolean isDonationChargesEditAllowed(@RequestParam final String connectionType) {
         List<AppConfigValues> appConfigValues;
-        if (connectionType.equalsIgnoreCase(WaterTaxConstants.METERED))
+        if (connectionType == null)
+            return false;
+        else if (connectionType.equalsIgnoreCase(WaterTaxConstants.METERED))
             appConfigValues = waterTaxUtils.getAppConfigValueByModuleNameAndKeyName(WaterTaxConstants.MODULE_NAME,
                     WaterTaxConstants.IS_METEREDDONATIONAMOUNT_MANUAL);
         else
@@ -301,11 +303,12 @@ public class AjaxConnectionController {
         else
             return false;
     }
-    
+
     @RequestMapping(value = "/ajax-getPropertyIdByConsumerCode", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public  String getPropertyIdentifier(@RequestParam final String consumerCode) {
-       final  WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,ConnectionStatus.ACTIVE);
+    public String getPropertyIdentifier(@RequestParam final String consumerCode) {
+        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         if (waterConnectionDetails == null)
             return "";
         else

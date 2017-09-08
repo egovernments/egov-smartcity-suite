@@ -43,10 +43,10 @@ import java.io.Serializable;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import org.egov.commons.service.FinancialYearService;
 import org.egov.council.autonumber.PreambleNumberGenerator;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -56,27 +56,19 @@ public class PreambleNumberGeneratorImpl implements PreambleNumberGenerator {
     private static final String PREAMBLE_NUMBER_SEQ = "SEQ_EGCNCL_PREAMBLE_NUMBER";
 
     @Autowired
-	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
-
-    @Autowired
-	private FinancialYearService financialYearService;
+    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
 
     @Override
-	public String getNextNumber(CouncilPreamble councilpreamble) {
-
+    public String getNextNumber(CouncilPreamble councilpreamble) {
         final SimpleDateFormat sdf = new SimpleDateFormat("MM");
         final String formattedDate = sdf.format(new Date());
         final String sequenceName = PREAMBLE_NUMBER_SEQ;
-        final String financialYearRange = financialYearService
-				.getCurrentFinancialYear().getFinYearRange();
-
+        final String currentYear = DateUtils.currentDateToYearFormat();
         Serializable sequenceNumber = applicationSequenceNumberGenerator
-				.getNextSequence(sequenceName);
+                .getNextSequence(sequenceName);
 
         final String result = String.format("%d-%s-%s", sequenceNumber,
-				formattedDate, financialYearRange);
+                formattedDate, currentYear);
         return result;
-
     }
-
 }

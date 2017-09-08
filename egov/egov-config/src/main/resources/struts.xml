@@ -61,7 +61,7 @@
 	<constant name="struts.convention.result.path" value="/WEB-INF/jsp/" />
 	<constant name="struts.custom.i18n.resources" value="messages/common-errors,messages/common-labels,custom" />
 	<constant name="struts.locale" value="en_IN" />
-	<constant name="struts.multipart.maxSize" value="10485760" />
+	<constant name="struts.multipart.maxSize" value="26214400" />
 	<constant name="struts.multipart.parser" value="jakarta" />
 	<constant name="struts.convention.action.mapAllMatches" value="true" />
 	<constant name="struts.convention.default.parent.package" value="egov" />
