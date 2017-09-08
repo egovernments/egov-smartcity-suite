@@ -480,21 +480,8 @@
 	<div class="panel-heading">
 		<div class="panel-title">Tax Details</div>
 	</div>
-	<%@ include file="../common/taxDetails.jsp"%>
-	
+	<%@ include file="../common/taxDetails.jsp"%>	
 </div>
-<div class="panel panel-primary" data-collapsed="0"
-	style="text-align: left">
-	<div class="panel-heading">
-		<div class="panel-title">Uploaded Documents</div>
-	</div>
-	<%@ include file="document-view.jsp"%>	
-</div>
-<div class="panel panel-primary" data-collapsed="0"
-	style="text-align: left">
-	<%@ include file="../common/workflowHistoryView.jsp"%>	
-</div>
-
 <script type="text/javascript">
 	function showDocumentManagerView(indexNum) {
 		var url = "../view/viewProperty!viewDoc.action?propertyId=" + indexNum;

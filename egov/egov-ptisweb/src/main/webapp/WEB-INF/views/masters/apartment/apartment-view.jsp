@@ -107,7 +107,8 @@
 						</div>
 						<div class="col-xs-3 add-margin view-content">
 							<strong><c:out
-									value="${apartment.totalResidentialProperties}" /> </strong>
+									value="${apartment.totalResidentialProperties}" 
+									default="N/A" /> </strong>
 						</div>
 						<div class="col-xs-3 add-margin">
 							<label><spring:message
@@ -162,7 +163,8 @@
 							<label><spring:message code="lbl.openSpaceArea" /></label>
 						</div>
 						<div class="col-xs-3 add-margin view-content">
-							<strong><c:out value="${apartment.openSpaceArea}" /> </strong>
+							<strong><c:out value="${apartment.openSpaceArea}" 
+							default="N/A" /> </strong>
 						</div>
 					</div>
 					<div class="row">
