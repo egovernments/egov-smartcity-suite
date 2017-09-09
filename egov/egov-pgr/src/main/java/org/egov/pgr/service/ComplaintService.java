@@ -117,7 +117,7 @@ public class ComplaintService {
     private ConfigurationService configurationService;
 
     @Autowired
-    private ComplaintMessagingService complaintMessagingService;
+    private ComplaintNotificationService complaintNotificationService;
 
     @Autowired
     private ComplaintProcessFlowService complaintProcessFlowService;
@@ -156,7 +156,7 @@ public class ComplaintService {
         complaintIndexService.createComplaintIndex(complaint);
         if (securityUtils.currentUserIsCitizen())
             citizenComplaintDataPublisher.onRegistration(complaint);
-        complaintMessagingService.sendRegistrationMessage(complaint);
+        complaintNotificationService.sendRegistrationMessage(complaint);
         return complaint;
     }
 
@@ -170,7 +170,7 @@ public class ComplaintService {
         complaintRepository.saveAndFlush(complaint);
         complaintIndexService.updateComplaintIndex(complaint);
         citizenComplaintDataPublisher.onUpdation(complaint);
-        complaintMessagingService.sendUpdateMessage(complaint);
+        complaintNotificationService.sendUpdateMessage(complaint);
         return complaint;
     }
 

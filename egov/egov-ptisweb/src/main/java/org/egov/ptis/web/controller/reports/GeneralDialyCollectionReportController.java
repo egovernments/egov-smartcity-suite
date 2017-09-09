@@ -58,7 +58,7 @@ import org.egov.commons.RegionalHeirarchy;
 import org.egov.commons.RegionalHeirarchyType;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.service.RegionalHeirarchyService;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.egov.ptis.domain.entity.property.BillCollectorDailyCollectionReportResult;
 import org.egov.ptis.domain.service.report.ReportService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,7 +169,7 @@ public class GeneralDialyCollectionReportController {
             BillCollectorDailyCollectionReportResult bcDailyCollectionReportResult) throws IOException {
         IOUtils.write(
                 "{ \"data\":"
-                        + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+                        + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                                 .toJson(reportService.getUlbWiseDcbCollection(new Date(), bcDailyCollectionReportResult))
                         + "}",
                 response.getWriter());
@@ -180,7 +180,7 @@ public class GeneralDialyCollectionReportController {
     public void searchUlbWise(final HttpServletResponse response) throws IOException {
         IOUtils.write(
                 "{ \"data\":"
-                        + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+                        + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                                 .toJson(reportService.getUlbWiseDailyCollection(new Date()))
                         + "}",
                 response.getWriter());
@@ -192,7 +192,7 @@ public class GeneralDialyCollectionReportController {
             throws IOException {
         IOUtils.write(
                 "{ \"data\":"
-                        + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+                        + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                                 .toJson(reportService.getBillCollectorWiseDailyCollection(new Date(),
                                         bcDailyCollectionReportResult))
                         + "}",

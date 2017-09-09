@@ -65,7 +65,7 @@ import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
@@ -87,7 +87,8 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
     protected @Autowired RevenueInspectorService revenueInspectorService;
     protected @Autowired RatesClassService ratesClassService;
     protected @Autowired HoardingDocumentTypeService hoardingDocumentTypeService;
-    protected @Autowired ApplicationProperties applicationProperties;
+    @Autowired
+    protected EnvironmentSettings environmentSettings;
     protected @Autowired AdvertisementDemandService advertisementDemandService;
     protected @Autowired FinancialYearDAO financialYearDAO;
 

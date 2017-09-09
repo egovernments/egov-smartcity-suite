@@ -56,7 +56,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.CollectionSummaryReport;
 import org.egov.collection.entity.CollectionSummaryReportResult;
 import org.egov.collection.entity.OnlinePaymentResult;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -70,10 +70,10 @@ public class CollectionReportService {
     private static final Logger LOGGER = Logger.getLogger(CollectionReportService.class);
 
     @PersistenceContext
-    EntityManager entityManager;
+    private EntityManager entityManager;
 
     @Autowired
-    ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -83,7 +83,7 @@ public class CollectionReportService {
             final String toDate, final String transactionId) {
         final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
         final StringBuilder queryStr = new StringBuilder(500);
-        queryStr.append("select * from ").append(applicationProperties.statewideSchemaName())
+        queryStr.append("select * from ").append(environmentSettings.statewideSchemaName())
                 .append(".onlinepayment_view opv where 1=1");
 
         if (StringUtils.isNotBlank(districtName))
@@ -121,7 +121,7 @@ public class CollectionReportService {
 
     public List<Object[]> getUlbNames(final String districtName) {
         final StringBuilder queryStr = new StringBuilder("select distinct ulbname from ").append(
-                applicationProperties.statewideSchemaName()).append(".onlinepayment_view opv where 1=1");
+                environmentSettings.statewideSchemaName()).append(".onlinepayment_view opv where 1=1");
         if (StringUtils.isNotBlank(districtName))
             queryStr.append(" and opv.districtName=:districtName ");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
@@ -132,7 +132,7 @@ public class CollectionReportService {
 
     public List<Object[]> getDistrictNames() {
         final StringBuilder queryStr = new StringBuilder("select distinct districtname from ").append(
-                applicationProperties.statewideSchemaName()).append(".onlinepayment_view");
+                environmentSettings.statewideSchemaName()).append(".onlinepayment_view");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());
         return query.list();
     }

@@ -58,7 +58,7 @@ import java.util.Map;
 
 import static com.google.zxing.EncodeHintType.CHARACTER_SET;
 import static com.google.zxing.EncodeHintType.MARGIN;
-import static org.egov.infra.config.core.GlobalSettings.encoding;
+import static org.egov.infra.config.core.LocalizationSettings.encoding;
 import static org.egov.infra.utils.ImageUtils.PNG_EXTN;
 import static org.egov.infra.utils.ImageUtils.PNG_FORMAT_NAME;
 
@@ -83,16 +83,16 @@ public final class SecureCodeUtils {
         return generatePDF417Code(content, DEFAULT_WIDTH, DEFAULT_HEIGHT);
     }
 
-    public static File generatePDF417Code(String content, int qrImgWidth, int qrImgHeight) {
-        return generateSecureCode(content, BarcodeFormat.PDF_417, qrImgWidth, qrImgHeight);
+    public static File generatePDF417Code(String content, int imgWidth, int imgHeight) {
+        return generateSecureCode(content, BarcodeFormat.PDF_417, imgWidth, imgHeight);
     }
 
-    public static File generateSecureCode(String content, BarcodeFormat format, int qrImgWidth, int qrImgHeight) {
+    public static File generateSecureCode(String content, BarcodeFormat format, int imgWidth, int imgHeight) {
         try {
             Map<EncodeHintType, Object> hints = new EnumMap<>(EncodeHintType.class);
             hints.put(CHARACTER_SET, encoding());
             hints.put(MARGIN, 1);
-            BitMatrix secureCodeMatrix = new MultiFormatWriter().encode(content, format, qrImgWidth, qrImgHeight, hints);
+            BitMatrix secureCodeMatrix = new MultiFormatWriter().encode(content, format, imgWidth, imgHeight, hints);
             Path secureCodePath = Files.createTempFile(RandomStringUtils.randomAlphabetic(5), PNG_EXTN);
             MatrixToImageWriter.writeToPath(secureCodeMatrix, PNG_FORMAT_NAME, secureCodePath);
             return secureCodePath.toFile();

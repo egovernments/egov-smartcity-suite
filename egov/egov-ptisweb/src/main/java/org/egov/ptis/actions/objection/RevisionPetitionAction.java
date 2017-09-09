@@ -136,7 +136,7 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -321,7 +321,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	@Autowired
 	private transient ApplicationNumberGenerator applicationNumberGenerator;
 	@Autowired
-	private transient MessagingService messagingService;
+	private transient NotificationService notificationService;
 	@Autowired
 	private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
 	@Autowired
@@ -1261,9 +1261,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				}
 			}
 			if (StringUtils.isNotBlank(mobileNumber))
-				messagingService.sendSMS(mobileNumber, smsMsg);
+				notificationService.sendSMS(mobileNumber, smsMsg);
 			if (StringUtils.isNotBlank(emailid))
-				messagingService.sendEmail(emailid, emailSubject, emailBody);
+				notificationService.sendEmail(emailid, emailSubject, emailBody);
 		}
 	}
 

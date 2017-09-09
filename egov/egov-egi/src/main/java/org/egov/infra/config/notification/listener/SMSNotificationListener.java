@@ -38,55 +38,38 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.messaging;
+package org.egov.infra.config.notification.listener;
 
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.egov.infra.notification.entity.NotificationPriority;
+import org.egov.infra.notification.service.SMSService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.jms.annotation.JmsListener;
+import org.springframework.jms.support.JmsUtils;
+import org.springframework.stereotype.Component;
 
-import java.util.Properties;
+import javax.jms.JMSException;
+import javax.jms.MapMessage;
+import javax.jms.Message;
 
-@Configuration
-public class EmailConfiguration {
+import static org.egov.infra.notification.NotificationConstants.MESSAGE;
+import static org.egov.infra.notification.NotificationConstants.MOBILE;
+import static org.egov.infra.notification.NotificationConstants.PRIORITY;
 
-    @Value("${mail.port}")
-    private Integer mailPort;
+@Component
+public class SMSNotificationListener {
 
-    @Value("${mail.host}")
-    private String mailHost;
+    @Autowired
+    private SMSService smsService;
 
-    @Value("${mail.protocol}")
-    private String mailProtocol;
-
-    @Value("${mail.sender.username}")
-    private String mailSenderUsername;
-
-    @Value("${mail.sender.password}")
-    private String mailSenderPassword;
-
-    @Value("${mail.smtps.auth}")
-    private String mailSMTPSAuth;
-
-    @Value("${mail.smtps.starttls.enable}")
-    private String mailStartTLSEnabled;
-
-    @Value("${mail.smtps.debug}")
-    private String mailSMTPSDebug;
-
-    @Bean
-    public JavaMailSenderImpl mailSender() {
-        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
-        mailSender.setPort(mailPort);
-        mailSender.setHost(mailHost);
-        mailSender.setProtocol(mailProtocol);
-        mailSender.setUsername(mailSenderUsername);
-        mailSender.setPassword(mailSenderPassword);
-        final Properties mailProperties = new Properties();
-        mailProperties.setProperty("mail.smtps.auth", mailSMTPSAuth);
-        mailProperties.setProperty("mail.smtps.starttls.enable", mailStartTLSEnabled);
-        mailProperties.setProperty("mail.smtps.debug", mailSMTPSDebug);
-        mailSender.setJavaMailProperties(mailProperties);
-        return mailSender;
+    @JmsListener(destination = "java:/jms/queue/sms")
+    public void processMessage(Message message) {
+        try {
+            final MapMessage emailMessage = (MapMessage) message;
+            smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
+                    NotificationPriority.valueOf(emailMessage.getString(PRIORITY)));
+        } catch (final JMSException e) {
+            throw JmsUtils.convertJmsAccessException(e);
+        }
     }
+
 }

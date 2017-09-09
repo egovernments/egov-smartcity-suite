@@ -43,10 +43,10 @@ package org.egov.infra.utils;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
-import static org.egov.infra.config.core.GlobalSettings.currencyName;
-import static org.egov.infra.config.core.GlobalSettings.currencyNamePlural;
-import static org.egov.infra.config.core.GlobalSettings.currencyUnitName;
-import static org.egov.infra.config.core.GlobalSettings.currencyUnitNamePlural;
+import static org.egov.infra.config.core.LocalizationSettings.currencyName;
+import static org.egov.infra.config.core.LocalizationSettings.currencyNamePlural;
+import static org.egov.infra.config.core.LocalizationSettings.currencyUnitName;
+import static org.egov.infra.config.core.LocalizationSettings.currencyUnitNamePlural;
 import static org.egov.infra.utils.ApplicationConstant.WHITESPACE;
 
 public final class NumberToWordConverter {

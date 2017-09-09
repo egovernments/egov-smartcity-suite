@@ -49,10 +49,9 @@ import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
@@ -68,12 +67,12 @@ public class RecaptchaUtils {
 
     private static final String RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    @Value("${captcha.strength}")
+    private String captchaStrength;
 
     public boolean captchaIsValid(HttpServletRequest request) {
         try {
-            if ("high".equals(applicationProperties.getProperty("captcha.strength"))) {
+            if ("high".equals(captchaStrength)) {
                 HttpPost post = new HttpPost(RECAPTCHA_VERIFY_URL);
                 List<NameValuePair> urlParameters = new ArrayList<>();
                 urlParameters.add(new BasicNameValuePair("secret", (String) request.getSession().getAttribute("siteSecret")));

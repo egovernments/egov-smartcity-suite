@@ -48,7 +48,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
 import org.springframework.data.jpa.support.ClasspathScanningPersistenceUnitPostProcessor;
@@ -74,7 +73,6 @@ import static org.hibernate.cfg.AvailableSettings.*;
 @Configuration
 @EnableTransactionManagement(proxyTargetClass = true)
 @PropertySource("classpath:config/persistence-config.properties")
-@Profile("production")
 public class JpaConfiguration {
 
     @Autowired

@@ -51,7 +51,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
-import static org.egov.infra.config.core.GlobalSettings.datePattern;
+import static org.egov.infra.config.core.LocalizationSettings.datePattern;
 
 @ControllerAdvice
 public class GlobalInitBinderHandler {

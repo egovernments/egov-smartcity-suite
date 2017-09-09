@@ -46,7 +46,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.pojo.DCBReportWardwiseResult;
@@ -195,7 +195,7 @@ public class SewerageRateDCBReportController {
         dcbMap = sewerageIndexService.wardWiseBoolQueryFilter(searchRequest.getUlbName(), wardNames, propertyTypeList);
         wardwiseResultList = sewerageDCBReporService.getSewerageRateDCBWardwiseReport(dcbMap, searchRequest.getPropertyType());
 
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(wardwiseResultList)
                 + "}", response.getWriter());
 

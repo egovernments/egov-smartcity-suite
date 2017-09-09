@@ -50,7 +50,7 @@ import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -100,7 +100,7 @@ public class AgencyReportController extends GenericController {
     @ResponseBody
     public void agencyWiseViewHoarding(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail, @RequestParam String agency,
                                        final HttpServletResponse response) throws IOException {
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getAgencyWiseAdvertisementSearchResult(advertisementPermitDetail))
                 + "}", response.getWriter());
     }
@@ -124,7 +124,7 @@ public class AgencyReportController extends GenericController {
     }
 
     private List<HoardingDcbReport> getAgencyWiseDCBResult(final List<AdvertisementPermitDetail> advertisementPermitDetail) {
-        List<HoardingDcbReport> HoardingDcbReportResults = new ArrayList<>();
+        List<HoardingDcbReport> hoardingDcbReportResults = new ArrayList<>();
 
         for (AdvertisementPermitDetail advpermitdetail : advertisementPermitDetail) {
             if (advpermitdetail.getAgency() != null && advpermitdetail.getAdvertisement() != null
@@ -145,10 +145,10 @@ public class AgencyReportController extends GenericController {
                 hoardingReport.setCategory(advpermitdetail.getAdvertisement().getCategory().getName());
                 hoardingReport.setSubcategory(advpermitdetail.getAdvertisement().getSubCategory().getDescription());
                 hoardingReport.setOwnerDetail(advpermitdetail.getOwnerDetail());
-                HoardingDcbReportResults.add(hoardingReport);
+                hoardingDcbReportResults.add(hoardingReport);
             }
         }
-        return HoardingDcbReportResults;
+        return hoardingDcbReportResults;
 
     }
 }

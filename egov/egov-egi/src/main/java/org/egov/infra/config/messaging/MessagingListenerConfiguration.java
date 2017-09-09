@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,48 +38,24 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.jms.messaging;
+package org.egov.infra.config.messaging;
 
-import org.egov.infra.config.jms.messaging.errorhandler.MessagingErrorHandler;
-import org.egov.infra.config.jms.messaging.listener.EmailQueueListener;
-import org.egov.infra.config.jms.messaging.listener.SMSQueueListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.DependsOn;
+import org.springframework.jms.annotation.EnableJms;
 import org.springframework.jms.config.DefaultJmsListenerContainerFactory;
 import org.springframework.jms.connection.CachingConnectionFactory;
 import org.springframework.jms.support.destination.JndiDestinationResolver;
-import org.springframework.jndi.JndiObjectFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
 
-import javax.jms.Destination;
-
+@EnableJms
 @Configuration
-@DependsOn("jmsConfiguration")
-public class MessagingConfiguration {
+public class MessagingListenerConfiguration {
 
-    @Bean(name = "smsQueue")
-    public JndiObjectFactoryBean smsQueue() {
-        JndiObjectFactoryBean smsQueue = new JndiObjectFactoryBean();
-        smsQueue.setExpectedType(Destination.class);
-        smsQueue.setResourceRef(true);
-        smsQueue.setJndiName("java:/jms/queue/sms");
-        return smsQueue;
-    }
-
-    @Bean(name = "emailQueue")
-    public JndiObjectFactoryBean emailQueue() {
-        JndiObjectFactoryBean emailQueue = new JndiObjectFactoryBean();
-        emailQueue.setExpectedType(Destination.class);
-        emailQueue.setResourceRef(true);
-        emailQueue.setJndiName("java:/jms/queue/email");
-        return emailQueue;
-    }
-
-    @Bean
-    public DefaultJmsListenerContainerFactory jmsListenerContainerFactory(CachingConnectionFactory cachingConnectionFactory,
-                                                                          PlatformTransactionManager transactionManager,
-                                                                          JndiDestinationResolver jmsDestinationResolver) {
+    @Bean("jmsListenerContainerFactory")
+    public DefaultJmsListenerContainerFactory jmsQueueListenerContainerFactory(CachingConnectionFactory cachingConnectionFactory,
+                                                                               PlatformTransactionManager transactionManager,
+                                                                               JndiDestinationResolver jmsDestinationResolver) {
         DefaultJmsListenerContainerFactory listenerContainerFactory = new DefaultJmsListenerContainerFactory();
         listenerContainerFactory.setConnectionFactory(cachingConnectionFactory);
         listenerContainerFactory.setTransactionManager(transactionManager);
@@ -90,18 +66,21 @@ public class MessagingConfiguration {
     }
 
     @Bean
+    public DefaultJmsListenerContainerFactory jmsTopicListenerContainerFactory(CachingConnectionFactory cachingConnectionFactory,
+                                                                               PlatformTransactionManager transactionManager,
+                                                                               JndiDestinationResolver jmsDestinationResolver) {
+        DefaultJmsListenerContainerFactory listenerContainerFactory = new DefaultJmsListenerContainerFactory();
+        listenerContainerFactory.setConnectionFactory(cachingConnectionFactory);
+        listenerContainerFactory.setTransactionManager(transactionManager);
+        listenerContainerFactory.setErrorHandler(messagingErrorHandler());
+        listenerContainerFactory.setDestinationResolver(jmsDestinationResolver);
+        listenerContainerFactory.setPubSubDomain(true);
+        listenerContainerFactory.setConcurrency("10");
+        return listenerContainerFactory;
+    }
+
+    @Bean
     public MessagingErrorHandler messagingErrorHandler() {
         return new MessagingErrorHandler();
     }
-
-    @Bean
-    public EmailQueueListener emailQueueListener() {
-        return new EmailQueueListener();
-    }
-
-    @Bean
-    public SMSQueueListener smsQueueListener() {
-        return new SMSQueueListener();
-    }
-
 }

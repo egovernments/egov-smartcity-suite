@@ -44,7 +44,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.connection.RedisSentinelConfiguration;
 import org.springframework.data.redis.connection.jedis.JedisConnectionFactory;
@@ -54,7 +53,6 @@ import redis.clients.jedis.JedisPoolConfig;
 import java.util.List;
 
 @Configuration
-@Profile("production")
 public class RedisServerConfiguration {
 
     @Value("${redis.enable.embedded}")
@@ -74,7 +72,6 @@ public class RedisServerConfiguration {
 
     @Value("#{'${redis.sentinel.hosts}'.split(',')}")
     private List<String> sentinelHosts;
-
 
     @Bean
     @Conditional(RedisServerConfigCondition.class)

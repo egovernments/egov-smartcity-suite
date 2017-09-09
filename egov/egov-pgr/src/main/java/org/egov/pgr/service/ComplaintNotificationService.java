@@ -43,7 +43,7 @@ package org.egov.pgr.service;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_WITHDRAWN;
 
 @Service
-public class ComplaintMessagingService {
+public class ComplaintNotificationService {
 
     private static final String COMPLAINT_REGISTERED_SMS_MSG_KEY = "msg.complaint.registered.sms";
     private static final String COMPLAINT_REGISTERED_EMAIL_BODY_MSG_KEY = "msg.complaint.registered.email.body";
@@ -93,17 +93,17 @@ public class ComplaintMessagingService {
     private MessageSource complaintMessageSource;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private AssignmentService assignmentService;
 
     public void sendRegistrationMessage(Complaint complaint) {
         if (COMPLAINT_REGISTERED.equals(complaint.getStatus().getName())) {
-            messagingService.sendEmail(complaint.getComplainant().getEmail(),
+            notificationService.sendEmail(complaint.getComplainant().getEmail(),
                     getMessage(COMPLAINT_REGISTERED_EMAIL_SUBJECT_MEG_KEY, new String[]{}),
                     getMessageForRegistration(COMPLAINT_REGISTERED_EMAIL_BODY_MSG_KEY, complaint));
-            messagingService.sendSMS(complaint.getComplainant().getMobile(),
+            notificationService.sendSMS(complaint.getComplainant().getMobile(),
                     getMessageForRegistration(COMPLAINT_REGISTERED_SMS_MSG_KEY, complaint));
         }
         officialSmsOnRegistration(complaint);
@@ -122,7 +122,7 @@ public class ComplaintMessagingService {
                                     complaint.getComplainant().getName(),
                                     complaint.getComplainant().getMobile(),
                             });
-                    messagingService.sendSMS(user.getMobileNumber(), smsMsg);
+                    notificationService.sendSMS(user.getMobileNumber(), smsMsg);
                 }
             }
         }
@@ -131,31 +131,31 @@ public class ComplaintMessagingService {
     public void sendUpdateMessage(Complaint complaint) {
         switch (complaint.getStatus().getName()) {
             case COMPLAINT_COMPLETED:
-                messagingService.sendEmail(complaint.getComplainant().getEmail(),
+                notificationService.sendEmail(complaint.getComplainant().getEmail(),
                         getMessage(COMPLAINT_COMPLETED_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
                         getMessageForProcessing(COMPLAINT_COMPLETED_EMAIL_BODY_MSG_KEY, complaint));
-                messagingService.sendSMS(complaint.getComplainant().getMobile(),
+                notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForProcessing(COMPLAINT_COMPLETED_SMS_MSG_KEY, complaint));
                 break;
             case COMPLAINT_REJECTED:
-                messagingService.sendEmail(complaint.getComplainant().getEmail(),
+                notificationService.sendEmail(complaint.getComplainant().getEmail(),
                         getMessage(COMPLAINT_REJECTED_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
                         getMessageForProcessing(COMPLAINT_REJECTED_EMAIL_BODY_MSG_KEY, complaint));
-                messagingService.sendSMS(complaint.getComplainant().getMobile(),
+                notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForProcessing(COMPLAINT_REJECTED_SMS_MSG_KEY, complaint));
                 break;
             case COMPLAINT_REOPENED:
-                messagingService.sendEmail(complaint.getComplainant().getEmail(),
+                notificationService.sendEmail(complaint.getComplainant().getEmail(),
                         getMessage(COMPLAINT_REOPENED_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
                         getMessageForReopening(COMPLAINT_REOPENED_EMAIL_BODY_MSG_KEY, complaint));
-                messagingService.sendSMS(complaint.getComplainant().getMobile(),
+                notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForReopening(COMPLAINT_REOPENED_SMS_MSG_KEY, complaint));
                 break;
             case COMPLAINT_WITHDRAWN:
-                messagingService.sendEmail(complaint.getComplainant().getEmail(),
+                notificationService.sendEmail(complaint.getComplainant().getEmail(),
                         getMessage(COMPLAINT_WITHDRAWN_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
                         getMessageForWithdrawn(COMPLAINT_WITHDRAWN_EMAIL_BODY_MSG_KEY, complaint));
-                messagingService.sendSMS(complaint.getComplainant().getMobile(),
+                notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForWithdrawn(COMPLAINT_WITHDRAWN_SMS_MSG_KEY, complaint));
                 break;
             default:
@@ -180,11 +180,11 @@ public class ComplaintMessagingService {
                 complaint.getCrn(), previousOwnerName, previousAssignee.getDeptDesig().getDesignation().getName(),
                 complaint.getComplaintType().getName()});
         if (previousOwner != null) {
-            messagingService.sendEmail(previousOwner.getEmailId(), emailSubject, smsMsgPreviousOwner);
-            messagingService.sendSMS(previousOwner.getMobileNumber(), smsMsgPreviousOwner);
+            notificationService.sendEmail(previousOwner.getEmailId(), emailSubject, smsMsgPreviousOwner);
+            notificationService.sendSMS(previousOwner.getMobileNumber(), smsMsgPreviousOwner);
         }
-        messagingService.sendEmail(nextOwner.getEmailId(), emailSubject, smsMsgnextOwner);
-        messagingService.sendSMS(nextOwner.getMobileNumber(), smsMsgnextOwner);
+        notificationService.sendEmail(nextOwner.getEmailId(), emailSubject, smsMsgnextOwner);
+        notificationService.sendSMS(nextOwner.getMobileNumber(), smsMsgnextOwner);
     }
 
     @Transactional(readOnly = true)

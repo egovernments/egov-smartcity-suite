@@ -47,8 +47,8 @@ import java.text.DecimalFormat;
 import java.text.FieldPosition;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.infra.config.core.GlobalSettings.currencyName;
-import static org.egov.infra.config.core.GlobalSettings.currencyUnitName;
+import static org.egov.infra.config.core.LocalizationSettings.currencyName;
+import static org.egov.infra.config.core.LocalizationSettings.currencyUnitName;
 import static org.egov.infra.utils.ApplicationConstant.WHITESPACE;
 import static org.egov.infra.utils.StringUtils.isUnsignedNumber;
 import static org.egov.infra.utils.StringUtils.stripExtraSpaces;

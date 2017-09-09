@@ -57,8 +57,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import java.util.Date;
 
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_TIME_PATTERN;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_TIME_ZONE;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_DATE_TIME_PATTERN;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_TIME_ZONE;
 import static org.egov.infra.security.audit.entity.SystemAudit.SEQ_SYSTEMAUDIT;
 
 @Entity

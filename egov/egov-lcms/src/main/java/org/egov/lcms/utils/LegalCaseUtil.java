@@ -55,7 +55,7 @@ import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.lcms.transactions.entity.AppealDocuments;
 import org.egov.lcms.transactions.entity.BipartisanDetails;
@@ -110,7 +110,7 @@ public class LegalCaseUtil {
     private AssignmentService assignmentService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private LegalCaseInterimOrderRepository legalCaseInterimOrderRepository;
@@ -197,7 +197,7 @@ public class LegalCaseUtil {
     }
 
     public void sendSMSOnLegalCase(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 
     public String getOfficerInchargeName(final LegalCase legalcase) {

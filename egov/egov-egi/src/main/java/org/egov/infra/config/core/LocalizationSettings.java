@@ -49,7 +49,7 @@ import java.util.TimeZone;
 import static java.lang.System.getProperty;
 import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
 
-public final class GlobalSettings {
+public final class LocalizationSettings {
 
     public static final String DEFAULT_TIME_ZONE_KEY = "default.time.zone";
     public static final String DEFAULT_COUNTRY_CODE_KEY = "default.country.code";
@@ -82,7 +82,7 @@ public final class GlobalSettings {
     public static final String DEFAULT_ENCODING = "UTF-8";
 
 
-    private GlobalSettings() {
+    private LocalizationSettings() {
         //only static methods
     }
 

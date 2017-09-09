@@ -58,7 +58,7 @@ public class ApplicationThreadLocals {
         return cityName.get();
     }
 
-    public static void setCityName(final String citiName) {
+    public static void setCityName(String citiName) {
         cityName.set(citiName);
     }
 
@@ -66,7 +66,7 @@ public class ApplicationThreadLocals {
         return cityCode.get();
     }
 
-    public static void setCityCode(final String citiCode) {
+    public static void setCityCode(String citiCode) {
         cityCode.set(citiCode);
     }
 
@@ -74,7 +74,7 @@ public class ApplicationThreadLocals {
         return tenantID.get();
     }
 
-    public static void setTenantID(final String tenantJNDI) {
+    public static void setTenantID(String tenantJNDI) {
         tenantID.set(tenantJNDI);
     }
 
@@ -82,7 +82,7 @@ public class ApplicationThreadLocals {
         return domainName.get();
     }
 
-    public static void setDomainName(final String domName) {
+    public static void setDomainName(String domName) {
         domainName.set(domName);
     }
 
@@ -90,7 +90,7 @@ public class ApplicationThreadLocals {
         return userId.get();
     }
 
-    public static void setUserId(final Long userid) {
+    public static void setUserId(Long userid) {
         userId.set(userid);
     }
 
@@ -98,7 +98,7 @@ public class ApplicationThreadLocals {
         return municipalityName.get();
     }
 
-    public static void setMunicipalityName(final String cityMunicipalityName) {
+    public static void setMunicipalityName(String cityMunicipalityName) {
         municipalityName.set(cityMunicipalityName);
     }
 
@@ -106,7 +106,7 @@ public class ApplicationThreadLocals {
         return domainURL.get();
     }
 
-    public static void setDomainURL(final String domURL) {
+    public static void setDomainURL(String domURL) {
         domainURL.set(domURL);
     }
 

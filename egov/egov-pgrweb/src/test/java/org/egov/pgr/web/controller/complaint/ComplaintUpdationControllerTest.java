@@ -52,7 +52,7 @@ import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintHistoryService;
-import org.egov.pgr.service.ComplaintMessagingService;
+import org.egov.pgr.service.ComplaintNotificationService;
 import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
@@ -63,7 +63,6 @@ import org.junit.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
-import org.springframework.context.MessageSource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.validation.BindingResult;
@@ -112,7 +111,7 @@ public class ComplaintUpdationControllerTest extends AbstractContextControllerTe
     @Mock
     private ComplaintProcessFlowService complaintProcessFlowService;
     @Mock
-    private ComplaintMessagingService complaintMessagingService;
+    private ComplaintNotificationService complaintNotificationService;
     @Mock
     private ComplaintValidator complaintValidator;
     private MockMvc mockMvc;

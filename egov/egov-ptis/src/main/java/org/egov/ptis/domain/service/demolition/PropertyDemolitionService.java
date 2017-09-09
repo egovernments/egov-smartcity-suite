@@ -103,7 +103,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -174,7 +174,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
     private MessageSource ptisMessageSource;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private InstallmentDao installmentDao;
@@ -626,7 +626,7 @@ public class PropertyDemolitionService extends PersistenceService<PropertyImpl, 
         }
 
         if (StringUtils.isNotBlank(mobileNumber))
-            messagingService.sendSMS(mobileNumber, smsMsg);
+            notificationService.sendSMS(mobileNumber, smsMsg);
 
     }
 

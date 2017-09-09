@@ -48,7 +48,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
-import org.springframework.context.annotation.Profile;
 import org.springframework.data.domain.AuditorAware;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.data.envers.repository.support.EnversRevisionRepositoryFactoryBean;
@@ -66,7 +65,6 @@ public class RepositoryConfiguration {
     private UserService userService;
 
     @Bean
-    @Profile("production")
     public AuditorAware<User> springSecurityAwareAuditor() {
         return userService::getCurrentUser;
     }

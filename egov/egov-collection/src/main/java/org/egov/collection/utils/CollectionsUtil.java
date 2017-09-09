@@ -95,9 +95,9 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -180,7 +180,7 @@ public class CollectionsUtil {
     private ReportService reportService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
@@ -189,7 +189,7 @@ public class CollectionsUtil {
     MicroserviceUtils microserviceUtils;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     @Autowired
     @Qualifier("branchUserMapService")
@@ -967,7 +967,7 @@ public class CollectionsUtil {
                 ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
-        messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
+        notificationService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
                 "application/pdf", "Receipt" + receiptHeader.getReceiptdate().toString(), attachment);
     }
 
@@ -986,7 +986,7 @@ public class CollectionsUtil {
     public String getBeanNameForDebitAccountHead() {
         Class<?> service = null;
         try {
-            service = Class.forName(applicationProperties.getProperty("collection.debitaccounthead.client.impl.class"));
+            service = Class.forName(environmentSettings.getProperty("collection.debitaccounthead.client.impl.class"));
         } catch (final ClassNotFoundException e) {
             LOGGER.error("Error getting Class name for Debit Account Head" + e);
         }

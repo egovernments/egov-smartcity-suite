@@ -38,7 +38,7 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.messaging.custom.entity;
+package org.egov.infra.notification.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.pims.commons.Position;
@@ -56,7 +56,7 @@ import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.Set;
 
-import static org.egov.infra.messaging.custom.entity.NotificationGroup.SEQ_EG_NOTIFICATION_GROUP;
+import static org.egov.infra.notification.entity.NotificationGroup.SEQ_EG_NOTIFICATION_GROUP;
 
 @Entity
 @Table(name = "EG_NOTIFICATION_GROUP")

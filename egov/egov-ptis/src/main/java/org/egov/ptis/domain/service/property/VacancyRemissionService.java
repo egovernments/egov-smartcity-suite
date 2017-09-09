@@ -115,7 +115,7 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -197,7 +197,7 @@ public class VacancyRemissionService {
     private MessageSource ptisMessageSource;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
@@ -675,7 +675,7 @@ public class VacancyRemissionService {
                     ApplicationThreadLocals.getMunicipalityName() }, null);
 
         if (StringUtils.isNotBlank(mobileNumber))
-            messagingService.sendSMS(mobileNumber, smsMsg);
+            notificationService.sendSMS(mobileNumber, smsMsg);
 
     }
 

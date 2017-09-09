@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,45 +38,20 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.jms.messaging.listener;
+package org.egov.infra.notification;
 
-import org.egov.infra.messaging.email.EmailService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jms.annotation.JmsListener;
-import org.springframework.jms.support.JmsUtils;
-import org.springframework.stereotype.Component;
+public final class NotificationConstants {
 
-import javax.jms.JMSException;
-import javax.jms.MapMessage;
-import javax.jms.Message;
+    public static final String MESSAGE = "message";
+    public static final String EMAIL = "email";
+    public static final String SUBJECT = "subject";
+    public static final String MOBILE = "mobile";
+    public static final String PRIORITY = "priority";
+    public static final String ATTACHMENT = "attachment";
+    public static final String FILETYPE = "filetype";
+    public static final String FILENAME = "filename";
 
-import static org.egov.infra.messaging.MessageConstants.ATTACHMENT;
-import static org.egov.infra.messaging.MessageConstants.EMAIL;
-import static org.egov.infra.messaging.MessageConstants.FILENAME;
-import static org.egov.infra.messaging.MessageConstants.FILETYPE;
-import static org.egov.infra.messaging.MessageConstants.MESSAGE;
-import static org.egov.infra.messaging.MessageConstants.SUBJECT;
-
-@Component
-public class EmailQueueListener {
-
-    @Autowired
-    private EmailService emailService;
-
-    @JmsListener(destination = "java:/jms/queue/email")
-    public void onMessage(Message message) {
-        try {
-            final MapMessage emailMessage = (MapMessage) message;
-            if (emailMessage.itemExists(FILETYPE))
-                emailService.sendMailWithAttachment(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
-                        emailMessage.getString(MESSAGE), emailMessage.getString(FILETYPE),
-                        emailMessage.getString(FILENAME), emailMessage.getObject(ATTACHMENT));
-            else
-                emailService.sendMail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
-                        emailMessage.getString(MESSAGE));
-        } catch (final JMSException e) {
-            throw JmsUtils.convertJmsAccessException(e);
-        }
+    private NotificationConstants() {
+        //only constants
     }
-
 }

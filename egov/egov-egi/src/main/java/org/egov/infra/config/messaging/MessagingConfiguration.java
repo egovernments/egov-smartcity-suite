@@ -38,52 +38,46 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.persistence.datasource.routing;
+package org.egov.infra.config.messaging;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.env.Environment;
+import org.springframework.jms.connection.CachingConnectionFactory;
+import org.springframework.jms.core.JmsTemplate;
+import org.springframework.jms.support.destination.JndiDestinationResolver;
 import org.springframework.jndi.JndiObjectFactoryBean;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
+import javax.jms.ConnectionFactory;
 
-import static org.egov.infra.config.persistence.datasource.routing.DatasourceType.READONLY;
-import static org.egov.infra.config.persistence.datasource.routing.DatasourceType.READWRITE;
+@Configuration("jmsConfiguration")
+public class MessagingConfiguration {
 
-@Configuration
-@Conditional(RoutingDatasourceConfigCondition.class)
-public class RoutingDatasourceConfiguration {
-    @Autowired
-    private Environment env;
-
-    @Bean(name = "readWriteDataSource")
-    public JndiObjectFactoryBean readWriteDataSource() {
-        final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
-        dataSource.setExpectedType(DataSource.class);
-        dataSource.setJndiName(env.getProperty("default.jdbc.jndi.datasource"));
-        return dataSource;
+    @Bean(name = "jmsDestinationResolver")
+    public JndiDestinationResolver jmsDestinationResolver() {
+        JndiDestinationResolver jndiDestinationResolver = new JndiDestinationResolver();
+        jndiDestinationResolver.setResourceRef(true);
+        return jndiDestinationResolver;
     }
 
-    @Bean(name = "readOnlyDataSource")
-    public JndiObjectFactoryBean readOnlyDataSource() {
-        final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
-        dataSource.setExpectedType(DataSource.class);
-        dataSource.setJndiName(env.getProperty("default.jdbc.jndi.readonly.datasource"));
-        return dataSource;
+    @Bean(name = "jmsConnectionFactory")
+    public JndiObjectFactoryBean jmsConnectionFactory() {
+        JndiObjectFactoryBean jmsConnectionFactory = new JndiObjectFactoryBean();
+        jmsConnectionFactory.setExpectedType(ConnectionFactory.class);
+        jmsConnectionFactory.setJndiName("java:/ConnectionFactory");
+        return jmsConnectionFactory;
     }
 
-    @Bean(name = "dataSource")
-    public RoutingDatasource dataSource(DataSource readWriteDataSource, DataSource readOnlyDataSource) {
-        RoutingDatasource routingDataSource = new RoutingDatasource();
-        Map<Object, Object> dataSources = new HashMap<>();
-        dataSources.put(READONLY, readOnlyDataSource);
-        dataSources.put(READWRITE, readWriteDataSource);
-        routingDataSource.setTargetDataSources(dataSources);
-        routingDataSource.setDefaultTargetDataSource(readWriteDataSource);
-        return routingDataSource;
+    @Bean(name = "cacheConnectionFactory")
+    public CachingConnectionFactory cacheConnectionFactory(ConnectionFactory jmsConnectionFactory) {
+        CachingConnectionFactory cacheConnectionFactory = new CachingConnectionFactory();
+        cacheConnectionFactory.setTargetConnectionFactory(jmsConnectionFactory);
+        cacheConnectionFactory.setSessionCacheSize(10);
+        cacheConnectionFactory.setCacheProducers(false);
+        return cacheConnectionFactory;
+    }
+
+    @Bean
+    public JmsTemplate jmsTemplate(CachingConnectionFactory cacheConnectionFactory) {
+        return new JmsTemplate(cacheConnectionFactory);
     }
 }

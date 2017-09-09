@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,11 +38,10 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.messaging.email;
+package org.egov.infra.notification.service;
 
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.exception.ApplicationRuntimeException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.mail.MailParseException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.mail.javamail.MimeMessageHelper;
@@ -58,41 +57,27 @@ public class EmailService {
     @Autowired
     private JavaMailSenderImpl mailSender;
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
-
-    public boolean sendMail(final String toEmail, final String subject, final String mailBody) {
-        boolean isSent = false;
-        if (applicationProperties.emailEnabled()) {
-            final SimpleMailMessage mailMessage = new SimpleMailMessage();
-            mailMessage.setTo(toEmail);
-            mailMessage.setSubject(subject);
-            mailMessage.setText(mailBody);
-            mailSender.send(mailMessage);
-            isSent = true;
-        }
-        return isSent;
+    public void sendEmail(String toEmail, String subject, String mailBody) {
+        SimpleMailMessage mailMessage = new SimpleMailMessage();
+        mailMessage.setTo(toEmail);
+        mailMessage.setSubject(subject);
+        mailMessage.setText(mailBody);
+        mailSender.send(mailMessage);
     }
 
-    public boolean sendMailWithAttachment(final String toEmail, final String subject, final String mailBody, final String fileType, final String fileName,
-            final Object attachment) {
-        boolean isSent = false;
-         if (applicationProperties.emailEnabled()) {
-            MimeMessage message = mailSender.createMimeMessage();
-            try {
-                MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
-                mimeMessageHelper.setTo(toEmail);
-                mimeMessageHelper.setSubject(subject);
-                mimeMessageHelper.setText(mailBody);
-                ByteArrayDataSource source = new ByteArrayDataSource((byte[])attachment,fileType);
-                    mimeMessageHelper.addAttachment(fileName, source);
-            } catch (MessagingException e) {
-                throw new MailParseException(e);
-            } catch (IllegalArgumentException e) {
-                throw new MailParseException(e);
-            }
-            mailSender.send(message);
+    public void sendEmail(String toEmail, String subject, String mailBody, String fileType, String fileName,
+                          byte[] attachment) {
+        MimeMessage message = mailSender.createMimeMessage();
+        try {
+            MimeMessageHelper mimeMessageHelper = new MimeMessageHelper(message, true);
+            mimeMessageHelper.setTo(toEmail);
+            mimeMessageHelper.setSubject(subject);
+            mimeMessageHelper.setText(mailBody);
+            ByteArrayDataSource source = new ByteArrayDataSource(attachment, fileType);
+            mimeMessageHelper.addAttachment(fileName, source);
+        } catch (MessagingException | IllegalArgumentException e) {
+            throw new ApplicationRuntimeException("Error occurred while sending email with attachment", e);
         }
-        return isSent;
+        mailSender.send(message);
     }
 }

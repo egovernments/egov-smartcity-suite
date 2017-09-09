@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,10 +38,11 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.messaging;
+package org.egov.infra.notification.service;
 
 import org.egov.infra.admin.common.service.MessageTemplateService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.notification.entity.NotificationPriority;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -52,18 +53,18 @@ import javax.jms.Destination;
 import javax.jms.MapMessage;
 
 import static org.apache.commons.lang3.StringUtils.isNoneBlank;
-import static org.egov.infra.messaging.MessageConstants.ATTACHMENT;
-import static org.egov.infra.messaging.MessageConstants.EMAIL;
-import static org.egov.infra.messaging.MessageConstants.FILENAME;
-import static org.egov.infra.messaging.MessageConstants.FILETYPE;
-import static org.egov.infra.messaging.MessageConstants.MESSAGE;
-import static org.egov.infra.messaging.MessageConstants.MOBILE;
-import static org.egov.infra.messaging.MessageConstants.PRIORITY;
-import static org.egov.infra.messaging.MessageConstants.SUBJECT;
-import static org.egov.infra.messaging.MessagePriority.MEDIUM;
+import static org.egov.infra.notification.NotificationConstants.ATTACHMENT;
+import static org.egov.infra.notification.NotificationConstants.EMAIL;
+import static org.egov.infra.notification.NotificationConstants.FILENAME;
+import static org.egov.infra.notification.NotificationConstants.FILETYPE;
+import static org.egov.infra.notification.NotificationConstants.MESSAGE;
+import static org.egov.infra.notification.NotificationConstants.MOBILE;
+import static org.egov.infra.notification.NotificationConstants.PRIORITY;
+import static org.egov.infra.notification.NotificationConstants.SUBJECT;
+import static org.egov.infra.notification.entity.NotificationPriority.MEDIUM;
 
 @Service
-public class MessagingService {
+public class NotificationService {
 
     @Autowired
     private JmsTemplate jmsTemplate;
@@ -126,7 +127,7 @@ public class MessagingService {
                 messageTemplateService.getByTemplateName(templateName), messageValues), MEDIUM);
     }
 
-    public void sendSMS(String mobileNo, String message, MessagePriority priority) {
+    public void sendSMS(String mobileNo, String message, NotificationPriority priority) {
         if (smsEnabled && isNoneBlank(mobileNo, message))
             jmsTemplate.send(smsQueue, session -> {
                 MapMessage mapMessage = session.createMapMessage();

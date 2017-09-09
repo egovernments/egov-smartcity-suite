@@ -38,52 +38,66 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.persistence.datasource.routing;
+package org.egov.infra.config.core;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Conditional;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.core.env.Environment;
-import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.stereotype.Component;
 
-import javax.sql.DataSource;
-import java.util.HashMap;
-import java.util.Map;
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 
-import static org.egov.infra.config.persistence.datasource.routing.DatasourceType.READONLY;
-import static org.egov.infra.config.persistence.datasource.routing.DatasourceType.READWRITE;
 
-@Configuration
-@Conditional(RoutingDatasourceConfigCondition.class)
-public class RoutingDatasourceConfiguration {
+@Component
+public class EnvironmentSettings {
+
+    private static final String DEV_MODE = "dev.mode";
+    private static final String MAIL_ENABLED = "mail.enabled";
+    private static final String SMS_ENABLED = "sms.enabled";
+    private static final String USER_PASWRD_EXPIRY_DAYS = "user.pwd.expiry.days";
+    private static final String HIBERNATE_JDBC_BATCH_SIZE = "hibernate.jdbc.batch_size";
+    private static final String STATE_WIDE_SCHEMA_NAME = "statewide.schema.name";
+    private static final String DEFAULT_SCHEMA_NAME = "default.schema.name";
+
     @Autowired
-    private Environment env;
+    private Environment environment;
 
-    @Bean(name = "readWriteDataSource")
-    public JndiObjectFactoryBean readWriteDataSource() {
-        final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
-        dataSource.setExpectedType(DataSource.class);
-        dataSource.setJndiName(env.getProperty("default.jdbc.jndi.datasource"));
-        return dataSource;
+    public String getProperty(String propKey) {
+        return this.environment.getProperty(propKey, EMPTY);
     }
 
-    @Bean(name = "readOnlyDataSource")
-    public JndiObjectFactoryBean readOnlyDataSource() {
-        final JndiObjectFactoryBean dataSource = new JndiObjectFactoryBean();
-        dataSource.setExpectedType(DataSource.class);
-        dataSource.setJndiName(env.getProperty("default.jdbc.jndi.readonly.datasource"));
-        return dataSource;
+    public <T> T getProperty(String propKey, Class<T> type) {
+        return this.environment.getProperty(propKey, type);
     }
 
-    @Bean(name = "dataSource")
-    public RoutingDatasource dataSource(DataSource readWriteDataSource, DataSource readOnlyDataSource) {
-        RoutingDatasource routingDataSource = new RoutingDatasource();
-        Map<Object, Object> dataSources = new HashMap<>();
-        dataSources.put(READONLY, readOnlyDataSource);
-        dataSources.put(READWRITE, readWriteDataSource);
-        routingDataSource.setTargetDataSources(dataSources);
-        routingDataSource.setDefaultTargetDataSource(readWriteDataSource);
-        return routingDataSource;
+    public boolean devMode() {
+        return this.environment.getProperty(DEV_MODE, Boolean.class);
+    }
+
+    public boolean emailEnabled() {
+        return this.environment.getProperty(MAIL_ENABLED, Boolean.class);
+    }
+
+    public boolean smsEnabled() {
+        return this.environment.getProperty(SMS_ENABLED, Boolean.class);
+    }
+
+    public Integer userPasswordExpiryInDays() {
+        return this.environment.getProperty(USER_PASWRD_EXPIRY_DAYS, Integer.class);
+    }
+
+    public Integer getBatchUpdateSize() {
+        return this.environment.getProperty(HIBERNATE_JDBC_BATCH_SIZE, Integer.class);
+    }
+
+    public String statewideSchemaName() {
+        return environment.getProperty(STATE_WIDE_SCHEMA_NAME);
+    }
+
+    public String defaultSchemaName() {
+        return environment.getProperty(DEFAULT_SCHEMA_NAME);
+    }
+
+    public String schemaName(String domainName) {
+        return environment.getProperty("tenant." + domainName, defaultSchemaName());
     }
 }

@@ -48,6 +48,7 @@
 package org.egov.infra.utils;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.commons.text.RandomStringGenerator;
 import org.json.simple.JSONObject;
 
 import java.nio.charset.Charset;
@@ -65,6 +66,9 @@ import static org.egov.infra.utils.DateUtils.currentDateToFileNameFormat;
 import static org.egov.infra.validation.regex.Constants.UNSIGNED_NUMERIC;
 
 public class StringUtils extends org.apache.commons.lang.StringUtils {
+
+    public static final RandomStringGenerator UNIQUE_STRING_GENERATOR = new RandomStringGenerator.Builder()
+            .withinRange('a', 'z').build();
 
     public static final Pattern SPL_CHAR_PATRN = Pattern.compile("([&;,+=\\[\\]\\{\\}><^\\(\\)#:~`/\\\\!\'\"])");
 
@@ -139,5 +143,9 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     public static String stripExtraSpaces(String value) {
         return value.trim().replaceAll("\\s{2,}", WHITESPACE);
+    }
+
+    public static String uniqueString(int codePoint) {
+        return UNIQUE_STRING_GENERATOR.generate(codePoint);
     }
 }

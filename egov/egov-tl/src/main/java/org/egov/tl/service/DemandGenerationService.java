@@ -45,7 +45,7 @@ import org.egov.commons.dao.InstallmentDao;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.tl.entity.DemandGenerationLog;
@@ -106,8 +106,8 @@ public class DemandGenerationService {
     private int batchSize;
 
     @Autowired
-    public DemandGenerationService(ApplicationProperties applicationProperties) {
-        this.batchSize = applicationProperties.getBatchUpdateSize();
+    public DemandGenerationService(EnvironmentSettings environmentSettings) {
+        this.batchSize = environmentSettings.getBatchUpdateSize();
     }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW, timeout = 7200)

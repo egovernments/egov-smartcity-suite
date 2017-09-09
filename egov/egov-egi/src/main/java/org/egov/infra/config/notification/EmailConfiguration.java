@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,48 +38,55 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.jms;
+package org.egov.infra.config.notification;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.jms.annotation.EnableJms;
-import org.springframework.jms.connection.CachingConnectionFactory;
-import org.springframework.jms.core.JmsTemplate;
-import org.springframework.jms.support.destination.JndiDestinationResolver;
-import org.springframework.jndi.JndiObjectFactoryBean;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 
-import javax.jms.ConnectionFactory;
+import java.util.Properties;
 
-@Configuration("jmsConfiguration")
-@EnableJms
-public class JMSConfiguration {
+@Configuration
+public class EmailConfiguration {
 
-    @Bean(name = "jmsDestinationResolver")
-    public JndiDestinationResolver jmsDestinationResolver() {
-        JndiDestinationResolver jndiDestinationResolver = new JndiDestinationResolver();
-        jndiDestinationResolver.setResourceRef(true);
-        return jndiDestinationResolver;
-    }
+    @Value("${mail.port}")
+    private Integer mailPort;
 
-    @Bean(name = "jmsConnectionFactory")
-    public JndiObjectFactoryBean jmsConnectionFactory() {
-        JndiObjectFactoryBean jmsConnectionFactory = new JndiObjectFactoryBean();
-        jmsConnectionFactory.setExpectedType(ConnectionFactory.class);
-        jmsConnectionFactory.setJndiName("java:/ConnectionFactory");
-        return jmsConnectionFactory;
-    }
+    @Value("${mail.host}")
+    private String mailHost;
 
-    @Bean(name = "cacheConnectionFactory")
-    public CachingConnectionFactory cacheConnectionFactory(ConnectionFactory jmsConnectionFactory) {
-        CachingConnectionFactory cacheConnectionFactory = new CachingConnectionFactory();
-        cacheConnectionFactory.setTargetConnectionFactory(jmsConnectionFactory);
-        cacheConnectionFactory.setSessionCacheSize(10);
-        cacheConnectionFactory.setCacheProducers(false);
-        return cacheConnectionFactory;
-    }
+    @Value("${mail.protocol}")
+    private String mailProtocol;
+
+    @Value("${mail.sender.username}")
+    private String mailSenderUsername;
+
+    @Value("${mail.sender.password}")
+    private String mailSenderPassword;
+
+    @Value("${mail.smtps.auth}")
+    private String mailSMTPSAuth;
+
+    @Value("${mail.smtps.starttls.enable}")
+    private String mailStartTLSEnabled;
+
+    @Value("${mail.smtps.debug}")
+    private String mailSMTPSDebug;
 
     @Bean
-    public JmsTemplate jmsTemplate(CachingConnectionFactory cacheConnectionFactory) {
-        return new JmsTemplate(cacheConnectionFactory);
+    public JavaMailSenderImpl mailSender() {
+        final JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
+        mailSender.setPort(mailPort);
+        mailSender.setHost(mailHost);
+        mailSender.setProtocol(mailProtocol);
+        mailSender.setUsername(mailSenderUsername);
+        mailSender.setPassword(mailSenderPassword);
+        final Properties mailProperties = new Properties();
+        mailProperties.setProperty("mail.smtps.auth", mailSMTPSAuth);
+        mailProperties.setProperty("mail.smtps.starttls.enable", mailStartTLSEnabled);
+        mailProperties.setProperty("mail.smtps.debug", mailSMTPSDebug);
+        mailSender.setJavaMailProperties(mailProperties);
+        return mailSender;
     }
 }

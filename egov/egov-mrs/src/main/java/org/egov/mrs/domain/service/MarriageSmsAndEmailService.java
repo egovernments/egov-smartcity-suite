@@ -47,7 +47,7 @@ import java.util.List;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -83,7 +83,7 @@ public class MarriageSmsAndEmailService {
     private static final String MSG_KEY_EMAIL_REISSUE_APPROVED_SUBJECT = "msg.reissueApprove.mail.subject";
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource mrsMessageSource;
@@ -118,10 +118,10 @@ public class MarriageSmsAndEmailService {
             final String message = buildEmailMessage(registration, msgKey, referenceNumber);
             if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
                     && registration.getHusband().getContactInfo().getMobileNo() != null)
-                messagingService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
+                notificationService.sendSMS(registration.getHusband().getContactInfo().getMobileNo(), message);
             if (registration.getWife() != null && registration.getWife().getContactInfo() != null
                     && registration.getWife().getContactInfo().getMobileNo() != null)
-                messagingService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
+                notificationService.sendSMS(registration.getWife().getContactInfo().getMobileNo(), message);
         }
     }
 
@@ -146,10 +146,10 @@ public class MarriageSmsAndEmailService {
             final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
             if (registration.getHusband() != null && registration.getHusband().getContactInfo() != null
                     && registration.getHusband().getContactInfo().getEmail() != null)
-                messagingService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
+                notificationService.sendEmail(registration.getHusband().getContactInfo().getEmail(), subject, message);
             if (registration.getWife() != null && registration.getWife().getContactInfo() != null
                     && registration.getWife().getContactInfo().getEmail() != null)
-                messagingService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
+                notificationService.sendEmail(registration.getWife().getContactInfo().getEmail(), subject, message);
         }
     }
 
@@ -169,7 +169,7 @@ public class MarriageSmsAndEmailService {
                 msgKey= MSG_KEY_SMS_REISSUE_REGISTERED;
             }
             final String message = buildMessageForIssueCertificate(reIssue, msgKey);
-            messagingService.sendSMS(reIssue.getApplicant().getContactInfo().getMobileNo(), message);
+            notificationService.sendSMS(reIssue.getApplicant().getContactInfo().getMobileNo(), message);
         }
     }
 
@@ -189,7 +189,7 @@ public class MarriageSmsAndEmailService {
             }
             final String message = buildMessageForIssueCertificate(reIssue, msgKeyMail);
             final String subject = mrsMessageSource.getMessage(msgKeyMailSubject, null, null);
-            messagingService.sendEmail(reIssue.getApplicant().getContactInfo().getEmail(), subject, message);
+            notificationService.sendEmail(reIssue.getApplicant().getContactInfo().getEmail(), subject, message);
         }
     }
 

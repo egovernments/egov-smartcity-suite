@@ -54,7 +54,7 @@ import org.egov.council.entity.CouncilSmsDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -69,7 +69,7 @@ public class CouncilSmsAndEmailService {
     private static final String AGENDAATTACHFILENAME = "agendadetails.rtf";
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -290,12 +290,12 @@ public class CouncilSmsAndEmailService {
     }
 
     public void sendSMSOnSewerageForMeeting(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 
     public void sendEmailOnSewerageForMeetingWithAttachment(final String email, final String emailBody,
             final String emailSubject, final byte[] attachment) {
-        messagingService.sendEmailWithAttachment(email, emailSubject, emailBody, "application/rtf", AGENDAATTACHFILENAME,
+        notificationService.sendEmailWithAttachment(email, emailSubject, emailBody, "application/rtf", AGENDAATTACHFILENAME,
                 attachment);
     }
 

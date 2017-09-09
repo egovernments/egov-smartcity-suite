@@ -133,7 +133,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.NumberUtil;
@@ -192,7 +192,7 @@ public class PropertyTaxCommonUtils {
     private DepartmentService departmentService;
         
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     /**
      * Gives the first half of the current financial year
@@ -720,9 +720,9 @@ public class PropertyTaxCommonUtils {
                     + ApplicationThreadLocals.getMunicipalityName();
         }
         if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
-            messagingService.sendEmail(emailid, emailSubject, emailBody);
+            notificationService.sendEmail(emailid, emailSubject, emailBody);
         if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
-            messagingService.sendSMS(mobileNumber, smsMsg);
+            notificationService.sendSMS(mobileNumber, smsMsg);
     }
 
     public String getNoticeNumber(final String applicationNo, final String workFlowAction) {

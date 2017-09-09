@@ -41,7 +41,7 @@
 package org.egov.infra.web.filter;
 
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import javax.servlet.Filter;
@@ -59,14 +59,14 @@ import static org.egov.infra.web.utils.WebUtils.extractRequestedDomainName;
 public class ApplicationTenantResolverFilter implements Filter {
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain)
             throws IOException, ServletException {
         String domainURL = extractRequestDomainURL((HttpServletRequest) request, false);
         String domainName = extractRequestedDomainName(domainURL);
-        ApplicationThreadLocals.setTenantID(applicationProperties.getProperty("tenant." + domainName));
+        ApplicationThreadLocals.setTenantID(environmentSettings.schemaName(domainName));
         ApplicationThreadLocals.setDomainName(domainName);
         ApplicationThreadLocals.setDomainURL(domainURL);
         chain.doFilter(request, response);

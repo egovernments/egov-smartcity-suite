@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,19 +38,46 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.jms.messaging.errorhandler;
+package org.egov.infra.config.notification;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.util.ErrorHandler;
+import org.egov.infra.config.notification.listener.EmailNotificationListener;
+import org.egov.infra.config.notification.listener.SMSNotificationListener;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.DependsOn;
+import org.springframework.jndi.JndiObjectFactoryBean;
 
-public class MessagingErrorHandler implements ErrorHandler {
+import javax.jms.Destination;
 
-    private static final Logger LOGGER = LoggerFactory.getLogger(MessagingErrorHandler.class);
+@Configuration
+@DependsOn("jmsConfiguration")
+public class NotificationConfiguration {
 
-    @Override
-    public void handleError(final Throwable t) {
-        LOGGER.warn("Messaging Service returns with error : {}", t.getMessage());
+    @Bean(name = "smsQueue")
+    public JndiObjectFactoryBean smsQueue() {
+        JndiObjectFactoryBean smsQueue = new JndiObjectFactoryBean();
+        smsQueue.setExpectedType(Destination.class);
+        smsQueue.setResourceRef(true);
+        smsQueue.setJndiName("java:/jms/queue/sms");
+        return smsQueue;
     }
 
+    @Bean(name = "emailQueue")
+    public JndiObjectFactoryBean emailQueue() {
+        JndiObjectFactoryBean emailQueue = new JndiObjectFactoryBean();
+        emailQueue.setExpectedType(Destination.class);
+        emailQueue.setResourceRef(true);
+        emailQueue.setJndiName("java:/jms/queue/email");
+        return emailQueue;
+    }
+
+    @Bean
+    public EmailNotificationListener emailNotificationListener() {
+        return new EmailNotificationListener();
+    }
+
+    @Bean
+    public SMSNotificationListener smsNotificationListener() {
+        return new SMSNotificationListener();
+    }
 }

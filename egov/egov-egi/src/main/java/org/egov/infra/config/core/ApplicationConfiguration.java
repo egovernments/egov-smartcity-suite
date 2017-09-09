@@ -40,8 +40,6 @@
 
 package org.egov.infra.config.core;
 
-import org.egov.infra.config.messaging.EmailConfiguration;
-import org.egov.infra.config.properties.ApplicationProperties;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.engine.jasper.JasperReportService;
@@ -54,7 +52,6 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.EnableAspectJAutoProxy;
-import org.springframework.context.annotation.Import;
 import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.i18n.SessionLocaleResolver;
@@ -66,21 +63,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Properties;
 
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_COUNTRY_CODE_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_CODE_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_NAME_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_NAME_SHORT_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_SYMBOL_HEX_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_CURRENCY_SYMBOL_UTF8_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_PATTERN_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_DATE_TIME_PATTERN_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_ENCODING_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_LOCALE_KEY;
-import static org.egov.infra.config.core.GlobalSettings.DEFAULT_TIME_ZONE_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_COUNTRY_CODE_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_CURRENCY_CODE_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_CURRENCY_NAME_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_CURRENCY_NAME_SHORT_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_CURRENCY_SYMBOL_HEX_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_CURRENCY_SYMBOL_UTF8_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_DATE_PATTERN_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_DATE_TIME_PATTERN_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_ENCODING_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_LOCALE_KEY;
+import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_TIME_ZONE_KEY;
 
 @Configuration
 @EnableAspectJAutoProxy(proxyTargetClass = true)
-@Import(EmailConfiguration.class)
 public class ApplicationConfiguration {
 
     @Resource(name = "tenants")
@@ -90,7 +86,7 @@ public class ApplicationConfiguration {
     private ApplicationContext context;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     @Value("${filestoreservice.beanname}")
     private String fileStoreServiceBeanName;
@@ -109,8 +105,8 @@ public class ApplicationConfiguration {
     @DependsOn(value = "tenants")
     public List<String> cities() {
         final List<String> cities = new ArrayList<>(tenants);
-        if (!applicationProperties.devMode())
-            cities.remove(applicationProperties.statewideSchemaName());
+        if (!environmentSettings.devMode())
+            cities.remove(environmentSettings.statewideSchemaName());
         return cities;
     }
 
@@ -130,17 +126,17 @@ public class ApplicationConfiguration {
         methodInvokingFactoryBean.setTargetObject(System.getProperties());
         methodInvokingFactoryBean.setTargetMethod("putAll");
         Properties properties = new Properties();
-        properties.setProperty(DEFAULT_TIME_ZONE_KEY, applicationProperties.getProperty(DEFAULT_TIME_ZONE_KEY));
-        properties.setProperty(DEFAULT_COUNTRY_CODE_KEY, applicationProperties.getProperty(DEFAULT_COUNTRY_CODE_KEY));
-        properties.setProperty(DEFAULT_CURRENCY_CODE_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_CODE_KEY));
-        properties.setProperty(DEFAULT_CURRENCY_NAME_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_NAME_KEY));
-        properties.setProperty(DEFAULT_CURRENCY_NAME_SHORT_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_NAME_SHORT_KEY));
-        properties.setProperty(DEFAULT_CURRENCY_SYMBOL_UTF8_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_SYMBOL_UTF8_KEY));
-        properties.setProperty(DEFAULT_CURRENCY_SYMBOL_HEX_KEY, applicationProperties.getProperty(DEFAULT_CURRENCY_SYMBOL_HEX_KEY));
-        properties.setProperty(DEFAULT_LOCALE_KEY, applicationProperties.getProperty(DEFAULT_LOCALE_KEY));
-        properties.setProperty(DEFAULT_ENCODING_KEY, applicationProperties.getProperty(DEFAULT_ENCODING_KEY));
-        properties.setProperty(DEFAULT_DATE_PATTERN_KEY, applicationProperties.getProperty(DEFAULT_DATE_PATTERN_KEY));
-        properties.setProperty(DEFAULT_DATE_TIME_PATTERN_KEY, applicationProperties.getProperty(DEFAULT_DATE_TIME_PATTERN_KEY));
+        properties.setProperty(DEFAULT_TIME_ZONE_KEY, environmentSettings.getProperty(DEFAULT_TIME_ZONE_KEY));
+        properties.setProperty(DEFAULT_COUNTRY_CODE_KEY, environmentSettings.getProperty(DEFAULT_COUNTRY_CODE_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_CODE_KEY, environmentSettings.getProperty(DEFAULT_CURRENCY_CODE_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_NAME_KEY, environmentSettings.getProperty(DEFAULT_CURRENCY_NAME_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_NAME_SHORT_KEY, environmentSettings.getProperty(DEFAULT_CURRENCY_NAME_SHORT_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_SYMBOL_UTF8_KEY, environmentSettings.getProperty(DEFAULT_CURRENCY_SYMBOL_UTF8_KEY));
+        properties.setProperty(DEFAULT_CURRENCY_SYMBOL_HEX_KEY, environmentSettings.getProperty(DEFAULT_CURRENCY_SYMBOL_HEX_KEY));
+        properties.setProperty(DEFAULT_LOCALE_KEY, environmentSettings.getProperty(DEFAULT_LOCALE_KEY));
+        properties.setProperty(DEFAULT_ENCODING_KEY, environmentSettings.getProperty(DEFAULT_ENCODING_KEY));
+        properties.setProperty(DEFAULT_DATE_PATTERN_KEY, environmentSettings.getProperty(DEFAULT_DATE_PATTERN_KEY));
+        properties.setProperty(DEFAULT_DATE_TIME_PATTERN_KEY, environmentSettings.getProperty(DEFAULT_DATE_TIME_PATTERN_KEY));
         methodInvokingFactoryBean.setArguments(new Object[]{properties});
         methodInvokingFactoryBean.prepare();
         methodInvokingFactoryBean.invoke();

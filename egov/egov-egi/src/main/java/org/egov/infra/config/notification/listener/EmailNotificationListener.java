@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,10 +38,9 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.jms.messaging.listener;
+package org.egov.infra.config.notification.listener;
 
-import org.egov.infra.messaging.MessagePriority;
-import org.egov.infra.messaging.sms.SMSService;
+import org.egov.infra.notification.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jms.annotation.JmsListener;
 import org.springframework.jms.support.JmsUtils;
@@ -51,22 +50,30 @@ import javax.jms.JMSException;
 import javax.jms.MapMessage;
 import javax.jms.Message;
 
-import static org.egov.infra.messaging.MessageConstants.MESSAGE;
-import static org.egov.infra.messaging.MessageConstants.MOBILE;
-import static org.egov.infra.messaging.MessageConstants.PRIORITY;
+import static org.egov.infra.notification.NotificationConstants.ATTACHMENT;
+import static org.egov.infra.notification.NotificationConstants.EMAIL;
+import static org.egov.infra.notification.NotificationConstants.FILENAME;
+import static org.egov.infra.notification.NotificationConstants.FILETYPE;
+import static org.egov.infra.notification.NotificationConstants.MESSAGE;
+import static org.egov.infra.notification.NotificationConstants.SUBJECT;
 
 @Component
-public class SMSQueueListener {
+public class EmailNotificationListener {
 
     @Autowired
-    private SMSService smsService;
+    private EmailService emailService;
 
-    @JmsListener(destination = "java:/jms/queue/sms")
-    public void processMessage(Message message) {
+    @JmsListener(destination = "java:/jms/queue/email")
+    public void onMessage(Message message) {
         try {
             final MapMessage emailMessage = (MapMessage) message;
-            smsService.sendSMS(emailMessage.getString(MOBILE), emailMessage.getString(MESSAGE),
-                    MessagePriority.valueOf(emailMessage.getString(PRIORITY)));
+            if (emailMessage.itemExists(FILETYPE))
+                emailService.sendEmail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
+                        emailMessage.getString(MESSAGE), emailMessage.getString(FILETYPE),
+                        emailMessage.getString(FILENAME), emailMessage.getBytes(ATTACHMENT));
+            else
+                emailService.sendEmail(emailMessage.getString(EMAIL), emailMessage.getString(SUBJECT),
+                        emailMessage.getString(MESSAGE));
         } catch (final JMSException e) {
             throw JmsUtils.convertJmsAccessException(e);
         }

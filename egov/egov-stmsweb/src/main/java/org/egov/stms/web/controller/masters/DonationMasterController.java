@@ -42,7 +42,7 @@ import com.google.gson.GsonBuilder;
 import org.apache.commons.io.IOUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.FinancialYearService;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.egov.infra.utils.DateUtils;
 import org.egov.stms.masters.entity.DonationDetailMaster;
 import org.egov.stms.masters.entity.DonationMaster;
@@ -238,7 +238,7 @@ public class DonationMasterController {
             } catch (final ParseException e) {
                 LOG.error("Parse Exception" + e);
             }
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(donationMasterService.getDonationMasters(type, effectivefromDate,
                         donationMasterSearch.getStatus()))
                 + "}", response.getWriter());

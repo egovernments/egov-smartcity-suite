@@ -42,7 +42,7 @@ package org.egov.ptis.domain.service.property;
 
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SMSEmailService {
@@ -51,13 +51,13 @@ public class SMSEmailService {
     private CityService cityService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     public String getCityName() {
         return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getName();
     }
 
     public void sendSMSOnNewAssessment(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 }

@@ -40,13 +40,12 @@
 
 package org.egov.infra.admin.common.service;
 
-import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.infra.admin.common.entity.IdentityRecovery;
 import org.egov.infra.admin.common.repository.IdentityRecoveryRepository;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.notification.service.NotificationService;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -57,12 +56,13 @@ import java.util.Date;
 import java.util.Optional;
 import java.util.UUID;
 
-import static org.egov.infra.messaging.MessagePriority.HIGH;
+import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
+import static org.egov.infra.utils.StringUtils.uniqueString;
 
 @Service
 @Transactional(readOnly = true)
 public class IdentityRecoveryService {
-    private static final String USER_PASWRD_RECOVERY_TMPLTE = "user.pwd.recovery";
+    private static String USER_PWD_RECOVERY_TEMPLATE = "user.pwd.recovery";
 
     @Autowired
     private IdentityRecoveryRepository identityRecoveryRepository;
@@ -71,54 +71,53 @@ public class IdentityRecoveryService {
     private UserService userService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
-    public Optional<IdentityRecovery> getByToken(final String token) {
+    public Optional<IdentityRecovery> getByToken(String token) {
         return Optional.ofNullable(identityRecoveryRepository.findByToken(token));
     }
 
     @Transactional
-    public IdentityRecovery generate(final User user, final Date timeToExpire, boolean byOTP) {
-        final IdentityRecovery identityRecovery = new IdentityRecovery();
-        identityRecovery.setToken(byOTP ?
-                RandomStringUtils.random(5, Boolean.TRUE, Boolean.TRUE).toUpperCase() :
-                UUID.randomUUID().toString());
+    public IdentityRecovery generate(User user, Date timeToExpire, boolean byOTP) {
+        IdentityRecovery identityRecovery = new IdentityRecovery();
+        identityRecovery.setToken(byOTP ? uniqueString(5).toUpperCase() : UUID.randomUUID().toString());
         identityRecovery.setUser(user);
         identityRecovery.setExpiry(timeToExpire);
         return identityRecoveryRepository.save(identityRecovery);
     }
 
     @Transactional
-    public boolean generateAndSendUserPasswordRecovery(final String identity, final String urlToSent, boolean byOTP) {
-        final Optional<User> user = userService.checkUserWithIdentity(identity);
+    public boolean generateAndSendUserPasswordRecovery(String identity, String urlToSent, boolean byOTP) {
+        Optional<User> user = userService.checkUserWithIdentity(identity);
         if (user.isPresent()) {
-            final IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(5).toDate(), byOTP);
+            IdentityRecovery identityRecovery = generate(user.get(), new DateTime().plusMinutes(5).toDate(), byOTP);
             if (byOTP) {
                 String message = "Your OTP for recovering password is " + identityRecovery.getToken();
-                messagingService.sendSMS(user.get().getMobileNumber(), message, HIGH);
-                messagingService.sendEmail(user.get().getEmailId(), "Password Reset", message);
-            } else
-                messagingService.sendEmail(identityRecovery.getUser(), "Password Recovery", USER_PASWRD_RECOVERY_TMPLTE, urlToSent,
-                        identityRecovery.getToken(), System.getProperty("line.separator"));
+                notificationService.sendSMS(user.get().getMobileNumber(), message, HIGH);
+                notificationService.sendEmail(user.get().getEmailId(), "Password Reset", message);
+            } else {
+                notificationService.sendEmail(identityRecovery.getUser(), "Password Recovery",
+                        USER_PWD_RECOVERY_TEMPLATE, urlToSent, identityRecovery.getToken(), System.lineSeparator());
+            }
         }
         return user.isPresent();
     }
 
     @Transactional
-    public boolean validateAndResetPassword(final String token, final String newPassword) {
+    public boolean validateAndResetPassword(String token, String newPassword) {
         boolean recoverd = false;
-        final Optional<IdentityRecovery> identityRecovery = getByToken(token);
+        Optional<IdentityRecovery> identityRecovery = getByToken(token);
         if (identityRecovery.isPresent()) {
-            final IdentityRecovery idRecovery = identityRecovery.get();
+            IdentityRecovery idRecovery = identityRecovery.get();
             if (idRecovery.getExpiry().isAfterNow()) {
-                final User user = idRecovery.getUser();
-                user.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
+                User user = idRecovery.getUser();
+                user.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
                 user.setPassword(passwordEncoder.encode(newPassword));
                 userService.updateUser(user);
                 recoverd = true;
@@ -128,8 +127,8 @@ public class IdentityRecoveryService {
         return recoverd;
     }
 
-    public boolean tokenValid(final String token) {
-        final Optional<IdentityRecovery> identityRecovery = getByToken(token);
+    public boolean tokenValid(String token) {
+        Optional<IdentityRecovery> identityRecovery = getByToken(token);
         return identityRecovery.isPresent() && identityRecovery.get().getExpiry().isAfterNow();
     }
 

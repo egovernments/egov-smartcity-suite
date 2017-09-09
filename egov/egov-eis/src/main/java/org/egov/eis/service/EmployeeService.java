@@ -59,7 +59,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.service.StateHistoryService;
 import org.egov.infra.workflow.service.StateService;
@@ -96,7 +96,7 @@ public class EmployeeService implements EntityTypeService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -170,7 +170,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Transactional
     public void create(final Employee employee) {
-        employee.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
+        employee.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
 
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
 
@@ -209,7 +209,7 @@ public class EmployeeService implements EntityTypeService {
 
     @Transactional
     public void createEmployeeData(final Employee employee) {
-        employee.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
+        employee.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         employee.setPassword(passwordEncoder.encode(EisConstants.DEFAULT_EMPLOYEE_PWD));
         employee.getRoles().add(roleService.getRoleByName(EisConstants.ROLE_EMPLOYEE));
         employeeRepository.save(employee);

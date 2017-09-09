@@ -44,7 +44,7 @@ import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.repository.LocationRepository;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,7 +63,7 @@ public class LocationService {
     private UserService userService;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     @Autowired
     public LocationService(LocationRepository locationRepository) {
@@ -82,7 +82,7 @@ public class LocationService {
         User user = this.userService.getUserByUsername(username);
         boolean userRequiredLocation = false;
         if (user != null) {
-            List<String> configuredUserRoles = Arrays.asList(this.applicationProperties.getProperty("location.user.role").split(","));
+            List<String> configuredUserRoles = Arrays.asList(this.environmentSettings.getProperty("location.user.role").split(","));
             for (Role role : user.getRoles()) {
                 if (configuredUserRoles.contains(role.getName())) {
                     userRequiredLocation = true;

@@ -113,7 +113,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -203,7 +203,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private PropertyService propertyService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -943,11 +943,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
         for (final User transferor : propertyMutation.getTransferorInfos())
             if (StringUtils.isNotBlank(transferor.getMobileNumber()) && StringUtils.isNotBlank(smsMsgForTransferor))
-                messagingService.sendSMS(transferor.getMobileNumber(), smsMsgForTransferor);
+                notificationService.sendSMS(transferor.getMobileNumber(), smsMsgForTransferor);
         for (final PropertyMutationTransferee transferee : propertyMutation.getTransfereeInfos())
             if (StringUtils.isNotBlank(transferee.getTransferee().getMobileNumber())
                     && StringUtils.isNotBlank(smsMsgForTransferee))
-                messagingService.sendSMS(transferee.getTransferee().getMobileNumber(), smsMsgForTransferee);
+                notificationService.sendSMS(transferee.getTransferee().getMobileNumber(), smsMsgForTransferee);
     }
 
     public void buildEmail(final PropertyMutation propertyMutation) {
@@ -1007,11 +1007,11 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         for (final User transferor : propertyMutation.getTransferorInfos())
             if (StringUtils.isNotBlank(transferor.getEmailId()) && StringUtils.isNotBlank(subject)
                     && StringUtils.isNotBlank(emailBodyTransferor))
-                messagingService.sendEmail(transferor.getEmailId(), subject, emailBodyTransferor);
+                notificationService.sendEmail(transferor.getEmailId(), subject, emailBodyTransferor);
         for (final PropertyMutationTransferee transferee : propertyMutation.getTransfereeInfos())
             if (StringUtils.isNotBlank(transferee.getTransferee().getEmailId()) && StringUtils.isNotBlank(subject)
                     && StringUtils.isNotBlank(emailBodyTransferee))
-                messagingService.sendEmail(transferee.getTransferee().getEmailId(), subject, emailBodyTransferee);
+                notificationService.sendEmail(transferee.getTransferee().getEmailId(), subject, emailBodyTransferee);
     }
 
     private String getNatureOfTask() {

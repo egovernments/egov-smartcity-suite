@@ -41,7 +41,7 @@ package org.egov.tl.service;
 
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,7 +78,7 @@ public class TradeLicenseSmsAndEmailService {
     private static final String MSG_LICENSE_DIGI_APPROVALAMT_BODY = "msg.%s.license.digienabled.approvalAmt.email.body";
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -88,11 +88,11 @@ public class TradeLicenseSmsAndEmailService {
     private LicenseUtils licenseUtils;
 
     public void sendSMSOnLicense(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 
     public void sendEmailOnLicense(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailSubject, emailBody);
+        notificationService.sendEmail(email, emailSubject, emailBody);
     }
 
     public String getMunicipalityName() {

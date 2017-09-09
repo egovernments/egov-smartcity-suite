@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,18 +38,19 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.messaging;
+package org.egov.infra.config.messaging;
 
-public final class MessageConstants {
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.util.ErrorHandler;
 
-    public static final String MESSAGE = "message";
-    public static final String EMAIL = "email";
-    public static final String SUBJECT = "subject";
-    public static final String MOBILE = "mobile";
-    public static final String PRIORITY = "priority";
-    public static final String ATTACHMENT = "attachment";
-    public static final String FILETYPE = "filetype";
-    public static final String FILENAME = "filename";
+public class MessagingErrorHandler implements ErrorHandler {
 
-    private MessageConstants(){}
+    private static final Logger LOGGER = LoggerFactory.getLogger(MessagingErrorHandler.class);
+
+    @Override
+    public void handleError(final Throwable t) {
+        LOGGER.warn("Messaging Service returns with error : {}", t.getMessage());
+    }
+
 }

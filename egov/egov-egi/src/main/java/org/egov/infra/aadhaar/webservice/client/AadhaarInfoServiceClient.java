@@ -41,46 +41,67 @@
 package org.egov.infra.aadhaar.webservice.client;
 
 import org.egov.infra.aadhaar.webservice.contract.AadhaarInfo;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPConnection;
 import javax.xml.soap.SOAPConnectionFactory;
 import javax.xml.soap.SOAPEnvelope;
+import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
 @Service
 public class AadhaarInfoServiceClient {
 
-    @Autowired
-    private ApplicationProperties applicationProperties;
+    @Value("${aadhaar.info.ws.namespace}")
+    private String aadharWSDLNamespace;
 
-    public AadhaarInfo getAadhaarInfo(final String uid) throws Exception {
-        final SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
-        final String wsdlURL = applicationProperties.getProperty("aadhaar.wsdl.url");
-        final String aadhaarInfoMethod = applicationProperties.getProperty("aadhaar.info.ws.method");
-        final AadhaarInfo aahaarInfo = retriveAadhaarInfo(soapConnection.call(soapRequest(aadhaarInfoMethod, uid), wsdlURL));
-        soapConnection.close();
-        return aahaarInfo;
+    @Value("${aadhaar.wsdl.url}")
+    private String aadharWSDLUrl;
+
+    @Value("${aadhaar.info.ws.method}")
+    private String aadharWSDLMethod;
+
+    @Value("${aadhaar.info.ws.client.impl.class.fqn}")
+    private String clientImplClassFQN;
+
+    public AadhaarInfo getAadhaarInfo(String uid) {
+        try {
+            SOAPConnection soapConnection = SOAPConnectionFactory.newInstance().createConnection();
+            AadhaarInfo aahaarInfo = retriveAadhaarInfo(soapConnection.call(soapRequest(uid), aadharWSDLUrl));
+            soapConnection.close();
+            return aahaarInfo;
+        } catch (SOAPException e) {
+            throw new ApplicationRuntimeException("Error occurred while getting Aadhaar Info", e);
+        }
     }
 
-    private SOAPMessage soapRequest(final String methodName, final String uid) throws Exception {
-        final SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
-        final SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
-        soapEnvelope.addNamespaceDeclaration("end", applicationProperties.getProperty("aadhaar.info.ws.namespace"));
-        soapEnvelope.getBody().addChildElement(methodName, "end").addChildElement("arg0").addTextNode(uid);
-        soapMessage.saveChanges();
-        return soapMessage;
+    private SOAPMessage soapRequest(String uid) {
+        try {
+            SOAPMessage soapMessage = MessageFactory.newInstance().createMessage();
+            SOAPEnvelope soapEnvelope = soapMessage.getSOAPPart().getEnvelope();
+            soapEnvelope.addNamespaceDeclaration("end", aadharWSDLNamespace);
+            soapEnvelope.getBody().addChildElement(aadharWSDLMethod, "end").addChildElement("arg0").addTextNode(uid);
+            soapMessage.saveChanges();
+            return soapMessage;
+        } catch (SOAPException e) {
+            throw new ApplicationRuntimeException("Error occurred while preparing Aadhaar Info request", e);
+        }
     }
 
-    private AadhaarInfo retriveAadhaarInfo(final SOAPMessage soapResponseMessage) throws Exception {
-        final Unmarshaller unmarshaller = JAXBContext
-                .newInstance(Class.forName(applicationProperties.getProperty("aadhaar.info.ws.client.impl.class.fqn"))).createUnmarshaller();
-        return (AadhaarInfo) unmarshaller.unmarshal(soapResponseMessage.getSOAPBody().extractContentAsDocument());
+    private AadhaarInfo retriveAadhaarInfo(SOAPMessage soapResponseMessage) {
+        try {
+            Unmarshaller unmarshaller = JAXBContext
+                    .newInstance(Class.forName(clientImplClassFQN)).createUnmarshaller();
+            return (AadhaarInfo) unmarshaller.unmarshal(soapResponseMessage.getSOAPBody().extractContentAsDocument());
+        } catch (JAXBException | SOAPException | ClassNotFoundException e) {
+            throw new ApplicationRuntimeException("Error occurred while converting Aadhaar Info", e);
+        }
     }
 
 }

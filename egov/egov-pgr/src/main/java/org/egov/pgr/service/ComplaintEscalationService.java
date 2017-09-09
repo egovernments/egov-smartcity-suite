@@ -134,7 +134,7 @@ public class ComplaintEscalationService {
     private ComplaintIndexService complaintIndexService;
 
     @Autowired
-    private ComplaintMessagingService complaintCommunicationService;
+    private ComplaintNotificationService complaintNotificationService;
 
     @Transactional
     public void create(Escalation escalation) {
@@ -220,7 +220,7 @@ public class ComplaintEscalationService {
             complaintRepository.saveAndFlush(complaint);
             complaintIndexService.updateComplaintEscalationIndexValues(complaint);
             if (sendMessage)
-                complaintCommunicationService.sendEscalationMessage(complaint, nextOwner, previousAssignee);
+                complaintNotificationService.sendEscalationMessage(complaint, nextOwner, previousAssignee);
 
         }
     }

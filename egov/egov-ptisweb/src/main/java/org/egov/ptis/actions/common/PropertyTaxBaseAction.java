@@ -122,7 +122,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
@@ -196,7 +196,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
@@ -940,9 +940,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
         if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
-            messagingService.sendSMS(mobileNumber, smsMsg);
+            notificationService.sendSMS(mobileNumber, smsMsg);
         if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
-            messagingService.sendEmail(emailid, emailSubject, emailBody);
+            notificationService.sendEmail(emailid, emailSubject, emailBody);
 
     }
 

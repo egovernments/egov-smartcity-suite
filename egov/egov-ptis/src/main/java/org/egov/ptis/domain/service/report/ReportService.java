@@ -67,7 +67,7 @@ import org.egov.commons.service.RegionalHeirarchyService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
@@ -129,7 +129,7 @@ public class ReportService {
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     /**
      * Method gives List of properties with current and arrear individual demand
@@ -423,7 +423,7 @@ public class ReportService {
         final StringBuilder queryBuilder = new StringBuilder(
                 " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\" ,collectorname,mobilenumber,sum(target_arrears_demand) \"target_arrears_demand\",sum(target_current_demand) \"target_current_demand\",sum(today_arrears_collection) \"today_arrears_collection\",sum(today_currentyear_collection) \"today_currentyear_collection\", "
                         + " sum(cummulative_arrears_collection) \"cummulative_arrears_collection\",sum(cummulative_currentyear_collection) \"cummulative_currentyear_collection\",sum(lastyear_collection) \"lastyear_collection\",sum(lastyear_cummulative_collection) \"lastyear_cummulative_collection\"   "
-                        + "from "+applicationProperties.statewideSchemaName()+".billColl_DialyCollection_view ");
+                        + "from "+ environmentSettings.statewideSchemaName()+".billColl_DialyCollection_view ");
         String value_ALL = "ALL";
 
         if (bcDailyCollectionReportResult != null) {
@@ -537,7 +537,7 @@ public class ReportService {
                 " select distinct district,ulbname \"ulbName\" ,ulbcode \"ulbCode\"  ,  collectorname \"collectorname\" ,mobilenumber \"mobilenumber\",  "
                         + "target_arrears_demand,target_current_demand,today_arrears_collection,today_currentyear_collection,   "
                         + "cummulative_arrears_collection,cummulative_currentyear_collection,lastyear_collection,lastyear_cummulative_collection  "
-                        + "from "+applicationProperties.statewideSchemaName()+".ulbWise_DialyCollection_view  order by district,ulbname ");
+                        + "from "+ environmentSettings.statewideSchemaName()+".ulbWise_DialyCollection_view  order by district,ulbname ");
         final Query query = propPerServ.getSession().createSQLQuery(queryBuilder.toString());
         query.setResultTransformer(new AliasToBeanResultTransformer(BillCollectorDailyCollectionReportResult.class));
 
@@ -654,7 +654,7 @@ public class ReportService {
         int noofDays = 0;
         final StringBuilder queryBuilder = new StringBuilder(
                 " select distinct district,ulbname  \"ulbName\" ,ulbcode \"ulbCode\",collectorname,mobilenumber ,sum(totalaccessments) \"totalaccessments\" , sum(current_demand) \"current_demand\", sum(arrears_demand) \"arrears_demand\", sum(current_demand_collection) \"current_demand_collection\" ,sum(arrears_demand_collection) \"arrears_demand_collection\" , sum(current_penalty) \"current_penalty\", sum(arrears_penalty) \"arrears_penalty\"  , sum(current_penalty_collection) \"current_penalty_collection\"  , sum(arrears_penalty_collection) \"arrears_penalty_collection\"  "
-                        + "from "+applicationProperties.statewideSchemaName()+".ulbWise_DCBCollection_view ");
+                        + "from "+ environmentSettings.statewideSchemaName()+".ulbWise_DCBCollection_view ");
 
         String value_ALL = "ALL";
 

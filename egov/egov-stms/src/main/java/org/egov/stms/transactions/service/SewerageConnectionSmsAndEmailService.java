@@ -82,7 +82,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -113,7 +113,7 @@ public class SewerageConnectionSmsAndEmailService {
     private SewerageThirdPartyServices sewerageThirdPartyServices;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
@@ -649,11 +649,11 @@ public class SewerageConnectionSmsAndEmailService {
     }
 
     public void sendSMSOnSewerageConnection(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 
     public void sendEmailOnSewerageConnection(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailSubject, emailBody);
+        notificationService.sendEmail(email, emailSubject, emailBody);
     }
 
 }

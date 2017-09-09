@@ -51,7 +51,7 @@ import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.RatesClassService;
 import org.egov.adtax.service.UnitOfMeasureService;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -261,7 +261,7 @@ public class ScheduleOfRateController {
         final String unitOfMeasure = request.getParameter("uom");
         final String classtype = request.getParameter("rateClass");
         final String finyear = request.getParameter("finyear");
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        return "{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementRateService.getScheduleOfRateSearchResult(category, subCategory, unitOfMeasure, classtype, finyear)) + "}";
 
     }

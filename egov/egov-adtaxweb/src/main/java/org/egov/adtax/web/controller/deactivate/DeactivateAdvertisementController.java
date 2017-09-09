@@ -53,7 +53,7 @@ import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.demand.model.EgDemandDetails;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -125,7 +125,7 @@ public class DeactivateAdvertisementController extends GenericController {
                              final HttpServletRequest request,
                              final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getActiveAdvertisementSearchResult(advertisementPermitDetailRecord,
                         searchType))
                 + "}", response.getWriter());

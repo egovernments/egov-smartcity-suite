@@ -50,7 +50,7 @@ import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -120,7 +120,7 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
     @Autowired
     private ApplicationIndexService applicationIndexService;
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
     private SMSEmailService sMSEmailService;
 
     @Autowired
@@ -334,9 +334,9 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
             }
         }
         if (isNotBlank(mobileNumber) && isNotBlank(smsMsg))
-            messagingService.sendSMS(mobileNumber, smsMsg);
+            notificationService.sendSMS(mobileNumber, smsMsg);
         if (isNotBlank(emailid) && isNotBlank(emailBody))
-            messagingService.sendEmail(emailid, emailSubject, emailBody);
+            notificationService.sendEmail(emailid, emailSubject, emailBody);
     }
 
     public SMSEmailService getsMSEmailService() {

@@ -49,7 +49,7 @@ import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.service.ComplaintHistoryService;
-import org.egov.pgr.service.ComplaintMessagingService;
+import org.egov.pgr.service.ComplaintNotificationService;
 import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
@@ -116,7 +116,7 @@ public class ComplaintUpdationController {
     private ComplaintHistoryService complaintHistoryService;
 
     @Autowired
-    private ComplaintMessagingService complaintMessagingService;
+    private ComplaintNotificationService complaintNotificationService;
 
     @Autowired
     private ComplaintProcessFlowService complaintProcessFlowService;
@@ -154,7 +154,7 @@ public class ComplaintUpdationController {
         }
         if (null != complaint.getComplaintType()) {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
-            model.addAttribute("mailBody", complaintMessagingService.getEmailBody(complaint));
+            model.addAttribute("mailBody", complaintNotificationService.getEmailBody(complaint));
         }
         if (complaint.getStatus() != null)
             model.addAttribute("complaintStatus", complaint.getStatus().getName());

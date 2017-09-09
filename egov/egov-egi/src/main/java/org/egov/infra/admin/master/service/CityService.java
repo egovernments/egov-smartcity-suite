@@ -43,7 +43,7 @@ package org.egov.infra.admin.master.service;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -70,7 +70,7 @@ public class CityService {
     private final CityRepository cityRepository;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, Object> cityPrefCache;
@@ -106,7 +106,7 @@ public class CityService {
     }
 
     public void sentFeedBackMail(final String email, final String subject, final String message) {
-        messagingService.sendEmail(email, subject, message);
+        notificationService.sendEmail(email, subject, message);
     }
 
     public Map<String, Object> cityDataAsMap() {

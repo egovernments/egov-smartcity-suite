@@ -46,7 +46,7 @@ import org.egov.adtax.search.contract.HoardingSearch;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.AdvertisementReportService;
 import org.egov.adtax.web.controller.GenericController;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -77,7 +77,7 @@ public class DcbReportController extends GenericController {
     @RequestMapping(value = "search-for-dcbreport", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return "{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        return "{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, null))
                 + "}";
     }

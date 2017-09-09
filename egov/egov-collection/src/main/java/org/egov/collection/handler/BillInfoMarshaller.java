@@ -45,7 +45,7 @@ import com.thoughtworks.xstream.converters.basic.DateConverter;
 import org.egov.collection.integration.models.BillDetails;
 import org.egov.collection.integration.models.BillInfoImpl;
 
-import static org.egov.infra.config.core.GlobalSettings.datePattern;
+import static org.egov.infra.config.core.LocalizationSettings.datePattern;
 
 public class BillInfoMarshaller {
     private static final XStream BILL_MARSHALLER = createXStream();

@@ -64,10 +64,10 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.infra.config.core.GlobalSettings.datePattern;
-import static org.egov.infra.config.core.GlobalSettings.dateTimePattern;
-import static org.egov.infra.config.core.GlobalSettings.jodaTimeZone;
-import static org.egov.infra.config.core.GlobalSettings.locale;
+import static org.egov.infra.config.core.LocalizationSettings.datePattern;
+import static org.egov.infra.config.core.LocalizationSettings.dateTimePattern;
+import static org.egov.infra.config.core.LocalizationSettings.jodaTimeZone;
+import static org.egov.infra.config.core.LocalizationSettings.locale;
 
 public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 

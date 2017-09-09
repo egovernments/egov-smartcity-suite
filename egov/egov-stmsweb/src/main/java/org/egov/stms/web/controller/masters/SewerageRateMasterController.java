@@ -43,7 +43,7 @@ import org.apache.commons.io.IOUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.FinancialYearService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.egov.infra.utils.DateUtils;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.entity.SewerageRatesMasterDetails;
@@ -282,7 +282,7 @@ public class SewerageRateMasterController {
                 displyalist.add(seRatesSearch);
             else if (!getAppconfigValue() && seRatesSearch.getMonthlyRate() == null)
                 displyalist.add(seRatesSearch);
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(displyalist)
                 + "}", response.getWriter());
     }

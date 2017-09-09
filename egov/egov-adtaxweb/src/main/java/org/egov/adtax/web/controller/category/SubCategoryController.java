@@ -46,7 +46,7 @@ import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.SubCategorySearch;
 import org.egov.adtax.service.HoardingCategoryService;
 import org.egov.adtax.service.SubCategoryService;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -131,7 +131,7 @@ public class SubCategoryController {
     public void searchSubcategory(final Model model, @ModelAttribute final SubCategory subCategory, @RequestParam final String category,
                                   @RequestParam final String description, final HttpServletResponse response) throws IOException {
         List<SubCategorySearch> SubCategoryJson = subCategoryService.getSubcategory(Long.valueOf(category), description != null ? Long.valueOf(description) : null);
-        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write("{ \"data\":" + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(SubCategoryJson)
                 + "}", response.getWriter());
     }

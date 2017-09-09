@@ -80,7 +80,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -140,7 +140,7 @@ public class WaterTaxUtils {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -361,11 +361,11 @@ public class WaterTaxUtils {
     }
 
     public void sendSMSOnWaterConnection(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 
     public void sendEmailOnWaterConnection(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailSubject, emailBody);
+        notificationService.sendEmail(email, emailSubject, emailBody);
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn, final String assessmentNumber) {
