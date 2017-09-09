@@ -47,5 +47,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ComplaintStatusRepository extends JpaRepository<ComplaintStatus, Long> {
 
-	ComplaintStatus findByName(String name);
+    ComplaintStatus findByName(String name);
 }

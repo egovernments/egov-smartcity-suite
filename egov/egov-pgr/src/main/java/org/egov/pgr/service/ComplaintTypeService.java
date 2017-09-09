@@ -68,6 +68,7 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ComplaintTypeService {
 
+    private static final String COMPLAINT_COMPLAINT_TYPE = "complaint.complaintType";
     private final ComplaintTypeRepository complaintTypeRepository;
 
     @PersistenceContext
@@ -135,10 +136,10 @@ public class ComplaintTypeService {
         previousDate = previousDate.minusMonths(1);
 
         final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint");
-        criteria.createAlias("complaint.complaintType", "compType");
-        criteria.setProjection(Projections.projectionList().add(Projections.property("complaint.complaintType"))
-                .add(Projections.count("complaint.complaintType").as("count"))
-                .add(Projections.groupProperty("complaint.complaintType")));
+        criteria.createAlias(COMPLAINT_COMPLAINT_TYPE, "compType");
+        criteria.setProjection(Projections.projectionList().add(Projections.property(COMPLAINT_COMPLAINT_TYPE))
+                .add(Projections.count(COMPLAINT_COMPLAINT_TYPE).as("count"))
+                .add(Projections.groupProperty(COMPLAINT_COMPLAINT_TYPE)));
         criteria.add(Restrictions.between("complaint.createdDate", previousDate.toDate(), currentDate.toDate()));
         criteria.add(Restrictions.eq("compType.isActive", Boolean.TRUE));
         criteria.setMaxResults(5).addOrder(Order.desc("count"));

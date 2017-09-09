@@ -46,13 +46,19 @@ import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.PositionHierarchyService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.contract.EscalationHelper;
+import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -67,8 +73,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 @Controller
 @RequestMapping(value = "/escalation")
 public class SearchEscalationController {
-    private static final String POSITIONID="positionId";
-    private static final String COMPLAINTTYPEID="complaintTypeId";
+    private static final String POSITIONID = "positionId";
+    private static final String COMPLAINTTYPEID = "complaintTypeId";
 
     protected final ComplaintTypeService complaintTypeService;
 

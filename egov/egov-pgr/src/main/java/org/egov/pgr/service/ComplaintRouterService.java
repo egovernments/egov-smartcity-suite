@@ -54,7 +54,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.dto.ComplaintRouterSearchRequest;
+import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
 import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pgr.repository.specs.ComplaintRouterSpec;
 import org.egov.pims.commons.Position;

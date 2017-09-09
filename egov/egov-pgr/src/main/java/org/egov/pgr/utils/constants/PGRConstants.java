@@ -75,13 +75,6 @@ public final class PGRConstants {
     public static final String WARDID = "wardId";
     public static final String COUNT = "count";
     public static final String COLOR = "color";
-    //Reports
-    public static final String BYBOUNDARY = "ByBoundary";
-    public static final String FROMDATE = "fromDates";
-    public static final String TODATE = "toDates";
-    public static final String USER_SELECT_QRY = "  SELECT   emp.name||'~'|| pos.name    as name, ";
-    public static final String COMPLAINTTYPE_SELECT_QRY = " SELECT ctype.name as name, ";
-    public static final String DEPT_SELECT_QRY = " SELECT dept.name as name, ";
 
     public static final String CITY_CODE = "cityCode";
     public static final String WARD_NUMBER = "wardNo";

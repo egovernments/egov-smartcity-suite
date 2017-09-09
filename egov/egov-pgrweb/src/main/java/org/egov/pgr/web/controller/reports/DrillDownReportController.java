@@ -44,10 +44,11 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.dto.DrillDownReportRequest;
-import org.egov.pgr.service.reports.DrillDownReportService;
-import org.egov.pgr.web.controller.response.adaptor.ComplaintDrillDownHelperAdaptor;
-import org.egov.pgr.web.controller.response.adaptor.DrillDownComplaintTypeAdaptor;
+import org.egov.pgr.report.entity.contract.ComplaintDrillDownHelperAdaptor;
+import org.egov.pgr.report.entity.contract.DrillDownComplaintTypeAdaptor;
+import org.egov.pgr.report.entity.contract.DrillDownReportRequest;
+import org.egov.pgr.report.entity.contract.ReportHelper;
+import org.egov.pgr.report.service.DrillDownReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -127,7 +128,7 @@ public class DrillDownReportController {
             reportRequest = new ReportRequest("pgr_functionarywise_report",
                     drillDownReportService.getAllDrillDownRecords(request), new HashMap<>());
         reportparam.put("groupBy", request.getGroupBy());
-        reportparam.put("reportTitle",request.getReportTitle());
+        reportparam.put("reportTitle", request.getReportTitle());
         reportRequest.setReportParams(reportparam);
         reportRequest.setReportFormat(request.getPrintFormat());
         reportRequest.setReportName("pgr_drillDown_report");

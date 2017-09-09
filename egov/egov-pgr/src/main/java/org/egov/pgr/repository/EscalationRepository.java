@@ -40,8 +40,6 @@
 
 package org.egov.pgr.repository;
 
-import java.util.List;
-
 import org.egov.pgr.entity.Escalation;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -49,14 +47,16 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface EscalationRepository extends JpaRepository<Escalation, Long>, JpaSpecificationExecutor<Escalation> {
 
     @Query(" from Escalation E where E.designation.id=:designationId and E.complaintType.id=:comTypeId")
-    public Escalation findByDesignationAndComplaintType(@Param("designationId") Long designationId,
-            @Param("comTypeId") Long comTypeId);
+    Escalation findByDesignationAndComplaintType(@Param("designationId") Long designationId,
+                                                 @Param("comTypeId") Long comTypeId);
 
     @Query(" from Escalation E where  E.complaintType.id=:comTypeId")
-    public List<Escalation> findEscalationByComplaintTypeId(@Param("comTypeId") Long comTypeId);
+    List<Escalation> findEscalationByComplaintTypeId(@Param("comTypeId") Long comTypeId);
 
 }

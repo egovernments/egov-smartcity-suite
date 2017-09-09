@@ -56,7 +56,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -142,7 +141,7 @@ public class GenericComplaintAjaxController {
 
     @GetMapping(value = {"/complaint/router/position", "/complaint/escalation/position"}, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getAllPositionByNameLike(@RequestParam String positionName) throws IOException {
+    public String getAllPositionByNameLike(@RequestParam String positionName) {
         StringBuilder positionUser = new StringBuilder();
         positionUser.append("[");
         String likePositionName = "%" + positionName.toUpperCase() + "%";

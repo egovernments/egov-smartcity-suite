@@ -41,7 +41,7 @@
 package org.egov.pgr.web.controller.dashboard;
 
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.service.dashboard.DashboardService;
+import org.egov.pgr.dashboard.service.DashboardService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

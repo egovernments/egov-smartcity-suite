@@ -40,11 +40,11 @@
 
 package org.egov.pgr.repository.specs;
 
-import javax.persistence.criteria.Predicate;
-
 import org.egov.pgr.entity.ComplaintRouter;
-import org.egov.pgr.entity.dto.ComplaintRouterSearchRequest;
+import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.Predicate;
 
 public final class ComplaintRouterSpec {
 
@@ -64,7 +64,7 @@ public final class ComplaintRouterSpec {
             if (routerSearchRequest.getComplaintTypeId() != null)
                 predicate.getExpressions()
                         .add(builder.equal(root.get("complaintType").get("id"), routerSearchRequest.getComplaintTypeId()));
-            predicate.getExpressions().add(builder.equal(root.get("complaintType").get("isActive"),true));
+            predicate.getExpressions().add(builder.equal(root.get("complaintType").get("isActive"), true));
             return predicate;
         };
     }

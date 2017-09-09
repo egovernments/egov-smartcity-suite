@@ -42,6 +42,7 @@ package org.egov.pgr.web.controller.reports;
 
 import org.apache.commons.io.IOUtils;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.report.entity.contract.PendingGrievanceAdaptor;
 import org.egov.pgr.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

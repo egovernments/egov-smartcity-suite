@@ -61,10 +61,10 @@ public class ComplaintStatusMappingRepositoryImpl implements ComplaintStatusMapp
 
     @Override
     public List<ComplaintStatus> getStatusByRoleAndCurrentStatus(Set<Role> role, ComplaintStatus status) {
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ComplaintStatusMapping.class,"complaintMapping");
+        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(ComplaintStatusMapping.class, "complaintMapping");
         criteria.add(Restrictions.eq("complaintMapping.currentStatus", status)).
-        add(Restrictions.in("complaintMapping.role", role)).
-        addOrder(Order.asc("complaintMapping.orderNo"));
+                add(Restrictions.in("complaintMapping.role", role)).
+                addOrder(Order.asc("complaintMapping.orderNo"));
         criteria.setProjection(Projections.property("complaintMapping.showStatus"));
         criteria.setResultTransformer(Criteria.DISTINCT_ROOT_ENTITY);
         return criteria.list();

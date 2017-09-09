@@ -53,11 +53,11 @@ import java.util.Set;
 @Service
 @Transactional(readOnly = true)
 public class ComplaintStatusMappingService {
-	@Autowired
-	private ComplaintStatusMappingRepository complaintStatusMappingRepository;
+    @Autowired
+    private ComplaintStatusMappingRepository complaintStatusMappingRepository;
 
-	public List<ComplaintStatus> getStatusByRoleAndCurrentStatus(final Set<Role> role, final ComplaintStatus status) {
-		return complaintStatusMappingRepository.getStatusByRoleAndCurrentStatus(role, status);
-	}
+    public List<ComplaintStatus> getStatusByRoleAndCurrentStatus(final Set<Role> role, final ComplaintStatus status) {
+        return complaintStatusMappingRepository.getStatusByRoleAndCurrentStatus(role, status);
+    }
 
 }

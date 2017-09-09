@@ -40,22 +40,17 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import java.io.IOException;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.dto.RouterEscalationForm;
-import org.egov.pgr.entity.dto.RouterEscalationRequest;
+import org.egov.pgr.entity.contract.RouterEscalationForm;
+import org.egov.pgr.entity.contract.RouterEscalationRequest;
+import org.egov.pgr.report.entity.contract.RouterEscalationAdaptor;
+import org.egov.pgr.report.service.RouterEscalationService;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
-import org.egov.pgr.service.reports.RouterEscalationService;
-import org.egov.pgr.web.controller.response.adaptor.RouterEscalationAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -68,20 +63,24 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping("routerescalation")
 public class RouterEscalationReportController {
 
-    @Autowired
-    private ReportService reportService;
-
     private final ComplaintTypeCategoryService complaintTypeCategoryService;
     private final BoundaryService boundaryService;
     private final RouterEscalationService routerEscalationService;
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     public RouterEscalationReportController(final ComplaintTypeCategoryService complaintTypeCategoryService,
-            final BoundaryService boundaryService, final RouterEscalationService routerEscalationService) {
+                                            final BoundaryService boundaryService, final RouterEscalationService routerEscalationService) {
         this.complaintTypeCategoryService = complaintTypeCategoryService;
         this.boundaryService = boundaryService;
         this.routerEscalationService = routerEscalationService;
@@ -106,7 +105,7 @@ public class RouterEscalationReportController {
     public String search(final RouterEscalationRequest routerEscalationRequest) throws IOException {
         return new DataTable<>(routerEscalationService.search(routerEscalationRequest),
                 routerEscalationRequest.draw())
-                        .toJson(RouterEscalationAdaptor.class);
+                .toJson(RouterEscalationAdaptor.class);
     }
 
     @GetMapping("/reportgeneration")

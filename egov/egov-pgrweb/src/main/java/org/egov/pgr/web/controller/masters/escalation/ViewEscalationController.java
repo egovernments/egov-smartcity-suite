@@ -47,14 +47,13 @@ import org.egov.eis.service.PositionHierarchyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.contract.EscalationForm;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
-import org.egov.pgr.web.controller.masters.escalationTime.EscalationForm;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -115,7 +114,7 @@ public class ViewEscalationController {
             final List<PositionHierarchy> positionHeirarchyList = positionHierarchyService
                     .getPositionHeirarchyByFromPositionAndObjectType(escalationForm.getPosition().getId(),
                             objectType.getId());
-            if (positionHeirarchyList.size() > 0)
+            if (!positionHeirarchyList.isEmpty())
                 escalationForm.setPositionHierarchyList(positionHeirarchyList);
             else {
                 escalationForm.addPositionHierarchyList(new PositionHierarchy());
@@ -135,7 +134,7 @@ public class ViewEscalationController {
             List<PositionHierarchy> positionHeirarchyList = positionHierarchyService
                     .getPositionHeirarchyByFromPositionAndObjectType(escalationForm.getPosition().getId(),
                             objectType.getId());
-            if (positionHeirarchyList.size() > 0) {
+            if (!positionHeirarchyList.isEmpty()) {
                 escalationForm.setPositionHierarchyList(positionHeirarchyList);
                 model.addAttribute("mode", "dataFound");
 
@@ -162,8 +161,7 @@ public class ViewEscalationController {
     }
 
     @RequestMapping(value = "/update/{id}", method = POST)
-    public String saveEscalationForm(@ModelAttribute final EscalationForm escalationForm, final Model model,
-                                     final BindingResult errors, final RedirectAttributes redirectAttrs, @PathVariable final Long id) {
+    public String saveEscalationForm(@ModelAttribute final EscalationForm escalationForm, final Model model, final RedirectAttributes redirectAttrs, @PathVariable final Long id) {
 
         if (id == null) {
             redirectAttrs.addFlashAttribute(ESCALATIONFORM, escalationForm);
@@ -174,7 +172,7 @@ public class ViewEscalationController {
         final List<PositionHierarchy> existingPosHierarchy = positionHierarchyService
                 .getPositionHeirarchyByFromPositionAndObjectType(id, objectType.getId());
 
-        if (existingPosHierarchy != null && existingPosHierarchy.size() > 0)
+        if (existingPosHierarchy != null && !existingPosHierarchy.isEmpty())
             positionHierarchyService.deleteAllInBatch(existingPosHierarchy);
         for (final PositionHierarchy posHierarchy : escalationForm.getPositionHierarchyList())
             if (posHierarchy.getFromPosition() != null && posHierarchy.getFromPosition().getId() != null

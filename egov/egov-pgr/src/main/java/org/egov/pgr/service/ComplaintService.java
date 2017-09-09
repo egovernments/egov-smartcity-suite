@@ -48,9 +48,9 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.repository.ComplaintRepository;
-import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -63,13 +63,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Comparator;
+
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;

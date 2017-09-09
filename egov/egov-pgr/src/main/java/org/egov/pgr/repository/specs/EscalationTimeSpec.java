@@ -40,11 +40,11 @@
 
 package org.egov.pgr.repository.specs;
 
-import javax.persistence.criteria.Predicate;
-
 import org.egov.pgr.entity.Escalation;
-import org.egov.pgr.entity.dto.EscalationTimeSearchRequest;
+import org.egov.pgr.entity.contract.EscalationTimeSearchRequest;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.Predicate;
 
 public final class EscalationTimeSpec {
 

@@ -40,21 +40,15 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.infstr.services.Page;
-import org.egov.pgr.entity.dto.AgeingReportForm;
-import org.egov.pgr.entity.dto.AgeingReportRequest;
-import org.egov.pgr.service.reports.AgeingReportService;
+import org.egov.pgr.report.entity.contract.AgeingReportHelperAdaptor;
+import org.egov.pgr.report.entity.contract.AgeingReportRequest;
+import org.egov.pgr.report.entity.contract.ReportHelper;
+import org.egov.pgr.report.entity.view.AgeingReportView;
+import org.egov.pgr.report.service.AgeingReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +58,14 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
 @RequestMapping("/report")
@@ -102,7 +104,7 @@ public class AgeingReportController {
     @GetMapping(value = "/ageing/resultList-update", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchAgeingReport(final AgeingReportRequest request) throws IOException {
-        final Page<AgeingReportForm> ageingreport = ageingReportService.pagedAgeingRecords(request);
+        final Page<AgeingReportView> ageingreport = ageingReportService.pagedAgeingRecords(request);
         final long draw = request.draw();
         return new DataTable<>(ageingreport, draw)
                 .toJson(AgeingReportHelperAdaptor.class);

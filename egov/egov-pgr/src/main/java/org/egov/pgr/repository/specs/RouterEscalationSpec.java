@@ -47,14 +47,14 @@
 
 package org.egov.pgr.repository.specs;
 
+import org.egov.pgr.entity.contract.RouterEscalationForm;
+import org.egov.pgr.entity.contract.RouterEscalationRequest;
+import org.springframework.data.jpa.domain.Specification;
+
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.egov.pgr.entity.dto.RouterEscalationForm;
-import org.egov.pgr.entity.dto.RouterEscalationRequest;
-import org.springframework.data.jpa.domain.Specification;
 
 public class RouterEscalationSpec implements Specification<RouterEscalationForm> {
 

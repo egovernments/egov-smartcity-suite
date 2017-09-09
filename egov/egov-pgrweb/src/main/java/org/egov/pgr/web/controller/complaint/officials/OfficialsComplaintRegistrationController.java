@@ -68,6 +68,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 public class OfficialsComplaintRegistrationController extends GenericComplaintController {
 
 
+    private static final String OFFICIALS_COMPLAINT_REGISTRATION_FORM = "complaint/officials/registration-form";
+
     @ModelAttribute("receivingCenters")
     public List<ReceivingCenter> receivingCenters() {
         return receivingCenterService.findAll();
@@ -80,7 +82,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
 
     @RequestMapping(value = "show-reg-form", method = GET)
     public String showComplaintRegistrationForm(@ModelAttribute final Complaint complaint) {
-        return "complaint/officials/registration-form";
+        return OFFICIALS_COMPLAINT_REGISTRATION_FORM;
     }
 
     @RequestMapping(value = "register", method = POST)
@@ -101,7 +103,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
             if (null != complaint.getCrossHierarchyId())
                 model.addAttribute("crossHierarchyLocation",
                         complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
-            return "complaint/officials/registration-form";
+            return OFFICIALS_COMPLAINT_REGISTRATION_FORM;
         }
 
         try {
@@ -109,7 +111,7 @@ public class OfficialsComplaintRegistrationController extends GenericComplaintCo
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
             resultBinder.rejectValue("location", e.getMessage());
-            return "complaint/officials/registration-form";
+            return OFFICIALS_COMPLAINT_REGISTRATION_FORM;
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
         return "redirect:/complaint/reg-success/" + complaint.getCrn();

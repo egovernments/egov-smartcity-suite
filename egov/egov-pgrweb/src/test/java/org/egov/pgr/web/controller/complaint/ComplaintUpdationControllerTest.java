@@ -58,6 +58,7 @@ import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
+import org.egov.pgr.web.validator.ComplaintValidator;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.InjectMocks;

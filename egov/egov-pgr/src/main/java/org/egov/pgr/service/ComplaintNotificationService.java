@@ -101,7 +101,7 @@ public class ComplaintNotificationService {
     public void sendRegistrationMessage(Complaint complaint) {
         if (COMPLAINT_REGISTERED.equals(complaint.getStatus().getName())) {
             notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                    getMessage(COMPLAINT_REGISTERED_EMAIL_SUBJECT_MEG_KEY, new String[]{}),
+                    getMessage(COMPLAINT_REGISTERED_EMAIL_SUBJECT_MEG_KEY),
                     getMessageForRegistration(COMPLAINT_REGISTERED_EMAIL_BODY_MSG_KEY, complaint));
             notificationService.sendSMS(complaint.getComplainant().getMobile(),
                     getMessageForRegistration(COMPLAINT_REGISTERED_SMS_MSG_KEY, complaint));
@@ -118,10 +118,10 @@ public class ComplaintNotificationService {
                 if (user != null) {
                     String smsMsg = getMessage(
                             COMPLAINT_OFFICIAL_REGISTERED_SMS_MSG_KEY,
-                            new String[]{complaint.getComplaintType().getName(), complaint.getLocation().getName(),
-                                    complaint.getComplainant().getName(),
-                                    complaint.getComplainant().getMobile(),
-                            });
+                            complaint.getComplaintType().getName(), complaint.getLocation().getName(),
+                            complaint.getComplainant().getName(),
+                            complaint.getComplainant().getMobile()
+                    );
                     notificationService.sendSMS(user.getMobileNumber(), smsMsg);
                 }
             }
@@ -132,28 +132,28 @@ public class ComplaintNotificationService {
         switch (complaint.getStatus().getName()) {
             case COMPLAINT_COMPLETED:
                 notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_COMPLETED_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
+                        getMessage(COMPLAINT_COMPLETED_EMAIL_SUBJECT_MSG_KEY),
                         getMessageForProcessing(COMPLAINT_COMPLETED_EMAIL_BODY_MSG_KEY, complaint));
                 notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForProcessing(COMPLAINT_COMPLETED_SMS_MSG_KEY, complaint));
                 break;
             case COMPLAINT_REJECTED:
                 notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_REJECTED_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
+                        getMessage(COMPLAINT_REJECTED_EMAIL_SUBJECT_MSG_KEY),
                         getMessageForProcessing(COMPLAINT_REJECTED_EMAIL_BODY_MSG_KEY, complaint));
                 notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForProcessing(COMPLAINT_REJECTED_SMS_MSG_KEY, complaint));
                 break;
             case COMPLAINT_REOPENED:
                 notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_REOPENED_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
+                        getMessage(COMPLAINT_REOPENED_EMAIL_SUBJECT_MSG_KEY),
                         getMessageForReopening(COMPLAINT_REOPENED_EMAIL_BODY_MSG_KEY, complaint));
                 notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForReopening(COMPLAINT_REOPENED_SMS_MSG_KEY, complaint));
                 break;
             case COMPLAINT_WITHDRAWN:
                 notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_WITHDRAWN_EMAIL_SUBJECT_MSG_KEY, new String[]{}),
+                        getMessage(COMPLAINT_WITHDRAWN_EMAIL_SUBJECT_MSG_KEY),
                         getMessageForWithdrawn(COMPLAINT_WITHDRAWN_EMAIL_BODY_MSG_KEY, complaint));
                 notificationService.sendSMS(complaint.getComplainant().getMobile(),
                         getMessageForWithdrawn(COMPLAINT_WITHDRAWN_SMS_MSG_KEY, complaint));
@@ -169,16 +169,16 @@ public class ComplaintNotificationService {
         User previousOwner = prevUserAssignments.isEmpty() ? null : prevUserAssignments.get(0).getEmployee();
         String previousOwnerName = previousOwner != null ? previousOwner.getName() : previousAssignee.getName();
 
-        String emailSubject = getMessage(COMPLAINT_ESCALATION_EMAIL_SUBJECT_MSG_KEY, new String[]{
-                complaint.getComplaintType().getSlaHours().toString()});
+        String emailSubject = getMessage(COMPLAINT_ESCALATION_EMAIL_SUBJECT_MSG_KEY,
+                complaint.getComplaintType().getSlaHours().toString());
 
-        String smsMsgnextOwner = getMessage(COMPLAINT_ESCALATION_SMS_NEXTOWNER_MSG_KEY, new String[]{
+        String smsMsgnextOwner = getMessage(COMPLAINT_ESCALATION_SMS_NEXTOWNER_MSG_KEY,
                 complaint.getCrn(), complaint.getComplaintType().getName(),
-                nextOwner.getName(), complaint.getAssignee().getName()});
+                nextOwner.getName(), complaint.getAssignee().getName());
 
-        String smsMsgPreviousOwner = getMessage(COMPLAINT_ESCALATION_SMS_PREVIOUSOWNER_MSG_KEY, new String[]{
+        String smsMsgPreviousOwner = getMessage(COMPLAINT_ESCALATION_SMS_PREVIOUSOWNER_MSG_KEY,
                 complaint.getCrn(), previousOwnerName, previousAssignee.getDeptDesig().getDesignation().getName(),
-                complaint.getComplaintType().getName()});
+                complaint.getComplaintType().getName());
         if (previousOwner != null) {
             notificationService.sendEmail(previousOwner.getEmailId(), emailSubject, smsMsgPreviousOwner);
             notificationService.sendSMS(previousOwner.getMobileNumber(), smsMsgPreviousOwner);
@@ -203,28 +203,28 @@ public class ComplaintNotificationService {
     }
 
     private String getMessageForRegistration(String msgKey, Complaint complaint) {
-        return getMessage(msgKey, new String[]{
+        return getMessage(msgKey,
                 complaint.getComplainant().getName(), complaint.getComplaintType().getName(),
                 complaint.getComplaintType().getSlaHours().toString(), getDomainURL(),
-                complaint.getCrn(), getMunicipalityName()});
+                complaint.getCrn(), getMunicipalityName());
     }
 
     private String getMessageForProcessing(String msgKey, Complaint complaint) {
-        return getMessage(msgKey, new String[]{
+        return getMessage(msgKey,
                 complaint.getComplainant().getName(), complaint.getComplaintType().getName(),
-                getDomainURL(), complaint.getCrn(), getMunicipalityName()});
+                getDomainURL(), complaint.getCrn(), getMunicipalityName());
     }
 
     private String getMessageForReopening(String msgKey, Complaint complaint) {
-        return getMessage(msgKey, new String[]{
+        return getMessage(msgKey,
                 complaint.getComplainant().getName(), complaint.getComplaintType().getName(),
                 complaint.getComplaintType().getSlaHours().toString(), getDomainURL(),
-                complaint.getCrn(), getMunicipalityName()});
+                complaint.getCrn(), getMunicipalityName());
     }
 
     private String getMessageForWithdrawn(String msgKey, Complaint complaint) {
-        return getMessage(msgKey, new String[]{
-                complaint.getComplainant().getName(), complaint.getComplaintType().getName(), getMunicipalityName()});
+        return getMessage(msgKey,
+                complaint.getComplainant().getName(), complaint.getComplaintType().getName(), getMunicipalityName());
     }
 
     private String getMessage(String key, String... args) {

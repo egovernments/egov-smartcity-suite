@@ -40,14 +40,14 @@
 
 package org.egov.pgr.service;
 
-import java.util.List;
-
 import org.egov.pgr.entity.Priority;
 import org.egov.pgr.repository.PriorityRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -59,9 +59,8 @@ public class PriorityService {
     public Priority getPriorityByCode(String code) {
         return priorityRepository.findByCode(code);
     }
-    
-    public List<Priority> getAllPriorities()
-    {
+
+    public List<Priority> getAllPriorities() {
         return priorityRepository.findAll(new Sort(Sort.Direction.DESC, "weight"));
     }
 }

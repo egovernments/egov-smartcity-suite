@@ -46,6 +46,7 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.web.controller.AbstractContextControllerTest;
+import org.egov.pgr.web.controller.masters.type.UpdateComplaintTypeController;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;

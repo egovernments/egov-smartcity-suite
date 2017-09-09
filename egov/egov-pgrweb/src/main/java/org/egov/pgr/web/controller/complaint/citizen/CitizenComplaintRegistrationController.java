@@ -68,20 +68,23 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = "/complaint/citizen")
 public class CitizenComplaintRegistrationController extends GenericComplaintController {
 
+    private static final String CITIZEN_COMPLAINT_REGISTRATION_FORM = "complaint/citizen/registration-form";
+    private static final String ANONYMOUS_COMPLAINT_REGISTRATION_FORM = "complaint/citizen/anonymous-registration-form";
+    private static final String LOCATION = "location";
     @Autowired
     private RecaptchaUtils recaptchaUtils;
 
     @RequestMapping(value = "show-reg-form", method = GET)
     public String showComplaintRegistrationForm(@ModelAttribute Complaint complaint) {
         setReceivingMode(complaint, DEFAULT_RECEIVING_MODE);
-        return "complaint/citizen/registration-form";
+        return CITIZEN_COMPLAINT_REGISTRATION_FORM;
     }
 
     @RequestMapping(value = "anonymous/show-reg-form", method = GET)
     public String showAnonymousComplaintRegistrationForm(@ModelAttribute Complaint complaint,
                                                          @RequestParam(required = false) String source) {
         setReceivingMode(complaint, isBlank(source) ? DEFAULT_RECEIVING_MODE : source);
-        return "complaint/citizen/anonymous-registration-form";
+        return ANONYMOUS_COMPLAINT_REGISTRATION_FORM;
     }
 
     @RequestMapping(value = "register", method = POST)
@@ -94,21 +97,21 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
             complaint.setChildLocation(crosshierarchy.getChild());
         }
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
-            resultBinder.rejectValue("location", "location.required");
+            resultBinder.rejectValue(LOCATION, "location.required");
 
         if (resultBinder.hasErrors()) {
             if (null != complaint.getCrossHierarchyId())
                 model.addAttribute("crossHierarchyLocation",
                         complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
-            return "complaint/citizen/registration-form";
+            return CITIZEN_COMPLAINT_REGISTRATION_FORM;
         }
 
         try {
             complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
-            resultBinder.rejectValue("location", e.getMessage());
-            return "complaint/citizen/registration-form";
+            resultBinder.rejectValue(LOCATION, e.getMessage());
+            return CITIZEN_COMPLAINT_REGISTRATION_FORM;
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
         return "redirect:/complaint/reg-success/" + complaint.getCrn();
@@ -136,21 +139,21 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         }
 
         if (complaint.getLocation() == null && (complaint.getLat() == 0 || complaint.getLng() == 0))
-            resultBinder.rejectValue("location", "location.required");
+            resultBinder.rejectValue(LOCATION, "location.required");
 
         if (resultBinder.hasErrors()) {
             if (null != complaint.getCrossHierarchyId())
                 model.addAttribute("crossHierarchyLocation",
                         complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
-            return "complaint/citizen/anonymous-registration-form";
+            return ANONYMOUS_COMPLAINT_REGISTRATION_FORM;
         }
 
         try {
             complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
             complaintService.createComplaint(complaint);
         } catch (final ValidationException e) {
-            resultBinder.rejectValue("location", e.getMessage());
-            return "complaint/citizen/anonymous-registration-form";
+            resultBinder.rejectValue(LOCATION, e.getMessage());
+            return ANONYMOUS_COMPLAINT_REGISTRATION_FORM;
         }
         redirectAttributes.addFlashAttribute("complaint", complaint);
         return "redirect:/complaint/reg-success/" + complaint.getCrn();
