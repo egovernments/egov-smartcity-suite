@@ -62,7 +62,7 @@ import static org.egov.infra.utils.StringUtils.uniqueString;
 @Service
 @Transactional(readOnly = true)
 public class IdentityRecoveryService {
-    private static String USER_PWD_RECOVERY_TEMPLATE = "user.pwd.recovery";
+    private static final String USER_PWD_RECOVERY_TEMPLATE = "user.pwd.recovery";
 
     @Autowired
     private IdentityRecoveryRepository identityRecoveryRepository;
