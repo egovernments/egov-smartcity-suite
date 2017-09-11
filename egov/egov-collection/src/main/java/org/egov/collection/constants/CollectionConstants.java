@@ -508,6 +508,8 @@ public final class CollectionConstants {
     public static final String AXIS_TXN_NO = "vpc_TransactionNo";
     public static final String AXIS_BATCH_NO = "vpc_BatchNo";
     public static final String AXIS_ORDER_INFO = "vpc_OrderInfo";
+    public static final String AXIS_SECURE_HASHTYPE = "vpc_SecureHashType";
+    public static final String AXIS_SECURE_HASHTYPE_VALUE = "SHA256";
 
     public static final String MESSAGEKEY_AXIS_PAYMENT_CLIENT = "axis.payment.client";
     public static final String MESSAGEKEY_AXIS_VERSION = "axis.version";

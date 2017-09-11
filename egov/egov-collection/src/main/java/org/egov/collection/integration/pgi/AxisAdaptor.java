@@ -47,23 +47,28 @@ import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
-import java.security.MessageDigest;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.crypto.Mac;
+import javax.crypto.spec.SecretKeySpec;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.xml.bind.DatatypeConverter;
 
+import org.apache.commons.codec.DecoderException;
+import org.apache.commons.codec.binary.Hex;
 import org.apache.http.HttpEntity;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -88,8 +93,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 /**
- * The PaymentRequestAdaptor class frames the request object for the payment
- * service.
+ * The PaymentRequestAdaptor class frames the request object for the payment service.
  */
 @Service
 public class AxisAdaptor implements PaymentGatewayAdaptor {
@@ -109,8 +113,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     private CityService cityService;
 
     /**
-     * This method invokes APIs to frame request object for the payment service
-     * passed as parameter
+     * This method invokes APIs to frame request object for the payment service passed as parameter
      *
      * @param serviceDetails
      * @param receiptHeader
@@ -119,108 +122,112 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     @Override
     public PaymentRequest createPaymentRequest(final ServiceDetails paymentServiceDetails,
             final ReceiptHeader receiptHeader) {
-        final DefaultPaymentRequest paymentRequest = new DefaultPaymentRequest();
         LOGGER.debug("inside createPaymentRequest");
-        final Map<String, String> fields = new HashMap<>(0);
-        fields.put(CollectionConstants.AXIS_VERSION, collectionApplicationProperties.axisVersion());
-        fields.put(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommand());
-        fields.put(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
-        fields.put(CollectionConstants.AXIS_MERCHANT_TXN_REF, ApplicationThreadLocals.getCityCode()
-                + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getId().toString());
-        fields.put(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
-        fields.put(CollectionConstants.AXIS_LOCALE, collectionApplicationProperties.axisLocale());
-        fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
-        fields.put(CollectionConstants.AXIS_ORDER_INFO, ApplicationThreadLocals.getCityCode()
-                + CollectionConstants.SEPARATOR_HYPHEN + ApplicationThreadLocals.getCityName());
-        final StringBuilder returnUrl = new StringBuilder();
-        returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
-                .append(paymentServiceDetails.getId());
-        fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
+        final DefaultPaymentRequest paymentRequest = new DefaultPaymentRequest();
+        final LinkedHashMap<String, String> fields = new LinkedHashMap<>(0);
+        final StringBuilder requestURL = new StringBuilder();
         final BigDecimal amount = receiptHeader.getTotalAmount();
         final float rupees = Float.parseFloat(amount.toString());
         final Integer rupee = (int) rupees;
         final Float exponent = rupees - (float) rupee;
         final Integer paise = (int) (rupee * PAISE_RUPEE_CONVERTER.intValue()
                 + exponent * PAISE_RUPEE_CONVERTER.intValue());
+        final StringBuilder returnUrl = new StringBuilder();
+        returnUrl.append(paymentServiceDetails.getCallBackurl()).append("?paymentServiceId=")
+                .append(paymentServiceDetails.getId());
+        fields.put(CollectionConstants.AXIS_ACCESS_CODE, collectionApplicationProperties.axisAccessCode());
         fields.put(CollectionConstants.AXIS_AMOUNT, paise.toString());
+        fields.put(CollectionConstants.AXIS_COMMAND, collectionApplicationProperties.axisCommand());
+        fields.put(CollectionConstants.AXIS_LOCALE, collectionApplicationProperties.axisLocale());
+        fields.put(CollectionConstants.AXIS_MERCHANT_TXN_REF, ApplicationThreadLocals.getCityCode()
+                + CollectionConstants.SEPARATOR_HYPHEN + receiptHeader.getId().toString());
+        fields.put(CollectionConstants.AXIS_MERCHANT, collectionApplicationProperties.axisMerchant());
+        fields.put(CollectionConstants.AXIS_ORDER_INFO, ApplicationThreadLocals.getCityCode()
+                + CollectionConstants.SEPARATOR_HYPHEN + ApplicationThreadLocals.getCityName());
+        fields.put(CollectionConstants.AXIS_RETURN_URL, returnUrl.toString());
+        fields.put(CollectionConstants.AXIS_TICKET_NO, receiptHeader.getConsumerCode());
+        fields.put(CollectionConstants.AXIS_VERSION, collectionApplicationProperties.axisVersion());
         final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
         if (axisSecureSecret != null) {
             final String secureHash = hashAllFields(fields);
             fields.put(CollectionConstants.AXIS_SECURE_HASH, secureHash);
         }
-        final StringBuilder buf = new StringBuilder();
-        buf.append(paymentServiceDetails.getServiceUrl()).append('?');
-        appendQueryFields(buf, fields);
-        paymentRequest.setParameter(CollectionConstants.ONLINEPAYMENT_INVOKE_URL, buf);
-        LOGGER.info("paymentRequest: " + paymentRequest.getRequestParameters());
+        fields.put(CollectionConstants.AXIS_SECURE_HASHTYPE, CollectionConstants.AXIS_SECURE_HASHTYPE_VALUE);
+
+        requestURL.append(paymentServiceDetails.getServiceUrl()).append('?');
+        appendQueryFields(requestURL, fields);
+        paymentRequest.setParameter(CollectionConstants.ONLINEPAYMENT_INVOKE_URL, requestURL);
+        LOGGER.info("AXIS payment gateway request: " + paymentRequest.getRequestParameters());
         return paymentRequest;
     }
 
-    private String hashAllFields(final Map<String, String> fields) {
+    private String hashAllFields(final LinkedHashMap<String, String> fields) {
 
-        // create a list and sort it
+        final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
+        byte[] decodedKey;
+        byte[] hashValue = null;
+        // Sort list with field names ascending order
         final List<String> fieldNames = new ArrayList<>(fields.keySet());
         Collections.sort(fieldNames);
 
-        // create a buffer for the md5 input and add the secure secret first
-        final StringBuilder buf = new StringBuilder();
-        final String axisSecureSecret = collectionApplicationProperties.axisSecureSecret();
-        buf.append(axisSecureSecret);
-
-        // iterate through the list and add the remaining field values
+        // iterate through field name list and generate message for hashing. Format: fieldname1=fieldvale1?fieldname2=fieldvalue2
         final Iterator<String> itr = fieldNames.iterator();
-
+        final StringBuilder hashingMessage = new StringBuilder();
+        int i = 0;
         while (itr.hasNext()) {
             final String fieldName = itr.next();
             final String fieldValue = fields.get(fieldName);
-            if (fieldValue != null && fieldValue.length() > 0)
-                buf.append(fieldValue);
+            if (fieldValue != null && fieldValue.length() > 0) {
+                if (i != 0)
+                    hashingMessage.append("&");
+                hashingMessage.append(fieldName).append("=").append(fieldValue);
+                i++;
+            }
         }
-
-        MessageDigest md5 = null;
-        byte[] ba = null;
-
-        // create the md5 hash and UTF-8 encode it
         try {
-            md5 = MessageDigest.getInstance("MD5");
-            ba = md5.digest(buf.toString().getBytes(UTF8));
-        } catch (final Exception e) {
-            LOGGER.error("Error in hashAllFields" + e);
-        } // wont happen
-
-        return hex(ba);
-
+            decodedKey = Hex.decodeHex(axisSecureSecret.toCharArray());
+            SecretKeySpec keySpec = new SecretKeySpec(decodedKey, "HmacSHA256");
+            Mac mac = Mac.getInstance("HmacSHA256");
+            mac.init(keySpec);
+            byte[] hashingMessageBytes = hashingMessage.toString().getBytes(UTF8);
+            hashValue = mac.doFinal(hashingMessageBytes);
+        } catch (DecoderException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (UnsupportedEncodingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return DatatypeConverter.printHexBinary(hashValue);
     } // end hashAllFields()
 
     /**
      * Returns Hex output of byte array
      */
-    private static String hex(final byte[] input) {
-        // create a StringBuilder 2x the size of the hash array
-        final StringBuilder sb = new StringBuilder(input.length * 2);
-
-        // retrieve the byte array data, convert it to hex
-        // and add it to the StringBuilder
-        for (final byte element : input) {
-            sb.append(CollectionConstants.AXIS_HEX_TABLE[element >> 4 & 0xf]);
-            sb.append(CollectionConstants.AXIS_HEX_TABLE[element & 0xf]);
-        }
-        return sb.toString();
-    }
+    /*
+     * private static String hex(final byte[] input) { // create a StringBuilder 2x the size of the hash array final StringBuilder
+     * sb = new StringBuilder(input.length * 2); // retrieve the byte array data, convert it to hex // and add it to the
+     * StringBuilder for (final byte element : input) { sb.append(CollectionConstants.AXIS_HEX_TABLE[element >> 4 & 0xf]);
+     * sb.append(CollectionConstants.AXIS_HEX_TABLE[element & 0xf]); } return sb.toString(); }
+     */
 
     /**
-     * This method parses the given response string into a AXIS payment response
-     * object.
+     * This method parses the given response string into a AXIS payment response object.
      *
-     * @param a
-     *            <code>String</code> representation of the response.
+     * @param a <code>String</code> representation of the response.
      * @return an instance of <code></code> containing the response information
      */
     @Override
     public PaymentResponse parsePaymentResponse(final String response) {
         LOGGER.info("Response message from Axis Payment gateway: " + response);
         final String[] keyValueStr = response.replace("{", "").replace("}", "").split(",");
-        final Map<String, String> fields = new HashMap<>(0);
+        final LinkedHashMap<String, String> fields = new LinkedHashMap<>(0);
 
         for (final String pair : keyValueStr) {
             final String[] entry = pair.split("=");
@@ -228,14 +235,11 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
                 fields.put(entry[0].trim(), entry[1].trim());
         }
         /*
-         * If there has been a merchant secret set then sort and loop through
-         * all the data in the Virtual Payment Client response. while we have
-         * the data, we can append all the fields that contain values (except
-         * the secure hash) so that we can create a hash and validate it against
-         * the secure hash in the Virtual Payment Client response. NOTE: If the
-         * vpc_TxnResponseCode in not a single character then there was a
-         * Virtual Payment Client error and we cannot accurately validate the
-         * incoming data from the secure hash.
+         * If there has been a merchant secret set then sort and loop through all the data in the Virtual Payment Client response.
+         * while we have the data, we can append all the fields that contain values (except the secure hash) so that we can create
+         * a hash and validate it against the secure hash in the Virtual Payment Client response. NOTE: If the vpc_TxnResponseCode
+         * in not a single character then there was a Virtual Payment Client error and we cannot accurately validate the incoming
+         * data from the secure hash.
          */
 
         // remove the vpc_TxnResponseCode code from the response fields as we do
@@ -280,7 +284,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
             qry.setParameter(1, Long.valueOf(receiptId));
             qry.setParameter(2, ulbCode);
             receiptHeader = (ReceiptHeader) qry.getSingleResult();
-            axisResponse.setAuthStatus("0".equals(fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE)) ? "0300"
+            axisResponse.setAuthStatus("0".equals(fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE))
+                    ? CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS
                     : fields.get(CollectionConstants.AXIS_TXN_RESPONSE_CODE));
             axisResponse.setErrorDescription(fields.get(CollectionConstants.AXIS_RESP_MESSAGE));
             axisResponse.setAdditionalInfo6(receiptHeader.getConsumerCode().replace("-", "").replace("/", ""));
@@ -298,9 +303,8 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     }
 
     /*
-     * This method takes a data String and returns a predefined value if empty
-     * If data Sting is null, returns string "No Value Returned", else returns
-     * input
+     * This method takes a data String and returns a predefined value if empty If data Sting is null, returns string
+     * "No Value Returned", else returns input
      * @param in String containing the data String
      * @return String containing the output String
      */
@@ -314,14 +318,12 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
     /**
      * This method is for creating a URL query string.
      *
-     * @param buf
-     *            is the inital URL for appending the encoded fields to
-     * @param fields
-     *            is the input parameters from the order page
+     * @param buf is the inital URL for appending the encoded fields to
+     * @param fields is the input parameters from the order page
      */
     @SuppressWarnings({ "rawtypes", "unchecked" })
     // Method for creating a URL query string
-    private void appendQueryFields(final StringBuilder buf, final Map fields) {
+    private void appendQueryFields(final StringBuilder buf, final LinkedHashMap<String, String> fields) {
 
         // create a list
         final List fieldNames = new ArrayList(fields.keySet());
@@ -330,7 +332,7 @@ public class AxisAdaptor implements PaymentGatewayAdaptor {
         // move through the list and create a series of URL key/value pairs
         while (itr.hasNext()) {
             final String fieldName = (String) itr.next();
-            final String fieldValue = (String) fields.get(fieldName);
+            final String fieldValue = fields.get(fieldName);
 
             if (fieldValue != null && fieldValue.length() > 0)
                 // append the URL parameters
