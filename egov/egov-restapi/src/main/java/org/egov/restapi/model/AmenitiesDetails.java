@@ -110,9 +110,9 @@ public class AmenitiesDetails implements Serializable {
 
 	@Override
 	public String toString() {
-		return "AmenitiesRequest [hasLift=" + hasLift + ", hasToilet=" + hasToilet + ", hasWaterTap=" + hasWaterTap + ", hasElectricity="
-				+ hasElectricity + ", hasAttachedBathroom=" + hasAttachedBathroom + ", hasWaterHarvesting=" + hasWaterHarvesting
-				+ ", hasCableConnection=" + hasCableConnection + "]";
+		return "AmenitiesRequest [hasLift=" + hasLift + ", hasToilet=" + hasToilet + ", hasWaterTap=" + hasWaterTap
+				+ ", hasElectricity=" + hasElectricity + ", hasAttachedBathroom=" + hasAttachedBathroom
+				+ ", hasWaterHarvesting=" + hasWaterHarvesting + ", hasCableConnection=" + hasCableConnection + "]";
 	}
 
 }

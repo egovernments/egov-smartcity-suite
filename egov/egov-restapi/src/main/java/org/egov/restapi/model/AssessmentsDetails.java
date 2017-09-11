@@ -49,44 +49,50 @@ public class AssessmentsDetails implements Serializable {
 	private String extentOfSite;
 	private String occupancyCertificationNo;
 	private String extentAppartenauntLand;
-	
+
 	@Override
 	public String toString() {
 		return "AssessmentsDetails [mutationReasonCode=" + mutationReasonCode + ", parentPropertyAssessmentNo="
-				+ parentPropertyAssessmentNo + ", extentOfSite=" + extentOfSite +  ", occupancyCertificationNo=" + occupancyCertificationNo + ", occupancyCertificationNo=" + occupancyCertificationNo
-				 + "]";
+				+ parentPropertyAssessmentNo + ", extentOfSite=" + extentOfSite + ", occupancyCertificationNo="
+				+ occupancyCertificationNo + ", occupancyCertificationNo=" + occupancyCertificationNo + "]";
 	}
-	
+
 	public String getMutationReasonCode() {
 		return mutationReasonCode;
 	}
+
 	public void setMutationReasonCode(String mutationReasonCode) {
 		this.mutationReasonCode = mutationReasonCode;
 	}
+
 	public String getParentPropertyAssessmentNo() {
 		return parentPropertyAssessmentNo;
 	}
+
 	public void setParentPropertyAssessmentNo(String parentPropertyAssessmentNo) {
 		this.parentPropertyAssessmentNo = parentPropertyAssessmentNo;
 	}
+
 	public String getExtentOfSite() {
 		return extentOfSite;
 	}
+
 	public void setExtentOfSite(String extentOfSite) {
 		this.extentOfSite = extentOfSite;
 	}
-	
+
 	public String getOccupancyCertificationNo() {
 		return occupancyCertificationNo;
 	}
+
 	public void setOccupancyCertificationNo(String occupancyCertificationNo) {
 		this.occupancyCertificationNo = occupancyCertificationNo;
 	}
-	
-	
+
 	public String getExtentAppartenauntLand() {
 		return extentAppartenauntLand;
 	}
+
 	public void setExtentAppartenauntLand(String extentAppartenauntLand) {
 		this.extentAppartenauntLand = extentAppartenauntLand;
 	}

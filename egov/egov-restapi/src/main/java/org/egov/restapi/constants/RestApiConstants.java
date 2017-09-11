@@ -39,13 +39,6 @@
  */
 package org.egov.restapi.constants;
 
-import static org.egov.restapi.constants.RestApiConstants.MOBILENO_ALPHANUMERIC_ERROR_CODE;
-import static org.egov.restapi.constants.RestApiConstants.MOBILENO_ALPHANUMERIC_ERROR_MSG;
-
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
-
 public class RestApiConstants {
     public static final String OWNERSHIP_CATEGORY_TYPE_REQ_CODE = "01";
     public static final String OWNERSHIP_CATEGORY_TYPE_REQ_MSG = "Category of Ownership is required.";
@@ -567,7 +560,7 @@ public class RestApiConstants {
     public static final String VL_AREA_NUMBER_REQ_MSG = "Please enter valid Vacant Land Area ";
     
     public static final String MKT_VAL_NUMBER_REQ_CODE = "92";
-    public static final String MKT_VAL__NUMBER_REQ_MSG = "Please enter valid Market Value ";
+    public static final String MKT_VAL_NUMBER_REQ_MSG = "Please enter valid Market Value ";
     
     public static final String BUILDING_PERMISSION_NO_REQ_CODE = "93";
     public static final String BUILDING_PERMISSION_NO_REQ_MSG = "Building Permission no  is required.";
@@ -613,6 +606,15 @@ public class RestApiConstants {
     public static final String INACTIVE_CLASSIFICATION_CODE = "109";
     public static final String INACTIVE_CLASSIFICATION_REQ_MSG = "Building Classification is Inactive";
     
+    public static final String INACTIVE_UNIT_RATES_CODE = "110";
+    public static final String INACTIVE_UNIT_RATES_REQ_MSG = "There is no Active Unit Rates for given ZOne,Claasfication,Usage and Occupancy Date";
+    
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_CODE = "111";
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_REQ_MSG = "There is Mapping Found for selected Locality , Block and Ward";
+    
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_CODE = "112";
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_REQ_MSG = "There is Mapping Found for selected Locality , Block and Ward";
+   
     public static final String DOCUMENT_NAME_PATTA_CERTIFICATE = "Patta Certificate (Issued by Revenue Department)";
     public static final String DOCUMENT_NAME_REGD_WILL_DOCUMENT = "Registered Will Document";
     public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";

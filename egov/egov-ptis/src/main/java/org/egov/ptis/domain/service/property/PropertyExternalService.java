@@ -197,6 +197,7 @@ import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.integration.utils.CollectionHelper;
 import org.egov.ptis.client.model.PenaltyAndRebate;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
+import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -321,12 +322,18 @@ public class PropertyExternalService {
 	private InstallmentHibDao installmentDao;
 	@Autowired
 	private ModuleService moduleService;
-
+	
+	@Autowired
+    private PersistenceService persistenceService;
+	
 	@Autowired
 	PropertyUsageService propertyUsageService;
 
 	@Autowired
 	StructureClassificationService structureClassificationService;
+	
+	@Autowired	
+	PropertyTaxUtil propertyTaxUtil;
 
 	private PropertyImpl propty = new PropertyImpl();
 
@@ -1121,7 +1128,7 @@ public class PropertyExternalService {
 
 	@SuppressWarnings("unchecked")
 	public List<MasterCodeNamePairDetails> getWoodTypes() {
-		final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
 		final List<WoodType> woodTypeList = entityManager.createQuery("from WoodType order by name").getResultList();
 		for (final WoodType woodType : woodTypeList) {
 			final MasterCodeNamePairDetails mstrCodeNamePairDetails = new MasterCodeNamePairDetails();
@@ -1134,7 +1141,7 @@ public class PropertyExternalService {
 
 	@SuppressWarnings("unchecked")
 	public List<MasterCodeNamePairDetails> getBuildingClassifications() {
-		final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
 		final List<StructureClassification> structClsfList = entityManager.createQuery("from StructureClassification")
 				.getResultList();
 		for (final StructureClassification structClsf : structClsfList) {
@@ -1154,7 +1161,7 @@ public class PropertyExternalService {
 
 	@SuppressWarnings("unchecked")
 	public List<MasterCodeNamePairDetails> getNatureOfUsages() {
-		final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<MasterCodeNamePairDetails>();
+		final List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = new ArrayList<>();
 		final List<PropertyUsage> usageList = entityManager.createQuery("from PropertyUsage order by usageName")
 				.getResultList();
 		for (final PropertyUsage propUsage : usageList) {
@@ -1277,8 +1284,7 @@ public class PropertyExternalService {
 		final PropertyAddress propAddress = createPropAddress(viewPropertyDetails, block);
 		basicProperty.setAddress(propAddress);
 
-		// Creating PropertyID object based on basic property, localityCode and
-		// boundary map direction
+		// Creating PropertyID object based on basic property, localityCode and boundary map direction
 		final PropertyID propertyID = createPropertID(basicProperty, viewPropertyDetails, block);
 		basicProperty.setPropertyID(propertyID);
 
@@ -1376,6 +1382,7 @@ public class PropertyExternalService {
 
 		basicProperty.setPropOccupationDate(propCompletionDate);
 		basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(viewPropertyDetails.getOwnerDetails()));
+		 
 		if (property != null && !property.getDocuments().isEmpty())
 			propService.processAndStoreDocument(property.getDocuments());
 		try {
@@ -1534,8 +1541,7 @@ public class PropertyExternalService {
 
 	public Date convertStringToDate(final String dateInString) throws ParseException {
 		final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
-		final Date stringToDate = sdf.parse(dateInString);
-		return stringToDate;
+		return sdf.parse(dateInString);
 	}
 
 	private void processAndStoreDocumentsWithReason(final BasicProperty basicProperty, final String reason,
@@ -1566,7 +1572,7 @@ public class PropertyExternalService {
 	}
 
 	private List<Floor> getFloorList(final List<FloorDetails> floorDetailsList) throws ParseException {
-		final List<Floor> floorList = new ArrayList<Floor>(0);
+		final List<Floor> floorList = new ArrayList<>(0);
 		for (final FloorDetails floorDetails : floorDetailsList) {
 			final Floor floor = new Floor();
 			if (StringUtils.isNotBlank(floorDetails.getFloorNoCode()))
@@ -1607,7 +1613,7 @@ public class PropertyExternalService {
 	}
 
 	private List<PropertyOwnerInfo> getPropertyOwnerInfoList(final List<OwnerInformation> ownerInfoList) {
-		final List<PropertyOwnerInfo> proeprtyOwnerInfoList = new ArrayList<PropertyOwnerInfo>(0);
+		final List<PropertyOwnerInfo> proeprtyOwnerInfoList = new ArrayList<>(0);
 		for (final OwnerInformation ownerInfo : ownerInfoList) {
 			final PropertyOwnerInfo propOwner = new PropertyOwnerInfo();
 			final User owner = new User();
@@ -1666,14 +1672,6 @@ public class PropertyExternalService {
 				.withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
 				.withNatureOfTask(natureOftask).withInitiator(assignment != null ? assignment.getPosition() : null);
 
-		/*
-		 * property.transition().start().withSenderName(user.getName()).
-		 * withComments(approverComments)
-		 * .withStateValue(wfmatrix.getCurrentState()).withDateInfo(currentDate.
-		 * toDate()).withOwner(pos)
-		 * .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(
-		 * natureOftask);
-		 */
 		return property;
 	}
 
@@ -1836,7 +1834,7 @@ public class PropertyExternalService {
 
 		final EgBill egBill = ptBillServiceImpl.generateBill(propertyTaxBillable);
 		final CollectionHelper collectionHelper = new CollectionHelper(egBill);
-		final Map<String, String> paymentDetailsMap = new HashMap<String, String>();
+		final Map<String, String> paymentDetailsMap = new HashMap<>();
 		paymentDetailsMap.put(TOTAL_AMOUNT, payPropertyTaxDetails.getPaymentAmount().toString());
 		paymentDetailsMap.put(PAID_BY, egBill.getCitizenName());
 		if (THIRD_PARTY_PAYMENT_MODE_CHEQUE.equalsIgnoreCase(payPropertyTaxDetails.getPaymentMode().toLowerCase())
@@ -2351,7 +2349,6 @@ public class PropertyExternalService {
 		Date propCompletionDate = null;
 		final PropertyTypeMaster propertyTypeMaster = getPropertyTypeMasterByCode(
 				viewPropertyDetails.getPropertyTypeMaster());
-		//propertyImpl.getPropertyDetail().setAppurtenantLandChecked(viewPropertyDetails.getIsExtentAppurtenantLand());
 		propertyImpl.getPropertyDetail().setEffectiveDate(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
 		if (StringUtils.isNotBlank(viewPropertyDetails.getApartmentCmplx())) {
 			final Apartment apartment = getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
@@ -2526,12 +2523,6 @@ public class PropertyExternalService {
 	private VacantProperty changePropertyDetail(final PropertyImpl property) {
 
 		final PropertyDetail propertyDetail = property.getPropertyDetail();
-		/*
-		 * if (getDocumentTypeDetails().getDocumentName() != null &&
-		 * getDocumentTypeDetails().getDocumentName()
-		 * .equals(PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT))
-		 * propertyDetail.setStructure(true);
-		 */
 		final VacantProperty vacantProperty = new VacantProperty(propertyDetail.getSitalArea(),
 				propertyDetail.getTotalBuiltupArea(), propertyDetail.getCommBuiltUpArea(),
 				propertyDetail.getPlinthArea(), propertyDetail.getCommVacantLand(), propertyDetail.getNonResPlotArea(),
@@ -2771,7 +2762,7 @@ public class PropertyExternalService {
 	
 	public BasicProperty getBasicPropertyByPropertyID(String propertyId) {
 		StringBuilder queryString = new StringBuilder();
-		queryString.append("from BasicPropertyImpl BP where BP.upicNo =:propertyId and BP.active='Y' ");
+		queryString.append("from BasicPropertyImpl BP where BP.upicNo =:propertyId ");
 		BasicProperty basicProperty = null;
 		final Query qry = entityManager.createQuery(queryString.toString());
 			qry.setParameter("propertyId", propertyId);
@@ -2781,7 +2772,7 @@ public class PropertyExternalService {
 	
 	public Property getPropertyByBasicPropertyID(BasicProperty basicpropertyId) {
 		StringBuilder queryString = new StringBuilder();
-		queryString.append("from PropertyImpl prop where prop.basicProperty =:basicpropertyId and BP.active='Y' ");
+		queryString.append("from PropertyImpl prop where prop.basicProperty =:basicpropertyId  ");
 		Property property = null;
 		final Query qry = entityManager.createQuery(queryString.toString());
 			qry.setParameter("basicpropertyId", basicpropertyId);
@@ -2800,6 +2791,89 @@ public class PropertyExternalService {
 			isActive = Boolean.TRUE;
 		}
 		return isActive;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Boolean isActiveUnitRateExists(FloorDetails floorDetails,String zoneNumber,String usageCode,String classificationCode) throws ParseException{
+		Boolean isActive=Boolean.FALSE;
+		Boundary zone=getBoundaryByNumberAndType(zoneNumber, ZONE, REVENUE_HIERARCHY_TYPE);
+		PropertyUsage usage=propertyUsageService.getUsageByCode(usageCode);
+		StructureClassification sc=structureClassificationService.getClassificationByCode(classificationCode);
+		final List<Installment> taxInstallments = propertyTaxUtil.getInstallmentsListByEffectiveDate(convertStringToDate(floorDetails.getOccupancyDate()));
+		 List<BoundaryCategory> categories;
+		for(Installment installment:taxInstallments){
+            
+				if (betweenOrBefore(convertStringToDate(floorDetails.getOccupancyDate()), installment.getFromDate(),
+						installment.getToDate())) {
+					categories = persistenceService.findAllByNamedQuery(QUERY_BASERATE_BY_OCCUPANCY_ZONE, zone.getId(),
+							usage.getId(), sc.getId(), convertStringToDate(floorDetails.getOccupancyDate()), installment.getToDate());
+					if (categories.isEmpty()){
+	            		 isActive=Boolean.TRUE;
+	            	 }
+            	 
+            }
+
+		}
+
+		return isActive;
+	}
+	
+	private Boolean between(final Date date, final Date fromDate, final Date toDate) {
+        return (date.after(fromDate) || date.equals(fromDate)) && date.before(toDate) || date.equals(toDate);
+    }
+
+    private Boolean betweenOrBefore(final Date date, final Date fromDate, final Date toDate) {
+        return between(date, fromDate, toDate) || date.before(fromDate);
+    }
+	
+    public Boundary getBoundarybyboundaryNumberTypeHierarchy(final String boundaryNum,final BoundaryType boundaryType ){
+    	return boundaryService.getBoundaryByTypeAndNo(boundaryType, Long.valueOf(boundaryNum));
+    }
+    
+    public BoundaryType getBoundaryTypeByNameandHierarchy( final String boundaryTypeName,
+			final String hierarchyName){
+    	return boundaryTypeService
+				.getBoundaryTypeByNameAndHierarchyTypeName(boundaryTypeName, hierarchyName);
+    }
+    
+	@SuppressWarnings("unchecked")
+	public Boolean isCrossHierarchyMappingExist(Long localityId, Long wardId, Long blockId, Long wardBoundaryTypeId) {
+		Boolean isMappingExists = Boolean.FALSE;
+		
+		StringBuilder queryString = new StringBuilder();
+		queryString.append(
+				"select parent.parent.boundaryNum as wardnum, parent.parent.name as wardname, parent.boundaryNum as blocknum,");
+		queryString.append(" parent.name as blockname, child.boundaryNum as localitynum, child.name as localityname");
+		queryString.append(" from CrossHierarchy ch, Boundary parent, Boundary child");
+		queryString.append(
+				" where ch.parent.id = :blockId  and ch.child.id = :localityId  and ch.parentType.name=:block and");
+		queryString.append(
+				" ch.childType.name=:locality and parent.parent.boundaryType.id=:wardBoundaryTypeId and parent.parent.id=:wardId");
+		List<Object[]> boundaryDetails = entityManager.unwrap(Session.class).createQuery(queryString.toString())
+				.setParameter("block", BLOCK).setParameter("locality", LOCALITY_BNDRY_TYPE)
+				.setParameter("wardBoundaryTypeId", wardBoundaryTypeId).setParameter("blockId", blockId).setParameter("localityId", localityId).setParameter("wardId", wardId).list();
+
+		if(!boundaryDetails.isEmpty()){
+			isMappingExists=Boolean.TRUE;
+		}
+		return isMappingExists;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Boolean isCrossHierarchyMappingExistforLoclityandElecWrd(Long localityId, Long electionWardId) {
+		Boolean isMappingExists = Boolean.FALSE;
+		
+		StringBuilder queryString = new StringBuilder();
+		queryString.append(" from CrossHierarchy ch");
+		queryString.append(
+				" where ch.parent.id = :electionWardId  and ch.child.id = :localityId  ");
+		List<CrossHierarchy> boundaryDetails = entityManager.unwrap(Session.class).createQuery(queryString.toString())
+				.setParameter("electionWardId", electionWardId).setParameter("localityId", localityId).list();
+
+		if(!boundaryDetails.isEmpty()){
+			isMappingExists=Boolean.TRUE;
+		}
+		return isMappingExists;
 	}
 	
 }

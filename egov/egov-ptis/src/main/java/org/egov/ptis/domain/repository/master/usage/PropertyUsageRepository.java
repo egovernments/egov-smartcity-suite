@@ -57,10 +57,10 @@ public interface PropertyUsageRepository extends JpaRepository<PropertyUsage, Lo
 
     public List<PropertyUsage> findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
     
-    @Query(value = "select isActive from egpt_property_usage_master where upper(code) = upper(:usageCode)", nativeQuery = true)
+    @Query(value = "select isActive from egpt_property_usage_master where code = :usageCode", nativeQuery = true)
     Boolean findIsActiveByCode(@Param("usageCode") String usageCode);
     
-    @Query(value = "select us from egpt_property_usage_master us where upper(us.code) = upper(:usageCode)", nativeQuery = true)
+    @Query(value = "select * from egpt_property_usage_master where code = :usageCode", nativeQuery = true)
     PropertyUsage findUsageByCode(@Param("usageCode") String usageCode);
     
     @Query(value = "select * from egpt_property_usage_master where upper(code) = upper(:usageCode) and id <> :usageId", nativeQuery = true)

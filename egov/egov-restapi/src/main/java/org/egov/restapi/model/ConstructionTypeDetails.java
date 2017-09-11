@@ -82,8 +82,8 @@ public class ConstructionTypeDetails implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ConstructionTypesRequest [floorTypeId=" + floorTypeId + ", roofTypeId=" + roofTypeId
-				+ ", wallTypeId=" + wallTypeId + ", woodTypeId=" + woodTypeId + "]";
+		return "ConstructionTypesRequest [floorTypeId=" + floorTypeId + ", roofTypeId=" + roofTypeId + ", wallTypeId="
+				+ wallTypeId + ", woodTypeId=" + woodTypeId + "]";
 	}
 
 }

@@ -39,28 +39,25 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
 import java.io.IOException;
 import java.text.ParseException;
-import java.util.Collections;
-import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
-import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
+import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
 import org.egov.dcb.bean.ChequePayment;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.ptis.domain.entity.property.Document;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
-import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentsDetails;
 import org.egov.restapi.model.ConstructionTypeDetails;
-import org.egov.restapi.model.CorrespondenceAddressDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.DocumentTypeDetails;
 import org.egov.restapi.model.PropertyAddressDetails;
@@ -73,9 +70,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-import org.egov.ptis.constants.PropertyTaxConstants;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 public class CreateAssessmentController {
@@ -211,7 +205,7 @@ public class CreateAssessmentController {
     	viewPropertyDetails.setRegdDocNo(documentTypeDetails.getDocumentNumber());
     	viewPropertyDetails.setRegdDocDate(documentTypeDetails.getDocumentDate());
     	viewPropertyDetails.setMroProcNo(documentTypeDetails.getMroProceedingNumber());
-    	viewPropertyDetails .setMroProcDate(documentTypeDetails.getMroProceedingDate());
+    	viewPropertyDetails.setMroProcDate(documentTypeDetails.getMroProceedingDate());
     	viewPropertyDetails.setTwSigned(documentTypeDetails.getSigned()== null? Boolean.FALSE:documentTypeDetails.getSigned());
     	return viewPropertyDetails;
     }

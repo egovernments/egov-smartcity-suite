@@ -123,9 +123,9 @@ public class PropertyAddressDetails implements Serializable {
 	@Override
 	public String toString() {
 		return "PropertyAddressDetails [localityNum=" + localityNum + ", streetNum=" + streetNum + ", electionWardNum="
-				+ electionWardNum + ", doorNo=" + doorNo + ", enumerationBlockCode=" + enumerationBlockCode 
-				+ ", zoneNum=" + zoneNum + ", wardNum=" + wardNum
-				+ ", pinCode=" + pinCode + ", isCorrAddrDiff=" + isCorrAddrDiff + ", corrAddressDetails=" + corrAddressDetails + "]";
+				+ electionWardNum + ", doorNo=" + doorNo + ", enumerationBlockCode=" + enumerationBlockCode
+				+ ", zoneNum=" + zoneNum + ", wardNum=" + wardNum + ", pinCode=" + pinCode + ", isCorrAddrDiff="
+				+ isCorrAddrDiff + ", corrAddressDetails=" + corrAddressDetails + "]";
 	}
 
 	public String getZoneNum() {

@@ -48,108 +48,129 @@ import java.util.List;
 
 @SuppressWarnings("serial")
 public class CreatePropertyDetails implements Serializable {
-	
+
 	private String ulbCode;
 	private String assessmentNumber;
 	private String propertyTypeMasterCode;
 	private String propertyDepartment;
 	private String categoryCode;
 	private String apartmentCmplxCode;
-	private Boolean appurtenantLandChecked=false;
+	private Boolean appurtenantLandChecked = false;
 	private List<OwnerInformation> ownerDetails;
 	private AssessmentsDetails assessmentDetails;
 	private PropertyAddressDetails propertyAddressDetails;
 	private AmenitiesDetails amenitiesDetails;
 	private ConstructionTypeDetails constructionTypeDetails;
 	private List<FloorDetails> floorDetails;
-	private Boolean floorDetailsEntered=false;
+	private Boolean floorDetailsEntered = false;
 	private VacantLandDetails vacantLandDetails;
 	private SurroundingBoundaryDetails surroundingBoundaryDetails;
-	private DocumentTypeDetails  documentTypeDetails;
+	private DocumentTypeDetails documentTypeDetails;
 	private String assessmentNo;
-	
+
 	@Override
 	public String toString() {
-		return "CreatePropertyDetails [propertyTypeMasterCode=" + propertyTypeMasterCode + ", categoryCode=" + categoryCode 
-				+ ", apartmentCmplxCode=" + apartmentCmplxCode + ", ownerDetails=" + ownerDetails + ", assessmentDetails=" + assessmentDetails
-				+ ", propertyAddressDetails=" + propertyAddressDetails + ", amenitiesDetails=" + amenitiesDetails
-				+ ", constructionTypeDetails=" + constructionTypeDetails + ", floorDetails=" + floorDetails
-				+ ", vacantLandDetails=" + vacantLandDetails + ", surroundingBoundaryDetails="
-				+ surroundingBoundaryDetails + ", documentTypeDetails="
-						+ documentTypeDetails + "]";
+		return "CreatePropertyDetails [propertyTypeMasterCode=" + propertyTypeMasterCode + ", categoryCode="
+				+ categoryCode + ", apartmentCmplxCode=" + apartmentCmplxCode + ", ownerDetails=" + ownerDetails
+				+ ", assessmentDetails=" + assessmentDetails + ", propertyAddressDetails=" + propertyAddressDetails
+				+ ", amenitiesDetails=" + amenitiesDetails + ", constructionTypeDetails=" + constructionTypeDetails
+				+ ", floorDetails=" + floorDetails + ", vacantLandDetails=" + vacantLandDetails
+				+ ", surroundingBoundaryDetails=" + surroundingBoundaryDetails + ", documentTypeDetails="
+				+ documentTypeDetails + "]";
 	}
-	
 
-	
 	public String getPropertyTypeMasterCode() {
 		return propertyTypeMasterCode;
 	}
+
 	public void setPropertyTypeMasterCode(String propertyTypeMasterCode) {
 		this.propertyTypeMasterCode = propertyTypeMasterCode;
 	}
+
 	public String getCategoryCode() {
 		return categoryCode;
 	}
+
 	public void setCategoryCode(String categoryCode) {
 		this.categoryCode = categoryCode;
 	}
+
 	public String getApartmentCmplxCode() {
 		return apartmentCmplxCode;
 	}
+
 	public void setApartmentCmplxCode(String apartmentCmplxCode) {
 		this.apartmentCmplxCode = apartmentCmplxCode;
 	}
+
 	public List<OwnerInformation> getOwnerDetails() {
 		return ownerDetails;
 	}
+
 	public void setOwnerDetails(List<OwnerInformation> ownerDetails) {
 		this.ownerDetails = ownerDetails;
 	}
+
 	public AssessmentsDetails getAssessmentDetails() {
 		return assessmentDetails;
 	}
+
 	public void setAssessmentDetails(AssessmentsDetails assessmentDetails) {
 		this.assessmentDetails = assessmentDetails;
 	}
+
 	public PropertyAddressDetails getPropertyAddressDetails() {
 		return propertyAddressDetails;
 	}
+
 	public void setPropertyAddressDetails(PropertyAddressDetails propertyAddressDetails) {
 		this.propertyAddressDetails = propertyAddressDetails;
 	}
+
 	public AmenitiesDetails getAmenitiesDetails() {
 		return amenitiesDetails;
 	}
+
 	public void setAmenitiesDetails(AmenitiesDetails amenitiesDetails) {
 		this.amenitiesDetails = amenitiesDetails;
 	}
+
 	public ConstructionTypeDetails getConstructionTypeDetails() {
 		return constructionTypeDetails;
 	}
+
 	public void setConstructionTypeDetails(ConstructionTypeDetails constructionTypeDetails) {
 		this.constructionTypeDetails = constructionTypeDetails;
 	}
+
 	public List<FloorDetails> getFloorDetails() {
 		return floorDetails;
 	}
+
 	public void setFloorDetails(List<FloorDetails> floorDetails) {
 		this.floorDetails = floorDetails;
 	}
+
 	public VacantLandDetails getVacantLandDetails() {
 		return vacantLandDetails;
 	}
+
 	public void setVacantLandDetails(VacantLandDetails vacantLandDetails) {
 		this.vacantLandDetails = vacantLandDetails;
 	}
+
 	public SurroundingBoundaryDetails getSurroundingBoundaryDetails() {
 		return surroundingBoundaryDetails;
 	}
+
 	public void setSurroundingBoundaryDetails(SurroundingBoundaryDetails surroundingBoundaryDetails) {
 		this.surroundingBoundaryDetails = surroundingBoundaryDetails;
 	}
+
 	public String getUlbCode() {
 		return ulbCode;
 	}
+
 	public void setUlbCode(String ulbCode) {
 		this.ulbCode = ulbCode;
 	}
@@ -161,26 +182,23 @@ public class CreatePropertyDetails implements Serializable {
 	public void setAssessmentNo(String assessmentNo) {
 		this.assessmentNo = assessmentNo;
 	}
-	
+
 	public String getPropertyDepartment() {
 		return propertyDepartment;
 	}
-
 
 	public void setPropertyDepartment(String propertyDepartment) {
 		this.propertyDepartment = propertyDepartment;
 	}
 
-
 	public DocumentTypeDetails getDocumentTypeDetails() {
 		return documentTypeDetails;
 	}
 
-
 	public void setDocumentTypeDetails(DocumentTypeDetails documentTypeDetails) {
 		this.documentTypeDetails = documentTypeDetails;
 	}
-	
+
 	public Boolean getFloorDetailsEntered() {
 		return floorDetailsEntered;
 	}
@@ -189,25 +207,17 @@ public class CreatePropertyDetails implements Serializable {
 		this.floorDetailsEntered = floorDetailsEntered;
 	}
 
-
-
 	public boolean isAppurtenantLandChecked() {
 		return appurtenantLandChecked;
 	}
-
-
 
 	public void setAppurtenantLandChecked(Boolean appurtenantLandChecked) {
 		this.appurtenantLandChecked = appurtenantLandChecked;
 	}
 
-
-
 	public String getAssessmentNumber() {
 		return assessmentNumber;
 	}
-
-
 
 	public void setAssessmentNumber(String assessmentNumber) {
 		this.assessmentNumber = assessmentNumber;
