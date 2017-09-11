@@ -55,7 +55,7 @@ import java.net.InetSocketAddress;
 import java.util.List;
 
 @Configuration
-@EnableElasticsearchRepositories(basePackages = "org.egov.**.repository.es")
+@EnableElasticsearchRepositories(basePackages = {"org.egov.**.repository.es", "org.egov.**.elasticsearch.repository"})
 public class ElasticSearchConfiguration {
 
     @Value("${elasticsearch.cluster.name}")
