@@ -93,7 +93,7 @@ public class UpdateAssessmentController {
 		ApplicationThreadLocals.setUserId(2L);
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
 		
-		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
+		ErrorDetails errorDetails = validationUtil.validateUpdateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
 		if (errorDetails != null) {
 			responseJson = JsonConvertor.convert(errorDetails);
 	    } else {
