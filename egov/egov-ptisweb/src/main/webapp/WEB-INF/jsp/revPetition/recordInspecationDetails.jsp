@@ -62,7 +62,7 @@
 							id="inspectionRemarks" cols="40" rows="2" onblur="checkLength(this)"></s:textarea>
 					</td>
 					<td class="bluebox" width="25%">
-						<s:text name="revisionPetition.generateSpecialNotice" />
+						<s:text name="revisionPetition.generateProceedings" />
 					</td>
 					<td class="bluebox" width="25%">
 						<s:radio name="generateSpecialNotice"

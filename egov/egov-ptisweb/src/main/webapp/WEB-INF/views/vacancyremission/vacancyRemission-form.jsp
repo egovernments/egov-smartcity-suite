@@ -70,38 +70,38 @@ body
 						<div class="panel panel-primary" data-collapsed="0">
 							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 							<form:hidden path="" name="applicationSource" value="${applicationSource}"/>
-							<div class="panel-heading" style="text-align: left">
-								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
-							</div>
-							<div class="panel-body custom-form">
-							       <div class="panel-body custom-form">
-							       	<jsp:include page="vacancy-remission-documents.jsp"></jsp:include>
-							     </div>
-								<div class="form-group">
-									<label class="col-sm-3 control-label text-right">
-										<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>
-									</label>
-									<div class="col-sm-3 add-margin">
-										<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
-										<form:errors path="vacancyFromDate" cssClass="add-margin error-msg"/>
-									</div>
-                                    <label class="col-sm-2 control-label text-right">
-                                    	<spring:message code="lbl.toDate" /> <span class="mandatory"></span>
-									</label>
-									<div class="col-sm-3 add-margin">
-										<form:input path="vacancyToDate" id="toDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
-										<form:errors path="vacancyToDate" cssClass="add-margin error-msg"/>
-									</div>
+							<div class="panel-body custom-form ">
+								<div class="panel-heading" style="text-align: left">
+									<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label text-right">
+											<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>
+										</label>
+										<div class="col-sm-3 add-margin">
+											<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
+											<form:errors path="vacancyFromDate" cssClass="add-margin error-msg"/>
+										</div>
+	                                    <label class="col-sm-2 control-label text-right">
+	                                    	<spring:message code="lbl.toDate" /> <span class="mandatory"></span>
+										</label>
+										<div class="col-sm-3 add-margin">
+											<form:input path="vacancyToDate" id="toDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
+											<form:errors path="vacancyToDate" cssClass="add-margin error-msg"/>
+										</div>
 								</div>
-								<div class="form-group">
 									<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.vacancy.comments" /> <span class="mandatory"></span>
 									</label>
-									<div class="col-sm-8 add-margin">
+									<div class="col-sm-5 add-margin">
 										<form:textarea path="vacancyComments" class="form-control" required="required" />
 										<form:errors path="vacancyComments" cssClass="add-margin error-msg"/>
 									</div>
 								</div>
+							</div></br>
+							<div class="panel-body custom-form">
+							       <div class="panel-body custom-form">
+							       	<jsp:include page="vacancy-remission-documents.jsp"></jsp:include>
+							     </div>
 							</div>
 						</div>
 					</div>

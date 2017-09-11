@@ -290,7 +290,7 @@
 							<s:text name="objection.status" />
 						</th>
 						<th class="bluebgheadtd">
-							<s:text name="revisionPetition.generateSpecialNotice" />
+							<s:text name="revisionPetition.generateProceedings" />
 						</th>
 			
 					</tr>
