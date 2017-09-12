@@ -120,12 +120,12 @@ id="editWaterConnectionform" cssClass="form-horizontal form-groups-bordered" enc
 	<jsp:include page="reconnection-details.jsp"></jsp:include> 
 	<jsp:include page="closuredocumentdetails-view.jsp"></jsp:include>
 	</c:if>
+	
+	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
+	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
 	<c:if test="${hasJuniorOrSeniorAssistantRole}">
 		<jsp:include page="application-reassignment.jsp"></jsp:include>
 	</c:if>
-	 	<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-	 	<jsp:include page="../common/commonWorkflowMatrix-button.jsp"/>
-	
 </form:form>
 <script src="<cdn:url value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url value='/resources/js/app/newconnectionupdate.js?rnd=${app_release_no}'/>"></script>

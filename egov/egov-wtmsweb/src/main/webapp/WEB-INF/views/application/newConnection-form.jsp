@@ -57,6 +57,7 @@
 
 			<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>
 			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
+			<input type="hidden" id="isAnonymousUser" name="isAnonymousUser" value="${isAnonymousUser}"/>
 			<form:hidden id="mode" path=""  value="${mode}"/>
 			<form:hidden path="legacy" id="legacy" value="false"/>
 			<input type="hidden" name="allowIfPTDueExists" id="allowIfPTDueExists" value="${allowIfPTDueExists}"> 

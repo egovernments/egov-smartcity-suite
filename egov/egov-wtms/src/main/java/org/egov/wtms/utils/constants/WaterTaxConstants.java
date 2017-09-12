@@ -396,4 +396,6 @@ public class WaterTaxConstants {
     public static final String JUNIOR_ASSISTANT_DESIGN_CODE = "JASST";
     public static final String SENIOR_ASSISTANT_DESIGN_CODE = "SASST";
     public static final String REASSIGNMENT = "REASSIGNMENT";
+    public static final String SOURCECHANNEL_ONLINE = "ONLINE";
+    public static final String CITIZENPORTAL = "CITIZENPORTAL";
 }

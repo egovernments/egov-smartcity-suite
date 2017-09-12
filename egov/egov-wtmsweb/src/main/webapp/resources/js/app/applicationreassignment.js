@@ -47,7 +47,7 @@
 
 $(document).ready(function(){
 	$('#reassign').click(function() {
-			$('#approvalPositionVal').find('option:gt(0)').remove();
+			$('#reassignApprovalPosition').find('option:gt(0)').remove();
 			var result=[];
 			$.ajax({
 				url : "/wtms/application/reassign",
@@ -61,7 +61,7 @@ $(document).ready(function(){
 		                    result.push(obj);
 					});
 					$.each(result, function(i) {
-						$('#approvalPositionVal').append($('<option>').text(result[i].text).attr('value', result[i].id));
+						$('#reassignApprovalPosition').append($('<option>').text(result[i].text).attr('value', result[i].id));
 					})
 					$('.reassign-screen').modal('show', {backdrop : 'static'});
 				},
@@ -73,14 +73,14 @@ $(document).ready(function(){
 	});
 	
 	$('#ReassignSubmit').click(function(){
-		if($('#approvalPositionVal').val()!="") {
+		if($('#reassignApprovalPosition').val()!="") {
 			var applicationId = $('#waterconnectiondetailid').val();
-			var name=$('#approvalPositionVal option:selected').text().split(/-/)[0];
+			var name=$('#reassignApprovalPosition option:selected').text().split(/-/)[0];
 		$.ajax({
 			url : "/wtms/application/reassign",
 			type : "POST",
 			data : {
-				approvalPositionId : $('#approvalPositionVal').val(),
+				approvalPositionId : $('#reassignApprovalPosition').val(),
 				applicationId	: applicationId
 			},
 				success : function(response) {

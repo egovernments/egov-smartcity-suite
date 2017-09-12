@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~ eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~      accountability and the service delivery of the government  organizations.
   ~
-  ~       Copyright (C) 2016  eGovernments Foundation
+  ~       Copyright (C) <2017>  eGovernments Foundation
   ~
   ~       The updated version of eGov suite of products as by eGovernments Foundation
   ~       is available at http://www.egovernments.org
@@ -56,6 +56,9 @@
 					<spring:message  code="lbl.basicdetails"/>
 				</div>
 			</div>
+			<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/> 
+			<input type="hidden" id="isAnonymousUser" name="isAnonymousUser" value="${isAnonymousUser}"/> 
+			<input type="hidden" id="citizenPortalUser" name="citizenPortalUser" value="${citizenPortalUser}"/>
 			<form:hidden path="applicationType" id="applicationType.id" value="${waterConnectionDetails.applicationType.id}"/>
 			<input type="hidden" name="validationMessage" id="validationMessage" value="${validationMessage}">
 			<input type="hidden" name="loggedInCSCUser" id="loggedInCSCUser" value="${loggedInCSCUser}">
@@ -103,9 +106,7 @@
 
 </div>			
 				
-				<c:if test="${(!loggedInCSCUser || loggedInCSCUser=='false') && (!citizenPortalUser || citizenPortalUser=='false') && (!loggedUserIsMeesevaUser || loggedUserIsMeesevaUser=='false')}">
-						<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
-						</c:if>
+					<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 						
 							<div class="buttonbottom" align="center">
 							<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
@@ -125,7 +126,7 @@ function validate(){
 	
 }
 </script>
-
+<script src="<cdn:url value='/resources/js/app/reconnection.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/applicationsuccess.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

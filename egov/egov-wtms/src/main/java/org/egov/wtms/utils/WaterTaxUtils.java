@@ -50,6 +50,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_A
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -164,6 +165,7 @@ public class WaterTaxUtils {
 
     @Autowired
     private InstallmentDao installmentDao;
+   
 
     public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(final String moduleName,
             final String keyName) {
@@ -687,6 +689,10 @@ public class WaterTaxUtils {
         return source;
     }
 
+    public Boolean isAnonymousUser(final User user) {
+        return USERNAME_ANONYMOUS.equalsIgnoreCase(user.getName());
+    }
+    
     public Boolean isCurrentUserCitizenRole() {
         Boolean citizenUserRole = Boolean.FALSE;
         User currentUser = null;

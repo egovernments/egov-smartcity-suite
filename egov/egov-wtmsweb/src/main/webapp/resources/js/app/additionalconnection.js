@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,8 +51,10 @@ $(document).ready(function(){
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
     var citizenPortal=$('#citizenPortalUser').val();
+    var isAnonymousUser = $('#isAnonymousUser').val();
 	if((currentloggedInUser=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
-	|| (citizenPortal=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false'))
+	|| (citizenPortal=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false')
+	|| (isAnonymousUser=='true' && mode=='addconnection' && validateIfPTDueExists=='') ||(isAnonymousUser=='true' && validateIfPTDueExists=='false'))
 		{
 		$(".show-row").hide(); 
 		$('#approvalDepartment').removeAttr('required');
@@ -192,7 +194,6 @@ $(document).ready(function(){
 			console.log("success"+response);
 			$('#approvalPosition').empty();
 			$.each(response, function(index, value) {
-				//$('#approvalPosition').append($('<option>').text(value.name).attr('value', value.id));
 				$('#approvalPosition').append($('<option>').text(value.userName+'/'+value.positionName).attr('value', value.positionId));  
 			});
 			

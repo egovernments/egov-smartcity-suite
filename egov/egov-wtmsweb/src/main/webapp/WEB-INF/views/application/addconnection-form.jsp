@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~ eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) <2017>  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -59,7 +59,8 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
-				<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>  
+				<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/> 
+				<input type="hidden" id="isAnonymousUser" name="isAnonymousUser" value="${isAnonymousUser}"/> 
 				<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 				<form:hidden id="mode" path=""  value="${mode}"/>
 				<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
@@ -74,7 +75,9 @@
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<c:if test="${validationMessage==''}">	
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
-					<jsp:include page="documentdetails.jsp"></jsp:include>	
+					<c:if test="${!documentNamesList.isEmpty()}">
+						<jsp:include page="documentdetails.jsp"></jsp:include>
+					</c:if>	
 				</c:if>
 				</div>
 			</div>			

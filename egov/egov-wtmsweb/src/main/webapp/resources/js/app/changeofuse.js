@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -70,8 +70,10 @@ $(document).ready(function(){
 	var validateIfPTDueExists=$('#validateIfPTDueExists').val();
 	var currentloggedInUser=$('#currentUser').val();
     var citizenPortal=$('#citizenPortalUser').val();
+    var isAnonymousUser = $('#isAnonymousUser').val();
 	if((currentloggedInUser=='true' && mode=='changeOfUse' && validateIfPTDueExists=='') ||(currentloggedInUser=='true' && validateIfPTDueExists=='false')
-	|| (citizenPortal=='true' && mode=='changeOfUse' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false'))
+	|| (citizenPortal=='true' && mode=='changeOfUse' && validateIfPTDueExists=='') ||(citizenPortal=='true' && validateIfPTDueExists=='false')
+	|| (isAnonymousUser=='true' && mode=='changeOfUse' && validateIfPTDueExists=='') ||(isAnonymousUser=='true' && validateIfPTDueExists=='false'))
 		{
 		$(".show-row").hide(); 
 		$('#approvalDepartment').removeAttr('required');

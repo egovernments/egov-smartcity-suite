@@ -66,7 +66,7 @@
 	                            <label class="control-label"><span class="mandatory"></span><spring:message code="lbl.reassigned.to"></spring:message></label>
 	                        </div>
 	                        <div class="col-md-8 add-margin">
-	                            <select id="approvalPositionVal" name="approvalPositionVal" class="form-control">
+	                            <select id="reassignApprovalPosition" name="reassignApprovalPosition" class="form-control">
 	                                <option value=""><spring:message code='lbl.select'/></option>
 	                            </select><br/>
 	                            <div id="reassignment_error" class="error-msg" style="display:none;" align="center"></div>

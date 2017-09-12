@@ -140,21 +140,25 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         Assignment wfInitiator = null;
         final Boolean recordCreatedBYNonEmployee;
         final Boolean recordCreatedBYCitizenPortal;
+        final Boolean recordCreatedByAnonymousUser;
 
         if (user != null && (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
                 RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))) {
             recordCreatedBYNonEmployee = waterTaxUtils.getCurrentUserRole(user);
             recordCreatedBYCitizenPortal = waterTaxUtils.isCitizenPortalUser(user);
+            recordCreatedByAnonymousUser = waterTaxUtils.isAnonymousUser(user);
         } else {
             recordCreatedBYNonEmployee = waterTaxUtils
                     .getCurrentUserRole(waterConnectionDetails.getCreatedBy());
             recordCreatedBYCitizenPortal = waterTaxUtils
                     .isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
+            recordCreatedByAnonymousUser = waterTaxUtils
+                    .isAnonymousUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
         }
         String currState = "";
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
         final String natureOfwork = getNatureOfTask(waterConnectionDetails);
-        if (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal) {
+        if (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal || recordCreatedByAnonymousUser) {
             currState = WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
             if (!waterConnectionDetails.getStateHistory().isEmpty()) {
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
@@ -167,6 +171,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         wfInitiator = assignmentList.get(0);
                 }
             }
+
         } else if (null != waterConnectionDetails.getId()) {
             currentUser = userService.getUserById(waterConnectionDetails.getCreatedBy().getId());
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
@@ -311,7 +316,8 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     && (waterConnectionDetails.getCurrentState().getValue().equals("Closed")
                             || waterConnectionDetails.getCurrentState().getValue().equals("END"))) {
                 if (currState != null && (waterTaxUtils.getCurrentUserRole() || waterTaxUtils.isCurrentUserCitizenRole()
-                        || waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser())))
+                        || waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser())
+                        || waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser())))
                     wfmatrix = waterConnectionWorkflowService.getWfMatrix(waterConnectionDetails.getStateType(), null, null,
                             additionalRule, currState, null);
                 else

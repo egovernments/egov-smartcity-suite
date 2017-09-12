@@ -42,9 +42,10 @@ $(document).ready(function(){
 	var currentloggedInUser=$('#currentUser').val();
     var citizenPortal=$('#citizenPortalUser').val();
     var isAnonymousUser = $('#isAnonymousUser').val();
-	if((currentloggedInUser=='true' && mode=='closureConnection') ||(currentloggedInUser=='true')
-	|| (citizenPortal=='true' && mode=='closureConnection') ||(citizenPortal=='true')
-	|| (isAnonymousUser=='true' && mode=='closureConnection') ||(isAnonymousUser=='true'))
+	
+	if((currentloggedInUser=='true') ||(currentloggedInUser=='true')
+	|| (citizenPortal=='true') ||(citizenPortal=='true')
+	|| (isAnonymousUser=='true') ||(isAnonymousUser=='true'))
 		{
 			$(".show-row").hide(); 
 			$('#approvalDepartment').removeAttr('required');
@@ -52,14 +53,5 @@ $(document).ready(function(){
 			$('#approvalPosition').removeAttr('required');
 			$('#approvalPosition').val('');
 		}
-	
-	$('#buttonid').click(function() {
-		if ($( "#closedConnectionformform" ).valid())
-		{
-			document.forms[0].submit();
-		}
-	});
-
-	$("#consumerNo").attr('disabled','disabled');
 	
  });

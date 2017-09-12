@@ -68,9 +68,9 @@
 			$('#approvalComent').attr('required', 'required');	
 			} 
 		 if(rejectbutton!=null && rejectbutton=='Forward'){
-			if($('#currentUser') || $('#citizenPortalUser') )
+			if($('#currentUser') || $('#citizenPortalUser') || $('#isAnonymousUser'))
 			{
-				if($('#currentUser').val()=="true" || $('#citizenPortalUser').val()=="true")
+				if($('#currentUser').val()=="true" || $('#citizenPortalUser').val()=="true" || $('#isAnonymousUser').val()=="true")
 				{
 					$('#approvalDepartment').removeAttr('required');
 					$('#approvalDesignation').removeAttr('required');

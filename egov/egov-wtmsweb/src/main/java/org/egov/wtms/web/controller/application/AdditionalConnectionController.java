@@ -40,6 +40,8 @@
 package org.egov.wtms.web.controller.application;
 
 import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -52,7 +54,6 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -82,6 +83,12 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping(value = "/application")
 public class AdditionalConnectionController extends GenericConnectionController {
+    private static final String MEESEVAAPPLICATIONNUMBER = "meesevaApplicationNumber";
+    private static final String APPROVALPOSITION = "approvalPosition";
+    private static final String ADDCONNECTION_FORM = "addconnection-form";
+    private static final String STATETYPE = "stateType";
+    private static final String ADDITIONALTULE = "additionalRule";
+    private static final String CURRENTUSER = "currentUser";
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -107,7 +114,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
             @ModelAttribute final WaterConnectionDetails addConnection, final Model model,
             @PathVariable final String consumerCode, final HttpServletRequest request) {
 
-        final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
+        final String meesevaApplicationNumber = request.getParameter(MEESEVAAPPLICATIONNUMBER);
         final WaterConnection connection = waterConnectionService.findByConsumerCode(consumerCode);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
@@ -115,7 +122,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetails(
                 connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         loadBasicDetails(addConnection, model, parentConnectionDetails, meesevaApplicationNumber);
-        return "addconnection-form";
+        return ADDCONNECTION_FORM;
     }
 
     private void loadBasicDetails(final WaterConnectionDetails addConnection, final Model model,
@@ -129,24 +136,25 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 waterConnectionDetailsService.getConnectionTypesMap().get(
                         parentConnectionDetails.getConnectionType().name()));
         model.addAttribute("addConnection", addConnection);
-        model.addAttribute("stateType", parentConnectionDetails.getClass().getSimpleName());
-        model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
+        model.addAttribute(STATETYPE, parentConnectionDetails.getClass().getSimpleName());
+        model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+        model.addAttribute(ADDITIONALTULE, addConnection.getApplicationType().getCode());
         model.addAttribute("mode", "addconnection");
         model.addAttribute("validationMessage",
-                additionalConnectionService.validateAdditionalConnection(parentConnectionDetails)); 
+                additionalConnectionService.validateAdditionalConnection(parentConnectionDetails));
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(parentConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
 
         loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
-            if (meesevaApplicationNumber == null && meesevaApplicationNumber != "")
+            if (meesevaApplicationNumber == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
             else
                 addConnection.setMeesevaApplicationNumber(meesevaApplicationNumber);
 
         model.addAttribute("typeOfConnection", WaterTaxConstants.ADDNLCONNECTION);
         model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
+        model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
     }
 
     @RequestMapping(value = "/addconnection/addConnection-create", method = RequestMethod.POST)
@@ -156,23 +164,25 @@ public class AdditionalConnectionController extends GenericConnectionController 
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
         final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-        if (loggedUserIsMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
-            addConnection.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
+        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
+        model.addAttribute("isAnonymousUser", isAnonymousUser);
+        if (loggedUserIsMeesevaUser && request.getParameter(MEESEVAAPPLICATIONNUMBER) != null)
+            addConnection.setMeesevaApplicationNumber(request.getParameter(MEESEVAAPPLICATIONNUMBER));
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser) {
+        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
                 throw new ValidationException("err.creator.application");
         }
 
-        final String sourceChannel = request.getParameter("Source");
+        String sourceChannel = request.getParameter("Source");
         final WaterConnectionDetails parent = waterConnectionDetailsService.getActiveConnectionDetailsByConnection(addConnection
                 .getConnection().getParentConnection());
         final String message = additionalConnectionService.validateAdditionalConnection(parent);
         if (!message.isEmpty() && !"".equals(message))
             return "redirect:/application/addconnection/"
-            + addConnection.getConnection().getParentConnection().getConsumerCode();
+                    + addConnection.getConnection().getParentConnection().getConsumerCode();
 
         final List<ApplicationDocuments> applicationDocs = new ArrayList<>();
         int i = 0;
@@ -201,11 +211,11 @@ public class AdditionalConnectionController extends GenericConnectionController 
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
             prepareWorkflow(model, addConnection, workflowContainer);
-            model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
-            model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
-            model.addAttribute("stateType", addConnection.getClass().getSimpleName());
-            model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-            return "addconnection-form";
+            model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVALPOSITION));
+            model.addAttribute(ADDITIONALTULE, addConnection.getApplicationType().getCode());
+            model.addAttribute(STATETYPE, addConnection.getClass().getSimpleName());
+            model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            return ADDCONNECTION_FORM;
         }
         addConnection.setApplicationDate(new Date());
         addConnection.getApplicationDocs().clear();
@@ -223,12 +233,12 @@ public class AdditionalConnectionController extends GenericConnectionController 
         if (request.getParameter("workFlowAction") != null)
             workFlowActionValue = request.getParameter("workFlowAction");
 
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter(APPROVALPOSITION) != null && !request.getParameter(APPROVALPOSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVALPOSITION));
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(addConnection.getConnection()
                     .getPropertyIdentifier());
             if (userPosition != null)
@@ -240,19 +250,24 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 final WorkflowContainer workflowContainer = new WorkflowContainer();
                 workflowContainer.setAdditionalRule(addConnection.getApplicationType().getCode());
                 prepareWorkflow(model, addConnection, workflowContainer);
-                model.addAttribute("additionalRule", addConnection.getApplicationType().getCode());
-                model.addAttribute("stateType", addConnection.getClass().getSimpleName());
-                model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+                model.addAttribute(ADDITIONALTULE, addConnection.getApplicationType().getCode());
+                model.addAttribute(STATETYPE, addConnection.getClass().getSimpleName());
+                model.addAttribute(CURRENTUSER, waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
-                return "addconnection-form";
+                return ADDCONNECTION_FORM;
 
             }
         }
-        if (citizenPortalUser)
-            if (addConnection.getSource() == null || StringUtils.isBlank(addConnection.getSource().toString()))
-                addConnection.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+
+        if (isAnonymousUser) {
+            addConnection.setSource(ONLINE);
+            sourceChannel = SOURCECHANNEL_ONLINE;
+        }
+
+        if (citizenPortalUser && (addConnection.getSource() == null || StringUtils.isBlank(addConnection.getSource().toString())))
+            addConnection.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
 
         if (loggedUserIsMeesevaUser) {
             final HashMap<String, String> meesevaParams = new HashMap<>();
@@ -267,23 +282,6 @@ public class AdditionalConnectionController extends GenericConnectionController 
         } else
             waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
                     addConnection.getApplicationType().getCode(), workFlowActionValue, sourceChannel);
-        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
-                .getCurrentUser().getId(), new Date(), new Date());
-        String nextDesign = "";
-        Assignment assignObj = null;
-        List<Assignment> asignList = null;
-        if (approvalPosition != null)
-            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
-        if (assignObj != null) {
-            asignList = new ArrayList<>();
-            asignList.add(assignObj);
-        } else if (assignObj == null && approvalPosition != null)
-            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
-        addConnection.getApplicationNumber();
-        waterTaxUtils.getApproverName(approvalPosition);
-        if(currentUserAssignment!=null)
-            currentUserAssignment.getDesignation().getName();
 
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="
