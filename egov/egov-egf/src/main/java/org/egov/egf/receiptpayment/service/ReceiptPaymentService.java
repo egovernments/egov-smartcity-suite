@@ -81,15 +81,27 @@ public class ReceiptPaymentService {
         List<Object[]> list = query.getResultList();
         List<ReceiptPayment> receiptPaymentList = new ArrayList<>();
         List<Object> obList = getOpeningBalance(receiptPayment).getResultList();
+        List<Object> openingBalanceTillFromDateList;
 
         BigDecimal receiptAmountSum = BigDecimal.ZERO;
         BigDecimal paymentAmountSum = BigDecimal.ZERO;
         BigDecimal openingBalnce = BigDecimal.ZERO;
         BigDecimal closingBalnce = BigDecimal.ZERO;
+        BigDecimal openingBalanceTillFromDate = BigDecimal.ZERO;
+
+
         ReceiptPayment receipt = new ReceiptPayment();
         obList.forEach(element -> {
             receipt.setCreditAmount(element != null ? BigDecimal.valueOf(Double.parseDouble(element.toString())) : BigDecimal.ZERO);
         });
+
+        if (receiptPayment.getPeriod().toString().equalsIgnoreCase("DATERANGE")) {
+            openingBalanceTillFromDateList = openingBalanceTillFromDate(receiptPayment).getResultList();
+            openingBalanceTillFromDateList.forEach(element -> {
+                receipt.setCreditAmount(receipt.getCreditAmount().add(element != null ? BigDecimal.valueOf(Double.parseDouble(element.toString())) : BigDecimal.ZERO));
+            });
+
+        }
 
 
         openingBalnce = receipt.getCreditAmount();
@@ -164,12 +176,12 @@ public class ReceiptPaymentService {
                 "g.glcode as glcode,c.name as name ,0 as debitAmount," +
                 "g.creditAmount as creditAmount from GeneralLedger g" +
                 ",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id" +
-                " and v.status=0 " + queryStr +
+                " and v.status not in(4,5) " + queryStr +
                 " and v.type='Receipt' and c.id=g.glcodeId  and c.majorcode!='450' ");
         query.append(" Union select  g.glcode as glcode,c.name as name ,g.debitAmount as debitAmount," +
                 "0 as creditAmount from GeneralLedger g" +
                 ",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id" +
-                " and v.status=0 " + queryStr +
+                " and v.status not in(4,5)" + queryStr +
                 "and v.type='Payment' and c.id=g.glcodeId  and c.majorcode!='450') as rp group by rp.glcode,rp.name order by rp.glcode");
 
         return entityManager.createNativeQuery(query.toString()).setParameter("fundId", receiptPayment.getFund().getId())
@@ -185,5 +197,16 @@ public class ReceiptPaymentService {
                 .setParameter("financialyearId", receiptPayment.getFinancialYear().getId()).setParameter("fundId", receiptPayment.getFund().getId());
     }
 
+    private Query openingBalanceTillFromDate(ReceiptPayment receiptPayment) {
+        StringBuilder query = new StringBuilder(500);
+        CFinancialYear fin = cFinancialYearService.findOne(receiptPayment.getFinancialYear().getId());
+        query.append("select sum(g.debitamount-g.creditamount) as amount from generalledger g ,voucherheader v,chartofaccounts c where v.id=g.voucherheaderid" +
+                "        and v.status not in (4,5) and v.voucherdate >=:finStartDate and  v.voucherdate <=:fromDate and" +
+                "        c.id=g.glcodeid and g.glcode in(select cc.glcode from chartofaccounts cc where cc.majorcode ='450')");
+
+        return entityManager.createNativeQuery(query.toString())
+                .setParameter("finStartDate", fin.getStartingDate()).setParameter("fromDate", receiptPayment.getFromDate());
+
+    }
 
 }
