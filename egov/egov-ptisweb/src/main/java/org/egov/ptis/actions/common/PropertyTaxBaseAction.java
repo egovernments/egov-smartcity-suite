@@ -185,7 +185,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String ackMessage;
     protected String userDesgn;
     protected String wfErrorMsg;
-    protected Boolean endorsementRequired = Boolean.FALSE;
+    protected Boolean endorsementRequired = FALSE;
     protected String ownersName;
     protected List<PtNotice> endorsementNotices;
     protected String applicationNumber;

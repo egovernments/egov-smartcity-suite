@@ -104,7 +104,7 @@ function validateEndorsement(){
 function openEndorsementNotice()
 { 
 	var remarks = jQuery('#approvalComent').val();
-	popupWindow = window.open('/ptis/endorsementNotice?'
+	popupWindow = window.open('/ptis/endorsementnotice?'
 			+ 'applicantName='+encodeURIComponent('<c:out value="${ownersName}"/>')+'&serviceName='+encodeURIComponent('<c:out value="${transactionType}"/>')+'&remarks='+encodeURIComponent(remarks)+'&assessmentNo=<c:out value="${property.getBasicProperty().getUpicNo()}"/>&applicationNo=<c:out value="${applicationNo}"/>' ,
 			'_blank', 'width=650, height=500, scrollbars=yes', false);
 	popupWindow.opener.close();

@@ -120,13 +120,13 @@ jQuery(document).on('change', ".applicationcheckbox", function () {
 		var modelNo = '<s:property value="%{property.getId}"/>';
  		var remarks = document.getElementById("approverComments").value;
 		if('<s:property value="%{transactionType}"/>' == 'New_Assessment'){
-		popupWindow = window.open('/ptis/endorsementNotice?'
+		popupWindow = window.open('/ptis/endorsementnotice?'
 				+ 'applicantName='+encodeURIComponent('<s:property value="%{ownersName}"/>')+'&serviceName='+encodeURIComponent('<s:property value="%{transactionType}"/>')+'&remarks='+encodeURIComponent(remarks)+'&assessmentNo=<s:property value="%{stateAwareId}"/>&applicationNo=<s:property value="%{applicationNumber}"/>',
 				'_blank', 'width=650, height=500, scrollbars=yes', false);
 		}
 		else
 			{
-			popupWindow = window.open('/ptis/endorsementNotice?'
+			popupWindow = window.open('/ptis/endorsementnotice?'
 					+ 'applicantName='+encodeURIComponent('<s:property value="%{ownersName}"/>')+'&serviceName='+encodeURIComponent('<s:property value="%{transactionType}"/>')+'&remarks='+encodeURIComponent(remarks)+'&assessmentNo=<s:property value="%{assessmentNumber}"/>&applicationNo=<s:property value="%{applicationNumber}"/>',
 					'_blank', 'width=650, height=500, scrollbars=yes', false);
 			}
