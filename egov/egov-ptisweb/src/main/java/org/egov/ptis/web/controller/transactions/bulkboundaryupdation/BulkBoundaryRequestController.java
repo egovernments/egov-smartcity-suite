@@ -47,8 +47,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
+import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletResponse;
+
+import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
@@ -63,7 +68,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import com.google.gson.JsonObject;
 
 @Controller
 @RequestMapping(value = "/bulkboundaryupdation")
@@ -108,6 +117,19 @@ public class BulkBoundaryRequestController {
 		model.addAttribute("PropertyMVInfo", propertyMVInfo());
 		return BULK_BOUNDARY_FORM;
 	}
+	
+	
+	@RequestMapping(value = {"/ajaxBoundary-wardByBlock"}, method = RequestMethod.GET)
+    public void blockByWard(@RequestParam Long blockId , HttpServletResponse response) throws IOException {
+		Boundary block=boundaryService.getBoundaryById(blockId);
+		final List<JsonObject> jsonObjects = new ArrayList<>();
+		final Boundary ward =block.getParent();
+			final JsonObject jsonObj = new JsonObject();
+			jsonObj.addProperty("wardId", ward.getId());
+			jsonObj.addProperty("wardName", ward.getName());
+			jsonObjects.add(jsonObj);
+		IOUtils.write(jsonObjects.toString(), response.getWriter());
+    }
 
 	@PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody

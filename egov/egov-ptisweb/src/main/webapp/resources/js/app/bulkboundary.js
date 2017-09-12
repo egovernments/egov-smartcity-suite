@@ -275,7 +275,7 @@ jQuery(document).ready(function() {
 										});
 									},
 									error : function(response) {
-										$tr.find('wardClass_tbl').html("");
+										$tr.find('.wardClass_tbl').html("");
 										$tr.find('.blockClass_tbl').html("");
 										bootbox.alert("No boundary details mapped for locality")
 									}
@@ -287,31 +287,31 @@ jQuery(document).ready(function() {
 						loadrevenue(jQuery(this));
 					});
 
-					jQuery(document).on('change', ".wardClass_tbl", function() {
-						loadblock(jQuery(this));
+					jQuery(document).on('change', ".blockClass_tbl", function() {
+						loadward(jQuery(this));
 					});
 
-					function loadblock(wardDropdown) {
-						var ward = wardDropdown.val();
+					function loadward(blockDropdown) {
+						var block = blockDropdown.val();
 						jQuery
 								.ajax({
-									url : "/egi/boundary/ajaxBoundary-blockByWard.action",
+									url : "/ptis/bulkboundaryupdation/ajaxBoundary-wardByBlock",
 									type : "GET",
 									data : {
-										wardId : ward
+										blockId : block
 									},
 									cache : false,
 									dataType : "json",
 									success : function(response) {
-										var $tr = wardDropdown.closest('tr');
-										$tr.find('.blockClass_tbl').html("");
-										jQuery.each(response,function(j, block) {
-											$tr.find('.blockClass_tbl').append("<option value='"+ block.blockId + "'>"+ block.blockName+ "</option>");
+										var $tr = blockDropdown.closest('tr');
+										$tr.find('.wardClass_tbl').html("");
+										jQuery.each(response,function(j, ward) {
+											$tr.find('.wardClass_tbl').append("<option value='"+ ward.wardId + "'>"+ ward.wardName+ "</option>");
 										});
 									},
 									error : function(response) {
 										jQuery('#revenueBlockId').html("");
-										bootbox.alert("No block details mapped for ward")
+										bootbox.alert("No ward details mapped for Block")
 									}
 								});
 					}
