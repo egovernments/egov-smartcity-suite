@@ -109,14 +109,14 @@
                                 <label class="col-sm-3 control-label text-right"><spring:message
                                         code="lbl.fromdate"/> </label>
                                 <div class="col-sm-3 add-margin">
-                                    <form:input path="fromDate" class="form-control datepicker" required="required"
+                                    <form:input path="fromDate" class="form-control datepicker" required="required" id="fromDate"
                                                 data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
                                     <form:errors path="fromDate" cssClass="error-msg"/>
                                 </div>
                                 <label class="col-sm-3 control-label text-right"><spring:message
                                         code="lbl.todate"/> </label>
                                 <div class="col-sm-3 add-margin">
-                                    <form:input path="toDate" class="form-control datepicker" required="required"
+                                    <form:input path="toDate" class="form-control datepicker" required="required" id="toDate"
                                                 data-date-end-date="0d" data-inputmask="'mask': 'd/m/y'"/>
                                     <form:errors path="toDate" cssClass="error-msg"/>
                                 </div>

@@ -46,8 +46,23 @@
  */
 
 jQuery('#btnsearch').click(function (e) {
-
-    callAjaxSearch();
+    var fromDate = '';
+    var toDate = '';
+    if ($('#fromDate').val() != "") {
+        fromDate = $('#fromDate').data('datepicker').date;
+    }
+    if ($('#toDate').val() != "") {
+        toDate = $('#toDate').data('datepicker').date;
+    }
+    var flag = true;
+    if (toDate != '' && fromDate != '') {
+        if (fromDate > toDate) {
+            flag = false;
+            bootbox.alert(' To Date should be greater than  From Date');
+        }
+    }
+    if (flag)
+        callAjaxSearch();
 });
 
 jQuery('#period').change(function (e) {
@@ -79,6 +94,10 @@ function callAjaxSearch() {
                 url: "/EGF/receiptpayment/ajaxsearch",
                 type: "POST",
                 "data": getFormData(jQuery('form'))
+            }, "fnRowCallback": function (row, data, index) {
+                $('td:eq(2)', row).html(parseFloat(Math.round(data.creditAmount * 100) / 100).toFixed(2));
+                $('td:eq(5)', row).html(parseFloat(Math.round(data.debitAmount * 100) / 100).toFixed(2));
+                return row;
             },
 
             "bDestroy": true,

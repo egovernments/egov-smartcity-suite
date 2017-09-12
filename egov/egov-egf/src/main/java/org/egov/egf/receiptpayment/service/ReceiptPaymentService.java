@@ -171,20 +171,22 @@ public class ReceiptPaymentService {
 
 
         StringBuilder query = new StringBuilder(500);
-        query.append("select rp.glcode,rp.name,sum(rp.debitAmount) as debitAmount,sum(rp.creditAmount) as creditAmount from (select  " +
+
+        query.append("select rp.glcode,rp.name,rp.debitAmount ,rp.creditAmount from (select  " +
                 "g.glcode as glcode,c.name as name ,0 as debitAmount," +
-                "g.creditAmount as creditAmount from GeneralLedger g" +
+                "sum(g.creditAmount) as creditAmount from GeneralLedger g" +
                 ",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id" +
                 " and v.status not in(4,5) " + queryStr +
-                " and v.type='Receipt' and c.id=g.glcodeId  and c.majorcode!='450' ");
-        query.append(" Union select  g.glcode as glcode,c.name as name ,g.debitAmount as debitAmount," +
+                " and v.type='Receipt' and c.id=g.glcodeId  and c.majorcode!='450'  group by g.glcode,c.name ");
+        query.append(" union select  g.glcode as glcode,c.name as name ,sum(g.debitAmount) as debitAmount," +
                 "0 as creditAmount from GeneralLedger g" +
                 ",VoucherHeader v,ChartofAccounts c where g.voucherHeaderId=v.id" +
                 " and v.status not in(4,5)" + queryStr +
-                "and v.type='Payment' and c.id=g.glcodeId  and c.majorcode!='450') as rp group by rp.glcode,rp.name order by rp.glcode");
+                "and v.type='Payment' and c.id=g.glcodeId  and c.majorcode!='450' group by g.glcode,c.name) as rp order by rp.glcode");
 
         return entityManager.createNativeQuery(query.toString()).setParameter("fundId", receiptPayment.getFund().getId())
-                .setParameter("startDate", receiptPayment.getFromDate()).setParameter("endDate", receiptPayment.getToDate());
+                .setParameter("startDate", receiptPayment.getFromDate())
+                .setParameter("endDate", receiptPayment.getToDate());
     }
 
     private Query getOpeningBalance(ReceiptPayment receiptPayment) {
