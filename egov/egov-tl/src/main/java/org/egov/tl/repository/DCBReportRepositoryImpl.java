@@ -77,7 +77,7 @@ public class DCBReportRepositoryImpl implements DCBReportRepositoryCustom {
             predicates.add(criteriaBuilder.equal(root.get("licensenumber"), dCBReportSearchRequest.getLicensenumber()));
         if (dCBReportSearchRequest.getActiveLicense() > 0)
             predicates.add(criteriaBuilder.equal(root.get("active"), dCBReportSearchRequest.getActiveLicense() == 1));
-        if (dCBReportSearchRequest.getWardId() != null)
+        if (dCBReportSearchRequest.getWardId() != null && !dCBReportSearchRequest.getWardId().isEmpty())
             predicates.add(root.get("wardid").in(dCBReportSearchRequest.getWardId()));
 
         criteriaQuery.multiselect(criteriaBuilder.sumAsLong(root.get("arreardemand")),

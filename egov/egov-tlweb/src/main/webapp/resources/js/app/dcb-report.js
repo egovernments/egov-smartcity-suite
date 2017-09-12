@@ -50,8 +50,8 @@ var param;
 var recordTotal = [];
 $(document).ready(function (e) {
     drillDowntableContainer = $("#tbldcbdrilldown");
-    $('#report-backbutton').hide();
-    $('form').submit(function (e) {
+    $('#btnsearch').click(function (e) {
+
         var table = $('#tbldcbdrilldown').DataTable();
         if ($('#ward').val() != null) {
             var wardid = "";
@@ -61,16 +61,14 @@ $(document).ready(function (e) {
             });
             wardid = wardid.substring(0, wardid.length - 1);
         }
+        else if (!$('#ward').val())
+            var wardid = "";
+
         var info = table.page.info();
         if (info.start == 0)
             getSumOfRecords(wardid);
         searchDCBReport(wardid);
     });
-
-    $('#backButton').click(function (e) {
-        searchDCBReport(e);
-    });
-
 });
 
 function getSumOfRecords(wardid) {
@@ -109,13 +107,9 @@ function jasonParam(obj) {
 }
 
 function searchDCBReport(wardid) {
-    $('#report-backbutton').show();
-    var licenseNumbertemp = $('#licensenumber').val();
     $('.report-section').removeClass('display-hide');
     $('#report-footer').show();
-    event.preventDefault();
     $("#tbldcbdrilldown").dataTable().fnDestroy();
-
     reportdatatable = drillDowntableContainer
         .on('preXhr.dt', function (e, settings, data) {
             param = data;
@@ -151,7 +145,8 @@ function searchDCBReport(wardid) {
                 type: 'POST',
                 data: function (args) {
                     return {
-                        "args": JSON.stringify(args), 'licensenumber': licenseNumbertemp,
+                        "args": JSON.stringify(args),
+                        'licensenumber': $('#licensenumber').val(),
                         'activeLicense': $('#activeLicense').val(),
                         'wardId': wardid
                     }
@@ -172,6 +167,11 @@ function searchDCBReport(wardid) {
                     },
                     "sTitle": "License No.",
                     "name": "licensenumber",
+                    "width": 10
+                }, {
+                    "data": "ward",
+                    "name": "wardname",
+                    "sTitle": "Ward",
                     "width": 10
                 }, {
                     "data": "active",
@@ -226,7 +226,6 @@ function searchDCBReport(wardid) {
                     $('#report-footer').show();
                 }
                 if (data.length > 0) {
-                    updateTotalFooter(2, api, true);
                     updateTotalFooter(3, api, true);
                     updateTotalFooter(4, api, true);
                     updateTotalFooter(5, api, true);
@@ -235,10 +234,11 @@ function searchDCBReport(wardid) {
                     updateTotalFooter(8, api, true);
                     updateTotalFooter(9, api, true);
                     updateTotalFooter(10, api, true);
+                    updateTotalFooter(11, api, true);
                 }
             },
             "aoColumnDefs": [{
-                "aTargets": [2, 3, 4, 5, 6, 7, 8, 9, 10],
+                "aTargets": [3, 4, 5, 6, 7, 8, 9, 10, 11],
                 "mRender": function (data, type, full) {
                     return formatNumberInr(data);
                 }
@@ -261,7 +261,7 @@ function updateTotalFooter(colidx, api, isServerSide) {
 
     // Total over all pages
     if (isServerSide && recordTotal != null)
-        total = recordTotal[colidx - 2];
+        total = recordTotal[colidx - 3];
     else
         total = api.column(colidx).data().reduce(function (a, b) {
             return intVal(a) + intVal(b);

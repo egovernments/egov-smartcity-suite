@@ -70,7 +70,7 @@ public class DCBReportSpec {
                 result.getExpressions().add(builder.equal(root.get("licenseid"), dCBReportSearchRequest.getLicenseid()));
             if (dCBReportSearchRequest.getActiveLicense() > 0)
                 result.getExpressions().add(builder.equal(root.get("active"), dCBReportSearchRequest.getActiveLicense() == 1));
-            if (dCBReportSearchRequest.getWardId()!=null)
+            if (dCBReportSearchRequest.getWardId()!=null && !dCBReportSearchRequest.getWardId().isEmpty())
                 result.getExpressions().add(root.get("wardid").in(dCBReportSearchRequest.getWardId()));
             return result;
         };

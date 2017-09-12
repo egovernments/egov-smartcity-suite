@@ -50,21 +50,22 @@ package org.egov.tl.web.controller.report;
 import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.egov.tl.service.InstallmentwiseDCBReportService;
 import org.egov.tl.web.response.adaptor.InstallmentWiseDCBResponse;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -109,13 +110,13 @@ public class InstallmentwiseDCBReportController {
     @GetMapping("/download")
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadYearWiseReport(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
-        final ReportRequest reportRequest = new ReportRequest("tl_dcb_report",
+        final ReportRequest reportRequest = new ReportRequest("tl_installment_yearwise_dcb_report",
                 installmentWiseDCBService.prepareReport(installmentWiseDCBRequest), new HashMap<>());
         final Map<String, Object> reportparam = new HashMap<>();
         reportparam.put("year", installmentWiseDCBRequest.getInstallment());
         reportRequest.setReportParams(reportparam);
         reportRequest.setReportFormat(installmentWiseDCBRequest.getPrintFormat());
-        reportRequest.setReportName(appendTimestamp("tl_dcb_report" ));
+        reportRequest.setReportName(appendTimestamp("tl_installment_yearwise_dcb_report"));
         reportRequest.setReportDisposition(ReportDisposition.ATTACHMENT);
         return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
 

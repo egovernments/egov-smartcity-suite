@@ -91,7 +91,7 @@
             </div>
             <div class="row">
                 <div class="text-center">
-                    <button type="submit" id="btnsearch" class="btn btn-primary">
+                    <button type="button" id="btnsearch" class="btn btn-primary">
                         <spring:message code="lbl.search"/>
                     </button>
                     <button type="button" class="btn btn-default" data-dismiss="modal"
@@ -117,6 +117,7 @@
             <tr>
                 <th rowspan="2"></th>
                 <th rowspan="2"></th>
+                <th rowspan="2"></th>
                 <th colspan="3"><spring:message code="lbl.demand"/></th>
                 <th colspan="3"><spring:message code="lbl.collection"/></th>
                 <th colspan="3"><spring:message code="lbl.balance"/></th>
@@ -135,7 +136,7 @@
             </thead>
             <tfoot id="report-footer">
             <tr>
-                <td colspan="2"><spring:message
+                <td colspan="3"><spring:message
                         code="lbl.total"/></td>
                 <td></td>
                 <td></td>
@@ -151,7 +152,6 @@
         </table>
     </div>
 </div>
-<div id="report-backbutton" class="col-xs-12 text-center"></div>
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
 <link rel="stylesheet"
