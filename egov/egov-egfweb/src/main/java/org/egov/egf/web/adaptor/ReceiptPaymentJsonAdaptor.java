@@ -98,8 +98,8 @@ public class ReceiptPaymentJsonAdaptor implements JsonSerializer<ReceiptPayment>
 
         if ((receiptPayment.getGlcode().equalsIgnoreCase("Opening Balance") || receiptPayment.getGlcode().equalsIgnoreCase("Closing Balance"))
                 && (receiptPayment.getCreditAmount().compareTo(BigDecimal.ZERO) < 0 || receiptPayment.getDebitAmount().compareTo(BigDecimal.ZERO) < 0)) {
-            jsonObject.addProperty("name", "");
-            jsonObject.addProperty("glcode", "");
+            jsonObject.addProperty("namee", "");
+            jsonObject.addProperty("glcodee", "");
             jsonObject.addProperty("creditAmount", "");
         }
         return jsonObject;

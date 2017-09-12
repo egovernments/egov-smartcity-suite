@@ -84,6 +84,7 @@ function callAjaxSearch() {
             "bDestroy": true,
             "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+            "iDisplayLength": 500,
             "oTableTools": {
                 "sSwfPath": "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
                 "aButtons": ["xls", "pdf", "print"]
