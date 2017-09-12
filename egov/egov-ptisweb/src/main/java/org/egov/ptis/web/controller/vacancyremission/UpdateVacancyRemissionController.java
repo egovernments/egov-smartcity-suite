@@ -39,11 +39,10 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_ASSISTANT_FORWARDED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 
 import java.util.Date;
 import java.util.List;
@@ -57,12 +56,10 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
-import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
@@ -89,9 +86,6 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
 
     @Autowired
     private ReassignService reassignService;
-    
-    @Autowired
-    private PropertyService propertyService;
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
@@ -116,6 +110,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
+        boolean endorsementRequired = Boolean.FALSE;
         final VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
         final String userDesignationList = propertyTaxCommonUtils
                 .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
@@ -149,6 +144,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                 prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
+            model.addAttribute("endorsementRequired", endorsementRequired);
         }
         return VACANCYREMISSION_EDIT;
     }

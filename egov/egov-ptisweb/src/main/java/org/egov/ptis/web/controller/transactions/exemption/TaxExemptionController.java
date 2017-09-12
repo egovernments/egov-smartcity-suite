@@ -276,6 +276,7 @@ public class TaxExemptionController extends GenericWorkFlowController {
         model.addAttribute(EXSERVICE_DOC, "");
         model.addAttribute(NGO_DOC, "");
         model.addAttribute("citizenPortalUser", citizenPortalUser);
+        model.addAttribute("endorsementNotices", null);
         taxExemptionService.addModelAttributes(model, basicProperty);
         prepareWorkflow(model, property, new WorkflowContainer());
         return TAX_EXEMPTION_FORM;

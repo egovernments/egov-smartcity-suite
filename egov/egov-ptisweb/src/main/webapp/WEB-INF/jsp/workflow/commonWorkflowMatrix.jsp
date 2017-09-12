@@ -102,6 +102,9 @@ function setApprover() {
 	document.getElementById("approverPositionId").value = '<s:property value="%{approverPositionId}"/>';
 } 
 </script>
+<s:if test="%{!endorsementNotices.isEmpty()}">
+		<jsp:include page="../workflow/endorsement_history.jsp"/>
+</s:if>
 <s:if test="%{getNextAction()!='END'}">
 <s:if test="%{!'Closed'.equalsIgnoreCase(state.value)}">
 	<s:hidden id="currentState" name="currentState" value="%{state.value}"/>

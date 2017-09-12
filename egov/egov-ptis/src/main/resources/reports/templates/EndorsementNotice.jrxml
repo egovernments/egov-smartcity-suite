@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-09-07T11:38:14 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="OccupierNotice_NagarPanachayet" pageWidth="595" pageHeight="842" whenNoDataType="BlankPage" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="60" bottomMargin="20" uuid="5f99a57d-d4d7-42d2-824c-02ee7d858b01">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<import value="net.sf.jasperreports.engine.util.JRStringUtil"/>
+	<parameter name="serviceName" class="java.lang.String"/>
+	<parameter name="cityName" class="java.lang.String"/>
+	<parameter name="applicantName" class="java.lang.String"/>
+	<parameter name="noticeDate" class="java.lang.String"/>
+	<parameter name="noticeNumber" class="java.lang.String"/>
+	<parameter name="remarks" class="java.lang.String"/>
+	<parameter name="applicationNo" class="java.lang.String"/>
+	<parameter name="upicno" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="600" splitType="Stretch">
+			<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="72" y="20" width="430" height="27" uuid="1ebcde9e-694e-4d76-b730-7ce76ef49065"/>
+				<textElement textAlignment="Center" markup="none">
+					<font size="16" isBold="true" isPdfEmbedded="true"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="24" y="117" width="26" height="22" uuid="344c635b-bb55-400a-9cb0-6f714b2fcdce">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[No :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="50" y="117" width="140" height="22" uuid="e3b0c16e-3898-42ef-a9e1-bedd74d52d35"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{noticeNumber}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="415" y="117" width="45" height="22" uuid="fbea28bb-3e97-4e28-adb6-8f2d399dc21a">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+					<property name="com.jaspersoft.studio.unit.width" value="pixel"/>
+				</reportElement>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="460" y="117" width="90" height="22" uuid="ede453f0-8bb5-4727-8bb6-bfa32d635e44"/>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{noticeDate}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="383" y="483" width="150" height="21" uuid="be5fd33e-a114-4a16-9eb3-479d7a3947f7">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Right" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Commissioner,]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" x="284" y="504" width="249" height="21" uuid="75caf9c0-1eb2-447d-bb56-2692c4341d56"/>
+				<textElement textAlignment="Right">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{cityName}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement x="24" y="150" width="526" height="250" uuid="b7b6a215-eb66-4c8b-95fa-aca3e831ad3f"/>
+				<textElement markup="styled">
+					<font size="12" isBold="false"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Dear <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{applicantName})+"</style>,\n\nWe regret to say that your application for <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{serviceName})+"</style> bearing application Number :<style forecolor=\"#000000\" isBold=\"true\">"+$P{applicationNo}+"</style>, cannot be served due to insufficient documentation mentioned below :\n\n<style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{remarks})+"</style>\n\nYou are requested to handover the document(s) mentioned above, so as to complete the service to the best of your satisfaction. We will be waiting for your response."]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement x="40" y="60" width="489" height="30" uuid="5311b365-ad36-4bd5-828b-f48c5fb6cbf3"/>
+				<textElement textAlignment="Center" markup="styled">
+					<font size="16"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Endorsement Notice for <style forecolor=\"#000000\" isBold=\"true\">"+$P{serviceName}+"</style>"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="193" y="117" width="80" height="22" uuid="bf89ca25-4f9d-4430-884c-0077cb8c8d74">
+					<property name="com.jaspersoft.studio.unit.height" value="pixel"/>
+				</reportElement>
+				<textElement textAlignment="Left">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{upicno}!=null?"Asmt No  ":" ")]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="273" y="117" width="140" height="22" uuid="7cc80ba1-9e5b-4ab5-8435-b44704d4d18c"/>
+				<textElement>
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[($P{upicno}!=null?$P{upicno}:" ")]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+</jasperReport>

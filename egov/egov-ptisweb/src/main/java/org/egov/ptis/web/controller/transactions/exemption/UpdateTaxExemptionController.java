@@ -41,6 +41,7 @@
 package org.egov.ptis.web.controller.transactions.exemption;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
@@ -62,7 +63,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIG
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 
 import java.util.Date;
 import java.util.List;
@@ -115,6 +115,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private static final String NGO_DOC = "ngoDocs";
     private static final String WORSHIP_DOC = "worshipDocs";
     private static final String EXSERVICE_DOC = "exserviceDocs";
+    private boolean endorsementRequired = Boolean.FALSE;
     
     private final TaxExemptionService taxExemptionService;
 
@@ -192,6 +193,13 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         workflowContainer.setPendingActions(nextAction);
         workflowContainer.setAdditionalRule(EXEMPTION);
         prepareWorkflow(model, property, workflowContainer);
+        if (property.getState() != null)
+            endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                    property.getCurrentState());
+        model.addAttribute("endorsementRequired", endorsementRequired);
+        model.addAttribute("ownersName", property.getBasicProperty().getFullOwnerName());
+        model.addAttribute("applicationNo", property.getApplicationNo());
+        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(property.getApplicationNo()));
         model.addAttribute("userDesignationList", userDesignationList);
         model.addAttribute("designation", COMMISSIONER_DESGN);
         model.addAttribute("isExempted", isExempted);

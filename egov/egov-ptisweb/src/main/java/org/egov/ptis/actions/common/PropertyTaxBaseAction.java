@@ -52,6 +52,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTE
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
@@ -109,7 +112,7 @@ import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
@@ -157,6 +160,7 @@ import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.egov.ptis.notice.PtNotice;
 
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
@@ -181,6 +185,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String ackMessage;
     protected String userDesgn;
     protected String wfErrorMsg;
+    protected Boolean endorsementRequired = Boolean.FALSE;
+    protected String ownersName;
+    protected List<PtNotice> endorsementNotices;
+    protected String applicationNumber;
+    protected String assessmentNumber;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
@@ -1068,6 +1077,19 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return PropertyTaxConstants.DOCUMENT_NAME_REGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName())
                 || PropertyTaxConstants.DOCUMENT_NAME_UNREGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName());
     }
+    
+    public void populateUsages(String propertyCategory) {
+        List<PropertyUsage> usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
+        // Loading property usages based on property category
+        if (StringUtils.isNoneBlank(propertyCategory))
+                if (propertyCategory.equals(CATEGORY_MIXED))
+                        usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
+                else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
+                        usageList = propertyUsageService.getResidentialPropertyUsages();
+                else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
+                        usageList = propertyUsageService.getNonResidentialPropertyUsages();
+        addDropdownData("UsageList", usageList);
+    }
 
     public WorkflowBean getWorkflowBean() {
         return workflowBean;
@@ -1235,4 +1257,45 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
     }
+
+    public Boolean getEndorsementRequired() {
+        return endorsementRequired;
+    }
+
+    public void setEndorsementRequired(Boolean endorsementRequired) {
+        this.endorsementRequired = endorsementRequired;
+    }
+
+    public String getOwnersName() {
+        return ownersName;
+    }
+
+    public void setOwnersName(String ownersName) {
+        this.ownersName = ownersName;
+    }
+
+    public List<PtNotice> getEndorsementNotices() {
+        return endorsementNotices;
+    }
+
+    public void setEndorsementNotices(List<PtNotice> endorsementNotices) {
+        this.endorsementNotices = endorsementNotices;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getAssessmentNumber() {
+        return assessmentNumber;
+    }
+
+    public void setAssessmentNumber(String assessmentNumber) {
+        this.assessmentNumber = assessmentNumber;
+    }
+
 }

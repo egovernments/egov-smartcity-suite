@@ -39,53 +39,56 @@
  */
 package org.egov.ptis.bean;
 
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
-
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+
 public class PropertyNoticeInfo {
-	private final PropertyImpl property;
-	private String noticeNo;
-	private PropertyAckNoticeInfo ownerInfo;
-	private List<PropertyAckNoticeInfo> floorDetailsForNotice = new ArrayList<PropertyAckNoticeInfo>();
-	
-	
-	public void setNoticeNo(String noticeNo) {
-		this.noticeNo = noticeNo;
-	}
+    private final PropertyImpl property;
+    private String noticeNo;
+    private PropertyAckNoticeInfo ownerInfo;
+    private List<PropertyAckNoticeInfo> floorDetailsForNotice = new ArrayList<>();
 
-	public PropertyAckNoticeInfo getOwnerInfo() {
-		return ownerInfo;
-	}
+    public PropertyNoticeInfo(final PropertyImpl property, final String noticeNo) {
+        this.property = property;
+        this.noticeNo = noticeNo;
+    }
 
-	public void setOwnerInfo(PropertyAckNoticeInfo ownerInfo) {
-		this.ownerInfo = ownerInfo;
-	}
+    public void setNoticeNo(final String noticeNo) {
+        this.noticeNo = noticeNo;
+    }
 
-	public List<PropertyAckNoticeInfo> getFloorDetailsForNotice() {
-		return floorDetailsForNotice;
-	}
+    public PropertyAckNoticeInfo getOwnerInfo() {
+        return ownerInfo;
+    }
 
-	public void setFloorDetailsForNotice(
-			List<PropertyAckNoticeInfo> floorDetailsForNotice) {
-		this.floorDetailsForNotice = floorDetailsForNotice;
-	}
+    public void setOwnerInfo(final PropertyAckNoticeInfo ownerInfo) {
+        this.ownerInfo = ownerInfo;
+    }
 
-	public PropertyNoticeInfo(PropertyImpl property, String noticeNo) {
-		this.property = property;
-		this.noticeNo = noticeNo;
-	}
+    public List<PropertyAckNoticeInfo> getFloorDetailsForNotice() {
+        return floorDetailsForNotice;
+    }
 
-	public String getNoticeNo() {
-		return this.noticeNo;
-	}
+    public void setFloorDetailsForNotice(
+            final List<PropertyAckNoticeInfo> floorDetailsForNotice) {
+        this.floorDetailsForNotice = floorDetailsForNotice;
+    }
 
-	public String getNoticeDate() {
-		SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-		return sdf.format(new Date());
-	}
+    public String getNoticeNo() {
+        return noticeNo;
+    }
+
+    public String getNoticeDate() {
+        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+        return sdf.format(new Date());
+    }
+
+    public PropertyImpl getProperty() {
+        return property;
+    }
 }

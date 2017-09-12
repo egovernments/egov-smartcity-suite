@@ -113,7 +113,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_AMALGAMATE_WATER_CONNECTIONS_URL;
 import static org.egov.ptis.constants.PropertyTaxConstants.WTMS_TAXDUE_RESTURL;
-
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 import java.io.File;
 import java.math.BigDecimal;
 import java.text.ParseException;
@@ -1729,7 +1730,10 @@ public class PropertyService {
 			newProperty.getPropertyDetail().getPropertyOccupation().getId().toString();
 		if (newProperty.getPropertyDetail().getPropertyUsage() != null)
 			newProperty.getPropertyDetail().getPropertyUsage().getId().toString();
-
+		if (modifyRsn.equalsIgnoreCase(NATURE_OF_WORK_RP))
+                    newProperty.setPropertyModifyReason(NATURE_OF_WORK_RP);
+              else
+                  newProperty.setPropertyModifyReason(NATURE_OF_WORK_GRP);
 		newProperty.setStatus(STATUS_WORKFLOW);
 		newProperty.setBasicProperty(basicProperty);
 

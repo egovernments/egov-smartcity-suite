@@ -42,6 +42,9 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<c:if test="${!endorsementNotices.isEmpty()}"> 
+ 			<jsp:include page="/WEB-INF/views/common/endorsement_history.jsp"/>
+</c:if>
 <c:if test="${nextAction !='END'}" > 
 		<div class="panel panel-primary" data-collapsed="0" >				
 			<div class="panel-body">

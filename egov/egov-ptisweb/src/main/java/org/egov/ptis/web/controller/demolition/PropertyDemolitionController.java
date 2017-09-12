@@ -180,6 +180,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         propertyDemolitionService.addModelAttributes(model, basicProperty);
         model.addAttribute("stateType", property.getClass().getSimpleName());
         model.addAttribute("additionalRule", DEMOLITION);
+        model.addAttribute("endorsementNotices", null);
         prepareWorkflow(model, property, new WorkflowContainer());
         return DEMOLITION_FORM;
     }

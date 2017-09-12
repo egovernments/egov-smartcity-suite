@@ -63,11 +63,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Optional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -81,7 +79,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
-import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.demolition.PropertyDemolitionService;
@@ -113,7 +110,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String SUCCESSMESSAGE = "successMessage";
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
-
+    
     PropertyDemolitionService propertyDemolitionService;
 
     @Autowired
@@ -153,7 +150,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
-
+        boolean endorsementRequired ;
         String currentDesignation = null;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
@@ -171,6 +168,12 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             currentDesignation = propertyDemolitionService.getLoggedInUserDesignation(
                     property.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser());
+        endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                    property.getCurrentState());
+        model.addAttribute("endorsementRequired", endorsementRequired);
+        model.addAttribute("ownersName", property.getBasicProperty().getFullOwnerName());
+        model.addAttribute("applicationNo", property.getApplicationNo());
+        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(property.getApplicationNo()));
         if (!currState.endsWith(STATUS_REJECTED))
             model.addAttribute("currentDesignation", currentDesignation);
         final WorkflowContainer workflowContainer = new WorkflowContainer();

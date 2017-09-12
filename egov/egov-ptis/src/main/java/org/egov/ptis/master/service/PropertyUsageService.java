@@ -54,7 +54,6 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyUsageDAO;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.repository.master.usage.PropertyUsageRepository;
@@ -191,5 +190,10 @@ public class PropertyUsageService {
     }
     public PropertyUsage  getUsageByCode(String code){
     	return propertyUsageRepository.findUsageByCode(code);
+    }
+    
+    @ReadOnly
+    public List<PropertyUsage> getAllActiveMixedPropertyUsages(){
+        return propertyUsageRepository.findByIsActiveTrueOrderByUsageName();
     }
 }

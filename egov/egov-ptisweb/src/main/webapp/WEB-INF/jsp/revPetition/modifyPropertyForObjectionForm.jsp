@@ -175,7 +175,7 @@
 		<td class="greybox">
 		   <s:select headerKey="-1"	headerValue="%{getText('default.select')}" name="property.propertyDetail.categoryType"
 				id="propTypeCategoryId" listKey="key" listValue="value" list="propTypeCategoryMap" value="%{property.propertyDetail.categoryType}"
-				cssClass="selectnew"/>
+				cssClass="selectnew" onchange="populateUsages();" />
 		</td>
 	</tr>
 	<tr id="apartmentRow">

@@ -69,6 +69,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_AMALGAMATION;
@@ -91,14 +92,19 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
+import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSACTION_TYPE_CREATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PRINT_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_NOTICE_PRINT_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -137,6 +143,7 @@ import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.utils.NumberUtil;
+import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -745,4 +752,36 @@ public class PropertyTaxCommonUtils {
         return notice.getNoticeNo();
     }
 
+    @SuppressWarnings("unchecked")
+    public List<PtNotice> getEndorsementNotices(final String applicationNo) {
+        final javax.persistence.Query qry = entityManager
+                .createQuery("from PtNotice notice where applicationNumber=? and noticeType='Endorsement Notice'");
+        qry.setParameter(1, applicationNo);
+        return (List<PtNotice>) qry.getResultList();
+    }
+
+    public Boolean getEndorsementGenerate(final Long userId, final State state) {
+        String loggedInUserDesignation;
+        final Position position = getPositionForUser(ApplicationThreadLocals.getUserId());
+        final List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                position.getId(), userId,
+                new Date());
+        loggedInUserDesignation = !loggedInUserAssign.isEmpty()
+                ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        return !StringUtils.isBlank(loggedInUserDesignation) && isValidDesignationForEndorsement(loggedInUserDesignation, state)
+                && isPrintPendingAction(state);
+    }
+
+    private Boolean isValidDesignationForEndorsement(String loggedInUserDesignation, State state) {
+        return loggedInUserDesignation.equalsIgnoreCase(REVENUE_INSPECTOR_DESGN) ||
+                ((loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) ||
+                        loggedInUserDesignation.equalsIgnoreCase(SENIOR_ASSISTANT))
+                        && (state.getOwnerPosition() != null));
+    }
+
+    private Boolean isPrintPendingAction(State state) {
+        return !(state.getNextAction()).equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
+                !(state.getNextAction()).equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
+    }
+    
 }

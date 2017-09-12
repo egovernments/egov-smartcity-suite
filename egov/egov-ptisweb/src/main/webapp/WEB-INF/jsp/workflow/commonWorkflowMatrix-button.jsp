@@ -106,7 +106,33 @@ jQuery(document).on('change', ".applicationcheckbox", function () {
 		jQuery('.loader-class').modal('hide');
 		popupWindow.close();
 	}
-	
+
+	function validateEndorsement(){
+		if((document.getElementById("approverComments").value).trim()=="" || document.getElementById("approverComments").value==null){
+			bootbox.alert("Please add Remarks");
+			return false;
+		}
+		else
+		    openEndorsementNotice();
+	}
+
+	function openEndorsementNotice(){
+		var modelNo = '<s:property value="%{property.getId}"/>';
+ 		var remarks = document.getElementById("approverComments").value;
+		if('<s:property value="%{transactionType}"/>' == 'New_Assessment'){
+		popupWindow = window.open('/ptis/endorsementNotice?'
+				+ 'applicantName='+encodeURIComponent('<s:property value="%{ownersName}"/>')+'&serviceName='+encodeURIComponent('<s:property value="%{transactionType}"/>')+'&remarks='+encodeURIComponent(remarks)+'&assessmentNo=<s:property value="%{stateAwareId}"/>&applicationNo=<s:property value="%{applicationNumber}"/>',
+				'_blank', 'width=650, height=500, scrollbars=yes', false);
+		}
+		else
+			{
+			popupWindow = window.open('/ptis/endorsementNotice?'
+					+ 'applicantName='+encodeURIComponent('<s:property value="%{ownersName}"/>')+'&serviceName='+encodeURIComponent('<s:property value="%{transactionType}"/>')+'&remarks='+encodeURIComponent(remarks)+'&assessmentNo=<s:property value="%{assessmentNumber}"/>&applicationNo=<s:property value="%{applicationNumber}"/>',
+					'_blank', 'width=650, height=500, scrollbars=yes', false);
+			}
+		popupWindow.opener.close();
+	}
+
 </script>
 <div class="buttonbottom" align="center">
 	<s:hidden id="workFlowAction" name="workFlowAction" />
@@ -131,7 +157,13 @@ jQuery(document).on('change', ".applicationcheckbox", function () {
 							id="Reassign" name="Reassign"
 							onclick="return openReassignWindow();" />
 					</s:if>
-				</s:if> <input type="button" name="button2" id="button2" value="Close"
+				</s:if>
+				<s:if test="%{endorsementRequired}">
+						<input type="button" value="Endorsement" class="buttonsubmit"
+							id="Endorsement" name="Endorsement"
+							onclick="return validateEndorsement();" />
+					</s:if>
+					 <input type="button" name="button2" id="button2" value="Close"
 				class="button" onclick="window.close();" /></td>
 		</tr>
 	</table>

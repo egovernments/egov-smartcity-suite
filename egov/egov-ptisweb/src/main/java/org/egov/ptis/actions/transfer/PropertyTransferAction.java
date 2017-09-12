@@ -274,6 +274,12 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     private Long stateAwareId;
     private String transactionType;
     private Boolean showPayBtn = Boolean.FALSE;
+    private String ownersName;
+    private List<PtNotice> endorsementNotices;
+    private Boolean endorsementRequired = Boolean.FALSE;
+    private String assessmentNumber;
+    private String applicationNumber;
+    
 
     public PropertyTransferAction() {
         addRelatedEntity("mutationReason", PropertyMutationMaster.class);
@@ -387,6 +393,14 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         isReassignEnabled = reassignmentservice.isReassignEnabled();
         stateAwareId = propertyMutation.getId();
         transactionType = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
+        if (propertyMutation.getState() != null) {
+            ownersName = propertyMutation.getBasicProperty().getFullOwnerName();
+            applicationNumber = propertyMutation.getApplicationNo();
+            endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(applicationNumber);
+            endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                    propertyMutation.getCurrentState());
+            assessmentNumber = propertyMutation.getBasicProperty().getUpicNo();
+        }
         if (currState.endsWith(WF_STATE_REJECTED)
                     || nextAction != null && nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)
                     || currState.equals(WFLOW_ACTION_NEW)){ 
@@ -1403,5 +1417,44 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         this.showPayBtn = showPayBtn;
     }
 
+    public List<PtNotice> getEndorsementNotices() {
+        return endorsementNotices;
+    }
 
+    public void setEndorsementNotices(List<PtNotice> endorsementNotices) {
+        this.endorsementNotices = endorsementNotices;
+    }
+
+    public Boolean getEndorsementRequired() {
+        return endorsementRequired;
+    }
+
+    public void setEndorsementRequired(Boolean endorsementRequired) {
+        this.endorsementRequired = endorsementRequired;
+    }
+
+    public String getAssessmentNumber() {
+        return assessmentNumber;
+    }
+
+    public void setAssessmentNumber(String assessmentNumber) {
+        this.assessmentNumber = assessmentNumber;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getOwnersName() {
+        return ownersName;
+    }
+
+    public void setOwnersName(String ownersName) {
+        this.ownersName = ownersName;
+    }
+    
 }

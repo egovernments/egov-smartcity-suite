@@ -92,7 +92,23 @@ function closeChildWindow(){
 	popupWindow.close();
 }
 
+function validateEndorsement(){
+	if((jQuery('#approvalComent').val()).trim()==''){
+		bootbox.alert("Please add Remarks");
+		return false;
+	}
+	else
+	    openEndorsementNotice();
+}
 
+function openEndorsementNotice()
+{ 
+	var remarks = jQuery('#approvalComent').val();
+	popupWindow = window.open('/ptis/endorsementNotice?'
+			+ 'applicantName='+encodeURIComponent('<c:out value="${ownersName}"/>')+'&serviceName='+encodeURIComponent('<c:out value="${transactionType}"/>')+'&remarks='+encodeURIComponent(remarks)+'&assessmentNo=<c:out value="${property.getBasicProperty().getUpicNo()}"/>&applicationNo=<c:out value="${applicationNo}"/>' ,
+			'_blank', 'width=650, height=500, scrollbars=yes', false);
+	popupWindow.opener.close();
+}
 
 </script>
 
@@ -128,6 +144,12 @@ function closeChildWindow(){
 						</c:otherwise>
 					</c:choose>
 				</c:forEach>
+				<c:if test="${endorsementRequired}">
+					<form:button type="button" disabled="false" id="endorsement" class="btn btn-primary" value="endorsement"
+								onclick="validateEndorsement();">
+						<c:out value="Endorsement" />
+					</form:button>
+				</c:if>
 				<input type="button" name="button2" id="button2" value="Close"
 				class="btn btn-default" onclick="window.close();" /></td>
 		</tr>

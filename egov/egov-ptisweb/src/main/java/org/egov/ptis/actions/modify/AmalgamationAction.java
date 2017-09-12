@@ -45,9 +45,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSES
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
@@ -131,7 +128,6 @@ import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.egov.ptis.domain.entity.property.VacantProperty;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -140,7 +136,6 @@ import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.ApartmentService;
 import org.egov.ptis.master.service.FloorTypeService;
 import org.egov.ptis.master.service.PropertyOccupationService;
-import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.RoofTypeService;
 import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.ptis.master.service.WallTypeService;
@@ -229,8 +224,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @Autowired
     private transient ApartmentService apartmentService;
     @Autowired
-    private transient PropertyUsageService propertyUsageService;
-    @Autowired
     private transient StructureClassificationService structureClassificationService;
     @Autowired
     private transient PropertyOccupationService propertyOccupationService;
@@ -287,8 +280,6 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         }
 
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.OBJECTION);
-        List<PropertyUsage> usageList = propertyUsageService.getAllActivePropertyUsages();
-
         setFloorNoMap(FLOOR_MAP);
         setGuardianRelations(propertyTaxCommonUtils.getGuardianRelations());
         addDropdownData("floorType", floorTypeService.getAllFloors());
@@ -300,17 +291,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         addDropdownData("StructureList", structureClassificationService.getAllActiveStructureTypes());
         addDropdownData("apartments", apartmentService.getAllApartments());
         populatePropertyTypeCategory();
-
-        // Loading property usages based on property category
-        if (StringUtils.isNoneBlank(propertyCategory))
-            if (propertyCategory.equals(CATEGORY_MIXED))
-                usageList = propertyUsageService.getAllActivePropertyUsages();
-            else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
-                usageList = propertyUsageService.getResidentialPropertyUsages();
-            else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
-                usageList = propertyUsageService.getNonResidentialPropertyUsages();
-
-        addDropdownData("UsageList", usageList);
+        if (propertyModel != null && propertyModel.getPropertyDetail() != null
+                && propertyModel.getPropertyDetail().getCategoryType() != null)
+            populateUsages(StringUtils.isNotBlank(propertyCategory) ? propertyCategory
+                    : propertyModel.getPropertyDetail().getCategoryType());
+        else
+            populateUsages(propertyCategory);
         if (logger.isDebugEnabled())
             logger.debug("Exiting from preapre, ModelId: " + getModelId());
     }
@@ -588,6 +574,14 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             isReassignEnabled = reassignService.isReassignEnabled();
             stateAwareId = propertyModel.getId();
             transactionType = APPLICATION_TYPE_AMALGAMATION;
+            if (propertyModel.getState() != null) {
+                ownersName = propertyModel.getBasicProperty().getFullOwnerName();
+                applicationNumber = propertyModel.getApplicationNo();
+                endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(applicationNumber);
+                endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                        propertyModel.getCurrentState());
+                assessmentNumber = propertyModel.getBasicProperty().getUpicNo();
+            }
             if (logger.isDebugEnabled())
                 logger.debug("view: PropertyModel by model id: " + propertyModel);
         }
