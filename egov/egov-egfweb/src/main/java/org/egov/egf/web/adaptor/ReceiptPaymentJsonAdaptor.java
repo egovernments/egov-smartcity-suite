@@ -62,13 +62,13 @@ public class ReceiptPaymentJsonAdaptor implements JsonSerializer<ReceiptPayment>
         final JsonObject jsonObject = new JsonObject();
         if (receiptPayment != null) {
             if (receiptPayment.getName() != null)
-                jsonObject.addProperty("name", receiptPayment.getName());
+                jsonObject.addProperty("receiptName", receiptPayment.getName());
             else
-                jsonObject.addProperty("name", "");
+                jsonObject.addProperty("receiptName", "");
             if (receiptPayment.getGlcode() != null)
-                jsonObject.addProperty("glcode", receiptPayment.getGlcode());
+                jsonObject.addProperty("receiptGlcode", receiptPayment.getGlcode());
             else
-                jsonObject.addProperty("glcode", "");
+                jsonObject.addProperty("receiptGlcode", "");
             if (receiptPayment.getDebitAmount() != null)
                 jsonObject.addProperty("debitAmount", receiptPayment.getDebitAmount());
             else
@@ -79,27 +79,27 @@ public class ReceiptPaymentJsonAdaptor implements JsonSerializer<ReceiptPayment>
                 jsonObject.addProperty("creditAmount", "");
 
             if (receiptPayment.getName() != null)
-                jsonObject.addProperty("namee", receiptPayment.getName());
+                jsonObject.addProperty("paymentName", receiptPayment.getName());
             else
-                jsonObject.addProperty("namee", "");
+                jsonObject.addProperty("paymentName", "");
             if (receiptPayment.getGlcode() != null)
-                jsonObject.addProperty("glcodee", receiptPayment.getGlcode());
+                jsonObject.addProperty("paymentGlcode", receiptPayment.getGlcode());
             else
-                jsonObject.addProperty("glcodee", "");
+                jsonObject.addProperty("paymentGlcode", "");
         }
 
 
         if ((receiptPayment.getGlcode().equalsIgnoreCase("Opening Balance") || receiptPayment.getGlcode().equalsIgnoreCase("Closing Balance"))
                 && (receiptPayment.getCreditAmount().compareTo(BigDecimal.ZERO) > 0 || receiptPayment.getDebitAmount().compareTo(BigDecimal.ZERO) > 0)) {
-            jsonObject.addProperty("namee", "");
-            jsonObject.addProperty("glcodee", "");
+            jsonObject.addProperty("paymentName", "");
+            jsonObject.addProperty("paymentGlcode", "");
             jsonObject.addProperty("debitAmount", "");
         }
 
         if ((receiptPayment.getGlcode().equalsIgnoreCase("Opening Balance") || receiptPayment.getGlcode().equalsIgnoreCase("Closing Balance"))
                 && (receiptPayment.getCreditAmount().compareTo(BigDecimal.ZERO) < 0 || receiptPayment.getDebitAmount().compareTo(BigDecimal.ZERO) < 0)) {
-            jsonObject.addProperty("namee", "");
-            jsonObject.addProperty("glcodee", "");
+            jsonObject.addProperty("paymentName", "");
+            jsonObject.addProperty("paymentGlcode", "");
             jsonObject.addProperty("creditAmount", "");
         }
         return jsonObject;

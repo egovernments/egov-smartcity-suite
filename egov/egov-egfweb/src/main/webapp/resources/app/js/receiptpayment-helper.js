@@ -91,15 +91,15 @@ function callAjaxSearch() {
             },
             aaSorting: [],
             columns: [{
-                "data": "glcode", "sClass": "text-left"
+                "data": "receiptGlcode", "sClass": "text-left"
             }, {
-                "data": "name", "sClass": "text-left"
+                "data": "receiptName", "sClass": "text-left"
             }, {
                 "data": "creditAmount", "sClass": "text-left"
             }, {
-                "data": "glcodee", "sClass": "text-left"
+                "data": "paymentGlcode", "sClass": "text-left"
             }, {
-                "data": "namee", "sClass": "text-left"
+                "data": "paymentName", "sClass": "text-left"
             }, {
                 "data": "debitAmount", "sClass": "text-left"
             }]

@@ -85,9 +85,8 @@ public class ReceiptPaymentService {
 
         BigDecimal receiptAmountSum = BigDecimal.ZERO;
         BigDecimal paymentAmountSum = BigDecimal.ZERO;
-        BigDecimal openingBalnce = BigDecimal.ZERO;
-        BigDecimal closingBalnce = BigDecimal.ZERO;
-        BigDecimal openingBalanceTillFromDate = BigDecimal.ZERO;
+        BigDecimal openingBalnce;
+        BigDecimal closingBalnce;
 
 
         ReceiptPayment receipt = new ReceiptPayment();
