@@ -47,7 +47,7 @@ $(document).ready(function () {
         remote: {
             url: '/egi/user/username-like/%QUERY',
             filter: function (data) {
-                return $.map(data, function (user) {
+                return $.map(JSON.parse(data), function (user) {
                     return {
                         name: user.name,
                         value: user.id
