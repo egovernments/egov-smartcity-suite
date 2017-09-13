@@ -50,6 +50,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_A
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_MEESEVA_OPERATOR;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
 
 import java.math.BigDecimal;
@@ -165,7 +166,6 @@ public class WaterTaxUtils {
 
     @Autowired
     private InstallmentDao installmentDao;
-   
 
     public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(final String moduleName,
             final String keyName) {
@@ -455,7 +455,8 @@ public class WaterTaxUtils {
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER) ||
-                            ROLE_APPROVERROLE.equalsIgnoreCase(userrole.getName())) {
+                            ROLE_APPROVERROLE.equalsIgnoreCase(userrole.getName()) ||
+                            ROLE_MEESEVA_OPERATOR.equalsIgnoreCase(userrole.getName())) {
                         final Position positionuser = getZonalLevelClerkForLoggedInUser(
                                 waterConnectionDetails.getConnection().getPropertyIdentifier());
                         if (positionuser != null) {
@@ -692,7 +693,7 @@ public class WaterTaxUtils {
     public Boolean isAnonymousUser(final User user) {
         return USERNAME_ANONYMOUS.equalsIgnoreCase(user.getName());
     }
-    
+
     public Boolean isCurrentUserCitizenRole() {
         Boolean citizenUserRole = Boolean.FALSE;
         User currentUser = null;
