@@ -1626,6 +1626,7 @@ public interface PropertyTaxConstants {
     public static final String DAY = "day";
     
     public static final String APPCONFIG_REASSIGN = "PTIS_REASSIGN_REQUIRED";
+    public static final String APPCONFIG_ENDORSEMENT = "PTIS_ENDORSEMENT_REQUIRED";
 
     @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {

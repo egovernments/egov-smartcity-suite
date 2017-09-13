@@ -768,7 +768,7 @@ public class PropertyTaxCommonUtils {
         loggedInUserDesignation = !loggedInUserAssign.isEmpty()
                 ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         return !StringUtils.isBlank(loggedInUserDesignation) && isValidDesignationForEndorsement(loggedInUserDesignation, state)
-                && isPrintPendingAction(state);
+                && isPrintPendingAction(state) && isEndorsementEnabled();
     }
 
     private Boolean isValidDesignationForEndorsement(String loggedInUserDesignation, State state) {
@@ -781,6 +781,12 @@ public class PropertyTaxCommonUtils {
     private Boolean isPrintPendingAction(State state) {
         return !(state.getNextAction()).equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
                 !(state.getNextAction()).equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
+    }
+    
+    public boolean isEndorsementEnabled() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PropertyTaxConstants.APPCONFIG_ENDORSEMENT);
+        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
     
 }
