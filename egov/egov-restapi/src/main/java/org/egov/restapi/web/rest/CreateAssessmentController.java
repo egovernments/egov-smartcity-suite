@@ -204,6 +204,7 @@ public class CreateAssessmentController {
     	viewPropertyDetails.setDocType(documentTypeDetails.getDocumentName());
     	viewPropertyDetails.setRegdDocNo(documentTypeDetails.getDocumentNumber());
     	viewPropertyDetails.setRegdDocDate(documentTypeDetails.getDocumentDate());
+    	viewPropertyDetails.setCourtName(documentTypeDetails.getCourtName());
     	viewPropertyDetails.setMroProcNo(documentTypeDetails.getMroProceedingNumber());
     	viewPropertyDetails.setMroProcDate(documentTypeDetails.getMroProceedingDate());
     	viewPropertyDetails.setTwSigned(documentTypeDetails.getSigned()== null? Boolean.FALSE:documentTypeDetails.getSigned());

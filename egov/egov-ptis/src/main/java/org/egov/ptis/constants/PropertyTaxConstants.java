@@ -1721,6 +1721,7 @@ public interface PropertyTaxConstants {
     public static final String SOURCE_MOBILE = "MOBILE";
     public static final String SOURCE_SYSTEM = "SYSTEM";
     public static final String SOURCE_ONLINE = "ONLINE";
+    public static final String SOURCE_SURVEY = "SURVEY";
     
     public static final String APPURTENANT_PROPERTY = "AppurTenantProperty";
     public static final String ANONYMOUS_USER= "Anonymous";

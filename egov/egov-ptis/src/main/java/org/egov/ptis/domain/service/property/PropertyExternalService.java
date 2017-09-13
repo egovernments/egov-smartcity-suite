@@ -104,6 +104,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASERATE_BY_OCC
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SERVICE_CODE_VACANTLANDTAX;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_SURVEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
@@ -1248,6 +1249,7 @@ public class PropertyExternalService {
 		BasicProperty basicProperty = createBscPropty(viewpropertyDetails, propService);
 
 		PropertyImpl property = (PropertyImpl) basicProperty.getProperty();
+		property.setSource(SOURCE_SURVEY);
 		List<File> fileAttachments = new ArrayList<>(0);
 		List<String> uploadContentTypes = new ArrayList<>(0);
 		List<String> uploadFileNames = new ArrayList<>(0);
@@ -2310,6 +2312,7 @@ public class PropertyExternalService {
 		final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
 		BasicProperty basicProperty = updateBasicProperty(viewPropertyDetails, propService);
 		PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
+		property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
 		basicProperty.setUnderWorkflow(Boolean.TRUE);
 		transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
 		basicPropertyService.applyAuditing(property.getState());

@@ -844,7 +844,7 @@ public class ValidationUtil {
 					return errorDetails;
 				} else {
 					Pattern pattern = Pattern.compile(CAMEL_CASE_PATTERN);
-					Matcher matcher = pattern.matcher(ownerDetails.getGuardian());
+					Matcher matcher = pattern.matcher(ownerDetails.getGuardianRelation());
 					if (!matcher.matches()) {
 						errorDetails = new ErrorDetails();
 						errorDetails.setErrorCode(INVALID_GUARDIAN_RELATION_CODE);
