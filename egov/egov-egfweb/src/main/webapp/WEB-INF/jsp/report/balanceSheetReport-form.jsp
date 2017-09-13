@@ -50,6 +50,7 @@ function showDetails(glcode){
 		var fundId='<s:property value="balanceSheet.fund.id"/>';
 		var startDate='<s:date name="%{currentYearfromDate}" format="dd/MM/yyyy"/>';
         var endDate='<s:date name="%{currentYeartoDate}" format="dd/MM/yyyy"/>';
+        var asOnDate='<s:date name="%{asOnDate}" format="dd/MM/yyyy"/>';
         var todayDate = new Date();
 		 var todayMonth = todayDate.getMonth() + 1;
 		 var todayDay = todayDate.getDate();
@@ -66,7 +67,7 @@ function showDetails(glcode){
 			functionId="";
 			}                   
 		
-		window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+asOnDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 	}
 	
 function showPreviousYearDetails(glcode)
@@ -79,6 +80,7 @@ function showPreviousYearDetails(glcode)
 		var fundId='<s:property value="balanceSheet.fund.id"/>';
         var startDate='<s:date name="%{previousYearfromDate}" format="dd/MM/yyyy"/>';
         var endDate='<s:date name="%{previousYeartoDate}" format="dd/MM/yyyy"/>';
+        var asOnDate='<s:date name="%{asOnDate}" format="dd/MM/yyyy"/>';
          var functionCode1=functionName+"~"+functionId;
          var todayDate = new Date();
 		 var todayMonth = todayDate.getMonth() + 1;
@@ -95,7 +97,7 @@ function showPreviousYearDetails(glcode)
 			functionCode1="";
 			functionId="";
 			}                   
-		window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+endDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
+		window.open('/EGF/report/generalLedgerReport-searchDrilldown.action?fromBean=1&glCode1='+glcode+'&fund_id='+fundId+'&startDate='+startDate+'&endDate='+asOnDate+'&departmentId='+deptId+'&functionaryId='+functionaryId+'&functionCodeId='+functionId+'&functionCode='+functionCode1+'&fieldId='+fieldId,'','resizable=yes,height=650,width=900,scrollbars=yes,left=30,top=30,status=no');
 
 }
 	

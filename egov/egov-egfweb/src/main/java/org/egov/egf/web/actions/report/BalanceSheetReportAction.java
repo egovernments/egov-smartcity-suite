@@ -109,6 +109,8 @@ public class BalanceSheetReportAction extends BaseFormAction {
  private PersistenceService persistenceService;
  @Autowired
     private EgovMasterDataCaching masterDataCache;
+
+    private Date asOnDate;
     
     public FinancialYearDAO getFinancialYearDAO() {
 		return financialYearDAO;
@@ -268,6 +270,7 @@ public class BalanceSheetReportAction extends BaseFormAction {
     @Action(value = "/report/balanceSheetReport-generateBalanceSheetSubReport")
     public String generateBalanceSheetSubReport() {
         populateDataSourceForSchedule();
+        asOnDate=balanceSheet.getAsOndate();
         return "scheduleResults";
     }
 
@@ -469,5 +472,11 @@ public class BalanceSheetReportAction extends BaseFormAction {
         this.header = header;
     }
 
-	
+    public Date getAsOnDate() {
+        return asOnDate;
+    }
+
+    public void setAsOnDate(Date asOnDate) {
+        this.asOnDate = asOnDate;
+    }
 }
