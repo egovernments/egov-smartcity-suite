@@ -415,12 +415,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
             else
                 property.getPropertyDetail().setPropertyType(PropertyTaxConstants.BUILT_UP_PROPERTY);
-            return createAppurTenantProperties(STATUS_DEMAND_INACTIVE);
+            return createAppurTenantProperties(STATUS_WORKFLOW);
         }
 
-        final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
+        final BasicProperty basicProperty = createBasicProp(STATUS_WORKFLOW);
         try {
-            addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
+            addDemandAndCompleteDate(STATUS_WORKFLOW, basicProperty, basicProperty.getPropertyMutationMaster());
         } catch (final TaxCalculatorExeption e) {
             basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
             addActionError(getText(UNIT_RATE_ERROR));
@@ -1133,7 +1133,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         } else
             setPropTypeCategoryMap(Collections.emptyMap());
        if(property!=null)
-           populateUsages(StringUtils.isNotBlank(propertyCategory) ? propertyCategory : property.getPropertyDetail().getCategoryType());
+           populateUsages(isNotBlank(propertyCategory) ? propertyCategory : property.getPropertyDetail().getCategoryType());
        else
            populateUsages(propertyCategory);
        // tax exempted properties

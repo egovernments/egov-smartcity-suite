@@ -576,27 +576,20 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS))
                     propertyTax = propertyTax.add(demandDetail.getAmount());
-                if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS)) {
-                    if (propertyType.equalsIgnoreCase(CURRENT))
-                        infoBean.setRevLibraryCess(demandDetail.getAmount());
-                    if (propertyType.equalsIgnoreCase(HISTORY))
-                        infoBean.setExistingLibraryCess(demandDetail.getAmount());
-                }
+                setLibraryCess(infoBean, propertyType, demandDetail);
 
                 if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                         .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX)
                         || demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
                                 .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX))
                     propertyTax = propertyTax.add(demandDetail.getAmount());
-                if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                        .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
-                    if (propertyType.equalsIgnoreCase(CURRENT))
-                        infoBean.setRevUCPenalty(demandDetail.getAmount());
-                    if (propertyType.equalsIgnoreCase(HISTORY))
-                        infoBean.setExistingUCPenalty(demandDetail.getAmount());
-                }
+                setUCPenalty(infoBean, propertyType, demandDetail);
             }
+        setTotalTax(infoBean, totalTax, propertyTax, propertyType);
+    }
+
+    private void setTotalTax(final PropertyAckNoticeInfo infoBean, BigDecimal totalTax, BigDecimal propertyTax,
+            final String propertyType) {
         if (propertyType.equalsIgnoreCase(CURRENT)) {
             infoBean.setRevTotalTax(totalTax);
             infoBean.setRevPropertyTax(propertyTax);
@@ -604,6 +597,28 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         if (propertyType.equalsIgnoreCase(HISTORY)) {
             infoBean.setExistingTotalTax(totalTax);
             infoBean.setExistingPropertyTax(propertyTax);
+        }
+    }
+
+    private void setLibraryCess(final PropertyAckNoticeInfo infoBean, final String propertyType,
+            final EgDemandDetails demandDetail) {
+        if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS)) {
+            if (propertyType.equalsIgnoreCase(CURRENT))
+                infoBean.setRevLibraryCess(demandDetail.getAmount());
+            if (propertyType.equalsIgnoreCase(HISTORY))
+                infoBean.setExistingLibraryCess(demandDetail.getAmount());
+        }
+    }
+
+    private void setUCPenalty(final PropertyAckNoticeInfo infoBean, final String propertyType,
+            final EgDemandDetails demandDetail) {
+        if (demandDetail.getEgDemandReason().getEgDemandReasonMaster().getCode()
+                .equalsIgnoreCase(PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY)) {
+            if (propertyType.equalsIgnoreCase(CURRENT))
+                infoBean.setRevUCPenalty(demandDetail.getAmount());
+            if (propertyType.equalsIgnoreCase(HISTORY))
+                infoBean.setExistingUCPenalty(demandDetail.getAmount());
         }
     }
 
