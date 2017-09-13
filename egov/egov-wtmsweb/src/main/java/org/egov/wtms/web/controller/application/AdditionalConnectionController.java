@@ -147,7 +147,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
 
         loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
-            if (meesevaApplicationNumber.equals(null))
+            if (meesevaApplicationNumber == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
             else
                 addConnection.setMeesevaApplicationNumber(meesevaApplicationNumber);
@@ -166,7 +166,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
         final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
         model.addAttribute("isAnonymousUser", isAnonymousUser);
-        if (loggedUserIsMeesevaUser && !request.getParameter(MEESEVAAPPLICATIONNUMBER).equals(null))
+        if (loggedUserIsMeesevaUser && request.getParameter(MEESEVAAPPLICATIONNUMBER) != null)
             addConnection.setMeesevaApplicationNumber(request.getParameter(MEESEVAAPPLICATIONNUMBER));
         model.addAttribute("citizenPortalUser", citizenPortalUser);
         if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser) {
