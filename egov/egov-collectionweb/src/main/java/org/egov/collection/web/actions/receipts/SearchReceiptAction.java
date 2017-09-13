@@ -85,7 +85,7 @@ public class SearchReceiptAction extends SearchFormAction {
     private Integer branchId;
 
     @Autowired
-    protected AssignmentService assignmentService;
+    private AssignmentService assignmentService;
 
     @Override
     public Object getModel() {
