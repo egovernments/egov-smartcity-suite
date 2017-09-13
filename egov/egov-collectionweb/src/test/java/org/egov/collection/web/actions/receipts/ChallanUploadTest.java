@@ -118,7 +118,7 @@ public class ChallanUploadTest {/* extends AbstractPersistenceServiceTest<Challa
 				return new AppConfigValuesHibernateDAO(AppConfigValues.class,session);
 			}
 		};
-		user =  (UserImpl) genericService.find("from UserImpl  where userName=? ","egovernments");
+		user =  (UserImpl) genericService.find("from UserImpl  where userName=? ","system");
 		objectFactory = new CollectionObjectFactory(session);
 		setupEJB();
 		ScriptService scriptExecutionService = new ScriptService(2, 5, 10, 30);
@@ -465,7 +465,7 @@ String[] inputArrayCheque = new String[21];
 		
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 	}
 	

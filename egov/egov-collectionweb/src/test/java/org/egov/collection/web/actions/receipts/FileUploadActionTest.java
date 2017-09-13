@@ -203,7 +203,7 @@ public class FileUploadActionTest { /*extends AbstractPersistenceServiceTest<Rec
 		
 		action.setInputList(inputList);
 		
-		UserImpl user = objectFactory.createUser("egovernments",dept);
+		UserImpl user = objectFactory.createUser("system",dept);
 		
 		EgwStatus status = (EgwStatus) genericService.findByNamedQuery(
 				CollectionConstants.QUERY_STATUS_BY_MODULE_AND_CODE, 

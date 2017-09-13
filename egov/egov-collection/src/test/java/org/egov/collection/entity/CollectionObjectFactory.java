@@ -139,9 +139,9 @@ public class CollectionObjectFactory {
 		bankServ.setServiceDetails(serviceDetails);
 		bankServ.setBankAccountId(createBankAccount("$" + serviceDetails.getCode() + "%"));
 		bankServ.setDeptId(createDept("testDeptName", "testDeptCode"));
-		bankServ.setLastModifiedBy(createUser("egovernments"));
+		bankServ.setLastModifiedBy(createUser("system"));
 		bankServ.setLastModifiedDate(new Date());
-		bankServ.setCreatedBy(createUser("egovernments"));
+		bankServ.setCreatedBy(createUser("system"));
 		bankServ.setCreatedDate(new Date());
 		return  (bankServ);
 	}
@@ -167,9 +167,9 @@ public class CollectionObjectFactory {
 		bankbranch.setIsactive(true);
 		bankbranch.setBank(createBank());
 		bankbranch.setCreatedDate(new Date());
-		bankbranch.setCreatedBy(createUser("egovernments"));
+		bankbranch.setCreatedBy(createUser("system"));
 		bankbranch.setLastModifiedDate(new Date());
-		bankbranch.setLastModifiedBy(createUser("egovernments"));
+		bankbranch.setLastModifiedBy(createUser("system"));
 		session.saveOrUpdate(bankbranch);
 		return bankbranch;
 	}
@@ -180,9 +180,9 @@ public class CollectionObjectFactory {
 		bank.setName("Test Bank" + getRandomNumber());
 		bank.setIsactive(true);
 		bank.setCreatedDate(new Date());
-		bank.setCreatedBy(createUser("egovernments"));
+		bank.setCreatedBy(createUser("system"));
 		bank.setLastModifiedDate(new Date());
-		bank.setLastModifiedBy(createUser("egovernments"));
+		bank.setLastModifiedBy(createUser("system"));
 		session.saveOrUpdate(bank);
 		return bank;
 	}
@@ -207,7 +207,7 @@ public class CollectionObjectFactory {
 	public ReceiptHeader createReceiptHeader(String receiptnumber) throws NumberFormatException {
 		return createReceiptHeader(receiptnumber,
 				CollectionConstants.RECEIPT_TYPE_BILL, "123456", "testCode",
-				createUser("egovernments"),null);
+				createUser("system"),null);
 	}
 
 	/**
@@ -591,7 +591,7 @@ public class CollectionObjectFactory {
 	public InstrumentType createUnsavedInstrumentType(String type) {
 		InstrumentType instrType = new InstrumentType();
 
-		User user = createUser("egovernments");
+		User user = createUser("system");
 		Date date = new Date();
 		instrType.setType(type + getRandomNumber());
 		instrType.setCreatedBy(user);
@@ -611,7 +611,7 @@ public class CollectionObjectFactory {
 	public InstrumentType createUnsavedRegularInstrumentType(String type) {
 		InstrumentType instrType = new InstrumentType();
 
-		User user = createUser("egovernments");
+		User user = createUser("system");
 		Date date = new Date();
 		instrType.setType(type);
 		instrType.setCreatedBy(user);
@@ -1125,7 +1125,7 @@ public class CollectionObjectFactory {
 	public InstrumentType createInstrumentTypeWithAccountCode() {
 		InstrumentType instrType = createUnsavedInstrumentType("testInstrumentType"
 				+ getRandomNumber());
-		User user = createUser("egovernments");
+		User user = createUser("system");
 		Date date = new Date();
 
 		InstrumentAccountCodes instrAccountCode = new InstrumentAccountCodes();
@@ -1146,7 +1146,7 @@ public class CollectionObjectFactory {
 			String instrType) {
 		InstrumentAccountCodes instrAccountCode = new InstrumentAccountCodes();
 
-		User user = createUser("egovernments");
+		User user = createUser("system");
 		Date date = new Date();
 
 		instrAccountCode.setCreatedBy(user);
@@ -1883,7 +1883,7 @@ public class CollectionObjectFactory {
 		receiptHeader.setService(createServiceDetails());
 		receiptHeader.setCreatedDate(new Date());
 		receiptHeader.setLastModifiedDate(new Date());
-		User user=createUser("egovernments");
+		User user=createUser("system");
 		receiptHeader.setCreatedBy(user);
 		receiptHeader.setLastModifiedBy(user);
 		receiptHeader.setIsReconciled(false);

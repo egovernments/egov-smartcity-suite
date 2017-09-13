@@ -238,7 +238,7 @@ public class CollectionsNumberGeneratorTest { /*extends AbstractPersistenceServi
 		CFinancialYear financialYear = objectFactory.getFinancialYearForDate(
 				challan.getCreatedDate());
 		
-		UserImpl user = objectFactory.createUser("egovernments",department);
+		UserImpl user = objectFactory.createUser("system",department);
 		challan.setCreatedBy(user);
 		
 		String challanSequence = "SQ_CHALLAN_"+financialYear.getFinYearRange().substring(0, 4);

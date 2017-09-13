@@ -96,7 +96,7 @@ public class CollectionIntegrationServiceImplTest { /*extends
 										.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CASH),
 								null, instrumentAmount, instrumentDate,
 								"testCode", glCode1, functionName,
-								"egovernments"));
+								"system"));
 
 		// Receipt with cheque as instrument
 		receiptHeaders
@@ -110,7 +110,7 @@ public class CollectionIntegrationServiceImplTest { /*extends
 										.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_CHEQUE),
 								"222222", instrumentAmount, instrumentDate,
 								"testCode", glCode2, functionName,
-								"egovernments"));
+								"system"));
 
 		// Receipt with DD as instrument
 		receiptHeaders
@@ -124,7 +124,7 @@ public class CollectionIntegrationServiceImplTest { /*extends
 										.getInstrumentTypeByType(CollectionConstants.INSTRUMENTTYPE_DD),
 								"333333", instrumentAmount, instrumentDate,
 								"testCode", glCode3, functionName,
-								"egovernments"));
+								"system"));
 		
 		commonsManager = createMock(CommonsManager.class);
 		boundaryDAO = createMock(BoundaryDAO.class);

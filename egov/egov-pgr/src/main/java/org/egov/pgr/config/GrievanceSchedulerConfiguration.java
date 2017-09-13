@@ -86,7 +86,7 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
         escalationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "complaintEscalationJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "pgr");
         escalationJobDetail.setJobDataAsMap(jobDetailMap);
@@ -118,7 +118,7 @@ public class GrievanceSchedulerConfiguration extends QuartzSchedulerConfiguratio
         complaintIndexingJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "complaintIndexingJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "pgr");
         complaintIndexingJobDetail.setJobDataAsMap(jobDetailMap);

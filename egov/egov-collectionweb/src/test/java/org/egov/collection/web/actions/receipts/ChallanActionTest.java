@@ -265,12 +265,12 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 	
 	private void createEmployeeForLoggedInUser(){
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 		
 		Department dept = objectFactory.createDeptForCode("testDeptCode");
-		UserImpl user = objectFactory.createUser("egovernments",dept);
-		userManager.getUserByUserName("egovernments");
+		UserImpl user = objectFactory.createUser("system",dept);
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user).anyTimes();
 		replay(userManager);
 		
@@ -295,7 +295,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		action.setParameters(parameters);
 		Department loggedinUserDept = objectFactory.createDept("testUserDeptName");
 		
-		UserImpl user = objectFactory.createUser("egovernments",loggedinUserDept);
+		UserImpl user = objectFactory.createUser("system",loggedinUserDept);
 		userManager.getUserByUserName(EasyMock.isA(String.class));
 		expectLastCall().andReturn(user);
 		replay(userManager);
@@ -325,7 +325,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		action.setParameters(parameters);
 		Department loggedinUserDept = objectFactory.createDept("testUserDeptName");
 		
-		UserImpl user = objectFactory.createUser("egovernments",loggedinUserDept);
+		UserImpl user = objectFactory.createUser("system",loggedinUserDept);
 		userManager.getUserByUserName(EasyMock.isA(String.class));
 		expectLastCall().andReturn(user);
 		replay(userManager);
@@ -403,10 +403,10 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		Department loggedinUserDept = objectFactory.createDept("testUserDeptName");
 		
-		UserImpl user = objectFactory.createUser("egovernments",loggedinUserDept);
-		userManager.getUserByUserName("egovernments");
+		UserImpl user = objectFactory.createUser("system",loggedinUserDept);
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
@@ -428,7 +428,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		action.setActionName(CollectionConstants.WF_ACTION_NAME_NEW_CHALLAN);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 		
 		ReceiptHeader receiptHeaderObj=action.getReceiptHeader();
@@ -465,14 +465,14 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		Department loggedinUserDept = objectFactory.createDept("testUserDeptName");
 		
-		UserImpl user = objectFactory.createUser("egovernments",loggedinUserDept);
-		userManager.getUserByUserName("egovernments");
+		UserImpl user = objectFactory.createUser("system",loggedinUserDept);
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
@@ -491,7 +491,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		objectFactory.createEmployeePositionDetails("testDesignation", emp,	loggedinUserDept);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 		
 		CVoucherHeader voucher = objectFactory.createVoucher("testVoucher");
@@ -798,14 +798,14 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		Department loggedinUserDept = objectFactory.createDept("testUserDeptName");
 		
-		UserImpl user = objectFactory.createUser("egovernments",loggedinUserDept);
-		userManager.getUserByUserName("egovernments");
+		UserImpl user = objectFactory.createUser("system",loggedinUserDept);
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user).anyTimes();
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
@@ -832,7 +832,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		objectFactory.createEmployeePositionDetails("testDesignation", emp,	loggedinUserDept);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 		
 		try {
@@ -862,7 +862,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		action.setParameters(parameters);
 		Department loggedinUserDept = objectFactory.createDept("testUserDeptName");
 		
-		UserImpl user = objectFactory.createUser("egovernments",loggedinUserDept);
+		UserImpl user = objectFactory.createUser("system",loggedinUserDept);
 		userManager.getUserByUserName(EasyMock.isA(String.class));
 		expectLastCall().andReturn(user);
 		replay(userManager);
@@ -904,11 +904,11 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		action.setReceiptHeader(receipt);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 		
-		UserImpl user = objectFactory.createUser("egovernments");
-		userManager.getUserByUserName("egovernments");
+		UserImpl user = objectFactory.createUser("system");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
@@ -921,7 +921,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 	public void testSaveReceiptAfterIntraDayCancellation(){
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
 		Location location = objectFactory.createCounter("test");
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		sessionMap.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sessionMap);
 		
@@ -1007,7 +1007,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 	public void testSaveReceiptForCash(){
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
 		Location location = objectFactory.createCounter("test");
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		sessionMap.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sessionMap);
 		
@@ -1087,7 +1087,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 	public void testSaveReceiptForCard(){
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
 		Location location = objectFactory.createCounter("test");
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		sessionMap.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sessionMap);
 		
@@ -1197,7 +1197,7 @@ public class ChallanActionTest {/* extends AbstractPersistenceServiceTest<Challa
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
 		Location location = objectFactory.createCounter("test");
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		sessionMap.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sessionMap);
 		

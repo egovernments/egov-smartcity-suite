@@ -102,7 +102,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         recoveryNoticeJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "recoveryNoticesJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "ptis");
         recoveryNoticeJobDetail.setJobDataAsMap(jobDetailMap);
@@ -124,7 +124,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         demandActivationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "demandActivationJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "ptis");
         demandActivationJobDetail.setJobDataAsMap(jobDetailMap);
@@ -242,7 +242,7 @@ public class PtisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         ptisBulkBillGenerationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "bulkBillGenerationJob" + modulo);
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "ptis");
         ptisBulkBillGenerationJobDetail.setJobDataAsMap(jobDetailMap);

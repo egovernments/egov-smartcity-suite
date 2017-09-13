@@ -270,7 +270,7 @@ public class WtmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
         wtmsBulkBillGenerationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "bulkWaterConnBillGenerationJob" + modulo);
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "wtms");
         wtmsBulkBillGenerationJobDetail.setJobDataAsMap(jobDetailMap);

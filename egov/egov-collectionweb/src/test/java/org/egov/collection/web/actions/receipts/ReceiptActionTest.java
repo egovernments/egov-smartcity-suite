@@ -221,8 +221,8 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 	}
 	
 	private void createEmployeeForReceiptCounterOperator(Department dept){
-		UserImpl user = objectFactory.createUser("egovernments",dept);
-		userManager.getUserByUserName("egovernments");
+		UserImpl user = objectFactory.createUser("system",dept);
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
@@ -257,11 +257,11 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		CFunction function1 = objectFactory.createFunction("testFunctionName1","testFunctionCode1");
 		CChartOfAccounts account1=objectFactory.createCOA("testGLCode1");
 		
-		UserImpl user = objectFactory.createUser("egovernments",dept);
+		UserImpl user = objectFactory.createUser("system",dept);
 		Location location = objectFactory.createCounter("test");
 		
 		if(runMocks){
-			userManager.getUserByUserName("egovernments");
+			userManager.getUserByUserName("system");
 			expectLastCall().andReturn(user).anyTimes();
 			replay(userManager);
 			
@@ -280,7 +280,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		sessionMap.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sessionMap);
 		
@@ -633,7 +633,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		collectionCommon.setReportService(reportService);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		sessionMap.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID,location.getId().toString());
 		action.setSession(sessionMap);
 		
@@ -786,7 +786,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		action.setReceiptCreatedByCounterOperator(loggedinUser);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		sessionMap.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sessionMap);
 		
@@ -930,7 +930,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		createEmployeeForReceiptCounterOperator(loggedinUserDept);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 		
 		EgwStatus receiptCancelStatus = (EgwStatus) genericService.find(
@@ -1071,16 +1071,16 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 	@Test
 	public void testPrepareWithInvalidXML() {
 		Department dept = objectFactory.createDeptForCode("testDeptCode");
-		UserImpl user = objectFactory.createUser("egovernments",dept);
+		UserImpl user = objectFactory.createUser("system",dept);
 
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
 		action.setReceiptCreatedByCounterOperator(user);
 		
 		HashMap<String, Object> sessionMap = new HashMap<String, Object>();
-		sessionMap.put("com.egov.user.LoginUserName", "egovernments");
+		sessionMap.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sessionMap);
 		
 		String xml = "<bill-collect><test></bill-collect>";
@@ -1204,7 +1204,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		Department dept = objectFactory.createDeptForCode("testDeptCode");
 		createEmployeeForReceiptCounterOperator(dept);
 		HashMap<String, Object> sess = new HashMap<String, Object>();
-		sess.put("com.egov.user.LoginUserName", "egovernments");
+		sess.put("com.egov.user.LoginUserName", "system");
 		action.setSession(sess);
 		ApplicationThreadLocals.setDomainName("localhost");
 		
@@ -1239,9 +1239,9 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		action.setCollectionCommon(collectionCommon);
 		action.setCollectionsUtil(collectionsUtil);
 		Department dept = objectFactory.createDeptForCode("testDeptCode");
-		UserImpl user = objectFactory.createUser("egovernments",dept);
+		UserImpl user = objectFactory.createUser("system",dept);
 		Location location = objectFactory.createCounter("test");
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
@@ -1258,7 +1258,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 				
 		action.setReceiptCreatedByCounterOperator(user);
 		HashMap<String, Object> sess = new HashMap<String, Object>();
-		sess.put("com.egov.user.LoginUserName", "egovernments");
+		sess.put("com.egov.user.LoginUserName", "system");
 		sess.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sess);
 		action.setBillSource("misc");
@@ -1379,9 +1379,9 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		action.setCollectionCommon(collectionCommon);
 		action.setCollectionsUtil(collectionsUtil);
 		Department dept = objectFactory.createDeptForCode("testDeptCode");
-		UserImpl user = objectFactory.createUser("egovernments",dept);
+		UserImpl user = objectFactory.createUser("system",dept);
 		Location location = objectFactory.createCounter("test");
-		userManager.getUserByUserName("egovernments");
+		userManager.getUserByUserName("system");
 		expectLastCall().andReturn(user);
 		replay(userManager);
 		
@@ -1397,7 +1397,7 @@ public class ReceiptActionTest {/*extends AbstractPersistenceServiceTest<Receipt
 		
 		action.setReceiptCreatedByCounterOperator(user);
 		HashMap<String, Object> sess = new HashMap<String, Object>();
-		sess.put("com.egov.user.LoginUserName", "egovernments");
+		sess.put("com.egov.user.LoginUserName", "system");
 		sess.put(CollectionConstants.SESSION_VAR_LOGIN_USER_COUNTERID, location.getId().toString());
 		action.setSession(sess);
 		action.setBillSource("misc");

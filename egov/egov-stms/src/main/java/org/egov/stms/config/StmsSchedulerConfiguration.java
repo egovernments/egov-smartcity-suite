@@ -85,7 +85,7 @@ public class StmsSchedulerConfiguration extends QuartzSchedulerConfiguration {
         stmsDemandGenerationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "generateDemandForSewerageTaxJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "stms");
         stmsDemandGenerationJobDetail.setJobDataAsMap(jobDetailMap);

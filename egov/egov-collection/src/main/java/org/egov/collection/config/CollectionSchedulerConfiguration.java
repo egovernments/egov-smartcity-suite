@@ -95,7 +95,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         axisReconciliationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "axisReconciliationJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "collection");
         axisReconciliationJobDetail.setJobDataAsMap(jobDetailMap);
@@ -241,7 +241,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         remittanceInstrumentJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", String.format("remittance%sInstrumentJob%d", instrumentType, modulo));
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "collection");
         remittanceInstrumentJobDetail.setJobDataAsMap(jobDetailMap);
@@ -268,7 +268,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         atomReconciliationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "atomReconciliationJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "collection");
         atomReconciliationJobDetail.setJobDataAsMap(jobDetailMap);

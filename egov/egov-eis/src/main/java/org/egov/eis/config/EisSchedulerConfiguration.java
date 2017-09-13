@@ -82,7 +82,7 @@ public class EisSchedulerConfiguration extends QuartzSchedulerConfiguration {
         userRoleMappingJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "userRoleMappingJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "false");
         jobDetailMap.put("moduleName", "eis");
         userRoleMappingJobDetail.setJobDataAsMap(jobDetailMap);

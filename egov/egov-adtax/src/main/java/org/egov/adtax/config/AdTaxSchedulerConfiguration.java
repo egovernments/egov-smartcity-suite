@@ -85,7 +85,7 @@ public class AdTaxSchedulerConfiguration extends QuartzSchedulerConfiguration {
         adtaxDemandGenerationJobDetail.setRequestsRecovery(true);
         Map<String, String> jobDetailMap = new HashMap<>();
         jobDetailMap.put("jobBeanName", "generateDemandForAdvertisementTaxJob");
-        jobDetailMap.put("userName", "egovernments");
+        jobDetailMap.put("userName", "system");
         jobDetailMap.put("cityDataRequired", "true");
         jobDetailMap.put("moduleName", "adtax");
         adtaxDemandGenerationJobDetail.setJobDataAsMap(jobDetailMap);

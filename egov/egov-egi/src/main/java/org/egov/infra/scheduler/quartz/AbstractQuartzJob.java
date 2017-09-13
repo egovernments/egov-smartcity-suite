@@ -108,7 +108,7 @@ public abstract class AbstractQuartzJob extends QuartzJobBean implements Generic
     }
 
     public void setUserName(String userName) {
-        this.userName = defaultIfBlank(userName, "egovernments");
+        this.userName = defaultIfBlank(userName, "system");
     }
 
     public void setCityDataRequired(boolean cityDataRequired) {
