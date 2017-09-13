@@ -621,7 +621,8 @@ public class WaterConnectionSmsAndEmailService {
                                 new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
                                         formatter.format(waterConnectionDetails.getExecutionDate()),
                                         amountFormat.format(waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                                                .getDemand().getBaseDemand()),
+                                                .getDemand() != null ? waterTaxUtils.getCurrentDemand(waterConnectionDetails)
+                                                        .getDemand().getBaseDemand() : BigDecimal.ZERO),
                                         waterTaxUtils.getMunicipalityName() },
                                 null);
             else
@@ -737,8 +738,11 @@ public class WaterConnectionSmsAndEmailService {
                         .getMessage(code,
                                 new String[] { applicantName, waterConnectionDetails.getConnection().getConsumerCode(),
                                         formatter.format(waterConnectionDetails.getExecutionDate()),
-                                        amountFormat.format(waterTaxUtils.getCurrentDemand(waterConnectionDetails)
-                                                .getDemand().getBaseDemand()),
+                                        amountFormat
+                                                .format(waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() != null
+                                                        ? waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand()
+                                                                .getBaseDemand()
+                                                        : BigDecimal.ZERO),
                                         waterTaxUtils.getMunicipalityName() },
                                 null);
             else
