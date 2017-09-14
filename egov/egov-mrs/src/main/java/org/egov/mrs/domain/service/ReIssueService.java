@@ -387,7 +387,7 @@ public class ReIssueService {
     }
 
     public boolean checkAnyWorkFlowInProgressForRegistration(final MarriageRegistration registration) {
-        return reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo()) == null ? true : false;
+        return reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo()) == null ? false : true;
     }
 
     /**
