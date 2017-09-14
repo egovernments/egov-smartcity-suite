@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-  
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-05-26T13:07:02 -->
+<!-- 2017-09-14T10:17:33 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isFloatColumnFooter="true" uuid="83cd3eec-a13e-40e2-ab9e-a64ab5ca3d02">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -601,7 +600,7 @@ WHERE
 	<summary>
 		<band height="802">
 			<textField isStretchWithOverflow="true" evaluationTime="Auto" pattern="###0.00;-###0.00">
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="317" y="305" width="140" height="20" uuid="2fe297ff-4bbf-493d-ac31-964f52b22375"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="317" y="325" width="140" height="20" uuid="2fe297ff-4bbf-493d-ac31-964f52b22375"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -615,7 +614,7 @@ WHERE
 				<textFieldExpression><![CDATA[$V{INSTRUMENT_AMOUNT_SUM}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="67" y="305" width="250" height="20" uuid="52521c4b-dace-42ac-9365-02903957717b"/>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="67" y="325" width="250" height="20" uuid="52521c4b-dace-42ac-9365-02903957717b"/>
 				<box>
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -720,21 +719,7 @@ WHERE
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="125" width="120" height="20" uuid="1b848fd9-fb89-4dee-b2f5-430232d6b94a"/>
-				<box leftPadding="5" rightPadding="5">
-					<pen lineWidth="0.5"/>
-					<topPen lineWidth="0.5"/>
-					<leftPen lineWidth="0.5"/>
-					<bottomPen lineWidth="0.5"/>
-					<rightPen lineWidth="0.5"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
-				</textElement>
-				<text><![CDATA[1000]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="67" y="145" width="120" height="20" uuid="49dd90f2-4770-4725-9ea6-e56a5a470638"/>
+				<reportElement x="67" y="145" width="120" height="20" uuid="1b848fd9-fb89-4dee-b2f5-430232d6b94a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -748,7 +733,21 @@ WHERE
 				<text><![CDATA[500]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="165" width="120" height="20" uuid="9969c560-fc39-4e4d-b30b-6a7ad5285637"/>
+				<reportElement x="67" y="165" width="120" height="20" uuid="49dd90f2-4770-4725-9ea6-e56a5a470638"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[200]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="185" width="120" height="20" uuid="9969c560-fc39-4e4d-b30b-6a7ad5285637"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -762,7 +761,7 @@ WHERE
 				<text><![CDATA[100]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="185" width="120" height="20" uuid="22b5f445-664e-4e99-89a8-1e1d35c6d294"/>
+				<reportElement x="67" y="205" width="120" height="20" uuid="22b5f445-664e-4e99-89a8-1e1d35c6d294"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -776,7 +775,7 @@ WHERE
 				<text><![CDATA[50]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="205" width="120" height="20" uuid="a7542e98-f1c5-4d79-b663-2118b6706fa2"/>
+				<reportElement x="67" y="225" width="120" height="20" uuid="a7542e98-f1c5-4d79-b663-2118b6706fa2"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -790,7 +789,7 @@ WHERE
 				<text><![CDATA[20]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="225" width="120" height="20" uuid="b1b234fb-b594-4fec-940f-64d8e6348785"/>
+				<reportElement x="67" y="245" width="120" height="20" uuid="b1b234fb-b594-4fec-940f-64d8e6348785"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -804,7 +803,7 @@ WHERE
 				<text><![CDATA[10]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="245" width="120" height="20" uuid="e72994c5-9043-41df-acf8-c3abb734ad4d"/>
+				<reportElement x="67" y="265" width="120" height="20" uuid="e72994c5-9043-41df-acf8-c3abb734ad4d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -818,7 +817,7 @@ WHERE
 				<text><![CDATA[5]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="265" width="120" height="20" uuid="b437d1be-e206-4bc6-82cf-22a16c3f6988"/>
+				<reportElement x="67" y="285" width="120" height="20" uuid="b437d1be-e206-4bc6-82cf-22a16c3f6988"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -832,7 +831,7 @@ WHERE
 				<text><![CDATA[2]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="67" y="285" width="120" height="20" uuid="2f1dc7ac-79a9-4b18-867b-3e83c7c30e6d"/>
+				<reportElement x="67" y="305" width="120" height="20" uuid="2f1dc7ac-79a9-4b18-867b-3e83c7c30e6d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -846,7 +845,7 @@ WHERE
 				<text><![CDATA[1]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="125" width="90" height="20" uuid="096b0926-7d4b-4637-8a50-1a72f94ddf65"/>
+				<reportElement x="227" y="145" width="90" height="20" uuid="096b0926-7d4b-4637-8a50-1a72f94ddf65"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -860,7 +859,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="145" width="90" height="20" uuid="7a981cc9-8f33-4ed0-99e9-e91db53f1e58"/>
+				<reportElement x="227" y="165" width="90" height="20" uuid="7a981cc9-8f33-4ed0-99e9-e91db53f1e58"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -874,7 +873,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="165" width="90" height="20" uuid="22e453dd-2154-41e6-95a0-a39a803d26aa"/>
+				<reportElement x="227" y="185" width="90" height="20" uuid="22e453dd-2154-41e6-95a0-a39a803d26aa"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -888,7 +887,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="185" width="90" height="20" uuid="082c3425-1f87-4a7e-aa99-4211b83054d2"/>
+				<reportElement x="227" y="205" width="90" height="20" uuid="082c3425-1f87-4a7e-aa99-4211b83054d2"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -902,7 +901,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="205" width="90" height="20" uuid="08139126-fbe7-4e95-85a9-2ddf95d041c7"/>
+				<reportElement x="227" y="225" width="90" height="20" uuid="08139126-fbe7-4e95-85a9-2ddf95d041c7"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -916,7 +915,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="245" width="90" height="20" uuid="52397955-f8b1-4ee5-ac4e-19e3342deb02"/>
+				<reportElement x="227" y="265" width="90" height="20" uuid="52397955-f8b1-4ee5-ac4e-19e3342deb02"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -930,7 +929,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="225" width="90" height="20" uuid="4527e84c-8481-4391-84b2-b1915e023c8f"/>
+				<reportElement x="227" y="245" width="90" height="20" uuid="4527e84c-8481-4391-84b2-b1915e023c8f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -944,7 +943,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="265" width="90" height="20" uuid="99bbe30c-703f-4f65-a250-04ce878e4240"/>
+				<reportElement x="227" y="285" width="90" height="20" uuid="99bbe30c-703f-4f65-a250-04ce878e4240"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -958,7 +957,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="227" y="285" width="90" height="20" uuid="1fe80c34-0461-4c27-b02f-014e59a30985"/>
+				<reportElement x="227" y="305" width="90" height="20" uuid="1fe80c34-0461-4c27-b02f-014e59a30985"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -972,7 +971,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="125" width="40" height="20" uuid="4efa12ec-33a7-4b18-b5c9-378a80de790a"/>
+				<reportElement x="187" y="145" width="40" height="20" uuid="4efa12ec-33a7-4b18-b5c9-378a80de790a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -986,7 +985,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="145" width="40" height="20" uuid="4a5127f3-d43e-4bf2-a838-0f801d86d97e"/>
+				<reportElement x="187" y="165" width="40" height="20" uuid="4a5127f3-d43e-4bf2-a838-0f801d86d97e"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1000,7 +999,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="165" width="40" height="20" uuid="d9b8b591-5d3d-4d54-bad6-90abc04575c4"/>
+				<reportElement x="187" y="185" width="40" height="20" uuid="d9b8b591-5d3d-4d54-bad6-90abc04575c4"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1014,7 +1013,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="185" width="40" height="20" uuid="ab3f183a-f908-423a-8934-50fb3932bfcd"/>
+				<reportElement x="187" y="205" width="40" height="20" uuid="ab3f183a-f908-423a-8934-50fb3932bfcd"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1028,7 +1027,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="245" width="40" height="20" uuid="b32da8cc-be1b-4e30-8145-2acc445f636b"/>
+				<reportElement x="187" y="265" width="40" height="20" uuid="b32da8cc-be1b-4e30-8145-2acc445f636b"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1042,7 +1041,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="265" width="40" height="20" uuid="8c550393-c4ed-45cf-b3b6-9d7ee7c0ce71"/>
+				<reportElement x="187" y="285" width="40" height="20" uuid="8c550393-c4ed-45cf-b3b6-9d7ee7c0ce71"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1056,7 +1055,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="205" width="40" height="20" uuid="2b508d98-0e23-4ffe-b86e-237c08aa4460"/>
+				<reportElement x="187" y="225" width="40" height="20" uuid="2b508d98-0e23-4ffe-b86e-237c08aa4460"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1070,7 +1069,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="225" width="40" height="20" uuid="44b85b10-94b9-444d-a3fa-98cf847ddb5d"/>
+				<reportElement x="187" y="245" width="40" height="20" uuid="44b85b10-94b9-444d-a3fa-98cf847ddb5d"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1084,7 +1083,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="187" y="285" width="40" height="20" uuid="0cce0616-c583-4c1e-9b63-b2b9ff39be6a"/>
+				<reportElement x="187" y="305" width="40" height="20" uuid="0cce0616-c583-4c1e-9b63-b2b9ff39be6a"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1098,7 +1097,7 @@ WHERE
 				<text><![CDATA[X]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="125" width="140" height="20" uuid="3d27f768-5196-4d76-b47f-ecc71d2c54d1"/>
+				<reportElement x="317" y="145" width="140" height="20" uuid="3d27f768-5196-4d76-b47f-ecc71d2c54d1"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1112,7 +1111,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="145" width="140" height="20" uuid="ef91733d-a0b0-4e06-b6e3-693e02f9b49f"/>
+				<reportElement x="317" y="165" width="140" height="20" uuid="ef91733d-a0b0-4e06-b6e3-693e02f9b49f"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1126,7 +1125,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="165" width="140" height="20" uuid="28774fe3-f34a-4892-8005-b4241aae856c"/>
+				<reportElement x="317" y="185" width="140" height="20" uuid="28774fe3-f34a-4892-8005-b4241aae856c"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1140,7 +1139,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="185" width="140" height="20" uuid="2f2784df-e369-48d3-97f4-d4d244656f73"/>
+				<reportElement x="317" y="205" width="140" height="20" uuid="2f2784df-e369-48d3-97f4-d4d244656f73"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1154,7 +1153,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="205" width="140" height="20" uuid="852ff259-ee24-438b-a7a7-b63c0d50af04"/>
+				<reportElement x="317" y="225" width="140" height="20" uuid="852ff259-ee24-438b-a7a7-b63c0d50af04"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1168,7 +1167,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="225" width="140" height="20" uuid="aa865ef4-9f2c-4695-90d3-8262c0829a19"/>
+				<reportElement x="317" y="245" width="140" height="20" uuid="aa865ef4-9f2c-4695-90d3-8262c0829a19"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1182,7 +1181,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="265" width="140" height="20" uuid="e7862c8c-9246-4e12-b607-e579e78ae0f5"/>
+				<reportElement x="317" y="285" width="140" height="20" uuid="e7862c8c-9246-4e12-b607-e579e78ae0f5"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1196,7 +1195,7 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="245" width="140" height="20" uuid="9eabdf41-f66f-401c-b03f-a9f4473d1943"/>
+				<reportElement x="317" y="265" width="140" height="20" uuid="9eabdf41-f66f-401c-b03f-a9f4473d1943"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
@@ -1210,7 +1209,63 @@ WHERE
 				<text><![CDATA[]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="317" y="285" width="140" height="20" uuid="75392e48-284c-436b-8235-4745c11e3ab4"/>
+				<reportElement x="317" y="305" width="140" height="20" uuid="75392e48-284c-436b-8235-4745c11e3ab4"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="67" y="125" width="120" height="20" uuid="3fd59e3a-41ec-44ca-9c12-dc2b60d7ba01"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[2000]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="187" y="125" width="40" height="20" uuid="72984827-7ba6-45a7-a759-4fe56fd989bd"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[X]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="227" y="125" width="90" height="20" uuid="ad8b7d3e-57b8-42ed-9a38-33e110280fc4"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="Times New Roman" isBold="false" pdfFontName="Times-Bold" isPdfEmbedded="true"/>
+				</textElement>
+				<text><![CDATA[]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="317" y="125" width="140" height="20" uuid="e689bf45-74d9-46a4-8471-5f62b7d5bb1e"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.5"/>
 					<topPen lineWidth="0.5"/>
