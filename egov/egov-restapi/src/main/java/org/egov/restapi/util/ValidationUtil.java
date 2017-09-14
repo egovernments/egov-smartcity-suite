@@ -541,18 +541,6 @@ public class ValidationUtil {
 						}
 					}
 
-					if (StringUtils.isBlank(floorDetails.getBuildingPermissionNo())) {
-						errorDetails = new ErrorDetails();
-						errorDetails.setErrorCode(BUILDING_PERMISSION_NO_REQ_CODE);
-						errorDetails.setErrorMessage(BUILDING_PERMISSION_NO_REQ_MSG);
-						return errorDetails;
-					}
-					if (StringUtils.isBlank(floorDetails.getBuildingPermissionDate())) {
-						errorDetails = new ErrorDetails();
-						errorDetails.setErrorCode(BUILDING_PERMISSION_DATE_REQ_CODE);
-						errorDetails.setErrorMessage(BUILDING_PERMISSION_DATE_REQ_MSG);
-						return errorDetails;
-					}
 					if(!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY))
 					if (propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate())
 							.after(propertyExternalService.convertStringToDate(floorDetails.getOccupancyDate()))) {

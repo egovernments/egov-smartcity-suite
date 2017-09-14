@@ -1596,11 +1596,15 @@ public class PropertyExternalService {
 				floor.setOccupancyDate(convertStringToDate(floorDetails.getOccupancyDate()));
 			floor.setCreatedDate(new Date());
 			final Area builtUpArea = new Area();
-			builtUpArea.setArea(floorDetails.getPlinthArea());
 			builtUpArea.setBreadth(floorDetails.getPlinthBreadth());
 			builtUpArea.setLength(floorDetails.getPlinthLength());
 			floor.setBuiltUpArea(builtUpArea);
 			floor.setUnstructuredLand(floorDetails.getUnstructuredLand());
+			if(!floor.getUnstructuredLand()){
+				builtUpArea.setArea((float) (Math.round(builtUpArea.getBreadth()*builtUpArea.getLength()*100.0)/100.0));
+			}else{
+				builtUpArea.setArea(floorDetails.getPlinthArea());
+			}
 			if (StringUtils.isNotBlank(floorDetails.getBuildingPermissionNo()))
 				floor.setBuildingPermissionNo(floorDetails.getBuildingPermissionNo());
 			if (StringUtils.isNotBlank(floorDetails.getBuildingPermissionDate()))
