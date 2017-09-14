@@ -122,7 +122,7 @@
                 <value>messages/message</value>
             </list>
         </property>
-        <property name="cacheSeconds" value="0"/>
+        <property name="cacheSeconds" value="#{environment['dev.mode'] ? 0 : -1}"/>
     </bean>
     <!-- Imports user-defined @Controller beans that process client requests -->
     <context:component-scan base-package="org.egov.ptis.web.controller"/>
