@@ -50,6 +50,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.commons.entity.Source;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.Document;
@@ -58,6 +59,7 @@ import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,6 +76,12 @@ public class VacanyRemissionMonthlyUpdateController {
 
     private final VacancyRemissionService vacancyRemissionService;
 
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     @Autowired
     private PropertyService propertyService;
 
@@ -102,6 +110,12 @@ public class VacanyRemissionMonthlyUpdateController {
         documentTypes = propertyService.getDocumentTypesForTransactionType(TransactionType.VRMONTHLYUPDATE);
         model.addAttribute("remissionDetailsObj", remissionDetails);
         model.addAttribute("documentTypes", documentTypes);
+        model.addAttribute("endorsementRequired", propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                vacancyRemission.getCurrentState()));
+        model.addAttribute("transactionType", APPLICATION_TYPE_VACANCY_REMISSION);
+        model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
+        model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
+        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
         if (!vacancyRemission.getDocuments().isEmpty())
             model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
         vacancyRemissionService.addModelAttributes(model, vacancyRemission.getBasicProperty());

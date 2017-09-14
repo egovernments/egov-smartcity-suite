@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -48,12 +50,14 @@ import javax.validation.Valid;
 
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.entity.property.VacancyRemissionApproval;
 import org.egov.ptis.domain.entity.property.VacancyRemissionDetails;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -74,6 +78,12 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
     private VacancyRemissionService vacancyRemissionService;
     private static final String APPROVAL_POS = "approvalPosition";
 
+    @Autowired
+    private PropertyTaxCommonUtils propertyTaxCommonUtils;
+
+    @Autowired
+    private SecurityUtils securityUtils;
+    
     @Autowired
     public VacanyRemissionApprovalController(VacancyRemissionService vacancyRemissionService,
             PropertyTaxUtil propertyTaxUtil) {
@@ -102,6 +112,12 @@ public class VacanyRemissionApprovalController extends GenericWorkFlowController
             if(!vacancyRemission.getDocuments().isEmpty()){
                 model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
             }
+        model.addAttribute("transactionType", APPLICATION_TYPE_VACANCY_REMISSION);
+        model.addAttribute("endorsementRequired", propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                vacancyRemission.getCurrentState()));
+        model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
+        model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
+        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
         }
         return "vacancyRemissionApproval-form";
     }

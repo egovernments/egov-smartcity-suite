@@ -66,6 +66,9 @@
 							</div>
 							<%@ include
 								file="/WEB-INF/views/vacancyremission/vacancy-remission-documents.jsp"%>
+								<c:if test="${!endorsementNotices.isEmpty()}"> 
+ 									<jsp:include page="/WEB-INF/views/common/endorsement_history.jsp"/>
+							</c:if>
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.vacancyremission.details.comments" /> <span class="mandatory"></span>
@@ -83,6 +86,12 @@
 			
 			<div class="form-group text-center">
 				<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+				<c:if test="${endorsementRequired}">
+					<form:button type="button" disabled="false" id="endorsement" class="btn btn-primary" value="endorsement"
+								onclick="validateEndorsement();">
+						<c:out value="Endorsement" />
+					</form:button>
+				</c:if>
 				&nbsp; 
 				<button type="button" name ="reject" class="btn btn-primary" onclick="return validateAndReject();"><spring:message code="lbl.btn.reject"/></button>
 				<input type="button" class="button" value="Close" onclick="self.close()">
@@ -107,6 +116,24 @@ function validateAndReject(){
 		}
 	}
 } 
+
+function validateEndorsement(){
+	if((jQuery('#remissionComments').val()).trim()==''){
+		bootbox.alert("Please add Endorsement Remarks in Property Vacant Details section!");
+		return false;
+	}
+	else
+	    openEndorsementNotice();
+}
+
+function openEndorsementNotice()
+{ 
+	var remarks = jQuery('#remissionComments').val();
+	popupWindow = window.open('/ptis/endorsementnotice?'
+			+ 'applicantName='+encodeURIComponent('<c:out value="${ownersName}"/>')+'&serviceName='+encodeURIComponent('<c:out value="${transactionType}"/>')+'&remarks='+encodeURIComponent(remarks)+'&assessmentNo=<c:out value="${property.getBasicProperty().getUpicNo()}"/>&applicationNo=<c:out value="${applicationNo}"/>' ,
+			'_blank', 'width=650, height=500, scrollbars=yes', false);
+	popupWindow.opener.close();
+}
 </script>
 
 <script src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

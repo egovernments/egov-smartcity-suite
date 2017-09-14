@@ -115,6 +115,17 @@ body
 				<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 				</c:when>
 				</c:choose>
+				 <c:choose>
+            <c:when test="${nextAction == 'END'}">
+		     <div class="row">
+					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
+					<div class="col-sm-8 add-margin">
+						<form:textarea class="form-control" path=""  id="approvalComent" name="approvalComent" />
+					</div>
+				</div>
+		   </c:when>
+		   </c:choose>
+		
 				<div class="buttonbottom" align="center">
 					<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
 				</div>

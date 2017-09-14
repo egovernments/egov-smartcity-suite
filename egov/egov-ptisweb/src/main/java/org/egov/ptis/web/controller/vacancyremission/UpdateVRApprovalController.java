@@ -147,7 +147,7 @@ public class UpdateVRApprovalController extends GenericWorkFlowController {
             model.addAttribute("userDesignationList", userDesignationList);
             model.addAttribute("commissionerDesignation", COMMISSIONER_DESGN);
             model.addAttribute("revenueClerkDesignation", ASSISTANT_DESGN);
-
+            model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
         }
         if (vacancyRemission != null && !vacancyRemission.getDocuments().isEmpty())
             model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());

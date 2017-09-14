@@ -44,9 +44,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_ASSISTANT_FORWARDED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
 
-import java.util.Date;
-import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
@@ -54,7 +51,6 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -110,7 +106,6 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
 
     @RequestMapping(value = "/update/{id}", method = RequestMethod.GET)
     public String view(final Model model, @PathVariable final Long id, final HttpServletRequest request) {
-        boolean endorsementRequired = Boolean.FALSE;
         final VacancyRemission vacancyRemission = vacancyRemissionService.getVacancyRemissionById(id);
         final String userDesignationList = propertyTaxCommonUtils
                 .getAllDesignationsForUser(securityUtils.getCurrentUser().getId());
@@ -144,7 +139,11 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                 prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
-            model.addAttribute("endorsementRequired", endorsementRequired);
+        model.addAttribute("endorsementRequired", propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                vacancyRemission.getCurrentState()));
+        model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
+        model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
+        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
         }
         return VACANCYREMISSION_EDIT;
     }
@@ -228,15 +227,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
     private String wfReject(final VacancyRemission vacancyRemission, final String workFlowAction, final Long approvalPosition,
                             final String approvalComent, final Boolean propertyByEmployee) {
         String successMsg;
-        final User user = securityUtils.getCurrentUser();
-        String loggedInUserDesignation = "";
-        List<Assignment> loggedInUserAssign;
-        if (vacancyRemission.getState() != null) {
-            loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                    vacancyRemission.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
-            loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
-        }
-        Assignment wfInitiator = null;
+        Assignment wfInitiator;
         wfInitiator = vacancyRemissionService.getWorkflowInitiator(vacancyRemission);
         if (wfInitiator != null) {
             successMsg = "Vacancy Remission rejected successfully and forwarded to : "
