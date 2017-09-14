@@ -145,6 +145,7 @@
                   <tr>
                     <th><spring:message code="lbl.slno" /></th>
                     <th><spring:message code="lbl.applicartionno" /></th>
+                    <th><spring:message code="lbl.applicant.name" /></th>
                     <th><spring:message code="lbl.applicationdate" /></th>
                     <th><spring:message code="lbl.servicegroup" /></th>
                     <th><spring:message code="lbl.servicename" /></th>
@@ -159,6 +160,7 @@
 		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 		                   <td><span class="spansno">${item.index + 1}</span></td>
 		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
+		                   <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
 		                   <td>
 			                   <fmt:formatDate
 								value="${inboxItem.portalInbox.applicationDate}"
@@ -196,6 +198,7 @@
 	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
+	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
 	                    <td>
 	                    	<fmt:formatDate
 								value="${inboxItem.portalInbox.applicationDate}"
@@ -234,6 +237,7 @@
 	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
+	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
 	                    <td>
 		                   <fmt:formatDate
 							value="${inboxItem.portalInbox.applicationDate}"
