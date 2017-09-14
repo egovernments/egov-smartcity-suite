@@ -761,9 +761,8 @@ public class PropertyTaxCommonUtils {
 
     public Boolean getEndorsementGenerate(final Long userId, final State state) {
         String loggedInUserDesignation;
-        final Position position = getPositionForUser(ApplicationThreadLocals.getUserId());
         final List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
-                position.getId(), userId,
+                state.getOwnerPosition().getId(), userId,
                 new Date());
         loggedInUserDesignation = !loggedInUserAssign.isEmpty()
                 ? loggedInUserAssign.get(0).getDesignation().getName() : null;
