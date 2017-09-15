@@ -100,11 +100,6 @@ public class ReassignController {
         return new ReassignInfo();
     }
 
-    public Long getLoggedInPositiontionId() {
-        final Position position = propertyTaxCommonUtils.getPositionForUser(ApplicationThreadLocals.getUserId());
-        return position.getId();
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public String getReassign(@ModelAttribute("reassign") final ReassignInfo reassignInfo, final Model model,
             @PathVariable final String modelIdAndApplicationType,
@@ -118,8 +113,9 @@ public class ReassignController {
         for (final Designation designation : designations)
             assignments.addAll(assignmentService.findAllAssignmentsByDeptDesigAndDates(department.getId(),
                     designation.getId(), new Date()));
+        List<Long> loggedInUserPositionIds = propertyTaxCommonUtils.getPositionForUser(ApplicationThreadLocals.getUserId());
         for (final Assignment assignment : assignments)
-            if (!getLoggedInPositiontionId().equals(assignment.getPosition().getId()))
+            if(loggedInUserPositionIds.isEmpty() || !loggedInUserPositionIds.contains(assignment.getPosition().getId()))
                 employeeWithPosition.put(assignment.getPosition().getId(), assignment.getEmployee().getName().concat("/")
                         .concat(assignment.getPosition().getName()));
         model.addAttribute("assignments", employeeWithPosition);

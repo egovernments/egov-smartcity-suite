@@ -654,15 +654,15 @@ public class PropertyTaxCommonUtils {
         return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
     }
     
-    public Position getPositionForUser(final Long userId) {
-        Position position = null;
+    public List<Long> getPositionForUser(final Long userId) {
+        List<Long> positionIds = new ArrayList<>();
         if (userId != null && userId.intValue() != 0) {
-            position = positionMasterService.getPositionByUserId(userId);
+            for(Position position : positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId()))
+                positionIds.add(position.getId());
         }
-        return position;
+        return positionIds;
     }
     
-   
     public void buildMailAndSMS(final Property property) {
         String transactionType;
         String modifyReason = property.getPropertyModifyReason();
