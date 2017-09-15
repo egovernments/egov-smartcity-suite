@@ -45,7 +45,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASO
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.ParameterMode;
 import javax.persistence.PersistenceContext;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -58,8 +57,8 @@ import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.repository.bulkboundaryupdation.BulkBoundaryUpdationRepository;
 import org.egov.ptis.repository.spec.BulkBoundarySpec;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.hibernate.Session;
-import org.hibernate.procedure.ProcedureCall;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -102,7 +101,7 @@ public class BulkBoundaryService {
 				basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty,
 						PROPERTY_MODIFY_REASON_BULK_BOUNDARY, null, null, null, null, null));
 				basicPropertyService.update(basicProperty);
-				updatePropertyMvInfo(basicProperty);
+				 updatePropertyMvInfo(basicProperty);
 				success = true;
 			}
 			if (success) {
@@ -115,32 +114,24 @@ public class BulkBoundaryService {
 		return success;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Transactional
 	public void updatePropertyMvInfo(BasicProperty basicProperty) {
-		final ProcedureCall procedureCall = entityManager.unwrap(Session.class)
-				.createStoredProcedureCall("update_Boundary_propertymvInfo");
-		procedureCall.registerParameter("upicno", String.class, ParameterMode.IN);
-		procedureCall.getParameterRegistration("upicno").bindValue(basicProperty.getUpicNo());
-		procedureCall.registerParameter("locality", Long.class, ParameterMode.IN);
-		procedureCall.getParameterRegistration("locality")
-				.bindValue(basicProperty.getPropertyID().getLocality().getId());
-		procedureCall.registerParameter("block", Long.class, ParameterMode.IN);
-		procedureCall.getParameterRegistration("block").bindValue(basicProperty.getPropertyID().getArea().getId());
-		procedureCall.registerParameter("ward", Long.class, ParameterMode.IN);
-		procedureCall.getParameterRegistration("ward").bindValue(basicProperty.getPropertyID().getWard().getId());
-		procedureCall.registerParameter("electionWard", Long.class, ParameterMode.IN);
-		procedureCall.getParameterRegistration("electionWard")
-				.bindValue(basicProperty.getPropertyID().getElectionBoundary().getId());
-		procedureCall.getOutputs();
+		String query = String.format("update egpt_mv_propertyinfo set localityid = :localityid, " + " blockid=:blockid, "
+				+ " wardid=:wardid, " + " electionwardid=:electionwardid" + " where upicno = :assessmentno");
+		SQLQuery sqlQuery = entityManager.unwrap(Session.class).createSQLQuery(query);
+		sqlQuery.setParameter("localityid", basicProperty.getPropertyID().getLocality().getId());
+		sqlQuery.setParameter("blockid", basicProperty.getPropertyID().getArea().getId());
+		sqlQuery.setParameter("wardid", basicProperty.getPropertyID().getWard().getId());
+		sqlQuery.setParameter("electionwardid", basicProperty.getPropertyID().getElectionBoundary().getId());
+		sqlQuery.setParameter("assessmentno", basicProperty.getUpicNo());
+		sqlQuery.executeUpdate();
 
 	}
 
 	@Transactional
 	public void refreshViewPropertyInfo() {
-		final ProcedureCall procedureCall = entityManager.unwrap(Session.class)
-				.createStoredProcedureCall("refresh_propertymvInfo");
-		procedureCall.getOutputs();
+		String sqlqry = "REFRESH MATERIALIZED VIEW egpt_view_propertyinfo ";
+		entityManager.unwrap(Session.class).createSQLQuery(sqlqry).executeUpdate();
 	}
 
 	@ReadOnly
