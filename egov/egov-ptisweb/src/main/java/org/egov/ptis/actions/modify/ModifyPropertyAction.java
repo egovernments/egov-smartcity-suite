@@ -42,6 +42,7 @@ package org.egov.ptis.actions.modify;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
@@ -68,6 +69,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.GENERAL_REVISION_PETITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.GRP_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
@@ -97,6 +100,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR
 import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
@@ -335,7 +339,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private String applicationSource;
 	private boolean citizenPortalUser;
 	private Long zoneId;
-	private String zoneName;
+	private Long localityId;
+	private Long wardId;
+	private Long blockId;
+	private Long electionWardId;
+	private Boolean zoneActive;
+	private Boolean localityActive;
+	private Boolean blockActive;
+	private Boolean wardActive;
+	private Boolean electionWardActive;
 
 	@Autowired
 	transient PropertyPersistenceService basicPropertyService;
@@ -520,8 +532,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			corrsAddress = PropertyTaxUtil.getOwnerAddress(basicProp.getPropertyOwnerInfo());
 			if (propertyAddr.getHouseNoBldgApt() != null)
 				setHouseNo(propertyAddr.getHouseNoBldgApt().toString());
-			if (basicProp.getPropertyID().getZone() != null)
-				setZoneName(basicProp.getPropertyID().getZone().getName());
 			if (propertyModel.getPropertyDetail().getFloorType() != null)
 				floorTypeId = propertyModel.getPropertyDetail().getFloorType().getId();
 			if (propertyModel.getPropertyDetail().getRoofType() != null)
@@ -553,6 +563,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 				vacantLandPlotAreaId = propertyModel.getPropertyDetail().getVacantLandPlotArea().getId();
 			if (propertyModel.getPropertyDetail().getLayoutApprovalAuthority() != null)
 				layoutApprovalAuthorityId = propertyModel.getPropertyDetail().getLayoutApprovalAuthority().getId();
+			setBoundaryDetailsFlag(basicProp);
 			target = NEW;
 		}
 		if (logger.isDebugEnabled())
@@ -705,11 +716,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		}
 		if (houseNo != null && !houseNo.isEmpty())
 			basicProp.getAddress().setHouseNoBldgApt(houseNo);
-		if(zoneId != null)
-			basicProp.getPropertyID().setZone(boundaryService.getBoundaryById(getZoneId()));
+		setBoundaries(basicProp);
 		if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId))
-			propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(FROM_PROPERTY_TYPE_MASTER_WHERE_ID,
-					Long.valueOf(propTypeId));
+                    propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(FROM_PROPERTY_TYPE_MASTER_WHERE_ID,
+                                    Long.valueOf(propTypeId));
 		propertyModel.getPropertyDetail().setPropertyTypeMaster(propTypeMstr);
 		String errorKey = null;
 		if (!hasErrors())
@@ -773,6 +783,19 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			logger.debug("forwardModify: Modify property forward ended");
 		return isMeesevaUser ? MEESEVA_RESULT_ACK : RESULT_ACK;
 	}
+
+    private void setBoundaries(BasicProperty basicProperty) {
+        if (zoneId != null)
+            basicProperty.getPropertyID().setZone(boundaryService.getBoundaryById(getZoneId()));
+        if (localityId != null)
+            basicProperty.getPropertyID().setLocality(boundaryService.getBoundaryById(getLocalityId()));
+        if (blockId != null)
+            basicProperty.getPropertyID().setArea(boundaryService.getBoundaryById(getBlockId()));
+        if (wardId != null)
+            basicProperty.getPropertyID().setWard(boundaryService.getBoundaryById(getWardId()));
+        if (electionWardId != null)
+            basicProperty.getPropertyID().setElectionBoundary(boundaryService.getBoundaryById(getElectionWardId()));
+    }
 
 	private void checkToDisplayAckButton() {
 		final Boolean rejected = wfInitiatorRejected == null ? Boolean.FALSE : wfInitiatorRejected;
@@ -1055,6 +1078,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		if (propWF != null)
 			prepareOwnerDetails();
 		populateUsages(StringUtils.isNoneBlank(propertyCategory) ? propertyCategory : basicProp.getProperty().getPropertyDetail().getCategoryType());
+		setBoundaryDetailsFlag(basicProp);
 		if (logger.isDebugEnabled())
 			logger.debug("Exiting from preapre, ModelId: " + getModelId());
 	}
@@ -1093,6 +1117,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		final List<WoodType> woodTypes = getPersistenceService().findAllBy("from WoodType order by name");
 		final List<Boundary> zones = boundaryService
 				.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
+		final List<Boundary> localities = boundaryService
+	                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY, LOCATION_HIERARCHY_TYPE);
+		final List<Boundary> electionWardList = boundaryService
+	                .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, ADMIN_HIERARCHY_TYPE);
 		setVacantLandPlotAreaList(vacantLandPlotAreaRepository.findAll());
 		setLayoutApprovalAuthorityList(layoutApprovalAuthorityRepository.findAll());
 		addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaList);
@@ -1108,6 +1136,10 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		addDropdownData("apartments", apartmentsList);
 		addDropdownData("taxExemptionReasonList", taxExemptionReasonList);
 		addDropdownData("zones", zones);
+		addDropdownData("localities", localities);
+		addDropdownData("wards", Collections.emptyList());
+		addDropdownData("blocks", Collections.emptyList());
+		addDropdownData("electionWards", electionWardList);
 		populatePropertyTypeCategory();
 		setDeviationPercentageMap(DEVIATION_PERCENTAGE);
 	}
@@ -1397,11 +1429,25 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 						? String.valueOf(basicProp.getPropertyID().getZone().getId()) : String.valueOf(zoneId),
 				propOccId, floorTypeId, roofTypeId, wallTypeId, woodTypeId, modifyRsn, propCompletionDate,
 				vacantLandPlotAreaId, layoutApprovalAuthorityId, null);
+		validateBoundaries();
 		validateApproverDetails();
 		validateInitiatorAssignment();
 		if (logger.isDebugEnabled())
 			logger.debug("Exiting from validate, BasicProperty: " + getBasicProp());
 	}
+
+    private void validateBoundaries() {
+        if ((localityId == null || localityId == -1) && !basicProp.getPropertyID().getLocality().isActive())
+            addActionError(getText("mandatory.localityId"));
+        if ((zoneId == null || zoneId == -1) && !basicProp.getPropertyID().getZone().isActive())
+            addActionError(getText("mandatory.zone"));
+        if ((wardId == null || wardId == -1) && !basicProp.getPropertyID().getWard().isActive())
+            addActionError(getText("mandatory.ward"));
+        if ((blockId == null || blockId == -1) && !basicProp.getPropertyID().getArea().isActive())
+            addActionError(getText("mandatory.block"));
+        if ((electionWardId == null || electionWardId == -1) && !basicProp.getPropertyID().getElectionBoundary().isActive())
+            addActionError(getText("mandatory.election.ward"));
+    }
 
 	private void validateHouseno() {
 		if (!propTypeMstr.getType().equals(OWNERSHIP_TYPE_VAC_LAND_STR)
@@ -1796,6 +1842,19 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 				: Boolean.valueOf((Boolean) propertyService.getWaterTaxDues(basicProp.getUpicNo())
 						.get(PropertyTaxConstants.UNDER_WTMS_WF));
 	}
+	
+    private void setBoundaryDetailsFlag(BasicProperty basicProperty) {
+        if (basicProperty.getPropertyID().getZone() != null && basicProperty.getPropertyID().getZone().isActive())
+            setZoneActive(Boolean.TRUE);
+        if (basicProperty.getPropertyID().getLocality() != null && basicProperty.getPropertyID().getLocality().isActive())
+            setLocalityActive(Boolean.TRUE);
+        if (basicProperty.getPropertyID().getArea() != null && basicProperty.getPropertyID().getArea().isActive())
+            setBlockActive(Boolean.TRUE);
+        if (basicProperty.getPropertyID().getWard() != null && basicProperty.getPropertyID().getWard().isActive())
+            setWardActive(Boolean.TRUE);
+        if (basicProperty.getPropertyID().getElectionBoundary() != null && basicProperty.getPropertyID().getElectionBoundary().isActive())
+            setElectionWardActive(Boolean.TRUE);
+    }
 
 	public BasicProperty getBasicProp() {
 		return basicProp;
@@ -2555,14 +2614,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		this.citizenPortalUser = citizenPortalUser;
 	}
 
-	public String getZoneName() {
-		return zoneName;
-	}
-
-	public void setZoneName(String zoneName) {
-		this.zoneName = zoneName;
-	}
-
 	public Long getZoneId() {
 		return zoneId;
 	}
@@ -2570,4 +2621,76 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	public void setZoneId(Long zoneId) {
 		this.zoneId = zoneId;
 	}
+
+    public Boolean isZoneActive() {
+        return zoneActive;
+    }
+
+    public void setZoneActive(Boolean zoneActive) {
+        this.zoneActive = zoneActive;
+    }
+
+    public Boolean isLocalityActive() {
+        return localityActive;
+    }
+
+    public void setLocalityActive(Boolean localityActive) {
+        this.localityActive = localityActive;
+    }
+
+    public Boolean isBlockActive() {
+        return blockActive;
+    }
+
+    public void setBlockActive(Boolean blockActive) {
+        this.blockActive = blockActive;
+    }
+
+    public Boolean isWardActive() {
+        return wardActive;
+    }
+
+    public void setWardActive(Boolean wardActive) {
+        this.wardActive = wardActive;
+    }
+
+    public Long getLocalityId() {
+        return localityId;
+    }
+
+    public void setLocalityId(Long localityId) {
+        this.localityId = localityId;
+    }
+
+    public Long getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(Long wardId) {
+        this.wardId = wardId;
+    }
+
+    public Long getBlockId() {
+        return blockId;
+    }
+
+    public void setBlockId(Long blockId) {
+        this.blockId = blockId;
+    }
+
+    public Long getElectionWardId() {
+        return electionWardId;
+    }
+
+    public void setElectionWardId(Long electionWardId) {
+        this.electionWardId = electionWardId;
+    }
+
+    public Boolean isElectionWardActive() {
+        return electionWardActive;
+    }
+
+    public void setElectionWardActive(Boolean electionWardActive) {
+        this.electionWardActive = electionWardActive;
+    }
 }

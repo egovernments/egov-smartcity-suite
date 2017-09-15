@@ -41,8 +41,10 @@
 <%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-<table width="100%" border="0" cellspacing="0" cellpadding="0" class="table-fixed">
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+<table width="100%" border="0" cellspacing="0" cellpadding="0"
+	class="table-fixed">
 	<tr>
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="bluebox" width="20%"><s:text name="prop.Id" /> :</td>
@@ -91,8 +93,9 @@
 		<td class="greybox" width="5%">&nbsp;</td>
 		<td class="greybox" width="25%"><s:text name="extent.site" /><span
 			class="mandatory1"> *</span> :</td>
-		<td class="greybox" width=""><s:textfield name="areaOfPlot"	id="areaOfPlot" size="12" maxlength="15" value="%{areaOfPlot}"
-		onblur="trim(this,this.value);checkForTwoDecimals(this,'extent of site');checkZero(this,'extent of site');"></s:textfield>
+		<td class="greybox" width=""><s:textfield name="areaOfPlot"
+				id="areaOfPlot" size="12" maxlength="15" value="%{areaOfPlot}"
+				onblur="trim(this,this.value);checkForTwoDecimals(this,'extent of site');checkZero(this,'extent of site');"></s:textfield>
 		</td>
 		<td class="greybox" width="25%"></td>
 		<td class="greybox"></td>
@@ -150,20 +153,84 @@
 				value="%{propertyDetail.occupancyCertificationNo}" /></td>
 	</tr>
 	<tr>
-			<td class="greybox">&nbsp;</td>
-			<td class="greybox"><s:text name="Zone No"></s:text> <span
-				class="mandatory1">*</span> :</td>
-			<s:if test="%{zoneName !=null && !zoneName.isEmpty()}">
-				<td class="greybox"><s:textfield name="zoneName" id="zoneName"
-						value="%{zoneName}" /></td>
-			</s:if>
-			<s:else>
-				<td class="bluebox"><s:select list="dropdownData.zones"
-						name="zoneId" value="%{zoneId}" headerKey="-1" id="zoneId"
-						headerValue="%{getText('default.select')}" listKey="id"
-						listValue="name" /></td>
-			</s:else>
-			<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="Zone"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<s:if test="%{basicProperty.propertyID.zone !=null && isZoneActive()}">
+			<td class="greybox"><s:textfield name="zone" id="zone"
+					value="%{basicProperty.propertyID.zone.name}" /></td>
+		</s:if>
+		<s:else>
+			<td class="bluebox"><s:select list="dropdownData.zones"
+					name="zoneId" value="%{zoneId}" headerKey="-1" id="zoneId"
+					headerValue="%{getText('default.select')}" listKey="id"
+					listValue="name" /></td>
+		</s:else>
+		<td class="greybox"><s:text name="Locality"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<s:set var="isLocalityActive" value="%{isLocalityActive()}"></s:set>
+		<s:if
+			test="%{basicProperty.propertyID.locality !=null && isLocalityActive()}">
+			<td class="greybox"><s:textfield name="locality" id="locality"
+					value="%{basicProperty.propertyID.locality.name}" /></td>
+		</s:if>
+		<s:else>
+			<td class="bluebox"><s:select list="dropdownData.localities"
+					name="localityId" value="%{localityId}" headerKey="-1"
+					id="localityId" headerValue="%{getText('default.select')}"
+					listKey="id" listValue="name" /></td>
+		</s:else>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="Block"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<s:if
+			test="%{basicProperty.propertyID.area !=null && isBlockActive() && isLocalityActive()}">
+			<td class="greybox"><s:textfield name="block" id="block"
+					value="%{basicProperty.propertyID.area.name}" /></td>
+		</s:if>
+		<s:else>
+			<td class="bluebox"><s:select list="dropdownData.blocks"
+					name="blockId" value="%{blockId}" headerKey="-1" id="blockId"
+					headerValue="%{getText('default.select')}" listKey="id"
+					listValue="name" /></td>
+		</s:else>
+		<td class="greybox"><s:text name="Ward"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<s:if
+			test="%{basicProperty.propertyID.ward !=null && isWardActive() && isLocalityActive()}">
+			<td class="greybox"><s:textfield name="ward" id="ward"
+					value="%{basicProperty.propertyID.ward.name}" /></td>
+		</s:if>
+		<s:else>
+			<td class="bluebox"><s:select list="dropdownData.wards"
+					name="wardId" value="%{wardId}" headerKey="-1" id="wardId"
+					headerValue="%{getText('default.select')}" listKey="id"
+					listValue="name" onchange="populateBlock();" /></td>
+		</s:else>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<td class="greybox"><s:text name="Block"></s:text> <span
+			class="mandatory1">*</span> :</td>
+		<s:if
+			test="%{basicProperty.propertyID.electionBoundary !=null && isElectionWardActive()}">
+			<td class="greybox"><s:textfield name="electionWard"
+					id="electionWard"
+					value="%{basicProperty.propertyID.electionBoundary.name}" /></td>
+		</s:if>
+		<s:else>
+			<td class="bluebox"><s:select list="dropdownData.electionWards"
+					name="electionWardId" value="%{electionWardId}" headerKey="-1"
+					id="electionWardId" headerValue="%{getText('default.select')}"
+					listKey="id" listValue="name" /></td>
+		</s:else>
+	</tr>
+	<tr>
+		<td class="greybox">&nbsp;</td>
+		<s:if
+			test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND && modifyRsn==@org.egov.ptis.constants.PropertyTaxConstants@PROPERTY_MODIFY_REASON_ADD_OR_ALTER}">
 			<td class="greybox"><s:text name="Door No"></s:text> :</td>
 			<s:if test="%{houseNo!=null && !houseNo.isEmpty()}">
 				<td class="greybox"><s:textfield name="houseNo" id="houseNo"
@@ -173,8 +240,8 @@
 				<td class="greybox"><s:textfield name="houseNo" id="houseNo"
 						size="12" maxlength="15" value="%{houseNo}" /></td>
 			</s:else>
-			</s:if>
-	</tr>	
+		</s:if>
+	</tr>
 	<!-- Amenities section -->
 
 	<tr id="amenitiesHeaderRow" class="amenities">
@@ -225,7 +292,8 @@
 
 	<tr class="floordetails">
 		<td colspan="5">
-			<div align="center" class="overflow-x-scroll floors-tbl-freeze-column-div">
+			<div align="center"
+				class="overflow-x-scroll floors-tbl-freeze-column-div">
 				<%@ include file="../common/FloorForm.jsp"%>
 			</div>
 		</td>
@@ -282,17 +350,44 @@
 	jQuery('tr.bpddetails').hide();
 	jQuery('tr.vacantlanddetaills').hide();
 	jQuery(document).ready(function() {
+		if(!'<s:property value="%{isLocalityActive()}"/>'){
+			populateBoundaries();
+		}
 		var propType = jQuery('#propTypeId :selected').text();
 		var doorno = jQuery("#houseNo").val() != '';
-		var zoneName= jQuery("#zoneName").val !='' ;
 		if(doorno && propType=='<s:property value="%{@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND_STR}"/>'){
 			jQuery("#houseNo").prop("readonly", true);
 		}
 		else{
 			jQuery("#houseNo").prop("readonly", false);
 		}
-		if(zoneName){
-			jQuery("#zoneName").prop("readonly", true);
+		if('<s:property value="%{isZoneActive()}"/>'){
+			jQuery("#zone").prop("readonly", true);
+		}
+		if('<s:property value="%{isElectionWardActive()}"/>'){
+			jQuery("#electionWard").prop("readonly", true);
+		}
+		if('<s:property value="%{isLocalityActive()}"/>'){
+			jQuery("#locality").prop("readonly", true);
+			if('<s:property value="%{isBlockActive()}"/>'){
+				jQuery("#block").prop("readonly", true);
+			}
+			if('<s:property value="%{isWardActive()}"/>'){
+				jQuery("#ward").prop("readonly", true);
+			}
+		}
+		jQuery('#localityId').change(function() {
+			 populateBoundaries();
+		 });
+		var blocks = jQuery('#blockId').children('option').length;
+		var wards = jQuery('#wardId').children('option').length;
+		if(blocks < 2 && !'<s:property value="%{isBlockActive()}"/>'){
+			bootbox.alert("No block details mapped for ward.");
+			return false;
+		}
+		if(wards < 2 && !'<s:property value="%{isWardActive()}"/>'){
+			bootbox.alert("No ward details mapped for locality.");
+			return false;
 		}
 	});
 	jQuery(function() {
@@ -308,5 +403,70 @@
         });
     });
 	
-	
+	function populateBoundaries() {
+		jQuery.ajax({
+			url: "/egi/public/boundary/ajaxBoundary-blockByLocality",
+			type: "GET",
+			data: {
+				locality : jQuery('#localityId').val()
+			},
+			cache: false,
+			dataType: "json",
+			success: function (response) {
+				jQuery('#wardId').html("");
+				jQuery('#blockId').html("");
+				jQuery('#streetId').html("");
+				jQuery.each(response.results.boundaries, function (j, boundary) {
+					if (boundary.wardId) {
+						jQuery('#wardId').append("<option value='"+boundary.wardId+"'>"+boundary.wardName+"</option>");
+					}
+					jQuery('#blockId').append("<option value='"+boundary.blockId+"'>"+boundary.blockName+"</option>");
+				});
+				jQuery.each(response.results.streets, function (j, street) {
+					jQuery('#streetId').append("<option value='"+street.streetId+"'>"+street.streetName+"</option>");
+				});
+				<s:if test="%{wardId != null}">
+					jQuery('#wardId').val('<s:property value="%{wardId}"/>');
+				</s:if>
+				<s:if test="%{blockId != null}">
+					jQuery('#blockId').val('<s:property value="%{blockId}"/>');
+				</s:if>
+				<s:if test="%{streetId != null}">
+					jQuery('#streetId').val('<s:property value="%{streetId}"/>');
+				</s:if>
+			}, 
+			error: function (response) {
+				jQuery('#wardId').html("");
+				jQuery('#blockId').html("");
+				jQuery('#streetId').html("");
+				bootbox.alert("No boundary details mapped for locality")
+			}
+		});
+
+	}
+
+	function populateBlock() {
+		jQuery.ajax({
+			url: "/egi/boundary/ajaxBoundary-blockByWard.action",
+			type: "GET",
+			data: {
+				wardId : jQuery('#wardId').val()
+			},
+			cache: false,
+			dataType: "json",
+			success: function (response) {
+				jQuery('#blockId').html("");
+				jQuery.each(response, function (j, block) {
+					jQuery('#blockId').append("<option value='"+block.blockId+"'>"+block.blockName+"</option>");
+				});
+				<s:if test="%{blockId != null}">
+					jQuery('#blockId').val('<s:property value="%{blockId}"/>');
+				</s:if>
+			}, 
+			error: function (response) {
+				jQuery('#blockId').html("");
+				bootbox.alert("No block details mapped for ward")
+			}
+		});
+	}
 </script>

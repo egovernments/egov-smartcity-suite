@@ -219,7 +219,7 @@
 		<td class="greybox"><s:text name="Zone"></s:text>:</td>
 		<td class="greybox">
 			<span class="bold">
-				<s:property value="%{zoneName}" default="N/A"/>
+				<s:property value="%{basicProperty.propertyID.zone.name}" default="N/A"/>
 			</span>
 		</td>
 		<td class="greybox" colspan=2>&nbsp;</td>
