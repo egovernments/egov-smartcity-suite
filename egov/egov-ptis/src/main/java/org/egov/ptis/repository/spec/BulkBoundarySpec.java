@@ -69,6 +69,13 @@ public class BulkBoundarySpec {
 			if (bulkBoundaryRequest.getLocality() != null)
 				predicate.getExpressions()
 						.add(builder.equal(root.get("locality").get("id"), bulkBoundaryRequest.getLocality()));
+			if (bulkBoundaryRequest.getBlock() != null)
+				predicate.getExpressions()
+						.add(builder.equal(root.get("block").get("id"), bulkBoundaryRequest.getBlock()));
+
+			if (bulkBoundaryRequest.getWard() != null)
+				predicate.getExpressions()
+						.add(builder.equal(root.get("ward").get("id"), bulkBoundaryRequest.getWard()));
 
 			if (bulkBoundaryRequest.getElectionWard() != null)
 				predicate.getExpressions()

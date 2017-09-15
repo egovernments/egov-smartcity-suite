@@ -121,6 +121,43 @@
 				</div>
 			</div>
 
+			<div class="form-group">
+				<label for="Field-7" class="col-sm-4 control-label"><spring:message
+						code="lbl.block" /></label>
+				<div class="col-sm-3 add-margin">
+					<form:select id="blockId" path="block" multiple="false"
+						cssClass="form-control blockClass" value="${block}"
+						cssErrorClass="form-control error">
+
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${blocklist}" itemValue="id" itemLabel="name" />
+					</form:select>
+
+					<form:errors path="block" cssClass="error-msg" />
+
+				</div>
+			</div>
+
+			<div class="form-group">
+				<label for="Field-7" class="col-sm-4 control-label"><spring:message
+						code="lbl.ward" /></label>
+				<div class="col-sm-3 add-margin">
+					<form:select id="wardId" path="ward" multiple="false"
+						cssClass="form-control wardClass" value="${ward}"
+						cssErrorClass="form-control error">
+
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${wardlist}" itemValue="id" itemLabel="name" />
+					</form:select>
+
+					<form:errors path="ward" cssClass="error-msg" />
+
+				</div>
+			</div>
 
 			<div class="form-group">
 				<label for="Field-6" class="col-sm-4 control-label"><spring:message

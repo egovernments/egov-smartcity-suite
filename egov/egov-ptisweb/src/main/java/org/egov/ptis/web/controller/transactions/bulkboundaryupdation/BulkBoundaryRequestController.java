@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 import java.io.IOException;
@@ -100,11 +101,18 @@ public class BulkBoundaryRequestController {
 	public List<Boundary> zones() {
 		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
 	}
+	@ModelAttribute("wardlist")
+	public List<Boundary> wards() {
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
+	}
+	@ModelAttribute("blocklist")
+	public List<Boundary> blocks() {
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
+	}
 
 	@ModelAttribute("localityList")
 	public List<Boundary> localities() {
-		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
-				LOCATION_HIERARCHY_TYPE);
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,LOCATION_HIERARCHY_TYPE);
 	}
 
 	@ModelAttribute("electionWardList")

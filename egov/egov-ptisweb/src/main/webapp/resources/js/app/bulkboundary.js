@@ -47,6 +47,8 @@ jQuery(document).ready(function() {
 										var houseNo = jQuery('#houseNo').val();
 										var zone = jQuery('#revenueZoneId').val();
 										var locality = jQuery('#localityId').val();
+										var block = jQuery('#blockId').val();
+										var ward = jQuery('#wardId').val();
 										var electionWard = jQuery('#electionWardId').val();
 										var res=checking();
 										if(res==true){
@@ -54,27 +56,10 @@ jQuery(document).ready(function() {
 										}
 										else{
 											var status=false;
-											if(zone != ""&& locality != "" && electionWard != ""){
+											if(zone != "" || locality != "" || electionWard != "" || block!="" || ward!=""){
 												status=true;
 											}
-											else if(zone != ""&& locality == "" && electionWard == ""){
-												status=true;
-											}
-											else if(zone == ""&& locality != "" && electionWard == ""){
-												status=true;
-											}
-											else if(zone == "" && locality == "" && electionWard != ""){
-												status=true;
-											}
-											else if(zone == "" && locality != "" && electionWard != ""){
-												status=true;
-											}
-											else if(zone != "" && locality == "" && electionWard != ""){
-												status=true;
-											}
-											else if(zone != "" && locality != "" && electionWard == ""){
-												status=true;
-											}
+											
 											if(status==false){
 												bootbox.alert("Please Select Atleast One Option...");
 												return;
@@ -107,6 +92,8 @@ jQuery(document).ready(function() {
 																"assessmentNumber" : propertyid,
 																"doorNumber" : houseNo,
 																"zone" : zone,
+																"block":block,
+																"ward":ward,
 																"locality" : locality,
 																"electionWard" : electionWard
 															};
@@ -251,7 +238,7 @@ jQuery(document).ready(function() {
 					 * loadrevenue($(this)); console.log('value',
 					 * $(this).val()); }); });
 					 */
-
+					
 					function loadrevenue(localityDropdown) {
 						var locality = localityDropdown.val();
 						jQuery
