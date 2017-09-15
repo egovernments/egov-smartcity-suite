@@ -79,8 +79,10 @@ jQuery(document).ready(function() {
 													"searching" : false,
 													responsive : true,
 													destroy : true,
-													dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+													"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+													"aLengthMenu": [[50, 100, 1000], [50, 100, 1000]],
 													"autoWidth" : false,
+													pagingType: 'full_numbers',
 													"bDestroy" : true,
 													"order" : [ [ 1, 'asc' ] ],
 													ajax : {
