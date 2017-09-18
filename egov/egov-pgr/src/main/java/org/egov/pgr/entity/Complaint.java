@@ -138,6 +138,10 @@ public class Complaint extends StateAware {
     @JoinColumn(name = "receivingCenter")
     private ReceivingCenter receivingCenter;
 
+    @SafeHtml
+    @Length(max = 200)
+    private String receivingCenterDetails;
+
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"),
             inverseJoinColumns = @JoinColumn(name = "filestoreid"))
@@ -264,6 +268,14 @@ public class Complaint extends StateAware {
 
     public void setReceivingCenter(ReceivingCenter receivingCenter) {
         this.receivingCenter = receivingCenter;
+    }
+
+    public String getReceivingCenterDetails() {
+        return receivingCenterDetails;
+    }
+
+    public void setReceivingCenterDetails(final String receivingCenterDetails) {
+        this.receivingCenterDetails = receivingCenterDetails;
     }
 
     public Set<FileStoreMapper> getSupportDocs() {

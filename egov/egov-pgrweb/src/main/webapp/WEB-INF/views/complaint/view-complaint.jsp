@@ -70,7 +70,7 @@
                          id="ct-mobno">
                         <c:choose>
                             <c:when test="${complaint.complainant.mobile !=null}">
-                                <c:out value="${complaint.complainant.mobile}"></c:out>
+                                <c:out value="${complaint.complainant.mobile}" default="N/A"></c:out>
                             </c:when>
                             <c:otherwise><spring:message code="msg.not.applicable"/></c:otherwise>
                         </c:choose>
@@ -82,8 +82,8 @@
                             <spring:message code="lbl.address"/>
                         </div>
                         <div class="col-md-3 col-xs-6 add-margin view-content"
-                             id="ct-ctnumber">
-                            <c:out value="${complaint.complainant.address}"></c:out>
+                             id="ct-address">
+                            <c:out value="${complaint.complainant.address}" default="N/A"></c:out>
                         </div>
                     </div>
                 </c:if>
@@ -99,18 +99,18 @@
                         <spring:message code="lbl.complaintDate"/>
                     </div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
-                        <fmt:formatDate value="${complaint.createdDate}" var="complaintDate" pattern="dd-MM-yyyy"/>
+                        <fmt:formatDate value="${complaint.createdDate}" var="complaintDate" pattern="dd/MMM/yyyy HH:mm a"/>
                         <c:out value="${complaintDate}"></c:out>
                     </div>
                 </div>
                 <div class="row add-border">
                     <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDepartment"/></div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
-                        <c:out value="${complaint.department.name}"></c:out>
+                        <c:out value="${complaint.department.name}" default="N/A"></c:out>
                     </div>
                     <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.nextescalation.date"/></div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-nextescalation">
-                        <fmt:formatDate value="${complaint.escalationDate}" var="nextEscalationDate" pattern="dd-MM-yyyy HH:mm"/>
+                        <fmt:formatDate value="${complaint.escalationDate}" var="nextEscalationDate" pattern="dd/MMM/yyyy HH:mm a"/>
                         <c:out value="${nextEscalationDate}"/>
                     </div>
                 </div>
@@ -126,7 +126,11 @@
                 <div class="row add-border">
                     <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails"/></div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-details">
-                        <c:out value="${complaint.details }"></c:out>
+                        <c:out value="${complaint.details }" default="N/A"></c:out>
+                    </div>
+                    <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.receivingcenter.details"/></div>
+                    <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-receiving-detail">
+                        <c:out value="${complaint.receivingCenterDetails}" default="N/A"/>
                     </div>
                 </div>
                 <div class="row add-border">
@@ -222,7 +226,7 @@
                                 <div class="row  add-border">
                                     <div class="col-sm-2 col-xs-12 add-margin">
                                         <fmt:formatDate value="${history.date}" var="historyDate"
-                                                        pattern="dd-MM-yyyy HH:mm a E"/>
+                                                        pattern="E dd/MMM/yyyy HH:mm a"/>
                                         <c:out value="${historyDate}"/>
                                     </div>
                                     <div class="col-sm-2 col-xs-12 add-margin">
@@ -252,14 +256,15 @@
         </div>
     </div>
 </div>
-<div class="row">
-    <div class="text-center">
-        <button type="button" class="btn btn-primary" onclick="window.close();">
-            <spring:message code="lbl.close"/>
-        </button>
+<c:if test="${approvalDepartmentList == null}">
+    <div class="row">
+        <div class="text-center">
+            <button type="button" class="btn btn-primary" onclick="window.close();">
+                <spring:message code="lbl.close"/>
+            </button>
+        </div>
     </div>
-</div>
-
+</c:if>
 <!-- Modal 6 (Long Modal)-->
 <div class="modal fade" id="complaint-locate">
     <div class="modal-dialog">
