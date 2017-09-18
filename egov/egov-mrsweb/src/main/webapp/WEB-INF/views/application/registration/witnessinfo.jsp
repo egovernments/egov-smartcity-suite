@@ -118,7 +118,7 @@
 		</label>
 		<div class="col-sm-6">
 			<form:input path="${witness}.occupation" id="${witness}.occupation"
-				type="text" class="form-control low-width is_valid_alphanumeric"
+				type="text" class="form-control low-width is_valid_alphabet"  
 				maxlength="60" placeholder="" autocomplete="off" />
 			<form:errors path="${witness}.occupation"
 				cssClass="add-margin error-msg" />
