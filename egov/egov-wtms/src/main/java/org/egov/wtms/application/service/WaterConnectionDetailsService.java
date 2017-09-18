@@ -171,7 +171,6 @@ import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.jfree.util.Log;
@@ -704,7 +703,7 @@ public class WaterConnectionDetailsService {
                         && waterConnectionDetails.getCloseConnectionType() != null)
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             APPLICATION_STATUS_CLOSERSANCTIONED, MODULETYPE));
-                else if (WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED
+                else if (APPLICATION_STATUS_CLOSERSANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                         && waterConnectionDetails.getCloseConnectionType() != null
                         && waterConnectionDetails.getCloseConnectionType()
@@ -796,8 +795,8 @@ public class WaterConnectionDetailsService {
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode()
-                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING) ||
-                    WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING
+                    .equals(APPLICATION_STATUS_DIGITALSIGNPENDING) ||
+                    APPLICATION_STATUS_CLOSERDIGSIGNPENDING
                             .equals(waterConnectionDetails.getStatus().getCode()))
                 approvalPosition = waterTaxUtils.getApproverPosition(
                         JUNIOR_OR_SENIOR_ASSISTANT_DESIGN, waterConnectionDetails);
