@@ -72,8 +72,9 @@
 		window.opener.closeChildWindow();
 	}
 </script>
-
-	<div class="text-right"  style="color:#ff0000 "><strong>${message}</strong>	</div>
+<c:if test="${not empty message}">
+	<div class="text-right"  style="color:#ff0000 "><spring:message code="${message}"/></strong>
+	</div></c:if>
 
 <div class="panel-heading">
 	<div class="panel-title">

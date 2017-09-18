@@ -46,7 +46,6 @@
  */
 package org.egov.stms.web.controller.transactions;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import javax.servlet.http.HttpServletRequest;
@@ -60,7 +59,6 @@ import org.egov.pims.commons.Position;
 import org.egov.stms.entity.SewerageReassignDetails;
 import org.egov.stms.transactions.service.SewerageReassignService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -88,9 +86,6 @@ public class SewerageReassignController {
     @Autowired
     private PositionMasterService positionMasterService;
 
-    @Autowired
-    protected ResourceBundleMessageSource messageSource;
-
     @ModelAttribute
     public SewerageReassignDetails reassign() {
         return new SewerageReassignDetails();
@@ -103,9 +98,9 @@ public class SewerageReassignController {
         Map<Long, String> employeeWithPosition = sewerageReassignService.getemployees();
         if (!employeeWithPosition.isEmpty())
             model.addAttribute("assignments", employeeWithPosition);
+
         else
-            model.addAttribute("message", messageSource.getMessage("notexists.position",
-                    new String[] {}, null));
+            model.addAttribute("message", "notexists.position");
 
         reassignDetails.setApplicationNo(applicationNum);
         reassignDetails.setStateType(appType);
