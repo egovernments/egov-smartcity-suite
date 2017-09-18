@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-09-18T16:20:57 -->
+<!-- 2017-09-18T17:00:54 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
@@ -119,8 +119,8 @@ $P{EGOV_PAYMENT_MODE} == "cheque/dd" ? " AND EGF_INSTRUMENTTYPE.TYPE IN ('cheque
 	</parameter>
 	<queryString>
 		<![CDATA[SELECT RECEIPT_NUMBER,RECEIPT_DATE,DEPARTMENT_NAME,INSTRUMENT_TYPE,SOURCE,STATUS_DESCRIPTION,
-		SERVICE_NAME || '/' ||CONSUMERCODE  AS SERVICE_NAME,CASH_AMOUNT,sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT ,CARD_AMOUNT,BANK_AMOUNT, ONLINE_AMOUNT,CARD_AMOUNT,
-		INSTRUMENT_NUMBER || ' ' || to_char(INSTRUMENT_DATE,'dd/MM/YYYY') AS INSTRUMENT_NUMBER_DATE,USER_NAME   from 
+		SERVICE_NAME,CASH_AMOUNT,sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT ,CARD_AMOUNT,BANK_AMOUNT, ONLINE_AMOUNT,CARD_AMOUNT,
+		INSTRUMENT_NUMBER || ' ' || to_char(INSTRUMENT_DATE,'dd/MM/YYYY') AS INSTRUMENT_NUMBER_DATE,CONSUMERCODE,USER_NAME,RECEIPTTYPE   from 
 (SELECT
      EGCL_COLLECTIONHEADER.RECEIPTNUMBER AS RECEIPT_NUMBER,
      EGCL_COLLECTIONHEADER.RECEIPTDATE AS RECEIPT_DATE,
@@ -131,7 +131,7 @@ $P{EGOV_PAYMENT_MODE} == "cheque/dd" ? " AND EGF_INSTRUMENTTYPE.TYPE IN ('cheque
      EGCL_SERVICEDETAILS.NAME AS SERVICE_NAME,
      EGF_INSTRUMENTHEADER.INSTRUMENTNUMBER AS INSTRUMENT_NUMBER,
      EGF_INSTRUMENTHEADER.INSTRUMENTDATE AS INSTRUMENT_DATE,
-     EGCL_COLLECTIONHEADER.CONSUMERCODE AS CONSUMERCODE,EG_USER.USERNAME AS USER_NAME,
+     EGCL_COLLECTIONHEADER.CONSUMERCODE AS CONSUMERCODE,EG_USER.USERNAME AS USER_NAME,EGCL_COLLECTIONHEADER.RECEIPTTYPE AS RECEIPTTYPE,
      (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cash' THEN EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT END) AS CASH_AMOUNT,
      (CASE WHEN EGF_INSTRUMENTTYPE.TYPE='cheque' THEN EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT END) AS CHEQUEDD_AMOUNT,
      (CASE WHEN EGF_INSTRUMENTTYPE.TYPE= 'card' THEN EGF_INSTRUMENTHEADER.INSTRUMENTAMOUNT END) AS CARD_AMOUNT,
@@ -175,7 +175,8 @@ GROUP BY
 	 RESULT.INSTRUMENT_NUMBER,
 	 RESULT.INSTRUMENT_DATE,
 	 RESULT.CONSUMERCODE,
-	 RESULT.USER_NAME
+	 RESULT.USER_NAME,
+	 RESULT.RECEIPTTYPE
 ORDER BY
      RESULT.RECEIPT_NUMBER,
      RESULT.RECEIPT_DATE,
@@ -219,6 +220,12 @@ ORDER BY
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<field name="USER_NAME" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="CONSUMERCODE" class="java.lang.String">
+		<fieldDescription><![CDATA[]]></fieldDescription>
+	</field>
+	<field name="RECEIPTTYPE" class="java.lang.String">
 		<fieldDescription><![CDATA[]]></fieldDescription>
 	</field>
 	<variable name="TOTAL_CASH_AMOUNT" class="java.math.BigDecimal" resetType="Group" resetGroup="DEPT_PAYMENT_MODE" calculation="Sum">
@@ -945,7 +952,7 @@ ORDER BY
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$F{SERVICE_NAME}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($F{RECEIPTTYPE}=="B")?( $F{SERVICE_NAME}+"/"+$F{CONSUMERCODE}):$F{SERVICE_NAME}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" pattern="#,##0">
 				<reportElement stretchType="RelativeToTallestObject" x="242" y="0" width="68" height="20" isPrintWhenDetailOverflows="true" uuid="9a6c8f3b-4651-4467-b105-c1a73a38e7a2">
