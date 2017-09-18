@@ -142,8 +142,9 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final Boolean recordCreatedBYCitizenPortal;
         final Boolean recordCreatedByAnonymousUser;
 
-        if (user != null && (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
-                RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))) {
+        if (user != null && user.getId() == waterConnectionDetails.getCreatedBy().getId()
+                && (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
+                        RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))) {
             recordCreatedBYNonEmployee = waterTaxUtils.getCurrentUserRole(user);
             recordCreatedBYCitizenPortal = waterTaxUtils.isCitizenPortalUser(user);
             recordCreatedByAnonymousUser = waterTaxUtils.isAnonymousUser(user);

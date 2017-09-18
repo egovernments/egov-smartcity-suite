@@ -796,13 +796,9 @@ public class WaterConnectionDetailsService {
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (waterConnectionDetails.getStatus().getCode()
-                    .equals(APPLICATION_STATUS_DIGITALSIGNPENDING) ||
-                    APPLICATION_STATUS_CLOSERDIGSIGNPENDING
-                            .equals(waterConnectionDetails.getStatus().getCode())
-                    ||
-                    WFLOW_ACTION_STEP_REJECT.equals(workFlowAction) &&
-                            APPLICATION_STATUS_CLOSERINPROGRESS
-                                    .equals(waterConnectionDetails.getStatus().getCode()))
+                    .equals(WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING) ||
+                    WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING
+                            .equals(waterConnectionDetails.getStatus().getCode()))
                 approvalPosition = waterTaxUtils.getApproverPosition(
                         JUNIOR_OR_SENIOR_ASSISTANT_DESIGN, waterConnectionDetails);
             else if (wfmatrix.getNextDesignation() != null
