@@ -160,6 +160,12 @@ public class CommonWaterTaxSearchController {
         final String meesevaApplicationNumber = request.getParameter(APPLICATION_NUMBER);
         return commonSearchForm(model, GENERATEBILL, meesevaApplicationNumber);
     }
+    
+    @RequestMapping(value = "commonSearch/editdemand", method = RequestMethod.GET)
+    public String editDemand(final Model model, final HttpServletRequest request) {
+        final String meesevaApplicationNumber = request.getParameter(APPLICATION_NUMBER);
+        return commonSearchForm(model, EDITDEMAND, meesevaApplicationNumber);
+    }
 
     public String commonSearchForm(final Model model, final String applicationType, final String meesevaApplicationNumber) {
         model.addAttribute(APPLICATIONTYPE, applicationType);
