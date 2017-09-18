@@ -55,6 +55,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_AP
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EDITDEMAND;
 
 import java.math.BigDecimal;
 
@@ -345,6 +346,20 @@ public class CommonWaterTaxSearchController {
                             && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
                             && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
                 return "redirect:/report/generateBillForHSCNo/"
+                        + waterConnectionDetails.getConnection().getConsumerCode();
+            else {
+                model.addAttribute(MODE, ERROR_MODE);
+                model.addAttribute(APPLICATIONTYPE, applicationType);
+                resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
+                return COMMON_FORM_SEARCH;
+            }
+        if (applicationType != null && applicationType.equals(EDITDEMAND))
+            if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION)
+                    || waterConnectionDetails.getApplicationType().getCode().equals(CHANGEOFUSE)
+                            && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
+                            && waterConnectionDetails.getLegacy())
+                return "redirect:/application/editDemand/"
                         + waterConnectionDetails.getConnection().getConsumerCode();
             else {
                 model.addAttribute(MODE, ERROR_MODE);
