@@ -154,7 +154,7 @@
 	</tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="Zone"></s:text> <span
+		<td class="greybox"><s:text name="zone"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:if test="%{basicProperty.propertyID.zone !=null && isZoneActive()}">
 			<td class="greybox"><s:textfield name="zone" id="zone"
@@ -166,7 +166,7 @@
 					headerValue="%{getText('default.select')}" listKey="id"
 					listValue="name" /></td>
 		</s:else>
-		<td class="greybox"><s:text name="Locality"></s:text> <span
+		<td class="greybox"><s:text name="locality"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:set var="isLocalityActive" value="%{isLocalityActive()}"></s:set>
 		<s:if
@@ -183,7 +183,7 @@
 	</tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="Block"></s:text> <span
+		<td class="greybox"><s:text name="blockno"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:if
 			test="%{basicProperty.propertyID.area !=null && isBlockActive() && isLocalityActive()}">
@@ -196,7 +196,7 @@
 					headerValue="%{getText('default.select')}" listKey="id"
 					listValue="name" /></td>
 		</s:else>
-		<td class="greybox"><s:text name="Ward"></s:text> <span
+		<td class="greybox"><s:text name="revwardno"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:if
 			test="%{basicProperty.propertyID.ward !=null && isWardActive() && isLocalityActive()}">
@@ -212,7 +212,7 @@
 	</tr>
 	<tr>
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="Block"></s:text> <span
+		<td class="greybox"><s:text name="elec.wardno"></s:text> <span
 			class="mandatory1">*</span> :</td>
 		<s:if
 			test="%{basicProperty.propertyID.electionBoundary !=null && isElectionWardActive()}">
