@@ -113,6 +113,11 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             model.addAttribute("isReassignEnabled", reassignService.isReassignEnabled());
             model.addAttribute("transactionType", APPLICATION_TYPE_VACANCY_REMISSION);
             model.addAttribute("stateAwareId", vacancyRemission.getId());
+            model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
+            model.addAttribute("endorsementRequired", propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
+                    vacancyRemission.getCurrentState()));
+            model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
+            model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
             if (propertyTaxUtil.enableVRApproval(vacancyRemission.getBasicProperty().getUpicNo())) {
 
                 return "redirect:/vacancyremissionapproval/create/" + vacancyRemission.getBasicProperty().getUpicNo();
@@ -139,11 +144,6 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                 prepareWorkflow(model, vacancyRemission, new WorkflowContainer());
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
             }
-        model.addAttribute("endorsementRequired", propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
-                vacancyRemission.getCurrentState()));
-        model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
-        model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
-        model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
         }
         return VACANCYREMISSION_EDIT;
     }

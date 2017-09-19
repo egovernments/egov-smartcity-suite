@@ -190,6 +190,9 @@
 				</table>
 				<br/>
 				<s:if test="%{currentDesignation != null && currentDesignation.toUpperCase().equalsIgnoreCase(@org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN)}"> 
+					<s:if test="%{!endorsementNotices.isEmpty()}">
+						<jsp:include page="../workflow/endorsement_history.jsp"/>
+					</s:if>
 					<div id="workflowCommentsDiv" align="center">
 						<table width="100%">
 							<tr>

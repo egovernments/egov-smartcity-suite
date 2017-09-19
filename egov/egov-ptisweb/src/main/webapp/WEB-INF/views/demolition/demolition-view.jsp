@@ -155,6 +155,9 @@ body
 			<jsp:include page="../common/commonWorkflowMatrix.jsp"/>
 			</c:when>
 			<c:otherwise>
+			<c:if test="${!endorsementNotices.isEmpty()}"> 
+ 			<jsp:include page="/WEB-INF/views/common/endorsement_history.jsp"/>
+			</c:if>
 			<div class="row">
 					<label class="col-sm-3 control-label text-right"><spring:message code="lbl.comments"/></label>
 					<div class="col-sm-8 add-margin">

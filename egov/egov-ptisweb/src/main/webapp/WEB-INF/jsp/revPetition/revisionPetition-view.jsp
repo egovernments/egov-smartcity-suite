@@ -509,6 +509,9 @@
 									</s:else>
 								</s:elseif>
 								<s:else>
+								<s:if test="%{!endorsementNotices.isEmpty() && @org.egov.ptis.constants.PropertyTaxConstants@COMMISSIONER_DESGN.equalsIgnoreCase(currentDesignation.toUpperCase())}">
+								   <jsp:include page="../workflow/endorsement_history.jsp"/>
+							   </s:if>
 									<div align="center">
 										<br>
 										<%--  <table width="100%" border="0" cellspacing="0" cellpadding="0" >
