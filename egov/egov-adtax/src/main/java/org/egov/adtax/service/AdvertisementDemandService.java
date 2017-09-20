@@ -229,6 +229,21 @@ public class AdvertisementDemandService {
         return pendingTaxCollection;
 
     }
+    
+    /**
+     * @param advertisement
+     * @return
+     */
+    public BigDecimal getPendingTaxAmount(final Advertisement advertisement) {
+        BigDecimal pendingTaxAmount = BigDecimal.ZERO;
+        if (advertisement != null && advertisement.getDemandId() != null)
+            for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
+                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                    pendingTaxAmount = pendingTaxAmount
+                            .add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
+                }
+        return pendingTaxAmount;
+    }
 
     /**
      * Check any tax pay pending for selected advertisement in selected installment

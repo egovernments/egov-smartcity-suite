@@ -357,5 +357,9 @@
     	<put-attribute name="page-title" value="lbl.reassign.success" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/reassign-success.jsp"/>
     </definition>
+    <definition name="mobilePayment-form" extends="base_layout">
+ 	   	<put-attribute name="page-title" value="mobilePayment.title" cascade="true"/>
+ 	   	<put-attribute name="body" value="/WEB-INF/views/mobile/mobilePayment-form.jsp"/>
+  	</definition>  
     
 </tiles-definitions>

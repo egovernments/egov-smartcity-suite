@@ -40,7 +40,11 @@
 
 package org.egov.adtax.service.collection;
 
-import org.apache.log4j.Logger;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -55,22 +59,17 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
 @Transactional(readOnly = true)
 public class AdvertisementBillable extends AbstractBillable implements Billable {
-    private static final Logger LOGGER = Logger.getLogger(AdvertisementBillable.class);
     private String referenceNumber;
     private String transanctionReferenceNumber;
 
@@ -140,7 +139,11 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
         return egBillDAO.getBillTypeByCode(AdvertisementTaxConstants.BILL_TYPE_AUTO);
 
     }
-
+    
+    public EgBillType getBillTypeByCode(final String typeCode) {
+        return egBillDAO.getBillTypeByCode(typeCode);
+    }
+    
     @Override
     public Date getBillLastDueDate() {
         return DateUtils.today();
@@ -249,8 +252,7 @@ public class AdvertisementBillable extends AbstractBillable implements Billable 
 
     @Override
     public String getCollModesNotAllowed() {
-
-        return null;
+        return StringUtils.EMPTY;
     }
 
     @Override
