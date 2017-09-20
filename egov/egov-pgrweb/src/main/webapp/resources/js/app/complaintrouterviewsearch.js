@@ -209,7 +209,9 @@ jQuery(document).ready(function($)
 		oTable.$('tr.row_selected').removeClass('row_selected');
         $(this).addClass('row_selected');
         var fid= oTable.fnGetData( this, 4 );
-        window.open('/pgr/router/view/'+ fid, '', 'height=800,width=800');
+        if(fid) {
+            window.open('/pgr/router/view/' + fid, '', 'height=800,width=800');
+        }
 	
 	});
 

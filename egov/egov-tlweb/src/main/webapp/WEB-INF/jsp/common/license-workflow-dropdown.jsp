@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~ accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2017  eGovernments Foundation
+  ~  Copyright (C) <2017>  eGovernments Foundation
   ~
   ~  The updated version of eGov suite of products as by eGovernments Foundation
   ~  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~      1) All versions of this program, verbatim or modified must carry this
   ~         Legal Notice.
+  ~ 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~         derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~ 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~ 	For any further queries on attribution, including queries on brand guidelines,
+  ~         please contact contact@egovernments.org
   ~
   ~      2) Any misrepresentation of the origin of the material is prohibited. It
   ~         is required that all modified versions of this material be marked in
@@ -147,7 +154,12 @@ function populateApprover() {
 </s:if>
 <div id="workflowCommentsDiv" align="center">
          <div class="form-group">
-             <label class="col-sm-3 add-margin text-right"><s:text name="wf.approver.remarks"/><span class="mandatory"></span></label>
+             <label class="col-sm-3 add-margin text-right">
+                 <s:text name="wf.approver.remarks"/>
+                 <c:if test="${mode}!=disableApprover">
+                     <span class="mandatory"/>
+                 </c:if>
+             </label>
              <div class="col-sm-8 add-margin">
                  <s:textarea id="approverComments" name="approverComments" class="form-control" ></s:textarea>
              </div>
