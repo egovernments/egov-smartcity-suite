@@ -64,15 +64,18 @@
                 <s:actionmessage theme="simple"/>
             </div>
         </s:if>
-        <s:form action="newTradeLicense-renewal" theme="simple" name="renewForm" cssClass="form-horizontal form-groups-bordered">
+        <s:form id="licenseForm" action="newTradeLicense-renewal" theme="simple" name="renewForm"
+                enctype="multipart/form-data"
+                cssClass="form-horizontal form-groups-bordered">
             <s:token/>
             <s:push value="model">
                 <s:hidden name="docNumber"/>
                 <s:hidden name="actionName" value="renew"/>
-                <s:hidden name="model.id"/>
+                <s:hidden name="model.id" id="id"/>
                 <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
-                <input type="hidden" name="model.applicationNumber" value="${param.applicationNo}" id="applicationNumber"/>
+                <input type="hidden" name="model.applicationNumber" value="${param.applicationNo}"
+                       id="applicationNumber"/>
                 <s:if test="%{status=='Active'}">
                     <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
                 </s:if>
@@ -81,54 +84,84 @@
                         <div class="panel-title" style="text-align:center">
                             <s:text name="page.title.renewtrade"/>
                         </div>
+                        <ul class="nav nav-tabs" id="settingstab">
+                            <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                                  aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                            <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
+                                            aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                        </ul>
                     </div>
 
-                    <%@ include file='../common/license-detail-view.jsp' %>
+                    <div class="panel-body">
+                        <div class="tab-content">
+                            <div class="tab-pane fade active in" id="tradedetails">
+                                <%@ include file='../common/license-detail-view.jsp' %>
 
-                    <div class="panel-heading custom_form_panel_heading">
-                        <div class="panel-title">Editable <s:text name='license.details.lbl'/></div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><s:text name='license.locality.lbl'/><span class="mandatory"></span></label>
-                        <div class="col-sm-3 add-margin">
-                            <s:select name="boundary" id="boundary" list="dropdownData.localityList"
-                                      listKey="id" listValue="name" headerKey="" headerValue="%{getText('default.select')}" required="true" value="%{boundary.id}" class="form-control"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><s:text name='license.division'/><span class="mandatory"></span></label>
-                        <div class="col-sm-3 add-margin">
-                            <select name="parentBoundary" id="parentBoundary" class="form-control" required="true">
-                                <option value=""><s:text name='default.select'/></option>
-                            </select>
-                        </div>
-                    </div>
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><s:text name='license.category.lbl'/><span class="mandatory"></span></label>
-                        <div class="col-sm-3 add-margin">
-                            <s:select name="category" id="category" list="dropdownData.categoryList"
-                                      listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{category.id}"
-                                      class="form-control" onChange="setupAjaxSubCategory(this);"/>
-                            <egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']" dropdownId='subCategory'
-                                               url='domain/commonTradeLicenseAjax-populateSubCategory.action'/>
-                        </div>
+                                <div class="panel-heading custom_form_panel_heading">
+                                    <div class="panel-title">Editable <s:text name='license.details.lbl'/></div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label text-right"><s:text
+                                            name='license.locality.lbl'/><span class="mandatory"></span></label>
+                                    <div class="col-sm-3 add-margin">
+                                        <s:select name="boundary" id="boundary" list="dropdownData.localityList"
+                                                  listKey="id" listValue="name" headerKey=""
+                                                  headerValue="%{getText('default.select')}" required="true"
+                                                  value="%{boundary.id}" class="form-control"/>
+                                    </div>
+                                    <label class="col-sm-2 control-label text-right"><s:text
+                                            name='license.division'/><span class="mandatory"></span></label>
+                                    <div class="col-sm-3 add-margin">
+                                        <select name="parentBoundary" id="parentBoundary" class="form-control"
+                                                required="true">
+                                            <option value=""><s:text name='default.select'/></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label text-right"><s:text
+                                            name='license.category.lbl'/><span class="mandatory"></span></label>
+                                    <div class="col-sm-3 add-margin">
+                                        <s:select name="category" id="category" list="dropdownData.categoryList"
+                                                  listKey="id" listValue="name" headerKey="-1"
+                                                  headerValue="%{getText('default.select')}" value="%{category.id}"
+                                                  class="form-control" onChange="setupAjaxSubCategory(this);"/>
+                                        <egov:ajaxdropdown id="populateSubCategory" fields="['Text','Value']"
+                                                           dropdownId='subCategory'
+                                                           url='domain/commonTradeLicenseAjax-populateSubCategory.action'/>
+                                    </div>
 
-                        <label class="col-sm-2 control-label text-right"><s:text name='license.subCategory.lbl'/><span class="mandatory"></span></label>
-                        <div class="col-sm-3 add-margin">
-                            <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
-                                      listKey="id" listValue="name" headerKey="-1" headerValue="%{getText('default.select')}" value="%{tradeName.id}"
-                                      class="form-control select2"/>
-                        </div>
-                    </div>
+                                    <label class="col-sm-2 control-label text-right"><s:text
+                                            name='license.subCategory.lbl'/><span class="mandatory"></span></label>
+                                    <div class="col-sm-3 add-margin">
+                                        <s:select name="tradeName" id="subCategory" list="dropdownData.subCategoryList"
+                                                  listKey="id" listValue="name" headerKey="-1"
+                                                  headerValue="%{getText('default.select')}" value="%{tradeName.id}"
+                                                  class="form-control select2"/>
+                                    </div>
+                                </div>
 
-                    <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><s:text name='license.uom.lbl'/><span class="mandatory"></span></label>
-                        <div class="col-sm-3 add-margin">
-                            <s:textfield name="uom" maxlength="8" id="uom" value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}"
-                                         readOnly="true" class="form-control"/>
-                        </div>
-                        <label class="col-sm-2 control-label text-right"><s:text name='license.premises.lbl'/><span class="mandatory"></span></label>
-                        <div class="col-sm-3 add-margin">
-                            <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight" value="%{tradeArea_weight}" cssClass="form-control patternvalidation"
-                                         data-pattern="number"/>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label text-right"><s:text
+                                            name='license.uom.lbl'/><span class="mandatory"></span></label>
+                                    <div class="col-sm-3 add-margin">
+                                        <s:textfield name="uom" maxlength="8" id="uom"
+                                                     value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}"
+                                                     readOnly="true" class="form-control"/>
+                                    </div>
+                                    <label class="col-sm-2 control-label text-right"><s:text
+                                            name='license.premises.lbl'/><span class="mandatory"></span></label>
+                                    <div class="col-sm-3 add-margin">
+                                        <s:textfield name="tradeArea_weight" maxlength="8" id="tradeArea_weight"
+                                                     value="%{tradeArea_weight}"
+                                                     cssClass="form-control patternvalidation"
+                                                     data-pattern="number"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tab-pane fade" id="tradeattachments">
+                                <%@include file="../common/supportdocs-renew.jsp" %>
+                            </div>
                         </div>
                     </div>
                 </div>
@@ -141,7 +174,7 @@
                 <s:else>
                     <div class="row">
                         <div class="text-center">
-                            <button type="submit" id="btnsave" class="btn btn-primary" onclick="return validateEditableFields();">
+                            <button type="submit" id="btnsave" class="btn btn-primary" onclick="return onSubmit();">
                                 Save
                             </button>
                             <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
@@ -190,27 +223,34 @@
         return true;
     }
     function onSubmit() {
+        if (!validateEditableFields()) {
+            return false;
+        }
         document.renewForm.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-renewal.action';
         return true;
     }
     function validateEditableFields() {
-        if (document.getElementById("category").value == '-1') {
-            showMessage('newLicense_error', '<s:text name="newlicense.category.null" />');
-            window.scroll(0, 0);
-            return false;
-        } else if (document.getElementById("subCategory").value == '-1') {
-            showMessage('newLicense_error', '<s:text name="newlicense.subcategory.null" />');
-            window.scroll(0, 0);
-            return false;
-        } else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null) {
-            showMessage('newLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
-            window.scroll(0, 0);
-            return false;
-        } else if (document.getElementById("uom").value == "") {
-            showMessage('newLicense_error', '<s:text name="newlicense.uom.null" />');
-            window.scroll(0, 0);
-            return false;
+        if ($('#licenseForm').valid()) {
+            if (document.getElementById("category").value == '-1') {
+                showMessage('newLicense_error', '<s:text name="newlicense.category.null" />');
+                window.scroll(0, 0);
+                return false;
+            } else if (document.getElementById("subCategory").value == '-1') {
+                showMessage('newLicense_error', '<s:text name="newlicense.subcategory.null" />');
+                window.scroll(0, 0);
+                return false;
+            } else if (document.getElementById("tradeArea_weight").value == '' || document.getElementById("tradeArea_weight").value == null) {
+                showMessage('newLicense_error', '<s:text name="newlicense.tradeareaweight.null" />');
+                window.scroll(0, 0);
+                return false;
+            } else if (document.getElementById("uom").value == "") {
+                showMessage('newLicense_error', '<s:text name="newlicense.uom.null" />');
+                window.scroll(0, 0);
+                return false;
+            }
+            return true;
         }
+        else return false;
     }
 
 </script>

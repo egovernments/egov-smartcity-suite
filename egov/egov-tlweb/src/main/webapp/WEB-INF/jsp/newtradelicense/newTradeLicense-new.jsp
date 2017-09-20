@@ -317,6 +317,9 @@
             if ($('#parentBoundary')) {
                 $('#parentBoundary').attr('disabled', false);
             }
+            if ($("#mode").val() != 'disableApprover') {
+                $(".supportdocs").prop("disabled", false);
+            }
         }
     </script>
 
@@ -396,15 +399,15 @@
                                 <%@ include file='../common/licensee.jsp' %>
                                 <%@ include file='../common/license-address.jsp' %>
                                 <%@ include file='../common/license.jsp' %>
+                                <s:if test="%{transitionInprogress()}">
+                                    <%@ include file='../common/license-workflow-history.jsp' %>
+                                </s:if>
                             </div>
                             <div class="tab-pane fade" id="tradeattachments">
                                 <%@include file="../common/supportdocs-new.jsp" %>
                             </div>
                         </div>
                     </div>
-                    <s:if test="%{transitionInprogress()}">
-                        <%@ include file='../common/license-workflow-history.jsp' %>
-                    </s:if>
                 </div>
                 <div style="text-align: center;" hidden="true" id="closeDiv">
                     <input type="button" name="closeBtn" id="closeBtn" value="Close"

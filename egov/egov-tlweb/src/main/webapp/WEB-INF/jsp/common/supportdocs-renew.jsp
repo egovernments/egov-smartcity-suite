@@ -44,7 +44,6 @@
   ~
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
 <%@ page language="java" pageEncoding="UTF-8" %>
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
@@ -61,31 +60,25 @@
                 <s:property value="#stat.index + 1"/>
             </div>
             <div class="col-sm-3">
-
                 <span class="docname"><s:property value="name"/></span>
-                <c:if test="${mode!=('editForReject'||'editForApprover')}">
-                    <s:if test="mandatory">
-                        <span class="mandatory"></span>
-                    </s:if>
-                </c:if>
-                <s:hidden name="licenseDocument[%{#stat.index}].type.id" value="%{id}"/>
-                <s:hidden name="licenseDocument[%{#stat.index}].type.name" value="%{name}"/>
+                <s:if test="mandatory">
+                    <span class="mandatory"></span>
+                </s:if>
+                <input type="hidden" name="licenseDocument[${stat.index}].type.id" value="${id}"/>
             </div>
             <div class="col-sm-4">
-                <s:file name="licenseDocument[%{#stat.index}].uploads" id="uploadFile%{#stat.index}"
-                        value="%{licenseDocument[#stat.index].uploads}" cssClass="file-ellipsis upload-file supportdocs"/>
+                <input type="file" name="licenseDocument[${stat.index}].uploads" id="uploadFile${stat.index}"
+                       value="${licenseDocument[stat.index].uploads}" class="file-ellipsis upload-file"/>
                 <script>
-                    <c:if test="${mode!=('editForReject'||'editForApprover')}">
                     <c:if test="${mandatory && empty licenseDocument[stat.index].files}">
                     jQuery('#uploadFile${stat.index}').attr('required', true);
                     </c:if>
-                    </c:if>
                 </script>
-                <forms path="licenseDocument[%{#stat.index}].files" cssClass="add-margin error-msg"/>
+                <form:errors path="licenseDocument[%{#stat.index}].files" cssClass="add-margin error-msg"/>
             </div>
             <div class="col-sm-3">
-                <s:textarea name="licenseDocument[%{#stat.index}].description" cssClass="form-control supportdocs"
-                            value="%{licenseDocument[#stat.index].description}"/>
+                <textarea name="licenseDocument[${stat.index}].description" class="form-control"
+                          value="${licenseDocument[stat.index].description}"></textarea>
             </div>
         </div>
     </s:iterator>
@@ -94,9 +87,9 @@
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <div class="panel-title">
-                        <a data-toggle="collapse" aria-expanded="true" href="#collapse1" id="getdocuments">
+                        <button data-toggle="collapse" aria-expanded="true" href="#collapse1" id="getdocuments">
                             <s:text name='title.attached.documents'/>
-                            <i class="more-less fa fa-chevron-down"></i></a>
+                            <i class="more-less fa fa-chevron-down"></i></button>
                     </div>
                 </div>
                 <div id="collapse1" class="panel-collapse collapse" role="tabpanel">
@@ -119,5 +112,6 @@
 $('.panel-group').on('hidden.bs.collapse', toggleIcon);
 $('.panel-group').on('shown.bs.collapse', toggleIcon);
 </script>
+
 <script src="<cdn:url  value='/resources/js/app/license-support-docs.js?rnd=${app_release_no}'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/view-support-documents.js?rnd=${app_release_no}'/>"></script>

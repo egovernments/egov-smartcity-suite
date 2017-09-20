@@ -86,9 +86,23 @@
                     <s:text name="application.num"/> : <s:property value="%{applicationNumber}"/>
                 </div>
             </s:if>
-            <table width="100%">
-                <%@ include file='../common/license-detail-view.jsp' %>
-            </table>
+            <ul class="nav nav-tabs" id="settingstab">
+                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                <li class=""><a data-toggle="tab" href="#tradeattachments" id="getdocuments" data-tabidx="1"
+                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+            </ul>
+            <div class="panel-body">
+                <div class="tab-content">
+                    <div class="tab-pane fade active in" id="tradedetails">
+                        <%@ include file='../common/license-detail-view.jsp' %>
+                    </div>
+                    <div class="tab-pane fade" id="tradeattachments">
+                        <br/><br/>
+                        <%@include file="../common/supportdocs-view.jsp" %>
+                    </div>
+                </div>
+            </div>
             </div>
             <s:if test="!hasCSCPublicRole()">
                 <div class="panel panel-primary" id="workflowDiv">
@@ -134,5 +148,6 @@
 
 </script>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/view-support-documents.js?rnd=${app_release_no}'/>"></script>
 </body>
 </html>

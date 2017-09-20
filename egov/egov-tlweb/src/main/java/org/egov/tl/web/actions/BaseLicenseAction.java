@@ -76,6 +76,7 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseCategory;
 import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
@@ -132,6 +133,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient List<HashMap<String, Object>> licenseHistory = new ArrayList<>();
     protected transient boolean showAgreementDtl;
     protected transient String applicationNo;
+    protected List<LicenseDocument> licenseDocument = new ArrayList<>();
 
     @Autowired
     protected transient LicenseUtils licenseUtils;
@@ -187,6 +189,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     @ValidationErrorPage(NEW)
     public String create(final T license) {
+        addNewDocuments();
         populateWorkflowBean();
         if (tradeLicenseService.currentUserIsMeeseva()) {
             licenseService().createWithMeseva(license, workflowBean);
@@ -221,6 +224,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             return MESSAGE;
         }
         processWorkflow(NEW);
+        addNewDocuments();
         tradeLicenseService.updateTradeLicense((TradeLicense) license(), workflowBean);
         if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             return GENERATE_CERTIFICATE;
@@ -286,6 +290,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     @SkipValidation
     public String renew() {
+        addNewDocuments();
         populateWorkflowBean();
         if (tradeLicenseService.currentUserIsMeeseva()) {
             licenseService().renewWithMeeseva(license(), workflowBean);
@@ -446,7 +451,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
                         || position.getDeptDesig().getDesignation().getName().equalsIgnoreCase(SA_DESIGNATION)));
     }
 
-    public Boolean reassignEnabled(){
+    public Boolean reassignEnabled() {
         return processOwnerReassignmentService.reassignmentEnabled();
     }
 
@@ -555,4 +560,21 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public void setLicenseHistory(List<HashMap<String, Object>> licenseHistory) {
         this.licenseHistory = licenseHistory;
     }
+
+    public List<LicenseDocument> getLicenseDocument() {
+        return licenseDocument;
+    }
+
+    public void setLicenseDocument(List<LicenseDocument> licenseDocument) {
+        this.licenseDocument = licenseDocument;
+    }
+
+    public void addNewDocuments() {
+        licenseDocument.removeIf(licenseDocument -> licenseDocument.getUploadsFileName().isEmpty());
+        licenseDocument.forEach(tempDocument -> {
+            tempDocument.setType(tradeLicenseService.getLicenseDocumentType(tempDocument.getType().getId()));
+        });
+        license().getDocuments().addAll(licenseDocument);
+    }
+
 }

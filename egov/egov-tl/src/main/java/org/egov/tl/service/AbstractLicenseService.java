@@ -77,7 +77,6 @@ import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
-import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
@@ -233,7 +232,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         if (isBlank(license.getApplicationNumber()))
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        processAndStoreDocument(license.getDocuments(), license);
+        processAndStoreDocument(license);
         if (securityUtils.currentUserIsEmployee())
             transitionWorkFlow(license, workflowBean);
         else
@@ -267,7 +266,7 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     private List<Assignment> getAssignments() {
-        Department nextAssigneeDept = departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT);
+        Department nextAssigneeDept = departmentService.getDepartmentByCode(PUBLIC_HEALTH_DEPT_CODE);
         Designation nextAssigneeDesig = designationService.getDesignationByName(JA_DESIGNATION);
         List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         if (assignmentList.isEmpty()) {
@@ -375,7 +374,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public License renew(final T license, final WorkflowBean workflowBean) {
-        license.setLicenseAppType(getLicenseApplicationTypeForRenew());
         final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
@@ -384,6 +382,7 @@ public abstract class AbstractLicenseService<T extends License> {
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
         license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
         license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
+        processAndStoreDocument(license);
         final User currentUser = this.securityUtils.getCurrentUser();
         if (securityUtils.currentUserIsEmployee()) {
             Position wfInitiator = null;
@@ -558,10 +557,10 @@ public abstract class AbstractLicenseService<T extends License> {
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
     }
 
-    public void processAndStoreDocument(final List<LicenseDocument> documents, final License license) {
-        documents.forEach(document -> {
+    public void processAndStoreDocument(License license) {
+        license.getDocuments().forEach(document -> {
             document.setType(licenseDocumentTypeRepository.findOne(document.getType().getId()));
-            if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
+            if (!(document.getUploads().isEmpty() || document.getUploadsFileName().isEmpty())) {
                 int fileCount = 0;
                 for (final File file : document.getUploads()) {
                     final FileStoreMapper fileStore = this.fileStoreService.store(file,
@@ -570,11 +569,11 @@ public abstract class AbstractLicenseService<T extends License> {
                     document.getFiles().add(fileStore);
                 }
                 document.setEnclosed(true);
+                document.setDocDate(new Date());
             } else if (document.getType().isMandatory() && document.getFiles().isEmpty()) {
                 document.getFiles().clear();
                 throw new ValidationException("TL-004", "TL-004", document.getType().getName());
             }
-            document.setDocDate(new Date());
             document.setLicense(license);
         });
     }

@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~ accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2017  eGovernments Foundation
+  ~  Copyright (C) <2017>  eGovernments Foundation
   ~
   ~  The updated version of eGov suite of products as by eGovernments Foundation
   ~  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~      1) All versions of this program, verbatim or modified must carry this
   ~         Legal Notice.
+  ~ 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~         derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~ 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~ 	For any further queries on attribution, including queries on brand guidelines,
+  ~         please contact contact@egovernments.org
   ~
   ~      2) Any misrepresentation of the origin of the material is prohibited. It
   ~         is required that all modified versions of this material be marked in
@@ -123,7 +130,8 @@
     </div>
     <div class="row add-border">
         <div class="col-xs-3 add-margin"><s:text name='license.uom.lbl'/></div>
-        <div class="col-xs-3 add-margin view-content"><s:property value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}"/></div>
+        <div class="col-xs-3 add-margin view-content"><s:property
+                value="%{tradeName.licenseSubCategoryDetails.iterator.next.uom.name}"/></div>
         <div class="col-xs-3 add-margin"><s:text name='license.premises.lbl'/></div>
         <div class="col-xs-3 add-margin view-content"><s:property value="%{tradeArea_weight}"/></div>
     </div>
@@ -180,21 +188,16 @@
         <tfoot>
         <tr>
             <td colspan="3">
-                <a name="viewdcb" class="btn btn-secondary" id="viewdcb" onclick="window.open('/tl/dcb/view/'+ <s:property
-                        value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">View DCB</a>
+                <a name="viewdcb" class="btn btn-secondary" id="viewdcb"
+                   onclick="window.open('/tl/dcb/view/'+ <s:property
+                           value="%{id}"/>, '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
+                    <s:text name='lbl.view.dcb'/></a>
             </td>
         </tr>
         </tfoot>
     </table>
 </s:if>
-<div class="panel-heading  custom_form_panel_heading subheadnew">
-    <div class="panel-title"><s:text name='license.title.documentDetails'/></div>
-</div>
-<div class="panel-body">
-    <div class="row add-border">
-        <%@ include file="supportdocs-view.jsp" %>
-    </div>
-</div>
+</br></br>
 <s:if test="%{transitionInprogress()}">
     <%@ include file='license-workflow-history.jsp' %>
 </s:if>
