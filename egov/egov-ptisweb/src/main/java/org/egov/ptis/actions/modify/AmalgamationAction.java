@@ -163,6 +163,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private static final String PROPERTY_FORWARD_SUCCESS = "property.forward.success";
     protected static final String NOTICE = "notice";
     private static final String RESULT_ERROR = "error";
+    private static final String FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER = "From User where name = ? and mobileNumber = ? and gender = ? ";
 
     private BasicProperty basicProp = new BasicPropertyImpl();
     private PropertyImpl oldProperty = new PropertyImpl();
@@ -823,9 +824,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 if (StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()))
                     user = userService.getUserByAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
                 else
-                    user = userService.getUserByNameAndMobileNumberForGender(ownerInfo
-                            .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
-                                    .getGender());
+                	 user = (User) basicPropertyService.find(FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER, ownerInfo
+                             .getOwner().getName(), ownerInfo.getOwner().getMobileNumber(), ownerInfo.getOwner()
+                                     .getGender());
 
                 if (user == null) {
                     final Citizen newOwner = new Citizen();
