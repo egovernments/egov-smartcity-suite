@@ -171,7 +171,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     }
 
     private User createNewOwner(final PropertyOwnerInfo ownerInfo, final Citizen newOwner) {
-        newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+        newOwner.setAadhaarNumber(StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()) ? ownerInfo.getOwner().getAadhaarNumber() : null);
         newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
         newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
         newOwner.setGender(ownerInfo.getOwner().getGender());
