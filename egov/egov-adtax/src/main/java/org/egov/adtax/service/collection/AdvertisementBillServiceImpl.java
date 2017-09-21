@@ -189,7 +189,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
             final List<EgDemandDetails> demandDetail = advertisementDemandService.getDemandDetailByPassingDemandDemandReason(dmd,
                     pendingTaxReason);
 
-            if (demandDetail != null && demandDetail.isEmpty()) {
+            if (demandDetail != null && !demandDetail.isEmpty()) {
                 final EgDemandDetails existingDemandDetail = demandDetail.get(0);
                 final BigDecimal creaditAmt = existingDemandDetail.getAmount().subtract(
                         existingDemandDetail.getAmtCollected());
