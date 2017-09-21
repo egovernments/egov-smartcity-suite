@@ -97,9 +97,7 @@ public class ProcessOwnerReassignmentService {
 
         List<Assignment> assignments = assignmentService.findByDepartmentCodeAndDesignationCode(PUBLIC_HEALTH_DEPT_CODE
                 , Arrays.asList(JA_DESIGNATION_CODE, SA_DESIGNATION_CODE));
-        Long positionId = positionMasterService.getCurrentPositionForUser(ApplicationThreadLocals.getUserId()).getId();
-
-        assignments.removeIf(assignment -> assignment.getPosition().getId().equals(positionId));
+        assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
 
         return assignments
                 .stream()
