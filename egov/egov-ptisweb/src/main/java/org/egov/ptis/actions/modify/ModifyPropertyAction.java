@@ -50,16 +50,12 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPEC
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_ROLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.BIFURCATION_OF_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_BAL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_DMD_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_AMALGAMATE_PROPERTY;
@@ -231,14 +227,12 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private static final String PROPERTY_MODIFY_FINAL_REJECT_SUCCESS = "property.modify.final.reject.success";
 	private static final String PROPERTY_MODIFY_APPROVE_SUCCESS = "property.modify.approve.success";
 	private static final String PROPERTY_FORWARD_SUCCESS = "property.forward.success";
-	private static final String TAXDUES_ERROR_MSG = "taxdues.error.msg";
 	private static final String WF_PENDING_MSG = "wf.pending.msg";
 	private static final String PROPERTY_MODIFY_REJECT_FAILURE = "property.modify.reject.failure";
 	private static final String PROPERTY_ALTER_ADDITION = "Property Alter/Addition";
 	private static final String PROPERTY_BIFURCATION = "Property Bifurcation";
 	private static final String PROPERTY_GENERAL_REVISION_PETITION = "Property General Revision Petition";
 	private static final long serialVersionUID = 1L;
-	private static final String BIFURCATION = "Bifurcation";
 	private static final String RESULT_ERROR = "error";
 	private static final String MODIFY_ACK_TEMPLATE = "mainModifyPropertyAck";
 	private static final String GRP_ACK_TEMPLATE = "mainGRPPropertyAck";
@@ -500,24 +494,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			setWfErrorMsg(getText(WF_PENDING_MSG, msgParams));
 			target = TARGET_WORKFLOW_ERROR;
 		} else {
-			if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox) {
-				if (isUnderWtmsWF()) {
+			if (PROPERTY_MODIFY_REASON_BIFURCATE.equalsIgnoreCase(modifyRsn) && !fromInbox && isUnderWtmsWF()) {
 					wfErrorMsg = getText("msg.under.wtms.wf.modify");
 					return TARGET_WORKFLOW_ERROR;
-				}
-				final Map<String, BigDecimal> propertyTaxDetails = propService
-						.getCurrentPropertyTaxDetails(basicProp.getActiveProperty());
-				final Map<String, BigDecimal> currentTaxAndDue = propertyService
-						.getCurrentTaxAndBalance(propertyTaxDetails, new Date());
-				currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
-				currentPropertyTaxDue = currentTaxAndDue.get(CURR_BAL_STR);
-				arrearPropertyTaxDue = propertyTaxDetails.get(ARR_DMD_STR)
-						.subtract(propertyTaxDetails.get(ARR_COLL_STR));
-				currentWaterTaxDue = getWaterTaxDues();
-				if (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
-					setTaxDueErrorMsg(getText(TAXDUES_ERROR_MSG, new String[] { BIFURCATION }));
-					return BALANCE;
-				}
 			}
 
 			setOldProperty((PropertyImpl) getBasicProp().getProperty());
@@ -1827,13 +1806,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 				|| StringUtils.containsIgnoreCase(userDesignationList, JUNIOR_ASSISTANT)
 				|| StringUtils.containsIgnoreCase(userDesignationList, SENIOR_ASSISTANT))
 				&& PROPERTY_MODIFY_REASON_ADD_OR_ALTER.equals(modifyRsn);
-	}
-
-	private BigDecimal getWaterTaxDues() {
-		return propertyService.getWaterTaxDues(basicProp.getUpicNo()).get(PropertyTaxConstants.WATER_TAX_DUES) == null
-				? BigDecimal.ZERO
-				: new BigDecimal(Double.valueOf((Double) propertyService.getWaterTaxDues(basicProp.getUpicNo())
-						.get(PropertyTaxConstants.WATER_TAX_DUES)));
 	}
 
 	private Boolean isUnderWtmsWF() {
