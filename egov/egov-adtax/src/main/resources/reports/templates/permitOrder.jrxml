@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.0.final using JasperReports Library version 6.3.0  -->
-<!-- 2017-03-13T11:01:13 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-09-21T17:18:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="permitOrder" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -85,7 +85,7 @@
 				<textElement verticalAlignment="Middle" markup="styled">
 					<font size="10" isBold="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA["The advertiser shall abide by the statutory provisions of the Andhra Pradseh Municipalities Act, 1965 and the Rules and by-laws made there under (See conditions)."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["The advertiser shall abide by the statutory provisions of Act and the Rules and by-laws made there under (See conditions)."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="11" y="495" width="124" height="15" uuid="63d44e4e-3f6b-4acd-93c6-935361a77db1"/>
@@ -245,7 +245,7 @@
 			<staticText>
 				<reportElement x="11" y="12" width="173" height="36" uuid="ce961570-d28c-45c8-a514-fd0e6e225907"/>
 				<textElement verticalAlignment="Middle"/>
-				<text><![CDATA[Advertisement Number :]]></text>
+				<text><![CDATA[Application Number :]]></text>
 			</staticText>
 		</band>
 		<band height="127">
