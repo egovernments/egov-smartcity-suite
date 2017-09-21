@@ -37,27 +37,63 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.services.budget;
+package org.egov.restapi.model;
 
-import org.egov.infstr.services.PersistenceService;
-import org.egov.model.budget.BudgetGroup;
+public class BudgetCheackHelper {
 
-public class BudgetGroupService extends PersistenceService<BudgetGroup, Long> {
-    public BudgetGroupService() {
-        super(BudgetGroup.class);
+    private String departmentCode;
+    private String functionCode;
+    private String schemeCode;
+    private String subSchemeCode;
+    private String fundCode;
+    private String budgetHeadName;
+
+    public String getDepartmentCode() {
+        return departmentCode;
     }
 
-    public BudgetGroupService(final Class<BudgetGroup> type) {
-        super(type);
+    public void setDepartmentCode(final String departmentCode) {
+        this.departmentCode = departmentCode;
     }
 
-    public BudgetGroup getBudgetGroup(final Long coaId) {
-        BudgetGroup budgetGroup = null;
-        budgetGroup = find("from BudgetGroup where majorCode.id=? or maxCode.id =? or minCode.id = ?", coaId, coaId, coaId);
-        return budgetGroup;
+    public String getFunctionCode() {
+        return functionCode;
     }
 
-    public BudgetGroup getBudgetGroupByName(final String name) {
-        return find("from BudgetGroup where name=?", name);
+    public void setFunctionCode(final String functionCode) {
+        this.functionCode = functionCode;
     }
+
+    public String getSchemeCode() {
+        return schemeCode;
+    }
+
+    public void setSchemeCode(final String schemeCode) {
+        this.schemeCode = schemeCode;
+    }
+
+    public String getSubSchemeCode() {
+        return subSchemeCode;
+    }
+
+    public void setSubSchemeCode(final String subSchemeCode) {
+        this.subSchemeCode = subSchemeCode;
+    }
+
+    public String getFundCode() {
+        return fundCode;
+    }
+
+    public void setFundCode(final String fundCode) {
+        this.fundCode = fundCode;
+    }
+
+    public String getBudgetHeadName() {
+        return budgetHeadName;
+    }
+
+    public void setBudgetHeadname(final String budgetHeadName) {
+        this.budgetHeadName = budgetHeadName;
+    }
+
 }

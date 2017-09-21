@@ -621,4 +621,8 @@ public class RestApiConstants {
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
     public static final String DOCUMENT_NAME_REGD_DOCUMENT = "Registered Document";
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
+    
+    public static final String THIRD_PARTY_ERR_CODE_NO_BUDGETHEAD = "EGF-REST-7";
+    public static final String THIRD_PARTY_ERR_MSG_NO_BUDGETHEAD = "No Budget Head exists with the given Budget Head code";
+
 }
