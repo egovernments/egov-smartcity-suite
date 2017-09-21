@@ -120,7 +120,7 @@
 								<spring:message code="lbl.hoarding.adv"/>
 								</label>
 								<div class="col-sm-3 add-margin view-content">
-									${hoarding.advertiser}
+									${advertisementPermitDetail.advertiser}
 								</div>
 							</div>
 							<div class="form-group">
