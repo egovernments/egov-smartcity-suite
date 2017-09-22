@@ -45,48 +45,45 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.report.service;
+package org.egov.pgr.repository.specs;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
-import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.pgr.entity.contract.EscalationRouterRequest;
+import org.egov.pgr.entity.contract.EscalationRouterView;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
+import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
+import javax.persistence.criteria.Root;
 
-@Service
-@Transactional(readOnly = true)
-public class DrillDownReportService {
+public class EscalationRouterSpec implements Specification<EscalationRouterView> {
 
-    @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+    private final EscalationRouterRequest escalationRouterRequest;
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
+    public EscalationRouterSpec(final EscalationRouterRequest escalationRouterRequest) {
+        this.escalationRouterRequest = escalationRouterRequest;
     }
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
-    }
+    @Override
+    public Predicate toPredicate(final Root<EscalationRouterView> root, final CriteriaQuery<?> query,
+                                 final CriteriaBuilder builder) {
+        final Predicate predicate = builder.conjunction();
 
-    @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
-    }
+        if (escalationRouterRequest.getCategoryid() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("categoryid"), escalationRouterRequest.getCategoryid()));
+        if (escalationRouterRequest.getComplainttype() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("complainttype"), escalationRouterRequest.getComplainttype()));
+        if (escalationRouterRequest.getBoundary() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("boundary"), escalationRouterRequest.getBoundary()));
+        if (escalationRouterRequest.getPosition() != null)
+            predicate.getExpressions()
+                    .add(builder.equal(root.get("position"), escalationRouterRequest.getPosition()));
+        if (escalationRouterRequest.getActive())
+            predicate.getExpressions().add(builder.equal(root.get("active"), true));
 
-    @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
+        return predicate;
     }
 }

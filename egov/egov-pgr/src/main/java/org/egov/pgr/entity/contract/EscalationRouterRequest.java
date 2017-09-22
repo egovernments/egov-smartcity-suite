@@ -45,48 +45,66 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.report.service;
+package org.egov.pgr.entity.contract;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
-import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import java.util.List;
+public class EscalationRouterRequest extends DataTableSearchRequest {
 
-@Service
-@Transactional(readOnly = true)
-public class DrillDownReportService {
+    private Long complainttype;
+    private Long categoryid;
+    private Long boundary;
+    private Long position;
+    private ReportFormat printFormat;
 
-    @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+    private Boolean active;
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
+    public Long getComplainttype() {
+        return complainttype;
     }
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
+    public void setComplainttype(final Long complainttype) {
+        this.complainttype = complainttype;
     }
 
-    @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
+    public Long getCategoryid() {
+        return categoryid;
     }
 
-    @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
+    public void setCategoryid(final Long categoryid) {
+        this.categoryid = categoryid;
     }
 
-    @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
+    public Long getBoundary() {
+        return boundary;
+    }
+
+    public void setBoundary(final Long boundary) {
+        this.boundary = boundary;
+    }
+
+    public Long getPosition() {
+        return position;
+    }
+
+    public void setPosition(final Long position) {
+        this.position = position;
+    }
+
+    public ReportFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(final ReportFormat printFormat) {
+        this.printFormat = printFormat;
+    }
+
+    public Boolean getActive() {
+        return active;
+    }
+
+    public void setActive(Boolean active) {
+        this.active = active;
     }
 }

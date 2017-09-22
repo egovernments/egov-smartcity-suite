@@ -47,87 +47,81 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.apache.commons.lang.StringUtils;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
-import org.egov.pgr.report.entity.contract.DrilldownAdaptor;
-import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
-import org.egov.pgr.report.service.DrillDownReportService;
+import org.egov.pgr.entity.contract.EscalationRouterRequest;
+import org.egov.pgr.entity.contract.EscalationRouterView;
+import org.egov.pgr.report.entity.contract.EscalationRouterAdaptor;
+import org.egov.pgr.report.service.EscalationRouterReportService;
+import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("/report/drilldown")
-public class DrillDownReportController {
+@RequestMapping("/report/escalationrouter")
+public class EscalationRouterReportController {
 
     @Autowired
-    private DrillDownReportService drillDownReportService;
+    private ComplaintTypeCategoryService complaintTypeCategoryService;
+
+    @Autowired
+    private BoundaryService boundaryService;
+
+    @Autowired
+    private EscalationRouterReportService escalationRouterReportService;
 
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("boundarywise")
-    public String showBoundarywiseDrilldownReportForm(Model model) {
-        model.addAttribute("mode", "ByBoundary");
-        return "drillDown-search";
+    @ModelAttribute
+    public EscalationRouterView escalationRouterView() {
+        return new EscalationRouterView();
     }
 
-    @GetMapping("departmentwise")
-    public String showDepartmentwiseDrilldownReportForm(Model model) {
-        model.addAttribute("mode", "ByDepartment");
-        return "drillDown-search";
+    @GetMapping
+    public String escalationRouterReportSearchForm(final Model model) {
+        model.addAttribute("categories", complaintTypeCategoryService.findAll());
+        model.addAttribute("complaintTypes", Collections.emptyList());
+        model.addAttribute("wardList",
+                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "ADMINISTRATION"));
+        return "routerescalation-report";
     }
 
-    @GetMapping(produces = TEXT_PLAIN_VALUE)
+    @PostMapping(produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchDrilldownReport(DrilldownReportRequest reportRequest) {
-        if (StringUtils.isNotBlank(reportRequest.getDeptid())
-                && StringUtils.isNotBlank(reportRequest.getComplainttypeid())
-                && StringUtils.isNotBlank(reportRequest.getSelecteduserid())) {
-            return new DataTable<>(drillDownReportService.pagedDrilldownRecordsByCompalintId(reportRequest), reportRequest.draw())
-                    .toJson(DrilldownAdaptor.class);
-        } else
-            return new DataTable<>(drillDownReportService.pagedDrilldownRecords(reportRequest), reportRequest.draw())
-                    .toJson(GrievanceDrilldownReportAdaptor.class);
-    }
-
-    @GetMapping("grand-total")
-    @ResponseBody
-    public Object[] drilldownReportGrandTotal(DrilldownReportRequest reportRequest) {
-        return drillDownReportService.drilldownRecordsGrandTotal(reportRequest);
+    public String searchEscalationRouterReport(EscalationRouterRequest escalationRouterRequest) {
+        return new DataTable<>(escalationRouterReportService.pagedEscalationRouterReport(escalationRouterRequest),
+                escalationRouterRequest.draw())
+                .toJson(EscalationRouterAdaptor.class);
     }
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadDrilldownReport(DrilldownReportRequest request) {
-        final ReportRequest reportRequest;
-        final Map<String, Object> reportparam = new HashMap<>();
-        if (StringUtils.isNotBlank(request.getDeptid()) &&
-                StringUtils.isNotBlank(request.getComplainttypeid()) && StringUtils.isNotBlank(request.getSelecteduserid())) {
-            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
-                    drillDownReportService.getDrilldownRecordsByComplaintId(request), new HashMap<>());
-        } else
-            reportRequest = new ReportRequest("pgr_functionarywise_report",
-                    drillDownReportService.getAllDrilldownRecords(request), new HashMap<>());
-        reportparam.put("groupBy", request.getGroupBy());
-        reportparam.put("reportTitle", request.getReportTitle());
-        reportRequest.setReportParams(reportparam);
-        reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("drillDown_report");
+    public ResponseEntity<InputStreamResource> downloadEscalationRouterReport(EscalationRouterRequest escalationRouterRequest) {
+
+        final Map<String, Object> responseParams = new HashMap<>();
+        final ReportRequest reportRequest = new ReportRequest("pgr_routerescalation_report",
+                escalationRouterReportService.getEscalationRouterReportRecords(escalationRouterRequest),
+                responseParams);
+        reportRequest.setReportFormat(escalationRouterRequest.getPrintFormat());
+        reportRequest.setReportName("escalation_router_report");
         return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
 }

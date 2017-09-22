@@ -48,11 +48,14 @@
 package org.egov.pgr.report.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
-import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
+import org.egov.pgr.entity.contract.EscalationRouterRequest;
+import org.egov.pgr.entity.contract.EscalationRouterView;
+import org.egov.pgr.report.repository.EscalationRouterReportRepository;
+import org.egov.pgr.repository.specs.EscalationRouterSpec;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -60,33 +63,23 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class DrillDownReportService {
+public class EscalationRouterReportService {
 
     @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+    private EscalationRouterReportRepository escalationRouterReportRepository;
 
     @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
+    public Page<EscalationRouterView> pagedEscalationRouterReport(final EscalationRouterRequest escalationRouterRequest) {
+        final Pageable pageable = new PageRequest(escalationRouterRequest.pageNumber(),
+                escalationRouterRequest.pageSize(),
+                escalationRouterRequest.orderDir(),
+                escalationRouterRequest.orderBy());
+        return escalationRouterReportRepository.findAll(new EscalationRouterSpec(escalationRouterRequest), pageable);
     }
 
     @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
+    public List<EscalationRouterView> getEscalationRouterReportRecords(final EscalationRouterRequest escalationRouterRequest) {
+        return escalationRouterReportRepository.findAll(new EscalationRouterSpec(escalationRouterRequest));
     }
 
-    @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
-    }
 }

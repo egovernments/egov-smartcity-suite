@@ -45,48 +45,49 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.report.service;
+package org.egov.pgr.report.entity.contract;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
-public class DrillDownReportService {
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-    @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+public class GrievanceDrilldownReportAdaptor implements DataTableJsonAdapter<DrilldownReportView> {
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
+    @Override
+    public JsonElement serialize(DataTable<DrilldownReportView> drillDownReportResponse, Type type,
+                                 JsonSerializationContext jsc) {
+        List<DrilldownReportView> drilldownReportResult = drillDownReportResponse.getData();
+        JsonArray reportData = new JsonArray();
+        drilldownReportResult.forEach(reportObject -> {
+            JsonObject jsonObject = new JsonObject();
+            if (reportObject.getEmployeeName() != null)
+                jsonObject.addProperty("name", defaultIfBlank(reportObject.getEmployeeName()));
+            if (reportObject.getComplaintTypeName() != null)
+                jsonObject.addProperty("name", defaultIfBlank(reportObject.getComplaintTypeName()));
+            jsonObject.addProperty("completed", reportObject.getCompleted());
+            jsonObject.addProperty("inprocess", reportObject.getInprocess());
+            jsonObject.addProperty("registered", reportObject.getRegistered());
+            jsonObject.addProperty("rejected", reportObject.getRejected());
+            jsonObject.addProperty("withinsla", reportObject.getWithinSLA());
+            jsonObject.addProperty("beyondsla", reportObject.getBeyondSLA());
+            jsonObject.addProperty("total", reportObject.getTotal());
+            jsonObject.addProperty("reopened", reportObject.getReopened());
+            if (reportObject.getEmployeeId() != null)
+                jsonObject.addProperty("usrid", reportObject.getEmployeeId());
+            if (reportObject.getComplaintTypeId() != null)
+                jsonObject.addProperty("complaintTyeId", reportObject.getComplaintTypeId());
+            reportData.add(jsonObject);
+        });
+        return enhance(reportData, drillDownReportResponse);
     }
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
-    }
-
-    @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
-    }
 }

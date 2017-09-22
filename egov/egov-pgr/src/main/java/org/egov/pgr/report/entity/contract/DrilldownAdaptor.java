@@ -45,48 +45,43 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.report.service;
+package org.egov.pgr.report.entity.contract;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
-public class DrillDownReportService {
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-    @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+public class DrilldownAdaptor implements DataTableJsonAdapter<DrilldownReportView> {
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
-    }
-
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
-    }
-
-    @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
+    @Override
+    public JsonElement serialize(final DataTable<DrilldownReportView> reportResponse, final Type type,
+                                 final JsonSerializationContext jsc) {
+        final List<DrilldownReportView> functionarywiseResult = reportResponse.getData();
+        final JsonArray drilldownReportData = new JsonArray();
+        functionarywiseResult.forEach(reportObject -> {
+            final JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("crn", defaultIfBlank(reportObject.getCrn()));
+            jsonObject.addProperty("createddate", defaultIfBlank(getFormattedDate(reportObject.getCreatedDate(), "dd-MM-yyyy hh:mm a")));
+            jsonObject.addProperty("complainantname", defaultIfBlank(reportObject.getComplainantName()));
+            jsonObject.addProperty("details", defaultIfBlank(reportObject.getComplaintDetail()));
+            jsonObject.addProperty("boundaryname", defaultIfBlank(reportObject.getBoundaryName()));
+            jsonObject.addProperty("status", defaultIfBlank(reportObject.getStatus()));
+            jsonObject.addProperty("complaintId", reportObject.getComplainantId());
+            jsonObject.addProperty("feedback", CitizenFeedback.value(reportObject.getFeedback()));
+            jsonObject.addProperty("issla", defaultIfBlank(reportObject.getIsSLA()));
+            drilldownReportData.add(jsonObject);
+        });
+        return enhance(drilldownReportData, reportResponse);
     }
 }

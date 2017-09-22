@@ -51,7 +51,7 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.Page;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
+import org.egov.pgr.report.repository.FunctionarywiseReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,33 +60,33 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class DrillDownReportService {
+public class FunctionarywiseReportService {
 
     @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+    private FunctionarywiseReportRepository functionarywiseReportRepository;
 
     @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
+    public Page<DrilldownReportView> pagedFunctionarwiseRecords(DrilldownReportRequest request) {
+        return functionarywiseReportRepository.findByFunctionarywiseRequest(request);
     }
 
     @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
+    public Page<DrilldownReportView> pagedFunctionarwiseReportByCompalints(DrilldownReportRequest request) {
+        return functionarywiseReportRepository.findComplaintsByEmployeeId(request);
     }
 
     @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
+    public Object[] functionarywiseReportGrandTotal(DrilldownReportRequest request) {
+        return functionarywiseReportRepository.findGrandTotalByRequest(request);
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
+    public List<DrilldownReportView> getAllFunctionarywiseRecords(DrilldownReportRequest request) {
+        return functionarywiseReportRepository.findFunctionarywiseReportByRequest(request);
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
+    public List<DrilldownReportView> getFunctionarywiseRecordsByEmployee(DrilldownReportRequest request) {
+        return functionarywiseReportRepository.findFunctionarywiseReportByEmployeeId(request);
     }
 }

@@ -51,7 +51,7 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.Page;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
+import org.egov.pgr.report.repository.GrievanceTypewiseReportRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,33 +60,33 @@ import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
-public class DrillDownReportService {
+public class GrievanceTypewiseReportService {
 
     @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+    private GrievanceTypewiseReportRepository grievanceTypewiseReportRepository;
 
     @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
+    public Page<DrilldownReportView> pagedGrievanceTypewiseRecords(DrilldownReportRequest reportRequest) {
+        return grievanceTypewiseReportRepository.findGrievanceTypewiseRecord(reportRequest);
     }
 
     @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
+    public Page<DrilldownReportView> pagedGrievanceTypewiseRecordsByCompalintId(DrilldownReportRequest reportRequest) {
+        return grievanceTypewiseReportRepository.findGrievanceTypewiseRecordsByComplaintId(reportRequest);
     }
 
     @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
+    public Object[] grievanceTypewiseReportGrandTotal(DrilldownReportRequest reportRequest) {
+        return grievanceTypewiseReportRepository.findGrandTotal(reportRequest);
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
+    public List<DrilldownReportView> getAllGrievanceTypewiseRecords(DrilldownReportRequest reportRequest) {
+        return grievanceTypewiseReportRepository.findGrievanceTypewiseRecordList(reportRequest);
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
+    public List<DrilldownReportView> getGrievanceTypewiseRecordsByComplaintId(DrilldownReportRequest reportRequest) {
+        return grievanceTypewiseReportRepository.findGrievanceTypewiseRecordlistByComplaintId(reportRequest);
     }
 }

@@ -59,16 +59,15 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseReportRepositoryCustom {
+public class DrilldownReportRepositoryImpl implements DrilldownReportRepositoryCustom {
 
     private static final String CREATED_DATE = "createdDate";
-    private static final String EMPLOYEE_ID = "employeeId";
-    private static final String EMPLOYEE_NAME = "employeeName";
     private static final String STATUS = "status";
     private static final String REGISTERED = "registered";
     private static final String INPROCESS = "inprocess";
@@ -77,12 +76,16 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
     private static final String REJECTED = "rejected";
     private static final String WITHINSLA = "withinSLA";
     private static final String BEYONDSLA = "beyondSLA";
+    private static final String PARENTBOUNDARY = "parentBoundary";
+    private static final String LOCALITY = "locality";
+    private static final String DEPARTMENT = "department";
+    private static final String COMPLAINTTYPENAME = "complaintTypeName";
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Override
-    public Page<DrilldownReportView> findByFunctionarywiseRequest(DrilldownReportRequest reportRequest) {
+    public Page<DrilldownReportView> findDrilldownRecords(DrilldownReportRequest reportRequest) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
@@ -90,19 +93,25 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
         CriteriaQuery<DrilldownReportView> recordCountQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
         Root<DrilldownReportView> countRoot = recordCountQuery.from(DrilldownReportView.class);
 
-        recordCountQuery.multiselect(criteriaBuilder.count(countRoot))
+        Path<String> selection = null;
+        if (selectByBoundary(reportRequest, root) != null)
+            selection = selectByBoundary(reportRequest, root);
+        else
+            selection = selectbyDepartment(reportRequest, root);
+
+        recordCountQuery.multiselect(criteriaBuilder.count(selection))
                 .where(criteria(reportRequest, criteriaBuilder, countRoot)
-                        .toArray(new Predicate[]{}))
-                .groupBy(countRoot.get(EMPLOYEE_ID), countRoot.get(EMPLOYEE_NAME));
+                        .toArray(new Predicate[]{})).groupBy(selection);
 
-        CriteriaQuery<DrilldownReportView> reportQuery = generateReportByRequest(criteriaQuery,
-                reportRequest, criteriaBuilder, root);
-
-        if (reportRequest.orderBy().equals(EMPLOYEE_NAME))
+        CriteriaQuery<DrilldownReportView> reportQuery = generateCriteriaToGetRecordsByRequest(reportRequest, criteriaQuery,
+                criteriaBuilder, root);
+        if (reportRequest.orderBy().equals(PARENTBOUNDARY) || reportRequest.orderBy().equals(LOCALITY) ||
+                reportRequest.orderBy().equals(DEPARTMENT) || reportRequest.orderBy().equals(COMPLAINTTYPENAME) ||
+                reportRequest.orderBy().equals("employeePosition")) {
             reportQuery.orderBy(reportRequest.orderDir().equals(Direction.ASC)
                     ? criteriaBuilder.asc(root.get(reportRequest.orderBy()))
                     : criteriaBuilder.desc(root.get(reportRequest.orderBy())));
-        else
+        } else
             reportQuery.orderBy(reportRequest.orderDir().equals(Direction.ASC)
                     ? criteriaBuilder.asc(criteriaBuilder.sum(root.get(reportRequest.orderBy())))
                     : criteriaBuilder.desc(criteriaBuilder.sum(root.get(reportRequest.orderBy()))));
@@ -112,7 +121,7 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
     }
 
     @Override
-    public Page<DrilldownReportView> findComplaintsByEmployeeId(DrilldownReportRequest reportRequest) {
+    public Page<DrilldownReportView> findDrilldownRecordsByComplaintTypeId(DrilldownReportRequest reportRequest) {
 
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
@@ -126,8 +135,8 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
                 .groupBy(countRoot.get("crn"));
 
 
-        TypedQuery<DrilldownReportView> query = entityManager.createQuery(generateReportByEmployeeId(criteriaQuery,
-                reportRequest, criteriaBuilder, root)
+        TypedQuery<DrilldownReportView> query = entityManager.createQuery(generateCriteriaToGetComplaints(reportRequest, criteriaQuery,
+                criteriaBuilder, root)
                 .orderBy(reportRequest.orderDir().equals(Direction.ASC)
                         ? criteriaBuilder.asc(root.get(reportRequest.orderBy()))
                         : criteriaBuilder.desc(root.get(reportRequest.orderBy()))));
@@ -139,7 +148,7 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
     }
 
     @Override
-    public Object[] findGrandTotalByRequest(DrilldownReportRequest reportRequest) {
+    public Object[] findDrilldownGrandTotal(DrilldownReportRequest reportRequest) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<Object[]> criteriaQuery = criteriaBuilder.createQuery(Object[].class);
         Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
@@ -154,32 +163,29 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
     }
 
     @Override
-    public List<DrilldownReportView> findFunctionarywiseReportByEmployeeId(DrilldownReportRequest reportRequest) {
-
+    public List<DrilldownReportView> findDrilldownRecordsByRequest(DrilldownReportRequest reportRequest) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
         Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
 
-        return entityManager.createQuery(generateReportByEmployeeId(criteriaQuery,
-                reportRequest, criteriaBuilder, root)).getResultList();
+        return entityManager.createQuery(generateCriteriaToGetComplaints(reportRequest, criteriaQuery, criteriaBuilder, root))
+                .getResultList();
     }
 
     @Override
-    public List<DrilldownReportView> findFunctionarywiseReportByRequest(DrilldownReportRequest reportRequest) {
-
+    public List<DrilldownReportView> findDrilldownRecordList(DrilldownReportRequest reportRequest) {
         CriteriaBuilder criteriaBuilder = entityManager.getCriteriaBuilder();
         CriteriaQuery<DrilldownReportView> criteriaQuery = criteriaBuilder.createQuery(DrilldownReportView.class);
         Root<DrilldownReportView> root = criteriaQuery.from(DrilldownReportView.class);
 
-        return entityManager.createQuery(generateReportByRequest(criteriaQuery,
-                reportRequest, criteriaBuilder, root)).getResultList();
+        return entityManager.createQuery(generateCriteriaToGetRecordsByRequest(reportRequest, criteriaQuery, criteriaBuilder, root))
+                .getResultList();
     }
 
-    private CriteriaQuery<DrilldownReportView> generateReportByEmployeeId(CriteriaQuery<DrilldownReportView> criteriaQuery,
-                                                                          DrilldownReportRequest reportRequest,
-                                                                          CriteriaBuilder criteriaBuilder,
-                                                                          Root<DrilldownReportView> root) {
-
+    private CriteriaQuery<DrilldownReportView> generateCriteriaToGetComplaints(DrilldownReportRequest reportRequest,
+                                                                               CriteriaQuery<DrilldownReportView> criteriaQuery,
+                                                                               CriteriaBuilder criteriaBuilder,
+                                                                               Root<DrilldownReportView> root) {
         criteriaQuery.multiselect(root.get("complainantId"), root.get("crn"), root.get(CREATED_DATE),
                 root.get("complainantName"), root.get("complaintDetail"), root.get(STATUS),
                 root.get("boundaryName"), root.get("feedback"), root.get("isSLA"))
@@ -187,24 +193,27 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
         return criteriaQuery;
     }
 
-    private CriteriaQuery<DrilldownReportView> generateReportByRequest(CriteriaQuery<DrilldownReportView> criteriaQuery,
-                                                                       DrilldownReportRequest reportRequest,
-                                                                       CriteriaBuilder criteriaBuilder,
-                                                                       Root<DrilldownReportView> root) {
-        criteriaQuery
-                .multiselect(root.get(EMPLOYEE_ID), root.get(EMPLOYEE_NAME),
-                        criteriaBuilder.sum(root.get(REGISTERED)), criteriaBuilder.sum(root.get(INPROCESS)),
-                        criteriaBuilder.sum(root.get(COMPLETED)), criteriaBuilder.sum(root.get(REOPENED)),
-                        criteriaBuilder.sum(root.get(REJECTED)), criteriaBuilder.sum(root.get(WITHINSLA)),
-                        criteriaBuilder.sum(root.get(BEYONDSLA)))
+    private CriteriaQuery<DrilldownReportView> generateCriteriaToGetRecordsByRequest(DrilldownReportRequest reportRequest,
+                                                                                     CriteriaQuery<DrilldownReportView> criteriaQuery,
+                                                                                     CriteriaBuilder criteriaBuilder,
+                                                                                     Root<DrilldownReportView> root) {
+        Path<String> selection = null;
+        if ("ByBoundary".equals(reportRequest.getGroupBy()))
+            selection = selectByBoundary(reportRequest, root);
+        else
+            selection = selectbyDepartment(reportRequest, root);
+        criteriaQuery.multiselect(selection,
+                criteriaBuilder.sum(root.get(REGISTERED)), criteriaBuilder.sum(root.get(INPROCESS)),
+                criteriaBuilder.sum(root.get(COMPLETED)), criteriaBuilder.sum(root.get(REJECTED)),
+                criteriaBuilder.sum(root.get(REOPENED)), criteriaBuilder.sum(root.get(WITHINSLA)),
+                criteriaBuilder.sum(root.get(BEYONDSLA)))
                 .where(criteria(reportRequest, criteriaBuilder, root).toArray(new Predicate[]{}))
-                .groupBy(root.get(EMPLOYEE_ID), root.get(EMPLOYEE_NAME));
+                .groupBy(selection);
 
         return criteriaQuery;
     }
 
-    private List<Predicate> criteria(DrilldownReportRequest reportRequest,
-                                     CriteriaBuilder criteriaBuilder,
+    private List<Predicate> criteria(DrilldownReportRequest reportRequest, CriteriaBuilder criteriaBuilder,
                                      Root<DrilldownReportView> root) {
 
         final List<Predicate> predicates = new ArrayList<>();
@@ -221,39 +230,51 @@ public class FunctionarywiseReportRepositoryImpl implements FunctionarywiseRepor
         if ("lastninetydays".equals(reportRequest.getComplaintDateType()))
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(CREATED_DATE),
                     DateUtils.endOfToday().minusDays(91).toDate()));
-        if (reportRequest.getToDate() != null)
+        if (reportRequest.getToDate() != null && reportRequest.getFromDate() == null)
             predicates.add(criteriaBuilder.lessThanOrEqualTo(root.get(CREATED_DATE),
                     DateUtils.endOfDay(reportRequest.getToDate())));
-        if (reportRequest.getFromDate() != null)
+        if (reportRequest.getFromDate() != null && reportRequest.getToDate() == null)
             predicates.add(criteriaBuilder.greaterThanOrEqualTo(root.get(CREATED_DATE),
                     DateUtils.startOfDay(reportRequest.getFromDate())));
-        if (StringUtils.isNotBlank(reportRequest.getUsrid()) &&
-                StringUtils.isNotBlank(reportRequest.getStatus()))
-            predicates.add(criteriaBuilder.equal(root.get(EMPLOYEE_ID), reportRequest.getUsrid()));
-        if (StringUtils.isNotBlank(reportRequest.getStatus())) {
-            predicates.addAll(predicatesForComplaints(reportRequest, criteriaBuilder, root));
+        if (StringUtils.isNotBlank(reportRequest.getBoundary()))
+            predicates.add(criteriaBuilder.equal(root.get(PARENTBOUNDARY), reportRequest.getBoundary()));
+        if (StringUtils.isNotBlank(reportRequest.getDeptid()))
+            predicates.add(criteriaBuilder.equal(root.get(DEPARTMENT), reportRequest.getDeptid()));
+        if (StringUtils.isNotBlank(reportRequest.getLocality()))
+            predicates.add(criteriaBuilder.equal(root.get(LOCALITY), reportRequest.getLocality()));
+        if (StringUtils.isNotBlank(reportRequest.getComplainttypeid()))
+            predicates.add(criteriaBuilder.equal(root.get(COMPLAINTTYPENAME), reportRequest.getComplainttypeid()));
+        if (StringUtils.isNotBlank(reportRequest.getSelecteduserid())) {
+            String userName = reportRequest.getSelecteduserid().split("~")[0];
+            predicates.add(criteriaBuilder.equal(root.get("employeeName"), userName));
         }
         return predicates;
     }
 
-    private List<Predicate> predicatesForComplaints(DrilldownReportRequest reportRequest,
-                                                    CriteriaBuilder criteriaBuilder,
-                                                    Root<DrilldownReportView> root) {
-        final List<Predicate> predicates = new ArrayList<>();
-        if (REGISTERED.equalsIgnoreCase(reportRequest.getStatus()))
-            predicates.add(criteriaBuilder.equal(root.get(STATUS), "REGISTERED"));
-        if (INPROCESS.equalsIgnoreCase(reportRequest.getStatus()))
-            predicates.add(root.get(STATUS).in("FORWARDED", "PROCESSING", "NOTCOMPLETED"));
-        if (REJECTED.equalsIgnoreCase(reportRequest.getStatus()))
-            predicates.add(criteriaBuilder.equal(root.get(STATUS), "REJECTED"));
-        if (COMPLETED.equalsIgnoreCase(reportRequest.getStatus()))
-            predicates.add(root.get(STATUS).in("WITHDRAWN", "COMPLETED", "CLOSED"));
-        if (REOPENED.equalsIgnoreCase(reportRequest.getStatus()))
-            predicates.add(criteriaBuilder.equal(root.get(STATUS), "REOPENED"));
-        if ("Within SLA".equalsIgnoreCase(reportRequest.getStatus()))
-            predicates.add(criteriaBuilder.greaterThan(root.get(WITHINSLA), 0));
-        if ("Beyond SLA".equalsIgnoreCase(reportRequest.getStatus()))
-            predicates.add(criteriaBuilder.greaterThan(root.get(BEYONDSLA), 0));
-        return predicates;
+    private Path<String> selectByBoundary(DrilldownReportRequest reportRequest, Root<DrilldownReportView> root) {
+
+        Path<String> selection = null;
+        if (StringUtils.isNotBlank(reportRequest.getBoundary())) {
+            if (StringUtils.isNotBlank(reportRequest.getLocality())) {
+                selection = selectbyDepartment(reportRequest, root);
+            } else
+                selection = root.get(LOCALITY);
+        } else if ("ByBoundary".equals(reportRequest.getGroupBy()))
+            selection = root.get(PARENTBOUNDARY);
+
+        return selection;
     }
+
+    private Path<String> selectbyDepartment(DrilldownReportRequest reportRequest, Root<DrilldownReportView> root) {
+        Path<String> selection;
+        if (StringUtils.isNotBlank(reportRequest.getDeptid())) {
+            if (StringUtils.isNotBlank(reportRequest.getComplainttypeid()))
+                selection = root.get("employeePosition");
+            else
+                selection = root.get(COMPLAINTTYPENAME);
+        } else
+            selection = root.get(DEPARTMENT);
+        return selection;
+    }
+
 }

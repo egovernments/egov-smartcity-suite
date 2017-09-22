@@ -45,48 +45,38 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.report.service;
+package org.egov.pgr.report.entity.contract;
 
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
-import org.egov.pgr.report.entity.view.DrilldownReportView;
-import org.egov.pgr.report.repository.DrilldownReportRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.report.entity.view.AgeingReportView;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-@Service
-@Transactional(readOnly = true)
-public class DrillDownReportService {
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-    @Autowired
-    private DrilldownReportRepository drilldownReportRepository;
+public class AgeingReportAdaptor implements DataTableJsonAdapter<AgeingReportView> {
 
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecords(reportRequest);
-    }
-
-    @ReadOnly
-    public Page<DrilldownReportView> pagedDrilldownRecordsByCompalintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByComplaintTypeId(reportRequest);
-    }
-
-    @ReadOnly
-    public Object[] drilldownRecordsGrandTotal(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownGrandTotal(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
-    }
-
-    @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
+    public JsonElement serialize(DataTable<AgeingReportView> ageingReportResponse, Type type,
+                                 JsonSerializationContext jsc) {
+        List<AgeingReportView> ageingreportResult = ageingReportResponse.getData();
+        JsonArray ageingReportFormData = new JsonArray();
+        ageingreportResult.forEach(ageingReportObject -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("complainttype", defaultIfBlank(ageingReportObject.getDepartment()));
+            jsonObject.addProperty("grtthn30", ageingReportObject.getGreater30());
+            jsonObject.addProperty("btw10to30", ageingReportObject.getBtw10to30());
+            jsonObject.addProperty("btw5to10", ageingReportObject.getBtw5to10());
+            jsonObject.addProperty("btw2to5", ageingReportObject.getBtw2to5());
+            jsonObject.addProperty("lsthn2", ageingReportObject.getLsthn2());
+            jsonObject.addProperty("total", ageingReportObject.getTotal());
+            ageingReportFormData.add(jsonObject);
+        });
+        return enhance(ageingReportFormData, ageingReportResponse);
     }
 }

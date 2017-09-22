@@ -47,87 +47,76 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
-import org.egov.pgr.report.service.DrillDownReportService;
+import org.egov.pgr.report.service.FunctionarywiseReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.HashMap;
-import java.util.Map;
 
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("/report/drilldown")
-public class DrillDownReportController {
+@RequestMapping(value = "/report/functionarywise")
+public class FunctionarywiseReportController {
 
     @Autowired
-    private DrillDownReportService drillDownReportService;
+    private FunctionarywiseReportService functionarywiseReportService;
 
     @Autowired
     private ReportService reportService;
 
-    @GetMapping("boundarywise")
-    public String showBoundarywiseDrilldownReportForm(Model model) {
-        model.addAttribute("mode", "ByBoundary");
-        return "drillDown-search";
+    @GetMapping
+    public String functionarywiseSearchForm() {
+        return "functionaryWise-search";
     }
 
-    @GetMapping("departmentwise")
-    public String showDepartmentwiseDrilldownReportForm(Model model) {
-        model.addAttribute("mode", "ByDepartment");
-        return "drillDown-search";
-    }
-
-    @GetMapping(produces = TEXT_PLAIN_VALUE)
+    @PostMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchDrilldownReport(DrilldownReportRequest reportRequest) {
-        if (StringUtils.isNotBlank(reportRequest.getDeptid())
-                && StringUtils.isNotBlank(reportRequest.getComplainttypeid())
-                && StringUtils.isNotBlank(reportRequest.getSelecteduserid())) {
-            return new DataTable<>(drillDownReportService.pagedDrilldownRecordsByCompalintId(reportRequest), reportRequest.draw())
+    public String searchFunctionarywiseReport(DrilldownReportRequest reportRequest) {
+        if (StringUtils.isNotBlank(reportRequest.getUsrid()) && StringUtils.isNotBlank(reportRequest.getStatus())) {
+            return new DataTable<>(functionarywiseReportService.pagedFunctionarwiseReportByCompalints(reportRequest),
+                    reportRequest.draw())
                     .toJson(DrilldownAdaptor.class);
+
         } else
-            return new DataTable<>(drillDownReportService.pagedDrilldownRecords(reportRequest), reportRequest.draw())
+            return new DataTable<>(functionarywiseReportService.pagedFunctionarwiseRecords(reportRequest),
+                    reportRequest.draw())
                     .toJson(GrievanceDrilldownReportAdaptor.class);
     }
 
     @GetMapping("grand-total")
     @ResponseBody
-    public Object[] drilldownReportGrandTotal(DrilldownReportRequest reportRequest) {
-        return drillDownReportService.drilldownRecordsGrandTotal(reportRequest);
+    public Object[] functionarywiseGrandTotal(DrilldownReportRequest request) {
+        return functionarywiseReportService.functionarywiseReportGrandTotal(request);
     }
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadDrilldownReport(DrilldownReportRequest request) {
+    public ResponseEntity<InputStreamResource> downloadFunctionarywiseReport(DrilldownReportRequest request) {
         final ReportRequest reportRequest;
-        final Map<String, Object> reportparam = new HashMap<>();
-        if (StringUtils.isNotBlank(request.getDeptid()) &&
-                StringUtils.isNotBlank(request.getComplainttypeid()) && StringUtils.isNotBlank(request.getSelecteduserid())) {
+        if (StringUtils.isNotBlank(request.getUsrid()) && StringUtils.isNotBlank(request.getStatus())) {
             reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
-                    drillDownReportService.getDrilldownRecordsByComplaintId(request), new HashMap<>());
+                    functionarywiseReportService.getFunctionarywiseRecordsByEmployee(request), new HashMap<>());
         } else
             reportRequest = new ReportRequest("pgr_functionarywise_report",
-                    drillDownReportService.getAllDrilldownRecords(request), new HashMap<>());
-        reportparam.put("groupBy", request.getGroupBy());
-        reportparam.put("reportTitle", request.getReportTitle());
-        reportRequest.setReportParams(reportparam);
+                    functionarywiseReportService.getAllFunctionarywiseRecords(request), new HashMap<>());
         reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("drillDown_report");
+        reportRequest.setReportName("functionarywise_report");
         return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
     }
+
 }
