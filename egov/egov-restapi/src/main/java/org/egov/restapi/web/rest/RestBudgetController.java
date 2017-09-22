@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -43,35 +43,21 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.SerializationConfig;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.commons.service.FunctionService;
-import org.egov.commons.service.FundService;
-import org.egov.dao.budget.BudgetDetailsDAO;
 import org.egov.dcb.bean.ChequePayment;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.restapi.constants.RestApiConstants;
-import org.egov.restapi.model.BudgetCheackHelper;
+import org.egov.restapi.model.BudgetCheck;
 import org.egov.restapi.model.RestErrors;
+import org.egov.restapi.service.BudgetCheckService;
 import org.egov.restapi.util.JsonConvertor;
-import org.egov.services.budget.BudgetGroupService;
-import org.egov.services.masters.SchemeService;
-import org.egov.services.masters.SubSchemeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -83,28 +69,7 @@ import com.google.gson.JsonObject;
 public class RestBudgetController {
 
     @Autowired
-    private BudgetDetailsDAO budgetDetailsDAO;
-
-    @Autowired
-    private FinancialYearHibernateDAO financialYearHibernateDAO;
-
-    @Autowired
-    private FundService fundService;
-
-    @Autowired
-    private FunctionService functionService;
-
-    @Autowired
-    private SchemeService schemeService;
-
-    @Autowired
-    private SubSchemeService subSchemeService;
-
-    @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private BudgetGroupService budgetGroupService;
+    private BudgetCheckService budgetCheckService;
 
     /**
      * API to get Available budget amount
@@ -112,39 +77,20 @@ public class RestBudgetController {
      *
      */
     @SuppressWarnings("null")
-    @RequestMapping(value = "/egf/budget/budgetavailable", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/egf/budget/planningbudgetavailable", method = POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String getBudgetAvailable(@RequestBody final String requestJson,
             final HttpServletResponse response) throws IOException {
-        BigDecimal budgetAvailable;
-        ApplicationThreadLocals.setUserId(2L);
-        final BudgetCheackHelper budgetCheackHelper = (BudgetCheackHelper) getObjectFromJSONRequest(requestJson,
-                BudgetCheackHelper.class);
+        String planningBudgetAvailable;
+        final BudgetCheck budgetCheck = (BudgetCheck) getObjectFromJSONRequest(requestJson,
+                BudgetCheck.class);
 
         try {
-            final List<RestErrors> restErrors = validateMandatoryFields(budgetCheackHelper);
+            final List<RestErrors> restErrors = budgetCheckService.validateMandatoryFields(budgetCheck);
             if (!restErrors.isEmpty()) {
                 response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
                 return JsonConvertor.convert(restErrors);
             }
-            final Scheme scheme = schemeService.findByCode(budgetCheackHelper.getSchemeCode());
-            final SubScheme subScheme = subSchemeService.findByCode(budgetCheackHelper.getSubSchemeCode());
-
-            final List<Long> budgetheadid = new ArrayList<>();
-            budgetheadid.add(budgetGroupService.getBudgetGroupByName(budgetCheackHelper.getBudgetHeadName()).getId());
-
-            budgetAvailable = budgetDetailsDAO.getPlanningBudgetAvailable(
-                    financialYearHibernateDAO.getFinYearByDate(new Date()).getId(),
-                    Integer.parseInt(
-                            departmentService.getDepartmentByCode(budgetCheackHelper.getDepartmentCode()).getId().toString()),
-                    functionService.findByCode(budgetCheackHelper.getFunctionCode()).getId(), null,
-                    scheme == null ? null
-                            : Integer.parseInt(
-                                    scheme.getId().toString()),
-                    subScheme == null ? null
-                            : Integer.parseInt(
-                                    subScheme.getId().toString()),
-                    null, budgetheadid,
-                    Integer.parseInt(fundService.findByCode(budgetCheackHelper.getFundCode()).getId().toString()));
+            planningBudgetAvailable = budgetCheckService.getPlanningBudgetAvailable(budgetCheck);
 
         } catch (final ValidationException v) {
             final List<RestErrors> errorList = new ArrayList<>(0);
@@ -155,43 +101,9 @@ public class RestBudgetController {
             return JsonConvertor.convert(errorList);
         }
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("AvailableBalance", budgetAvailable.toString());
+        jsonObject.addProperty("AvailableBalance", planningBudgetAvailable);
         response.setStatus(HttpServletResponse.SC_CREATED);
         return jsonObject.toString();
-    }
-
-    private List<RestErrors> validateMandatoryFields(final BudgetCheackHelper budgetCheackHelper) {
-        RestErrors restErrors;
-        final List<RestErrors> errors = new ArrayList<>();
-        if (StringUtils.isBlank(budgetCheackHelper.getDepartmentCode())
-                || departmentService.getDepartmentByCode(budgetCheackHelper.getDepartmentCode()) == null) {
-            restErrors = new RestErrors();
-            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_DEPARTMENT);
-            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_DEPARTMENT);
-            errors.add(restErrors);
-        }
-        if (StringUtils.isBlank(budgetCheackHelper.getFunctionCode())
-                || functionService.findByCode(budgetCheackHelper.getFunctionCode()) == null) {
-            restErrors = new RestErrors();
-            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUNCTION);
-            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUNCTION);
-            errors.add(restErrors);
-        }
-        if (StringUtils.isBlank(budgetCheackHelper.getFundCode())
-                || fundService.findByCode(budgetCheackHelper.getFundCode()) == null) {
-            restErrors = new RestErrors();
-            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_FUND);
-            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_FUND);
-            errors.add(restErrors);
-        }
-        if (StringUtils.isBlank(budgetCheackHelper.getBudgetHeadName())
-                || budgetGroupService.getBudgetGroupByName(budgetCheackHelper.getBudgetHeadName()) == null) {
-            restErrors = new RestErrors();
-            restErrors.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_NO_BUDGETHEAD);
-            restErrors.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_NO_BUDGETHEAD);
-            errors.add(restErrors);
-        }
-        return errors;
     }
 
     @SuppressWarnings("unchecked")

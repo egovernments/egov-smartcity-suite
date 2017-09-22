@@ -39,7 +39,7 @@
  */
 package org.egov.restapi.model;
 
-public class BudgetCheackHelper {
+public class BudgetCheck {
 
     private String departmentCode;
     private String functionCode;
