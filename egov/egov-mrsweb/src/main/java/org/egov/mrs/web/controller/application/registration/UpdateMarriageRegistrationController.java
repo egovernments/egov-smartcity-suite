@@ -349,13 +349,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("........outside for loop......");
 
-        if (marriageRegistrationObj != null) {
-            final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(marriageRegistrationObj
-                    .getCreatedBy().getId());
-            final String message = messageSource.getMessage("msg.digisign.success.registration", new String[] { wfInitiator
-                    .getEmployee().getName().concat("~").concat(wfInitiator.getDesignation().getName()) }, null);
-            model.addAttribute("successMessage", message);
-        }
+        if (marriageRegistrationObj != null)
+            model.addAttribute("successMessage", "msg.digisign.success.registration");
         model.addAttribute("objectType", MarriageCertificateType.REGISTRATION.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
         if (LOGGER.isDebugEnabled())

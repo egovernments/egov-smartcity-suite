@@ -297,11 +297,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             }
         }
         LOGGER.debug("........outside for loop......");
-        final Assignment wfInitiator = assignmentService.getPrimaryAssignmentForUser(reIssueObj
-                .getCreatedBy().getId());
-        final String message = messageSource.getMessage("msg.digisign.success.reissue", new String[] { wfInitiator
-                .getEmployee().getName().concat("~").concat(wfInitiator.getDesignation().getName()) }, null);
-        model.addAttribute("successMessage", message);
+        model.addAttribute("successMessage","msg.digisign.success.reissue");
         model.addAttribute("objectType", MarriageCertificateType.REISSUE.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
         LOGGER.debug("..........End of Digital Signature Transition : ReIssue........");

@@ -484,9 +484,9 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration digiSignCertificate(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+            final WorkflowContainer workflowContainer, final HttpServletRequest request){
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
-                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
+                MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         if (marriageRegistration.getSource() != null
@@ -494,9 +494,9 @@ public class MarriageRegistrationService {
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
             updatePortalMessage(marriageRegistration);
         marriageSmsAndEmailService.sendSMS(marriageRegistration,
-                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
+                MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration,
-                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString());
+                MarriageRegistration.RegistrationStatus.REGISTERED.toString());
 
         return marriageRegistration;
     }

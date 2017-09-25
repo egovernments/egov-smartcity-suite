@@ -296,13 +296,15 @@ public class ReIssueService {
     public ReIssue digiSignCertificate(final ReIssue reIssue,
             final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(
-                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
+                ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
         reiSsueUpdateIndexesService.updateReIssueAppIndex(reIssue);
         if (reIssue.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(reIssue.getSource())
                 && getPortalInbox(reIssue.getApplicationNo()) != null)
             updatePortalMessage(reIssue);
+        marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
+        marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);
         return reIssue;
     }
 
