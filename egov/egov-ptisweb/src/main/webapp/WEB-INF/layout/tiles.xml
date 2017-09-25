@@ -543,4 +543,8 @@
         <put-attribute name="page-title" value="lbl.usage.nature" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/usage/usageModify-success.jsp"/>
     </definition>
+    <definition name="wardwiseServiceReport-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.report.wardwiseserviceReport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/wardwiseServiceReport.jsp"/>
+    </definition>
 </tiles-definitions> 

@@ -70,6 +70,7 @@ import com.google.common.collect.ImmutableList;
 
 public interface PropertyTaxConstants {
 
+    //take a list of needed things
     public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
     public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
     public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
@@ -343,6 +344,7 @@ public interface PropertyTaxConstants {
 
     // Usage Types
     public static final String USAGE_RESIDENTIAL = "RESD";
+    
 
     // TreeMap for Non Vacant Land types
     public static final TreeMap<String, String> NON_VAC_LAND_PROPERTY_TYPE_CATEGORY = new TreeMap<String, String>() {
@@ -1733,5 +1735,11 @@ public interface PropertyTaxConstants {
 
     public static final ImmutableList DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
             DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
+    
+    public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
+    public static final List<String> SERVICE_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment","General_Revision_Petition","Revision_Petition");
+    
+            
+    
 
 }
