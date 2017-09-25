@@ -297,7 +297,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             }
         }
         LOGGER.debug("........outside for loop......");
-        model.addAttribute("successMessage","msg.digisign.success.reissue");
+        final String message = messageSource.getMessage("msg.digisign.success.reissue", null, null);             
+        model.addAttribute("successMessage", message);
         model.addAttribute("objectType", MarriageCertificateType.REISSUE.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
         LOGGER.debug("..........End of Digital Signature Transition : ReIssue........");

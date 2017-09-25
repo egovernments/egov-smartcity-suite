@@ -349,8 +349,10 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("........outside for loop......");
 
-        if (marriageRegistrationObj != null)
-            model.addAttribute("successMessage", "msg.digisign.success.registration");
+        if (marriageRegistrationObj != null) {
+            final String message = messageSource.getMessage("msg.digisign.success.registration", null, null);
+            model.addAttribute("successMessage", message);
+        }
         model.addAttribute("objectType", MarriageCertificateType.REGISTRATION.toString());
         model.addAttribute("fileStoreId", fileStoreIdArr.length == 1 ? fileStoreIdArr[0] : "");
         if (LOGGER.isDebugEnabled())
