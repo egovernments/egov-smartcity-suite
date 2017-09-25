@@ -699,12 +699,13 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                     addActionError(getText("mandatory.ownerName"));
                 if (null == owner.getOwner().getGender())
                     addActionError(getText("mandatory.gender"));
-                if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
+              //to do--- commenting is temporarily.. need to enable it later as per the requirement  
+                /*if (StringUtils.isBlank(owner.getOwner().getMobileNumber()))
                     addActionError(getText("mandatory.mobilenumber"));
                 if (StringUtils.isBlank(owner.getOwner().getGuardianRelation()))
                     addActionError(getText("mandatory.guardianrelation"));
                 if (StringUtils.isBlank(owner.getOwner().getGuardian()))
-                    addActionError(getText("mandatory.guardian"));
+                    addActionError(getText("mandatory.guardian"));*/
             }
 
         validateDuplicateMobileNo();
