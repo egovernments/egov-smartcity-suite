@@ -194,6 +194,9 @@ public class WaterConnectionDetails extends StateAware {
 
     private String estimationNumber;
 
+    @Temporal(value = TemporalType.DATE)
+    private Date estimationNoticeDate;
+
     private double donationCharges;
     private Boolean legacy = false;
 
@@ -217,6 +220,10 @@ public class WaterConnectionDetails extends StateAware {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reconnectionfilestoreid")
     private FileStoreMapper reconnectionFileStore;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "estimationnoticefilestoreid")
+    private FileStoreMapper estimationNoticeFileStoreId;
 
     @ManyToOne
     @JoinColumn(name = "chairPerson")
@@ -739,6 +746,22 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setReconnectionFileStore(final FileStoreMapper reconnectionFileStore) {
         this.reconnectionFileStore = reconnectionFileStore;
+    }
+
+    public FileStoreMapper getEstimationNoticeFileStoreId() {
+        return estimationNoticeFileStoreId;
+    }
+
+    public void setEstimationNoticeFileStoreId(final FileStoreMapper estimationNoticeFileStoreId) {
+        this.estimationNoticeFileStoreId = estimationNoticeFileStoreId;
+    }
+
+    public Date getEstimationNoticeDate() {
+        return estimationNoticeDate;
+    }
+
+    public void setEstimationNoticeDate(final Date estimationNoticeDate) {
+        this.estimationNoticeDate = estimationNoticeDate;
     }
 
 }

@@ -1,0 +1,2 @@
+ALTER TABLE egwtr_connectiondetails ADD COLUMN estimationnoticefilestoreid bigint;
+ALTER TABLE egwtr_connectiondetails ADD COLUMN estimationnoticedate date;
