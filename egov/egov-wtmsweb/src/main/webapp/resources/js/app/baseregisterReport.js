@@ -85,8 +85,16 @@ $('#baseRegisterReportSearch').click(function(e){
 						  { "data" : "waterSource", "title": "Water Source"},
 						  { "data" : "usageType", "title": "Usage"},
 						  { "data" : "pipeSize", "title": "Pipe Size"},
-						  { "data" : "monthlyRate", "title": "Monthly Rate"},
-						  { "data" : "period", "title": "Arrears Period"},
+                          {
+                                "data" : "monthlyRate",
+                                "title" : "Monthly Rate",
+                                "sortable" : false,
+                                "render" : function(data, type, row) {
+                                    return (!data || parseInt(data) == 0 ? "NA"
+                                            : data);
+                                }
+                            },
+                          { "data" : "period", "title": "Arrears Period"},
 						  { "data" : "arrears", "title": "Arrears Demand", class : 'text-right'},
 						  { "data" : "current", "title": "Current Demand", class : 'text-right'},
 						  { "data" : "totalDemand", "title": "Total Demand", class : 'text-right'},
