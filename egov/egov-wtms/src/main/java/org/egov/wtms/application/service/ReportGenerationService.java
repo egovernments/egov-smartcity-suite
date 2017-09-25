@@ -54,8 +54,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
 import org.egov.eis.entity.Assignment;
@@ -70,6 +68,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -83,8 +82,6 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -306,11 +303,12 @@ public class ReportGenerationService {
                 final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-                final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
-                String ownerName = "";
+                final String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
+                final StringBuilder ownerName = new StringBuilder();
                 for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                    ownerName = names.getOwnerName();
-                    break;
+                    if (assessmentDetails.getOwnerNames().size() > 1)
+                        ownerName.append(", ");
+                    ownerName.append(names.getOwnerName());
                 }
 
                 reportParams.put("applicationType", WordUtils.capitalize(WaterTaxConstants.CLOSURECONN));
@@ -338,33 +336,28 @@ public class ReportGenerationService {
     }
 
     public ReportOutput generateEstimationNoticeReport(final WaterConnectionDetails waterConnectionDetails,
-            final String workFlowAction, final String cityMunicipalityName, final String districtName,
-            final HttpSession session) {
+            final String cityMunicipalityName, final String districtName) {
         ReportRequest reportInput = null;
-        ReportOutput reportOutput;
         if (waterConnectionDetails != null) {
             final Map<String, Object> reportParams = new HashMap<>();
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-            final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
+            final String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
             final StringBuilder ownerName = new StringBuilder();
 
-            int counter = 0;
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                if (counter > 0)
+                if (assessmentDetails.getOwnerNames().size() > 1)
                     ownerName.append(", ");
                 ownerName.append(names.getOwnerName());
-                counter++;
             }
 
             reportParams.put("applicationType",
-                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
-            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
-            reportParams.put("district", session.getAttribute("districtName"));
+                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+            reportParams.put("cityName", cityMunicipalityName);
+            reportParams.put("district", districtName);
             reportParams.put("estimationDate",
-                    formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
+                    DateUtils.toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
             reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
             reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
             final double totalCharges = waterConnectionDetails.getDonationCharges()
@@ -372,7 +365,7 @@ public class ReportGenerationService {
                     + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
             reportParams.put("totalCharges", totalCharges);
-            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
+            reportParams.put("applicationDate", DateUtils.toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName.toString());
             reportParams.put("address", assessmentDetails.getPropertyAddress());
             reportParams.put("houseNo", doorNo[0]);
@@ -386,9 +379,7 @@ public class ReportGenerationService {
                     waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges());
             reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
         }
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
+        ReportOutput reportOutput;
         reportOutput = reportService.createReport(reportInput);
         return reportOutput;
     }

@@ -130,15 +130,13 @@ public class EstimationNoticeController {
                 final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-                final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
+                final String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
                 final StringBuilder ownerName = new StringBuilder();
 
-                int counter = 0;
                 for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                    if (counter > 0)
+                    if (assessmentDetails.getOwnerNames().size() > 1)
                         ownerName.append(", ");
                     ownerName.append(names.getOwnerName());
-                    counter++;
                 }
 
                 reportParams.put("applicationType",

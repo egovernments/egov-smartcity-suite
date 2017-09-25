@@ -111,6 +111,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.service.AppConfigService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -134,6 +135,8 @@ import org.egov.wtms.masters.service.RoadCategoryService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -191,6 +194,9 @@ public class UpdateConnectionController extends GenericConnectionController {
 
     @Autowired
     private AppConfigService appConfigService;
+
+    @Autowired
+    private CityService cityService;
 
     @Autowired
     public UpdateConnectionController(final DepartmentService departmentService,
@@ -655,12 +661,15 @@ public class UpdateConnectionController extends GenericConnectionController {
                 waterConnectionDetails.setEstimationNumber(estimationNoGen.generateEstimationNumber());
                 waterConnectionDetails.setEstimationNoticeDate(new Date());
 
-                final String cityMunicipalityName = (String) request.getSession().getAttribute("citymunicipalityname");
-                final String districtName = (String) request.getSession().getAttribute("districename");
+                final String cityMunicipalityName = cityService.getMunicipalityName();
+                final String districtName = cityService.getDistrictName();
                 ReportOutput reportOutput = null;
-                reportOutput = reportGenerationService.generateEstimationNoticeReport(waterConnectionDetails, workFlowAction,
-                        cityMunicipalityName, districtName, request.getSession());
+                reportOutput = reportGenerationService.generateEstimationNoticeReport(waterConnectionDetails,
+                        cityMunicipalityName, districtName);
                 if (reportOutput != null) {
+                    final HttpHeaders headers = new HttpHeaders();
+                    headers.setContentType(MediaType.parseMediaType("application/pdf"));
+                    headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
                     String fileName;
                     fileName = SIGNED_DOCUMENT_PREFIX + waterConnectionDetails.getEstimationNumber() + ".pdf";
                     final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -765,9 +774,7 @@ public class UpdateConnectionController extends GenericConnectionController {
     }
 
     private boolean validEstimationDetail(final ConnectionEstimationDetails connectionEstimationDetails) {
-        if (connectionEstimationDetails != null && connectionEstimationDetails.getItemDescription() != null)
-            return true;
-        return false;
+        return connectionEstimationDetails != null && connectionEstimationDetails.getItemDescription() != null ? true : false;
     }
 
 }
