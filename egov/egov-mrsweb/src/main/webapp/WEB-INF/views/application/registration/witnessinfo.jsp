@@ -107,7 +107,7 @@
 		<div class="col-sm-6">
 			<form:input path="${witness}.aadhaarNo" id="${witness}.aadhaarNo"
 				type="text" cssClass="form-control low-width patternvalidation"
-				data-pattern="number"  maxlength="12" placeholder=""
+				data-pattern="number" minlength="12" maxlength="12" placeholder=""
 				autocomplete="off" />
 			<form:errors path="${witness}.aadhaarNo"
 				cssClass="add-margin error-msg" />

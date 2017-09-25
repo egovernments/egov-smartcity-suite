@@ -157,6 +157,14 @@
 			$('#'+applicant+'-photo').prop('src', "data:image/jpeg;base64," + strData);
 		</script> -->
 		</div>
+		
+		<div class="col-sm-3 add-margin">
+			<spring:message code="lbl.applicant.aadhaarNo" />
+		</div>
+		<div class="col-sm-3 add-margin view-content">
+			<c:out value="${param.appAadharno}"  default="N/A"></c:out>
+		</div>
+		
 	</div>
 
 

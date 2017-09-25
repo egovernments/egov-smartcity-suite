@@ -230,7 +230,7 @@
 	<div class="col-sm-3">
 		<form:input path="${applicant}.aadhaarNo" id="${applicant}.aadhaarNo"
 			type="text" cssClass="form-control low-width patternvalidation"
-			data-pattern="number" maxlength="12" />
+			data-pattern="number" minlength="12" maxlength="12" />
 		<form:errors path="${applicant}.aadhaarNo"
 			cssClass="add-margin error-msg" />
 	</div>

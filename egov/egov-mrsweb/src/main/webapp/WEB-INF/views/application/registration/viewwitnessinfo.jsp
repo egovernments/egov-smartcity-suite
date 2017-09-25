@@ -90,8 +90,8 @@
 		<div class="row add-border">
 				<div class="col-xs-3 add-margin"><spring:message code="lbl.residence.address"/></div>
 				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.contactInfo.residenceAddress}" default="N/A"></c:out></div>
-			<%-- 	<div class="col-xs-3 add-margin"><spring:message code="lbl.residence.address"/></div>
-				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.contactInfo.officeAddress}" default="N/A"></c:out></div> --%>
+				<div class="col-xs-3 add-margin"><spring:message code="lbl.applicant.aadhaarNo"/></div>
+				<div class="col-xs-3 add-margin view-content"><c:out value="${witness.aadhaarNo}" default="N/A"></c:out></div>
 		</div>
 		<div class="row add-border">
 				<div class="col-xs-3 add-margin">
