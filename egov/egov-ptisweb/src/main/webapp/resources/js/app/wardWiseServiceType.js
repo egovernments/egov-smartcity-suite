@@ -104,13 +104,12 @@ $('#wardWiseReportSearch').click(function(){
             { data: function (row) { 	
                     return (row.applicationsPending)}},
             { data: function (row) { 	
-                    return (row.taxAssessHYBA)}},
+                    return (row.taxBeforeAffctd)}},
             { data: function (row) { 	
-                    return (row.taxAssessHYAA)}},
+                    return (row.taxAfterAffctd)}},
              {data:function(row){
-            	 return ((row.taxAssessHYAA)-(row.taxAssessHYBA))
+            	 return ((row.taxBeforeAffctd)-(row.taxAfterAffctd))
              }}
-               
 			],
 			"footerCallback" : function(row, data, start, end, display) {
 				var api = this.api(), data;
