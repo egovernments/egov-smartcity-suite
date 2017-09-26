@@ -108,7 +108,7 @@ $('#wardWiseReportSearch').click(function(){
             { data: function (row) { 	
                     return (row.taxAfterAffctd)}},
              {data:function(row){
-            	 return ((row.taxBeforeAffctd)-(row.taxAfterAffctd))
+            	 return ((row.taxAfterAffctd)-(row.taxBeforeAffctd))
              }}
 			],
 			"footerCallback" : function(row, data, start, end, display) {
