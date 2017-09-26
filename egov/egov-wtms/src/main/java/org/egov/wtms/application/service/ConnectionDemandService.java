@@ -177,6 +177,7 @@ public class ConnectionDemandService {
         return entityManager.unwrap(Session.class);
     }
 
+    @Transactional
     public EgDemand createDemand(final WaterConnectionDetails waterConnectionDetails) {
         final Map<String, Object> feeDetails = new HashMap<>();
         DonationDetails donationDetails = null;
@@ -383,13 +384,7 @@ public class ConnectionDemandService {
         final WaterConnectionDetails waterConnectionDetails;
         final BillReferenceNumberGenerator billRefeNumber = beanResolver
                 .getAutoNumberServiceFor(BillReferenceNumberGenerator.class);
-
-        if (applicationTypeCode != null && (applicationTypeCode.equals(WaterTaxConstants.CHANGEOFUSE)
-                || applicationTypeCode.equals(WaterTaxConstants.RECONNECTIONCONNECTION)))
-            waterConnectionDetails = waterConnectionDetailsService
-                    .findByApplicationNumberOrConsumerCodeAndStatus(consumerCode, ConnectionStatus.ACTIVE);
-        else
-            waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
+        waterConnectionDetails = waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode);
         if (ConnectionStatus.INPROGRESS.equals(waterConnectionDetails.getConnectionStatus()))
             currentInstallmentYear = formatYear
                     .format(getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date())
