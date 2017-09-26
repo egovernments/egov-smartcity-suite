@@ -42,13 +42,13 @@ package org.egov.restapi.filter;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.apache.http.HttpHeaders.REFERER;
+import static org.egov.commons.entity.Source.ANYEMI;
 import static org.egov.commons.entity.Source.APONLINE;
 import static org.egov.commons.entity.Source.CARD;
 import static org.egov.commons.entity.Source.ESEVA;
-import static org.egov.commons.entity.Source.SOFTTECH;
 import static org.egov.commons.entity.Source.LEADWINNER;
 import static org.egov.commons.entity.Source.SMARTVIZAG;
-import static org.egov.commons.entity.Source.ANYEMI;
+import static org.egov.commons.entity.Source.SOFTTECH;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setCityCode;
 import static org.egov.infra.config.core.ApplicationThreadLocals.setDomainName;
@@ -132,6 +132,10 @@ public class ApiFilter implements Filter {
             final HttpSession session = request.getSession();
             final Optional<Map.Entry<Source, List<String>>> resolvedIP = SOURCE_IP_MAPPING.entrySet().parallelStream()
                     .filter(e -> e.getValue().parallelStream().anyMatch(referrer::contains)).findFirst();
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Resolve ip present or not ", resolvedIP.isPresent());
+                LOG.debug("SOURCE_IP_MAPPING values ", SOURCE_IP_MAPPING);
+            }
             if (resolvedIP.isPresent())
                 session.setAttribute(SOURCE, resolvedIP.get().getKey());
             else
