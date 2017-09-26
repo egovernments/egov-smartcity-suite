@@ -694,6 +694,13 @@ public class WaterTaxUtils {
         return USERNAME_ANONYMOUS.equalsIgnoreCase(user.getName());
     }
 
+    public Boolean isSuperUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(WaterTaxConstants.ROLE_SUPERUSER))
+                return true;
+        return false;
+    }
+    
     public Boolean isCurrentUserCitizenRole() {
         Boolean citizenUserRole = Boolean.FALSE;
         User currentUser = null;

@@ -141,6 +141,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final Boolean recordCreatedBYNonEmployee;
         final Boolean recordCreatedBYCitizenPortal;
         final Boolean recordCreatedByAnonymousUser;
+        final Boolean recordCreatedBySuperUser;
 
         if (user != null && user.getId() == waterConnectionDetails.getCreatedBy().getId()
                 && (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
@@ -148,6 +149,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
             recordCreatedBYNonEmployee = waterTaxUtils.getCurrentUserRole(user);
             recordCreatedBYCitizenPortal = waterTaxUtils.isCitizenPortalUser(user);
             recordCreatedByAnonymousUser = waterTaxUtils.isAnonymousUser(user);
+            recordCreatedBySuperUser = waterTaxUtils.isSuperUser(user);
         } else {
             recordCreatedBYNonEmployee = waterTaxUtils
                     .getCurrentUserRole(waterConnectionDetails.getCreatedBy());
@@ -155,11 +157,12 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     .isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
             recordCreatedByAnonymousUser = waterTaxUtils
                     .isAnonymousUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
+            recordCreatedBySuperUser = waterTaxUtils.isSuperUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
         }
         String currState = "";
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
         final String natureOfwork = getNatureOfTask(waterConnectionDetails);
-        if (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal || recordCreatedByAnonymousUser) {
+        if (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal || recordCreatedByAnonymousUser || recordCreatedBySuperUser) {
             currState = WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
             if (!waterConnectionDetails.getStateHistory().isEmpty()) {
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
