@@ -106,6 +106,14 @@
 				</s:if>
 				<s:else>
 					<jsp:include page="viewProperty.jsp" />
+					<div class="panel panel-primary" data-collapsed="0"
+						style="text-align: left">
+						<%@ include file="document-view.jsp"%>
+					</div>
+					<div class="panel panel-primary" data-collapsed="0"
+						style="text-align: left">
+						<%@ include file="../common/workflowHistoryView.jsp"%>
+					</div>
 					<div class="buttonbottom no-print" align="center">
 						<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
 						<s:if test="%{basicProperty.upicNo!=null &&  !citizenPortalUser}">

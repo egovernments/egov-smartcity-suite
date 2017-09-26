@@ -49,6 +49,13 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="5">
+			<div class="headingsmallbg">
+				<s:text name="docsectiontitle" />
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5">
 			<table class="tablebottom" id="nameTable" width="100%" border="0"
 				cellpadding="0" cellspacing="0">
 				<tbody>
@@ -58,25 +65,25 @@
 						<th class="bluebgheadtd"><s:text name="file" /></th>
 					</tr>
 					<s:iterator value="documents" status="status" var="document">
+					<s:if test="%{!documents[#status.index].files.isEmpty()}">
 						<tr>
-							<td class="blueborderfortd" style="text-align: center"><span
-								class="bold"><s:property value="#status.index + 1" /></span></td>
-							<td class="blueborderfortd" style="text-align: left"><span
-								class="bold"><s:property
-										value="documents[#status.index].type.name" /></span></td>
-							<td class="blueborderfortd" style="text-align: center"><s:if
-									test="%{documents.isEmpty() || documents[#status.index].files.isEmpty()}">
-									<span class="bold">N/A</span>
-								</s:if> <s:else>
-									<s:iterator value="%{documents[#status.index].files}">
+								<td class="blueborderfortd" style="text-align: center"><span
+									class="bold"><s:property value="#status.index + 1" /></span></td>
+								<td class="blueborderfortd" style="text-align: left"><span
+									class="bold"><s:property
+											value="documents[#status.index].type.name" /> </span></td>
+								<td class="blueborderfortd" style="text-align: center">
+								<s:iterator
+										value="%{documents[#status.index].files}">
 										<a
 											href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
 											<s:property value="%{fileName}" />
 										</a>
-									</s:iterator>
-								</s:else></td>
+									</s:iterator> </td>
 						</tr>
+						</s:if>
 					</s:iterator>
+					
 				</tbody>
 			</table>
 		</td>

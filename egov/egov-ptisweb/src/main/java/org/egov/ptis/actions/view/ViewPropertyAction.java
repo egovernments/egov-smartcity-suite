@@ -47,6 +47,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVI
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -99,6 +100,7 @@ import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -111,7 +113,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
 @ParentPackage("egov")
-@Results({ @Result(name = "view", location = "viewProperty-view.jsp") })
+@Results({ @Result(name = "view", location = "viewProperty-view.jsp"),
+		@Result(name = "viewApplication", location = "viewApplication-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
 
     private static final long serialVersionUID = 4609817011534083012L;
@@ -151,11 +154,13 @@ public class ViewPropertyAction extends BaseFormAction {
     private transient PropertyService propService;
     @PersistenceContext
     private transient EntityManager entityManager;
-
-    private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
-                
-    private List<Hashtable<String, Object>> historyMap = new ArrayList<>();
     
+	private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
+	
+	private List<Hashtable<String, Object>> historyMap = new ArrayList<>();
+	
+	private List<Document> documents = new ArrayList<>();
+       
     @Override
     public StateAware getModel() {
         return property;
@@ -273,11 +278,10 @@ public class ViewPropertyAction extends BaseFormAction {
                 LOGGER.debug("viewForm : viewMap : " + viewMap);
                 LOGGER.debug("Exit from method viewForm");
             }
-            if (null != property.getState() && !(property.getStatus().toString().equalsIgnoreCase("C"))) {
-                setHistoryMap(propService.populateHistory(property));
-            }
-           
-            return "view";
+            if (applicationNo != null && !applicationNo.isEmpty())
+            	return "viewApplication";
+            else
+            	return "view";
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
             throw new ApplicationRuntimeException("Exception in View Property : " + e);
@@ -315,33 +319,48 @@ public class ViewPropertyAction extends BaseFormAction {
         return roleNameList.toString().toUpperCase();
     }
 
-    private void getBasicPropForAppNo(final String appNo, final String appType) {
-        if (appType != null && !appType.isEmpty())
-            if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
-                    || appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
-                    || appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
-                    || appType.equals(APPLICATION_TYPE_TAX_EXEMTION)) {
-                property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
-                setBasicProperty(property.getBasicProperty());
-                if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
-                    getDocumentDetails();
-                }
-            } else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
-                    || appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
-                final RevisionPetition rp = revisionPetitionPersistenceService.find(
-                        "from RevisionPetition where objectionNumber=?", appNo);
-                setBasicProperty(rp.getBasicProperty());
-            } else if (appType.equals(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
-                final PropertyMutation propertyMutation = transferOwnerService
-                        .getPropertyMutationByApplicationNo(appNo);
-                setBasicProperty(propertyMutation.getBasicProperty());
-            } else if (appType.equals(APPLICATION_TYPE_VACANCY_REMISSION)) {
-                final VacancyRemission vacancyRemission = vacancyRemissionPersistenceService.find("from VacancyRemission where applicationNumber=?",appNo);
-                setBasicProperty(vacancyRemission.getBasicProperty());
-            }
-    }
+	private void getBasicPropForAppNo(final String appNo, final String appType) {
+		if (appType != null && !appType.isEmpty())
+			if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)
+					|| appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
+					|| appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
+					|| appType.equals(APPLICATION_TYPE_TAX_EXEMTION)
+					|| appType.equals(APPLICATION_TYPE_AMALGAMATION)){
+				property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
+				setBasicProperty(property.getBasicProperty());
+				setHistoryMap(propService.populateHistory(property));
+				if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
+					getDocumentDetails();
 
-    public void getDocumentDetails() {
+				} else if (appType.equals(APPLICATION_TYPE_TAX_EXEMTION) && property.getIsExemptedFromTax()) {
+					property.setDocuments(property.getTaxExemptionDocuments());
+				}
+			} else if (appType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
+					|| appType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
+				final RevisionPetition rp = revisionPetitionPersistenceService
+						.find("from RevisionPetition where objectionNumber=?", appNo);
+				setBasicProperty(rp.getBasicProperty());
+				setHistoryMap(propService.populateHistory(rp));
+				property = rp.getBasicProperty().getActiveProperty();
+				property.setDocuments(rp.getDocuments());
+			} else if (appType.equals(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP)) {
+				final PropertyMutation propertyMutation = transferOwnerService
+						.getPropertyMutationByApplicationNo(appNo);
+				setBasicProperty(propertyMutation.getBasicProperty());
+				setHistoryMap(propService.populateHistory(propertyMutation));
+				property = (PropertyImpl) propertyMutation.getProperty();
+				property.setDocuments(propertyMutation.getDocuments());
+			} else if (appType.equals(APPLICATION_TYPE_VACANCY_REMISSION)) {
+				final VacancyRemission vacancyRemission = vacancyRemissionPersistenceService
+						.find("from VacancyRemission where applicationNumber=?", appNo);
+				setBasicProperty(vacancyRemission.getBasicProperty());
+				setHistoryMap(propService.populateHistory(vacancyRemission));
+				property = vacancyRemission.getBasicProperty().getActiveProperty();
+				property.setDocuments(vacancyRemission.getDocuments());
+			}
+	}
+    
+   public void getDocumentDetails() {
         try {
             final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
             query.setParameter(1, basicProperty.getId());
@@ -473,13 +492,6 @@ public class ViewPropertyAction extends BaseFormAction {
         this.errorMessage = errorMessage;
     }
 
-    public boolean getIsNagarPanchayat() {
-        return propertyTaxUtil.checkIsNagarPanchayat();
-    }
-
-    public void setIsNagarPanchayat(final boolean isNagarPanchayat) {
-    }
-
     public Map<String, Map<String, BigDecimal>> getDemandCollMap() {
         return demandCollMap;
     }
@@ -523,6 +535,12 @@ public class ViewPropertyAction extends BaseFormAction {
 	public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
 		this.historyMap = historyMap;
 	}
-    
 
+	public List<Document> getDocuments() {
+		return documents;
+	}
+
+	public void setDocuments(List<Document> documents) {
+		this.documents = documents;
+	}
 }
