@@ -158,7 +158,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             final HttpServletRequest request,
             final BindingResult errors, final RedirectAttributes redirectAttributes) {
         User logedinUser = securityUtils.getCurrentUser();
-        validateApplicationDate(marriageRegistration, errors, request);
+        validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
         boolean citizenPortalUser = registrationWorkFlowService.isCitizenPortalUser(securityUtils.getCurrentUser());
@@ -166,12 +166,9 @@ public class NewRegistrationController extends MarriageRegistrationController {
                 && registrationWorkFlowService.isEmployee(logedinUser);
         boolean isAssignmentPresent = registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null,
                 isEmployee);
-        if (!isAssignmentPresent) {
-            return buildFormOnValidation(marriageRegistration, isEmployee, model);
-        }
-        if (errors.hasErrors()) {
-            return buildFormOnValidation(marriageRegistration, isEmployee, model);
-        }
+        if (!isAssignmentPresent || errors.hasErrors()) 
+            return buildFormOnValidation(marriageRegistration, isEmployee, model, isAssignmentPresent);
+      
         String message;
         String approverName = null;
         String nextDesignation = null;
@@ -222,10 +219,13 @@ public class NewRegistrationController extends MarriageRegistrationController {
     }
 
     private String buildFormOnValidation(final MarriageRegistration marriageRegistration,
-            final Boolean isEmployee, final Model model) {
+            final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent) {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
-        model.addAttribute("message", messageSource.getMessage("notexists.position",
+        if(!isAssignmentPresent)        
+            model.addAttribute("message", messageSource.getMessage("notexists.position",
                 new String[] {}, null));
+        else
+            model.addAttribute("message", "Validation failed");
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);

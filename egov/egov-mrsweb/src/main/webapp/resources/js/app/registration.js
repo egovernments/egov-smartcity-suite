@@ -66,7 +66,7 @@ $(document).ready( function () {
 	});   
 	
 	//default currentdate in create screen
-	if($('#registrationStatus').val()=="")
+	if($('#txt-dateOfMarriage').val()=="")
 		$('#txt-dateOfMarriage').datepicker('setDate', new Date());
 	//Date of marriage shld not be editable in workflow 
 	if($('#registrationStatus').val()=='CREATED' || $('#registrationStatus').val()=='APPROVED'){

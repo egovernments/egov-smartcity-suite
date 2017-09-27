@@ -39,15 +39,12 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
 import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
-import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
 
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.commons.service.EducationalQualificationService;
 import org.egov.commons.service.NationalityService;
@@ -55,6 +52,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.utils.DateUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -116,13 +114,8 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
     protected AppConfigValueService appConfigValuesService;
     
     @ModelAttribute
-    public void prepareForm(final Model model) {
-      /*  model.addAttribute("zones",
-                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(BOUNDARY_TYPE, REVENUE_HIERARCHY_TYPE));
-*/
-
+    public void prepareForm(final Model model) {        
         getBoundaryTypeForRegistration(model);
-
         model.addAttribute("localitylist", boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                 MarriageConstants.BOUNDARYTYPE_LOCALITY, MarriageConstants.LOCATION_HIERARCHY_TYPE));
         model.addAttribute("religions", religionService.getReligions());
@@ -164,27 +157,28 @@ public class MarriageRegistrationController extends GenericWorkFlowController {
     }
 
     public void validateApplicationDate(final MarriageRegistration registration,
-            final BindingResult errors, final HttpServletRequest request) {
+            final BindingResult errors) {
         final AppConfigValues allowValidation = marriageFeeService.getDaysValidationAppConfValue(
                 MarriageConstants.MODULE_NAME, MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION);
         if (allowValidation != null && !allowValidation.getValue().isEmpty()
-                && "YES".equalsIgnoreCase(allowValidation.getValue())) {
-            if (registration.getDateOfMarriage() != null && !registration.isLegacy()) {
-                final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-                if(registration.getApplicationDate() != null){
-                    if ( !new DateTime(registration.getApplicationDate())
-                            .isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
-                                    .parseInt(REGISTER_NO_OF_DAYS) - 1))) {
-                        errors.reject("err.validate.marriageRegistration.applicationDate",
-                                new String[] { sdf.format(registration.getDateOfMarriage()) }, null);
-                    }
-                } else if (!new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
-                            .parseInt(REGISTER_NO_OF_DAYS) - 1))) {
-                        errors.reject("err.validate.marriageRegistration.applicationDate",
-                                new String[] { sdf.format(registration.getDateOfMarriage()) }, null);
-                }
+                && "YES".equalsIgnoreCase(allowValidation.getValue()) && registration.getDateOfMarriage() != null
+                && !registration.isLegacy()) {
+            validateDateOfMarriage(registration, errors);
+        }
+    }
 
+    private void validateDateOfMarriage(final MarriageRegistration registration, final BindingResult errors) {
+        if (registration.getApplicationDate() != null) {
+            if (!new DateTime(registration.getApplicationDate())
+                    .isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
+                            .parseInt(REGISTER_NO_OF_DAYS) + 1))) {
+                errors.reject("err.validate.marriageRegistration.applicationDate",
+                        new String[] { DateUtils.getDefaultFormattedDate(registration.getDateOfMarriage()) }, null);
             }
+        } else if (!new DateTime(new Date()).isBefore(new DateTime(registration.getDateOfMarriage()).plusDays(Integer
+                .parseInt(REGISTER_NO_OF_DAYS) + 1))) {
+            errors.reject("err.validate.marriageRegistration.applicationDate",
+                    new String[] { DateUtils.getDefaultFormattedDate(registration.getDateOfMarriage()) }, null);
         }
     }
 

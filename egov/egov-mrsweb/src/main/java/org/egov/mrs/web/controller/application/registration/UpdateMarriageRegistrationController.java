@@ -211,7 +211,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
 
-        validateApplicationDate(marriageRegistration, errors, request);
+        validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
         if (errors.hasErrors()) {
             model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
@@ -389,7 +389,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             @ModelAttribute final MarriageRegistration registration, final Model model,
             final HttpServletRequest request, final BindingResult errors) {
 
-        validateApplicationDate(registration, errors, request);
+        validateApplicationDate(registration, errors);
         if (errors.hasErrors()) {
             model.addAttribute(MARRIAGE_REGISTRATION, registration);
             return MRG_REGISTRATION_EDIT_APPROVED;
