@@ -53,6 +53,7 @@ public class CollectionDashBoardRequest {
     private String type;
     private List<String> includeServices;
     private List<String> excludeServices;
+    private String revenueWard;
 
     public String getRegionName() {
         return regionName;
@@ -124,5 +125,13 @@ public class CollectionDashBoardRequest {
 
     public void setExcludeServices(List<String> excludeServices) {
         this.excludeServices = excludeServices;
+    }
+
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(String revenueWard) {
+        this.revenueWard = revenueWard;
     }
 }
