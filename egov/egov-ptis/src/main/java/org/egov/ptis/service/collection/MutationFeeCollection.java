@@ -115,15 +115,17 @@ public class MutationFeeCollection extends TaxCollection {
         }
         String nextAction = null;
         if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
-            final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                    null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
-            nextAction = wFMatrix.getNextAction();
-            if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
+            if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)
+                    && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
+                final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                        null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
+                nextAction = wFMatrix.getNextAction();
                 propertyMutation.transition().progressWithStateCopy().withSenderName(propertyMutation.getState().getSenderName())
                         .withDateInfo(new Date())
                         .withOwner(propertyMutation.getState().getOwnerPosition())
                         .withStateValue(TRANSFER_FEE_COLLECTED)
                         .withNextAction(nextAction);
+            }
         } else {
             LOGGER.error("Mutation workflow is already closed for the receipt : " + propertyMutation.getReceiptNum()
                     + " payed for assessment : "
