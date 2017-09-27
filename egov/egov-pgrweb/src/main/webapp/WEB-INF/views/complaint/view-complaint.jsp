@@ -280,7 +280,7 @@
                             </div>
                             <!-- panel body -->
                             <div class="panel-body no-padding">
-                                <script src="https://maps.googleapis.com/maps/api/js"></script>
+                                <script src="https://maps.googleapis.com/maps/api/js?key=${sessionScope.googleApiKey}"></script>
                                 <div id="normal" class="img-prop"></div>
                             </div>
                         </div>

@@ -148,7 +148,7 @@
 	<script src="<cdn:url value='/resources/js/highchart/modules/data.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/highchart/modules/drilldown.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&libraries=places"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=${sessionScope.googleApiKey}&v=3.exp&libraries=places"></script>
 	<script src="<cdn:url value='/resources/js/date.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>

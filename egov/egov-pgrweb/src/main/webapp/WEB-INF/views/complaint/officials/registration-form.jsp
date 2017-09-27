@@ -266,7 +266,7 @@
 
                             <!-- panel body -->
                             <div class="panel-body no-padding">
-                                <script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false&amp;libraries=places"></script>
+                                <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=${sessionScope.googleApiKey}&libraries=places"></script>
                                 <script type="text/javascript" src="<cdn:url  value='/resources/global/js/geolocation/geolocationmarker-compiled.js' context='/egi'/>"></script>
                                 <div id="normal" class="img-prop"></div>
                                 <input id="pac-input" class="controls" type="text" placeholder="Enter a location">

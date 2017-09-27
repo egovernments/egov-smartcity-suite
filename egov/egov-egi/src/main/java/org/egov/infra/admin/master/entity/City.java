@@ -61,6 +61,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,14 +101,6 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
-    private String recaptchaPK;
-
-    @SafeHtml
-    @NotBlank
-    private String recaptchaPub;
-
-    @SafeHtml
-    @NotBlank
     private String code;
 
     @SafeHtml
@@ -132,6 +125,7 @@ public class City extends AbstractAuditable {
     @JoinColumn(name = "preferences")
     @NotAudited
     @Fetch(FetchMode.JOIN)
+    @Valid
     private CityPreferences preferences;
 
     @Override
@@ -174,22 +168,6 @@ public class City extends AbstractAuditable {
 
     public void setDomainURL(final String domainURL) {
         this.domainURL = domainURL;
-    }
-
-    public String getRecaptchaPK() {
-        return recaptchaPK;
-    }
-
-    public void setRecaptchaPK(final String recaptchaPK) {
-        this.recaptchaPK = recaptchaPK;
-    }
-
-    public String getRecaptchaPub() {
-        return recaptchaPub;
-    }
-
-    public void setRecaptchaPub(final String recaptchaPub) {
-        this.recaptchaPub = recaptchaPub;
     }
 
     public String getCode() {
@@ -274,12 +252,13 @@ public class City extends AbstractAuditable {
             cityPrefs.put(CITY_CORP_TWITTER_KEY, preferences.getMunicipalityTwitterLink());
             cityPrefs.put(CITY_CORP_FB_KEY, preferences.getMunicipalityFacebookLink());
             cityPrefs.put(CITY_CORP_GOOGLE_MAP_KEY, preferences.getMunicipalityGisLocation());
+            cityPrefs.put(CITY_CAPTCHA_PRIV_KEY, preferences.getRecaptchaPK());
+            cityPrefs.put(CITY_CAPTCHA_PUB_KEY, preferences.getRecaptchaPub());
+            cityPrefs.put(CITY_GOOGLE_API_KEY, preferences.getGoogleApiKey());
         }
 
         cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
         cityPrefs.put(CITY_CODE_KEY, code);
-        cityPrefs.put(CITY_CAPTCHA_PRIV_KEY, recaptchaPK);
-        cityPrefs.put(CITY_CAPTCHA_PUB_KEY, recaptchaPub);
         cityPrefs.put(CITY_LAT_KEY, latitude);
         cityPrefs.put(CITY_LNG_KEY, longitude);
         cityPrefs.put(CITY_DIST_NAME_KEY, districtName);

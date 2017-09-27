@@ -208,7 +208,7 @@ $(document).ready(function(){
 				var formatted_long = format_lat_long(imagelongt.toString());
 				$.ajax({
 					type: "POST",
-					url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+formatted_lat+','+formatted_long+'&sensor=true',
+					url: 'https://maps.googleapis.com/maps/api/geocode/json?key='+googleapikey+'&latlng='+formatted_lat+','+formatted_long,
 					dataType: 'json',
 					success : function(data){
 						$('#latitude').val(formatted_lat);

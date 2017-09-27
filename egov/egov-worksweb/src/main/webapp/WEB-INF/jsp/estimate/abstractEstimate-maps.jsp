@@ -42,7 +42,7 @@
 <html>
 <title><s:text name='page.title.estimate'/></title>
 <script src="../resources/js/jquery-1.7.2.min.js"></script>
-<script type="text/javascript" src="https://maps.google.com/maps/api/js?sensor=false"></script>
+<script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=${sessionScope.googleApiKey}"></script>
 <script type="text/javascript" src="/egworks/resources/js/gmap3.min.js"></script>
 <script type="text/javascript">
 var MODE = '<s:property value="%{mapMode}" />';

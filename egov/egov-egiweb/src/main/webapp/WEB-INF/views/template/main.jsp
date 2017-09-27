@@ -74,6 +74,11 @@
     <script src="<cdn:url  value='/resources/global/js/ie8/html5shiv.min.js'/>"></script>
     <script src="<cdn:url  value='/resources/global/js/ie8/respond.min.js'/>"></script>
     <![endif]-->
+    <script>
+        var googleapikey = '${sessionScope.googleApiKey}';
+        var citylat = ${sessionScope.citylat};
+        var citylng = ${sessionScope.citylng};
+    </script>
 
 </head>
 <body class="page-body" oncontextmenu="return false;">

@@ -70,6 +70,7 @@ public final class ApplicationConstant {
     public static final String CITY_CORP_FB_KEY = "corpFBLink";
     public static final String CITY_CORP_GOOGLE_MAP_KEY = "corpGisLink";
     public static final String CITY_REGION_NAME_KEY = "cityRegion";
+    public static final String CITY_GOOGLE_API_KEY = "googleApiKey";
 
     public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
     public static final String CITY_LOGO_PATH_KEY = "logopath";

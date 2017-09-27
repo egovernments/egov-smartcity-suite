@@ -45,7 +45,7 @@ $(document).ready(function(){
 	if (lat != '0.0') {
 		$.ajax({
 	        type: "POST",
-	        url: 'https://maps.googleapis.com/maps/api/geocode/json?latlng='+lat+','+lng,
+	        url: 'https://maps.googleapis.com/maps/api/geocode/json?key='+googleapikey+'&latlng='+lat+','+lng,
 	        dataType: 'json',
 	        success : function(data){
 	            $('#address_locate').html(JSON.stringify(data.results[0].formatted_address))  

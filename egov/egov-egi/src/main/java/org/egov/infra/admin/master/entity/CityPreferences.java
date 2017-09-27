@@ -45,6 +45,7 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
@@ -65,8 +66,9 @@ import static org.egov.infra.admin.master.entity.CityPreferences.SEQ_CITY_PREF;
 @SequenceGenerator(name = SEQ_CITY_PREF, sequenceName = SEQ_CITY_PREF, allocationSize = 1)
 public class CityPreferences extends AbstractAuditable {
 
-    public static final String SEQ_CITY_PREF = "SEQ_EG_CITYPREFERENCES";
+    protected static final String SEQ_CITY_PREF = "SEQ_EG_CITYPREFERENCES";
     private static final long serialVersionUID = -7160795726709889116L;
+
     @Id
     @GeneratedValue(generator = SEQ_CITY_PREF, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -110,13 +112,26 @@ public class CityPreferences extends AbstractAuditable {
     @Length(max = 100)
     private String municipalityTwitterLink;
 
+    @SafeHtml
+    @Length(max = 64)
+    private String recaptchaPK;
+
+    @SafeHtml
+    @Length(max = 64)
+    private String recaptchaPub;
+
+    @SafeHtml
+    @NotBlank
+    @Length(max = 50)
+    private String googleApiKey;
+
     @Override
     public Long getId() {
         return id;
     }
 
     @Override
-    protected void setId(final Long id) {
+    protected void setId(Long id) {
         this.id = id;
     }
 
@@ -124,7 +139,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityLogo;
     }
 
-    public void setMunicipalityLogo(final FileStoreMapper municipalityLogo) {
+    public void setMunicipalityLogo(FileStoreMapper municipalityLogo) {
         this.municipalityLogo = municipalityLogo;
     }
 
@@ -132,7 +147,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityName;
     }
 
-    public void setMunicipalityName(final String municipalityName) {
+    public void setMunicipalityName(String municipalityName) {
         this.municipalityName = municipalityName;
     }
 
@@ -140,7 +155,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityContactNo;
     }
 
-    public void setMunicipalityContactNo(final String municipalityContactNo) {
+    public void setMunicipalityContactNo(String municipalityContactNo) {
         this.municipalityContactNo = municipalityContactNo;
     }
 
@@ -148,7 +163,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityAddress;
     }
 
-    public void setMunicipalityAddress(final String municipalityAddress) {
+    public void setMunicipalityAddress(String municipalityAddress) {
         this.municipalityAddress = municipalityAddress;
     }
 
@@ -156,7 +171,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityContactEmail;
     }
 
-    public void setMunicipalityContactEmail(final String municipalityContactEmail) {
+    public void setMunicipalityContactEmail(String municipalityContactEmail) {
         this.municipalityContactEmail = municipalityContactEmail;
     }
 
@@ -164,7 +179,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityGisLocation;
     }
 
-    public void setMunicipalityGisLocation(final String municipalityGisLocation) {
+    public void setMunicipalityGisLocation(String municipalityGisLocation) {
         this.municipalityGisLocation = municipalityGisLocation;
     }
 
@@ -172,7 +187,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityCallCenterNo;
     }
 
-    public void setMunicipalityCallCenterNo(final String municipalityCallCenterNo) {
+    public void setMunicipalityCallCenterNo(String municipalityCallCenterNo) {
         this.municipalityCallCenterNo = municipalityCallCenterNo;
     }
 
@@ -180,7 +195,7 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityFacebookLink;
     }
 
-    public void setMunicipalityFacebookLink(final String municipalityFacebookLink) {
+    public void setMunicipalityFacebookLink(String municipalityFacebookLink) {
         this.municipalityFacebookLink = municipalityFacebookLink;
     }
 
@@ -188,8 +203,32 @@ public class CityPreferences extends AbstractAuditable {
         return municipalityTwitterLink;
     }
 
-    public void setMunicipalityTwitterLink(final String municipalityTwitterLink) {
+    public void setMunicipalityTwitterLink(String municipalityTwitterLink) {
         this.municipalityTwitterLink = municipalityTwitterLink;
+    }
+
+    public String getRecaptchaPK() {
+        return recaptchaPK;
+    }
+
+    public void setRecaptchaPK(String recaptchaPK) {
+        this.recaptchaPK = recaptchaPK;
+    }
+
+    public String getRecaptchaPub() {
+        return recaptchaPub;
+    }
+
+    public void setRecaptchaPub(String recaptchaPub) {
+        this.recaptchaPub = recaptchaPub;
+    }
+
+    public String getGoogleApiKey() {
+        return googleApiKey;
+    }
+
+    public void setGoogleApiKey(final String googleApiKey) {
+        this.googleApiKey = googleApiKey;
     }
 
     public boolean logoExist() {

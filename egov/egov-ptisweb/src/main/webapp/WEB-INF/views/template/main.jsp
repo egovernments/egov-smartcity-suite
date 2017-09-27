@@ -42,100 +42,105 @@
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <!DOCTYPE html>
 <html oncontextmenu="return false;">
-	<head>
-	    <meta charset="utf-8">
-	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	    <meta name="description" content="eGov System" />
-	    <meta name="author" content="eGovernments Foundation" />
-	
-	    <title><tiles:insertAttribute name="title"/></title>
-		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
-	    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-	    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
-				
-		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-        <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/javascript/SASvalidation.js'/>"></script>
-		
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">		
-	 	<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-		
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
-			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
-		<![endif]-->
-	
-	</head>
-    <body class="page-body" oncontextmenu="return false;">
-        <div class="page-container">
-            <tiles:insertAttribute name="header"/>
-                <div class="main-content">
-                    <tiles:insertAttribute name="body"/>
-                </div>
-				<tiles:insertAttribute name="footer"/>
-        </div>
-        <div class="modal fade loader-class" data-backdrop="static">
-			<div class="modal-dialog">
-					<div class="modal-body">
-						<div class="row spinner-margin text-center">
-							<div class="col-md-12 ">
-								<div class="spinner">
-									<div class="rect1"></div>
-									<div class="rect2"></div>
-									<div class="rect3"></div>
-									<div class="rect4"></div>
-									<div class="rect5"></div>
-								</div>
-							</div>
-							
-							<div class="col-md-12 spinner-text">
-								Processing your request. Please wait..
-							</div>
-						</div>
-					</div>
-			</div>
-		</div>
-		<script>
-			function disableRefresh(e) {
-	            if ((e.which || e.keyCode) == 116)
-	                    e.preventDefault();
-	            if (e.ctrlKey)
-	                    if ((e.which || e.keyCode) == 82)
-	                            e.preventDefault();
-            }
-            jQuery(document).on("keydown", disableRefresh);
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="eGov System"/>
+    <meta name="author" content="eGovernments Foundation"/>
 
-	    	function reCalculateTotalFooterWhenExport(tableIdWithOutPrefix)
-	    	{
-	    		$("#"+tableIdWithOutPrefix+" tfoot td").each(function( index ) {
-	    	   		 if(index!==0)
-	    	   		 {
-	    	   			 var totals=$(this).html().split("(");
-	    		    		 var str=""+totals[1];
-	    		    		 str=str.slice(0,-1);
-	    		    		 $(this).html(str);
-	    	   		 }
-	    	   	 });
-	    	     setTimeout(function(){ $('select[name="'+ tableIdWithOutPrefix +'_length"]').trigger('change'); }, 10);
-	    	}
-		</script>
-    </body>
+    <title><tiles:insertAttribute name="title"/></title>
+    <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>"/>
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+
+    <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
+    <script type="text/javascript" src="<cdn:url value='/resources/javascript/SASvalidation.js'/>"></script>
+
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>">
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+    <script src="/egi/resources/global/js/ie8/respond.min.js"></script>
+    <![endif]-->
+    <script>
+        var googleapikey = '${sessionScope.googleApiKey}';
+        var citylat = ${sessionScope.citylat};
+        var citylng = ${sessionScope.citylng};
+    </script>
+</head>
+<body class="page-body" oncontextmenu="return false;">
+<div class="page-container">
+    <tiles:insertAttribute name="header"/>
+    <div class="main-content">
+        <tiles:insertAttribute name="body"/>
+    </div>
+    <tiles:insertAttribute name="footer"/>
+</div>
+<div class="modal fade loader-class" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-body">
+            <div class="row spinner-margin text-center">
+                <div class="col-md-12 ">
+                    <div class="spinner">
+                        <div class="rect1"></div>
+                        <div class="rect2"></div>
+                        <div class="rect3"></div>
+                        <div class="rect4"></div>
+                        <div class="rect5"></div>
+                    </div>
+                </div>
+
+                <div class="col-md-12 spinner-text">
+                    Processing your request. Please wait..
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+    function disableRefresh(e) {
+        if ((e.which || e.keyCode) == 116)
+            e.preventDefault();
+        if (e.ctrlKey)
+            if ((e.which || e.keyCode) == 82)
+                e.preventDefault();
+    }
+
+    jQuery(document).on("keydown", disableRefresh);
+
+    function reCalculateTotalFooterWhenExport(tableIdWithOutPrefix) {
+        $("#" + tableIdWithOutPrefix + " tfoot td").each(function (index) {
+            if (index !== 0) {
+                var totals = $(this).html().split("(");
+                var str = "" + totals[1];
+                str = str.slice(0, -1);
+                $(this).html(str);
+            }
+        });
+        setTimeout(function () {
+            $('select[name="' + tableIdWithOutPrefix + '_length"]').trigger('change');
+        }, 10);
+    }
+</script>
+</body>
 </html>
