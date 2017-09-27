@@ -130,7 +130,7 @@ public class BulkBoundaryService {
 
 	@Transactional
 	public void refreshViewPropertyInfo() {
-		String sqlqry = "REFRESH MATERIALIZED VIEW egpt_view_propertyinfo ";
+		String sqlqry = "REFRESH MATERIALIZED VIEW CONCURRENTLY egpt_view_propertyinfo ";
 		entityManager.unwrap(Session.class).createSQLQuery(sqlqry).executeUpdate();
 	}
 
