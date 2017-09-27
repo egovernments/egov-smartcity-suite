@@ -97,8 +97,8 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -427,7 +427,17 @@ public class CollectionsUtil {
      * @return Position of logged in user
      */
     public Position getPositionOfUser(final User user) {
-        return posService.getCurrentPositionForUser(user.getId());
+        Position position = posService.getCurrentPositionForUser(user.getId());
+        if (position == null) {
+            List<Assignment> assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+            if (!assignList.isEmpty())
+                position = assignList.get(0).getPosition();
+            else
+                throw new ValidationException(user.getUsername() + " User doesn't have active assignments.",
+                        user.getUsername() + " User doesn't have active assignments.");
+        }
+
+        return position;
     }
 
     public List<Position> getPositionsForEmployee(final User user) {

@@ -84,6 +84,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -127,6 +128,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
+    @Autowired
+    protected SecurityUtils securityUtils;
 
     public ReceiptHeaderService() {
         super(ReceiptHeader.class);
@@ -394,16 +398,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void startWorkflow(final ReceiptHeader receiptHeader) {
         final Boolean createVoucherForBillingService = collectionsUtil.checkVoucherCreation(receiptHeader);
         Position position;
-        if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy()))
+        if (!collectionsUtil.isEmployee(this.securityUtils.getCurrentUser()))
             position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
-        else
-            position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
+        else 
+            position = collectionsUtil.getPositionOfUser(this.securityUtils.getCurrentUser());
         if (receiptHeader.getState() == null && !createVoucherForBillingService)
             receiptHeader
                     .transition()
                     .start()
                     .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                            this.securityUtils.getCurrentUser().getUsername() + "::" + this.securityUtils.getCurrentUser().getName())
                     .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
                     .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -412,11 +416,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .transition()
                     .start()
                     .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                            this.securityUtils.getCurrentUser().getUsername() + "::" +this.securityUtils.getCurrentUser().getName())
                     .withComments("Receipt voucher created")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
 
+        persistenceService.applyAuditing(receiptHeader.getState());
         LOGGER.debug("Workflow state transition complete");
     }
 
@@ -1054,13 +1059,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void populateAndPersistReceipts(final ReceiptHeader receiptHeader,
             final List<InstrumentHeader> receiptInstrList) {
         try {
-            persist(receiptHeader);
-            LOGGER.info("Persisted receipts");
             LOGGER.info("Workflow started for newly created receipts");
             if (isReceiptCreateApprovedStatus(receiptHeader))
                 setReceiptApprovedStatus(receiptHeader);
             else
                 startWorkflow(receiptHeader);
+            LOGGER.info("Persisted receipts");
+            persist(receiptHeader);
             // create voucher based on configuration.
             if (collectionsUtil.checkVoucherCreation(receiptHeader))
                 createVoucherForReceipt(receiptHeader);
@@ -1068,8 +1073,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
                 LOGGER.info("Updated billing system ");
             } else
-                updateCollectionIndexAndPushMail(receiptHeader);
-
+                   updateCollectionIndexAndPushMail(receiptHeader);
         } catch (final HibernateException e) {
             LOGGER.error("Receipt Service HException while persisting ReceiptHeader", e);
             throw new ApplicationRuntimeException("Receipt Service Exception while persisting ReceiptHeader : ", e);
