@@ -38,65 +38,67 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-$(document).ready(function(){
-	
-	var myCenter;
-	var map, geocoder, geolocate, marker;
-	if (lat != '0.0') {
-		$.ajax({
-	        type: "POST",
-	        url: 'https://maps.googleapis.com/maps/api/geocode/json?key='+googleapikey+'&latlng='+lat+','+lng,
-	        dataType: 'json',
-	        success : function(data){
-	            $('#address_locate').html(JSON.stringify(data.results[0].formatted_address))  
-	        }
-		});
-	}
-	$('#complaint-locate').on('show.bs.modal', function() {
-		//Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
-		
-		//complaint view(update) map
-		$('#show_address_in_map').html($('#address_locate').html());
-		myCenter=new google.maps.LatLng(lat, lng);
-		initialize();
-		resizeMap();
-	});
-	
-	function resizeMap() {
-		if(typeof map =="undefined") return;
-		setTimeout( function(){resizingMap();} , 400);
-	}
-	
-	function resizingMap() {
-		if(typeof map =="undefined") return;
-		var center = map.getCenter();
-		google.maps.event.trigger(map, "resize");
-		map.setCenter(center); 
-	}
-	
-	function initialize() {
-		
-		marker=new google.maps.Marker({
-			position:myCenter
-		});
-		
-		var mapProp = {
-			center:myCenter,
-			mapTypeControl: true,
-			zoom:15,
-			mapTypeId:google.maps.MapTypeId.ROADMAP
-		};
-		
-		geocoder = new google.maps.Geocoder();
-		map=new google.maps.Map(document.getElementById("normal"),mapProp);
-		
-		marker.setMap(map);
-		
-	};
-	
-	google.maps.event.addDomListener(window, 'load', initialize);
-	
-	google.maps.event.addDomListener(window, "resize", resizingMap());
-	
-	
+$(document).ready(function () {
+
+    var myCenter;
+    var map, geocoder, geolocate, marker;
+    if (lat != '0.0') {
+        var geocoder = new google.maps.Geocoder;
+        geocoder.geocode({'location': {lat: lat, lng: lng}}, function (results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    $('#address_locate').html(JSON.stringify(results[0].formatted_address));
+                }
+            }
+        });
+    }
+    $('#complaint-locate').on('show.bs.modal', function () {
+        //Must wait until the render of the modal appear, thats why we use the resizeMap and NOT resizingMap!! ;-)
+
+        //complaint view(update) map
+        $('#show_address_in_map').html($('#address_locate').html());
+        myCenter = new google.maps.LatLng(lat, lng);
+        initialize();
+        resizeMap();
+    });
+
+    function resizeMap() {
+        if (typeof map == "undefined") return;
+        setTimeout(function () {
+            resizingMap();
+        }, 400);
+    }
+
+    function resizingMap() {
+        if (typeof map == "undefined") return;
+        var center = map.getCenter();
+        google.maps.event.trigger(map, "resize");
+        map.setCenter(center);
+    }
+
+    function initialize() {
+
+        marker = new google.maps.Marker({
+            position: myCenter
+        });
+
+        var mapProp = {
+            center: myCenter,
+            mapTypeControl: true,
+            zoom: 15,
+            mapTypeId: google.maps.MapTypeId.ROADMAP
+        };
+
+        geocoder = new google.maps.Geocoder();
+        map = new google.maps.Map(document.getElementById("normal"), mapProp);
+
+        marker.setMap(map);
+
+    };
+
+    google.maps.event.addDomListener(window, 'load', initialize);
+
+    google.maps.event.addDomListener(window, "resize", resizingMap());
+
+
 });

@@ -124,20 +124,24 @@ $(document).ready(function () {
                     var imagelat = EXIF.getTag(this, "GPSLatitude"),
                         imagelongt = EXIF.getTag(this, "GPSLongitude");
                     var formatted_lat = format_lat_long(imagelat.toString());
-                    var formatted_long = format_lat_long(imagelongt.toString());
-                    $.ajax({
-                        type: "POST",
-                        url: 'https://maps.googleapis.com/maps/api/geocode/json?key='+googleapikey+'&latlng=' + formatted_lat + ',' + formatted_long,
-                        dataType: 'json',
-                        success: function (data) {
-                            $('#location').typeahead('val', data.results[0].formatted_address);
-                            myCenter = new google.maps.LatLng(formatted_lat, formatted_long);
-                            $('#lat').val(formatted_lat);
-                            $('#lng').val(formatted_long);
-                            lat = formatted_lat;
-                            lng = formatted_long;
-                            //setmarkerfromimage();
-                            map.setCenter(myCenter);
+                    var formatted_lng = format_lat_long(imagelongt.toString());
+                    var geocoder = new google.maps.Geocoder;
+                    geocoder.geocode({
+                        'location': {
+                            lat: formatted_lat,
+                            lng: formatted_lng
+                        }
+                    }, function (results, status) {
+                        if (status === 'OK') {
+                            if (results[0]) {
+                                $('#location').typeahead('val', results[0].formatted_address);
+                                myCenter = new google.maps.LatLng(formatted_lat, formatted_lng);
+                                $('#lat').val(formatted_lat);
+                                $('#lng').val(formatted_lng);
+                                lat = formatted_lat;
+                                lng = formatted_lng;
+                                map.setCenter(myCenter);
+                            }
                         }
                     });
                 });
@@ -313,12 +317,12 @@ $(document).ready(function () {
     }
 
     function getAddress(lat, lng) {
-        $.ajax({
-            type: "POST",
-            url: 'https://maps.googleapis.com/maps/api/geocode/json?key='+googleapikey+'&latlng=' + lat + ',' + lng,
-            dataType: 'json',
-            success: function (data) {
-                address = data.results[0].formatted_address;
+        var geocoder = new google.maps.Geocoder;
+        geocoder.geocode({'location': {lat: lat, lng: lng}}, function (results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    address = results[0].formatted_address;
+                }
             }
         });
     }
@@ -351,14 +355,14 @@ $(document).ready(function () {
         var location = map.getCenter();
         lat = location.lat();
         lng = location.lng();
-        $.ajax({
-            type: "POST",
-            url: 'https://maps.googleapis.com/maps/api/geocode/json?key='+googleapikey+'&latlng=' + lat + ',' + lng,
-            dataType: 'json',
-            success: function (data) {
-                address = data.results[0].formatted_address;
-                $('#location').typeahead('val', address);
-                $('#latlngaddress').val(address);
+        var geocoder = new google.maps.Geocoder;
+        geocoder.geocode({'location': {lat: lat, lng: lng}}, function (results, status) {
+            if (status === 'OK') {
+                if (results[0]) {
+                    address = results[0].formatted_address;
+                    $('#location').typeahead('val', address);
+                    $('#latlngaddress').val(address);
+                }
             }
         });
         $('#lat').val(lat);
