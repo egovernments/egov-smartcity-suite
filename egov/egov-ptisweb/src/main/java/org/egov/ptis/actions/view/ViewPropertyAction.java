@@ -48,6 +48,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -325,7 +326,8 @@ public class ViewPropertyAction extends BaseFormAction {
 					|| appType.equalsIgnoreCase(APPLICATION_TYPE_ALTER_ASSESSENT)
 					|| appType.equalsIgnoreCase(APPLICATION_TYPE_BIFURCATE_ASSESSENT)
 					|| appType.equals(APPLICATION_TYPE_TAX_EXEMTION)
-					|| appType.equals(APPLICATION_TYPE_AMALGAMATION)){
+					|| appType.equals(APPLICATION_TYPE_AMALGAMATION)
+					|| appType.equals(APPLICATION_TYPE_DEMOLITION)){
 				property = (PropertyImpl) propertyImplService.find("from PropertyImpl where applicationNo=?", appNo);
 				setBasicProperty(property.getBasicProperty());
 				setHistoryMap(propService.populateHistory(property));
