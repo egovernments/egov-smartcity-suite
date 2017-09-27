@@ -132,10 +132,6 @@ public class ApiFilter implements Filter {
             final HttpSession session = request.getSession();
             final Optional<Map.Entry<Source, List<String>>> resolvedIP = SOURCE_IP_MAPPING.entrySet().parallelStream()
                     .filter(e -> e.getValue().parallelStream().anyMatch(referrer::contains)).findFirst();
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Resolve ip present or not ", resolvedIP.isPresent());
-                LOG.debug("SOURCE_IP_MAPPING values ", SOURCE_IP_MAPPING);
-            }
             if (resolvedIP.isPresent())
                 session.setAttribute(SOURCE, resolvedIP.get().getKey());
             else
