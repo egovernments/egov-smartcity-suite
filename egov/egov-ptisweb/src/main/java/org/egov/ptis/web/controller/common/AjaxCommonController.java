@@ -45,6 +45,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import org.egov.infra.persistence.entity.Address;
@@ -100,7 +101,8 @@ public class AjaxCommonController {
                     amalgamatedProp.setValidationMsg("This property has dues!");
                 else
                     for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
-                        final List<Address> addrSet = propOwner.getOwner().getAddress();
+						final List<Address> addrSet = propOwner.getOwner().getAddress().isEmpty()
+								? Arrays.asList(basicProp.getAddress()) : propOwner.getOwner().getAddress();
                         for (final Address address : addrSet) {
                             amalgamatedProp.setOwnerName(propOwner.getOwner().getName());
                             amalgamatedProp.setMobileNo(propOwner.getOwner().getMobileNumber());
