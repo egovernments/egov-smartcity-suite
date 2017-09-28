@@ -153,6 +153,7 @@ public class CreateAssessmentController {
     	viewPropertyDetails.setMutationReason(assessmentDetails.getMutationReasonCode());
     	viewPropertyDetails.setExtentOfSite(assessmentDetails.getExtentOfSite());
     	viewPropertyDetails.setOccupancyCertificationNo(assessmentDetails.getOccupancyCertificationNo());
+    	viewPropertyDetails.setOccupancyCertificationDate(assessmentDetails.getOccupancyCertificationDate());
     	
     	//Amenities Details
     	AmenitiesDetails amenities = createPropDetails.getAmenitiesDetails();
@@ -165,16 +166,29 @@ public class CreateAssessmentController {
     		viewPropertyDetails.setHasWaterHarvesting(amenities.hasWaterHarvesting());
     		viewPropertyDetails.setHasCableConnection(amenities.hasCableConnection());
     	}
+		else {
+			viewPropertyDetails.setHasLift(false);
+			viewPropertyDetails.setHasToilet(false);
+			viewPropertyDetails.setHasWaterTap(false);
+			viewPropertyDetails.setHasElectricity(false);
+			viewPropertyDetails.setHasAttachedBathroom(false);
+			viewPropertyDetails.setHasWaterHarvesting(false);
+			viewPropertyDetails.setHasCableConnection(false);
+		}
     	
     	//Construction Type Details
     	ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
-    	if(constructionTypeDetails != null){
-    		viewPropertyDetails.setFloorType(constructionTypeDetails.getFloorTypeId());
-    		viewPropertyDetails.setRoofType(constructionTypeDetails.getRoofTypeId());
-    		viewPropertyDetails.setWallType(constructionTypeDetails.getWallTypeId());
-    		viewPropertyDetails.setWoodType(constructionTypeDetails.getWoodTypeId());
-    	}
-    	
+		if (constructionTypeDetails != null) {
+			viewPropertyDetails.setFloorType(constructionTypeDetails.getFloorTypeId());
+			viewPropertyDetails.setRoofType(constructionTypeDetails.getRoofTypeId());
+			viewPropertyDetails.setWallType(constructionTypeDetails.getWallTypeId());
+			viewPropertyDetails.setWoodType(constructionTypeDetails.getWoodTypeId());
+		} else {
+			viewPropertyDetails.setFloorType(null);
+			viewPropertyDetails.setRoofType(null);
+			viewPropertyDetails.setWallType(null);
+			viewPropertyDetails.setWoodType(null);
+		}
     	if(createPropDetails.getPropertyTypeMasterCode().equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)){
     		VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
     		viewPropertyDetails.setSurveyNumber(vacantLandDetails.getSurveyNumber());

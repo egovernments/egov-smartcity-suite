@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.model;
 
 import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public class ViewPropertyDetails {
@@ -58,6 +59,7 @@ public class ViewPropertyDetails {
     private String extentOfSite;
     private Boolean isExtentAppurtenantLand;
     private String occupancyCertificationNo;
+    private Date occupancyCertificationDate;
     private String extentAppartenauntLand;
     private String regdDocNo;
     private String regdDocDate;
@@ -224,7 +226,15 @@ public class ViewPropertyDetails {
         this.occupancyCertificationNo = occupancyCertificationNo;
     }
 
-    public String getExtentAppartenauntLand() {
+    public Date getOccupancyCertificationDate() {
+		return occupancyCertificationDate;
+	}
+
+	public void setOccupancyCertificationDate(Date occupancyCertificationDate) {
+		this.occupancyCertificationDate = occupancyCertificationDate;
+	}
+
+	public String getExtentAppartenauntLand() {
         return extentAppartenauntLand;
     }
 

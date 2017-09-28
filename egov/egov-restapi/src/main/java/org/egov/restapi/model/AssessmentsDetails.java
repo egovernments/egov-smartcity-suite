@@ -40,6 +40,7 @@
 package org.egov.restapi.model;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @SuppressWarnings("serial")
 public class AssessmentsDetails implements Serializable {
@@ -49,12 +50,13 @@ public class AssessmentsDetails implements Serializable {
 	private String extentOfSite;
 	private String occupancyCertificationNo;
 	private String extentAppartenauntLand;
+	private Date occupancyCertificationDate;
 
 	@Override
 	public String toString() {
 		return "AssessmentsDetails [mutationReasonCode=" + mutationReasonCode + ", parentPropertyAssessmentNo="
 				+ parentPropertyAssessmentNo + ", extentOfSite=" + extentOfSite + ", occupancyCertificationNo="
-				+ occupancyCertificationNo + ", occupancyCertificationNo=" + occupancyCertificationNo + "]";
+				+ occupancyCertificationNo + ", occupancyCertificationDate=" + occupancyCertificationDate + "]";
 	}
 
 	public String getMutationReasonCode() {
@@ -95,6 +97,14 @@ public class AssessmentsDetails implements Serializable {
 
 	public void setExtentAppartenauntLand(String extentAppartenauntLand) {
 		this.extentAppartenauntLand = extentAppartenauntLand;
+	}
+
+	public Date getOccupancyCertificationDate() {
+		return occupancyCertificationDate;
+	}
+
+	public void setOccupancyCertificationDate(Date occupancyCertificationDate) {
+		this.occupancyCertificationDate = occupancyCertificationDate;
 	}
 
 }

@@ -354,7 +354,7 @@ public interface PropertyTaxConstants {
         private static final long serialVersionUID = -8758751964576480520L;
 
         {
-            put("RESIDENTIAl", "Residential");
+            put("RESIDENTIAL", "Residential");
             put("NON_RESIDENTIAL", "Non Residential");
             put("MIXED", "Mixed");
         }
@@ -1400,7 +1400,7 @@ public interface PropertyTaxConstants {
     public static final String CATEGORY_VACANT_LAND = "VACANTLAND";
     public static final String CATEGORY_STATE_GOVT = "STATE_GOVT";
     public static final String CATEGORY_CENTRAL_GOVT = "CENTRAL_GOVT";
-    public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAl";
+    public static final String CATEGORY_RESIDENTIAL = "RESIDENTIAL";
     public static final String CATEGORY_NON_RESIDENTIAL = "NON_RESIDENTIAL";
     public static final String CATEGORY_MIXED = "MIXED";
 

@@ -420,10 +420,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         else if (FALSE.equals(propertyDetail.isAppurtenantLandChecked())
                 && ("".equals(areaOfPlot) || Double.valueOf(areaOfPlot) == 0))
             addActionError(getText("mandatory.extentsite.greaterthanzero"));
-        if (floorTypeId == null || floorTypeId == -1)
-            addActionError(getText("mandatory.floorType"));
-        if (roofTypeId == null || roofTypeId == -1)
-            addActionError(getText("mandatory.roofType"));
         if (propertyDetail.getOccupancyCertificationDate() != null && propCompletionDate != null
                 && propertyDetail.getOccupancyCertificationDate().before(propCompletionDate))
             addActionError(getText("occupancydate.before.constrDate.error"));

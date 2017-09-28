@@ -60,7 +60,6 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.client.service.calculator.APTaxCalculator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -77,7 +76,6 @@ import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.StructureClassificationService;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.AssessmentsDetails;
-import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.DocumentTypeDetails;
 import org.egov.restapi.model.PropertyAddressDetails;
@@ -94,9 +92,6 @@ public class ValidationUtil {
 
 	@Autowired
 	private PropertyExternalService propertyExternalService;
-
-	@Autowired
-	private BoundaryService boundaryService;
 
 	@Autowired
 	PropertyUsageService propertyUsageService;
@@ -322,7 +317,6 @@ public class ValidationUtil {
 		}
 
 		// Property Address validations
-
 		PropertyAddressDetails propertyAddressDetails = createPropDetails.getPropertyAddressDetails();
 		if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)) {
 			if (propertyAddressDetails == null) {
@@ -377,27 +371,6 @@ public class ValidationUtil {
 		}
 
 		if (!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
-			ConstructionTypeDetails constructionTypeDetails = createPropDetails.getConstructionTypeDetails();
-			if (constructionTypeDetails == null) {
-				errorDetails = new ErrorDetails();
-				errorDetails.setErrorCode(CONSTRUCTION_DETAILS_REQ_CODE);
-				errorDetails.setErrorMessage(CONSTRUCTION_DETAILS_REQ_MSG);
-				return errorDetails;
-			} else {
-				if (StringUtils.isBlank(constructionTypeDetails.getFloorTypeId())) {
-					errorDetails = new ErrorDetails();
-					errorDetails.setErrorCode(FLOOR_TYPE_REQ_CODE);
-					errorDetails.setErrorMessage(FLOOR_TYPE_REQ_MSG);
-					return errorDetails;
-				}
-				if (StringUtils.isBlank(constructionTypeDetails.getRoofTypeId())) {
-					errorDetails = new ErrorDetails();
-					errorDetails.setErrorCode(ROOF_TYPE_REQ_CODE);
-					errorDetails.setErrorMessage(ROOF_TYPE_REQ_MSG);
-					return errorDetails;
-				}
-			}
-			// Floor level validations
 			final List<FloorDetails> floorDetailsList = createPropDetails.getFloorDetails();
 			if (floorDetailsList == null || floorDetailsList.isEmpty()) {
 				errorDetails = new ErrorDetails();
@@ -418,8 +391,15 @@ public class ValidationUtil {
 						errorDetails.setErrorMessage(CLASSIFICATION_OF_BUILDING_REQ_MSG);
 						return errorDetails;
 					}
-					if (!structureClassificationService
-							.isActiveClassification(floorDetails.getBuildClassificationCode())) {
+					Boolean classification = structureClassificationService
+							.isActiveClassification(floorDetails.getBuildClassificationCode());
+					if (classification == null) {
+						errorDetails = new ErrorDetails();
+						errorDetails.setErrorCode(CLASSIFICATION_CODE_DOESNT_EXIST);
+						errorDetails.setErrorMessage(CLASSIFICATION_CODE_DOESNT_EXIST_MSG);
+						return errorDetails;
+					}
+					if (!classification) {
 						errorDetails = new ErrorDetails();
 						errorDetails.setErrorCode(INACTIVE_CLASSIFICATION_CODE);
 						errorDetails.setErrorMessage(INACTIVE_CLASSIFICATION_REQ_MSG);
@@ -431,7 +411,14 @@ public class ValidationUtil {
 						errorDetails.setErrorMessage(NATURE_OF_USAGES_REQ_MSG);
 						return errorDetails;
 					}
-					if (!propertyUsageService.isActiveUsage(floorDetails.getNatureOfUsageCode())) {
+					Boolean usage = propertyUsageService.isActiveUsage(floorDetails.getNatureOfUsageCode());
+					if (usage == null) {
+						errorDetails = new ErrorDetails();
+						errorDetails.setErrorCode(USAGE_CODE_DOESNT_EXIST);
+						errorDetails.setErrorMessage(USAGE_CODE_DOESNT_EXIST_MSG);
+						return errorDetails;
+					}
+					if (!usage) {
 						errorDetails = new ErrorDetails();
 						errorDetails.setErrorCode(INACTIVE_USAGE_CODE);
 						errorDetails.setErrorMessage(INACTIVE_USAGE_REQ_MSG);

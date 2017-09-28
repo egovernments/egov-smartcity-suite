@@ -41,11 +41,11 @@
 <%@ include file="/includes/taglibs.jsp" %>
 	<tr class="construction">
 		<td class="greybox">&nbsp;</td>
-		<td class="greybox"><s:text name="floortype"></s:text> <span class="mandatory1">*</span> :</td>
+		<td class="greybox"><s:text name="floortype"></s:text> :</td>
 		<td class="greybox" width=""><s:select headerKey="-1" title="Floor type of the property" headerValue="%{getText('default.select')}" name="floorTypeId"
 				id="floorTypeId" listKey="id" listValue="name" list="dropdownData.floorType" value="%{floorTypeId}"
 				cssClass="selectnew" /></td>
-		<td class="greybox"><s:text name="rooftype"></s:text> <span class="mandatory1">*</span> :</td>
+		<td class="greybox"><s:text name="rooftype"></s:text> :</td>
 		<td class="greybox"><s:select headerKey="-1" title="Roof type of the property" headerValue="%{getText('default.select')}" name="roofTypeId"
 				id="roofTypeId" listKey="id" listValue="name" list="dropdownData.roofType" value="%{roofTypeId}"
 				cssClass="selectnew" /></td>

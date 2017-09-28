@@ -106,11 +106,11 @@ public class RestApiConstants {
     public static final String PLINTH_AREA_REQ_CODE = "22";
     public static final String PLINTH_AREA_REQ_MSG = "Plinth area (Sq.Mtrs) is required.";
 
-    public static final String FLOOR_TYPE_REQ_CODE = "23";
-    public static final String FLOOR_TYPE_REQ_MSG = "Floor Type is required.";
+    public static final String CLASSIFICATION_CODE_DOESNT_EXIST = "23";
+    public static final String CLASSIFICATION_CODE_DOESNT_EXIST_MSG = "Building Classification doesn't exist";
 
-    public static final String ROOF_TYPE_REQ_CODE = "24";
-    public static final String ROOF_TYPE_REQ_MSG = "Roof Type is required.";
+    public static final String USAGE_CODE_DOESNT_EXIST = "24";
+    public static final String USAGE_CODE_DOESNT_EXIST_MSG = "Nature of Usage doesn't exist";
 
     public static final String PIN_CODE_REQ_CODE = "25";
     public static final String PIN_CODE_REQ_MSG = "Pin Code is required.";
@@ -213,7 +213,7 @@ public class RestApiConstants {
     public static final String CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_MSG = "Current Capital Value should be greate than 0.";
 
     public static final String FIRMNAME_REQ_CODE = "64";
-    public static final String FIRMNAME_REQ_MSG = "Area/Extent of site should be greate than 0.";
+    public static final String FIRMNAME_REQ_MSG = "Firm Name is Required";
 
     public static final String OCCUPANCY_DATE_REQ_CODE = "65";
     public static final String OCCUPANCY_DATE_REQ_MSG = "Occupancy Date is required.";
@@ -241,9 +241,6 @@ public class RestApiConstants {
 
     public static final String DOOR_NO_REQ_CODE = "73";
     public static final String DOOR_NO_REQ_MSG = "Door Number is required.";
-
-    public static final String CONSTRUCTION_DETAILS_REQ_CODE = "74";
-    public static final String CONSTRUCTION_DETAILS_REQ_MSG = "Please enter the construction details.";
 
     public static final String FUTURE_DATES_NOT_ALLOWED_CODE = "75";
     public static final String FUTURE_DATES_NOT_ALLOWED_MSG = "Registration Doc Date/Construction Date/Occupancy Date cannot be greater than current date.";
@@ -574,7 +571,7 @@ public class RestApiConstants {
     public static final String DOCUMENT_DATE_LESS_EFFECTIVE_DATE_REQ_MSG = "Document Date Should be less than Effective Date";
     
     public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE = "98";
-    public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG = "Document Date Should be greter than Construction Date";
+    public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG = "Document Date Should be less than Construction Date";
     
     public static final String INVALID_GUARDIAN_RELATION_CODE = "100";
     public static final String INVALID_GUARDIAN_RELATION_REQ_MSG = "Invalid Guardian Relation";
@@ -607,7 +604,7 @@ public class RestApiConstants {
     public static final String INACTIVE_CLASSIFICATION_REQ_MSG = "Building Classification is Inactive";
     
     public static final String INACTIVE_UNIT_RATES_CODE = "110";
-    public static final String INACTIVE_UNIT_RATES_REQ_MSG = "There is no Active Unit Rates for given ZOne,Claasfication,Usage and Occupancy Date";
+    public static final String INACTIVE_UNIT_RATES_REQ_MSG = "There is no Active Unit Rates for given Zone,Claasfication,Usage and Occupancy Date";
     
     public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_CODE = "111";
     public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_REQ_MSG = "There is Mapping Found for selected Locality , Block and Ward";
@@ -624,5 +621,5 @@ public class RestApiConstants {
     
     public static final String THIRD_PARTY_ERR_CODE_NO_BUDGETHEAD = "EGF-REST-7";
     public static final String THIRD_PARTY_ERR_MSG_NO_BUDGETHEAD = "No Budget Head exists with the given Budget Head code";
-
+    
 }

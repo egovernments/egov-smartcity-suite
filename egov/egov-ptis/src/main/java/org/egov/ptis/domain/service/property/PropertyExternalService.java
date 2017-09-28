@@ -727,10 +727,6 @@ public class PropertyExternalService {
 
 				} else {
 					arrearDetails.setTaxAmount(total);
-					// penalty calculation is entirely moved to next loop . So
-					// no need to add it here
-					// arrearDetails.setTotalAmount(total.add(arrearDetails.getPenalty()).add(
-					// arrearDetails.getChqBouncePenalty()));
 					arrearDetails.setTotalAmount(total.add(arrearDetails.getChqBouncePenalty()));
 					propertyTaxDetails.getTaxDetails().add(arrearDetails);
 					loopInstallment = installment;
@@ -1328,13 +1324,17 @@ public class PropertyExternalService {
 		propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
 
 		if (!viewPropertyDetails.getPropertyTypeMaster().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
-			final FloorType floorType = floorTypeService.getFloorTypeById(Long.valueOf(viewPropertyDetails.getFloorType()));
-			final RoofType roofType = roofTypeService.getRoofTypeById(Long.valueOf(viewPropertyDetails.getRoofType()));
+			FloorType floorType = null;
+			RoofType roofType = null;
 			WallType wallType = null;
 			WoodType woodType = null;
-			if (StringUtils.isNotBlank(viewPropertyDetails.getWallType()))
+			if (viewPropertyDetails.getFloorType() != null && !viewPropertyDetails.getFloorType().isEmpty())
+				floorType = floorTypeService.getFloorTypeById(Long.valueOf(viewPropertyDetails.getFloorType()));
+			if (viewPropertyDetails.getRoofType() != null && !viewPropertyDetails.getRoofType().isEmpty())
+				roofType = roofTypeService.getRoofTypeById(Long.valueOf(viewPropertyDetails.getRoofType()));
+			if (viewPropertyDetails.getWoodType() != null && !viewPropertyDetails.getWallType().isEmpty())
 				wallType = wallTypeService.getWallTypeById(Long.valueOf(viewPropertyDetails.getWallType()));
-			if (StringUtils.isNotBlank(viewPropertyDetails.getWallType()))
+			if (viewPropertyDetails.getWallType() != null && !viewPropertyDetails.getWoodType().isEmpty())
 				woodType = woodTypeService.getWoodTypeById(Long.valueOf(viewPropertyDetails.getWoodType()));
 
 			propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
@@ -1659,13 +1659,10 @@ public class PropertyExternalService {
 		String natureOftask = StringUtils.EMPTY;
 		if (mode.equals(PROPERTY_MODE_CREATE)) {
 			currentState = "Created";
-			// currentState = CREATE_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
 			additionalRule = NEW_ASSESSMENT;
 			natureOftask = NATURE_NEW_ASSESSMENT;
 		} else {
 			currentState = "Created";
-			//currentState = WF_STATE_ASSISTANT_APPROVAL_PENDING;
-			// currentState = MODIFY_CURRENT_STATE_BILL_COLLECTOR_APPROVED;
 			additionalRule = ADDTIONAL_RULE_ALTER_ASSESSMENT;
 			natureOftask = NATURE_ALTERATION;
 		}
