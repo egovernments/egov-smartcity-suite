@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,29 +39,35 @@
  */
 package org.egov.wtms.reports.entity;
 
+import java.lang.reflect.Type;
+
+import org.egov.wtms.application.entity.SearchNoticeDetails;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-import org.egov.wtms.application.entity.GenerateConnectionBill;
-
-import java.lang.reflect.Type;
-
-public class GenerateConnectionBillAdaptor implements JsonSerializer<GenerateConnectionBill> {
+public class SearchNoticeAdaptor implements JsonSerializer<SearchNoticeDetails> {
 
     @Override
-    public JsonElement serialize(final GenerateConnectionBill generateConnectionBill, final Type typeOfSrc,
+    public JsonElement serialize(final SearchNoticeDetails searchNoticeDetails, final Type typeOfSrc,
             final JsonSerializationContext context) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("hscNo", generateConnectionBill.getHscNo());
-        jsonObject.addProperty("ownerName", generateConnectionBill.getOwnerName());
-        jsonObject.addProperty("propertyId", generateConnectionBill.getAssessmentNo());
-        jsonObject.addProperty("connectionType", generateConnectionBill.getConnectionType());
-        jsonObject.addProperty("houseNo", generateConnectionBill.getHouseNumber());
-        jsonObject.addProperty("locality", generateConnectionBill.getLocality());
-        jsonObject.addProperty("billNo", generateConnectionBill.getBillNo());
-        jsonObject.addProperty("billDate", generateConnectionBill.getBillDate().toString());
+        jsonObject.addProperty("hscNo", searchNoticeDetails.getHscNo());
+        jsonObject.addProperty("ownerName", searchNoticeDetails.getOwnerName());
+        jsonObject.addProperty("propertyId", searchNoticeDetails.getAssessmentNo());
+        jsonObject.addProperty("connectionType", searchNoticeDetails.getConnectionType());
+        jsonObject.addProperty("houseNo", searchNoticeDetails.getHouseNumber());
+        jsonObject.addProperty("locality", searchNoticeDetails.getLocality());
+        if (searchNoticeDetails.getBillNo() != null)
+            jsonObject.addProperty("billNo", searchNoticeDetails.getBillNo());
+        if (searchNoticeDetails.getBillDate() != null)
+            jsonObject.addProperty("billDate", searchNoticeDetails.getBillDate().toString());
+        if (searchNoticeDetails.getWorkOrderDate() != null)
+            jsonObject.addProperty("workOrderDate", searchNoticeDetails.getWorkOrderDate().toString());
+        if (searchNoticeDetails.getWorkOrderNumber() != null)
+            jsonObject.addProperty("workOrderNumber", searchNoticeDetails.getWorkOrderNumber());
         return jsonObject;
     }
 

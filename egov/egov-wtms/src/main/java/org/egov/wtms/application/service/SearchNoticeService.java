@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,13 +40,12 @@
 package org.egov.wtms.application.service;
 
 import java.math.BigInteger;
-import java.text.ParseException;
 import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.wtms.application.entity.GenerateConnectionBill;
+import org.egov.wtms.application.entity.SearchNoticeDetails;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
@@ -57,18 +56,20 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
-public class GenerateConnectionBillService {
+public class SearchNoticeService {
 
     @Qualifier("entityQueryService")
     @Autowired
     private PersistenceService entityQueryService;
 
-    private static final Logger LOGGER = Logger.getLogger(GenerateConnectionBillService.class);
+    private static final Logger LOGGER = Logger.getLogger(SearchNoticeService.class);
 
     @ReadOnly
-    public List<GenerateConnectionBill> getBillReportDetails(final String zone, final String ward,
+    public List<SearchNoticeDetails> getBillReportDetails(final SearchNoticeDetails searchNoticeDetails,
+            final String zone, final String ward,
             final String propertyType, final String applicationType, final String connectionType,
-            final String consumerCode, final String houseNumber, final String assessmentNumber) throws ParseException {
+            final String consumerCode, final String houseNumber, final String assessmentNumber,
+            final String fromDate, final String toDate) {
         final long startTime = System.currentTimeMillis();
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -106,14 +107,68 @@ public class GenerateConnectionBillService {
         final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
-        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(GenerateConnectionBill.class));
-        final List<GenerateConnectionBill> generateConnectionBillList = finalQuery.list();
+        finalQuery.setResultTransformer(new AliasToBeanResultTransformer(SearchNoticeDetails.class));
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("GenerateBill | SearchResult | Time taken(ms) " + (endTime - startTime));
             LOGGER.debug("Exit from SearchResult method");
         }
-        return generateConnectionBillList;
+
+        return finalQuery.list();
+    }
+
+    @ReadOnly
+    public List<SearchNoticeDetails> getSanctionOrderDetails(final SearchNoticeDetails searchNoticeDetails,
+            final String zone, final String ward, final String propertyType,
+            final String applicationType, final String connectionType, final String consumerCode, final String houseNumber,
+            final String assessmentNumber, final String fromDate, final String toDate) {
+        String formattedFromDate = null;
+        String formattedToDate = null;
+        String[] arr = null;
+        if (fromDate != null && !fromDate.isEmpty()) {
+            arr = fromDate.split("/");
+            formattedFromDate = arr[2] + "-" + arr[1] + "-" + arr[0];
+        }
+        if (toDate != null && !toDate.isEmpty()) {
+            arr = toDate.split("/");
+            formattedToDate = arr[2] + "-" + arr[1] + "-" + arr[0];
+        }
+
+        final StringBuilder queryString = new StringBuilder();
+        queryString.append(
+                "select distinct dcbinfo.hscno as \"hscNo\", dcbinfo.username as \"ownerName\", dcbinfo.propertyid as \"assessmentNo\", ");
+        queryString.append(
+                "dcbinfo.houseno as \"houseNumber\", localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
+        queryString.append("dcbinfo.workorderdate as \"workOrderDate\", dcbinfo.workordernumber as \"workOrderNumber\", ");
+        queryString.append("dcbinfo.connectiontype as \"connectionType\" from egwtr_mv_dcb_view dcbinfo ");
+        queryString.append("INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid=zoneboundary.id ");
+        queryString.append(
+                " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+
+        if (ward != null && !ward.isEmpty())
+            queryString.append(" and wardboundary.name = " + "'" + ward + "'");
+        if (zone != null && !zone.isEmpty())
+            queryString.append(" and zoneboundary.name = " + "'" + zone + "'");
+        if (consumerCode != null && !consumerCode.isEmpty())
+            queryString.append(" and dcbinfo.hscno = " + "'" + consumerCode + "'");
+        if (assessmentNumber != null && !assessmentNumber.isEmpty())
+            queryString.append(" and dcbinfo.propertyid = " + "'" + assessmentNumber + "'");
+        if (houseNumber != null && !houseNumber.isEmpty())
+            queryString.append(" and dcbinfo.houseno = " + "'" + houseNumber + "'");
+        if (connectionType != null && !connectionType.isEmpty())
+            queryString.append(" and dcbinfo.connectiontype = " + "'" + connectionType + "'");
+        if (applicationType != null && !applicationType.isEmpty())
+            queryString.append(" and dcbinfo.applicationtype = " + "'" + applicationType + "'");
+        if (propertyType != null && !propertyType.isEmpty())
+            queryString.append(" and dcbinfo.propertytype = " + "'" + propertyType + "'");
+        if (formattedFromDate != null && !formattedFromDate.isEmpty())
+            queryString.append(" and dcbinfo.workorderdate >= " + "'" + formattedFromDate + "'");
+        if (formattedToDate != null && !formattedToDate.isEmpty())
+            queryString.append(" and dcbinfo.workorderdate <= " + "'" + formattedToDate + "'");
+
+        final SQLQuery sqlQuery = entityQueryService.getSession().createSQLQuery(queryString.toString());
+        sqlQuery.setResultTransformer(new AliasToBeanResultTransformer(SearchNoticeDetails.class));
+        return sqlQuery.list();
     }
 
     public List<Long> getDocuments(final String consumerCode, final String applicationType) {
@@ -137,7 +192,7 @@ public class GenerateConnectionBillService {
 
     public long getTotalCountofBills(final String zone, final String ward, final String propertyType,
             final String applicationType, final String connectionType, final String consumerCode,
-            final String houseNumber, final String assessmentNumber) throws ParseException {
+            final String houseNumber, final String assessmentNumber) {
 
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append("select count(distinct dcbinfo.hscno)  from egwtr_mv_bill_view dcbinfo"
@@ -167,10 +222,7 @@ public class GenerateConnectionBillService {
         final SQLQuery finalQuery = entityQueryService.getSession().createSQLQuery(queryStr.toString());
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());
-
-        final Long count = ((BigInteger) finalQuery.uniqueResult()).longValue();
-
-        return count;
+        return ((BigInteger) finalQuery.uniqueResult()).longValue();
     }
 
 }

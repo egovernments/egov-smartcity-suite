@@ -64,7 +64,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infstr.services.PersistenceService;
-import org.egov.wtms.application.service.GenerateConnectionBillService;
+import org.egov.wtms.application.service.SearchNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -87,7 +87,7 @@ import com.lowagie.text.pdf.PdfWriter;
 @Controller
 @RequestMapping(value = "/report")
 public class GenerateBillForConsumerCodeController {
-    
+
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -99,7 +99,7 @@ public class GenerateBillForConsumerCodeController {
     private ApplicationContext beanProvider;
 
     @Autowired
-    private GenerateConnectionBillService generateConnectionBillService;
+    private SearchNoticeService searchNoticeService;
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
@@ -114,18 +114,18 @@ public class GenerateBillForConsumerCodeController {
             final HttpServletResponse response) {
         WaterConnectionBillService waterConnectionBillService = null;
         try {
-            EgBill  egBill=getBillByConsumerCode(consumerCode);
-              if (egBill!=null)
-                  throw new ValidationException("err.demand.bill.generated");
-              else 
-            waterConnectionBillService = (WaterConnectionBillService) beanProvider
-                    .getBean("waterConnectionBillService");
+            final EgBill egBill = getBillByConsumerCode(consumerCode);
+            if (egBill != null)
+                throw new ValidationException("err.demand.bill.generated");
+            else
+                waterConnectionBillService = (WaterConnectionBillService) beanProvider
+                        .getBean("waterConnectionBillService");
         } catch (final NoSuchBeanDefinitionException e) {
 
         }
         if (waterConnectionBillService != null)
             waterConnectionBillService.generateBillForConsumercode(consumerCode);
-        final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
+        final List<Long> waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode,
                 waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
                         .getName());
         model.addAttribute("successMessage", "Demand Bill got generated, Please click on download.");
@@ -141,7 +141,7 @@ public class GenerateBillForConsumerCodeController {
         if (signedFileStoreId != null)
             try {
                 final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
-                final List<InputStream> pdfs = new ArrayList<InputStream>();
+                final List<InputStream> pdfs = new ArrayList<>();
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                 final byte[] bFile = FileUtils.readFileToByteArray(file);
                 pdfs.add(new ByteArrayInputStream(bFile));
@@ -175,7 +175,7 @@ public class GenerateBillForConsumerCodeController {
         Document document = null;
         try {
             final List<InputStream> pdfs = streamOfPDFFiles;
-            final List<PdfReader> readers = new ArrayList<PdfReader>();
+            final List<PdfReader> readers = new ArrayList<>();
             final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
             // Create Readers for the pdfs.
@@ -230,24 +230,27 @@ public class GenerateBillForConsumerCodeController {
         }
         return outputStream.toByteArray();
     }
-    
+
     public EgBill getBillByConsumerCode(final String consumerCode) {
-        EgBill  egBill=null;
+        EgBill egBill = null;
         final String query = "select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd "
-                        + "where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails "
-                        + " and demd.id=bill.egDemand and demd.id=conndem.demand and connDet.connectionType='"+WaterTaxConstants.NON_METERED+"' "
-                        + " and demd.isHistory = '"+WaterTaxConstants.DEMANDISHISTORY+"' and  bill.is_Cancelled='"+WaterTaxConstants.DEMANDISHISTORY+"' and bill.serviceCode='"+WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE+"'"
-                        + " and connDet.connectionStatus='"+WaterTaxConstants.MASTERSTATUSACTIVE+"' and connDet.status=status.id and status.moduletype='"+WaterTaxConstants.MODULETYPE+"' "
-                        + " and status.code='"+WaterTaxConstants.APPLICATION_STATUS_SANCTIONED+"' and conn.consumerCode =:consumerCode  order by bill.id desc";
+                + "where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails "
+                + " and demd.id=bill.egDemand and demd.id=conndem.demand and connDet.connectionType='"
+                + WaterTaxConstants.NON_METERED + "' "
+                + " and demd.isHistory = '" + WaterTaxConstants.DEMANDISHISTORY + "' and  bill.is_Cancelled='"
+                + WaterTaxConstants.DEMANDISHISTORY + "' and bill.serviceCode='"
+                + WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE + "'"
+                + " and connDet.connectionStatus='" + WaterTaxConstants.MASTERSTATUSACTIVE
+                + "' and connDet.status=status.id and status.moduletype='" + WaterTaxConstants.MODULETYPE + "' "
+                + " and status.code='" + WaterTaxConstants.APPLICATION_STATUS_SANCTIONED
+                + "' and conn.consumerCode =:consumerCode  order by bill.id desc";
         final Query hibquery = persistenceService.getSession().createQuery(query.toString())
-                        .setString("consumerCode", consumerCode);
-        List<EgBill>egBilltemp=hibquery.list();
-        if(!egBilltemp.isEmpty())
-        {
-                egBill=egBilltemp.get(0);
-        }
+                .setString("consumerCode", consumerCode);
+        final List<EgBill> egBilltemp = hibquery.list();
+        if (!egBilltemp.isEmpty())
+            egBill = egBilltemp.get(0);
         LOGGER.debug(
-                        "query to get Bill for single consumernumber" + query.toString() + " for consumer No= " + consumerCode);
+                "query to get Bill for single consumernumber" + query.toString() + " for consumer No= " + consumerCode);
         return egBill;
-}
+    }
 }

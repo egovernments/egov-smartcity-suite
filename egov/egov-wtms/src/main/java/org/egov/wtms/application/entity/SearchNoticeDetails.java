@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -41,7 +41,7 @@ package org.egov.wtms.application.entity;
 
 import java.util.Date;
 
-public class GenerateConnectionBill {
+public class SearchNoticeDetails {
 
     private String zone;
     private String propertyType;
@@ -57,6 +57,24 @@ public class GenerateConnectionBill {
     private Date billDate;
     private String locality;
     private String fileStoreID;
+    private String workOrderNumber;
+    private Date workOrderDate;
+
+    public String getWorkOrderNumber() {
+        return workOrderNumber;
+    }
+
+    public void setWorkOrderNumber(final String workOrderNumber) {
+        this.workOrderNumber = workOrderNumber;
+    }
+
+    public Date getWorkOrderDate() {
+        return workOrderDate;
+    }
+
+    public void setWorkOrderDate(final Date workOrderDate) {
+        this.workOrderDate = workOrderDate;
+    }
 
     public String getLocality() {
         return locality;
@@ -110,7 +128,7 @@ public class GenerateConnectionBill {
         return assessmentNo;
     }
 
-    public void setAssessmentNo(String assessmentNo) {
+    public void setAssessmentNo(final String assessmentNo) {
         this.assessmentNo = assessmentNo;
     }
 
@@ -161,12 +179,12 @@ public class GenerateConnectionBill {
     public void setOwnerName(final String ownerName) {
         this.ownerName = ownerName;
     }
-    
+
     public String getFileStoreID() {
         return fileStoreID;
     }
 
-    public void setFileStoreID(String fileStoreID) {
+    public void setFileStoreID(final String fileStoreID) {
         this.fileStoreID = fileStoreID;
     }
 

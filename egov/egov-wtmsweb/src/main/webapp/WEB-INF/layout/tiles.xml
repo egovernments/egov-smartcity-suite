@@ -258,9 +258,9 @@
         <put-attribute name="page-title" value="title.pipesize.master.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/pipesize-master-list.jsp"/>
     </definition>
-     <definition name="generateBill-Report" extends="base_layout">	 
-        <put-attribute name="page-title" value="title.searchbill" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/reports/generatebill-report.jsp"/>
+     <definition name="searchnotice-report" extends="base_layout">	 
+        <put-attribute name="page-title" value="title.searchnotice" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/searchnotice-report.jsp"/>
     </definition>
     <definition name="water-source-master" extends="base_layout">
         <put-attribute name="page-title" value="title.waterSource.master" cascade="true"/>

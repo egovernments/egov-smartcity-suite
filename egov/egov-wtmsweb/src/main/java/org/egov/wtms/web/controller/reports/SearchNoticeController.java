@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,12 +40,13 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 import static java.math.BigDecimal.ZERO;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -53,7 +54,6 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -74,14 +74,16 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.wtms.application.entity.GenerateConnectionBill;
-import org.egov.wtms.application.service.GenerateConnectionBillService;
+import org.egov.wtms.application.entity.SearchNoticeDetails;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.SearchNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.PropertyType;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.PropertyTypeService;
-import org.egov.wtms.reports.entity.GenerateConnectionBillAdaptor;
+import org.egov.wtms.reports.entity.SearchNoticeAdaptor;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -89,8 +91,8 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import com.lowagie.text.Document;
@@ -100,8 +102,21 @@ import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
 
 @Controller
-@RequestMapping("/report/generateBill/search")
-public class GenerateConnectionBillController {
+@RequestMapping("/report/notice/search")
+public class SearchNoticeController {
+
+    private static final String REVENUEWARD = "revenueWard";
+    private static final String APPLICATION_TYPE = "applicationType";
+    private static final String PROPERTY_TYPE = "propertyType";
+    private static final String CONNECTION_TYPE = "connectionType";
+    private static final String ASSESSMENT_NUMBER = "assessmentNumber";
+    private static final String HOUSE_NUMBER = "houseNumber";
+    private static final String EXCEPTION_IN_ADDFILESTOZIP = "Exception in addFilesToZip : ";
+    private static final String NOTICE_TYPE = "noticeType";
+    private static final String FROMDATE = "fromDate";
+    private static final String TODATE = "toDate";
+    private static final String SANCTION_ORDER = "Sanction Order";
+    private static final String DEMAND_BILL = "Demand Bill";
 
     @Autowired
     private PropertyTypeService propertyTypeService;
@@ -114,7 +129,7 @@ public class GenerateConnectionBillController {
     protected FileStoreService fileStoreService;
 
     @Autowired
-    private GenerateConnectionBillService generateConnectionBillService;
+    private SearchNoticeService searchNoticeService;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -125,17 +140,17 @@ public class GenerateConnectionBillController {
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
 
-    private static final Logger LOGGER = Logger.getLogger(GenerateConnectionBillController.class);
+    private static final Logger LOGGER = Logger.getLogger(SearchNoticeController.class);
 
     @RequestMapping(method = GET)
     public String search(final Model model) {
 
-        return "generateBill-Report";
+        return "searchnotice-report";
     }
 
     @ModelAttribute
-    public GenerateConnectionBill reportModel() {
-        return new GenerateConnectionBill();
+    public SearchNoticeDetails reportModel() {
+        return new SearchNoticeDetails();
     }
 
     @ModelAttribute("zones")
@@ -160,48 +175,81 @@ public class GenerateConnectionBillController {
         return applicationTypeService.findAll();
     }
 
-    @RequestMapping(value = "/result", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody void searchResult(final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ParseException {
+    @ModelAttribute("noticetypeList")
+    public List<String> getNoticeTypes() {
+        final List<String> noticeList = new ArrayList<>();
+        noticeList.add(DEMAND_BILL);
+        noticeList.add(SANCTION_ORDER);
+        return noticeList;
+    }
+
+    @RequestMapping(value = "/result", method = POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void searchResult(final SearchNoticeDetails searchNoticeDetails,
+            final HttpServletRequest request, final HttpServletResponse response) throws IOException {
         String result = null;
-        List<GenerateConnectionBill> generateConnectionBillList = new ArrayList<>();
-        generateConnectionBillList = generateConnectionBillService.getBillReportDetails(request.getParameter("zone"),
-                request.getParameter("revenueWard"), request.getParameter("propertyType"),
-                request.getParameter("applicationType"), request.getParameter("connectionType"),
-                request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter("houseNumber"),
-                request.getParameter("assessmentNumber"));
-        final long foundRows = generateConnectionBillService.getTotalCountofBills(request.getParameter("zone"),
-                request.getParameter("revenueWard"), request.getParameter("propertyType"),
-                request.getParameter("applicationType"), request.getParameter("connectionType"),
-                request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter("houseNumber"),
-                request.getParameter("assessmentNumber"));
+        List<SearchNoticeDetails> generateConnectionBillList = new ArrayList<>();
+        if (request.getParameter(NOTICE_TYPE) != null)
+            if (DEMAND_BILL.equals(request.getParameter(NOTICE_TYPE)))
+                generateConnectionBillList = searchNoticeService.getBillReportDetails(searchNoticeDetails,
+                        request.getParameter("zone"),
+                        request.getParameter(REVENUEWARD), request.getParameter(PROPERTY_TYPE),
+                        request.getParameter(APPLICATION_TYPE), request.getParameter(CONNECTION_TYPE),
+                        request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter(HOUSE_NUMBER),
+                        request.getParameter(ASSESSMENT_NUMBER),
+                        request.getParameter(FROMDATE), request.getParameter(TODATE));
+            else if (SANCTION_ORDER.equals(request.getParameter(NOTICE_TYPE)))
+                generateConnectionBillList = searchNoticeService.getSanctionOrderDetails(searchNoticeDetails,
+                        request.getParameter("zone"),
+                        request.getParameter(REVENUEWARD), request.getParameter(PROPERTY_TYPE),
+                        request.getParameter(APPLICATION_TYPE), request.getParameter(CONNECTION_TYPE),
+                        request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter(HOUSE_NUMBER),
+                        request.getParameter(ASSESSMENT_NUMBER),
+                        request.getParameter(FROMDATE), request.getParameter(TODATE));
+
+        final long foundRows = searchNoticeService.getTotalCountofBills(request.getParameter("zone"),
+                request.getParameter(REVENUEWARD), request.getParameter(PROPERTY_TYPE),
+                request.getParameter(APPLICATION_TYPE), request.getParameter(CONNECTION_TYPE),
+                request.getParameter(WATERCHARGES_CONSUMERCODE), request.getParameter(HOUSE_NUMBER),
+                request.getParameter(ASSESSMENT_NUMBER));
 
         final int count = generateConnectionBillList.size();
         LOGGER.info("Total count of records-->" + Long.valueOf(count));
-        new ArrayList<>();
-        if (Long.valueOf(count) > 5000)
-            new ArrayList<>();
         result = new StringBuilder("{ \"draw\":").append(request.getParameter("draw")).append(", \"recordsTotal\":")
                 .append(foundRows).append(", \"recordsFiltered\":").append(foundRows).append(", \"data\":")
-                .append(toJSON(generateConnectionBillList, GenerateConnectionBill.class,
-                        GenerateConnectionBillAdaptor.class))
+                .append(toJSON(generateConnectionBillList, SearchNoticeDetails.class,
+                        SearchNoticeAdaptor.class))
                 .append(", \"recordsCount\":").append(Long.valueOf(count)).append("}").toString();
         response.setContentType(MediaType.APPLICATION_JSON_VALUE);
         IOUtils.write(result, response.getWriter());
 
     }
 
-    @RequestMapping(value = "/result/{consumerCode}", method = GET)
+    @RequestMapping(value = "/result", method = GET)
     public void getBillBySearchParameter(final HttpServletRequest request, final HttpServletResponse response,
-            @PathVariable final String consumerCode) {
-        final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
-                waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
-                        .getName());
-        if (!waterChargesDocumentslist.isEmpty() && waterChargesDocumentslist.get(0) != null)
+            @RequestParam("consumerCode") final String consumerCode, @RequestParam(NOTICE_TYPE) final String noticeType,
+            @RequestParam("billNo") final String billNo, @RequestParam("workOrderNumber") final String workOrderNumber) {
+        List<Long> waterChargesDocumentslist;
+        final List<String> waterChargesFileStoreId = new ArrayList<>();
+        if (SANCTION_ORDER.equals(noticeType)) {
+            WaterConnectionDetails waterConnectionDetails = null;
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
+                    ConnectionStatus.ACTIVE);
+            if (waterConnectionDetails != null)
+                waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
+                        ? waterConnectionDetails.getFileStore().getFileStoreId() : null);
+        } else {
+            waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode,
+                    waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
+                            .getName());
+            waterChargesFileStoreId.add(waterChargesDocumentslist.get(0) + "");
+        }
+
+        if (!waterChargesFileStoreId.isEmpty() && waterChargesFileStoreId.get(0) != null)
             try {
                 final FileStoreMapper fsm = fileStoreMapperRepository
-                        .findByFileStoreId(waterChargesDocumentslist.get(0) + "");
-                final List<InputStream> pdfs = new ArrayList<InputStream>();
+                        .findByFileStoreId(waterChargesFileStoreId.get(0) + "");
+                final List<InputStream> pdfs = new ArrayList<>();
                 final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                 final byte[] bFile = FileUtils.readFileToByteArray(file);
                 pdfs.add(new ByteArrayInputStream(bFile));
@@ -214,26 +262,41 @@ public class GenerateConnectionBillController {
     }
 
     @RequestMapping(value = "/mergeAndDownload", method = GET)
-    public String mergeAndDownload(final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ParseException, ValidationException {
+    public String mergeAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
+            final HttpServletResponse response)
+            throws IOException {
         final long startTime = System.currentTimeMillis();
-        final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
-                .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
-                        request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter(WATERCHARGES_CONSUMERCODE),
-                        request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+        final String noticeType = request.getParameter(NOTICE_TYPE);
+        List<SearchNoticeDetails> searchResultList;
+        if (noticeType != null && DEMAND_BILL.equalsIgnoreCase(noticeType))
+            searchResultList = searchNoticeService
+                    .getBillReportDetails(searchNoticeDetails, request.getParameter("zone"), request.getParameter(REVENUEWARD),
+                            request.getParameter(PROPERTY_TYPE), request.getParameter(APPLICATION_TYPE),
+                            request.getParameter(CONNECTION_TYPE), request.getParameter(WATERCHARGES_CONSUMERCODE),
+                            request.getParameter(HOUSE_NUMBER), request.getParameter(ASSESSMENT_NUMBER),
+                            request.getParameter(FROMDATE), request.getParameter(TODATE));
+        else
+            searchResultList = searchNoticeService
+                    .getSanctionOrderDetails(searchNoticeDetails, request.getParameter("zone"), request.getParameter(REVENUEWARD),
+                            request.getParameter(PROPERTY_TYPE), request.getParameter(APPLICATION_TYPE),
+                            request.getParameter(CONNECTION_TYPE), request.getParameter(WATERCHARGES_CONSUMERCODE),
+                            request.getParameter(HOUSE_NUMBER), request.getParameter(ASSESSMENT_NUMBER),
+                            request.getParameter(FROMDATE), request.getParameter(TODATE));
+        final List<InputStream> pdfs = new ArrayList<>();
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of Bills : "
-                    + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
-        final List<InputStream> pdfs = new ArrayList<InputStream>();
+                    + (searchResultList != null ? searchResultList.size() : ZERO));
 
-        for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
+        for (final SearchNoticeDetails connectionbill : searchResultList)
             if (connectionbill != null)
                 try {
-                    if (!connectionbill.getFileStoreID().isEmpty()) {
+                    final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.ACTIVE);
+
+                    if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
                         final FileStoreMapper fsm = fileStoreMapperRepository
-                                .findByFileStoreId(connectionbill.getFileStoreID());
+                                .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                         final byte[] bFile = FileUtils.readFileToByteArray(file);
                         pdfs.add(new ByteArrayInputStream(bFile));
@@ -277,7 +340,7 @@ public class GenerateConnectionBillController {
         Document document = null;
         try {
             final List<InputStream> pdfs = streamOfPDFFiles;
-            final List<PdfReader> readers = new ArrayList<PdfReader>();
+            final List<PdfReader> readers = new ArrayList<>();
             final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
             // Create Readers for the pdfs.
@@ -331,35 +394,50 @@ public class GenerateConnectionBillController {
             }
         }
 
-        return outputStream.toByteArray();
+        return outputStream != null ? outputStream.toByteArray() : null;
     }
 
     @RequestMapping(value = "/zipAndDownload", method = GET)
-    public String zipAndDownload(final HttpServletRequest request, final HttpServletResponse response)
-            throws IOException, ParseException, ValidationException {
+    public String zipAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
+            final HttpServletResponse response)
+            throws IOException {
+        final String noticeType = request.getParameter(NOTICE_TYPE);
         final long startTime = System.currentTimeMillis();
-        final List<GenerateConnectionBill> generateConnectionBillList = generateConnectionBillService
-                .getBillReportDetails(request.getParameter("zone"), request.getParameter("revenueWard"),
-                        request.getParameter("propertyType"), request.getParameter("applicationType"),
-                        request.getParameter("connectionType"), request.getParameter(WATERCHARGES_CONSUMERCODE),
-                        request.getParameter("houseNumber"), request.getParameter("assessmentNumber"));
+        List<SearchNoticeDetails> noticeList;
+        if (DEMAND_BILL.equalsIgnoreCase(noticeType))
+            noticeList = searchNoticeService
+                    .getBillReportDetails(searchNoticeDetails, request.getParameter("zone"), request.getParameter(REVENUEWARD),
+                            request.getParameter(PROPERTY_TYPE), request.getParameter(APPLICATION_TYPE),
+                            request.getParameter(CONNECTION_TYPE), request.getParameter(WATERCHARGES_CONSUMERCODE),
+                            request.getParameter(HOUSE_NUMBER), request.getParameter(ASSESSMENT_NUMBER),
+                            request.getParameter(FROMDATE), request.getParameter(TODATE));
+        else
+            noticeList = searchNoticeService.getSanctionOrderDetails(searchNoticeDetails, request.getParameter("zone"),
+                    request.getParameter(REVENUEWARD),
+                    request.getParameter(PROPERTY_TYPE), request.getParameter(APPLICATION_TYPE),
+                    request.getParameter(CONNECTION_TYPE), request.getParameter(WATERCHARGES_CONSUMERCODE),
+                    request.getParameter(HOUSE_NUMBER), request.getParameter(ASSESSMENT_NUMBER),
+                    request.getParameter(FROMDATE), request.getParameter(TODATE));
+
         if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of BIlls : "
-                    + (generateConnectionBillList != null ? generateConnectionBillList.size() : ZERO));
+            LOGGER.debug("Number of Bills : "
+                    + (noticeList != null ? noticeList.size() : ZERO));
         try {
             ZipOutputStream zipOutputStream = null;
-            if (null != generateConnectionBillList && generateConnectionBillList.size() >= 0) {
+            if (null != noticeList && noticeList.size() >= 0) {
 
                 zipOutputStream = new ZipOutputStream(response.getOutputStream());
                 response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + "searchbill" + ".zip");
                 response.setContentType("application/zip");
             }
 
-            for (final GenerateConnectionBill connectionbill : generateConnectionBillList)
+            for (final SearchNoticeDetails connectionbill : noticeList)
                 try {
-                    if (!connectionbill.getFileStoreID().isEmpty()) {
+                    final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.ACTIVE);
+                    if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
                         final FileStoreMapper fsm = fileStoreMapperRepository
-                                .findByFileStoreId(connectionbill.getFileStoreID());
+                                .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
                         final byte[] bFile = FileUtils.readFileToByteArray(file);
                         zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),
@@ -369,9 +447,10 @@ public class GenerateConnectionBillController {
                     LOGGER.error("zipAndDownload : Getting demand notice failed ", e);
                     continue;
                 }
-
-            zipOutputStream.closeEntry();
-            zipOutputStream.close();
+            if (zipOutputStream != null) {
+                zipOutputStream.closeEntry();
+                zipOutputStream.close();
+            }
 
         } catch (final IOException e) {
             LOGGER.error("Exception in Zip and Download : ", e);
@@ -397,11 +476,11 @@ public class GenerateConnectionBillController {
             inputStream.close();
 
         } catch (final IllegalArgumentException iae) {
-            LOGGER.error("Exception in addFilesToZip : ", iae);
+            LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, iae);
         } catch (final FileNotFoundException fnfe) {
-            LOGGER.error("Exception in addFilesToZip : ", fnfe);
+            LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, fnfe);
         } catch (final IOException ioe) {
-            LOGGER.error("Exception in addFilesToZip : ", ioe);
+            LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, ioe);
         }
         return out;
     }
