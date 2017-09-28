@@ -113,19 +113,8 @@ public class MutationFeeCollection extends TaxCollection {
                 throw new ValidationException();
             }
         }
-        String nextAction = null;
         if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
-            if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)
-                    && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)) {
-                final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                        null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
-                nextAction = wFMatrix.getNextAction();
-                propertyMutation.transition().progressWithStateCopy().withSenderName(propertyMutation.getState().getSenderName())
-                        .withDateInfo(new Date())
-                        .withOwner(propertyMutation.getState().getOwnerPosition())
-                        .withStateValue(TRANSFER_FEE_COLLECTED)
-                        .withNextAction(nextAction);
-            }
+            updateTransitionForFullTransfer(bri, propertyMutation);
         } else {
             LOGGER.error("Mutation workflow is already closed for the receipt : " + propertyMutation.getReceiptNum()
                     + " payed for assessment : "
@@ -134,6 +123,20 @@ public class MutationFeeCollection extends TaxCollection {
         }
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
+    }
+
+    private void updateTransitionForFullTransfer(final BillReceiptInfo bri, final PropertyMutation propertyMutation) {
+        if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)
+                && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)
+                && !(TRANSFER_FEE_COLLECTED).equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
+            final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                    null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
+            propertyMutation.transition().progressWithStateCopy().withSenderName(propertyMutation.getState().getSenderName())
+                    .withDateInfo(new Date())
+                    .withOwner(propertyMutation.getState().getOwnerPosition())
+                    .withStateValue(TRANSFER_FEE_COLLECTED)
+                    .withNextAction(wFMatrix.getNextAction());
+        }
     }
 
     @Override
