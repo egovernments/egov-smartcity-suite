@@ -59,7 +59,7 @@
 <div class="panel-body">
 	<div class="form-group">
 		<label class="col-sm-3 control-label text-right"> <s:text
-				name="floortype" /> <span class="mandatory" /> :
+				name="floortype" /> :
 		</label>
 		<div class="col-sm-3 add-margin">
 			<s:select headerKey="-1" title="Floor type of the property"
@@ -69,7 +69,7 @@
 				cssClass="form-control" />
 		</div>
 		<label class="col-sm-2 control-label text-right"> <s:text
-				name="rooftype" /> <span class="mandatory" /> :
+				name="rooftype" /> :
 		</label>
 		<div class="col-sm-3 add-margin">
 			<s:select headerKey="-1" title="Roof type of the property"
