@@ -42,6 +42,7 @@ package org.egov.infra.script.service;
 
 import org.egov.infra.cache.impl.LRUCache;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.python.core.Options;
 import org.springframework.stereotype.Component;
 
 import javax.script.ScriptEngine;
@@ -52,38 +53,19 @@ public class ScriptEngineProvider {
 
     private static LRUCache<String, ScriptEngine> SCRIPT_ENGINE_CACHE;
 
-    /**
-     * Creates instance of script service with given sizes of engine cache and
-     * script cache
-     *
-     * @param engineCacheMinSize
-     *            Minimum (initial) size of script engine cache
-     * @param engineCacheMaxSize
-     *            Maximum size of script engine cache
-     * @param scriptCacheMinSize
-     *            Minimum (initial) Size of script cache
-     * @param scriptCacheMaxSize
-     *            Maximum size of script cache
-     */
     public ScriptEngineProvider() {
         if (SCRIPT_ENGINE_CACHE == null)
-            SCRIPT_ENGINE_CACHE = new LRUCache<String, ScriptEngine>(2, 10);
+            SCRIPT_ENGINE_CACHE = new LRUCache<>(2, 10);
     }
 
-    /**
-     * @param scriptType
-     *            Script type for which the script engine is to be fetched
-     * @return Script engine for given script type
-     */
-    public ScriptEngine getScriptEngine(final String scriptType) {
-        // Check if engine for given script type is already cached
+    public ScriptEngine getScriptEngine(String scriptType) {
         ScriptEngine engine = SCRIPT_ENGINE_CACHE.get(scriptType);
         if (engine == null) {
-            // Engine not cached. Create and cache it.
-            final ScriptEngineManager m = new ScriptEngineManager();
+            ScriptEngineManager m = new ScriptEngineManager();
+            if ("python".equals(scriptType))
+                Options.importSite = false;
             engine = m.getEngineByName(scriptType);
             if (engine == null)
-                // Engine could not be created. throw exception
                 throw new ApplicationRuntimeException("Could not get script engine for [" + scriptType + "]");
             SCRIPT_ENGINE_CACHE.put(scriptType, engine);
         }
