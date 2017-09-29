@@ -217,7 +217,7 @@
         <junit-version>4.12</junit-version>
         <mockito-all-version>1.10.19</mockito-all-version>
         <springockito-version>1.0.9</springockito-version>
-        <easymock-version>3.4</easymock-version>
+        <easymock-version>3.5</easymock-version>
         <easymockclassextension-version>3.2</easymockclassextension-version>
         <hamcrest-all-version>1.3</hamcrest-all-version>
         <slf4j-version>1.7.25</slf4j-version>
@@ -238,7 +238,7 @@
         <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
         <mvn.sonar.plugin.version>3.3.0.603</mvn.sonar.plugin.version>
         <mvn.versioneye.plugin.version>3.11.4</mvn.versioneye.plugin.version>
-        <mvn.surefire.plugin.version>2.20</mvn.surefire.plugin.version>
+        <mvn.surefire.plugin.version>2.20.1</mvn.surefire.plugin.version>
         <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
         <mvn.clean.plugin.version>3.0.0</mvn.clean.plugin.version>
     </properties>
