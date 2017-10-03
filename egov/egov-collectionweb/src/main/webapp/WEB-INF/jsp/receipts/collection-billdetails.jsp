@@ -94,11 +94,11 @@
 				                   <div align="center">
 				                	<input id="receiptDetailList[<%=rcptDtlCnt%>].cramountToBePaid" name="receiptDetailList[<%=rcptDtlCnt%>].cramountToBePaid" value='<s:property value="%{cramountToBePaid}"/>' type="text" readonly="true" disabled="disabled" size="12"/>
 				                	
-									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].cramount" value="0" type="text" id="receiptDetailList[<%=rcptDtlCnt%>].cramount"  size="12" onblur='checkandcalculatecredittotal(<%=rcptDtlCnt%>,this);'/>
-									<!-- the below two fields are included to be matched in the action -->
+									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].cramount" value="0"  id="receiptDetailList[<%=rcptDtlCnt%>].cramount"  size="12" onblur='checkandcalculatecredittotal(<%=rcptDtlCnt%>,this);'/>
+									<!-- the below two fields are included to be matched in the action --> 
 									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].ordernumber" id="receiptDetailList[<%=rcptDtlCnt%>].ordernumber" value='<s:property value="ordernumber"/>' />
 									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].receiptHeader.referencenumber" id="receiptDetailList[<%=rcptDtlCnt%>].receiptHeader.referencenumber" value='<s:property value="referencenumber"/>'/>
-									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].dramount" id="receiptDetailList[<%=rcptDtlCnt%>].dramount" />
+									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].dramount" id="receiptDetailList[<%=rcptDtlCnt%>].dramount"  value='<s:property value="dramount"/>'/>
 									<input type="hidden" name="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand" id="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand" value='<s:property value="isActualDemand"/>' />	
 				                   </div>
 				                </td>
