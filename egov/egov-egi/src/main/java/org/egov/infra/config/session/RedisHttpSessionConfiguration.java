@@ -52,7 +52,7 @@ import org.springframework.session.web.http.DefaultCookieSerializer;
 @Configuration
 @EnableRedisHttpSession
 public class RedisHttpSessionConfiguration {
-    private static final String SESSION_COOKIE_NAME = "SESSIONID";
+    private static final String SESSION_COOKIE_NAME = "JSESSIONID";
     private static final String SESSION_COOKIE_PATH = "/";
 
     @Bean

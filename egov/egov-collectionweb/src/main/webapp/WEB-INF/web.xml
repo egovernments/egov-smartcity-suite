@@ -38,192 +38,194 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<web-app version="3.1" xmlns="http://xmlns.jcp.org/xml/ns/javaee"
- xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
- xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
+<web-app xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" version="3.1"
+         xmlns="http://xmlns.jcp.org/xml/ns/javaee"
+         xsi:schemaLocation="http://xmlns.jcp.org/xml/ns/javaee http://xmlns.jcp.org/xml/ns/javaee/web-app_3_1.xsd">
 
-	<display-name>e-governments collection web</display-name>
-	
-	<!-- Context Params Starts -->
-	<context-param>
-		<param-name>contextConfigLocation</param-name>
-		<param-value>classpath*:config/spring/applicationContext-collectionweb.xml</param-value>
-	</context-param>
-	<context-param>
-		<param-name>locatorFactorySelector</param-name>
-		<param-value>classpath*:config/spring/applicationContext-erp.xml</param-value>
-	</context-param>
-	<context-param>
-		<param-name>parentContextKey</param-name>
-		<param-value>erpApplicationContext</param-value>
-	</context-param>
-	<filter>
-		<filter-name>CacheControlFilter</filter-name>
-		<filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>CharacterEncodingFilter</filter-name>
-		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
-		<init-param>
-			<param-name>encoding</param-name>
-			<param-value>UTF-8</param-value>
-		</init-param>
-		<init-param>
-			<param-name>forceEncoding</param-name>
-			<param-value>true</param-value>
-		</init-param>
-	</filter>
-	
-	<filter>
-		<filter-name>gzipFilter</filter-name>
-		<filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>applicationCoreFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>mdcLoggingFilter</filter-name>
-		<filter-class>org.egov.infra.web.filter.MDCLoggingFilter</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>applicationTenantResolverFilter</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>openEntityManagerInViewFilter</filter-name>
-		<filter-class>
-			org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
-		</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>securityFilterChain</filter-name>
-		<filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	
-	<filter>
-	    <filter-name>springSessionRepositoryFilter</filter-name>
-	    <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>ResponseOverrideFilter</filter-name>
-		<filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
-	</filter>
-	
-	<filter>
-		<filter-name>struts2Prepare</filter-name>
-		<filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareFilter</filter-class>
-	</filter>
-	<filter>
-		<filter-name>struts2Execute</filter-name>
-		<filter-class>org.apache.struts2.dispatcher.filter.StrutsExecuteFilter</filter-class>
-	</filter>
+    <display-name>e-governments collection web</display-name>
 
-	<filter>
-		<filter-name>sitemesh</filter-name>
-		<filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
-	</filter>
-	
-	<!-- Filter Declaration Ends -->
-	
-	<!-- Filter Mapping Starts -->	
-	<filter-mapping>
-	    <filter-name>springSessionRepositoryFilter</filter-name>
-	    <url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>CacheControlFilter</filter-name>
-		<url-pattern>*.js</url-pattern>
-		<url-pattern>*.css</url-pattern>
-		<url-pattern>*.jpg</url-pattern>
-		<url-pattern>*.png</url-pattern>
-		<url-pattern>*.gif</url-pattern>
-		<url-pattern>*.ico</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>CharacterEncodingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>gzipFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>applicationTenantResolverFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>openEntityManagerInViewFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>securityFilterChain</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <!-- Context Params Starts -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>classpath*:config/spring/applicationContext-collectionweb.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>locatorFactorySelector</param-name>
+        <param-value>classpath*:config/spring/applicationContext-erp.xml</param-value>
+    </context-param>
+    <context-param>
+        <param-name>parentContextKey</param-name>
+        <param-value>erpApplicationContext</param-value>
+    </context-param>
+    <filter>
+        <filter-name>CacheControlFilter</filter-name>
+        <filter-class>org.egov.infra.web.filter.CacheControlFilter</filter-class>
+    </filter>
 
-	<filter-mapping>
-		<filter-name>applicationCoreFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>mdcLoggingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<filter-mapping>
-		<filter-name>ResponseOverrideFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>struts2Prepare</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>sitemesh</filter-name>
-		<url-pattern>*.action</url-pattern>
-		<dispatcher>REQUEST</dispatcher>
-		<dispatcher>FORWARD</dispatcher>
-		<dispatcher>INCLUDE</dispatcher>
-	</filter-mapping>
-	<filter-mapping>
-		<filter-name>struts2Execute</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
-	
-	<!-- Listeners Starts -->	
-	<listener>
-		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
-	</listener>
-	
-	<listener>
-		<listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
-	</listener>
-	
-	<servlet>
-		<servlet-name>reportViewer</servlet-name>
-		<servlet-class>org.egov.infra.reporting.viewer.ReportViewer</servlet-class>
-		<load-on-startup>5</load-on-startup>
-	</servlet>
-	<servlet-mapping>
-		<servlet-name>reportViewer</servlet-name>
-		<url-pattern>/reportViewer</url-pattern>
-	</servlet-mapping>
-	
-	<servlet>
+    <filter>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+        <init-param>
+            <param-name>encoding</param-name>
+            <param-value>UTF-8</param-value>
+        </init-param>
+        <init-param>
+            <param-name>forceEncoding</param-name>
+            <param-value>true</param-value>
+        </init-param>
+    </filter>
+
+    <filter>
+        <filter-name>gzipFilter</filter-name>
+        <filter-class>net.sf.ehcache.constructs.web.filter.GzipFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>applicationCoreFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>mdcLoggingFilter</filter-name>
+        <filter-class>org.egov.infra.web.filter.MDCLoggingFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>applicationTenantResolverFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <filter-class>
+            org.springframework.orm.jpa.support.OpenEntityManagerInViewFilter
+        </filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>securityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>ResponseOverrideFilter</filter-name>
+        <filter-class>org.displaytag.filter.ResponseOverrideFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>struts2Prepare</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.filter.StrutsPrepareFilter</filter-class>
+    </filter>
+    <filter>
+        <filter-name>struts2Execute</filter-name>
+        <filter-class>org.apache.struts2.dispatcher.filter.StrutsExecuteFilter</filter-class>
+    </filter>
+
+    <filter>
+        <filter-name>sitemesh</filter-name>
+        <filter-class>com.opensymphony.sitemesh.webapp.SiteMeshFilter</filter-class>
+    </filter>
+
+    <!-- Filter Declaration Ends -->
+
+    <!-- Filter Mapping Starts -->
+    <filter-mapping>
+        <filter-name>springSessionRepositoryFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>CacheControlFilter</filter-name>
+        <url-pattern>*.js</url-pattern>
+        <url-pattern>*.css</url-pattern>
+        <url-pattern>*.jpg</url-pattern>
+        <url-pattern>*.png</url-pattern>
+        <url-pattern>*.gif</url-pattern>
+        <url-pattern>*.ico</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>CharacterEncodingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>gzipFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>applicationTenantResolverFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>openEntityManagerInViewFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>securityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>applicationCoreFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>mdcLoggingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter-mapping>
+        <filter-name>ResponseOverrideFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>struts2Prepare</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>sitemesh</filter-name>
+        <url-pattern>*.action</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
+        <dispatcher>INCLUDE</dispatcher>
+    </filter-mapping>
+    <filter-mapping>
+        <filter-name>struts2Execute</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <!-- Listeners Starts -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <listener>
+        <listener-class>org.springframework.security.web.session.HttpSessionEventPublisher</listener-class>
+    </listener>
+
+    <servlet>
+        <servlet-name>reportViewer</servlet-name>
+        <servlet-class>org.egov.infra.reporting.viewer.ReportViewer</servlet-class>
+        <load-on-startup>5</load-on-startup>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>reportViewer</servlet-name>
+        <url-pattern>/reportViewer</url-pattern>
+    </servlet-mapping>
+
+    <servlet>
         <servlet-name>collectionweb</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
@@ -233,35 +235,35 @@
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
     </servlet>
-    
+
     <servlet-mapping>
         <servlet-name>collectionweb</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-	<!-- Filter Mapping Ends -->
-	
-	<jsp-config>
-		<taglib>
-			<taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/c.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://displaytag.sf.net</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/displaytag.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/sitemesh-decorator.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/sitemesh-page.tld</taglib-location>
-		</taglib>
-		<taglib>
-			<taglib-uri>/struts-tags</taglib-uri>
-			<taglib-location>/WEB-INF/taglib/struts-tags.tld</taglib-location>
-		</taglib>
-		<taglib>
+    <!-- Filter Mapping Ends -->
+
+    <jsp-config>
+        <taglib>
+            <taglib-uri>http://java.sun.com/jsp/jstl/core</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/c.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://displaytag.sf.net</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/displaytag.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://www.opensymphony.com/sitemesh/decorator</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/sitemesh-decorator.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>http://www.opensymphony.com/sitemesh/page</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/sitemesh-page.tld</taglib-location>
+        </taglib>
+        <taglib>
+            <taglib-uri>/struts-tags</taglib-uri>
+            <taglib-location>/WEB-INF/taglib/struts-tags.tld</taglib-location>
+        </taglib>
+        <taglib>
             <taglib-uri>http://tiles.apache.org/tags-tiles</taglib-uri>
             <taglib-location>/WEB-INF/taglib/tiles-jsp.tld</taglib-location>
         </taglib>
@@ -273,21 +275,21 @@
             <taglib-uri>http://www.springframework.org/tags/form</taglib-uri>
             <taglib-location>/WEB-INF/taglib/spring-form.tld</taglib-location>
         </taglib>
-		<jsp-property-group>
-    		<url-pattern>*.jsp</url-pattern>
-    		<page-encoding>UTF-8</page-encoding>
-    	</jsp-property-group> 
-	</jsp-config>
-	<welcome-file-list>
-		<welcome-file>/index.jsp</welcome-file>
-	</welcome-file-list>
-	
-	<session-config>
-		<cookie-config>
-			<path>/</path>
-			<http-only>true</http-only>
-			<secure>false</secure>
-		</cookie-config>
-		<tracking-mode>COOKIE</tracking-mode>
-	</session-config>
+        <jsp-property-group>
+            <url-pattern>*.jsp</url-pattern>
+            <page-encoding>UTF-8</page-encoding>
+        </jsp-property-group>
+    </jsp-config>
+    <welcome-file-list>
+        <welcome-file>/index.jsp</welcome-file>
+    </welcome-file-list>
+
+    <session-config>
+        <cookie-config>
+            <path>/</path>
+            <http-only>true</http-only>
+            <secure>false</secure>
+        </cookie-config>
+        <tracking-mode>COOKIE</tracking-mode>
+    </session-config>
 </web-app>
