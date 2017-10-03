@@ -59,7 +59,7 @@
 			<div class="row">
 				<div class="text-center">
 					<c:if test='${fileStoreId != null && fileStoreId != ""}'>
-						<button type="button" id="previewButn" onclick="downloadBill('${fileStoreId}')" class="btn btn-primary">Download</button>
+						<button type="button" id="previewButn" onclick="downloadBill('${fileStoreId}', '${consumerCode}')" class="btn btn-primary">Download</button>
 					</c:if>
 			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a> 
 				</div>
