@@ -562,7 +562,8 @@ function onLoad(){
 																value='<s:property value="ordernumber"/>' /> <input
 																type="hidden"
 																name="receiptDetailList[<%=rcptDtlCnt%>].dramount"
-																id="receiptDetailList[<%=rcptDtlCnt%>].dramount" /> <input
+																id="receiptDetailList[<%=rcptDtlCnt%>].dramount" 
+																value='<s:property value="dramount"/>' /> <input
 																type="hidden"
 																name="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand"
 																id="receiptDetailList[<%=rcptDtlCnt%>].isActualDemand"
