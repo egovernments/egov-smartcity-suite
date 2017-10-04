@@ -927,7 +927,7 @@ public class WaterConnectionDetailsService {
                 .findByApplicationNumber(waterConnectionDetails.getApplicationNumber());
         if (applicationIndex != null
                 && waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)) {
-            applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
+            applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
             applicationIndexService.updateApplicationIndex(applicationIndex);
         }
         if (applicationIndex != null && null != waterConnectionDetails.getId()
@@ -944,7 +944,7 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setClosed(ClosureStatus.NO);
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 if (!waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_SANCTIONED))
-                    applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
+                    applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
                 applicationIndex.setSla(applicationProcessTimeService.getApplicationProcessTime(
                         waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory()));
                 if (applicationIndex.getChannel() == null)
@@ -969,7 +969,7 @@ public class WaterConnectionDetailsService {
                 applicationIndex.setStatus(waterConnectionDetails.getStatus().getDescription());
                 applicationIndex.setApproved(ApprovalStatus.APPROVED);
                 applicationIndex.setClosed(ClosureStatus.YES);
-                applicationIndex.setOwnerName(user.getUsername() + "::" + user.getName());
+                applicationIndex.setOwnerName(user != null ? user.getUsername() + "::" + user.getName() : "");
             }
             if (waterConnectionDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS_CANCELLED)) {
