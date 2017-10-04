@@ -223,6 +223,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             model.addAttribute("currentDesignation", currentDesignation);
 
         taxExemptionService.addModelAttributes(model, property.getBasicProperty());
+        if(property.getTaxExemptedReason() == null)
+            property.getTaxExemptionDocuments().clear();
         if (!property.getTaxExemptionDocuments().isEmpty()) {
             property.setTaxExemptionDocumentsProxy(property.getTaxExemptionDocuments());
             if (property.getTaxExemptedReason().getCode().equals(PropertyTaxConstants.EXEMPTION_CHOULTRY)) {
