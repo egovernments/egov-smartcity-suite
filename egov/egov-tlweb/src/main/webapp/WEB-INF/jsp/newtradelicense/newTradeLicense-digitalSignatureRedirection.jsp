@@ -56,7 +56,7 @@
 	 		var ulbCode = '${ulbCode}' ;
 	 		var fileStoreIds='${fileStoreIds}';
 	 		var applicationNo='${applicationNo}';
-	 		var callBackUrl =encodeURIComponent('/tl/tradelicense/digisign-transition?applicationNumbers='+applicationNo+'&fileStoreIds='+fileStoreIds);
+	 		var callBackUrl =encodeURIComponent('/tl/tradelicense/digisign-transition?applicationNumbers='+applicationNo+'&fileStoreIds='+fileStoreIds+'&r=');
 			jQuery('<form>.').attr({
 				method: 'post',
 				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=TL&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
