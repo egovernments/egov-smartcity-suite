@@ -56,10 +56,10 @@
 	 		var ulbCode = '${ulbCode}' ;
 	 		var fileStoreIds='${fileStoreIds}';
 	 		var applicationNo='${applicationNo}';
-	 		var callBackUrl = '/tl/tradelicense/digisign-transition';
+	 		var callBackUrl =encodeURIComponent('/tl/tradelicense/digisign-transition?applicationNumbers='+applicationNo+'&fileStoreIds='+fileStoreIds);
 			jQuery('<form>.').attr({
 				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreIds='+fileStoreIds+'&moduleName=TL&ulbCode='+ulbCode+'&applicationNumbers='+applicationNo+'&callBackUrl='+callBackUrl,
+				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=TL&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
 				target: '_self'
 			})
 			.appendTo(document.body).submit();  
