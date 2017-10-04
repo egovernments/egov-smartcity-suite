@@ -1,9 +1,9 @@
 
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,6 +40,8 @@
  */
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONTENT_DISPOSITION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 import java.io.ByteArrayInputStream;
@@ -65,10 +67,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.wtms.application.service.SearchNoticeService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.collection.ConnectionBillService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.service.bill.WaterConnectionBillService;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.Query;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
@@ -108,6 +109,9 @@ public class GenerateBillForConsumerCodeController {
 
     @Autowired
     private FileStoreService fileStoreService;
+    
+    @Autowired
+    private ConnectionBillService connectionBillService;
 
     private static final Logger LOGGER = LoggerFactory.getLogger(GenerateBillForConsumerCodeController.class);
 
@@ -116,7 +120,7 @@ public class GenerateBillForConsumerCodeController {
             final HttpServletResponse response) {
         WaterConnectionBillService waterConnectionBillService = null;
         try {
-            final EgBill egBill = getBillByConsumerCode(consumerCode);
+            final EgBill egBill = connectionBillService.getBillByConsumerCode(consumerCode);
             if (egBill != null)
                 throw new ValidationException("err.demand.bill.generated");
             else
@@ -146,7 +150,7 @@ public class GenerateBillForConsumerCodeController {
             try {
                 final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
                 final List<InputStream> pdfs = new ArrayList<>();
-                final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                final File file = fileStoreService.fetch(fsm, FILESTORE_MODULECODE);
                 final byte[] bFile = FileUtils.readFileToByteArray(file);
                 pdfs.add(new ByteArrayInputStream(bFile));
                 getServletResponse(response, pdfs, consumerCode);
@@ -164,7 +168,7 @@ public class GenerateBillForConsumerCodeController {
         try {
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
             final byte[] data = concatPDFs(pdfs, output);
-            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
+            response.setHeader(CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
             response.setContentType("application/pdf");
             response.setContentLength(data.length);
             response.getOutputStream().write(data);
@@ -235,28 +239,5 @@ public class GenerateBillForConsumerCodeController {
         return outputStream.toByteArray();
     }
 
-    public EgBill getBillByConsumerCode(final String consumerCode) {
-        EgBill egBill = null;
-        final StringBuilder queryString = new StringBuilder();
-        queryString.append(
-                " select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd ")
-                .append("where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails ")
-                .append(" and demd.id=bill.egDemand and demd.id=conndem.demand and connDet.connectionType='Non-metered'")
-                .append(" and demd.isHistory = 'N' and  bill.is_Cancelled='N' ")
-                .append(" and bill.serviceCode='WT' ")
-                .append(" and connDet.connectionStatus='ACTIVE' ")
-                .append(" and connDet.status=status.id and status.moduletype='WATERTAXAPPLICATION'")
-                .append(" and status.code='SANCTIONED'")
-                .append(" and conn.consumerCode =:consumerCode order by bill.id desc");
-
-        final Query hibquery = persistenceService.getSession().createQuery(queryString.toString())
-                .setString("consumerCode", consumerCode);
-        final List<EgBill> egBilltemp = hibquery.list();
-        if (!egBilltemp.isEmpty())
-            egBill = egBilltemp.get(0);
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug(
-                    "query to get Bill for is {}. for consumer No {}. ", queryString.toString(), consumerCode);
-        return egBill;
-    }
+    
 }

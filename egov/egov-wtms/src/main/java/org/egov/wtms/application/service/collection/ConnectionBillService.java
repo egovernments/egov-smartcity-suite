@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,6 +39,24 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDISHISTORY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_REASON_ADVANCE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMAND_REASON_ORDER_MAP;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.GLCODE_FOR_ADVANCE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MAX_ADVANCES_ALLOWED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ORDERED_DEMAND_RSNS_LIST;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
+
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -70,6 +88,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -77,10 +96,13 @@ import org.egov.wtms.application.service.ConnectionDemandService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
+import org.hibernate.Query;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -89,6 +111,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class ConnectionBillService extends BillServiceInterface {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectionBillService.class);
+    private static final String ACTIVE = "ACTIVE";
     private static final String STRING_WCMS_FUCNTION_CODE = "5100";
     @PersistenceContext
     private EntityManager entityManager;
@@ -117,37 +141,41 @@ public class ConnectionBillService extends BillServiceInterface {
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
 
+    @Autowired
+    @Qualifier("persistenceService")
+    private PersistenceService persistenceService;
+
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
     }
 
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetails = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetails = new ArrayList<>();
         final EgDemand demand = billObj.getCurrentDemand();
         final Date currentDate = new Date();
-        final Map installmentWise = new HashMap<Installment, List<EgDemandDetails>>();
-        final Set<Installment> sortedInstallmentSet = new TreeSet<Installment>();
+        final Map<Installment, List<EgDemandDetails>> installmentWise = new HashMap<>();
+        final Set<Installment> sortedInstallmentSet = new TreeSet<>();
         final DemandComparatorByOrderId demandComparatorByOrderId = new DemandComparatorByOrderId();
-        final List<EgDemandDetails> orderedDetailsList = new ArrayList<EgDemandDetails>();
+        final List<EgDemandDetails> orderedDetailsList = new ArrayList<>();
         final Installment currInstallment = connectionDemandService
-                .getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.YEARLY, new Date());
+                .getCurrentInstallment(EGMODULE_NAME, YEARLY, new Date());
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
         new TreeMap<Date, String>();
 
         for (final EgDemandDetails demandDetail : demand.getEgDemandDetails()) {
             final Installment installment = demandDetail.getEgDemandReason().getEgInstallmentMaster();
             if (installmentWise.get(installment) == null) {
-                final List<EgDemandDetails> detailsList = new ArrayList<EgDemandDetails>();
+                final List<EgDemandDetails> detailsList = new ArrayList<>();
                 detailsList.add(demandDetail);
                 installmentWise.put(demandDetail.getEgDemandReason().getEgInstallmentMaster(), detailsList);
                 sortedInstallmentSet.add(installment);
             } else
-                ((List<EgDemandDetails>) installmentWise.get(demandDetail.getEgDemandReason().getEgInstallmentMaster()))
+                installmentWise.get(demandDetail.getEgDemandReason().getEgInstallmentMaster())
                         .add(demandDetail);
         }
         for (final Installment i : sortedInstallmentSet) {
-            final List<EgDemandDetails> installmentWiseDetails = (List<EgDemandDetails>) installmentWise.get(i);
+            final List<EgDemandDetails> installmentWiseDetails = installmentWise.get(i);
             Collections.sort(installmentWiseDetails, demandComparatorByOrderId);
             orderedDetailsList.addAll(installmentWiseDetails);
         }
@@ -167,8 +195,8 @@ public class ConnectionBillService extends BillServiceInterface {
                     billdetail.setDrAmount(BigDecimal.ZERO);
                     billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
                 }
-
-                LOGGER.info("demandDetail.getEgDemandReason()"
+                if(LOG.isInfoEnabled())
+                    LOG.info("demandDetail.getEgDemandReason()"
                         + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
                         + demandDetail.getEgDemandReason().getGlcodeId());
                 billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
@@ -183,7 +211,7 @@ public class ConnectionBillService extends BillServiceInterface {
                 billdetail.setFunctionCode(STRING_WCMS_FUCNTION_CODE);
                 if (waterConnectionDetails != null
                         && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
-                    if (billdetail.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE))
+                    if (billdetail.getDescription().contains(DEMANDRSN_REASON_ADVANCE))
                         billdetail.setPurpose(PURPOSE.ADVANCE_AMOUNT.toString());
                     else if (billdetail.getEgDemandReason().getEgInstallmentMaster().getToDate()
                             .compareTo(finYear.getStartingDate()) < 0)
@@ -208,25 +236,25 @@ public class ConnectionBillService extends BillServiceInterface {
 
         if (waterConnectionDetails != null
                 && waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED)) {
-            final Map<String, Installment> currInstallments = new HashMap<String, Installment>();
+            final Map<String, Installment> currInstallments = new HashMap<>();
             final Installment currFirstHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
                     .get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
             final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
                     .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-            currInstallments.put(WaterTaxConstants.CURRENTYEAR_FIRST_HALF, currFirstHalf);
-            currInstallments.put(WaterTaxConstants.CURRENTYEAR_SECOND_HALF, currSecondHalf);
+            currInstallments.put(CURRENTYEAR_FIRST_HALF, currFirstHalf);
+            currInstallments.put(CURRENTYEAR_SECOND_HALF, currSecondHalf);
             final Date advanceStartDate = org.apache.commons.lang3.time.DateUtils
-                    .addYears(currInstallments.get(WaterTaxConstants.CURRENTYEAR_FIRST_HALF).getFromDate(), 1);
+                    .addYears(currInstallments.get(CURRENTYEAR_FIRST_HALF).getFromDate(), 1);
 
             final List<Installment> advanceInstallments = getAdvanceInstallmentsList(advanceStartDate);
             BigDecimal currentInstDemand = BigDecimal.ZERO;
             for (final EgDemandDetails dmdDet : demand.getEgDemandDetails())
                 if (dmdDet.getInstallmentStartDate()
-                        .equals(currInstallments.get(WaterTaxConstants.CURRENTYEAR_SECOND_HALF).getFromDate()))
+                        .equals(currInstallments.get(CURRENTYEAR_SECOND_HALF).getFromDate()))
                     currentInstDemand = currentInstDemand.add(dmdDet.getAmount());
             if (ConnectionStatus.ACTIVE.equals(waterConnectionDetails.getConnectionStatus()))
                 createAdvanceBillDetails(billDetails, currentInstDemand, demand, billObj, advanceInstallments,
-                        currInstallments.get(WaterTaxConstants.CURRENTYEAR_SECOND_HALF));
+                        currInstallments.get(CURRENTYEAR_SECOND_HALF));
         }
         return billDetails;
     }
@@ -246,13 +274,12 @@ public class ConnectionBillService extends BillServiceInterface {
             final List<Installment> advanceInstallments, final Installment dmdDetInstallment) {
 
         /*
-         * Advance will be created with current year second half installment.
-         * While fetching advance collection, we will pass current year second
-         * half installment
+         * Advance will be created with current year second half installment. While fetching advance collection, we will pass
+         * current year second half installment
          */
         BigDecimal advanceCollection = demandGenericDAO.getBalanceByDmdMasterCodeInst(demand,
-                WaterTaxConstants.DEMANDRSN_CODE_ADVANCE,
-                moduleService.getModuleByName(WaterTaxConstants.EGMODULE_NAME), dmdDetInstallment);
+                DEMANDRSN_CODE_ADVANCE,
+                moduleService.getModuleByName(EGMODULE_NAME), dmdDetInstallment);
         final CFinancialYear finYear = financialYearDAO.getFinancialYearByDate(new Date());
 
         if (advanceCollection.compareTo(BigDecimal.ZERO) < 0)
@@ -263,26 +290,26 @@ public class ConnectionBillService extends BillServiceInterface {
         if (currentInstallmentDemand.compareTo(BigDecimal.ZERO) > 0) {
             final Integer noOfAdvancesPaid = advanceCollection.subtract(partiallyCollectedAmount)
                     .divide(currentInstallmentDemand).intValue();
-
-            LOGGER.debug("getBilldetails - advanceCollection = " + advanceCollection + ", noOfAdvancesPaid="
+            if(LOG.isDebugEnabled())
+                LOG.debug("getBilldetails - advanceCollection = " + advanceCollection + ", noOfAdvancesPaid="
                     + noOfAdvancesPaid);
 
             // DateTime installmentDate = null;
             Installment installment = null;
             int j = billDetails.size() + 1;
-            if (noOfAdvancesPaid < WaterTaxConstants.MAX_ADVANCES_ALLOWED)
+            if (noOfAdvancesPaid < MAX_ADVANCES_ALLOWED)
                 for (int i = noOfAdvancesPaid; i < advanceInstallments.size(); i++) {
                     installment = advanceInstallments.get(i);
                     // installmentDate = new
                     // DateTime(installment.getInstallmentYear().getTime());
                     final EgDemandReason reasonmaster = connectionDemandService
-                            .getDemandReasonByCodeAndInstallment(WaterTaxConstants.DEMANDRSN_CODE_ADVANCE, installment);
+                            .getDemandReasonByCodeAndInstallment(DEMANDRSN_CODE_ADVANCE, installment);
                     if (reasonmaster != null) {
                         final EgBillDetails billdetail = new EgBillDetails();
                         billdetail.setDrAmount(BigDecimal.ZERO);
                         billdetail.setCrAmount(currentInstallmentDemand);
 
-                        billdetail.setGlcode(WaterTaxConstants.GLCODE_FOR_ADVANCE);
+                        billdetail.setGlcode(GLCODE_FOR_ADVANCE);
                         billdetail.setEgDemandReason(reasonmaster);
                         billdetail.setCreateDate(new Date());
                         billdetail.setModifiedDate(new Date());
@@ -290,7 +317,7 @@ public class ConnectionBillService extends BillServiceInterface {
                         billdetail.setOrderNo(j);
                         billdetail.setDescription(reasonmaster.getEgDemandReasonMaster().getReasonMaster() + " - "
                                 + installment.getDescription());
-                        if (billdetail.getDescription().contains(WaterTaxConstants.DEMANDRSN_REASON_ADVANCE))
+                        if (billdetail.getDescription().contains(DEMANDRSN_REASON_ADVANCE))
                             billdetail.setPurpose(PURPOSE.ADVANCE_AMOUNT.toString());
                         else if (billdetail.getEgDemandReason().getEgInstallmentMaster().getToDate()
                                 .compareTo(finYear.getStartingDate()) < 0)
@@ -307,8 +334,8 @@ public class ConnectionBillService extends BillServiceInterface {
                         billDetails.add(billdetail);
                     }
                 }
-        } else
-            LOGGER.debug("getBillDetails - All advances are paid...");
+        } else if(LOG.isDebugEnabled())
+            LOG.debug("getBillDetails - All advances are paid...");
     }
 
     @Override
@@ -317,9 +344,11 @@ public class ConnectionBillService extends BillServiceInterface {
     }
 
     public EgBill updateBillWithLatest(final Long billId) {
-        LOGGER.debug("updateBillWithLatest billId " + billId);
+        if(LOG.isDebugEnabled())
+            LOG.debug("updateBillWithLatest billId " + billId);
         final EgBill bill = egBillDAO.findById(billId, false);
-        LOGGER.debug("updateBillWithLatest old bill " + bill);
+        if(LOG.isDebugEnabled())
+            LOG.debug("updateBillWithLatest old bill " + bill);
         if (bill == null)
             throw new ApplicationRuntimeException("No bill found with bill reference no :" + billId);
         bill.getEgBillDetails().clear();
@@ -334,7 +363,8 @@ public class ConnectionBillService extends BillServiceInterface {
             bill.addEgBillDetails(billDetail);
             billDetail.setEgBill(bill);
         }
-        LOGGER.debug("Bill update with bill details for water charges " + bill.getConsumerId() + " as billdetails "
+        if(LOG.isDebugEnabled())
+            LOG.debug("Bill update with bill details for water charges " + bill.getConsumerId() + " as billdetails "
                 + egBillDetails);
         return bill;
     }
@@ -346,12 +376,12 @@ public class ConnectionBillService extends BillServiceInterface {
      * @return List of Installment
      */
     public List<Installment> getAdvanceInstallmentsList(final Date startDate) {
-        List<Installment> advanceInstallments = new ArrayList<Installment>();
+        List<Installment> advanceInstallments = new ArrayList<>();
         final String query = "select inst from Installment inst where inst.module.name = '"
-                + WaterTaxConstants.PROPERTY_MODULE_NAME
+                + PROPERTY_MODULE_NAME
                 + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
         advanceInstallments = getCurrentSession().createQuery(query).setParameter("startdate", startDate)
-                .setMaxResults(WaterTaxConstants.MAX_ADVANCES_ALLOWED).list();
+                .setMaxResults(MAX_ADVANCES_ALLOWED).list();
         return advanceInstallments;
     }
 
@@ -359,26 +389,26 @@ public class ConnectionBillService extends BillServiceInterface {
             final Billable billable, final List<Installment> advanceInstallments,
             final Map<String, Installment> currInstallments) {
 
-        final Map<Date, String> instReasonMap = new TreeMap<Date, String>();
-        final HashMap<String, Integer> orderMap = new HashMap<String, Integer>();
+        final Map<Date, String> instReasonMap = new TreeMap<>();
+        final HashMap<String, Integer> orderMap = new HashMap<>();
         Date key = null;
         DateTime dateTime = null;
         for (final Installment inst : advanceInstallments) {
             dateTime = new DateTime(inst.getInstallmentYear());
 
             key = getOrder(inst.getInstallmentYear(),
-                    WaterTaxConstants.DEMAND_REASON_ORDER_MAP.get(WaterTaxConstants.DEMANDRSN_CODE_ADVANCE));
+                    DEMAND_REASON_ORDER_MAP.get(DEMANDRSN_CODE_ADVANCE));
 
             instReasonMap.put(key, dateTime.getMonthOfYear() + "/" + dateTime.getYear() + "-"
-                    + WaterTaxConstants.DEMANDRSN_CODE_ADVANCE);
+                    + DEMANDRSN_CODE_ADVANCE);
         }
         int order = 1;
-        final Map<String, Map<String, String>> installmentAndReason = new LinkedHashMap<String, Map<String, String>>();
+        final Map<String, Map<String, String>> installmentAndReason = new LinkedHashMap<>();
 
         for (final Map.Entry<Date, String> entry : instReasonMap.entrySet()) {
             final String[] split = entry.getValue().split("-");
             if (installmentAndReason.get(split[0]) == null) {
-                final Map<String, String> reason = new HashMap<String, String>();
+                final Map<String, String> reason = new HashMap<>();
                 reason.put(split[1], entry.getValue());
                 installmentAndReason.put(split[0], reason);
             } else
@@ -386,7 +416,7 @@ public class ConnectionBillService extends BillServiceInterface {
         }
 
         for (final String installmentYear : installmentAndReason.keySet())
-            for (final String reasonCode : WaterTaxConstants.ORDERED_DEMAND_RSNS_LIST)
+            for (final String reasonCode : ORDERED_DEMAND_RSNS_LIST)
                 if (installmentAndReason.get(installmentYear).get(reasonCode) != null)
                     orderMap.put(installmentAndReason.get(installmentYear).get(reasonCode), order++);
 
@@ -398,5 +428,39 @@ public class ConnectionBillService extends BillServiceInterface {
         calendar.setTime(date);
         calendar.add(Calendar.DATE, reasonOrder);
         return calendar.getTime();
+    }
+
+    public EgBill getBillByConsumerCode(final String consumerCode) {
+        EgBill egBill = null;
+        final StringBuilder queryString = new StringBuilder();
+
+        queryString.append(
+                " select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd ")
+                .append("where billtype.id=bill.egBillType and billtype.code= '" + BILLTYPE_MANUAL + "'")
+                .append(" and bill.consumerId = conn.consumerCode ")
+                .append(" and conn.id=connDet.connection ")
+                .append(" and connDet.id=conndem.waterConnectionDetails ")
+                .append(" and demd.id=bill.egDemand ")
+                .append(" and demd.id=conndem.demand ")
+                .append(" and connDet.connectionType='" + NON_METERED + "'")
+                .append(" and demd.isHistory = '" + DEMANDISHISTORY + "'")
+                .append(" and bill.is_Cancelled='" + DEMANDISHISTORY + "'")
+                .append(" and bill.serviceCode='" + COLLECTION_STRING_SERVICE_CODE + "'")
+                .append(" and connDet.connectionStatus='" + ACTIVE + "'")
+                .append(" and connDet.status=status.id ")
+                .append(" and status.moduletype='" + MODULETYPE + "'")
+                .append(" and status.code='" + APPLICATION_STATUS_SANCTIONED + "'")
+                .append(" and conn.consumerCode =:consumerCode ")
+                .append(" order by bill.id desc ");
+
+        final Query query = persistenceService.getSession().createQuery(queryString.toString())
+                .setString("consumerCode", consumerCode);
+        final List<EgBill> egBilltemp = query.list();
+        if (!egBilltemp.isEmpty())
+            egBill = egBilltemp.get(0);
+        if (LOG.isDebugEnabled())
+            LOG.debug(
+                    "query to get Bill for is {}. for consumer No {}. ", queryString.toString(), consumerCode);
+        return egBill;
     }
 }
