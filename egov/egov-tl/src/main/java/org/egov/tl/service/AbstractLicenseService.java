@@ -108,6 +108,7 @@ import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.tl.utils.Constants.*;
 
 @Transactional(readOnly = true)
@@ -874,10 +875,9 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void digitalSignTransition(String fileStoreId, Map<String, String> appNoFileStoreIdsMap) {
+    public void digitalSignTransition(String applicationNumber) {
         final User user = securityUtils.getCurrentUser();
-        final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
-        if (null != applicationNumber && !applicationNumber.isEmpty()) {
+        if (isNotBlank(applicationNumber)) {
             License license = licenseRepository.findByApplicationNumber(applicationNumber);
             final DateTime currentDate = new DateTime();
             license = licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_APPROVED_CODE);

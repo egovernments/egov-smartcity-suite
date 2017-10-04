@@ -45,28 +45,39 @@
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page language="java" pageEncoding="UTF-8"%>
-<html>
-	<head>
-		<title>Digital Signature</title>
-		<script type="text/javascript">
-
-		$(document).ready( function() {
-
-	 		var ulbCode = '${ulbCode}' ;
-	 		var fileStoreIds='${fileStoreIds}';
-	 		var applicationNo='${applicationNo}';
-	 		var callBackUrl = '/tl/tradelicense/digisign-transition';
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreIds='+fileStoreIds+'&moduleName=TL&ulbCode='+ulbCode+'&applicationNumbers='+applicationNo+'&callBackUrl='+callBackUrl,
-				target: '_self'
-			})
-			.appendTo(document.body).submit();  
-		});
-		
-		</script>
-	</head>
-	<body>
-	</body>
-</html>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
+<%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<div class="row" id="page-content">
+    <div class="col-md-12">
+        <div class="panel" data-collapsed="0">
+            <div class="panel-body">
+                <form:form method="GET" action="/tl/tradelicense/download/digisign-certificate"
+                           class="form-horizontal form-groups-bordered" id="DigitalSignatureAckForm">
+                    <div class="panel panel-primary" data-collapsed="0">
+                        <div class="panel-heading" align="center">
+                            <div class="panel-title text-center" align="center">
+                                <input type="hidden" value="${applnum}" name="applnum"/>
+                                <input type="hidden" value="${fileStoreId}" name="file"/>
+                                <strong>${successMessage}</strong>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="text-center">
+                            <c:if test='${fileStoreId != null && fileStoreId != ""}'>
+                                <button id="previewButn" class="btn btn-primary"><spring:message
+                                        code="lbl.download"/></button>
+                            </c:if>
+                            <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message
+                                    code="lbl.close"/></a>
+                        </div>
+                    </div>
+                </form:form>
+            </div>
+        </div>
+    </div>
+</div>

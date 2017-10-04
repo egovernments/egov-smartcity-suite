@@ -78,7 +78,7 @@ import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 @Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
         @Result(name = "message", location = "viewTradeLicense-message.jsp"),
         @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
-        @Result(name = "digisigncertificate", type = "redirect", location = "/digitalSignature/tradeLicense/downloadSignedLicenseCertificate", params = {"file", "${digiSignedFile}", "applnum", "${applNum}"})
+        @Result(name = "digisigncertificate", type = "redirect", location = "/tradelicense/download/digisign-certificate", params = {"file", "${digiSignedFile}", "applnum", "${applNum}"})
 })
 public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
