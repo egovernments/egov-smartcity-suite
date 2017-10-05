@@ -87,7 +87,7 @@ public class LicenseCertificateDigiSignController {
     @Autowired
     private LicenseCertificateDigiSignService licenseCertificateDigiSignService;
 
-    @PostMapping(value = "/digisign-transition")
+    @GetMapping("/digisign-transition")
     public String licenseDigiSignTransition(@RequestParam String[] fileStoreIds,
                                             @RequestParam String[] applicationNumbers,
                                             Model model) {
