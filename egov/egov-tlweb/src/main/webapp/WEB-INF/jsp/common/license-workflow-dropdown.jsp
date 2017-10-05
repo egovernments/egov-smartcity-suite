@@ -156,7 +156,7 @@ function populateApprover() {
          <div class="form-group">
              <label class="col-sm-3 add-margin text-right">
                  <s:text name="wf.approver.remarks"/>
-                 <c:if test="${mode}!=disableApprover">
+                 <c:if test="${mode!='disableApprover' || licenseAppType.name=='Closure'}">
                      <span class="mandatory"/>
                  </c:if>
              </label>
