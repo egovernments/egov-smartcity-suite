@@ -1146,7 +1146,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             if (row.getKey() != null)
                 if (getRtgsSeceltedAccMap().get(row.getKey()) != null && getRtgsSeceltedAccMap().get(row.getKey())) {
                     if (isRtgsNoGenerationAuto()) {
-                        final String[] dateArray = new String[] { getRtgsdateMap().get(row.getKey()) };
+                        final String[] dateArray = new String[] { getRtgsdateMap().get(String.valueOf(Long.valueOf(row.getKey()))) };
                         // LOGGER.debug(dateArray);
                         Date rtgsdate = null;
                         final Date autoNoCutOffDate = FinancialConstants.RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE;
@@ -1212,25 +1212,25 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
                 rtgsEntry.add(chqAssgn);
                 if (chqAssgn.getBankAccountId() != null && !"".equals(chqAssgn.getBankAccountId()))
-                    resultMap.put(chqAssgn.getBankAccountId().toString(), rtgsEntry);
+                    resultMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), rtgsEntry);
                 if (chqAssgn.getIsSelected()) {
-                    rtgsSeceltedAccMap.put(chqAssgn.getBankAccountId().toString(), true);
+                    rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
                     if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
                         if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
                             ContractorbillList.add(chqAssgn);
-                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
+                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
                                 " RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
-            } else if (resultMap.containsKey(chqAssgn.getBankAccountId().toString())) {
-                resultMap.get(chqAssgn.getBankAccountId().toString()).add(chqAssgn);
+            } else if (resultMap.containsKey(String.valueOf(chqAssgn.getBankAccountId().longValue()))) {
+                resultMap.get(String.valueOf(chqAssgn.getBankAccountId().longValue())).add(chqAssgn);
                 if (chqAssgn.getIsSelected()) {
-                    rtgsSeceltedAccMap.put(chqAssgn.getBankAccountId().toString(), true);
+                    rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
                     if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
                         if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
                             ContractorbillList.add(chqAssgn);
-                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
+                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
                                 "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
@@ -1238,13 +1238,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             } else {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
                 rtgsEntry.add(chqAssgn);
-                resultMap.put(chqAssgn.getBankAccountId().toString(), rtgsEntry);
+                resultMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), rtgsEntry);
                 if (chqAssgn.getIsSelected()) {
-                    rtgsSeceltedAccMap.put(chqAssgn.getBankAccountId().toString(), true);
+                    rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
                     if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
                         if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
                             ContractorbillList.add(chqAssgn);
-                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
+                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
                                 "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());

@@ -423,8 +423,8 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         // times.
         for (final VoucherDetails voucherDetails : billDetailslist) {
             index = index + 1;
-            totalDrAmt = totalDrAmt.add(voucherDetails.getDebitAmountDetail());
-            totalCrAmt = totalCrAmt.add(voucherDetails.getCreditAmountDetail());
+            totalDrAmt = totalDrAmt.add(voucherDetails.getDebitAmountDetail() == null ? BigDecimal.ZERO : voucherDetails.getDebitAmountDetail());
+            totalCrAmt = totalCrAmt.add(voucherDetails.getCreditAmountDetail() == null ? BigDecimal.ZERO : voucherDetails.getCreditAmountDetail());
             /*
              * if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO)==0 &&
              * voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0 &&
