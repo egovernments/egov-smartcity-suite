@@ -1025,7 +1025,7 @@ public class WaterConnectionDetailsService {
                 waterConnectionDetails.setApplicationDate(new DateTime().toDate());
             if (waterConnectionDetails.getApplicationNumber() == null)
                 waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getConnection().getConsumerCode());
-            if (applicationIndex == null) {
+            if (applicationIndex == null && !waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_SANCTIONED)) {
                 if (LOG.isDebugEnabled())
                     LOG.debug(" updating Application Index creation Started... ");
                 String channel = "";
