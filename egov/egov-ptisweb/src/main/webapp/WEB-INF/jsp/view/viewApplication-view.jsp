@@ -114,6 +114,9 @@
 						style="text-align: left">
 						<%@ include file="../common/workflowHistoryView.jsp"%>
 					</div>
+					<s:if test="%{!endorsementNotices.isEmpty()}">
+						<jsp:include page="../workflow/endorsement_history.jsp"/>
+					</s:if>
 					<div class="buttonbottom no-print" align="center">
 						<!--From application index search same view page is given, if new property is under work flow and assessment no is not generated then all links are disabled  -->
 						<s:if test="%{basicProperty.upicNo!=null &&  !citizenPortalUser}">

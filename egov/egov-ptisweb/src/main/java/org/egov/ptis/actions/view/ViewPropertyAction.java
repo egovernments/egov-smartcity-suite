@@ -109,6 +109,7 @@ import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -133,6 +134,7 @@ public class ViewPropertyAction extends BaseFormAction {
     private String errorMessage;
     private String isCitizen;
     private boolean citizenPortalUser;
+    private List<PtNotice> endorsementNotices;
 
     @Autowired
     private transient BasicPropertyDAO basicPropertyDAO;
@@ -360,6 +362,7 @@ public class ViewPropertyAction extends BaseFormAction {
 				property = vacancyRemission.getBasicProperty().getActiveProperty();
 				property.setDocuments(vacancyRemission.getDocuments());
 			}
+		 endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(appNo);
 	}
     
    public void getDocumentDetails() {
@@ -530,19 +533,27 @@ public class ViewPropertyAction extends BaseFormAction {
         this.propService = propService;
     }
 
-	public List<Hashtable<String, Object>> getHistoryMap() {
-		return historyMap;
-	}
+    public List<Hashtable<String, Object>> getHistoryMap() {
+        return historyMap;
+    }
 
-	public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
-		this.historyMap = historyMap;
-	}
+    public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
+        this.historyMap = historyMap;
+    }
 
-	public List<Document> getDocuments() {
-		return documents;
-	}
+    public List<Document> getDocuments() {
+        return documents;
+    }
 
-	public void setDocuments(List<Document> documents) {
-		this.documents = documents;
-	}
+    public void setDocuments(List<Document> documents) {
+        this.documents = documents;
+    }
+
+    public List<PtNotice> getEndorsementNotices() {
+        return endorsementNotices;
+    }
+
+    public void setEndorsementNotices(List<PtNotice> endorsementNotices) {
+        this.endorsementNotices = endorsementNotices;
+    }
 }
