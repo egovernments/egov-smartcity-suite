@@ -199,7 +199,7 @@
             var mode = $("#mode").val();
             var workflowaction = $("#workFlowAction").val();
             <s:if test="%{workflowaction != null && workflowaction == 'Generate Provisional Certificate'}">
-            window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + $('#id').val(),'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+            window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + $('#id').val(),'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
             return false;
             </s:if>
             <s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
@@ -453,7 +453,7 @@
                 </button>
             </s:if>
             <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
-                   style="display: none;" onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+                   style="display: none;" onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
         </div>
 
     </div>

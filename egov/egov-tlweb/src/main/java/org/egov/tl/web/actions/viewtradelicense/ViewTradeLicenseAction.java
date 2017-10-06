@@ -125,9 +125,18 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             return "digisigncertificate";
         } else {
             reportId = reportViewerUtil
-                    .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license()));
+                    .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(),false));
             return "report";
         }
+    }
+
+    @ValidationErrorPage("report")
+    @Action(value = "/viewtradelicense/generate-provisional-certificate")
+    public String generateProvisionalCertificate() {
+        setLicenseIdIfServletRedirect();
+        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
+            reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(),true));
+            return "report";
     }
 
     private void setLicenseIdIfServletRedirect() {

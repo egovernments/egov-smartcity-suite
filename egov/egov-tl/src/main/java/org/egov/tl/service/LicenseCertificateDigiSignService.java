@@ -95,7 +95,7 @@ public class LicenseCertificateDigiSignService {
         List<License> licenses = new ArrayList<>();
         for (Long licenseId : licenseIds) {
             License license = tradeLicenseService.getLicenseById(Long.valueOf(licenseId));
-            ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license);
+            ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license,false);
             if (reportOutput != null) {
                 InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
                 FileStoreMapper fileStore = fileStoreService.store(fileStream,

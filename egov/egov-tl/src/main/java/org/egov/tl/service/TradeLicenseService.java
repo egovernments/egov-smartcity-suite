@@ -248,17 +248,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public ReportOutput generateLicenseCertificate(License license) {
+    public ReportOutput generateLicenseCertificate(License license,boolean isProvisional) {
         if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade())) {
             return reportService.createReport(
-                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license)));
+                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license,isProvisional)));
         } else {
             return reportService.createReport(
-                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license)));
+                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license,isProvisional)));
         }
     }
 
-    private Map<String, Object> getReportParamsForCertificate(License license) {
+    private Map<String, Object> getReportParamsForCertificate(License license,boolean isProvisional) {
 
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("applicationnumber", license.getApplicationNumber());
@@ -295,9 +295,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", amtPaid);
 
-        if (license.getStatus() != null && LICENSE_STATUS_UNDERWORKFLOW.equals(license.getStatus().getName())) {
+        if (isProvisional)
             reportParams.put("certificateType", "provisional");
-        } else {
+        else {
             StringBuilder qrCodeValue = new StringBuilder();
             qrCodeValue.append("License Number : ").append(license.getLicenseNumber()).append(System.lineSeparator());
             qrCodeValue.append("Trade Title : ").append(license.getNameOfEstablishment()).append(System.lineSeparator());
