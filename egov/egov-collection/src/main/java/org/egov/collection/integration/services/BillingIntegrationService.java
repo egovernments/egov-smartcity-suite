@@ -42,6 +42,7 @@ package org.egov.collection.integration.services;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
 import java.math.BigDecimal;
@@ -128,4 +129,14 @@ public interface BillingIntegrationService {
      * @return
      */
     public ReceiptAmountInfo receiptAmountBifurcation(BillReceiptInfo billReceiptInfo);
+    
+    /**
+     * Collection system invokes billing system to validate receipt cancellation allowed or not. 
+     * parameter.
+     * @param receiptNumber
+     * @return
+     */
+    default ReceiptCancellationInfo validateCancelReceipt(String receiptNumber) {
+        return new ReceiptCancellationInfo();
+    }
 }
