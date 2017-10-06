@@ -63,6 +63,7 @@ import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
@@ -997,7 +998,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .withNextAction(nextAction);
         super.persist(receiptHeader);
 
-        updateCollectionIndexAndPushMail(receiptHeader);
+         updateCollectionIndexAndPushMail(receiptHeader);
     }
 
     public Set<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,
@@ -1326,5 +1327,16 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         receiptHeader.setStatus(collectionsUtil
                 .getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                         CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
+    }
+
+    public void validateReceiptCancellation(String receiptNumber,String serviceCode)
+    {
+        BillingIntegrationService  billingService = getBillingServiceBean(serviceCode);
+        ReceiptCancellationInfo receiptCancellationInfo= billingService.validateCancelReceipt(receiptNumber);
+        if(!receiptCancellationInfo.getIsCancellationAllowed())
+        {
+            String validationMsg= receiptCancellationInfo.getValidationMessage();
+            throw new ValidationException(new ValidationError(validationMsg,validationMsg));
+        }
     }
 }

@@ -1165,12 +1165,13 @@ public class ReceiptAction extends BaseFormAction {
      *
      * @return
      */
+    @ValidationErrorPage(value = "error")
     @Action(value = "/receipts/receipt-saveOnCancel")
     public String saveOnCancel() {
         boolean isInstrumentDeposited = false;
 
         final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
-
+        receiptHeaderService.validateReceiptCancellation(receiptHeaderToBeCancelled.getReceiptnumber(), receiptHeaderToBeCancelled.getService().getCode());
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
         for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())
