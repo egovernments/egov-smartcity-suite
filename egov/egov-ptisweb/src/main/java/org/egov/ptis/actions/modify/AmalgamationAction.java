@@ -74,6 +74,7 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -384,16 +385,17 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 else
                     amalBasicProp = basicPropertyDAO
                             .getInActiveBasicPropertyByPropertyID(amal.getAmalgamatedProperty().getUpicNo());
-                for (final PropertyOwnerInfo propOwner : amalBasicProp.getPropertyOwnerInfo()) {
-                    final List<Address> addrSet = propOwner.getOwner().getAddress();
-                    for (final Address address : addrSet) {
-                        amal.setAssessmentNo(amal.getAmalgamatedProperty().getUpicNo());
-                        amal.setOwnerName(propOwner.getOwner().getName());
-                        amal.setMobileNo(propOwner.getOwner().getMobileNumber());
-                        amal.setPropertyAddress(address.toString());
-                        break;
-                    }
-                }
+				for (final PropertyOwnerInfo propOwner : amalBasicProp.getPropertyOwnerInfo()) {
+					final List<Address> addrSet = propOwner.getOwner().getAddress().isEmpty()
+							? Arrays.asList(basicProp.getAddress()) : propOwner.getOwner().getAddress();
+					for (final Address address : addrSet) {
+						amal.setAssessmentNo(amal.getAmalgamatedProperty().getUpicNo());
+						amal.setOwnerName(propOwner.getOwner().getName());
+						amal.setMobileNo(propOwner.getOwner().getMobileNumber());
+						amal.setPropertyAddress(address.toString());
+						break;
+					}
+				}
                 basicProp.getAmalgamationsProxy().add(amal);
             }
 

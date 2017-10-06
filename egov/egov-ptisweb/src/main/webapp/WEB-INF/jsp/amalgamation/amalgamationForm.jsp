@@ -101,11 +101,7 @@
 		<div class="col-sm-3 add-margin">
 			<s:property default="N/A" value="%{propertyDetail.apartment.name}" />
 		</div>
-		<label class="col-sm-2 control-label text-right"> </label>
-		<div class="col-sm-3 add-margin">&nbsp;</div>
-	</div>
-	<div class="form-group">
-		<label class="col-sm-3 control-label text-right"> <s:text
+		<label class="col-sm-2 control-label text-right"> <s:text
 				name="extent.site" /> <span class="mandatory" /> :
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -114,7 +110,12 @@
 				cssClass="form-control patternvalidation"
 				data-pattern="decimalvalue" />
 		</div>
-		<label class="col-sm-2 control-label text-right"> <s:text
+		
+		
+	</div>
+	<div class="form-group">
+		
+		<label class="col-sm-3 control-label text-right"> <s:text
 				name="certificationNumber" /> :
 		</label>
 		<div class="col-sm-3 add-margin">
@@ -122,6 +123,18 @@
 				cssClass="form-control"
 				value="%{propertyDetail.occupancyCertificationNo}"
 				cssStyle="width:100%" />
+		</div>
+		<label class="col-sm-2 control-label text-right"> <s:text
+				name="certificationDate" /> :
+		</label>
+		<div class="col-sm-3 add-margin">
+			<s:date
+				name="propertyDetail.occupancyCertificationDate"
+				format="dd/MM/yyyy" var="occDate"/> 
+				<s:textfield
+				name="propertyDetail.occupancyCertificationDate"
+				value="%{occDate}"
+				cssClass="form-control datepicker" cssStyle="width:100"></s:textfield>
 		</div>
 	</div>
 </div>

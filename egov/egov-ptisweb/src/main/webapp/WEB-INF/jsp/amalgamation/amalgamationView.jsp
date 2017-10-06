@@ -90,12 +90,22 @@
 		<div class="col-sm-3 add-margin">
 			<s:property value="%{propertyDetail.sitalArea.area}" default="N/A" />
 		</div>
-		<label class="col-sm-2 control-label text-right"> <s:text
+		<label class="col-sm-3 control-label text-right"> <s:text
 				name="certificationNumber" /> :
 		</label>
 		<div class="col-sm-3 add-margin">
 			<s:property value="%{propertyDetail.occupancyCertificationNo}"
 				default="N/A" />
+		</div>
+	</div>
+	<div class="form-group">
+		<label class="col-sm-3 control-label text-right"> <s:text
+				name="certificationDate" /> :
+		</label>
+		<div class="col-sm-3 add-margin">
+			<s:date name="propertyDetail.occupancyCertificationDate"
+				format="dd/MM/yyyy" var="occDate" />
+			<s:property value="%{occDate}" default="N/A" />
 		</div>
 	</div>
 </div>

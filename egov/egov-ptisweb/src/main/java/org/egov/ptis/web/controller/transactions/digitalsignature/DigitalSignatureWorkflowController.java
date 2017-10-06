@@ -84,6 +84,7 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.PropertyStatusDAO;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
+import org.egov.ptis.domain.entity.property.Amalgamation;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
@@ -304,12 +305,15 @@ public class DigitalSignatureWorkflowController {
         return applicationTypes;
     }
 
-    private String transition(final PropertyImpl property) {
-        final String applicationType = property.getCurrentState().getValue().split(":")[0];
-            property.transition().end().withOwner((Position)null).withNextAction(null);
-            property.getBasicProperty().setUnderWorkflow(false);
-        return applicationType;
-    }
+	private String transition(final PropertyImpl property) {
+		final String applicationType = property.getCurrentState().getValue().split(":")[0];
+		if (applicationType.equalsIgnoreCase(AMALG))
+			for (final Amalgamation amalProp : property.getBasicProperty().getAmalgamations())
+				amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
+		property.transition().end().withOwner((Position) null).withNextAction(null);
+		property.getBasicProperty().setUnderWorkflow(false);
+		return applicationType;
+	}
 
     private void transition(final RevisionPetition revPetition) {
             revPetition.getBasicProperty().setStatus(
