@@ -90,18 +90,17 @@ public class AdvertisementPermitDetailRepositoryImpl implements AdvertisementPer
             hoardingCriteria.add(Restrictions.eq("advertisement.subCategory.id", hoardingSearch.getSubCategory()));
         if (hoardingSearch.getRevenueInspector() != null)
             hoardingCriteria.add(Restrictions.eq("advertisement.revenueInspector.id", hoardingSearch.getRevenueInspector()));
-        if (hoardingSearch.getStatus() != null)
+        if (null != hoardingSearch.getStatus() && !hoardingSearch.getStatus().equals(AdvertisementStatus.ACTIVE))
             hoardingCriteria.add(Restrictions.eq("advertisement.status", hoardingSearch.getStatus()));
+        else {
+            hoardingCriteria.add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
+            hoardingCriteria.add(Restrictions.eq("permit.isActive", Boolean.TRUE));
+        }
         if (hoardingSearch.getApplicationFromDate() != null)
-
             hoardingCriteria
                     .add(Restrictions.ge("applicationDate", DateUtils.startOfDay(hoardingSearch.getApplicationFromDate())));
         if (hoardingSearch.getApplicationToDate() != null)
             hoardingCriteria.add(Restrictions.le("applicationDate", DateUtils.endOfDay(hoardingSearch.getApplicationToDate())));
-        
-        hoardingCriteria.add(Restrictions.eq("permit.isActive", Boolean.TRUE));
-        
-        hoardingCriteria.add(Restrictions.eq("advertisement.status", AdvertisementStatus.ACTIVE));
         if (hoardingSearch.getOwnerDetail() != null)
             hoardingCriteria.add(Restrictions.ilike("ownerDetail", hoardingSearch.getOwnerDetail(),MatchMode.ANYWHERE));
         return hoardingCriteria.list();
