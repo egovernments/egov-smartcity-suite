@@ -319,6 +319,14 @@ public class SearchPropertyAction extends SearchFormAction {
             addActionError(getText("validation.property.doesnot.exists"));
             return COMMON_FORM;
         }
+        if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION, APPLICATION_TYPE_BIFURCATE_ASSESSENT,
+                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION).contains(applicationType)) {
+            final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+            if (ptDemand == null || ptDemand != null && ptDemand.getEgDemandDetails() == null) {
+                addActionError(getText("msg.no.tax"));
+                return COMMON_FORM;
+            }
+        }
         if (APPLICATION_TYPE_EDIT_OWNER.equals(applicationType))
             return APPLICATION_TYPE_EDIT_OWNER;
         checkIsDemandActive(basicProperty.getProperty());
