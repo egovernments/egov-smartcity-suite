@@ -94,4 +94,9 @@ public class RestAPIApplicationProperties {
         return environment.getProperty("anyemi.ipaddress") == null ? emptyList()
                 : Arrays.asList(environment.getProperty("anyemi.ipaddress").split(","));
     }
+    
+    public List<String> paytmIPAddress() {
+        return environment.getProperty("paytm.ipaddress") == null ? emptyList()
+                : Arrays.asList(environment.getProperty("paytm.ipaddress").split(","));
+    }
 }
