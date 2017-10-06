@@ -101,6 +101,7 @@ import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DemandAudit;
 import org.egov.ptis.domain.entity.property.DemandAuditDetails;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.DemandAuditService;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -369,12 +370,20 @@ public class EditDemandAction extends BaseFormAction {
 		String resultPage = "";
 		final RevisionPetition oldObjection = revisionPetitionService.getExistingObjections(basicProperty);
 		Date effectiveDate = null;
+		PropertyImpl propertyModel = null;
 		if (oldObjection == null) {
 			if (NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))
-				effectiveDate = basicProperty.getActiveProperty().getEffectiveDate();
-		} else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(oldObjection.getType()))
-			effectiveDate = oldObjection.getProperty().getEffectiveDate();
+				propertyModel = basicProperty.getActiveProperty();
 
+		} else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(oldObjection.getType()))
+			propertyModel = oldObjection.getProperty();
+
+		if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
+				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+			effectiveDate = getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail().getFloorDetails());
+		else
+			effectiveDate = propertyModel.getPropertyDetail().getDateOfCompletion();
+			
 		ownerName = basicProperty.getFullOwnerName();
 		mobileNumber = basicProperty.getMobileNumber();
 		propertyAddress = basicProperty.getAddress().toString();
@@ -754,6 +763,24 @@ public class EditDemandAction extends BaseFormAction {
 		dmdAdtDtls.setDemandAudit(demandAudit);
 		demandAudit.getDemandAuditDetails().add(dmdAdtDtls);
 
+	}
+	
+	private Date getLowestDtOfCompFloorWise(final List<Floor> floorList) {
+		LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);
+		Date completionDate = null;
+		for (final Floor floor : floorList) {
+			Date floorDate;
+			if (floor != null) {
+				floorDate = floor.getOccupancyDate();
+				if (floorDate != null)
+					if (completionDate == null)
+						completionDate = floorDate;
+					else if (completionDate.after(floorDate))
+						completionDate = floorDate;
+			}
+		}
+		LOGGER.debug("completionDate: " + completionDate + "\nExiting from getLowestDtOfCompFloorWise");
+		return completionDate;
 	}
 
 	public String getPropertyId() {
