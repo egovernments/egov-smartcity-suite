@@ -401,14 +401,15 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         Position position;
         if (!collectionsUtil.isEmployee(this.securityUtils.getCurrentUser()))
             position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
-        else 
+        else
             position = collectionsUtil.getPositionOfUser(this.securityUtils.getCurrentUser());
         if (receiptHeader.getState() == null && !createVoucherForBillingService)
             receiptHeader
                     .transition()
                     .start()
                     .withSenderName(
-                            this.securityUtils.getCurrentUser().getUsername() + "::" + this.securityUtils.getCurrentUser().getName())
+                            this.securityUtils.getCurrentUser().getUsername() + "::"
+                                    + this.securityUtils.getCurrentUser().getName())
                     .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
                     .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -417,7 +418,8 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .transition()
                     .start()
                     .withSenderName(
-                            this.securityUtils.getCurrentUser().getUsername() + "::" +this.securityUtils.getCurrentUser().getName())
+                            this.securityUtils.getCurrentUser().getUsername() + "::"
+                                    + this.securityUtils.getCurrentUser().getName())
                     .withComments("Receipt voucher created")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -998,7 +1000,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .withNextAction(nextAction);
         super.persist(receiptHeader);
 
-         updateCollectionIndexAndPushMail(receiptHeader);
+        updateCollectionIndexAndPushMail(receiptHeader);
     }
 
     public Set<InstrumentHeader> createOnlineInstrument(final Date transactionDate, final String transactionId,
@@ -1074,7 +1076,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 updateBillingSystemWithReceiptInfo(receiptHeader, null, null);
                 LOGGER.info("Updated billing system ");
             } else
-                   updateCollectionIndexAndPushMail(receiptHeader);
+                updateCollectionIndexAndPushMail(receiptHeader);
         } catch (final HibernateException e) {
             LOGGER.error("Receipt Service HException while persisting ReceiptHeader", e);
             throw new ApplicationRuntimeException("Receipt Service Exception while persisting ReceiptHeader : ", e);
@@ -1329,14 +1331,12 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
     }
 
-    public void validateReceiptCancellation(String receiptNumber,String serviceCode)
-    {
-        BillingIntegrationService  billingService = getBillingServiceBean(serviceCode);
-        ReceiptCancellationInfo receiptCancellationInfo= billingService.validateCancelReceipt(receiptNumber);
-        if(!receiptCancellationInfo.getIsCancellationAllowed())
-        {
-            String validationMsg= receiptCancellationInfo.getValidationMessage();
-            throw new ValidationException(new ValidationError(validationMsg,validationMsg));
+    public void validateReceiptCancellation(String receiptNumber, String serviceCode) {
+        BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
+        ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber);
+        if (!receiptCancellationInfo.getCancellationAllowed()) {
+            String validationMsg = receiptCancellationInfo.getValidationMessage();
+            throw new ValidationException(new ValidationError(validationMsg, validationMsg));
         }
     }
 }

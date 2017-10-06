@@ -41,7 +41,7 @@ package org.egov.collection.integration.models;
 
 public class ReceiptCancellationInfo {
 
-    private Boolean isCancellationAllowed = Boolean.TRUE;
+    private Boolean cancellationAllowed = Boolean.TRUE;
     private String validationMessage;
 
     public String getValidationMessage() {
@@ -52,11 +52,12 @@ public class ReceiptCancellationInfo {
         this.validationMessage = validationMessage;
     }
 
-    public Boolean getIsCancellationAllowed() {
-        return isCancellationAllowed;
+    public Boolean getCancellationAllowed() {
+        return cancellationAllowed;
     }
 
-    public void setIsCancellationAllowed(Boolean isCancellationAllowed) {
-        this.isCancellationAllowed = isCancellationAllowed;
+    public void setCancellationAllowed(Boolean cancellationAllowed) {
+        this.cancellationAllowed = cancellationAllowed;
     }
+
 }
