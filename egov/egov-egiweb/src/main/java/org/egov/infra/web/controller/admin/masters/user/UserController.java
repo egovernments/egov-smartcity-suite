@@ -40,10 +40,10 @@
 
 package org.egov.infra.web.controller.admin.masters.user;
 
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,15 +76,15 @@ public class UserController {
     }
 
     private String toJson(List<User> users) {
-        JSONArray userInfos = new JSONArray();
+        JsonArray userInfos = new JsonArray();
         users.forEach(user -> {
-            JSONObject userInfo = new JSONObject();
-            userInfo.put("name", user.getName());
-            userInfo.put("userName", user.getUsername());
-            userInfo.put("id", user.getId());
+            JsonObject userInfo = new JsonObject();
+            userInfo.addProperty("name", user.getName());
+            userInfo.addProperty("userName", user.getUsername());
+            userInfo.addProperty("id", user.getId());
             userInfos.add(userInfo);
 
         });
-        return userInfos.toJSONString();
+        return userInfos.toString();
     }
 }
