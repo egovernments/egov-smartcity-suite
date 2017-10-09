@@ -318,7 +318,9 @@ public class CommonWaterTaxSearchController {
                                 || waterConnectionDetails.getApplicationType().getCode()
                                         .equals(ADDNLCONNECTION)
                                 || waterConnectionDetails.getApplicationType().getCode()
-                                        .equals(CHANGEOFUSE))
+                                        .equals(CHANGEOFUSE)
+                                || waterConnectionDetails.getApplicationType().getCode()
+                                        .equals(RECONNECTIONCONNECTION))
                         && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
                     return "redirect:/application/generatebill/"
                             + waterConnectionDetails.getConnection().getConsumerCode();
