@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -31,16 +31,17 @@
  *         is required that all modified versions of this material be marked in
  *         reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
- *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- */
+*      3) This license does not grant any rights to any user of the program
+*         with regards to rights under trademark law for use of the trade names
+*         or trademarks of eGovernments Foundation.
+*
+*  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+*/
 
 package org.egov.infra.admin.master.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
@@ -64,7 +65,6 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.persistence.Transient;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -127,9 +127,6 @@ public class Boundary extends AbstractAuditable {
 
     @Length(max = 32)
     private String materializedPath;
-
-    @Transient
-    private City city = new City();
 
     @Override
     public Long getId() {
@@ -255,60 +252,20 @@ public class Boundary extends AbstractAuditable {
         this.materializedPath = materializedPath;
     }
 
-    public City getCity() {
-        return city;
-    }
-
-    public void setCity(final City city) {
-        this.city = city;
+    @Override
+    public boolean equals(Object other) {
+        if (this == other)
+            return true;
+        if (!(other instanceof Boundary))
+            return false;
+        Boundary boundary = (Boundary) other;
+        return Objects.equal(boundaryNum, boundary.boundaryNum) &&
+                Objects.equal(boundaryType, boundary.boundaryType);
     }
 
     @Override
     public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (boundaryNum == null ? 0 : boundaryNum.hashCode());
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (localName == null ? 0 : localName.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        result = prime * result + (parent == null ? 0 : parent.hashCode());
-        return result;
+        return Objects.hashCode(boundaryNum, boundaryType);
     }
 
-    @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final Boundary other = (Boundary) obj;
-        if (boundaryNum == null) {
-            if (other.boundaryNum != null)
-                return false;
-        } else if (!boundaryNum.equals(other.boundaryNum))
-            return false;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (localName == null) {
-            if (other.localName != null)
-                return false;
-        } else if (!localName.equals(other.localName))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        if (parent == null) {
-            if (other.parent != null)
-                return false;
-        } else if (!parent.equals(other.parent))
-            return false;
-        return true;
-    }
 }

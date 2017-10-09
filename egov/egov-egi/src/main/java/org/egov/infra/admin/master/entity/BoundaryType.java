@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -40,6 +40,7 @@
 
 package org.egov.infra.admin.master.entity;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.hibernate.validator.constraints.NotBlank;
@@ -101,7 +102,7 @@ public class BoundaryType extends AbstractAuditable {
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,7 +110,7 @@ public class BoundaryType extends AbstractAuditable {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
     }
 
@@ -117,7 +118,7 @@ public class BoundaryType extends AbstractAuditable {
         return hierarchyType;
     }
 
-    public void setHierarchyType(final HierarchyType hierarchyType) {
+    public void setHierarchyType(HierarchyType hierarchyType) {
         this.hierarchyType = hierarchyType;
     }
 
@@ -125,7 +126,7 @@ public class BoundaryType extends AbstractAuditable {
         return parent;
     }
 
-    public void setParent(final BoundaryType parent) {
+    public void setParent(BoundaryType parent) {
         this.parent = parent;
     }
 
@@ -133,7 +134,7 @@ public class BoundaryType extends AbstractAuditable {
         return hierarchy;
     }
 
-    public void setHierarchy(final Long hierarchy) {
+    public void setHierarchy(Long hierarchy) {
         this.hierarchy = hierarchy;
     }
 
@@ -141,7 +142,7 @@ public class BoundaryType extends AbstractAuditable {
         return parentName;
     }
 
-    public void setParentName(final String parentName) {
+    public void setParentName(String parentName) {
         this.parentName = parentName;
     }
 
@@ -149,11 +150,11 @@ public class BoundaryType extends AbstractAuditable {
         return childBoundaryTypes;
     }
 
-    public void setChildBoundaryTypes(final Set<BoundaryType> childBoundaryTypes) {
+    public void setChildBoundaryTypes(Set<BoundaryType> childBoundaryTypes) {
         this.childBoundaryTypes = childBoundaryTypes;
     }
 
-    public void addChildBoundaryType(final BoundaryType boundaryType) {
+    public void addChildBoundaryType(BoundaryType boundaryType) {
         boundaryType.setParent(this);
         childBoundaryTypes.add(boundaryType);
     }
@@ -167,33 +168,18 @@ public class BoundaryType extends AbstractAuditable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof BoundaryType))
+            return false;
+        BoundaryType that = (BoundaryType) o;
+        return Objects.equal(name, that.name) &&
+                Objects.equal(hierarchyType, that.hierarchyType);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final BoundaryType other = (BoundaryType) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hashCode(name, hierarchyType);
     }
 }
