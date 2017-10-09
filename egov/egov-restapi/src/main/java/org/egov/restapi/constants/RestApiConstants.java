@@ -238,9 +238,12 @@ public class RestApiConstants {
 
     public static final String ELECTION_WARD_REQ_CODE = "72";
     public static final String ELECTION_WARD_REQ_MSG = "Election Ward is required.";
-
-    public static final String DOOR_NO_REQ_CODE = "73";
-    public static final String DOOR_NO_REQ_MSG = "Door Number is required.";
+    
+    public static final String VACANTLAND_AREA_REQ = "733";
+    public static final String VACANTLAND_AREA_REQ_MSG = "Vacant Land Area is required.";
+    
+    public static final String CATEGORY_CANT_BE_RESIDENTIAL = "74";
+    public static final String CATEGORY_CANT_BE_RESIDENTIAL_MSG = "Ownership type is Vacant Land, hence Property type can't be Residential, Non-Residential or Mixed.";
 
     public static final String FUTURE_DATES_NOT_ALLOWED_CODE = "75";
     public static final String FUTURE_DATES_NOT_ALLOWED_MSG = "Registration Doc Date/Construction Date/Occupancy Date cannot be greater than current date.";
@@ -265,8 +268,6 @@ public class RestApiConstants {
     public static final String TO_DATE_REQUIRED_CODE = "82";
     public static final String TO_DATE_REQUIRED_MSG = "To date is required.";
     
-    
-
     public static final String PROPERTIES_LIST_EXCEED_LIMIT_CODE = "83";
     public static final String PROPERTIES_LIST_EXCEED_LIMIT_MSG = "More than 100 records found, please narrow the search criteria.";
 
@@ -622,4 +623,15 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_CODE_NO_BUDGETHEAD = "EGF-REST-7";
     public static final String THIRD_PARTY_ERR_MSG_NO_BUDGETHEAD = "No Budget Head exists with the given Budget Head code";
     
+    public static final String LAYOUT_AUTHORITY_REQ = "113";
+    public static final String LAYOUT_AUTHORITY_REQ_MSG = "Layout Authority Required.";
+    
+    public static final String LAYOUT_AUTHORITY_NUM = "114";
+    public static final String LAYOUT_AUTHORITY_NUM_MSG = "Layout Permit Number Required.";
+    
+    public static final String LAYOUT_AUTHORITY_DATE = "115";
+    public static final String LAYOUT_AUTHORITY_DATE_MSG = "Layout Permit Date Required.";
+    
+    public static final String NON_VACANT_TO_VACANT = "116";
+    public static final String NON_VACANT_TO_VACANT_MSG = "Non-Vacant Property cannot be converted to Vacant land";
 }

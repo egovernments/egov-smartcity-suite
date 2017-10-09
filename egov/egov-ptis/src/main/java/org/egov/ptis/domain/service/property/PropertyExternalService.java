@@ -43,7 +43,6 @@ import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPROVAL_COMMENTS_SUCCESS;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
@@ -271,6 +270,7 @@ public class PropertyExternalService {
 	public static final Integer FLAG_MOBILE_EMAIL = 0;
 	public static final Integer FLAG_TAX_DETAILS = 1;
 	public static final Integer FLAG_FULL_DETAILS = 2;
+	private static final String FORWARD_SUCCESS_COMMENT = "Application has been created by GIS Survey system.";
 
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
@@ -1259,6 +1259,7 @@ public class PropertyExternalService {
 		transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
 		basicPropertyService.applyAuditing(property.getState());
 		basicProperty = basicPropertyService.persist(basicProperty);
+		propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
 		saveDocumentTypeDetails(basicProperty, viewpropertyDetails);
 		if (null != basicProperty) {
 			newPropertyDetails = new NewPropertyDetails();
@@ -1322,6 +1323,7 @@ public class PropertyExternalService {
 		}
 
 		propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
+		propertyImpl.getPropertyDetail().setOccupancyCertificationDate(viewPropertyDetails.getOccupancyCertificationDate());
 
 		if (!viewPropertyDetails.getPropertyTypeMaster().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			FloorType floorType = null;
@@ -1357,9 +1359,10 @@ public class PropertyExternalService {
 			propertyImpl.getPropertyDetail().setCurrentCapitalValue(viewPropertyDetails.getCurrentCapitalValue());
 			propertyImpl.getPropertyDetail().setSurveyNumber(viewPropertyDetails.getSurveyNumber());
 			propertyImpl.getPropertyDetail().setPattaNumber(viewPropertyDetails.getPattaNumber());
-			propertyImpl.getPropertyDetail().setLayoutPermitNo(viewPropertyDetails.getLpNo());
 			propertyImpl.getPropertyDetail()
-					.setLayoutPermitDate(viewPropertyDetails.getLpDate() != null ? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
+					.setLayoutPermitNo(viewPropertyDetails.getLpNo() != null ? viewPropertyDetails.getLpNo() : null);
+			propertyImpl.getPropertyDetail().setLayoutPermitDate(viewPropertyDetails.getLpDate() != null
+					? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
 			final Area area = new Area();
 			area.setArea(viewPropertyDetails.getVacantLandArea());
 			propertyImpl.getPropertyDetail().setSitalArea(area);
@@ -1653,7 +1656,7 @@ public class PropertyExternalService {
 	private PropertyImpl transitionWorkFlow(PropertyImpl property, PropertyService propService, String mode) {
 		final DateTime currentDate = new DateTime();
 		final User user = userService.getUserById(ApplicationThreadLocals.getUserId());
-		final String approverComments = APPROVAL_COMMENTS_SUCCESS;
+		final String approverComments = FORWARD_SUCCESS_COMMENT;
 		String currentState = StringUtils.EMPTY;
 		String additionalRule = StringUtils.EMPTY;
 		String natureOftask = StringUtils.EMPTY;
@@ -2358,7 +2361,9 @@ public class PropertyExternalService {
 			final Apartment apartment = getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
 			propertyImpl.getPropertyDetail().setApartment(apartment);
 		}
+		propertyImpl.setSource(SOURCE_SURVEY);
 		propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
+		propertyImpl.getPropertyDetail().setOccupancyCertificationDate(viewPropertyDetails.getOccupancyCertificationDate());
 		final PropertyMutationMaster propMutMstr = getPropertyMutationMaster(PROPERTY_MODIFY_REASON_ADD_OR_ALTER);
 		basicProperty.setPropertyMutationMaster(propMutMstr);
 
@@ -2394,9 +2399,10 @@ public class PropertyExternalService {
 			propertyImpl.getPropertyDetail().setCurrentCapitalValue(viewPropertyDetails.getCurrentCapitalValue());
 			propertyImpl.getPropertyDetail().setSurveyNumber(viewPropertyDetails.getSurveyNumber());
 			propertyImpl.getPropertyDetail().setPattaNumber(viewPropertyDetails.getPattaNumber());
-			propertyImpl.getPropertyDetail().setLayoutPermitNo(viewPropertyDetails.getLpNo());
 			propertyImpl.getPropertyDetail()
-					.setLayoutPermitDate(viewPropertyDetails.getLpDate() != null ? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
+			.setLayoutPermitNo(viewPropertyDetails.getLpNo() != null ? viewPropertyDetails.getLpNo() : null);
+			propertyImpl.getPropertyDetail().setLayoutPermitDate(viewPropertyDetails.getLpDate() != null
+					? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
 			final Area area = new Area();
 			if (viewPropertyDetails.getVacantLandArea() != null)
 				area.setArea(viewPropertyDetails.getVacantLandArea());
@@ -2408,6 +2414,15 @@ public class PropertyExternalService {
 					String.valueOf(viewPropertyDetails.getVacantLandArea()), propMutMstr.getCode(),
 					propertyTypeMaster.getId().toString(), null, null, STATUS_WORKFLOW, propertyImpl.getDocNumber(),
 					null, null, null, null, null, null, null, new Long(viewPropertyDetails.getVlPlotArea()), new Long(viewPropertyDetails.getLaAuthority()), Boolean.FALSE);
+			
+			if (StringUtils.isNotBlank(viewPropertyDetails.getNorthBoundary()))
+				basicProperty.getPropertyID().setNorthBoundary(viewPropertyDetails.getNorthBoundary());
+			if (StringUtils.isNotBlank(viewPropertyDetails.getSouthBoundary()))
+				basicProperty.getPropertyID().setSouthBoundary(viewPropertyDetails.getSouthBoundary());
+			if (StringUtils.isNotBlank(viewPropertyDetails.getEastBoundary()))
+				basicProperty.getPropertyID().setEastBoundary(viewPropertyDetails.getEastBoundary());
+			if (StringUtils.isNotBlank(viewPropertyDetails.getWestBoundary()))
+				basicProperty.getPropertyID().setWestBoundary(viewPropertyDetails.getWestBoundary());
 		}
 		if (!propertyTypeMaster.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
 			propCompletionDate = propService
@@ -2724,8 +2739,8 @@ public class PropertyExternalService {
 			propertyImpl.getPropertyDetail().setSurveyNumber(viewPropertyDetails.getSurveyNumber());
 			propertyImpl.getPropertyDetail().setPattaNumber(viewPropertyDetails.getPattaNumber());
 			propertyImpl.getPropertyDetail().setLayoutPermitNo(viewPropertyDetails.getLpNo());
-			propertyImpl.getPropertyDetail()
-					.setLayoutPermitDate(viewPropertyDetails.getLpDate() != null ? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
+			propertyImpl.getPropertyDetail().setLayoutPermitDate(viewPropertyDetails.getLpDate() != null
+					? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
 			final Area area = new Area();
 			area.setArea(viewPropertyDetails.getVacantLandArea());
 			propertyImpl.getPropertyDetail().setSitalArea(area);
@@ -2776,7 +2791,7 @@ public class PropertyExternalService {
 	
 	public Property getPropertyByBasicPropertyID(BasicProperty basicpropertyId) {
 		StringBuilder queryString = new StringBuilder();
-		queryString.append("from PropertyImpl prop where prop.basicProperty =:basicpropertyId  ");
+		queryString.append("from PropertyImpl prop where prop.basicProperty =:basicpropertyId  and prop.status='A' ");
 		Property property = null;
 		final Query qry = entityManager.createQuery(queryString.toString());
 			qry.setParameter("basicpropertyId", basicpropertyId);

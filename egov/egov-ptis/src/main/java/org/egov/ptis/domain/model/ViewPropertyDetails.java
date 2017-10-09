@@ -101,7 +101,7 @@ public class ViewPropertyDetails {
     private String eastBoundary;
     private String westBoundary;
     private String vlPlotArea;
-    private String laAuthority;
+    private Long laAuthority;
     private String lpNo;
     private String lpDate;
     private String docType;
@@ -430,7 +430,7 @@ public class ViewPropertyDetails {
         return floorType;
     }
 
-    public void setFloorType(String floorType) {
+	public void setFloorType(String floorType) {
         this.floorType = floorType;
     }
 
@@ -602,11 +602,11 @@ public class ViewPropertyDetails {
         this.vlPlotArea = vlPlotArea;
     }
 
-    public String getLaAuthority() {
+    public Long getLaAuthority() {
         return laAuthority;
     }
 
-    public void setLaAuthority(String laAuthority) {
+    public void setLaAuthority(Long laAuthority) {
         this.laAuthority = laAuthority;
     }
 

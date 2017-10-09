@@ -54,6 +54,7 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.NewPropertyDetails;
 import org.egov.ptis.domain.model.ViewPropertyDetails;
+import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AmenitiesDetails;
 import org.egov.restapi.model.AssessmentsDetails;
@@ -74,11 +75,16 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 public class CreateAssessmentController {
 
+	private static final String NO_APPROVAL = "No Approval";
+
 	@Autowired
 	private ValidationUtil validationUtil;
 
 	@Autowired
 	private PropertyExternalService propertyExternalService;
+	
+	@Autowired
+    transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
 
 	/**
 	 * This method is used to create property.
@@ -98,7 +104,7 @@ public class CreateAssessmentController {
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
 		NewPropertyDetails newPropertyDetails;
 		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_CREATE);
-		if (errorDetails != null) {
+		if (errorDetails != null && errorDetails.getErrorCode() != null) {
 			responseJson = JsonConvertor.convert(errorDetails);
 	    } else {
 	     	ViewPropertyDetails viewPropertyDetails = setRequestParameters(createPropDetails);
@@ -199,9 +205,11 @@ public class CreateAssessmentController {
     		viewPropertyDetails.setEffectiveDate(vacantLandDetails.getEffectiveDate());
     		viewPropertyDetails.setVlPlotArea(vacantLandDetails.getVacantLandPlot());
     		viewPropertyDetails.setLaAuthority(vacantLandDetails.getLayoutApprovalAuthority());
-    		viewPropertyDetails.setLpNo(vacantLandDetails.getLayoutPermitNumber());
-    		viewPropertyDetails.setLpDate(vacantLandDetails.getLayoutPermitDate());
-    		
+			if (!NO_APPROVAL.equals(
+					layoutApprovalAuthorityRepo.findOne(vacantLandDetails.getLayoutApprovalAuthority()).getName())) {
+				viewPropertyDetails.setLpNo(vacantLandDetails.getLayoutPermitNumber());
+				viewPropertyDetails.setLpDate(vacantLandDetails.getLayoutPermitDate());
+			}
     		//Surrounding Boundary Details
     		SurroundingBoundaryDetails surroundingBoundaryDetails = createPropDetails.getSurroundingBoundaryDetails();
     		viewPropertyDetails.setNorthBoundary(surroundingBoundaryDetails.getNorthBoundary());

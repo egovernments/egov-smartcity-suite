@@ -51,7 +51,7 @@ public class VacantLandDetails implements Serializable {
 	private Double currentCapitalValue;
 	private String effectiveDate;
 	private String vacantLandPlot;
-	private String layoutApprovalAuthority;
+	private Long layoutApprovalAuthority;
 	private String layoutPermitNumber;
 	private String layoutPermitDate;
 
@@ -63,11 +63,11 @@ public class VacantLandDetails implements Serializable {
 		this.vacantLandPlot = vacantLandPlot;
 	}
 
-	public String getLayoutApprovalAuthority() {
+	public Long getLayoutApprovalAuthority() {
 		return layoutApprovalAuthority;
 	}
 
-	public void setLayoutApprovalAuthority(String layoutApprovalAuthority) {
+	public void setLayoutApprovalAuthority(Long layoutApprovalAuthority) {
 		this.layoutApprovalAuthority = layoutApprovalAuthority;
 	}
 
