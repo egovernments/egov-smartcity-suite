@@ -86,4 +86,8 @@ public class JsonUtils {
     public static <T> T fromJSON(String json, Class<T> clazz) {
         return new GsonBuilder().create().fromJson(json, clazz);
     }
+
+    public static String toJSON(Object object) {
+        return new GsonBuilder().create().toJson(object);
+    }
 }

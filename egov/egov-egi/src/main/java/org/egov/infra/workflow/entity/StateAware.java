@@ -51,6 +51,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
 import org.egov.pims.commons.Position;
@@ -126,6 +127,10 @@ public abstract class StateAware extends AbstractAuditable {
 
     public final String getStateType() {
         return this.getClass().getSimpleName();
+    }
+
+    public <T> T extraInfoAs(Class<T> type) {
+        return state.extraInfoAs(type);
     }
 
     public final boolean transitionInitialized() {
@@ -245,7 +250,6 @@ public abstract class StateAware extends AbstractAuditable {
             return this;
         }
 
-
         public final Transition reopen() {
             checkinTransition();
             if (transitionCompleted()) {
@@ -303,6 +307,12 @@ public abstract class StateAware extends AbstractAuditable {
         public final Transition withExtraInfo(String extraInfo) {
             checkTransitionStatus();
             state.setExtraInfo(extraInfo);
+            return this;
+        }
+
+        public final Transition withExtraInfo(Object extraInfo) {
+            checkTransitionStatus();
+            state.setExtraInfo(JsonUtils.toJSON(extraInfo));
             return this;
         }
 

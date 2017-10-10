@@ -49,6 +49,7 @@ package org.egov.infra.workflow.entity;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
@@ -294,6 +295,10 @@ public class State extends AbstractAuditable {
 
     protected void setPreviousStateRef(State previousStateRef) {
         this.previousStateRef = previousStateRef;
+    }
+
+    public <T> T extraInfoAs(Class<T> type) {
+        return JsonUtils.fromJSON(getExtraInfo(), type);
     }
 
     public enum StateStatus {
