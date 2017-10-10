@@ -40,6 +40,7 @@
 
 package org.egov.infra.utils;
 
+import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonSerializer;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -84,10 +85,10 @@ public class JsonUtils {
     }
 
     public static <T> T fromJSON(String json, Class<T> clazz) {
-        return new GsonBuilder().create().fromJson(json, clazz);
+        return new Gson().fromJson(json, clazz);
     }
 
     public static String toJSON(Object object) {
-        return new GsonBuilder().create().toJson(object);
+        return new Gson().toJson(object);
     }
 }
