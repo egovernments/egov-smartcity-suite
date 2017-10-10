@@ -54,7 +54,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -105,7 +105,7 @@ public class DigitalSignatureConnectionController {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
     @Autowired
-    private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
+    private InboxRenderServiceDelegate<StateAware> inboxRenderServiceDeligate;
     @Autowired
     private WorkflowTypeService workflowTypeService;
     @Autowired
@@ -368,7 +368,7 @@ public class DigitalSignatureConnectionController {
 
     public List<StateAware> fetchItems() {
         final List<StateAware> digitalSignWFItems = new ArrayList<>();
-        digitalSignWFItems.addAll(inboxRenderServiceDeligate.getInboxItems());
+        digitalSignWFItems.addAll(inboxRenderServiceDeligate.getAssignedWorkflowItems());
         return digitalSignWFItems;
     }
 

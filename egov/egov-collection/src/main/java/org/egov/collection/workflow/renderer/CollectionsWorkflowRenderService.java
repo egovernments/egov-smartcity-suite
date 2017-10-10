@@ -63,8 +63,8 @@ public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceI
      * @return Workflow items (receipt headers) grouped by service + counter + user
      */
     private List<ReceiptHeader> getGroupedWorkflowItems(final List<ReceiptHeader> allItems) {
-        final List<ReceiptHeader> receiptHeaderPerGroup = new ArrayList<ReceiptHeader>(0);
-        final HashMap<String, Integer> assignedItems = new HashMap<String, Integer>(0);
+        final List<ReceiptHeader> receiptHeaderPerGroup = new ArrayList<>();
+        final HashMap<String, Integer> assignedItems = new HashMap<>();
         for (final StateAware nextItem : allItems)
             if (nextItem instanceof ReceiptHeader) {
                 final ReceiptHeader nextReceipt = (ReceiptHeader) nextItem;
@@ -84,8 +84,8 @@ public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceI
     }
 
     @Override
-    public List<ReceiptHeader> getDraftWorkflowItems(final Long userId, final List<Long> owner) {
-        return getGroupedWorkflowItems(super.getDraftWorkflowItems(userId, owner));
+    public List<ReceiptHeader> getDraftWorkflowItems(final List<Long> owner) {
+        return getGroupedWorkflowItems(super.getDraftWorkflowItems(owner));
     }
 
     /**
@@ -93,12 +93,11 @@ public class CollectionsWorkflowRenderService extends DefaultInboxRenderServiceI
      * billing service, user and counter.
      *
      * @param owner The owner for whom the assigned work flow items are to be returned
-     * @param userId The currently logged in user id (NEW items created by this user are excluded)
      * @return Assigned workflow items (receipt headers) grouped by service + counter + user
      */
 
     @Override
-    public List<ReceiptHeader> getAssignedWorkflowItems(final Long userId, final List<Long> owner) {
-        return getGroupedWorkflowItems(super.getAssignedWorkflowItems(userId, owner));
+    public List<ReceiptHeader> getAssignedWorkflowItems(final List<Long> owner) {
+        return getGroupedWorkflowItems(super.getAssignedWorkflowItems(owner));
     }
 }

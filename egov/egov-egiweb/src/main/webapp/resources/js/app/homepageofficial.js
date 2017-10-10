@@ -126,17 +126,20 @@ $(document).ready(function () {
         $('.history-inbox').modal('show');
         historyTableContainer = $("#historyTable");
         historyTableContainer.dataTable({
-            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i>" +
+            "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "autoWidth": false,
             "paging": false,
             "destroy": true,
-            /* Disable initial sort */
             "aaSorting": [],
             "oLanguage": {
                 "sInfo": ""
             },
-            "ajax": "inbox/history?stateId=" + tableContainer1.fnGetData($(this).parent().parent(), 6),
+            "ajax": {
+                "url": "inbox/history?stateId=" + tableContainer1.fnGetData($(this).parent().parent(), 6),
+                "dataSrc": ""
+            },
             "columns": [
                 {"data": "date", "width": "20%"},
                 {"data": "sender", "width": "15%"},
@@ -434,9 +437,11 @@ function worklist() {
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         "autoWidth": false,
-        /* Disable initial sort */
         "aaSorting": [],
-        "ajax": "inbox",
+        "ajax": {
+            "url": "inbox",
+            "dataSrc": ""
+        },
         "columns": [
             {"data": "date", "width": "16%"},
             {"data": "sender", "width": "15%"},
@@ -460,7 +465,7 @@ function worklist() {
             }
         ],
         "fnInitComplete": function (oSettings, json) {
-            response_json = JSON.stringify(json.data);
+            response_json = JSON.stringify(json);
             if (JSON.parse(response_json).length != 0) {
 
                 var groupByModule = JSON.parse(response_json).reduce(function (obj, item) {
@@ -538,13 +543,16 @@ function loadGroupMenusModuleWise(moduleArray) {
 function drafts() {
     tableContainer1 = $("#official_drafts");
     tableContainer1.dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
+        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
-        /* Disable initial sort */
         "aaSorting": [],
         "autoWidth": false,
-        "ajax": "inbox/draft",
+        "ajax": {
+            "url": "inbox/draft",
+            "dataSrc": ""
+        },
         "columns": [
             {"data": "date", "width": "16%"},
             {"data": "sender", "width": "15%"},
@@ -557,7 +565,9 @@ function drafts() {
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
+                    return type === 'display' && data.length > 75 ? data.substr(0, 75) +
+                        ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More ' +
+                        '<i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
                 },
                 "targets": 4
             }
@@ -568,7 +578,8 @@ function drafts() {
 function notifications() {
     tableContainer1 = $("#official_notify");
     tableContainer1.dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
+        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         /* Disable initial sort */
@@ -580,10 +591,10 @@ function notifications() {
 function worklistwrtnow(json) {
     tableContainer1 = $("#official_inbox");
     tableContainer1.dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
+        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
-        /* Disable initial sort */
         "aaSorting": [],
         "autoWidth": false,
         "data": json,
@@ -604,7 +615,9 @@ function worklistwrtnow(json) {
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
+                    return type === 'display' && data.length > 75 ? data.substr(0, 75) +
+                        ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More ' +
+                        '<i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
                 },
                 "targets": 4
             }

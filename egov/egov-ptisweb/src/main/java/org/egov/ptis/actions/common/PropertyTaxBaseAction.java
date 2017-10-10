@@ -131,7 +131,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
@@ -195,7 +195,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
-    private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
+    private InboxRenderServiceDelegate<StateAware> inboxRenderServiceDeligate;
     @Autowired
     protected EisCommonService eisCommonService;
     @Autowired
@@ -280,7 +280,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     protected List<StateHistory> setUpWorkFlowHistory(final Long stateId) {
-        final List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
+        final List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getStateHistory(stateId);
         if (workflowBean != null)
             workflowBean.setWorkFlowHistoryItems(workflowHisObj);
         return workflowHisObj;

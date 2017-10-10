@@ -40,7 +40,18 @@
 
 package org.egov.infra.web.support.ui;
 
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.WorkflowTypes;
+
 import java.util.Date;
+
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
+import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
+import static org.egov.infra.utils.StringUtils.escapeSpecialChars;
 
 public class Inbox {
     private String id;
@@ -52,6 +63,46 @@ public class Inbox {
     private String link;
     private String moduleName;
     private Date createdDate;
+    private boolean draft;
+
+    public Inbox() {
+        //Default constructor for external inbox integration
+    }
+
+    private Inbox(StateAware stateAware, WorkflowTypes workflowTypes, String nextAction) {
+        State state = stateAware.getCurrentState();
+        setId(workflowTypes.isGrouped() ? EMPTY : state.getId() + "#" + workflowTypes.getId());
+        setDate(toDefaultDateTimeFormat(state.getCreatedDate()));
+        setSender(state.getSenderName());
+        setTask(isBlank(state.getNatureOfTask()) ? workflowTypes.getDisplayName() : state.getNatureOfTask());
+        setStatus(state.getValue() + (isBlank(nextAction) ? EMPTY : " - " + nextAction));
+        setDetails(isBlank(stateAware.getStateDetails()) ? EMPTY : stateAware.getStateDetails());
+        setLink(workflowTypes.getLink().replace(":ID", stateAware.myLinkId()));
+        setModuleName(workflowTypes.getModule().getDisplayName());
+        setCreatedDate(state.getCreatedDate());
+        setDraft(state.isNew() && state.getCreatedBy().getId().equals(getUserId()));
+    }
+
+    private Inbox(StateHistory stateHistory, WorkflowTypes workflowTypes) {
+        setId(stateHistory.getState().getId().toString());
+        setDate(toDefaultDateTimeFormat(stateHistory.getLastModifiedDate()));
+        setSender(stateHistory.getSenderName());
+        setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName()
+                : stateHistory.getNatureOfTask());
+        setStatus(stateHistory.getValue()
+                + (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
+        setDetails(
+                isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
+        setLink(EMPTY);
+    }
+
+    public static Inbox build(StateAware stateAware, WorkflowTypes workflowType, String nextAction) {
+        return new Inbox(stateAware, workflowType, nextAction);
+    }
+
+    public static Inbox buildHistory(StateHistory stateHistory, WorkflowTypes workflowType) {
+        return new Inbox(stateHistory, workflowType);
+    }
 
     public String getId() {
         return id;
@@ -123,5 +174,13 @@ public class Inbox {
 
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
+    }
+
+    public boolean isDraft() {
+        return draft;
+    }
+
+    public void setDraft(final boolean draft) {
+        this.draft = draft;
     }
 }

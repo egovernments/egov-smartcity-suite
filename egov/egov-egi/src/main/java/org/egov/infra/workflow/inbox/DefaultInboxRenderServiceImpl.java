@@ -40,7 +40,6 @@
 
 package org.egov.infra.workflow.inbox;
 
-import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.FetchMode;
@@ -48,29 +47,33 @@ import org.hibernate.FlushMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
+import java.util.Arrays;
 import java.util.List;
+
+import static org.egov.infra.workflow.entity.State.StateStatus.INPROGRESS;
+import static org.egov.infra.workflow.entity.State.StateStatus.STARTED;
 
 /**
  * Every module which is having StateAware should initialize this with their own
  * StateAware persistence service<br/>
  * eg:
- * 
+ * <p>
  * <pre>
  *      &lt;bean id="myStateAwarePersistenceService" parent="persistenceService"&gt;
  *                 &lt;property name="type" value="org.egov.infra.web.struts.actions.common.MyStateAware" /&gt;
  *         &lt;/bean>
- *         
+ *
  *         &lt;bean id="MyStateAwareInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl"&gt;
  *                 &lt;constructor-arg index="0" ref="myStateAwarePersistenceService"/&gt;
  *         &lt;/bean&gt;
  * </pre>
- * 
+ * <p>
  * <br/>
  * id or name attribute value of the workflowTypeService bean definition should
  * follow a strict naming convention as follows<br/>
  * <code>
  * <YourStateAwareClassName>InboxRenderService
- * </code> This is how, {@link InboxRenderServiceDeligate} will detect the
+ * </code> This is how, {@link InboxRenderServiceDelegate} will detect the
  * appropriate {@link InboxRenderService} and render the inbox items.
  **/
 @SuppressWarnings("all")
@@ -79,32 +82,32 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
     private final Class<T> stateAwareType;
     private final PersistenceService<T, Long> stateAwarePersistenceService;
 
-    public DefaultInboxRenderServiceImpl(final PersistenceService<T, Long> stateAwarePersistenceService) {
+    public DefaultInboxRenderServiceImpl(PersistenceService<T, Long> stateAwarePersistenceService) {
         this.stateAwarePersistenceService = stateAwarePersistenceService;
         this.stateAwareType = stateAwarePersistenceService.getType();
     }
 
     @Override
-    public List<T> getAssignedWorkflowItems(final Long userId, final List<Long> owners) {
+    public List<T> getAssignedWorkflowItems(List<Long> owners) {
         return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
                 .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
                 .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
                 .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
                 .add(Restrictions.in("state.ownerPosition.id", owners))
-                .add(Restrictions.ne("state.status", StateStatus.ENDED))
-                .add(Restrictions.not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("state.createdBy.id", userId)))).addOrder(Order.desc("state.createdDate"))
-                        .list();
+                .add(Restrictions.in("state.status", Arrays.asList(INPROGRESS, STARTED)))
+                .addOrder(Order.desc("state.createdDate"))
+                .list();
     }
 
     @Override
-    public List<T> getDraftWorkflowItems(final Long userId, final List<Long> owners) {
+    public List<T> getDraftWorkflowItems(List<Long> owners) {
         return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
                 .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
                 .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
                 .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
-                .add(Restrictions.in("state.ownerPosition.id", owners)).add(Restrictions.eq("state.createdBy.id", userId))
-                .add(Restrictions.eq("state.status", StateStatus.STARTED)).addOrder(Order.asc("state.createdDate"))
+                .add(Restrictions.in("state.ownerPosition.id", owners))
+                .add(Restrictions.eq("state.status", STARTED))
+                .addOrder(Order.asc("state.createdDate"))
                 .list();
     }
 }

@@ -41,6 +41,8 @@
 package org.egov.infra.workflow.inbox;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.microservice.utils.MicroserviceUtils;
+import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -69,15 +71,17 @@ import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparing;
+import static java.util.stream.Collectors.toList;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 
 @Service
 @Transactional(readOnly = true)
-public class InboxRenderServiceDeligate<T extends StateAware> {
-    private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDeligate.class);
+public class InboxRenderServiceDelegate<T extends StateAware> {
+    private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDelegate.class);
     private static final String INBOX_RENDER_SERVICE_SUFFIX = "InboxRenderService";
-    private static final Map<String, WorkflowTypes> WORKFLOWTYPE_CACHE = new ConcurrentHashMap<>();
+    private static final Map<String, WorkflowTypes> WORKFLOW_TYPE_CACHE = new ConcurrentHashMap<>();
 
     @Autowired
     private ApplicationContext applicationContext;
@@ -95,66 +99,109 @@ public class InboxRenderServiceDeligate<T extends StateAware> {
     @Autowired
     private WorkflowActionService workflowActionService;
 
+    @Autowired
+    private MicroserviceUtils microserviceUtils;
+
     @ReadOnly
-    public List<StateHistory> getWorkflowHistory(final Long stateId) {
+    public List<Inbox> getCurrentUserInboxItems() {
+        return constructInbox(getAssignedWorkflowItems())
+                .parallelStream()
+                .filter(item -> !item.isDraft())
+                .collect(Collectors.toList());
+    }
+
+    @ReadOnly
+    public List<Inbox> getCurrentUserDraftItems() {
+        return constructInbox(getAssignedDraftItems())
+                .parallelStream()
+                .filter(Inbox::isDraft)
+                .collect(Collectors.toList());
+    }
+
+    @ReadOnly
+    public List<Inbox> getWorkflowHistoryItems(Long stateId) {
+        List<Inbox> inboxHistoryItems = new LinkedList<>();
+        for (StateHistory stateHistory : getStateHistory(stateId)) {
+            inboxHistoryItems.add(Inbox
+                    .buildHistory(stateHistory, getWorkflowType(stateHistory.getState().getType())));
+        }
+        return inboxHistoryItems;
+    }
+
+    @ReadOnly
+    public List<T> getAssignedWorkflowItems() {
+        List<T> inboxItems = new ArrayList<>();
+        List<Long> owners = currentUserPositionIds();
+        if (!owners.isEmpty()) {
+            List<String> types = stateService.getAssignedWorkflowTypeNames(owners);
+            for (String type : types) {
+                Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(type);
+                if (inboxRenderService.isPresent())
+                    inboxItems.addAll(inboxRenderService.get().getAssignedWorkflowItems(owners));
+            }
+        }
+        return inboxItems;
+    }
+
+    @ReadOnly
+    public List<T> getAssignedDraftItems() {
+        List<T> inboxItems = new ArrayList<>();
+        List<Long> owners = currentUserPositionIds();
+        if (!owners.isEmpty()) {
+            List<String> types = stateService.getAssignedWorkflowTypeNames(owners);
+            for (String type : types) {
+                Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(type);
+                if (inboxRenderService.isPresent())
+                    inboxItems.addAll(inboxRenderService.get().getDraftWorkflowItems(owners));
+            }
+        }
+        return inboxItems;
+    }
+
+    @ReadOnly
+    public List<StateHistory> getStateHistory(Long stateId) {
         return new LinkedList<>(stateService.getStateById(stateId).getHistory());
     }
 
-    @ReadOnly
-    public List<T> getInboxItems() {
-        final List<T> assignedWFItems = new ArrayList<>();
-        List<Long> owners = currentUserPositionIds();
-        if (!owners.isEmpty()) {
-            final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
-            for (final String wfType : wfTypes) {
-                final Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(wfType);
-                if (inboxRenderService.isPresent())
-                    assignedWFItems.addAll(inboxRenderService.get().getAssignedWorkflowItems(getUserId(), owners));
-            }
+    private List<Inbox> constructInbox(List<T> items) {
+        List<Inbox> inboxItems = new ArrayList<>();
+        for (StateAware stateAware : items) {
+            inboxItems.add(Inbox
+                    .build(stateAware,
+                            getWorkflowType(stateAware.getStateType()),
+                            getNextAction(stateAware.getState())));
         }
-        return assignedWFItems;
+        inboxItems.addAll(microserviceUtils.getInboxItems());
+        inboxItems = inboxItems.stream().sorted(comparing(Inbox::getCreatedDate).reversed()).collect(toList());
+
+        return inboxItems;
     }
 
-    @ReadOnly
-    public List<T> getInboxDraftItems() {
-        final List<T> draftWfItems = new ArrayList<>();
-        List<Long> owners = currentUserPositionIds();
-        if (!owners.isEmpty()) {
-            final List<String> wfTypes = stateService.getAssignedWorkflowTypeNames(owners);
-            for (final String wfType : wfTypes) {
-                final Optional<InboxRenderService<T>> inboxRenderService = getInboxRenderService(wfType);
-                if (inboxRenderService.isPresent())
-                    draftWfItems.addAll(inboxRenderService.get().getDraftWorkflowItems(getUserId(), owners));
-            }
-        }
-        return draftWfItems;
-    }
-
-    public WorkflowTypes getWorkflowType(final String wfType) {
-        WorkflowTypes workflowType = WORKFLOWTYPE_CACHE.get(wfType);
+    private WorkflowTypes getWorkflowType(String type) {
+        WorkflowTypes workflowType = WORKFLOW_TYPE_CACHE.get(type);
         if (workflowType == null) {
-            workflowType = workflowTypeService.getEnabledWorkflowTypeByType(wfType);
+            workflowType = workflowTypeService.getEnabledWorkflowTypeByType(type);
             if (workflowType != null)
-                WORKFLOWTYPE_CACHE.put(wfType, workflowType);
+                WORKFLOW_TYPE_CACHE.put(type, workflowType);
         }
         return workflowType;
     }
 
-    public Optional<InboxRenderService<T>> getInboxRenderService(final String wfType) {
+    private Optional<InboxRenderService<T>> getInboxRenderService(String type) {
         InboxRenderService<T> inboxRenderService = null;
         try {
-            if (getWorkflowType(wfType) != null)
-                inboxRenderService = applicationContext.getBean(wfType.concat(INBOX_RENDER_SERVICE_SUFFIX), InboxRenderService.class);
-        } catch (final BeansException e) {
-            LOG.warn("InboxRenderService bean for {} not found, have you defined {}InboxRenderService bean ?", wfType, wfType, e);
+            if (getWorkflowType(type) != null)
+                inboxRenderService = applicationContext.getBean(type.concat(INBOX_RENDER_SERVICE_SUFFIX), InboxRenderService.class);
+        } catch (BeansException e) {
+            LOG.warn("InboxRenderService bean for {} not found, have you defined {}InboxRenderService bean ?", type, type, e);
         }
         return Optional.ofNullable(inboxRenderService);
     }
 
-    public String getNextAction(final State state) {
+    private String getNextAction(State state) {
         String nextAction = EMPTY;
         if (state.getNextAction() != null) {
-            final WorkflowAction workflowAction = workflowActionService.getWorkflowActionByNameAndType(state.getNextAction(), state.getType());
+            WorkflowAction workflowAction = workflowActionService.getWorkflowActionByNameAndType(state.getNextAction(), state.getType());
             if (workflowAction == null)
                 nextAction = state.getNextAction();
             else

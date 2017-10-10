@@ -40,18 +40,15 @@
 
 package org.egov.egf.workflow.renderer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.budget.BudgetDetail;
 
-/**
- * @author eGov
- */
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
 public class BudgetDetailRenderService extends DefaultInboxRenderServiceImpl<BudgetDetail> {
 
     public BudgetDetailRenderService(final PersistenceService<BudgetDetail, Long> stateAwarePersistenceService) {
@@ -59,8 +56,8 @@ public class BudgetDetailRenderService extends DefaultInboxRenderServiceImpl<Bud
     }
 
     private List<BudgetDetail> getGroupedWorkflowItems(final List<BudgetDetail> allItems) {
-        final List<BudgetDetail> budgetDetailGroup = new ArrayList<BudgetDetail>(0);
-        final HashMap<String, Integer> assignedItems = new HashMap<String, Integer>(0);
+        final List<BudgetDetail> budgetDetailGroup = new ArrayList<>();
+        final HashMap<String, Integer> assignedItems = new HashMap<>();
         for (final StateAware nextItem : allItems)
             if (nextItem instanceof BudgetDetail) {
                 final BudgetDetail nextDetail = (BudgetDetail) nextItem;
@@ -76,12 +73,12 @@ public class BudgetDetailRenderService extends DefaultInboxRenderServiceImpl<Bud
     }
 
     @Override
-    public List<BudgetDetail> getDraftWorkflowItems(final Long userId, final List<Long> owner) {
-        return getGroupedWorkflowItems(super.getDraftWorkflowItems(userId, owner));
+    public List<BudgetDetail> getDraftWorkflowItems(final List<Long> owner) {
+        return getGroupedWorkflowItems(super.getDraftWorkflowItems(owner));
     }
 
     @Override
-    public List<BudgetDetail> getAssignedWorkflowItems(final Long userId, final List<Long> owner) {
-        return getGroupedWorkflowItems(super.getAssignedWorkflowItems(userId, owner));
+    public List<BudgetDetail> getAssignedWorkflowItems(final List<Long> owner) {
+        return getGroupedWorkflowItems(super.getAssignedWorkflowItems(owner));
     }
 }

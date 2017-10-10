@@ -46,22 +46,8 @@ import java.util.List;
 
 public interface InboxRenderService<T extends StateAware> {
 
-	/**
-	 * Returns a list of workflow items that are assigned to the given position where the workflow
-	 * has not ended.
-	 * @param owners the owner
-	 * @param userId the user id
-	 * @return the assigned workflow items
-	 */
-	List<T> getAssignedWorkflowItems(Long userId, List<Long> owners);
-	
-	/**
-	 * Returns a list of workflow items that are created by the given position and the state in
-	 * 'NEW'.
-	 * @param owners the owner
-	 * @param userId the user id
-	 * @return the draft workflow items
-	 */
-	List<T> getDraftWorkflowItems(Long userId, List<Long> owners);
-	
+    List<T> getAssignedWorkflowItems(List<Long> owners);
+
+    List<T> getDraftWorkflowItems(List<Long> owners);
+
 }

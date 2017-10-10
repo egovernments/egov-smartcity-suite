@@ -41,7 +41,7 @@ package org.egov.ptis.web.controller.transactions.digitalsignature;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.WorkflowTypes;
-import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.service.WorkflowTypeService;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -64,7 +64,7 @@ public class DigitalSignatureReportController {
     private static final String DIGITAL_SIGNATURE_REPORT_FORM = "digitalSignatureReport-form";
 
     @Autowired
-    private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
+    private InboxRenderServiceDelegate<StateAware> inboxRenderServiceDelegate;
 
     @Autowired
     private WorkflowTypeService workflowTypeService;
@@ -77,10 +77,9 @@ public class DigitalSignatureReportController {
         return DIGITAL_SIGNATURE_REPORT_FORM;
     }
 
-    @SuppressWarnings("unchecked")
     public List<HashMap<String, Object>> getRecordsForDigitalSignature() {
         final List<HashMap<String, Object>> resultList = new ArrayList<>();
-        final List<StateAware> stateAwareList = fetchItems();
+        final List<StateAware> stateAwareList = inboxRenderServiceDelegate.getAssignedWorkflowItems();
 
         if (null != stateAwareList && !stateAwareList.isEmpty()) {
             HashMap<String, Object> tempMap;
@@ -107,10 +106,6 @@ public class DigitalSignatureReportController {
                 }
         }
         return resultList;
-    }
-
-    public List<StateAware> fetchItems() {
-        return new ArrayList<>(inboxRenderServiceDeligate.getInboxItems());
     }
 
 }
