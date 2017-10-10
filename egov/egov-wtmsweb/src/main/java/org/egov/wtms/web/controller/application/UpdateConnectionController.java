@@ -380,7 +380,9 @@ public class UpdateConnectionController extends GenericConnectionController {
             model.addAttribute(MODE, "edit");
             model.addAttribute(APPROVALPOSITIONEXIST,
                     waterConnectionDetailsService.getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l,
-                            waterConnectionDetails.getApplicationType().getCode(), "edit", ""));
+                            CLOSINGCONNECTION.equals(waterConnectionDetails.getApplicationType().getCode())
+                                    ? WORKFLOW_CLOSUREADDITIONALRULE : waterConnectionDetails.getApplicationType().getCode(),
+                            "edit", ""));
         }
         // "edit" mode for AE inbox record FROM CSC and Record from Clerk
         else if ((recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal)
@@ -410,7 +412,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         } else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() == null)
             model.addAttribute(APPROVALPOSITIONEXIST, waterConnectionDetailsService
-                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, "CLOSECONNECTION", "", ""));
+                    .getApprovalPositionByMatrixDesignation(waterConnectionDetails, 0l, WORKFLOW_CLOSUREADDITIONALRULE, "", ""));
 
         else if (waterConnectionDetails.getCloseConnectionType() != null
                 && waterConnectionDetails.getReConnectionReason() != null)
