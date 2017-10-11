@@ -53,6 +53,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
 
 import java.math.BigDecimal;
@@ -367,16 +368,17 @@ public class EditDemandAction extends BaseFormAction {
 	public String newEditForm() {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Entered into newEditForm");
-		String resultPage = "";
-		final RevisionPetition oldObjection = revisionPetitionService.getExistingObjections(basicProperty);
-		Date effectiveDate = null;
+		String resultPage;
+		final RevisionPetition generalRevisionPetition = revisionPetitionService.getExistingGRP(basicProperty);
+		Date effectiveDate;
 		PropertyImpl propertyModel = null;
-		if (oldObjection == null) {
-			if (NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))
+		if (generalRevisionPetition == null) {
+			if ((SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+                                && basicProperty.getPropertySet().size() == 1) || NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))
 				propertyModel = basicProperty.getActiveProperty();
 
-		} else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(oldObjection.getType()))
-			propertyModel = oldObjection.getProperty();
+		} else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(generalRevisionPetition.getType()))
+			propertyModel = generalRevisionPetition.getProperty();
 
 		if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
 				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
@@ -395,37 +397,37 @@ public class EditDemandAction extends BaseFormAction {
 
 		final PropertyTaxBillable billable = new PropertyTaxBillable();
 		billable.setBasicProperty(basicProperty);
-		final Map<Installment, List<String>> newDDMap = new HashMap<Installment, List<String>>();
-		String reason = null;
-		Installment existingInst = null;
+		final Map<Installment, List<String>> newDDMap = new HashMap<>();
+		String reason;
+		Installment existingInst;
 		if (!demandDetails.isEmpty())
 			for (final EgDemandDetails dd : demandDetails) {
-				List<String> existingReasons = new ArrayList<String>();
+				List<String> existingReasons = new ArrayList<>();
 				reason = dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
 				existingInst = dd.getEgDemandReason().getEgInstallmentMaster();
 				if (newDDMap.get(existingInst) == null) {
-					existingReasons = new ArrayList<String>();
+					existingReasons = new ArrayList<>();
 					existingReasons.add(reason);
 					newDDMap.put(existingInst, existingReasons);
 				} else if (newDDMap.get(existingInst) != null) {
 					existingReasons.add(reason);
 					newDDMap.get(existingInst).addAll(existingReasons);
 				} else {
-					existingReasons = new ArrayList<String>();
+					existingReasons = new ArrayList<>();
 					existingReasons.add(reason);
 					newDDMap.get(existingInst).addAll(existingReasons);
 				}
 
 			}
 
-		final Map<Installment, Map<String, Map<String, Object>>> newMap = new LinkedHashMap<Installment, Map<String, Map<String, Object>>>();
-		final Map<String, Map<String, Object>> rsnList = new LinkedHashMap<String, Map<String, Object>>();
+		final Map<Installment, Map<String, Map<String, Object>>> newMap = new LinkedHashMap<>();
+		final Map<String, Map<String, Object>> rsnList = new LinkedHashMap<>();
 
 		if (!demandDetails.isEmpty()) {
 			for (final EgDemandDetails dd : demandDetails)
 				if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
-					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<String, Map<String, Object>>();
-					final Map<String, Object> dtls = new HashMap<String, Object>();
+					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
+					final Map<String, Object> dtls = new HashMap<>();
 					dtls.put("amount", dd.getAmount());
 					dtls.put("collection", dd.getAmtCollected());
 					dtls.put("isNew", false);
@@ -433,7 +435,7 @@ public class EditDemandAction extends BaseFormAction {
 					newMap.put(dd.getEgDemandReason().getEgInstallmentMaster(), rsns);
 				} else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
 						&& dd.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-					final Map<String, Object> dtls = new HashMap<String, Object>();
+					final Map<String, Object> dtls = new HashMap<>();
 					dtls.put("amount", BigDecimal.ZERO);
 					dtls.put("collection", BigDecimal.ZERO);
 					dtls.put("isNew", false);
@@ -442,8 +444,8 @@ public class EditDemandAction extends BaseFormAction {
 
 				} else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
 						&& dd.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<String, Map<String, Object>>();
-					final Map<String, Object> dtls = new HashMap<String, Object>();
+					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
+					final Map<String, Object> dtls = new HashMap<>();
 					dtls.put("amount", dd.getAmount());
 					dtls.put("collection", dd.getAmtCollected());
 					dtls.put("isNew", false);

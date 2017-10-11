@@ -76,6 +76,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYP
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -116,13 +117,12 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -264,9 +264,7 @@ public class SearchPropertyAction extends SearchFormAction {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    
-    @Autowired
-    private RevisionPetitionService revisionPetitionService;
+
     @Override
     public Object getModel() {
         return null;
@@ -444,27 +442,17 @@ public class SearchPropertyAction extends SearchFormAction {
             else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
                 return APPLICATION_TYPE_MEESEVA_RP;
 
-		if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
-			boolean grpDone = false;
-			RevisionPetition oldObjection = revisionPetitionService.getExistingGRP(basicProperty);
-			if (oldObjection != null || (oldObjection == null && NATURE_OF_WORK_GRP
-					.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))) {
-				grpDone = true;
-			}
-			boolean dataEntryDone = false;
-			if ((SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
-					&& basicProperty.getPropertySet().size() == 1)
-					|| (SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
-							&& grpDone))
-				dataEntryDone = true;
-			if (!(dataEntryDone
-					|| (SOURCEOFDATA_MIGRATION.toString().equalsIgnoreCase(basicProperty.getSource().toString())
-							&& grpDone))) {
+        if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
+            if(basicProperty.isUnderWorkflow() && !isUnderMutationWorkflow(basicProperty)){
+                addActionError(getText("error.underworkflow"));
+                return COMMON_FORM;
+            }
+            if( !validateAssessmentForEditDemand(basicProperty)){
+                addActionError(getText("edit.dataEntry.source.error"));
+                return COMMON_FORM;
+            }
+        }
 
-				addActionError(getText("edit.dataEntry.source.error"));
-				return COMMON_FORM;
-			}
-		}
         if (APPLICATION_TYPE_ADD_DEMAND.equals(applicationType)) {
             if (!(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())
                     || basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_MIGRATION.toString()))) {
@@ -496,6 +484,31 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_EDIT_COLLECTION;
         return applicationType;
 
+    }
+
+    private boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
+        boolean underWorkFlow = false;
+        if (basicProperty.getPropertyMutations() != null) {
+            for (PropertyMutation propertyMutation : basicProperty.getPropertyMutations()) {
+                underWorkFlow = WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getState().getValue()) ? false : true;
+                if (underWorkFlow)
+                    break;
+            }
+        } 
+        return underWorkFlow;
+    }
+    
+    private boolean validateAssessmentForEditDemand(final BasicProperty basicProperty) {
+        boolean validForEdit = false;
+        if (SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+                && (basicProperty.getPropertySet().size() == 1
+                        || NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))) {
+            validForEdit = true;
+        } else if (SOURCEOFDATA_MIGRATION.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+                && NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))
+            validForEdit = true;
+        
+        return validForEdit;
     }
 
     /**

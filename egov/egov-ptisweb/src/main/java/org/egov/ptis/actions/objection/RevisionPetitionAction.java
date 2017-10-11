@@ -704,6 +704,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			modifyBasicProp();
 		} catch (final TaxCalculatorExeption e) {
 			addActionError(getText("unitrate.error"));
+			return "view";
 		}
 
 		final String designation = propService.getDesignationForPositionAndUser(
