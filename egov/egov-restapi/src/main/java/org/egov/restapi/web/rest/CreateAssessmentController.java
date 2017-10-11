@@ -84,7 +84,7 @@ public class CreateAssessmentController {
 	private PropertyExternalService propertyExternalService;
 	
 	@Autowired
-    transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
+    private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
 
 	/**
 	 * This method is used to create property.

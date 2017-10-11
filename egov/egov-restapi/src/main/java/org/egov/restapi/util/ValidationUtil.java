@@ -109,7 +109,7 @@ public class ValidationUtil {
 	APTaxCalculator aPTaxCalculator;
 	
 	@Autowired
-    transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
+    private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -299,7 +299,8 @@ public class ValidationUtil {
 					return errorDetails;
 				}
 			}
-			if (!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
+			if (!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)
+					&& !mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)) {
 				if (StringUtils.isBlank(assessmentsDetails.getExtentOfSite())) {
 					errorDetails.setErrorCode(EXTENT_OF_SITE_REQ_CODE);
 					errorDetails.setErrorMessage(EXTENT_OF_SITE_REQ_MSG);
@@ -327,7 +328,7 @@ public class ValidationUtil {
 				errorDetails.setErrorMessage(ADDRESS_DETAILS_REQ_MSG);
 				return errorDetails;
 			} else {
-				errorDetails = validateBoundaries(propertyAddressDetails, errorDetails);
+				errorDetails = validateBoundaries(propertyAddressDetails, errorDetails, mode);
 				if (errorDetails != null && errorDetails.getErrorCode() != null)
 					return errorDetails;
 				else {
@@ -426,9 +427,16 @@ public class ValidationUtil {
 						errorDetails.setErrorMessage(OCCUPANCY_DATE_REQ_MSG);
 						return errorDetails;
 					}
-					if (propertyExternalService.isActiveUnitRateExists(floorDetails,
-							propertyAddressDetails.getZoneNum(), floorDetails.getNatureOfUsageCode(),
-							floorDetails.getBuildClassificationCode())) {
+					String zoneNo = null;
+					if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY))
+						zoneNo = propertyAddressDetails.getZoneNum();
+					else {
+						final BasicProperty basicProperty = basicPropertyDAO
+								.getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
+						zoneNo = basicProperty.getPropertyID().getZone().getBoundaryNum().toString();
+					}
+					if (propertyExternalService.isActiveUnitRateExists(floorDetails, zoneNo,
+							floorDetails.getNatureOfUsageCode(), floorDetails.getBuildClassificationCode())) {
 						errorDetails.setErrorCode(INACTIVE_UNIT_RATES_CODE);
 						errorDetails.setErrorMessage(INACTIVE_UNIT_RATES_REQ_MSG);
 						return errorDetails;
@@ -967,7 +975,7 @@ public class ValidationUtil {
 	}
 
 	public ErrorDetails validateBoundaries(final PropertyAddressDetails propertyAddressDetails,
-			ErrorDetails errorDetails) {
+			ErrorDetails errorDetails,  final String mode) {
 		if (StringUtils.isBlank(propertyAddressDetails.getElectionWardNum())) {
 			errorDetails.setErrorCode(ELECTION_WARD_REQ_CODE);
 			errorDetails.setErrorMessage(ELECTION_WARD_REQ_MSG);
@@ -1000,7 +1008,8 @@ public class ValidationUtil {
 			errorDetails.setErrorMessage(INACTIVE_BLOCK_REQ_MSG);
 		}
 		
-		if (StringUtils.isBlank(propertyAddressDetails.getZoneNum())) {
+		if (StringUtils.isBlank(propertyAddressDetails.getZoneNum())
+				&& !PropertyTaxConstants.PROPERTY_MODE_MODIFY.equalsIgnoreCase(mode)) {
 			errorDetails.setErrorCode(ZONE_NO_REQ_CODE);
 			errorDetails.setErrorMessage(ZONE_NO_REQ_MSG);
 			return errorDetails;

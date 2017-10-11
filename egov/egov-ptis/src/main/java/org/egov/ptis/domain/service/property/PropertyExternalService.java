@@ -2386,13 +2386,23 @@ public class PropertyExternalService {
 			propertyImpl.getPropertyDetail().setAttachedBathRoom(viewPropertyDetails.getHasAttachedBathroom());
 			propertyImpl.getPropertyDetail().setWaterHarvesting(viewPropertyDetails.getHasWaterHarvesting());
 			propertyImpl.getPropertyDetail().setCable(viewPropertyDetails.getHasCableConnection());
-
-			propertyImpl.getPropertyDetail().setExtentSite(Double.valueOf(viewPropertyDetails.getExtentOfSite()));
-			propertyImpl = propService.createProperty(propertyImpl, viewPropertyDetails.getExtentOfSite(),
-					propMutMstr.getCode(), propertyTypeMaster.getId().toString(), null, null, STATUS_WORKFLOW,
-					propertyImpl.getDocNumber(), null, floorType != null ? floorType.getId() : null,
-					roofType != null ? roofType.getId() : null, wallType != null ? wallType.getId() : null,
-					woodType != null ? woodType.getId() : null, null, null, null, null, Boolean.FALSE);
+			
+			String extentOfSite = null;
+			if (viewPropertyDetails.getExtentOfSite() != null && !viewPropertyDetails.getExtentOfSite().isEmpty()) {
+				propertyImpl.getPropertyDetail().setExtentSite(Double.valueOf(viewPropertyDetails.getExtentOfSite()));
+				extentOfSite = viewPropertyDetails.getExtentOfSite();
+			} else if (!viewPropertyDetails.getPropertyTypeMaster()
+					.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
+				PropertyDetail propDetail = basicProperty.getActiveProperty().getPropertyDetail();
+				extentOfSite = propDetail.getExtentSite() != null ? propDetail.getExtentSite().toString()
+						: propDetail.getSitalArea().getArea().toString();
+			}
+			
+			propertyImpl = propService.createProperty(propertyImpl, extentOfSite, propMutMstr.getCode(),
+					propertyTypeMaster.getId().toString(), null, null, STATUS_WORKFLOW, propertyImpl.getDocNumber(),
+					null, floorType != null ? floorType.getId() : null, roofType != null ? roofType.getId() : null,
+					wallType != null ? wallType.getId() : null, woodType != null ? woodType.getId() : null, null, null,
+					null, null, Boolean.FALSE);
 		} else {
 			propertyImpl.getPropertyDetail()
 					.setDateOfCompletion(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
