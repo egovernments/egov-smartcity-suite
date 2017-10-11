@@ -2392,7 +2392,7 @@ public class PropertyExternalService {
 				propertyImpl.getPropertyDetail().setExtentSite(Double.valueOf(viewPropertyDetails.getExtentOfSite()));
 				extentOfSite = viewPropertyDetails.getExtentOfSite();
 			} else if (!viewPropertyDetails.getPropertyTypeMaster()
-					.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)) {
+					.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 				PropertyDetail propDetail = basicProperty.getActiveProperty().getPropertyDetail();
 				extentOfSite = propDetail.getExtentSite() != null ? propDetail.getExtentSite().toString()
 						: propDetail.getSitalArea().getArea().toString();
@@ -2723,7 +2723,7 @@ public class PropertyExternalService {
 			WoodType woodType = null;
 			if (StringUtils.isNotBlank(viewPropertyDetails.getWallType()))
 				wallType = wallTypeService.getWallTypeById(Long.valueOf(viewPropertyDetails.getWallType()));
-			if (StringUtils.isNotBlank(viewPropertyDetails.getWallType()))
+			if (StringUtils.isNotBlank(viewPropertyDetails.getWoodType()))
 				woodType = woodTypeService.getWoodTypeById(Long.valueOf(viewPropertyDetails.getWoodType()));
 
 			propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
