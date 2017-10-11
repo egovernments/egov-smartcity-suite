@@ -39,14 +39,15 @@
  */
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
@@ -73,15 +74,16 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CH
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CLOSESEWERAGE_CONN_CREATE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CLOSESEWERAGE_CONN_EEAPPROVE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CLOSESEWERAGE_CONN_REJECT;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
 
 import java.math.BigDecimal;
 import java.util.Locale;
 
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -105,7 +107,6 @@ public class SewerageConnectionSmsAndEmailService {
     @Autowired
     @Qualifier("parentMessageSource")
     private MessageSource stmsMessageSource;
-
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
 
@@ -234,11 +235,11 @@ public class SewerageConnectionSmsAndEmailService {
 
         } else if (APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
-            smsMsg = SmsBodyByCodeAndArgsWithType("msg.newconnectionapproval.sms", SewerageApplicationDetails,
+            smsMsg = SmsBodyByCodeAndArgsWithType("msg.newsewerageconnectionapprove.sms", SewerageApplicationDetails,
                     applicantName, SMSEMAILTYPENEWCONNFINALAPPROVE);
-            body = EmailBodyByCodeAndArgsWithType("msg.newconncetionapproval.email.body", SewerageApplicationDetails,
+            body = EmailBodyByCodeAndArgsWithType("msg.newsewerageconnectionapprove.email.body", SewerageApplicationDetails,
                     applicantName, SMSEMAILTYPENEWCONNFINALAPPROVE);
-            subject = emailSubjectforEmailByCodeAndArgs("msg.newconncetionapprove.email.subject",
+            subject = emailSubjectforEmailByCodeAndArgs("msg.newsewerageconnectionapprove.email.subject",
                     SewerageApplicationDetails.getApplicationNumber());
         } else if (APPLICATION_STATUS_REJECTED.equalsIgnoreCase(SewerageApplicationDetails
                 .getStatus().getCode())) {
@@ -435,9 +436,14 @@ public class SewerageConnectionSmsAndEmailService {
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         } else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFINALAPPROVE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE)) {
+            String pdfLink = StringUtils.EMPTY;
+            if (null != sewerageApplicationDetails.getApplicationNumber())
+                pdfLink = ApplicationThreadLocals.getDomainURL() + "/stms/transactions/workordernotice?pathVar="
+                        + sewerageApplicationDetails.getApplicationNumber();
             emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
-                            sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName }, null);
+                            sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName, pdfLink },
+                    null);
         } else if (SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type))
             emailBody = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName },
@@ -595,9 +601,16 @@ public class SewerageConnectionSmsAndEmailService {
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
         else if (type.equalsIgnoreCase(SMSEMAILTYPENEWCONNFINALAPPROVE)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
+        {
+            String pdfLink = StringUtils.EMPTY;
+            if (null != sewerageApplicationDetails.getApplicationNumber())
+                pdfLink = ApplicationThreadLocals.getDomainURL() + "/stms/transactions/workordernotice?pathVar="
+                        + sewerageApplicationDetails.getApplicationNumber();
             smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(),
-                            sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName }, null);
+                            sewerageApplicationDetails.getConnection().getShscNumber(), muncipalityName, pdfLink },
+                    null);
+        }
         else if (SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
             smsMsg = stmsMessageSource.getMessage(code,

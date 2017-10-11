@@ -270,6 +270,11 @@ public class SewerageApplicationDetailsService {
     public List<SewerageApplicationDetails> findByConnectionShscNumber(final String shscNumber) {
         return sewerageApplicationDetailsRepository.findByConnection_ShscNumber(shscNumber);
     }
+    
+    @Transactional
+    public void updateExecutionDate(final SewerageApplicationDetails connectionExeList) {
+        sewerageApplicationDetailsRepository.saveAndFlush(connectionExeList);
+    }
 
     @Transactional
     public SewerageApplicationDetails createLegacySewerageConnection(
@@ -509,7 +514,6 @@ public class SewerageApplicationDetailsService {
         final StringBuilder mobileNumber = new StringBuilder();
         Assignment assignment = null;
         User user = null;
-        Integer elapsedDays = 0;
         final StringBuilder aadharNumber = new StringBuilder();
         if (null != ownerNameItr && ownerNameItr.hasNext()) {
             final OwnerName primaryOwner = ownerNameItr.next();
@@ -781,8 +785,9 @@ public class SewerageApplicationDetailsService {
                     sewerageApplicationDetails, session, request);
             if (sewerageNotice != null)
                 sewerageApplicationDetails.addNotice(sewerageNotice);
-        } else if (sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_WOGENERATED)) {
+        } else if (APPLICATION_STATUS_WOGENERATED
+                .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
+                || APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())) {
             final SewerageNotice existingSewerageNotice = sewerageNoticeService
                     .findByNoticeNoAndNoticeType(sewerageApplicationDetails.getWorkOrderNumber(), NOTICE_TYPE_WORK_ORDER_NOTICE);
             if (existingSewerageNotice == null) {

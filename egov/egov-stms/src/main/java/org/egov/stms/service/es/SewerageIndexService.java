@@ -40,6 +40,11 @@
 
 package org.egov.stms.service.es;
 
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.egov.infra.utils.DateUtils.endOfGivenDate;
+import static org.egov.infra.utils.DateUtils.startOfGivenDate;
+import static org.egov.infra.utils.DateUtils.toDateTimeUsingDefaultPattern;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINAL_APPROVED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CHANGEINCLOSETS;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_CLOSECONNECTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_TYPE_NAME_NEWCONNECTION;
@@ -56,6 +61,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
@@ -72,13 +78,17 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
+import org.egov.stms.elasticSearch.entity.SewerageBulkExecutionResponse;
 import org.egov.stms.elasticSearch.entity.SewerageCollectFeeSearchRequest;
 import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
+import org.egov.stms.elasticSearch.entity.SewerageExecutionResult;
 import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
 import org.egov.stms.entity.es.SewerageIndex;
+import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.masters.pojo.SewerageRateDCBResult;
 import org.egov.stms.reports.entity.SewerageBaseRegisterResult;
 import org.egov.stms.reports.entity.SewerageNoOfConnReportResult;
@@ -88,6 +98,7 @@ import org.egov.stms.transactions.entity.SewerageConnectionFee;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDCBReporService;
 import org.egov.stms.transactions.service.SewerageDemandService;
+import org.egov.stms.utils.SewerageTaxUtils;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.action.search.SearchRequestBuilder;
 import org.elasticsearch.action.search.SearchResponse;
@@ -103,6 +114,8 @@ import org.elasticsearch.search.aggregations.metrics.sum.Sum;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.joda.time.DateTime;
+import org.json.JSONArray;
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -116,32 +129,29 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SewerageIndexService {
 
+    private static final String APPLICATION_STARTDATE = "1998-04-01T00:00:00.000Z";
+    private static final String EXECUTION_DATE = "executionDate";
+
     @Autowired
     private CityService cityService;
-
     @Autowired
     private SewerageIndexRepository sewerageIndexRepository;
-
     @Autowired
     private CollectionDocumentRepository collectionDocumentRepository;
-
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
     @Autowired
     private SewerageDemandService sewerageDemandService;
-
     @Autowired
     private SewerageDCBReporService sewerageDCBReporService;
-
     @Autowired
     private InstallmentDao installmentDao;
-
     @Autowired
     private ModuleService moduleDao;
+    @Autowired
+    private SewerageTaxUtils sewerageTaxUtils;
 
     public SewerageIndex createSewarageIndex(final SewerageApplicationDetails sewerageApplicationDetails,
             final AssessmentDetails assessmentDetails) {
@@ -346,6 +356,40 @@ public class SewerageIndexService {
         return boolQuery;
     }
 
+    public BoolQueryBuilder getSearchQueryForExecuteConnection(final SewerageExecutionResult SewerageExecutionResult) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("ulbName", SewerageExecutionResult.getUlbName()));
+        if (StringUtils.isNotBlank(SewerageExecutionResult.getRevenueWard()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("ward", SewerageExecutionResult.getRevenueWard()));
+        if (StringUtils.isNotBlank(SewerageExecutionResult.getApplicationNumber()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("consumerNumber", SewerageExecutionResult.getApplicationNumber()));
+        if (StringUtils.isNotBlank(SewerageExecutionResult.getShscNumber()))
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("shscNumber", SewerageExecutionResult.getShscNumber()));
+        if (StringUtils.isNotBlank(SewerageExecutionResult.getApplicationType()))
+            boolQuery = boolQuery
+                    .filter(QueryBuilders.matchQuery("applicationType", SewerageExecutionResult.getApplicationType()));
+        if (StringUtils.isNotBlank(SewerageExecutionResult.getFromDate())
+                && StringUtils.isNotBlank(SewerageExecutionResult.getToDate()))
+            boolQuery.filter(QueryBuilders.rangeQuery("applicationDate")
+                    .from(startOfGivenDate(toDateTimeUsingDefaultPattern(SewerageExecutionResult.getFromDate()))
+                            .toString(ES_DATE_FORMAT))
+                    .to(endOfGivenDate(toDateTimeUsingDefaultPattern(SewerageExecutionResult.getToDate()))
+                            .toString(ES_DATE_FORMAT)));
+        else if (StringUtils.isNotBlank(SewerageExecutionResult.getFromDate()))
+            boolQuery.filter(QueryBuilders.rangeQuery("applicationDate")
+                    .from(startOfGivenDate(toDateTimeUsingDefaultPattern(SewerageExecutionResult.getFromDate()))
+                            .toString(ES_DATE_FORMAT))
+                    .to(DateTime.now().toString(ES_DATE_FORMAT)));
+        else if (StringUtils.isNotBlank(SewerageExecutionResult.getToDate()))
+            boolQuery.filter(QueryBuilders.rangeQuery("applicationDate")
+                    .from(APPLICATION_STARTDATE)
+                    .to(endOfGivenDate(toDateTimeUsingDefaultPattern(SewerageExecutionResult.getToDate()))
+                            .toString(ES_DATE_FORMAT)));
+        boolQuery = boolQuery.filter(QueryBuilders.matchQuery("applicationStatus", APPLICATION_STATUS_FINAL_APPROVED));
+        return boolQuery;
+    }
+
     public Page<SewerageIndex> getCollectSearchResult(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort,
             final SewerageCollectFeeSearchRequest searchRequest) {
         Page<SewerageIndex> resultList;
@@ -356,6 +400,16 @@ public class SewerageIndexService {
 
         resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
+    }
+
+    public List<SewerageIndex> getSearchResultForExecuteConnection(final BoolQueryBuilder boolQuery,
+            final FieldSortBuilder sort) {
+        SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("sewerage").withQuery(boolQuery).withSort(sort)
+                .build();
+        if (searchQuery != null)
+            return elasticsearchTemplate.queryForList(searchQuery, SewerageIndex.class);
+        else
+            return Collections.emptyList();
     }
 
     public BoolQueryBuilder getDCRSearchResult(final DailySTCollectionReportSearch searchRequest) throws ParseException {
@@ -689,6 +743,78 @@ public class SewerageIndexService {
 
         resultList = elasticsearchTemplate.queryForPage(searchQuery, SewerageIndex.class);
         return resultList;
+    }
+
+    public List<SewerageExecutionResult> getConnectionExecutionList(SewerageExecutionResult sewerageExecutionResult) {
+
+        sewerageExecutionResult.setUlbName(cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getName());
+        final BoolQueryBuilder boolQuery = getSearchQueryForExecuteConnection(sewerageExecutionResult);
+        final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.DESC);
+        List<SewerageIndex> searchResultList = getSearchResultForExecuteConnection(boolQuery, sort);
+        List<SewerageExecutionResult> connectionExecutionList = new ArrayList<>();
+        if (null != searchResultList && !searchResultList.isEmpty()) {
+            for (SewerageIndex searchResult : searchResultList) {
+                if (null == searchResult.getExecutionDate() || searchResult.getExecutionDate().equals(StringUtils.EMPTY)) {
+                    SewerageExecutionResult executionResult = new SewerageExecutionResult();
+                    executionResult.setApplicationType(searchResult.getApplicationType());
+                    executionResult.setApplicationDate(DateUtils.getDefaultFormattedDate(searchResult.getApplicationDate()));
+                    executionResult.setApplicationNumber(searchResult.getApplicationNumber());
+                    executionResult.setShscNumber(searchResult.getShscNumber());
+                    executionResult.setRevenueWard(searchResult.getWard());
+                    executionResult.setStatus(searchResult.getApplicationStatus());
+                    executionResult.setOwnerName(searchResult.getConsumerName());
+                    executionResult
+                            .setId(sewerageApplicationDetailsService.findByApplicationNumber(searchResult.getApplicationNumber())
+                                    .getId());
+                    connectionExecutionList.add(executionResult);
+                }
+            }
+        }
+        return connectionExecutionList;
+
+    }
+
+    public String validateDate(SewerageBulkExecutionResponse sewerageBulkExecutionResponse, SewerageApplicationDetails sewerage,
+            List<SewerageApplicationDetails> seweragelist) throws ParseException {
+        final JSONObject obj = new JSONObject(sewerageBulkExecutionResponse);
+        final JSONArray jsonArray = obj.getJSONArray("sewerageExecutionResult");
+        String status = StringUtils.EMPTY;
+        for (int i = 0; i < jsonArray.length(); ++i) {
+            final JSONObject jsonobj = jsonArray.getJSONObject(i);
+            sewerage = sewerageApplicationDetailsService.findBy(jsonobj.getLong("id"));
+            if (!jsonobj.getString(EXECUTION_DATE).isEmpty()) {
+                sewerage.getConnection()
+                        .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonobj.getString(EXECUTION_DATE)));
+                if (sewerage.getConnection().getExecutionDate() != null
+                        && StringUtils.isNotEmpty(sewerage.getConnection().getExecutionDate().toString())) {
+                    if (sewerage.getConnection().getExecutionDate()
+                            .compareTo(
+                                    DateUtils.toDateUsingDefaultPattern(
+                                            DateUtils.getDefaultFormattedDate(sewerage.getApplicationDate()))) <= 0) {
+                        status = "DateValidationFailed";
+                    } else {
+                        seweragelist.add(sewerage);
+                    }
+                }
+            }
+        }
+        return status;
+    }
+
+    public Boolean update(List<SewerageApplicationDetails> seweragelist) {
+        if (!seweragelist.isEmpty()) {
+            for (SewerageApplicationDetails sewerageobj : seweragelist) {
+                sewerageobj.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED, SewerageTaxConstants.MODULETYPE));
+                sewerageobj.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
+                sewerageobj.setActive(true);
+                sewerageApplicationDetailsService.updateExecutionDate(sewerageobj);
+                sewerageApplicationDetailsService.updatePortalMessage(sewerageobj);
+                sewerageApplicationDetailsService.updateIndexes(sewerageobj);
+            }
+            return true;
+        } else
+            return false;
     }
 
 }

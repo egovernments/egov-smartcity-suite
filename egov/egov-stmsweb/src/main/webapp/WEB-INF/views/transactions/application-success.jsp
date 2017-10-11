@@ -117,6 +117,13 @@
 </div>
 <div class="row text-center">
 	<div class="add-margin">
+		<c:if
+			test="${sewerageApplicationDetails.status.code == 'FINALAPPROVED' }">
+			<a href="javascript:void(0)" class="btn btn-primary"
+				onclick="renderWorkOrderPdf()">Generate Work Order</a>
+		</c:if>
+	</div>
+	<div class="add-margin">
 		<button type="submit" class="btn btn-default print" id="printBtn" onclick="printDiv('main')"><spring:message code="lbl.print" /></button>
 		<c:choose>
 			<c:when test="${sewerageApplicationDetails.status == 'ACTIVE' }">
@@ -137,5 +144,8 @@ function printDiv(divName) {
     document.body.innerHTML = printContents;
     window.print();
     document.body.innerHTML = originalContents;
+}
+function renderWorkOrderPdf() {
+    window.open("/stms/transactions/workordernotice?pathVar=${sewerageApplicationDetails.applicationNumber}", '', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');
 }
 </script>

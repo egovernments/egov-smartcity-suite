@@ -40,6 +40,9 @@
 package org.egov.stms.transactions.workflow;
 
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -212,7 +215,13 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
 
-            } // End workflow on execute connection
+            } // End workflow on executive engineer approval 
+            else if(APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction) && WF_STATE_PAYMENTDONE.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue()) ){
+                sewerageApplicationDetails.transition().end()
+                .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+            }
+            // End workflow on execute connection
             else if (SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), null);

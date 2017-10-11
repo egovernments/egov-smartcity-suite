@@ -78,8 +78,8 @@ public class SewerageTaxConstants {
     public static final String APPLICATION_STATUS_DEEAPPROVED = "DEEAPPROVED";
     public static final String APPLICATION_STATUS_COLLECTINSPECTIONFEE = "COLLECTINSPECTIONFEE";
     public static final String APPLICATION_STATUS_SANCTIONED_WITH_DEMAND_NOT_PAID = "SANCTIONEDWITHDEMAND";
-
     public static final String APPLICATION_STATUS_CLOSERSANCTIONED = "CLOSERSANCTIONED";
+    public static final String APPLICATION_STATUS_FINAL_APPROVED = "Final Approved";
     // application status constants - end
 
     // workflow related - start

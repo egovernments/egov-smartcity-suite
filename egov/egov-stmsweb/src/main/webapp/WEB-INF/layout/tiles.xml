@@ -361,4 +361,10 @@
 		<put-attribute name="body"
 			value="/WEB-INF/views/transactions/seweragereassign-success.jsp" />
 	</definition>
+	<definition name="sewerageExecution-search" extends="base_layout">
+		<put-attribute name="page-title" value="lbl.execution.execute"
+			cascade="true" />
+		<put-attribute name="body"
+			value="/WEB-INF/views/transactions/sewerageExecution-search.jsp" />
+	</definition>
 </tiles-definitions>
