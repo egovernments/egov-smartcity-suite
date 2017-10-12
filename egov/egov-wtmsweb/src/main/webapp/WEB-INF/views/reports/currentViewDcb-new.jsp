@@ -249,7 +249,7 @@
 													<%--  <a href="javascript:void(0)" onclick="redirecttocoll(this);"> <c:out value="${rcpt.receiptNumber}" /> </a>
 											 --%>
 													<a
-														href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<c:out value="${rcpt.receiptNumber}" />&consumerCode=<c:out value="${consumerCode}" />&serviceCode=WT"
+														href="/../collection/citizen/onlineReceipt-viewReceipt.action?receiptNumber=<c:out value="${rcpt.receiptNumber}" />&consumerCode=<c:out value="${waterConnectionDetails.connection.consumerCode}" />&serviceCode=WT"
 														target="_blank"> <c:out value="${rcpt.receiptNumber}" />
 													</a>
 												</div>
