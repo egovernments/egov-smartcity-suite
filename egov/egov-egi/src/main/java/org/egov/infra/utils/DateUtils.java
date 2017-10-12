@@ -56,6 +56,7 @@ import org.joda.time.Years;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -68,6 +69,7 @@ import static org.egov.infra.config.core.LocalizationSettings.datePattern;
 import static org.egov.infra.config.core.LocalizationSettings.dateTimePattern;
 import static org.egov.infra.config.core.LocalizationSettings.jodaTimeZone;
 import static org.egov.infra.config.core.LocalizationSettings.locale;
+import static org.egov.infra.utils.NumberToWordConverter.numberToWords;
 
 public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
@@ -100,6 +102,10 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
 
     public static String currentDateToDefaultDateFormat() {
         return toDefaultDateFormat(new LocalDate());
+    }
+
+    public static String currentDateToGivenFormat(String format) {
+        return getFormattedDate(now(), format);
     }
 
     public static String toDefaultDateFormat(LocalDate date) {
@@ -279,7 +285,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         StringBuilder dateInWord = new StringBuilder();
         dateInWord.append(DATE_IN_WORDS[cal.get(Calendar.DATE) - 1]).append(' ');
         dateInWord.append(formatter("dd-MMMMM-yyyy").print(new DateTime(dateToConvert)).split("-")[1]).append(' ');
-        dateInWord.append(NumberToWord.translateToWord(String.valueOf(cal.get(Calendar.YEAR))));
+        dateInWord.append(numberToWords(BigDecimal.valueOf(cal.get(Calendar.YEAR)), false, false));
         return dateInWord.toString();
     }
 
