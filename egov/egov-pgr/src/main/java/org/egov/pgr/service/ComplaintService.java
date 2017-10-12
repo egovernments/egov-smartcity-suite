@@ -50,6 +50,7 @@ import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.event.ComplaintEventPublisher;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
@@ -126,6 +127,9 @@ public class ComplaintService {
     @Autowired
     private CitizenComplaintDataPublisher citizenComplaintDataPublisher;
 
+    @Autowired
+    private ComplaintEventPublisher complaintEventPublisher;
+
     @Transactional
     public Complaint createComplaint(Complaint complaint) {
 
@@ -169,6 +173,7 @@ public class ComplaintService {
         else
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         complaintRepository.saveAndFlush(complaint);
+        complaintEventPublisher.publishEvent(complaint);
         complaintIndexService.updateComplaintIndex(complaint);
         citizenComplaintDataPublisher.onUpdation(complaint);
         complaintNotificationService.sendUpdateMessage(complaint);
