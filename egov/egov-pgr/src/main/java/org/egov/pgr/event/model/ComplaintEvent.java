@@ -46,6 +46,7 @@ import org.springframework.context.ApplicationEvent;
 public class ComplaintEvent extends ApplicationEvent {
 
     private Complaint complaint;
+    private String cityCode;
 
     public ComplaintEvent(final Object source, Complaint complaint) {
         super(source);
@@ -54,5 +55,13 @@ public class ComplaintEvent extends ApplicationEvent {
 
     public Complaint getComplaint() {
         return complaint;
+    }
+
+    public String getCityCode() {
+        return this.cityCode;
+    }
+
+    public void setCityCode(String cityCode) {
+        this.cityCode = cityCode;
     }
 }

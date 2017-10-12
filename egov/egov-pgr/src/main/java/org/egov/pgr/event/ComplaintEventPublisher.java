@@ -46,6 +46,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+
 @Service
 public class ComplaintEventPublisher {
 
@@ -54,6 +56,7 @@ public class ComplaintEventPublisher {
 
     public void publishEvent(Complaint complaint) {
         ComplaintEvent event = new ComplaintEvent(this, complaint);
+        event.setCityCode(getCityCode());
         applicationEventPublisher.publishEvent(event);
     }
 }
