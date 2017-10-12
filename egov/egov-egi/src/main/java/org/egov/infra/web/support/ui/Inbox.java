@@ -90,7 +90,7 @@ public class Inbox {
         setTask(isBlank(stateHistory.getNatureOfTask()) ? workflowTypes.getDisplayName()
                 : stateHistory.getNatureOfTask());
         setStatus(stateHistory.getValue()
-                + (isBlank(stateHistory.getNextAction()) ? EMPTY : "-" + stateHistory.getNextAction()));
+                + (isBlank(stateHistory.getNextAction()) ? EMPTY : " - " + stateHistory.getNextAction()));
         setDetails(
                 isBlank(stateHistory.getComments()) ? EMPTY : escapeSpecialChars(stateHistory.getComments()));
         setLink(EMPTY);

@@ -80,7 +80,7 @@ import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 @Transactional(readOnly = true)
 public class InboxRenderServiceDelegate<T extends StateAware> {
     private static final Logger LOG = LoggerFactory.getLogger(InboxRenderServiceDelegate.class);
-    private static final String INBOX_RENDER_SERVICE_SUFFIX = "InboxRenderService";
+    private static final String INBOX_RENDER_SERVICE_SUFFIX = "%sInboxRenderService";
     private static final Map<String, WorkflowTypes> WORKFLOW_TYPE_CACHE = new ConcurrentHashMap<>();
 
     @Autowired
@@ -104,7 +104,7 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
 
     @ReadOnly
     public List<Inbox> getCurrentUserInboxItems() {
-        return constructInbox(getAssignedWorkflowItems())
+        return buildInbox(getAssignedWorkflowItems())
                 .parallelStream()
                 .filter(item -> !item.isDraft())
                 .collect(Collectors.toList());
@@ -112,10 +112,7 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
 
     @ReadOnly
     public List<Inbox> getCurrentUserDraftItems() {
-        return constructInbox(getAssignedDraftItems())
-                .parallelStream()
-                .filter(Inbox::isDraft)
-                .collect(Collectors.toList());
+        return buildInbox(getAssignedWorkflowDrafts());
     }
 
     @ReadOnly
@@ -130,32 +127,12 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
 
     @ReadOnly
     public List<T> getAssignedWorkflowItems() {
-        List<T> inboxItems = new ArrayList<>();
-        List<Long> owners = currentUserPositionIds();
-        if (!owners.isEmpty()) {
-            List<String> types = stateService.getAssignedWorkflowTypeNames(owners);
-            for (String type : types) {
-                Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(type);
-                if (inboxRenderService.isPresent())
-                    inboxItems.addAll(inboxRenderService.get().getAssignedWorkflowItems(owners));
-            }
-        }
-        return inboxItems;
+        return getAssignedWorkflowItems(false);
     }
 
     @ReadOnly
-    public List<T> getAssignedDraftItems() {
-        List<T> inboxItems = new ArrayList<>();
-        List<Long> owners = currentUserPositionIds();
-        if (!owners.isEmpty()) {
-            List<String> types = stateService.getAssignedWorkflowTypeNames(owners);
-            for (String type : types) {
-                Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(type);
-                if (inboxRenderService.isPresent())
-                    inboxItems.addAll(inboxRenderService.get().getDraftWorkflowItems(owners));
-            }
-        }
-        return inboxItems;
+    public List<T> getAssignedWorkflowDrafts() {
+        return getAssignedWorkflowItems(true);
     }
 
     @ReadOnly
@@ -163,7 +140,24 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
         return new LinkedList<>(stateService.getStateById(stateId).getHistory());
     }
 
-    private List<Inbox> constructInbox(List<T> items) {
+    private List<T> getAssignedWorkflowItems(boolean draft) {
+        List<T> workflowItems = new ArrayList<>();
+        List<Long> owners = currentUserPositionIds();
+        if (!owners.isEmpty()) {
+            List<String> types = stateService.getAssignedWorkflowTypeNames(owners);
+            for (String type : types) {
+                Optional<InboxRenderService<T>> inboxRenderService = this.getInboxRenderService(type);
+                if (inboxRenderService.isPresent()) {
+                    InboxRenderService<T> renderService = inboxRenderService.get();
+                    workflowItems.addAll(draft ? renderService.getDraftWorkflowItems(owners) :
+                            renderService.getAssignedWorkflowItems(owners));
+                }
+            }
+        }
+        return workflowItems;
+    }
+
+    private List<Inbox> buildInbox(List<T> items) {
         List<Inbox> inboxItems = new ArrayList<>();
         for (StateAware stateAware : items) {
             inboxItems.add(Inbox
@@ -172,28 +166,19 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
                             getNextAction(stateAware.getState())));
         }
         inboxItems.addAll(microserviceUtils.getInboxItems());
-        inboxItems = inboxItems.stream().sorted(comparing(Inbox::getCreatedDate).reversed()).collect(toList());
-
-        return inboxItems;
-    }
-
-    private WorkflowTypes getWorkflowType(String type) {
-        WorkflowTypes workflowType = WORKFLOW_TYPE_CACHE.get(type);
-        if (workflowType == null) {
-            workflowType = workflowTypeService.getEnabledWorkflowTypeByType(type);
-            if (workflowType != null)
-                WORKFLOW_TYPE_CACHE.put(type, workflowType);
-        }
-        return workflowType;
+        return inboxItems
+                .stream()
+                .sorted(comparing(Inbox::getCreatedDate).reversed())
+                .collect(toList());
     }
 
     private Optional<InboxRenderService<T>> getInboxRenderService(String type) {
         InboxRenderService<T> inboxRenderService = null;
         try {
             if (getWorkflowType(type) != null)
-                inboxRenderService = applicationContext.getBean(type.concat(INBOX_RENDER_SERVICE_SUFFIX), InboxRenderService.class);
+                inboxRenderService = applicationContext.getBean(String.format(INBOX_RENDER_SERVICE_SUFFIX, type), InboxRenderService.class);
         } catch (BeansException e) {
-            LOG.warn("InboxRenderService bean for {} not found, have you defined {}InboxRenderService bean ?", type, type, e);
+            LOG.warn("{}InboxRenderService bean not defined", type, e);
         }
         return Optional.ofNullable(inboxRenderService);
     }
@@ -210,8 +195,20 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
         return nextAction;
     }
 
+    private WorkflowTypes getWorkflowType(String type) {
+        WorkflowTypes workflowType = WORKFLOW_TYPE_CACHE.get(type);
+        if (workflowType == null) {
+            workflowType = workflowTypeService.getEnabledWorkflowTypeByType(type);
+            if (workflowType != null)
+                WORKFLOW_TYPE_CACHE.put(type, workflowType);
+        }
+        return workflowType;
+    }
+
     private List<Long> currentUserPositionIds() {
-        return this.eisService.getPositionsForUser(getUserId(), new Date()).parallelStream()
-                .map(Position::getId).collect(Collectors.toList());
+        return this.eisService.getPositionsForUser(getUserId(), new Date())
+                .parallelStream()
+                .map(Position::getId)
+                .collect(Collectors.toList());
     }
 }

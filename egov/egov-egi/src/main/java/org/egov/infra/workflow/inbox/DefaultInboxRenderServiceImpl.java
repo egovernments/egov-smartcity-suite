@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -42,16 +42,17 @@ package org.egov.infra.workflow.inbox;
 
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
-import org.hibernate.FetchMode;
-import org.hibernate.FlushMode;
 import org.hibernate.criterion.Order;
 import org.hibernate.criterion.Restrictions;
 
 import java.util.Arrays;
 import java.util.List;
 
+import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.infra.workflow.entity.State.StateStatus.INPROGRESS;
 import static org.egov.infra.workflow.entity.State.StateStatus.STARTED;
+import static org.hibernate.FetchMode.JOIN;
+import static org.hibernate.FlushMode.MANUAL;
 
 /**
  * Every module which is having StateAware should initialize this with their own
@@ -90,8 +91,8 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
     @Override
     public List<T> getAssignedWorkflowItems(List<Long> owners) {
         return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
-                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
-                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                .setFetchMode("state", JOIN).createAlias("state", "state")
+                .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
                 .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
                 .add(Restrictions.in("state.ownerPosition.id", owners))
                 .add(Restrictions.in("state.status", Arrays.asList(INPROGRESS, STARTED)))
@@ -102,11 +103,12 @@ public class DefaultInboxRenderServiceImpl<T extends StateAware> implements Inbo
     @Override
     public List<T> getDraftWorkflowItems(List<Long> owners) {
         return this.stateAwarePersistenceService.getSession().createCriteria(this.stateAwareType)
-                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
-                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                .setFetchMode("state", JOIN).createAlias("state", "state")
+                .setFlushMode(MANUAL).setReadOnly(true).setCacheable(true)
                 .add(Restrictions.eq("state.type", this.stateAwareType.getSimpleName()))
                 .add(Restrictions.in("state.ownerPosition.id", owners))
                 .add(Restrictions.eq("state.status", STARTED))
+                .add(Restrictions.eq("state.createdBy.id", getUserId()))
                 .addOrder(Order.asc("state.createdDate"))
                 .list();
     }
