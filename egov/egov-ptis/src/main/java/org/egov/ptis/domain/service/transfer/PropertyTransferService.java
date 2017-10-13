@@ -395,9 +395,6 @@ public class PropertyTransferService {
             ackBean.setOwnerName(newOwnerName.substring(0, newOwnerName.length() - 1));
         }
         ackBean.setOwnerAddress(basicProperty.getAddress().toString());
-        // ackBean.setNoOfDays(ptaxApplicationTypeService.findByNamedQuery(PtApplicationType.BY_CODE, TRANSFER)
-        // .getResolutionTime().toString());
-
         final ReportRequest reportInput = new ReportRequest("mainTransferPropertyAck", ackBean, reportParams);
         reportInput.setReportFormat(ReportFormat.PDF);
         return reportService.createReport(reportInput);
@@ -866,6 +863,7 @@ public class PropertyTransferService {
             propertyMutation.setDeedDate(null);
             propertyMutation.setDeedNo(null);
         } else if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(reasonForTransfer)) {
+			propertyMutation.setSaleDetail(propertyMutation.getSaleDetail().replaceAll("[\\t\\n\\r]+", " "));
             propertyMutation.setDecreeDate(null);
             propertyMutation.setDecreeNumber(null);
             propertyMutation.setCourtName(null);
