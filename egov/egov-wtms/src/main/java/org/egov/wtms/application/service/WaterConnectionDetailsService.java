@@ -476,7 +476,7 @@ public class WaterConnectionDetailsService {
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     try {
-                        user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getCreatedDate());
+                        user = eisCommonService.getUserForPosition(owner.getId(), stateHistory.getLastModifiedDate());
                     } catch (final ApplicationRuntimeException e) {
                         if (Log.isErrorEnabled())
                             Log.error("Exception while getting history of record :" + e);
