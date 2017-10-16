@@ -57,14 +57,14 @@
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.shsc.number" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="shscNumber" id="shscNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
+							<input type="text" name="shscNumber" id="shscNumber" class="form-control is_valid_number"  data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
 						</div>
 				</div> 
 				<div class="form-group">
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.applicantname" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="24" id="app-mobno" />
+							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidation" data-pattern="alphanumericwithspacespecialcharacters" maxlength="100" id="app-mobno" />
 						</div>
 				</div>
 				<div class="form-group">
@@ -92,10 +92,10 @@
 						</div>
 				</div>
 				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.type" /></label>
+					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.type" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
 						 	<select name="noticeType" id="noticetype" class="form-control" data-first-option="false"><span class="mandatory"></span>
-								<option value=""></option>
+								<option value="">Select</option>
                                 <option value="EM">Estimation Notice</option>
                                 <option value="WO">WorkOrder Notice</option>
                                 <option value="CC">Close Connection Notice</option>
@@ -104,15 +104,15 @@
 						</div>
 				</div>
 				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.fromdate" /></label>
+					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.fromdate" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
-						 	<input  type="text" name="noticeGeneratedFrom" class="form-control datepicker"  id="noticeGeneratedFrom" maxlength="24" />
+						 	<input  type="text" name="noticeGeneratedFrom" class="form-control datepicker"  id="noticeGeneratedFrom" maxlength="24" required="required"/>
 						</div>
 				</div>
 				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.todate" /></label>
+					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.todate" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
-						 	<input  type="text" name="noticeGeneratedTo" class="form-control datepicker"  id="noticeGeneratedTo" maxlength="24" />
+						 	<input  type="text" name="noticeGeneratedTo" class="form-control datepicker"  id="noticeGeneratedTo" maxlength="24" required="required"/>
 						</div>
 				</div>
 			

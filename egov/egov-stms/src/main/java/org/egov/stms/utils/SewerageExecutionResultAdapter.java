@@ -47,13 +47,14 @@
 package org.egov.stms.utils;
 
 import java.lang.reflect.Type;
-import org.egov.stms.elasticSearch.entity.SewerageExecutionResult;
+
+import org.egov.infra.utils.StringUtils;
+import org.egov.stms.elasticsearch.entity.SewerageExecutionResult;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.infra.utils.StringUtils;
-
 
 public class SewerageExecutionResultAdapter implements JsonSerializer<SewerageExecutionResult> {
     @Override

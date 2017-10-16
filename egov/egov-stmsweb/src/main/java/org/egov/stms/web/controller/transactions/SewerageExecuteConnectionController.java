@@ -50,15 +50,13 @@ import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.REVENUE_WARD;
 
-import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.stms.elasticSearch.entity.SewerageBulkExecutionResponse;
-import org.egov.stms.elasticSearch.entity.SewerageExecutionResult;
+import org.egov.stms.elasticsearch.entity.SewerageBulkExecutionResponse;
+import org.egov.stms.elasticsearch.entity.SewerageExecutionResult;
 import org.egov.stms.masters.repository.SewerageApplicationTypeRepository;
 import org.egov.stms.service.es.SewerageIndexService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -106,8 +104,7 @@ public class SewerageExecuteConnectionController {
 
     @RequestMapping(value = "/ajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String executeSewerage(@ModelAttribute SewerageExecutionResult sewerageExecutionResult)
-            throws ParseException {
+    public String executeSewerage(@ModelAttribute SewerageExecutionResult sewerageExecutionResult) {
         List<SewerageExecutionResult> connectionExecutionList = sewerageIndexService
                 .getConnectionExecutionList(sewerageExecutionResult);
         return new StringBuilder("{ \"data\":").append(toJSON(connectionExecutionList, SewerageExecutionResult.class,
@@ -116,13 +113,12 @@ public class SewerageExecuteConnectionController {
 
     @RequestMapping(value = "/connexecutionupdate", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public String updateData(@RequestBody SewerageBulkExecutionResponse sewerageBulkExecutionResponse)
-            throws ParseException {
-        List<SewerageApplicationDetails> seweragelist = new ArrayList<>();
-        SewerageApplicationDetails sewerage = new SewerageApplicationDetails();
-        String validationstatus = sewerageIndexService.validateDate(sewerageBulkExecutionResponse, sewerage, seweragelist);
-        Boolean updateStatus = sewerageIndexService.update(seweragelist);
-        String response = StringUtils.EMPTY;
+    public String updateData(@RequestBody SewerageBulkExecutionResponse sewerageBulkExecutionResponse) {
+        List<SewerageApplicationDetails> sewerageApplicationDetailsList = new ArrayList<>();
+        String validationstatus = sewerageIndexService.validateDate(sewerageBulkExecutionResponse,
+                sewerageApplicationDetailsList);
+        Boolean updateStatus = sewerageIndexService.update(sewerageApplicationDetailsList);
+        String response;
         if (sewerageBulkExecutionResponse.getSewerageExecutionResult().length <= 0) {
             response = "EmptyList";
         } else if (!validationstatus.isEmpty()) {

@@ -59,7 +59,7 @@
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.application.number" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="consumerNumber" id="consumerNumber" class="form-control" maxlength="13" data-pattern="alphanumericwithspace" min="10"  />
+							<input type="text" name="consumerNumber" id="consumerNumber" class="form-control" maxlength="15" data-pattern="alphanumericwithspace" min="10"  />
 						</div>
 				</div> 
 				<div class="form-group">
@@ -73,7 +73,7 @@
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.applicantname" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidationclass" maxlength="100" id="app-mobno" />
+							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidationclass" data-pattern="alphanumericwithspacespecialcharacters" maxlength="100" id="app-mobno" />
 						</div>
 				</div>
 				<div class="form-group">

@@ -44,63 +44,37 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.stms.elasticsearch.entity;
 
-package org.egov.stms.elasticSearch.entity;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public class SewerageExecutionResult {
-
-    private String applicationNumber;
+public class SewerageCollectFeeSearchRequest extends DataTableSearchRequest {
+    private String consumerNumber;
+    private String searchText;
     private String shscNumber;
-    private String isChecked;
-    private String executionDate;
-    private Long id;
-    private String applicationDate;
+    private String moduleName;
     private String applicationType;
-    private String ownerName;
-    private String ulbName;
+    private String applicantName;
+    private String mobileNumber;
     private String revenueWard;
-    private String status;
-    private String fromDate;
-    private String toDate;
+    private String doorNumber;
+    private String ulbName;
+    private String applicationDate;
 
-    public String getApplicationNumber() {
-        return applicationNumber;
+    public String getModuleName() {
+        return moduleName;
     }
 
-    public void setApplicationNumber(String applicationNumber) {
-        this.applicationNumber = applicationNumber;
+    public void setModuleName(final String moduleName) {
+        this.moduleName = moduleName;
     }
 
-    public String getShscNumber() {
-        return shscNumber;
+    public String getApplicationType() {
+        return applicationType;
     }
 
-    public void setShscNumber(String shscNumber) {
-        this.shscNumber = shscNumber;
-    }
-
-    public String getIsChecked() {
-        return isChecked;
-    }
-
-    public void setIsChecked(String isChecked) {
-        this.isChecked = isChecked;
-    }
-
-    public String getExecutionDate() {
-        return executionDate;
-    }
-
-    public void setExecutionDate(String executionDate) {
-        this.executionDate = executionDate;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
+    public void setApplicationType(final String applicationType) {
+        this.applicationType = applicationType;
     }
 
     public String getApplicationDate() {
@@ -111,20 +85,40 @@ public class SewerageExecutionResult {
         this.applicationDate = applicationDate;
     }
 
-    public String getOwnerName() {
-        return ownerName;
-    }
-
-    public void setOwnerName(String ownerName) {
-        this.ownerName = ownerName;
-    }
-
     public String getUlbName() {
         return ulbName;
     }
 
-    public void setUlbName(String ulbName) {
-        this.ulbName = ulbName;
+    public String getShscNumber() {
+        return shscNumber;
+    }
+
+    public void setShscNumber(String shscNumber) {
+        this.shscNumber = shscNumber;
+    }
+
+    public String getApplicantName() {
+        return applicantName;
+    }
+
+    public void setApplicantName(final String applicantName) {
+        this.applicantName = applicantName;
+    }
+
+    public String getMobileNumber() {
+        return mobileNumber;
+    }
+
+    public void setMobileNumber(final String mobileNumber) {
+        this.mobileNumber = mobileNumber;
+    }
+
+    public void setSearchText(final String searchText) {
+        this.searchText = searchText;
+    }
+
+    public String searchQuery() {
+        return searchText;
     }
 
     public String getRevenueWard() {
@@ -135,36 +129,24 @@ public class SewerageExecutionResult {
         this.revenueWard = revenueWard;
     }
 
-    public String getStatus() {
-        return status;
+    public String getDoorNumber() {
+        return doorNumber;
     }
 
-    public void setStatus(String status) {
-        this.status = status;
+    public void setDoorNumber(String doorNumber) {
+        this.doorNumber = doorNumber;
     }
 
-    public String getApplicationType() {
-        return applicationType;
+    public void setUlbName(String ulbName) {
+        this.ulbName = ulbName;
     }
 
-    public void setApplicationType(String applicationType) {
-        this.applicationType = applicationType;
+    public String getConsumerNumber() {
+        return consumerNumber;
     }
 
-    public String getFromDate() {
-        return fromDate;
-    }
-
-    public void setFromDate(String fromDate) {
-        this.fromDate = fromDate;
-    }
-
-    public String getToDate() {
-        return toDate;
-    }
-
-    public void setToDate(String toDate) {
-        this.toDate = toDate;
+    public void setConsumerNumber(String consumerNumber) {
+        this.consumerNumber = consumerNumber;
     }
 
 }

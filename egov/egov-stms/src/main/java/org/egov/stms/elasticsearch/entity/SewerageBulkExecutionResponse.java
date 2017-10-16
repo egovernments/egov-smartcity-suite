@@ -45,7 +45,7 @@
      *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
      */
 
-package org.egov.stms.elasticSearch.entity;
+package org.egov.stms.elasticsearch.entity;
 
 public class SewerageBulkExecutionResponse {
 

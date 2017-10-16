@@ -1,41 +1,48 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/*
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
- * <p>
- * Copyright (C) <2016>  eGovernments Foundation
- * <p>
- * The updated version of eGov suite of products as by eGovernments Foundation
- * is available at http://www.egovernments.org
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/ or
- * http://www.gnu.org/licenses/gpl.html .
- * <p>
- * In addition to the terms of the GPL license to be adhered to in using this
- * program, the following additional terms are to be complied with:
- * <p>
- * 1) All versions of this program, verbatim or modified must carry this
- * Legal Notice.
- * <p>
- * 2) Any misrepresentation of the origin of the material is prohibited. It
- * is required that all modified versions of this material be marked in
- * reasonable ways as different from the original version.
- * <p>
- * 3) This license does not grant any rights to any user of the program
- * with regards to rights under trademark law for use of the trade names
- * or trademarks of eGovernments Foundation.
- * <p>
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ *  Copyright (C) <2017>  eGovernments Foundation
+ *
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
+ *
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
+ *
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ *      Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *      For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *      For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
+ *
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
+ *
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.stms.web.controller.notice;
 
@@ -49,7 +56,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,19 +75,19 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
-import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
+import org.egov.stms.elasticsearch.entity.SewerageNoticeSearchRequest;
+import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.service.es.SewerageIndexService;
+import org.egov.stms.service.es.SeweragePaginationService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -107,6 +113,8 @@ public class SewerageNoticeController {
     private SewerageNoticeService sewerageNoticeService;
     @Autowired
     private SewerageIndexService sewerageIndexService;
+    @Autowired
+    private SeweragePaginationService seweragePaginationService;
 
     @RequestMapping(value = "/search-notice", method = RequestMethod.GET)
     public String newSearchNoticeForm(final Model model) {
@@ -132,36 +140,15 @@ public class SewerageNoticeController {
     @RequestMapping(value = "/searchResult", method = RequestMethod.POST)
     @ResponseBody
     public DataTable<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageNoticeSearchRequest searchRequest) {
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<>();
         final Page<SewerageIndex> searchResult = getNoticeSearchResult(searchRequest);
-        SewerageSearchResult searchResultObject ;
-        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
-                searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
-        for (final SewerageIndex sewerageIndexObject : searchResult) {
-            searchResultObject = new SewerageSearchResult();
-            searchResultObject.setApplicationNumber(sewerageIndexObject.getApplicationNumber());
-            if (searchRequest.getNoticeType() != null)
-                if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_WORK_ORDER)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getWorkOrderNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getWorkOrderDate()));
-                } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_ESTIMATION)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getEstimationNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getEstimationDate()));
-                } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getClosureNoticeNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getClosureNoticeDate()));
-                } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_REJECTION)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getRejectionNoticeNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getRejectionNoticeDate()));
-                }
-            searchResultObject.setShscNumber(sewerageIndexObject.getShscNumber());
-            searchResultObject.setDoorNumber(sewerageIndexObject.getDoorNo());
-            searchResultObject.setAddress(sewerageIndexObject.getAddress());
-            searchResultObject.setApplicantName(sewerageIndexObject.getConsumerName());
-            searchResultFomatted.add(searchResultObject);
-        }
-        return new DataTable<>(new PageImpl<>(searchResultFomatted, pageable, searchResult.getTotalElements()),searchRequest.draw()) ;  }
+        final Pageable pageable = seweragePaginationService.sewerageNoticeSearch(searchRequest, searchResultFomatted,
+                searchResult);
+        return new DataTable<>(new PageImpl<>(searchResultFomatted, pageable, searchResult.getTotalElements()),
+                searchRequest.draw());
+    }
+
+
 
     @RequestMapping(value = "/search-NoticeResultSize", method = RequestMethod.GET)
     @ResponseBody
@@ -200,10 +187,9 @@ public class SewerageNoticeController {
         return noticeList;
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/searchNotices-mergeAndDownload", method = RequestMethod.GET)
     public String mergeAndDownload(@ModelAttribute final SewerageNoticeSearchRequest searchRequest,
-            final HttpServletResponse response) throws Exception {
+            final HttpServletResponse response) throws IOException {
         final String noticeType = null;
         final List<SewerageNotice> noticeList = getSearchedNotices(searchRequest);
         if (LOGGER.isDebugEnabled())
@@ -255,10 +241,9 @@ public class SewerageNoticeController {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/searchNotices-seweragezipAndDownload")
     public String zipAndDownload(@ModelAttribute final SewerageNoticeSearchRequest searchRequest,
-            final HttpServletResponse response) throws ValidationException {
+            final HttpServletResponse response) {
         final List<SewerageNotice> noticeList = getSearchedNotices(searchRequest);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into zipAndDownload method");
