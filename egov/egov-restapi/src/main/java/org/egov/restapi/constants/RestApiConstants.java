@@ -608,7 +608,7 @@ public class RestApiConstants {
     public static final String INACTIVE_UNIT_RATES_REQ_MSG = "There is no Active Unit Rates for given Zone,Claasfication,Usage and Occupancy Date";
     
     public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_CODE = "111";
-    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_REQ_MSG = "There is Mapping Found for selected Locality , Block and Ward";
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_REQ_MSG = "There is No Mapping Found for selected Locality , Block and Ward";
     
     public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_CODE = "112";
     public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_REQ_MSG = "There is Mapping Found for selected Locality , Block and Ward";
@@ -634,4 +634,13 @@ public class RestApiConstants {
     
     public static final String NON_VACANT_TO_VACANT = "116";
     public static final String NON_VACANT_TO_VACANT_MSG = "Non-Vacant Property cannot be converted to Vacant land";
+    
+    public static final String LAYOUT_AUTH_DOESNT_EXIST = "117";
+    public static final String LAYOUT_AUTH_DOESNT_EXIST_MSG = "Entered layout authority doesn't exist, Please enter existing one";
+    
+    public static final String BLD_PERMISSION_DATE_REQ = "118";
+    public static final String BLD_PERMISSION_DATE_REQ_MSG = "Building Permission Date is Required";
+    
+    public static final String BLD_PLAN_PLINTHAREA_REQ = "119";
+    public static final String BLD_PLAN_PLINTHAREA_REQ_MSG = "Building Plan Plinth Area is Required";
 }

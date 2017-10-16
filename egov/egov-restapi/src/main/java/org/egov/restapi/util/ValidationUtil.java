@@ -157,21 +157,21 @@ public class ValidationUtil {
 			return errorDetails;
 		}
 
-		if (mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE))
-			if (StringUtils.isBlank(propertyTransferDetails.getSaleDetails())) {
-				errorDetails = new ErrorDetails();
-				errorDetails.setErrorCode(SALE_DETAILS_REQ_CODE);
-				errorDetails.setErrorMessage(SALE_DETAILS_REQ_MSG);
-				return errorDetails;
-			}
+		if (mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)
+				&& StringUtils.isBlank(propertyTransferDetails.getSaleDetails())) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(SALE_DETAILS_REQ_CODE);
+			errorDetails.setErrorMessage(SALE_DETAILS_REQ_MSG);
+			return errorDetails;
+		}
 
-		if (!mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE))
-			if (StringUtils.isNotBlank(propertyTransferDetails.getSaleDetails())) {
-				errorDetails = new ErrorDetails();
-				errorDetails.setErrorCode(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
-				errorDetails.setErrorMessage(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
-				return errorDetails;
-			}
+		if (!mutationReasonCode.equalsIgnoreCase(PropertyTaxConstants.MUTATION_REASON_CODE_SALE)
+				&& StringUtils.isNotBlank(propertyTransferDetails.getSaleDetails())) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorCode(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_CODE);
+			errorDetails.setErrorMessage(OTHER_MUTATION_CODES_SALE_DETAILS_VALIDATION_MSG);
+			return errorDetails;
+		}
 
 		final String deedNo = propertyTransferDetails.getDeedNo();
 		if (StringUtils.isBlank(deedNo)) {
@@ -291,16 +291,19 @@ public class ValidationUtil {
 			errorDetails.setErrorMessage(ASSESSMENT_DETAILS_REQ_MSG);
 			return errorDetails;
 		} else {
-			if (assessmentsDetails != null) {
-				if (StringUtils.isBlank(assessmentsDetails.getMutationReasonCode())
-						&& !PropertyTaxConstants.PROPERTY_MODE_MODIFY.equalsIgnoreCase(mode)) {
-					errorDetails.setErrorCode(REASON_FOR_CREATION_REQ_CODE);
-					errorDetails.setErrorMessage(REASON_FOR_CREATION_REQ_MSG);
-					return errorDetails;
-				}
+			if (assessmentsDetails != null && StringUtils.isBlank(assessmentsDetails.getMutationReasonCode())
+					&& !PropertyTaxConstants.PROPERTY_MODE_MODIFY.equalsIgnoreCase(mode)) {
+				errorDetails.setErrorCode(REASON_FOR_CREATION_REQ_CODE);
+				errorDetails.setErrorMessage(REASON_FOR_CREATION_REQ_MSG);
+				return errorDetails;
+
 			}
-			if (!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)
-					&& !mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)) {
+			final BasicProperty basicProperty = basicPropertyDAO
+					.getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
+			if (assessmentsDetails != null && !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)
+					&& (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)
+							|| basicProperty.getActiveProperty().getPropertyDetail().getCategoryType()
+									.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_VACANT_LAND))) {
 				if (StringUtils.isBlank(assessmentsDetails.getExtentOfSite())) {
 					errorDetails.setErrorCode(EXTENT_OF_SITE_REQ_CODE);
 					errorDetails.setErrorMessage(EXTENT_OF_SITE_REQ_MSG);
@@ -500,14 +503,25 @@ public class ValidationUtil {
 							return errorDetails;
 						}
 					}
-
-					if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY))
-						if (propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate())
-								.after(propertyExternalService.convertStringToDate(floorDetails.getOccupancyDate()))) {
-							errorDetails.setErrorCode(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE);
-							errorDetails.setErrorMessage(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG);
+					if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)
+							&& propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate()).after(
+									propertyExternalService.convertStringToDate(floorDetails.getOccupancyDate()))) {
+						errorDetails.setErrorCode(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE);
+						errorDetails.setErrorMessage(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG);
+						return errorDetails;
+					}
+					if (StringUtils.isNotBlank(floorDetails.getBuildingPermissionNo())) {
+						if (StringUtils.isBlank(floorDetails.getBuildingPermissionDate())) {
+							errorDetails.setErrorCode(BLD_PERMISSION_DATE_REQ);
+							errorDetails.setErrorMessage(BLD_PERMISSION_DATE_REQ_MSG);
 							return errorDetails;
 						}
+						if (floorDetails.getBuildingPlanPlinthArea() == null) {
+							errorDetails.setErrorCode(BLD_PLAN_PLINTHAREA_REQ);
+							errorDetails.setErrorMessage(BLD_PLAN_PLINTHAREA_REQ_MSG);
+							return errorDetails;
+						}
+					}
 				}
 		}
 
@@ -582,7 +596,7 @@ public class ValidationUtil {
 	 * @throws ParseException
 	 */
 	public ErrorDetails validateVacantLandDetails(final CreatePropertyDetails createPropDetails,
-			ErrorDetails errorDetails) throws ParseException {
+			ErrorDetails errorDetails) {
 		final VacantLandDetails vacantLandDetails = createPropDetails.getVacantLandDetails();
 		if (vacantLandDetails == null) {
 			errorDetails.setErrorCode(VACANT_LAND_DETAILS_REQ_CODE);
@@ -656,6 +670,11 @@ public class ValidationUtil {
 				errorDetails.setErrorMessage(LAYOUT_AUTHORITY_REQ_MSG);
 				return errorDetails;
 			}
+			if (layoutApprovalAuthorityRepo.findOne(vacantLandDetails.getLayoutApprovalAuthority()) == null) {
+				errorDetails.setErrorCode(LAYOUT_AUTH_DOESNT_EXIST);
+				errorDetails.setErrorMessage(LAYOUT_AUTH_DOESNT_EXIST_MSG);
+				return errorDetails;
+			}
 			if (vacantLandDetails.getLayoutPermitNumber().isEmpty() && !NO_APPROVAL.equals(
 					layoutApprovalAuthorityRepo.findOne(vacantLandDetails.getLayoutApprovalAuthority()).getName())) {
 				errorDetails.setErrorCode(LAYOUT_AUTHORITY_NUM);
@@ -703,7 +722,6 @@ public class ValidationUtil {
 	 */
 	public ErrorDetails validateOwnerDetails(ErrorDetails errorDetails, final List<OwnerInformation> ownerDetailsList) {
 		if (ownerDetailsList == null) {
-			//errorDetails = new ErrorDetails();
 			errorDetails.setErrorCode(OWNER_DETAILS_REQ_CODE);
 			errorDetails.setErrorMessage(OWNER_DETAILS_REQ_MSG);
 			return errorDetails;

@@ -1243,7 +1243,7 @@ public class PropertyExternalService {
 		NewPropertyDetails newPropertyDetails = null;
 		final PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
 		BasicProperty basicProperty = createBscPropty(viewpropertyDetails, propService);
-
+		final Address ownerCorrAddr = createCorrespondenceAddress(viewpropertyDetails, basicProperty.getAddress());
 		PropertyImpl property = (PropertyImpl) basicProperty.getProperty();
 		property.setSource(SOURCE_SURVEY);
 		List<File> fileAttachments = new ArrayList<>(0);
@@ -1255,7 +1255,7 @@ public class PropertyExternalService {
 		}
 		processAndStoreDocumentsWithReason(basicProperty, DOCS_CREATE_PROPERTY, fileAttachments, uploadFileNames,
 				uploadContentTypes);
-		basicPropertyService.createOwners(property, basicProperty, basicProperty.getAddress());
+		basicPropertyService.createOwners(property, basicProperty, ownerCorrAddr);
 		transitionWorkFlow(property, propService, PROPERTY_MODE_CREATE);
 		basicPropertyService.applyAuditing(property.getState());
 		basicProperty = basicPropertyService.persist(basicProperty);
@@ -1398,39 +1398,33 @@ public class PropertyExternalService {
 		return basicProperty;
 	}
 	
-	private PropertyAddress createPropAddress(ViewPropertyDetails viewPropertyDetails ,final Boundary block) {
-
+	private PropertyAddress createPropAddress(ViewPropertyDetails viewPropertyDetails, final Boundary block) {
 		final Address propAddr = new PropertyAddress();
 		propAddr.setHouseNoBldgApt(viewPropertyDetails.getDoorNo());
-		propAddr.setAreaLocalitySector(
-				getBoundaryByNumberAndType(viewPropertyDetails.getLocalityName(), LOCALITY_BNDRY_TYPE, LOCATION_HIERARCHY_TYPE).getName());
+		propAddr.setAreaLocalitySector(getBoundaryByNumberAndType(viewPropertyDetails.getLocalityName(),
+				LOCALITY_BNDRY_TYPE, LOCATION_HIERARCHY_TYPE).getName());
 		String cityName = ApplicationThreadLocals.getCityName();
 		propAddr.setStreetRoadLine(block.getParent().getName());
 		propAddr.setCityTownVillage(cityName);
 
 		if (StringUtils.isNotBlank(viewPropertyDetails.getPinCode()))
 			propAddr.setPinCode(viewPropertyDetails.getPinCode());
-
-		Address ownerAddress = null;
-		if (viewPropertyDetails.getIsCorrAddrDiff())
-			ownerAddress = createCorrespondenceAddress(viewPropertyDetails);
-		else {
-			ownerAddress = new CorrespondenceAddress();
-			ownerAddress.setAreaLocalitySector(propAddr.getAreaLocalitySector());
-			ownerAddress.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
-			ownerAddress.setStreetRoadLine(propAddr.getStreetRoadLine());
-			ownerAddress.setPinCode(propAddr.getPinCode());
-		}
-
 		return (PropertyAddress) propAddr;
 	}
 	
-	private Address createCorrespondenceAddress(ViewPropertyDetails viewPropertyDetails) {
+	private Address createCorrespondenceAddress(ViewPropertyDetails viewPropertyDetails, PropertyAddress propAddr) {
 		final Address ownerCorrAddr = new CorrespondenceAddress();
-		ownerCorrAddr.setHouseNoBldgApt(viewPropertyDetails.getDoorNo());
-		ownerCorrAddr.setAreaLocalitySector(viewPropertyDetails.getCorrAddr1());
-		ownerCorrAddr.setStreetRoadLine(viewPropertyDetails.getCorrAddr2());
-		ownerCorrAddr.setPinCode(viewPropertyDetails.getPinCode());
+		if (viewPropertyDetails.getIsCorrAddrDiff()) {
+			ownerCorrAddr.setHouseNoBldgApt(viewPropertyDetails.getDoorNo());
+			ownerCorrAddr.setAreaLocalitySector(viewPropertyDetails.getCorrAddr1());
+			ownerCorrAddr.setStreetRoadLine(viewPropertyDetails.getCorrAddr2());
+			ownerCorrAddr.setPinCode(viewPropertyDetails.getPinCode());
+		} else {
+			ownerCorrAddr.setAreaLocalitySector(propAddr.getAreaLocalitySector());
+			ownerCorrAddr.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
+			ownerCorrAddr.setStreetRoadLine(propAddr.getStreetRoadLine());
+			ownerCorrAddr.setPinCode(propAddr.getPinCode());
+		}
 		return ownerCorrAddr;
 	}
 	
@@ -1474,8 +1468,6 @@ public class PropertyExternalService {
 		documentTypeDetails.setSigned(viewPropertyDetails.getTwSigned());
 		documentTypeDetailsService.persist(documentTypeDetails);
 	}
-	
-
 
 	private PropertyStatus getPropertyStatus() {
 		final Query qry = entityManager.createQuery("from PropertyStatus where statusCode = :statusCode");
@@ -1640,6 +1632,7 @@ public class PropertyExternalService {
 					? ownerInfo.getGuardianRelation() : StringUtils.EMPTY);
 			owner.setGuardian(
 					StringUtils.isNotBlank(ownerInfo.getGuardian()) ? ownerInfo.getGuardian() : StringUtils.EMPTY);
+			
 			propOwner.setOwner(owner);
 			proeprtyOwnerInfoList.add(propOwner);
 		}
@@ -2683,6 +2676,7 @@ public class PropertyExternalService {
 		// Creating Property Address object
 		final Boundary block = getBoundaryByNumberAndType(viewPropertyDetails.getBlockName(), BLOCK, REVENUE_HIERARCHY_TYPE);
 		final PropertyAddress propAddress = createPropAddress(viewPropertyDetails, block);
+		final Address ownerCorrAddr= createCorrespondenceAddress(viewPropertyDetails,propAddress); 
 		basicProperty.setAddress(propAddress);
 
 		// Creating PropertyID object based on basic property, localityCode and
@@ -2709,10 +2703,10 @@ public class PropertyExternalService {
 		propty.setBasicProperty(basicProperty);
 
 		if (!viewPropertyDetails.getIsExtentAppurtenantLand()) {
-			basicPropertyService.createOwners(propty, basicProperty, basicProperty.getAddress());
+			basicPropertyService.createOwners(propty, basicProperty, ownerCorrAddr);
 			propty.setBasicProperty(basicProperty);
 		} else
-			basicPropertyService.createOwnersForAppurTenant(propty, basicProperty, basicProperty.getAddress());
+			basicPropertyService.createOwnersForAppurTenant(propty, basicProperty, ownerCorrAddr);
 		propty.setPropertyModifyReason(PROP_CREATE_RSN);
 		return basicProperty;
 	}
@@ -2727,10 +2721,15 @@ public class PropertyExternalService {
 			// private Land without appurtenant
 			propertyImpl.getPropertyDetail()
 					.setEffectiveDate(convertStringToDate(viewPropertyDetails.getFloorDetails().get(0).getOccupancyDate()));
-			final FloorType floorType = floorTypeService.getFloorTypeById(Long.valueOf(viewPropertyDetails.getFloorType()));
-			final RoofType roofType = roofTypeService.getRoofTypeById(Long.valueOf(viewPropertyDetails.getRoofType()));
+
+			FloorType floorType = null;
+			RoofType roofType = null;
 			WallType wallType = null;
 			WoodType woodType = null;
+			if (StringUtils.isNotBlank(viewPropertyDetails.getFloorType()))
+				floorType = floorTypeService.getFloorTypeById(Long.valueOf(viewPropertyDetails.getFloorType()));
+			if (StringUtils.isNotBlank(viewPropertyDetails.getRoofType()))
+				roofType = roofTypeService.getRoofTypeById(Long.valueOf(viewPropertyDetails.getRoofType()));
 			if (StringUtils.isNotBlank(viewPropertyDetails.getWallType()))
 				wallType = wallTypeService.getWallTypeById(Long.valueOf(viewPropertyDetails.getWallType()));
 			if (StringUtils.isNotBlank(viewPropertyDetails.getWoodType()))
@@ -2849,7 +2848,6 @@ public class PropertyExternalService {
 					if (categories.isEmpty()){
 	            		 isActive=Boolean.TRUE;
 	            	 }
-            	 
             }
 
 		}
