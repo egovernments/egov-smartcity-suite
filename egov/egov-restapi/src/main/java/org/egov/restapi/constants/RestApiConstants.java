@@ -239,8 +239,8 @@ public class RestApiConstants {
     public static final String ELECTION_WARD_REQ_CODE = "72";
     public static final String ELECTION_WARD_REQ_MSG = "Election Ward is required.";
     
-    public static final String VACANTLAND_AREA_REQ = "733";
-    public static final String VACANTLAND_AREA_REQ_MSG = "Vacant Land Area is required.";
+	public static final String VACANTLAND_AREA_REQ = "73";
+	public static final String VACANTLAND_AREA_REQ_MSG = "Vacant Land Area Type is required.";
     
     public static final String CATEGORY_CANT_BE_RESIDENTIAL = "74";
     public static final String CATEGORY_CANT_BE_RESIDENTIAL_MSG = "Ownership type is Vacant Land, hence Property type can't be Residential, Non-Residential or Mixed.";
@@ -643,4 +643,11 @@ public class RestApiConstants {
     
     public static final String BLD_PLAN_PLINTHAREA_REQ = "119";
     public static final String BLD_PLAN_PLINTHAREA_REQ_MSG = "Building Plan Plinth Area is Required";
+    
+    public static final String NATUREOFUSAGE_CANT_BE_RESIDENTIAL = "120";
+    public static final String NATUREOFUSAGE_CANT_BE_RESIDENTIAL_MSG = "Non-Residential property hence, Nature of Usage can't be Residential.";
+    
+    public static final String VACANT_PLOT_AREA_TYPE_DOESNT_EXIST = "121";
+    public static final String VACANT_PLOT_AREA_TYPE_DOESNT_EXIST_MSG = "Vacant Plot Area type Doesn't Exists.";
+
 }

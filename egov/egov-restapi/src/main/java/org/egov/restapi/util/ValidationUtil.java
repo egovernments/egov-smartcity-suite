@@ -47,6 +47,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TY
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
 import static org.egov.restapi.constants.RestApiConstants.*;
 
 import java.text.ParseException;
@@ -72,6 +73,7 @@ import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
+import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.ptis.master.service.PropertyUsageService;
 import org.egov.ptis.master.service.StructureClassificationService;
@@ -110,6 +112,9 @@ public class ValidationUtil {
 	
 	@Autowired
     private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepo;
+	
+	@Autowired
+	private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
 
 	private static final String EMAIL_PATTERN = "^[_A-Za-z0-9-\\+]+(\\.[_A-Za-z0-9-]+)*@"
 			+ "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$";
@@ -298,12 +303,8 @@ public class ValidationUtil {
 				return errorDetails;
 
 			}
-			final BasicProperty basicProperty = basicPropertyDAO
-					.getBasicPropertyByPropertyID(createPropDetails.getAssessmentNumber());
-			if (assessmentsDetails != null && !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)
-					&& (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)
-							|| basicProperty.getActiveProperty().getPropertyDetail().getCategoryType()
-									.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_VACANT_LAND))) {
+			if (assessmentsDetails != null
+					&& (!propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND))) {
 				if (StringUtils.isBlank(assessmentsDetails.getExtentOfSite())) {
 					errorDetails.setErrorCode(EXTENT_OF_SITE_REQ_CODE);
 					errorDetails.setErrorMessage(EXTENT_OF_SITE_REQ_MSG);
@@ -396,6 +397,13 @@ public class ValidationUtil {
 					if (StringUtils.isBlank(floorDetails.getNatureOfUsageCode())) {
 						errorDetails.setErrorCode(NATURE_OF_USAGES_REQ_CODE);
 						errorDetails.setErrorMessage(NATURE_OF_USAGES_REQ_MSG);
+						return errorDetails;
+					}
+					if (propertyCategoryCode.equalsIgnoreCase(PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL)
+							&& propertyUsageService.getUsageByCode(floorDetails.getNatureOfUsageCode()).getUsageName()
+									.equalsIgnoreCase(NATURE_OF_USAGE_RESIDENCE)) {
+						errorDetails.setErrorCode(NATUREOFUSAGE_CANT_BE_RESIDENTIAL);
+						errorDetails.setErrorMessage(NATUREOFUSAGE_CANT_BE_RESIDENTIAL_MSG);
 						return errorDetails;
 					}
 					final Boolean usage = propertyUsageService.isActiveUsage(floorDetails.getNatureOfUsageCode());
@@ -660,9 +668,14 @@ public class ValidationUtil {
 				errorDetails.setErrorMessage(EFFECTIVE_DATE_REQ_MSG);
 				return errorDetails;
 			}
-			if (vacantLandDetails.getVacantLandPlot().isEmpty()) {
+			if (vacantLandDetails.getVacantLandPlot() == null) {
 				errorDetails.setErrorCode(VACANTLAND_AREA_REQ);
 				errorDetails.setErrorMessage(VACANTLAND_AREA_REQ_MSG);
+				return errorDetails;
+			}
+			if (vacantLandPlotAreaRepository.findOne(vacantLandDetails.getVacantLandPlot()) == null) {
+				errorDetails.setErrorCode(VACANT_PLOT_AREA_TYPE_DOESNT_EXIST);
+				errorDetails.setErrorMessage(VACANT_PLOT_AREA_TYPE_DOESNT_EXIST_MSG);
 				return errorDetails;
 			}
 			if (vacantLandDetails.getLayoutApprovalAuthority() == null) {

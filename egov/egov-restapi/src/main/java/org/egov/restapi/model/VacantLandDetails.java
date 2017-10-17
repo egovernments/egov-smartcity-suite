@@ -50,16 +50,16 @@ public class VacantLandDetails implements Serializable {
 	private Double marketValue;
 	private Double currentCapitalValue;
 	private String effectiveDate;
-	private String vacantLandPlot;
+	private Long vacantLandPlot;
 	private Long layoutApprovalAuthority;
 	private String layoutPermitNumber;
 	private String layoutPermitDate;
 
-	public String getVacantLandPlot() {
+	public Long getVacantLandPlot() {
 		return vacantLandPlot;
 	}
 
-	public void setVacantLandPlot(String vacantLandPlot) {
+	public void setVacantLandPlot(Long vacantLandPlot) {
 		this.vacantLandPlot = vacantLandPlot;
 	}
 

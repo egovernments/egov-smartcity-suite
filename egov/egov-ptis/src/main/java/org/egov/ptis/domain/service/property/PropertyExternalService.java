@@ -2766,7 +2766,7 @@ public class PropertyExternalService {
 			propertyImpl.getPropertyDetail().setMarketValue(viewPropertyDetails.getMarketValue());
 			propertyImpl = propService.createProperty(propertyImpl, viewPropertyDetails.getExtentOfSite(), viewPropertyDetails.getMutationReason(),
 					propertyTypeMaster.getId().toString(), null, null, STATUS_ISACTIVE, viewPropertyDetails.getRegdDocNo(), null, null,
-					null, null, null, null, null, StringUtils.isNotBlank(viewPropertyDetails.getVlPlotArea())?Long.valueOf((viewPropertyDetails.getVlPlotArea())):null, StringUtils.isNotBlank(viewPropertyDetails.getVlPlotArea())?Long.valueOf((viewPropertyDetails.getVlPlotArea())):null,
+					null, null, null, null, null, viewPropertyDetails.getVlPlotArea() != null ? Long.valueOf((viewPropertyDetails.getVlPlotArea())):null, viewPropertyDetails.getVlPlotArea() != null ? Long.valueOf((viewPropertyDetails.getVlPlotArea())):null,
 					Boolean.FALSE);
 		}
 		propertyImpl.setBasicProperty(basicProperty);

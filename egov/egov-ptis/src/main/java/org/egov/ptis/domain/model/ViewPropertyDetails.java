@@ -100,7 +100,7 @@ public class ViewPropertyDetails {
     private String southBoundary;
     private String eastBoundary;
     private String westBoundary;
-    private String vlPlotArea;
+    private Long vlPlotArea;
     private Long laAuthority;
     private String lpNo;
     private String lpDate;
@@ -594,11 +594,11 @@ public class ViewPropertyDetails {
         this.westBoundary = westBoundary;
     }
 
-    public String getVlPlotArea() {
+    public Long getVlPlotArea() {
         return vlPlotArea;
     }
 
-    public void setVlPlotArea(String vlPlotArea) {
+    public void setVlPlotArea(Long vlPlotArea) {
         this.vlPlotArea = vlPlotArea;
     }
 
