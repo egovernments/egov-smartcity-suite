@@ -681,8 +681,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             for (final PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo())
                 for (final Address userAddress : ownerInfo.getOwner().getAddress())
                     if (null != userAddress) {
-                        final String corrAddress = userAddress.getHouseNoBldgApt() + ","
-                                + userAddress.getAreaLocalitySector();
+                        final String corrAddress = (userAddress.getHouseNoBldgApt() != null
+                                ? userAddress.getHouseNoBldgApt() + ","
+                                : "") + userAddress.getAreaLocalitySector();
                         setCorrAddress1(corrAddress);
                         setCorrAddress2(userAddress.getStreetRoadLine());
                         setCorrPinCode(userAddress.getPinCode());
@@ -1318,7 +1319,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 ownerAddress.setAreaLocalitySector(getCorrAddress1());
             else
                 ownerAddress.setAreaLocalitySector(corrAddr[1]);
-            ownerAddress.setHouseNoBldgApt(getHouseNumber());
             ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
@@ -1351,7 +1351,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             ownerAddress.setPinCode(propAddr.getPinCode());
         } else {
             ownerAddress = new CorrespondenceAddress();
-            ownerAddress.setHouseNoBldgApt(getHouseNumber());
             ownerAddress.setAreaLocalitySector(getCorrAddress1());
             ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setCityTownVillage(cityName);
