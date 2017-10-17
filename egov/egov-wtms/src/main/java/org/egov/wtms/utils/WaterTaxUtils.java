@@ -758,7 +758,7 @@ public class WaterTaxUtils {
     
     public Boolean isRoleAdmin(final User user) {
         for (final Role role : user.getRoles())
-            if (role != null && role.getName().equalsIgnoreCase(WaterTaxConstants.ROLE_SUPERUSER))
+            if (role != null && role.getName().equalsIgnoreCase(WaterTaxConstants.ROLE_ADMIN))
                 return true;
         return false;
     }
