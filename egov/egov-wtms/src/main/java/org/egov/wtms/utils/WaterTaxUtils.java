@@ -755,4 +755,11 @@ public class WaterTaxUtils {
         return !appConfigValues.isEmpty() && "Yes".equalsIgnoreCase(appConfigValues.get(0).getValue());
 
     }
+    
+    public Boolean isRoleAdmin(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(WaterTaxConstants.ROLE_SUPERUSER))
+                return true;
+        return false;
+    }
 }
