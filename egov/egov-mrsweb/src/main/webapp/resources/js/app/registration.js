@@ -239,6 +239,34 @@ $(document).ready( function () {
 		window.open(url);
 	});
 
+	
+	$('.file-ellipsis.upload-file').change( function(e) {		
+		var fileInput = $(this);
+		var maxSize = 2097152; // file size in
+								// bytes(2MB)
+		var inMB = maxSize / 1024 / 1024;
+		if (fileInput.get(0).files.length) {
+			var fileSize = this.files[0].size; // in
+												// bytes
+			var charlen = (this.value
+					.split('/').pop().split(
+							'\\').pop()).length;
+			if (charlen > 50) {
+				bootbox
+						.alert('File length should not exceed 50 characters!');
+				fileInput.replaceWith(fileInput
+						.val('').clone(true));
+				return false;
+			} else if (fileSize > maxSize) {
+				bootbox
+						.alert('File size should not exceed '
+								+ inMB + ' MB!');
+				fileInput.replaceWith(fileInput
+						.val('').clone(true));
+				return false;
+			}
+		}
+	});
 
 var fileformatsinclude = ['jpeg','jpg','png']; 
 	
