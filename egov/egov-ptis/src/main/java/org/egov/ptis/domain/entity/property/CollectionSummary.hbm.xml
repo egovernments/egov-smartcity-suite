@@ -42,7 +42,7 @@
 	"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-    <class name="org.egov.ptis.domain.entity.property.CollectionSummary" table="EGPT_MV_COLLECTIONREPORT">
+    <class name="org.egov.ptis.domain.entity.property.CollectionSummary" table="EGPT_MV_COLLECTIONREPORT" mutable="false">
     		<composite-id>
             	<key-property name="receiptHeaderId" column="receiptHeaderId" />
         	</composite-id>
