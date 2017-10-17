@@ -56,7 +56,7 @@
 							<spring:message code="lbl.sanctionnumber"/><span class="mandatory"></span>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="approvalNumber" path="approvalNumber" maxlength="50" required="required" />
+							<form:input class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash" id="approvalNumber" path="approvalNumber" minlength="3" maxlength="50" required="required" />
 							<form:errors path="approvalNumber" cssClass="add-margin error-msg" />
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
