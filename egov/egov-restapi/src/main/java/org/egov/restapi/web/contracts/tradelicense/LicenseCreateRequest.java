@@ -63,8 +63,8 @@ public class LicenseCreateRequest {
     private static final String EMAIL = "^[\\w!#$%&'*+/=?`{|}~^-]+(?:\\.[\\w!#$%&'*+/=?`{|}~^-]+)*@(?:[a-zA-Z0-9-]+\\.)+[a-zA-Z]{2,6}$";
     private static final String ALPHANUMERIC_WITHLENGTH = "^[0-9a-zA-Z-& :,/.()@]{1,256}$";
 
-    @NotNull(message = "ULB code must be present")
-    private Long ulbCode;
+    @NotBlank(message = "ULB code must be present")
+    private String ulbCode;
 
     @Pattern(regexp = ALPHABETS, message = "Invalid Applicant Name")
     private String applicantName;
@@ -75,8 +75,8 @@ public class LicenseCreateRequest {
     @Pattern(regexp = "^[0-9]{10,10}$", message = "Invalid Mobile Number")
     private String mobilePhoneNumber;
 
-    @Pattern(regexp = "^[0-9]{16,16}$", message = "Invalid Aadhaar Number")
-    private String adhaarNumber;
+    @Pattern(regexp = "^[0-9]{12,12}$", message = "Invalid Aadhaar Number")
+    private String aadhaarNumber;
 
     @Email(regexp = EMAIL, message = "Invalid Email")
     private String emailId;
@@ -94,8 +94,8 @@ public class LicenseCreateRequest {
     @JsonFormat(pattern = "dd-MM-yyyy", shape = JsonFormat.Shape.STRING)
     private Date commencementDate;
 
-    @NotNull(message = "Invalid Trade Area/Weight")
-    private BigDecimal tradeArea_weight;
+    @NotNull(message = "Invalid Trade Measure")
+    private BigDecimal tradeMeasure;
 
     @NotNull(message = "Invalid Locality")
     private Long boundary;
@@ -127,11 +127,11 @@ public class LicenseCreateRequest {
     @Length(max = 50, message = "Invalid Agreement Document No.")
     private String agreementDocNo;
 
-    public Long getUlbCode() {
+    public String getUlbCode() {
         return ulbCode;
     }
 
-    public void setUlbCode(Long ulbCode) {
+    public void setUlbCode(String ulbCode) {
         this.ulbCode = ulbCode;
     }
 
@@ -159,12 +159,12 @@ public class LicenseCreateRequest {
         this.mobilePhoneNumber = mobilePhoneNumber;
     }
 
-    public String getAdhaarNumber() {
-        return adhaarNumber;
+    public String getAadhaarNumber() {
+        return aadhaarNumber;
     }
 
-    public void setAdhaarNumber(String adhaarNumber) {
-        this.adhaarNumber = adhaarNumber;
+    public void setAadhaarNumber(String aadhaarNumber) {
+        this.aadhaarNumber = aadhaarNumber;
     }
 
     public String getEmailId() {
@@ -207,12 +207,12 @@ public class LicenseCreateRequest {
         this.commencementDate = commencementDate;
     }
 
-    public BigDecimal getTradeArea_weight() {
-        return tradeArea_weight;
+    public BigDecimal getTradeMeasure() {
+        return tradeMeasure;
     }
 
-    public void setTradeArea_weight(BigDecimal tradeArea_weight) {
-        this.tradeArea_weight = tradeArea_weight;
+    public void setTradeMeasure(BigDecimal tradeMeasure) {
+        this.tradeMeasure = tradeMeasure;
     }
 
     public Long getBoundary() {

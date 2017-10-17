@@ -83,7 +83,8 @@ public class LicenseCreateAPIService {
         TradeLicense tradeLicense = new TradeLicense();
         Licensee licensee = new Licensee();
         licensee.setMobilePhoneNumber(license.getMobilePhoneNumber());
-        licensee.setUid(license.getAdhaarNumber());
+        if (isNotBlank(license.getAadhaarNumber()))
+            licensee.setUid(license.getAadhaarNumber());
         licensee.setApplicantName(license.getApplicantName());
         licensee.setFatherOrSpouseName(license.getFatherOrSpouseName());
         licensee.setAddress(license.getLicenseeAddress());
@@ -92,12 +93,10 @@ public class LicenseCreateAPIService {
         tradeLicense.setApplicationDate(new Date());
         tradeLicense.setAddress(license.getTradeAddress());
         tradeLicense.setNameOfEstablishment(license.getTradeTitle());
-        tradeLicense.setTradeArea_weight(license.getTradeArea_weight());
+        tradeLicense.setTradeArea_weight(license.getTradeMeasure());
         tradeLicense.setCommencementDate(license.getCommencementDate());
         tradeLicense.setNameOfEstablishment(license.getApplicantName());
         tradeLicense.setOwnershipType(license.getOwnershipType());
-        if (isNotBlank(license.getAdhaarNumber()))
-            tradeLicense.getLicensee().setUid(license.getAdhaarNumber());
         if (isNotBlank(license.getAssessmentNo()))
             tradeLicense.setAssessmentNo(license.getAssessmentNo());
         if (isNotBlank(license.getRemarks()))

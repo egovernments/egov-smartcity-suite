@@ -49,7 +49,7 @@ package org.egov.restapi.web.contracts.tradelicense;
 
 public class LicenseCreateResponse {
 
-    private String applicationNumber;
+    private String applicationNumber = "";
 
     private String status;
 
