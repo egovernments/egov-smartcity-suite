@@ -47,10 +47,6 @@
 
 package org.egov.restapi.web.controller.tradelicense;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.BoundaryType;
-import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
-import org.egov.infra.admin.master.repository.CrossHierarchyRepository;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.repository.LicenseCategoryRepository;
@@ -77,10 +73,6 @@ public class LicenseCreateAPIValidator implements Validator {
     @Autowired
     private NatureOfBusinessRepository natureOfBusinessRepository;
     @Autowired
-    private CrossHierarchyRepository crossHierarchyRepository;
-    @Autowired
-    private BoundaryTypeRepository boundaryTypeRepository;
-    @Autowired
     private ValidityRepository validityRepository;
 
     @Override
@@ -101,18 +93,14 @@ public class LicenseCreateAPIValidator implements Validator {
         if (natureOfBusinessRepository.findOne(license.getNatureOfBusiness()) == null)
             errors.rejectValue("natureOfBusiness", "Invalid Nature Of Business", "Invalid Nature Of Business");
 
-        BoundaryType blockType = boundaryTypeRepository.findByNameAndHierarchyTypeName("Block", "REVENUE");
-        List<Boundary> boundary = crossHierarchyRepository.findParentBoundariesByChildBoundaryAndParentBoundaryTypeIds(license.getBoundary(), blockType.getId());
-        if (boundary == null ||
-                !boundary.stream().anyMatch(childBoundary -> childBoundary.getParent().getId().equals(license.getParentBoundary())))
-            errors.rejectValue("boundary", "Invalid Boundary", "Invalid Boundary");
-
         Long categoryId = licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()).getId();
         List<LicenseSubCategory> subCategories = licenseSubCategoryRepository.findByCategoryIdOrderByNameAsc(categoryId);
+
         if (!subCategories.stream().anyMatch(subCategory -> subCategory.getCode().equalsIgnoreCase(license.getSubCategory())))
             errors.rejectValue("subCategory", "Invalid SubCategory", "Invalid SubCategory");
 
-        if (Optional.ofNullable(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(license.getNatureOfBusiness(), categoryId))
+        if (Optional
+                .ofNullable(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(license.getNatureOfBusiness(), categoryId))
                 .orElse(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryIsNull(license.getNatureOfBusiness())) == null)
             errors.rejectValue("category", "License validity not defined for this Category",
                     "License validity not defined for this Category");

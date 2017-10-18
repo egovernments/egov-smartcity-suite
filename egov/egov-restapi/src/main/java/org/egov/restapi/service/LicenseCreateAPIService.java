@@ -46,7 +46,11 @@
  */
 package org.egov.restapi.service;
 
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.repository.BoundaryRepository;
+import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
+import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.Licensee;
@@ -61,6 +65,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Date;
+import java.util.List;
 
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
@@ -78,6 +83,10 @@ public class LicenseCreateAPIService {
     private LicenseSubCategoryRepository licenseSubCategoryRepository;
     @Autowired
     private NatureOfBusinessRepository natureOfBusinessRepository;
+    @Autowired
+    private BoundaryTypeRepository boundaryTypeRepository;
+    @Autowired
+    private CrossHierarchyService crossHierarchyService;
 
     public License createLicense(LicenseCreateRequest license) {
         TradeLicense tradeLicense = new TradeLicense();
@@ -106,8 +115,16 @@ public class LicenseCreateAPIService {
             tradeLicense.setAgreementDocNo(license.getAgreementDocNo());
         }
         tradeLicense.setNatureOfBusiness(natureOfBusinessRepository.findOne(license.getNatureOfBusiness()));
-        tradeLicense.setBoundary(boundaryRepository.findOne(license.getBoundary()));
-        tradeLicense.setParentBoundary(boundaryRepository.findOne(license.getParentBoundary()));
+
+        BoundaryType locality = boundaryTypeRepository.findByNameAndHierarchyTypeName("Locality", "LOCATION");
+        Boundary childBoundary = boundaryRepository.findByBoundaryTypeAndBoundaryNum(locality, license.getBoundary());
+        BoundaryType blockType = boundaryTypeRepository.findByNameAndHierarchyTypeName("Block", "REVENUE");
+        List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(childBoundary.getId(), blockType.getId());
+        blocks.stream().forEach(boundary -> {
+            if (boundary.getParent().getBoundaryNum().equals(license.getParentBoundary()))
+                tradeLicense.setParentBoundary(boundary.getParent());
+        });
+        tradeLicense.setBoundary(childBoundary);
         tradeLicense.setCategory(licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()));
         tradeLicense.setTradeName(licenseSubCategoryRepository.findByCode(license.getSubCategory()));
         return tradeLicenseService.create(tradeLicense, new WorkflowBean());
