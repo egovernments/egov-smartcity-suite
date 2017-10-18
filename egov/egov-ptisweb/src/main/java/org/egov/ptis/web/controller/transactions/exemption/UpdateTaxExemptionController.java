@@ -64,7 +64,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.Hashtable;
 import java.util.List;
@@ -118,8 +117,6 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private static final String NGO_DOC = "ngoDocs";
     private static final String WORSHIP_DOC = "worshipDocs";
     private static final String EXSERVICE_DOC = "exserviceDocs";
-    private boolean endorsementRequired = Boolean.FALSE;
-    protected List<Hashtable<String, Object>> historyMap = new ArrayList<>();
     
     private final TaxExemptionService taxExemptionService;
 
@@ -139,7 +136,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private ReassignService reassignService;
     
     @Autowired
-    private transient PropertyService propService;
+    private PropertyService propService;
 
     @Autowired
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
@@ -189,6 +186,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
         boolean isExempted = property.getBasicProperty().getActiveProperty().getIsExemptedFromTax();
         String userDesignationList;
+        boolean endorsementRequired = Boolean.FALSE;
+        List<Hashtable<String, Object>> historyMap;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
         User loggedInUser = securityUtils.getCurrentUser();
