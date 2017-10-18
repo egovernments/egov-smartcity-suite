@@ -64,7 +64,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Hashtable;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -84,6 +86,7 @@ import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.domain.service.exemption.TaxExemptionService;
+import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -116,6 +119,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     private static final String WORSHIP_DOC = "worshipDocs";
     private static final String EXSERVICE_DOC = "exserviceDocs";
     private boolean endorsementRequired = Boolean.FALSE;
+    protected List<Hashtable<String, Object>> historyMap = new ArrayList<>();
     
     private final TaxExemptionService taxExemptionService;
 
@@ -133,6 +137,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     
     @Autowired
     private ReassignService reassignService;
+    
+    @Autowired
+    private transient PropertyService propService;
 
     @Autowired
     public UpdateTaxExemptionController(final TaxExemptionService taxExemptionService) {
@@ -239,6 +246,11 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             } else {
                 model.addAttribute(NGO_DOC, property.getTaxExemptionDocumentsProxy());
             }
+        }
+        if (property != null && property.getId() != null && property.getState() != null) {
+            historyMap = propService.populateHistory(property);
+            model.addAttribute("historyMap", historyMap);
+            model.addAttribute("state", property.getState());
         }
         model.addAttribute("property", property);
         if (currState.endsWith(WF_STATE_REJECTED) || nextAction.equalsIgnoreCase(WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING)

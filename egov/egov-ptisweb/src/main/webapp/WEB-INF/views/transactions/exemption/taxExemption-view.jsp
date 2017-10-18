@@ -95,6 +95,13 @@ body
 				</div>
 			</div>
 			<c:choose>
+			<c:when test="${state != null}">
+				<tr>
+					<jsp:include page="../../common/workflowHistoryView.jsp" />
+				<tr>
+			</c:when>
+			</c:choose>
+			<c:choose>
 			<c:when test="${currentDesignation != 'Commissioner'}">
             <%-- <c:when test="${!fn:containsIgnoreCase(userDesignationList, designation)}"> --%>
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp"/>

@@ -132,6 +132,11 @@ body
 						</div>
 					</div>
 				</div>
+			<c:if test="${state != null}">
+				<tr>
+					<jsp:include page="../../common/workflowHistoryView.jsp" />
+				<tr>
+			</c:if>
 			<c:if test="${propertyByEmployee == true  && citizenPortalUser == false}">
 			<jsp:include page="../../common/commonWorkflowMatrix.jsp" />
 			</c:if>
