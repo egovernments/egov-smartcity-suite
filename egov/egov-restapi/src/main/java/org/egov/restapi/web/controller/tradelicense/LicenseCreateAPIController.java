@@ -47,6 +47,8 @@
 
 package org.egov.restapi.web.controller.tradelicense;
 
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.validation.exception.ValidationException;
 import org.egov.restapi.service.LicenseCreateAPIService;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateResponse;
@@ -91,9 +93,16 @@ public class LicenseCreateAPIController {
         }
     }
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<Object> restErrors(RuntimeException exception) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(new LicenseCreateResponse(false, HttpStatus.BAD_REQUEST.toString(), exception
-                .getMessage()));
+    @ExceptionHandler(ValidationException.class)
+    public ResponseEntity<Object> validationErrors(ValidationException exception) {
+        List<String> errors = exception.getErrors().stream().map(ValidationError::getMessage).collect(Collectors.toList());
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(new LicenseCreateResponse(false, HttpStatus.BAD_REQUEST.toString(), errors.toString()));
+    }
+
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> restErrors() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new LicenseCreateResponse(false, HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Server Error"));
     }
 }

@@ -72,12 +72,14 @@ public class LicenseCreateRequest {
     @Pattern(regexp = ALPHABETS, message = "Invalid Father/Spouse Name")
     private String fatherOrSpouseName;
 
+    @NotBlank(message = "Provide Mobile Number")
     @Pattern(regexp = "^[0-9]{10,10}$", message = "Invalid Mobile Number")
     private String mobilePhoneNumber;
 
     @Pattern(regexp = "^[0-9]{12,12}$", message = "Invalid Aadhaar Number")
     private String aadhaarNumber;
 
+    @NotBlank(message = "Provide EmailId")
     @Email(regexp = EMAIL, message = "Invalid Email")
     private String emailId;
 

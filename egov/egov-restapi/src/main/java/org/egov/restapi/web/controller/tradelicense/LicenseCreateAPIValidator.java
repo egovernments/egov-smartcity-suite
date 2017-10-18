@@ -47,16 +47,41 @@
 
 package org.egov.restapi.web.controller.tradelicense;
 
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.entity.BoundaryType;
+import org.egov.infra.admin.master.repository.BoundaryTypeRepository;
+import org.egov.infra.admin.master.repository.CrossHierarchyRepository;
 import org.egov.restapi.web.contracts.tradelicense.LicenseCreateRequest;
+import org.egov.tl.entity.LicenseSubCategory;
+import org.egov.tl.repository.LicenseCategoryRepository;
+import org.egov.tl.repository.LicenseSubCategoryRepository;
+import org.egov.tl.repository.NatureOfBusinessRepository;
+import org.egov.tl.repository.ValidityRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+
+import java.util.List;
+import java.util.Optional;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
 @Component
 public class LicenseCreateAPIValidator implements Validator {
+    @Autowired
+    private LicenseCategoryRepository licenseCategoryRepository;
+    @Autowired
+    private LicenseSubCategoryRepository licenseSubCategoryRepository;
+    @Autowired
+    private NatureOfBusinessRepository natureOfBusinessRepository;
+    @Autowired
+    private CrossHierarchyRepository crossHierarchyRepository;
+    @Autowired
+    private BoundaryTypeRepository boundaryTypeRepository;
+    @Autowired
+    private ValidityRepository validityRepository;
 
     @Override
     public boolean supports(final Class<?> clazz) {
@@ -70,7 +95,26 @@ public class LicenseCreateAPIValidator implements Validator {
 
         if ((license.getAgreementDate() == null && isNotBlank(license.getAgreementDocNo()))
                 || license.getAgreementDate() != null && isBlank(license.getAgreementDocNo()))
-            errors.rejectValue("agreementDate", "Provide both Agreement Date and Agreement Doc No.");
-    }
+            errors.rejectValue("agreementDate", "Provide both Agreement Date and Agreement Doc No",
+                    "Provide both Agreement Date and Agreement Doc No");
 
+        if (natureOfBusinessRepository.findOne(license.getNatureOfBusiness()) == null)
+            errors.rejectValue("natureOfBusiness", "Invalid Nature Of Business", "Invalid Nature Of Business");
+
+        BoundaryType blockType = boundaryTypeRepository.findByNameAndHierarchyTypeName("Block", "REVENUE");
+        List<Boundary> boundary = crossHierarchyRepository.findParentBoundariesByChildBoundaryAndParentBoundaryTypeIds(license.getBoundary(), blockType.getId());
+        if (boundary == null ||
+                !boundary.stream().anyMatch(childBoundary -> childBoundary.getParent().getId().equals(license.getParentBoundary())))
+            errors.rejectValue("boundary", "Invalid Boundary", "Invalid Boundary");
+
+        Long categoryId = licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()).getId();
+        List<LicenseSubCategory> subCategories = licenseSubCategoryRepository.findByCategoryIdOrderByNameAsc(categoryId);
+        if (!subCategories.stream().anyMatch(subCategory -> subCategory.getCode().equalsIgnoreCase(license.getSubCategory())))
+            errors.rejectValue("subCategory", "Invalid SubCategory", "Invalid SubCategory");
+
+        if (Optional.ofNullable(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryId(license.getNatureOfBusiness(), categoryId))
+                .orElse(validityRepository.findByNatureOfBusinessIdAndLicenseCategoryIsNull(license.getNatureOfBusiness())) == null)
+            errors.rejectValue("category", "License validity not defined for this Category",
+                    "License validity not defined for this Category");
+    }
 }
