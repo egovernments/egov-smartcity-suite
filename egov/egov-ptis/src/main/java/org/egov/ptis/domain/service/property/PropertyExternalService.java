@@ -1415,10 +1415,9 @@ public class PropertyExternalService {
 	private Address createCorrespondenceAddress(ViewPropertyDetails viewPropertyDetails, PropertyAddress propAddr) {
 		final Address ownerCorrAddr = new CorrespondenceAddress();
 		if (viewPropertyDetails.getIsCorrAddrDiff()) {
-			ownerCorrAddr.setHouseNoBldgApt(viewPropertyDetails.getDoorNo());
 			ownerCorrAddr.setAreaLocalitySector(viewPropertyDetails.getCorrAddr1());
 			ownerCorrAddr.setStreetRoadLine(viewPropertyDetails.getCorrAddr2());
-			ownerCorrAddr.setPinCode(viewPropertyDetails.getPinCode());
+			ownerCorrAddr.setPinCode(viewPropertyDetails.getCorrPinCode());
 		} else {
 			ownerCorrAddr.setAreaLocalitySector(propAddr.getAreaLocalitySector());
 			ownerCorrAddr.setHouseNoBldgApt(propAddr.getHouseNoBldgApt());
