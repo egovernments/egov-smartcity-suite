@@ -47,6 +47,7 @@
 
 package org.egov.stms.service.es;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
 import static org.egov.infra.utils.DateUtils.endOfGivenDate;
 import static org.egov.infra.utils.DateUtils.startOfGivenDate;
@@ -195,15 +196,15 @@ public class SewerageIndexService {
         sewarageIndex.setApplicationDate(sewerageApplicationDetails.getApplicationDate());
         sewarageIndex.setApplicationNumber(sewerageApplicationDetails.getApplicationNumber());
         sewarageIndex.setApplicationStatus(sewerageApplicationDetails.getStatus() != null
-                ? sewerageApplicationDetails.getStatus().getDescription() : "");
+                ? sewerageApplicationDetails.getStatus().getDescription() :EMPTY);
         sewarageIndex.setConsumerNumber(sewerageApplicationDetails.getApplicationNumber());
         sewarageIndex.setApplicationType(sewerageApplicationDetails.getApplicationType() != null
-                ? sewerageApplicationDetails.getApplicationType().getName() : "");
+                ? sewerageApplicationDetails.getApplicationType().getName() : EMPTY);
         sewarageIndex.setConnectionStatus(sewerageApplicationDetails.getConnection().getStatus() != null
-                ? sewerageApplicationDetails.getConnection().getStatus().name() : "");
+                ? sewerageApplicationDetails.getConnection().getStatus().name() : EMPTY);
         sewarageIndex.setCreatedDate(sewerageApplicationDetails.getCreatedDate());
         sewarageIndex.setShscNumber(sewerageApplicationDetails.getConnection().getShscNumber() != null
-                ? sewerageApplicationDetails.getConnection().getShscNumber() : "");
+                ? sewerageApplicationDetails.getConnection().getShscNumber() : EMPTY);
         sewarageIndex.setDisposalDate(sewerageApplicationDetails.getDisposalDate());
 
         sewarageIndex
@@ -214,33 +215,33 @@ public class SewerageIndexService {
         sewarageIndex
                 .setNoOfClosets_residential(sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential());
         sewarageIndex.setPropertyIdentifier(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() != null
-                ? sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() : "");
+                ? sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier() : EMPTY);
         sewarageIndex.setPropertyType(sewerageApplicationDetails.getConnectionDetail().getPropertyType() != null
-                ? sewerageApplicationDetails.getConnectionDetail().getPropertyType().name() : "");
+                ? sewerageApplicationDetails.getConnectionDetail().getPropertyType().name() : EMPTY);
         if (sewerageApplicationDetails.getEstimationDate() != null)
             sewarageIndex.setEstimationDate(sewerageApplicationDetails.getEstimationDate());
         sewarageIndex
                 .setEstimationNumber(sewerageApplicationDetails.getEstimationNumber() != null ? sewerageApplicationDetails
-                        .getEstimationNumber() : "");
+                        .getEstimationNumber() : EMPTY);
         if (sewerageApplicationDetails.getWorkOrderDate() != null)
             sewarageIndex.setWorkOrderDate(sewerageApplicationDetails.getWorkOrderDate());
         sewarageIndex
                 .setWorkOrderNumber(sewerageApplicationDetails.getWorkOrderNumber() != null ? sewerageApplicationDetails
-                        .getWorkOrderNumber() : "");
+                        .getWorkOrderNumber() : EMPTY);
         if (sewerageApplicationDetails.getClosureNoticeDate() != null)
             sewarageIndex
                     .setClosureNoticeDate(sewerageApplicationDetails.getClosureNoticeDate());
         sewarageIndex
                 .setClosureNoticeNumber(
                         sewerageApplicationDetails.getClosureNoticeNumber() != null ? sewerageApplicationDetails
-                                .getClosureNoticeNumber() : "");
+                                .getClosureNoticeNumber() : EMPTY);
         if (sewerageApplicationDetails.getRejectionDate() != null)
             sewarageIndex
                     .setRejectionNoticeDate(sewerageApplicationDetails.getRejectionDate());
         sewarageIndex
                 .setRejectionNoticeNumber(
                         sewerageApplicationDetails.getRejectionNumber() != null ? sewerageApplicationDetails
-                                .getRejectionNumber() : "");
+                                .getRejectionNumber() : EMPTY);
         Iterator<OwnerName> ownerNameItr = null;
         if (null != assessmentDetails.getOwnerNames())
             ownerNameItr = assessmentDetails.getOwnerNames().iterator();
@@ -248,26 +249,26 @@ public class SewerageIndexService {
         final StringBuilder mobileNumber = new StringBuilder();
         if (null != ownerNameItr && ownerNameItr.hasNext()) {
             final OwnerName primaryOwner = ownerNameItr.next();
-            consumerName.append(primaryOwner.getOwnerName() != null ? primaryOwner.getOwnerName() : "");
-            mobileNumber.append(primaryOwner.getMobileNumber() != null ? primaryOwner.getMobileNumber() : "");
+            consumerName.append(primaryOwner.getOwnerName() != null ? primaryOwner.getOwnerName() : EMPTY);
+            mobileNumber.append(primaryOwner.getMobileNumber() != null ? primaryOwner.getMobileNumber() : EMPTY);
             while (ownerNameItr.hasNext()) {
                 final OwnerName secondaryOwner = ownerNameItr.next();
-                consumerName.append(",").append(secondaryOwner.getOwnerName() != null ? secondaryOwner.getOwnerName() : "");
+                consumerName.append(",").append(secondaryOwner.getOwnerName() != null ? secondaryOwner.getOwnerName() : EMPTY);
                 mobileNumber.append(",")
-                        .append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : "");
+                        .append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : EMPTY);
             }
         }
         sewarageIndex.setMobileNumber(mobileNumber.toString());
         sewarageIndex.setConsumerName(consumerName.toString());
-        sewarageIndex.setDoorNo(assessmentDetails.getHouseNo() != null ? assessmentDetails.getHouseNo() : "");
+        sewarageIndex.setDoorNo(assessmentDetails.getHouseNo() != null ? assessmentDetails.getHouseNo() : EMPTY);
         sewarageIndex.setWard(
-                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getWardName() : "");
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getWardName() : EMPTY);
         sewarageIndex.setRevenueBlock(
-                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getBlockName() : "");
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getBlockName() : EMPTY);
         sewarageIndex.setLocationName(
-                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getLocalityName() : "");
+                assessmentDetails.getBoundaryDetails() != null ? assessmentDetails.getBoundaryDetails().getLocalityName() : EMPTY);
         sewarageIndex
-                .setAddress(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : "");
+                .setAddress(assessmentDetails.getPropertyAddress() != null ? assessmentDetails.getPropertyAddress() : EMPTY);
         sewarageIndex.setSource(sewerageApplicationDetails.getSource() != null ? sewerageApplicationDetails.getSource()
                 : Source.SYSTEM.toString());
         // Setting application status is active or in-active
@@ -307,7 +308,7 @@ public class SewerageIndexService {
                 calendar.setTime(sewerageApplicationDetails.getConnection().getExecutionDate());
             final int year = calendar.get(Calendar.YEAR);
             period = year + "-" + demand.getInstallmentYearDescription().substring(5, 9);
-            sewarageIndex.setPeriod(period != null ? period : StringUtils.EMPTY);
+            sewarageIndex.setPeriod(period != null ? period : EMPTY);
 
             if (installmentYear.equals(currentInstallmentYear) || installmentYear.after(currentInstallmentYear)) {
                 totalDemandAmount = totalDemandAmount.add(demand.getDemandAmount());
@@ -808,7 +809,7 @@ public class SewerageIndexService {
             List<SewerageApplicationDetails> sewerageApplicationDetailsList) {
         final JSONObject obj = new JSONObject(sewerageBulkExecutionResponse);
         final JSONArray jsonArray = obj.getJSONArray("sewerageExecutionResult");
-        String status = StringUtils.EMPTY;
+        String status = EMPTY;
         for (int i = 0; i < jsonArray.length(); ++i) {
             final JSONObject jsonobj = jsonArray.getJSONObject(i);
             SewerageApplicationDetails sewerageApplnDetailsObj = sewerageApplicationDetailsService.findBy(jsonobj.getLong("id"));
@@ -831,15 +832,21 @@ public class SewerageIndexService {
         return status;
     }
 
-    public Boolean update(List<SewerageApplicationDetails> seweragelist) {
-        if (!seweragelist.isEmpty()) {
-            for (SewerageApplicationDetails sewerageobj : seweragelist) {
-                sewerageobj.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
-                sewerageobj.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
-                sewerageobj.setActive(true);
-                sewerageApplicationDetailsService.updateExecutionDate(sewerageobj);
-                sewerageApplicationDetailsService.updatePortalMessage(sewerageobj);
-                sewerageApplicationDetailsService.updateIndexes(sewerageobj);
+    public Boolean update(List<SewerageApplicationDetails> sewerageList) {
+        if (!sewerageList.isEmpty()) {
+            for (SewerageApplicationDetails sewerageObj : sewerageList) {
+                sewerageObj.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
+                sewerageObj.getConnection().setStatus(SewerageConnectionStatus.ACTIVE);
+                sewerageObj.setActive(true);
+                final SewerageApplicationDetails parentSewerageAppDtls = sewerageApplicationDetailsService
+                        .findByConnection_ShscNumberAndIsActive(sewerageObj.getConnection().getShscNumber());
+                if (parentSewerageAppDtls != null) {
+                    parentSewerageAppDtls.setActive(false);
+                    sewerageObj.setParent(parentSewerageAppDtls);
+                }
+                sewerageApplicationDetailsService.updateExecutionDate(sewerageObj);
+                sewerageApplicationDetailsService.updatePortalMessage(sewerageObj);
+                sewerageApplicationDetailsService.updateIndexes(sewerageObj);
             }
             return true;
         } else

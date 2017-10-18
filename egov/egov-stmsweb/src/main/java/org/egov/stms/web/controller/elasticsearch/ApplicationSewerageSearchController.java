@@ -99,7 +99,7 @@ public class ApplicationSewerageSearchController {
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
     @Autowired
-    SeweragePaginationService seweragePaginationService;
+    private SeweragePaginationService seweragePaginationService;
 
     @ModelAttribute
     public SewerageConnSearchRequest searchRequest() {

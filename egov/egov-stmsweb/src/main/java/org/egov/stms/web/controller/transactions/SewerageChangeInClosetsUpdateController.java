@@ -1,41 +1,48 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
+ *
+ *  Copyright (C) <2017>  eGovernments Foundation
+ *
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
+ *
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
+ *
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ *      Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *      For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *      For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
+ *
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
+ *
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.stms.web.controller.transactions;
 
@@ -64,6 +71,7 @@ import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -107,6 +115,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/transactions")
 public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_COMENT = "approvalComent";
     private static final String PENDING_ACTIONS = "pendingActions";
     private static final String CHANGE_IN_CLOSETS_EDIT = "changeInClosets-edit";
     private static final String ADDITIONAL_RULE = "additionalRule";
@@ -118,8 +127,6 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
     private static final Logger LOG = LoggerFactory.getLogger(SewerageChangeInClosetsUpdateController.class);
 
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
-    private final DepartmentService departmentService;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -242,7 +249,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
     private String loadViewData(final Model model, final HttpServletRequest request,
             final SewerageApplicationDetails sewerageApplicationDetails) {
-        String inspectionDate = "";
+        String inspectionDate = StringUtils.EMPTY;
         String additionalRule = sewerageApplicationDetails.getApplicationType().getCode();
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
         for (final SewerageFieldInspection fieldInspection : sewerageApplicationDetails.getFieldInspections())
@@ -312,10 +319,10 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
         } else if (sewerageApplicationDetails.getStatus() != null &&
                 sewerageApplicationDetails.getStatus().getCode()
-                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED))
-            if (!sewerageDemandService
-                    .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))
-                additionalRule = SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+                        .equalsIgnoreCase(SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED)
+                && !sewerageDemandService
+                        .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))
+            additionalRule = SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
         model.addAttribute(ADDITIONAL_RULE, additionalRule);
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("currentState", sewerageApplicationDetails.getCurrentState().getValue());
@@ -366,11 +373,9 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             else if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE))
                 currentEstimationCharge = currentEstimationCharge.add(BigDecimal.valueOf(scf.getAmount()));
 
-        if (currentDonationCharge.compareTo(oldDonationCharge) <= 0
+        return currentDonationCharge.compareTo(oldDonationCharge) <= 0
                 && currentSewerageTax.compareTo(oldSewerageTax.add(oldApplicationAdvanceAmount)) <= 0
-                && currentEstimationCharge.compareTo(BigDecimal.ZERO) <= 0)
-            return false;
-        return true;
+                && currentEstimationCharge.compareTo(BigDecimal.ZERO) <= 0 ? true : false;
     }
 
     private void createSewerageConnectionFee(final SewerageApplicationDetails sewerageApplicationDetails, final String feeCode) {
@@ -392,8 +397,8 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             final HttpServletRequest request, final HttpSession session, final Model model,
             @RequestParam("files") final MultipartFile[] files,
             @RequestParam final String removedInspectRowId, @RequestParam final String removedEstimationDtlRowId) {
-        String mode = "";
-        String workFlowAction = "";
+        String mode = StringUtils.EMPTY;
+        String workFlowAction = StringUtils.EMPTY;
 
         if (request.getParameter("mode") != null)
             mode = request.getParameter("mode");
@@ -448,10 +453,10 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             populateDonationSewerageTax(sewerageApplicationDetails);
 
         Long approvalPosition = 0l;
-        String approvalComment = "";
+        String approvalComment = StringUtils.EMPTY;
 
-        if (request.getParameter("approvalComent") != null)
-            approvalComment = request.getParameter("approvalComent");
+        if (request.getParameter(APPROVAL_COMENT) != null)
+            approvalComment = request.getParameter(APPROVAL_COMENT);
 
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
@@ -463,10 +468,9 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
         if (!resultBinder.hasErrors()) {
             try {
-                if (null != workFlowAction)
-                    if (workFlowAction.equalsIgnoreCase(SewerageTaxConstants.PREVIEWWORKFLOWACTION)
-                            && sewerageApplicationDetails.getApplicationType().getCode()
-                                    .equals(SewerageTaxConstants.NEWSEWERAGECONNECTION))
+                if (null != workFlowAction && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.PREVIEWWORKFLOWACTION)
+                        && sewerageApplicationDetails.getApplicationType().getCode()
+                        .equals(SewerageTaxConstants.NEWSEWERAGECONNECTION))
                         return "redirect:/transactions/workorder?pathVar="
                                 + sewerageApplicationDetails.getApplicationNumber();
 
@@ -500,7 +504,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                     && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL))
                 return "redirect:/transactions/rejectionnotice?pathVar="
                         + sewerageApplicationDetails.getApplicationNumber() + "&" + "approvalComent="
-                        + request.getParameter("approvalComent");
+                        + request.getParameter(APPROVAL_COMENT);
             final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                     .getCurrentUser().getId(), new Date(), new Date());
             String nextDesign;
@@ -522,12 +526,12 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             } else if (assignObj == null && approvalPosition != null)
                 asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
-            nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+            nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : StringUtils.EMPTY;
 
             final String pathVars = sewerageApplicationDetails.getApplicationNumber() + ","
                     + sewerageTaxUtils.getApproverName(approvalPosition) + ","
-                    + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
-                    + (nextDesign != null ? nextDesign : "");
+                    + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : StringUtils.EMPTY) + ","
+                    + (nextDesign != null ? nextDesign : StringUtils.EMPTY);
             return "redirect:/transactions/changeInClosets-success?pathVars=" + pathVars;
         } else
             return loadViewData(model, request, sewerageApplicationDetails);
@@ -591,7 +595,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
         sewerageApplicationDetails.setEstimationDetails(sewerageConnectionEstimationDetailList);
         if (!existingSewerage.isEmpty())
             return existingSewerage;
-        return null;
+        return Collections.emptyList();
     }
 
     private void populateFeesDetails(final SewerageApplicationDetails sewerageApplicationDetails) {
@@ -605,8 +609,6 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
             final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpServletRequest request, final MultipartFile[] files) {
         final String inspectionDate = request.getParameter(INSPECTIONDATE);
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-
         final List<SewerageFieldInspectionDetails> existingInspectionDtlList = new ArrayList<>();
 
         if (!sewerageApplicationDetails.getFieldInspections().isEmpty())
@@ -615,11 +617,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
                 final List<SewerageFieldInspectionDetails> sewerageFieldInspectionDetailList = new ArrayList<>();
 
                 sewerageFieldInspection.setApplicationDetails(sewerageApplicationDetails);
-                try {
-                    sewerageFieldInspection.setInspectionDate(sdf.parse(inspectionDate));
-                } catch (final ParseException e) {
-
-                }
+                sewerageFieldInspection.setInspectionDate(DateUtils.toDateUsingDefaultPattern(inspectionDate));
                 final Set<FileStoreMapper> fileStoreSet = sewerageTaxUtils.addToFileStore(files);
                 Iterator<FileStoreMapper> fsIterator = null;
                 if (fileStoreSet != null && !fileStoreSet.isEmpty())
@@ -660,22 +658,20 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
         if (existingInspectionDtlList != null)
             return existingInspectionDtlList;
-        return null;
+        return Collections.emptyList();
     }
 
     private boolean validSewerageFieldInspectionDetails(
             final SewerageFieldInspectionDetails sewerageFieldInspectionDetails) {
-        if (sewerageFieldInspectionDetails != null
-                && sewerageFieldInspectionDetails.getNoOfPipes() != null && sewerageFieldInspectionDetails.getNoOfPipes() != 0)
-            return true;
-        return false;
+        return sewerageFieldInspectionDetails != null
+                && sewerageFieldInspectionDetails.getNoOfPipes() != null && sewerageFieldInspectionDetails.getNoOfPipes() != 0
+                        ? true : false;
     }
 
     private boolean validSewerageConnectioEstimationDetail(
             final SewerageConnectionEstimationDetails sewerageConnectionEstimationDetails) {
-        if (sewerageConnectionEstimationDetails != null && sewerageConnectionEstimationDetails.getItemDescription() != null)
-            return true;
-        return false;
+        return sewerageConnectionEstimationDetails != null && sewerageConnectionEstimationDetails.getItemDescription() != null
+                ? true : false;
     }
 
 }

@@ -1,43 +1,53 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
+ *
+ *  Copyright (C) <2017>  eGovernments Foundation
+ *
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
+ *
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
+ *
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ *      Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *      For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *      For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
+ *
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
+ *
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.stms.web.controller.transactions;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -48,7 +58,6 @@ import java.util.List;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -97,6 +106,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/transactions")
 public class SewerageChangeInClosetsController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private final SewerageApplicationDetailsService sewerageApplicationDetailsService;
     private static final String MESSAGE = "message";
     private static final String COMMON_ERROR_PAGE = "common-error";
@@ -154,7 +164,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         final SewerageApplicationDetails sewerageApplicationDetailsFromDB = sewerageApplicationDetailsService
                 .findByConnection_ShscNumberAndIsActive(shscNumber);
         final Boolean isCitizenPortalUser= sewerageWorkflowService.isCitizenPortalUser(securityUtils.getCurrentUser());
-        if (StringUtils.isNotBlank(shscNumber)) {
+        if (isNotBlank(shscNumber)) {
             applicationDetails = sewerageApplicationDetailsService.isApplicationInProgress(shscNumber);
             if (applicationDetails != null)
                 if (SewerageTaxConstants.CHANGEINCLOSETS.equalsIgnoreCase(applicationDetails.getApplicationType().getCode())) {
@@ -272,7 +282,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
             prepareWorkflow(model, sewerageApplicationDetails, new WorkflowContainer());
             model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
             model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-            model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
+            model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVAL_POSITION));
             model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
             return "changeInClosetsConnection-form";
         }
@@ -300,15 +310,15 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         sewerageConnectionService.processAndStoreApplicationDocuments(sewerageApplicationDetails);
 
         Long approvalPosition = 0l;
-        String approvalComment = "";
-        String approverName = "";
-        String nextDesignation = "";
+        String approvalComment = EMPTY;
+        String approverName = EMPTY;
+        String nextDesignation = EMPTY;
         if (request.getParameter("approvalComment") != null)
             approvalComment = request.getParameter("approvalComent");
         if (request.getParameter("workFlowAction") != null)
             workFlowAction = request.getParameter("workFlowAction");
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
         if (citizenPortalUser) {
             Assignment assignment = sewerageWorkflowService.getMappedAssignmentForCscOperator(sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             if (assignment != null) {
@@ -343,14 +353,14 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         } else if (assignObj == null && approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
-        final String nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+        final String nextDesign = asignList != null && !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : EMPTY;
 
         final String pathVars = newSewerageApplicationDetails.getApplicationNumber() + ","
                 + sewerageTaxUtils.getApproverName(approvalPosition) + ","
-                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : "") + ","
-                + (nextDesign != null ? nextDesign : "");
+                + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : EMPTY) + ","
+                + (nextDesign != null ? nextDesign : EMPTY);
         String message = messageSource.getMessage("msg.success.forward",
-                new String[] { approverName.concat("~").concat(nextDesignation),
+                new String[] {approverName.concat("~").concat(nextDesignation),
                         newSewerageApplicationDetails.getApplicationNumber() },
                 null);
         model.addAttribute("message", message);
@@ -364,10 +374,10 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     public ModelAndView successView(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
             final HttpServletRequest request, final Model model, final ModelMap modelMap) {
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
-        String applicationNumber = "";
-        String approverName = "";
-        String currentUserDesgn = "";
-        String nextDesign = "";
+        String applicationNumber = EMPTY;
+        String approverName = EMPTY;
+        String currentUserDesgn = EMPTY;
+        String nextDesign = EMPTY;
         if (keyNameArray.length != 0 && keyNameArray.length > 0)
             if (keyNameArray.length == 1)
                 applicationNumber = keyNameArray[0];
@@ -382,7 +392,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
                 nextDesign = keyNameArray[3];
             }
 
-        if (applicationNumber != null)
+        if (isNotBlank(applicationNumber))
             sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
