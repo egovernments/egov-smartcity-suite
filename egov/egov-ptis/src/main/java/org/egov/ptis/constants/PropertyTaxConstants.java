@@ -953,7 +953,7 @@ public interface PropertyTaxConstants {
     public static final String GLCODE_FOR_LIGHTINGTAX_CURRENT = "4311042";
     public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_ARREARS = "4311003";
     public static final String GLCODE_FOR_BIG_RESIDENTIAL_BLDG_TAX_CURRENT = "4311004";
-    public static final String GLCODE_FOR_MUTATION_FEE = "4311002";
+    public static final String GLCODE_FOR_MUTATION_FEE = "1404009";
 
     @SuppressWarnings("serial")
     public static final List<String> EDU_EGS_CESS_GLCODE_LIST = new ArrayList<String>() {
