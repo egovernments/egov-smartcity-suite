@@ -66,6 +66,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_
 import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
+import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -106,6 +107,8 @@ import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
+import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
+import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
@@ -334,6 +337,13 @@ public class ViewPropertyAction extends BaseFormAction {
 				setBasicProperty(property.getBasicProperty());
 				setHistoryMap(propService.populateHistory(property));
 				if (appType.equalsIgnoreCase(APPLICATION_TYPE_NEW_ASSESSENT)) {
+					final PropertyMutationMaster propertyMutationMaster = basicProperty.getPropertyMutationMaster();
+					if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR)) {
+						final PropertyStatusValues statusValues = (PropertyStatusValues) getPersistenceService()
+								.find("From PropertyStatusValues where basicProperty.id = ?", basicProperty.getId());
+						if (null != statusValues && null != statusValues.getReferenceBasicProperty())
+							viewMap.put("parentProps", statusValues.getReferenceBasicProperty().getUpicNo());
+					}
 					getDocumentDetails();
 
 				} else if (appType.equals(APPLICATION_TYPE_TAX_EXEMTION) && property.getIsExemptedFromTax()) {
