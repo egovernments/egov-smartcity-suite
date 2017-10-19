@@ -74,8 +74,8 @@
                 <s:hidden name="model.id" id="id"/>
                 <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
-                <input type="hidden" name="model.applicationNumber" value="${param.applicationNo}"
-                       id="applicationNumber"/>
+                <input type="hidden" name="applicationNo" value="${param.applicationNo}"
+                       id="applicationNo"/>
                 <s:if test="%{status=='Active'}">
                     <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
                 </s:if>

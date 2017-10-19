@@ -218,10 +218,9 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String saveClosure() {
         populateWorkflowBean();
         if (getLicenseid() != null) {
-            applicationNo = license().getApplicationNumber();
             tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
             if (tradeLicenseService.currentUserIsMeeseva()) {
-                tradeLicense.setApplicationNumber(applicationNo);
+                tradeLicense.setApplicationNumber(getApplicationNo());
                 tradeLicenseService.closureWithMeeseva(tradeLicense, workflowBean);
             } else
                 tradeLicenseService.saveClosure(tradeLicense, workflowBean);

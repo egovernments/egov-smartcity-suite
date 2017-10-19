@@ -366,7 +366,7 @@
                 <s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}"/>
                 <s:hidden name="id" id="id"/>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
-                <input type="hidden" name="model.applicationNumber" value="${param.applicationNo}" id="applicationNumber"/>
+                <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
                 <div class="panel panel-primary">
                     <div class="panel-heading">
                         <s:if test="%{mode=='edit'}">

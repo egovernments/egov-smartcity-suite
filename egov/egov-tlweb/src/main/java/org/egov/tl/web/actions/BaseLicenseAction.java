@@ -192,8 +192,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         addNewDocuments();
         populateWorkflowBean();
         if (tradeLicenseService.currentUserIsMeeseva()) {
+            license.setApplicationNumber(getApplicationNo());
             licenseService().createWithMeseva(license, workflowBean);
-            applicationNo = license.getApplicationNumber();
         } else {
             licenseService().create(license, workflowBean);
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
@@ -289,8 +289,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         addNewDocuments();
         populateWorkflowBean();
         if (tradeLicenseService.currentUserIsMeeseva()) {
+            license().setApplicationNumber(getApplicationNo());
             licenseService().renewWithMeeseva(license(), workflowBean);
-            applicationNo = license().getApplicationNumber();
         } else {
             licenseService().renew(license(), workflowBean);
             addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());

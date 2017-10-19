@@ -76,7 +76,7 @@
             <s:hidden name="licenseid" id="licenseId" value="%{id}"/>
             <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
             <s:hidden id="url" name="url" value="%{url}"></s:hidden>
-            <input type="hidden" name="model.applicationNumber" value="${param.applicationNo}" id="applicationNumber"/>
+            <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
             <c:set var="trclass" value="greybox"/>
             <div class="text-right error-msg" style="font-size:14px;">
                 <s:text name="dateofapplication.lbl"/> : <s:date name="applicationDate"
