@@ -37,73 +37,38 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.restapi.config.filter;
 
-package org.egov.restapi.filter;
+import org.egov.infra.rest.support.APIRequestEnricher;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import org.apache.commons.io.IOUtils;
-
-import javax.servlet.ReadListener;
-import javax.servlet.ServletInputStream;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletRequestWrapper;
-import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
+import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import java.io.IOException;
-import java.io.InputStreamReader;
 
-public class MultiReadRequestWrapper extends HttpServletRequestWrapper {
+public class APIRequestEnricherFilter implements Filter {
 
-    private ByteArrayOutputStream cachedBytes;
+    @Autowired
+    private APIRequestEnricher apiRequestEnricher;
 
-    public MultiReadRequestWrapper(HttpServletRequest request) {
-        super(request);
+    @Override
+    public void doFilter(ServletRequest request, ServletResponse response, FilterChain filterChain)
+            throws IOException, ServletException {
+        filterChain.doFilter(apiRequestEnricher.enrich(request), response);
+    }
+
+
+    @Override
+    public void init(final FilterConfig arg0) throws ServletException {
+        // Do nothing
     }
 
     @Override
-    public ServletInputStream getInputStream() throws IOException {
-        if (cachedBytes == null)
-            cacheInputStream();
-
-        return new CachedServletInputStream();
-    }
-
-    @Override
-    public BufferedReader getReader() throws IOException {
-        return new BufferedReader(new InputStreamReader(getInputStream()));
-    }
-
-    private void cacheInputStream() throws IOException {
-        cachedBytes = new ByteArrayOutputStream();
-        IOUtils.copy(super.getInputStream(), cachedBytes);
-    }
-
-
-    public class CachedServletInputStream extends ServletInputStream {
-        private ByteArrayInputStream input;
-
-        public CachedServletInputStream() {
-            input = new ByteArrayInputStream(cachedBytes.toByteArray());
-        }
-
-        @Override
-        public int read() throws IOException {
-            return input.read();
-        }
-
-        @Override
-        public boolean isFinished() {
-            return false;
-        }
-
-        @Override
-        public boolean isReady() {
-            return true;
-        }
-
-        @Override
-        public void setReadListener(ReadListener readListener) {
-            //Nothing
-        }
+    public void destroy() {
+        // Do nothing
     }
 }

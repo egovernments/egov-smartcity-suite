@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,25 +38,14 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.restapi.config;
+package org.egov.infra.rest.support;
 
-import org.egov.infra.rest.support.APIRequestEnricher;
-import org.egov.infra.rest.support.DefaultAPIRequestEnricher;
-import org.egov.restapi.config.filter.APIRequestEnricherFilter;
-import org.springframework.beans.factory.annotation.Autowire;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
+import javax.servlet.ServletRequest;
 
-@Configuration
-public class RestAPIConfiguration {
+public class DefaultAPIRequestEnricher implements APIRequestEnricher {
 
-    @Bean
-    public APIRequestEnricher apiRequestEnricher() {
-        return new DefaultAPIRequestEnricher();
-    }
-
-    @Bean(autowire = Autowire.BY_TYPE)
-    public APIRequestEnricherFilter apiFilter() {
-        return new APIRequestEnricherFilter();
+    @Override
+    public ServletRequest enrich(ServletRequest request) {
+        return request;
     }
 }

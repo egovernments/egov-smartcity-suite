@@ -44,8 +44,6 @@
 
     <display-name>e-governments restapi web</display-name>
 
-    <!-- The definition of the Root Spring Container shared by all Servlets
-        and Filters -->
     <context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath*:config/spring/applicationContext-restapi.xml</param-value>
@@ -108,11 +106,6 @@
         </filter-class>
     </filter>
 
-    <!-- <filter>
-        <filter-name>securityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter> -->
-
     <filter>
         <filter-name>springSessionRepositoryFilter</filter-name>
         <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
@@ -127,12 +120,6 @@
         <filter-name>gzipFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-
-
-    <!-- <filter>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
-    </filter> -->
 
     <filter-mapping>
         <filter-name>springSessionRepositoryFilter</filter-name>
@@ -151,25 +138,12 @@
         <filter-name>apiFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
-    <filter-mapping>
-        <filter-name>applicationCoreFilter</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-
 
     <filter-mapping>
         <filter-name>openEntityManagerInViewFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-    <!-- <filter-mapping>
-        <filter-name>securityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping>
-    <filter-mapping>
-        <filter-name>springSecurityFilterChain</filter-name>
-        <url-pattern>/*</url-pattern>
-    </filter-mapping> -->
     <filter-mapping>
         <filter-name>applicationCoreFilter</filter-name>
         <url-pattern>/*</url-pattern>
@@ -181,13 +155,16 @@
     </filter-mapping>
 
 
-    <!-- Processes application requests -->
     <servlet>
         <servlet-name>restapi</servlet-name>
         <servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
         <init-param>
             <param-name>contextConfigLocation</param-name>
             <param-value>/WEB-INF/spring/restapi-servlet.xml</param-value>
+        </init-param>
+        <init-param>
+            <param-name>throwExceptionIfNoHandlerFound</param-name>
+            <param-value>true</param-value>
         </init-param>
         <load-on-startup>1</load-on-startup>
         <async-supported>true</async-supported>
@@ -197,15 +174,5 @@
         <servlet-name>restapi</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
-
-
-    <welcome-file-list>
-        <welcome-file>/index.jsp</welcome-file>
-    </welcome-file-list>
-
-    <error-page>
-        <error-code>404</error-code>
-        <location>/404</location>
-    </error-page>
 
 </web-app>
