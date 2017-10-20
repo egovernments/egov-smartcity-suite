@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,45 +38,39 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infstr.security.spring;
+package org.egov.infra.config.security.authorization;
+
+import org.egov.infra.admin.master.entity.Action;
+import org.egov.infra.admin.master.service.ActionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.ConfigAttribute;
+import org.springframework.security.access.SecurityConfig;
+import org.springframework.security.web.FilterInvocation;
+import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.egov.infra.admin.master.entity.Action;
-import org.egov.infra.admin.master.service.ActionService;
-import org.egov.infra.security.utils.SecurityConstants;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.ConfigAttribute;
-import org.springframework.security.access.SecurityConfig;
-import org.springframework.security.web.FilterInvocation;
-import org.springframework.security.web.access.intercept.FilterInvocationSecurityMetadataSource;
-import org.springframework.stereotype.Component;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_URI;
+import static org.egov.infra.security.utils.SecurityConstants.PUBLIC_URI;
 
-/**
- * ObjectDefinitionSource for Spring security filter to determine access based
- * on url
- *
- * @author sahina bose
- */
-@Component
-public class EGovFilterInvocationDefinitionSource implements FilterInvocationSecurityMetadataSource {
+public class ApplicationAuthorizationMetadataSource implements FilterInvocationSecurityMetadataSource {
 
     private List<String> excludePatterns = new ArrayList<>();
 
     @Autowired
     private ActionService actionService;
 
-    public void setExcludePatterns(final List<String> excludePatterns) {
+    public void setExcludePatterns(List<String> excludePatterns) {
         this.excludePatterns = excludePatterns;
     }
 
     @Override
-    public Collection<ConfigAttribute> getAttributes(final Object object) {
-        final FilterInvocation invocation = (FilterInvocation) object;
-        final String contextRoot = invocation.getHttpRequest().getContextPath().replace("/", "");
+    public Collection<ConfigAttribute> getAttributes(Object object) {
+        FilterInvocation invocation = (FilterInvocation) object;
+        String contextRoot = invocation.getHttpRequest().getContextPath().replace("/", "");
         return lookupAttributes(contextRoot, invocation.getRequestUrl());
     }
 
@@ -86,17 +80,17 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
     }
 
     @Override
-    public boolean supports(final Class<?> clazz) {
+    public boolean supports(Class<?> clazz) {
         return FilterInvocation.class.isAssignableFrom(clazz);
     }
 
-    private Collection<ConfigAttribute> lookupAttributes(final String contextRoot, final String url) {
-        if (url.startsWith(SecurityConstants.LOGIN_URI) || url.startsWith(SecurityConstants.PUBLIC_URI) || isPatternExcluded(url))
+    private Collection<ConfigAttribute> lookupAttributes(String contextRoot, String url) {
+        if (url.startsWith(LOGIN_URI) || url.startsWith(PUBLIC_URI) || isPatternExcluded(url))
             return Collections.emptyList();
         else {
-            final Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
+            Action action = actionService.getActionByUrlAndContextRoot(url, contextRoot);
             if (action != null) {
-                final List<ConfigAttribute> configAttributes = new ArrayList<>();
+                List<ConfigAttribute> configAttributes = new ArrayList<>();
                 action.getRoles().forEach(role ->
                         configAttributes.add(new SecurityConfig(role.getName()))
                 );
@@ -106,8 +100,10 @@ public class EGovFilterInvocationDefinitionSource implements FilterInvocationSec
         return Collections.emptyList();
     }
 
-    private Boolean isPatternExcluded(final String pattern) {
-        return excludePatterns.parallelStream().anyMatch(excludePattern -> pattern.startsWith(excludePattern.trim()));
+    private Boolean isPatternExcluded(String pattern) {
+        return excludePatterns
+                .parallelStream()
+                .anyMatch(excludePattern -> pattern.startsWith(excludePattern.trim()));
     }
 
 }

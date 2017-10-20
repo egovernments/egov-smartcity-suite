@@ -42,7 +42,7 @@ package org.egov.infra.security.utils;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -76,13 +76,13 @@ public class SecurityUtils {
         Optional<Authentication> authentication = getCurrentAuthentication();
         return !authentication.isPresent() || userAnonymouslyAuthenticated(authentication)
                 ? userService.getUserByUsername(ANONYMOUS_USERNAME) :
-                userService.getUserById(((SecureUser) authentication.get().getPrincipal()).getUserId());
+                userService.getUserById(((CurrentUser) authentication.get().getPrincipal()).getUserId());
     }
 
     public UserType currentUserType() {
         Optional<Authentication> authentication = getCurrentAuthentication();
         return authentication.isPresent() && !userAnonymouslyAuthenticated(authentication) ?
-                ((SecureUser) authentication.get().getPrincipal()).getUserType() : UserType.SYSTEM;
+                ((CurrentUser) authentication.get().getPrincipal()).getUserType() : UserType.SYSTEM;
     }
 
     public boolean currentUserIsCitizen() {

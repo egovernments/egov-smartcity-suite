@@ -41,7 +41,7 @@
 package org.egov.infra.security.audit.repository.specs;
 
 import org.egov.infra.security.audit.contract.LoginAuditReportRequest;
-import org.egov.infra.security.audit.entity.SystemAudit;
+import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -54,7 +54,7 @@ public class LoginAuditSpec {
         //need not to initialize
     }
 
-    public static final Specification<SystemAudit> loginAuditSearchSpec(LoginAuditReportRequest loginAuditReportRequest) {
+    public static final Specification<LoginAudit> loginAuditSearchSpec(LoginAuditReportRequest loginAuditReportRequest) {
         return (root, query, builder) -> {
             final Predicate predicate = builder.conjunction();
             if (isNotBlank(loginAuditReportRequest.getUserName()))

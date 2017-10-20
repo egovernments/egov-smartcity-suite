@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,7 +38,7 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.security.authentication;
+package org.egov.infra.config.security.authentication.userdetail;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
@@ -51,19 +51,18 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
-public class SecureUser implements UserDetails {
+public class CurrentUser implements UserDetails {
     private static final long serialVersionUID = -8756608845278722035L;
     private final User user;
     private final List<SimpleGrantedAuthority> authorities = new ArrayList<>();
 
-    public SecureUser(User user) {
+    public CurrentUser(User user) {
         if (user == null) {
             throw new UsernameNotFoundException("User not found");
         } else {
             this.user = user;
-            user.getRoles().forEach(role ->
-                    this.authorities.add(new SimpleGrantedAuthority(role.getName()))
-            );
+            user.getRoles()
+                    .forEach(role -> this.authorities.add(new SimpleGrantedAuthority(role.getName())));
         }
     }
 

@@ -49,11 +49,12 @@ import org.springframework.session.web.http.CookieHttpSessionStrategy;
 import org.springframework.session.web.http.CookieSerializer;
 import org.springframework.session.web.http.DefaultCookieSerializer;
 
+import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_NAME;
+import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
+
 @Configuration
 @EnableRedisHttpSession
 public class RedisHttpSessionConfiguration {
-    private static final String SESSION_COOKIE_NAME = "JSESSIONID";
-    private static final String SESSION_COOKIE_PATH = "/";
 
     @Bean
     public CookieSerializer cookieSerializer() {

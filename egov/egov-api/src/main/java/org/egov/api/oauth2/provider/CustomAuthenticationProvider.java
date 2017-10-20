@@ -42,14 +42,14 @@ package org.egov.api.oauth2.provider;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
-import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.common.exceptions.OAuth2Exception;
 import org.springframework.stereotype.Component;
 
@@ -61,6 +61,9 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -77,9 +80,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
             throw new OAuth2Exception("Entered mobile no is not registered. Create an account for your mobile no");
         }
 
-        BCryptPasswordEncoder bcrypt = new BCryptPasswordEncoder();
-
-        if (bcrypt.matches(password, user.getPassword())) {
+        if (passwordEncoder.matches(password, user.getPassword())) {
 
             if (!user.isActive()) {
                 throw new OAuth2Exception("Please activate your account");
@@ -90,7 +91,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider {
              */
             List<GrantedAuthority> grantedAuths = new ArrayList<>();
             grantedAuths.add(new SimpleGrantedAuthority("ROLE_" + user.getType()));
-            return  new UsernamePasswordAuthenticationToken(new SecureUser(user), password, grantedAuths);
+            return new UsernamePasswordAuthenticationToken(new CurrentUser(user), password, grantedAuths);
         } else {
             throw new OAuth2Exception("Invalid login credentials");
         }

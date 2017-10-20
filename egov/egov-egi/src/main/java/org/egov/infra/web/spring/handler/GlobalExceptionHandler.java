@@ -44,6 +44,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.annotation.AnnotationUtils;
+import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -53,14 +54,14 @@ import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpServletRequest;
 
-@ControllerAdvice
+@ControllerAdvice(annotations = Controller.class)
 public class GlobalExceptionHandler {
     private static final Logger LOG = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
-    public static final String DEFAULT_ERROR_VIEW = "/error/500";
+    private static final String DEFAULT_ERROR_VIEW = "/error/500";
 
     @ExceptionHandler(Exception.class)
-    public RedirectView defaultErrorHandler(final HttpServletRequest req, final Exception e) throws Exception {
+    public RedirectView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
         // If the exception is annotated with @ResponseStatus rethrow it and let
         // the framework handle it.
         LOG.error("An error occurred while processing the request", e);
@@ -70,13 +71,13 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(value = ApplicationRuntimeException.class)
-    public RedirectView egovErrorHandler(final HttpServletRequest req, final ApplicationRuntimeException e) throws Exception {
+    public RedirectView egovErrorHandler(HttpServletRequest req, ApplicationRuntimeException e) throws Exception {
         return createErrorMV(req, e);
     }
 
-    private RedirectView createErrorMV(final HttpServletRequest request, final Exception e) {
-        final RedirectView rw = new RedirectView(DEFAULT_ERROR_VIEW, true);
-        final FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
+    private RedirectView createErrorMV(HttpServletRequest request, Exception e) {
+        RedirectView rw = new RedirectView(DEFAULT_ERROR_VIEW, true);
+        FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
         if (outputFlashMap != null) {
             outputFlashMap.put("error", e.getMessage());
             outputFlashMap.put("url", request.getRequestURL());

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,10 +38,24 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infstr.security.spring.event.actions;
+package org.egov.infra.config.security.authentication.userdetail.checker;
 
-import org.springframework.context.ApplicationEvent;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
+import org.egov.infra.persistence.entity.enums.UserType;
+import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
+import org.springframework.security.authentication.DisabledException;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.stereotype.Component;
 
-public interface ApplicationSecurityEventAction<T extends ApplicationEvent> {
-	void doAction(T event); 
+@Component("userActivationChecker")
+public class UserActivationChecker extends AccountStatusUserDetailsChecker {
+
+    @Override
+    public void check(UserDetails userDetail) {
+        CurrentUser user = (CurrentUser) userDetail;
+        if (user.getUserType().equals(UserType.CITIZEN) && !userDetail.isEnabled())
+            throw new DisabledException("Inactive User");
+
+        super.check(userDetail);
+    }
 }

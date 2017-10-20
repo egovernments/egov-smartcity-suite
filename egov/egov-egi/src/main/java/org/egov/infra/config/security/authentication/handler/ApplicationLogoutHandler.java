@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,12 +38,9 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infstr.security.spring.filter;
+package org.egov.infra.config.security.authentication.handler;
 
-import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.security.audit.entity.SystemAudit;
-import org.egov.infra.security.audit.service.SystemAuditService;
-import org.egov.infra.security.utils.SecurityConstants;
+import org.egov.infra.security.audit.service.LoginAuditService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.logout.LogoutHandler;
@@ -52,42 +49,42 @@ import org.springframework.stereotype.Component;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.util.Date;
 import java.util.HashMap;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOG_ID;
+import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
 
 @Component
-public class CustomLogoutHandler implements LogoutHandler {
+public class ApplicationLogoutHandler implements LogoutHandler {
 
     @Autowired
-    private SystemAuditService systemAuditService;
+    private LoginAuditService loginAuditService;
 
     @Override
-    public void logout(final HttpServletRequest request, final HttpServletResponse response,
-            final Authentication authentication) {
-        clearAllCookies(request, response);
+    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
         auditLogout(authentication);
+        clearAllCookies(request, response);
     }
 
-    private void clearAllCookies(final HttpServletRequest request, final HttpServletResponse response) {
-        final Cookie cookies[] = request.getCookies();
+    private void clearAllCookies(HttpServletRequest request, HttpServletResponse response) {
+        Cookie[] cookies = request.getCookies();
         if (cookies == null || cookies.length < 1)
             return;
-        for (final Cookie cookie : cookies) {
+        for (Cookie cookie : cookies) {
             cookie.setMaxAge(0);
-            cookie.setPath("/");
+            cookie.setPath(SESSION_COOKIE_PATH);
             cookie.setValue(null);
             response.addCookie(cookie);
         }
     }
 
-    private void auditLogout(final Authentication authentication) {
+    private void auditLogout(Authentication authentication) {
         if (authentication != null) {
-            final String systemAuditId = ((HashMap<String, String>) authentication.getCredentials())
-                    .get(SecurityConstants.LOGIN_LOG_ID);
-            if (StringUtils.isNotBlank(systemAuditId)) {
-                final SystemAudit systemAudit = systemAuditService.getSystemAuditById(Long.valueOf(systemAuditId));
-                systemAudit.setLogoutTime(new Date());
-                systemAuditService.createOrUpdateSystemAudit(systemAudit);
+            Map<String, String> authCredentials = ((HashMap<String, String>) authentication.getCredentials());
+            if (authCredentials != null && isNotBlank(authCredentials.get(LOGIN_LOG_ID))) {
+                loginAuditService.auditLogout(Long.valueOf(authCredentials.get(LOGIN_LOG_ID)));
             }
         }
     }

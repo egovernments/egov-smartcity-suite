@@ -64,8 +64,8 @@
 			<required>false</required>
 			<rtexprvalue>true</rtexprvalue>
 			<description>
-               An object reference that implements org.egov.infstr.security.AuthorizeRule
-			</description>
+                An object reference that implements org.egov.infra.security.utils.AuthorizeRule
+            </description>
 		</attribute>
 
 		<attribute>

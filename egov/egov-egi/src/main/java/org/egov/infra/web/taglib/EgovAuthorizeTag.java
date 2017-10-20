@@ -43,7 +43,7 @@ package org.egov.infra.web.taglib;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.ActionService;
-import org.egov.infstr.security.AuthorizeRule;
+import org.egov.infra.security.utils.AuthorizeRule;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;

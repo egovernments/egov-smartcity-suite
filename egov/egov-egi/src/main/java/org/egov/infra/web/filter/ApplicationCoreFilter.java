@@ -42,7 +42,7 @@ package org.egov.infra.web.filter;
 
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -116,8 +116,8 @@ public class ApplicationCoreFilter implements Filter {
         Long userId = (Long) session.getAttribute(USERID_KEY);
         if (userId == null) {
             Optional<Authentication> authentication = getCurrentAuthentication();
-            if (authentication.isPresent() && authentication.get().getPrincipal() instanceof SecureUser) {
-                userId = ((SecureUser) authentication.get().getPrincipal()).getUserId();
+            if (authentication.isPresent() && authentication.get().getPrincipal() instanceof CurrentUser) {
+                userId = ((CurrentUser) authentication.get().getPrincipal()).getUserId();
                 session.setAttribute(USERID_KEY, userId);
             } else if (!authentication.isPresent() ||
                     (authentication.isPresent() && !(authentication.get().getPrincipal() instanceof User))) {

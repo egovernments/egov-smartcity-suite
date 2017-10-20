@@ -38,8 +38,14 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.security.handler;
+package org.egov.infra.config.security.authentication.handler;
 
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
+import org.egov.infra.security.audit.entity.LoginAudit;
+import org.egov.infra.security.audit.service.LoginAttemptService;
+import org.egov.infra.security.audit.service.LoginAuditService;
+import org.egov.infra.security.utils.SecurityUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -50,19 +56,48 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.regex.Pattern;
 
+import static org.egov.infra.security.utils.SecurityConstants.IPADDR_FIELD;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOG_ID;
+import static org.egov.infra.security.utils.SecurityConstants.USERAGENT_FIELD;
 import static org.springframework.util.StringUtils.hasText;
 
-public class LastAccessedUrlAwareAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
+
+    @Autowired
+    private LoginAuditService loginAuditService;
+
+    @Autowired
+    private LoginAttemptService loginAttemptService;
+
+    @Autowired
+    private SecurityUtils securityUtils;
 
     private RequestCache requestCache = new HttpSessionRequestCache();
 
     private Pattern excludedUrls;
 
+    public void setRequestCache(RequestCache requestCache) {
+        this.requestCache = requestCache;
+    }
+
+    public void setExcludedUrlRegex(String excludedUrlRegex) {
+        this.excludedUrls = Pattern.compile(excludedUrlRegex);
+    }
+
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
+        auditLoginDetails(authentication);
+        resetFailedLoginAttempt(authentication);
+        redirectToSuccessPage(request, response, authentication);
+    }
+
+    private void redirectToSuccessPage(HttpServletRequest request, HttpServletResponse response,
+                                       Authentication authentication) throws IOException, ServletException {
         SavedRequest savedRequest = requestCache.getRequest(request, response);
         if (savedRequest == null) {
             super.onAuthenticationSuccess(request, response, authentication);
@@ -83,11 +118,18 @@ public class LastAccessedUrlAwareAuthenticationSuccessHandler extends SimpleUrlA
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    public void setRequestCache(RequestCache requestCache) {
-        this.requestCache = requestCache;
+    private void auditLoginDetails(Authentication authentication) {
+        HashMap<String, String> credentials = ((HashMap<String, String>) authentication.getCredentials());
+        LoginAudit loginAudit = new LoginAudit();
+        loginAudit.setLoginTime(new Date());
+        loginAudit.setUser(securityUtils.getCurrentUser());
+        loginAudit.setIpAddress(credentials.get(IPADDR_FIELD));
+        loginAudit.setUserAgentInfo(credentials.get(USERAGENT_FIELD));
+        loginAuditService.auditLogin(loginAudit);
+        credentials.put(LOGIN_LOG_ID, loginAudit.getId().toString());
     }
 
-    public void setExcludedUrlRegex(String excludedUrlRegex) {
-        this.excludedUrls = Pattern.compile(excludedUrlRegex);
+    private void resetFailedLoginAttempt(Authentication authentication) {
+        loginAttemptService.resetFailedAttempt(((CurrentUser) authentication.getPrincipal()).getUsername());
     }
 }

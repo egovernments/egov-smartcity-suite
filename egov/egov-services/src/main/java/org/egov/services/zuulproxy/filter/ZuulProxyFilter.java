@@ -58,7 +58,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.services.config.properties.ServicesApplicationProperties;
 import org.egov.services.wrapper.CustomRequestWrapper;
@@ -245,7 +245,7 @@ public class ZuulProxyFilter extends ZuulFilter {
 
         if (StringUtils.isBlank(userInfoJson)) {
             final UserService userService = (UserService) springContext.getBean(USER_SERVICE);
-            final SecureUser userDetails = new SecureUser(
+            final CurrentUser userDetails = new CurrentUser(
                     userService.getUserByUsername(request.getRemoteUser()));
 
             final User user = userDetails.getUser();

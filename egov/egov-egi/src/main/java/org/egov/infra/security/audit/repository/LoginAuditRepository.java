@@ -38,24 +38,12 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infstr.security.spring;
+package org.egov.infra.security.audit.repository;
 
-import org.egov.infra.config.security.authentication.SecureUser;
-import org.egov.infra.persistence.entity.enums.UserType;
-import org.springframework.security.authentication.AccountStatusUserDetailsChecker;
-import org.springframework.security.authentication.DisabledException;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.stereotype.Component;
+import org.egov.infra.security.audit.entity.LoginAudit;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 
-@Component("activationPreAuthenticationChecker")
-public class ActivationPreAuthenticationChecker extends AccountStatusUserDetailsChecker {
+public interface LoginAuditRepository extends JpaRepository<LoginAudit, Long>, JpaSpecificationExecutor<LoginAudit> {
 
-    @Override
-    public void check(final UserDetails userDetail) {
-        final SecureUser user = (SecureUser) userDetail;
-        if (user.getUserType().equals(UserType.CITIZEN) && !userDetail.isEnabled())
-            throw new DisabledException("Inactive User");
-
-        super.check(userDetail);
-    }
 }

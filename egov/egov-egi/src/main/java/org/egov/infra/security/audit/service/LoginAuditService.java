@@ -38,12 +38,48 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.security.audit.repository;
+package org.egov.infra.security.audit.service;
 
-import org.egov.infra.security.audit.entity.SystemAudit;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.egov.infra.security.audit.contract.LoginAuditReportRequest;
+import org.egov.infra.security.audit.entity.LoginAudit;
+import org.egov.infra.security.audit.repository.LoginAuditRepository;
+import org.egov.infra.security.audit.repository.specs.LoginAuditSpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-public interface SystemAuditRepository extends JpaRepository<SystemAudit, Long>, JpaSpecificationExecutor<SystemAudit> {
+import java.util.Date;
 
+@Service
+@Transactional(readOnly = true)
+public class LoginAuditService {
+
+    @Autowired
+    private LoginAuditRepository loginAuditRepository;
+
+    @Transactional
+    public LoginAudit auditLogin(LoginAudit loginAudit) {
+        return loginAuditRepository.saveAndFlush(loginAudit);
+    }
+
+    @Transactional
+    public LoginAudit auditLogout(Long loginAuditId) {
+        LoginAudit loginAudit = getLoginAuditById(loginAuditId);
+        loginAudit.setLogoutTime(new Date());
+        return loginAuditRepository.saveAndFlush(loginAudit);
+    }
+
+    public LoginAudit getLoginAuditById(Long id) {
+        return loginAuditRepository.findOne(id);
+    }
+
+    public Page<LoginAudit> getLoginAudits(LoginAuditReportRequest loginAuditReportRequest) {
+        Pageable pageable = new PageRequest(loginAuditReportRequest.pageNumber(),
+                loginAuditReportRequest.pageSize(),
+                loginAuditReportRequest.orderDir(), loginAuditReportRequest.orderBy());
+        return loginAuditRepository.findAll(LoginAuditSpec.loginAuditSearchSpec(loginAuditReportRequest), pageable);
+    }
 }

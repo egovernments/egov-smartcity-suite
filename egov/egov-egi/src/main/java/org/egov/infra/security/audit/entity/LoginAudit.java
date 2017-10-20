@@ -59,16 +59,17 @@ import java.util.Date;
 
 import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_DATE_TIME_PATTERN;
 import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_TIME_ZONE;
-import static org.egov.infra.security.audit.entity.SystemAudit.SEQ_SYSTEMAUDIT;
+import static org.egov.infra.security.audit.entity.LoginAudit.SEQ_LOGINAUDIT;
 
 @Entity
-@Table(name = "eg_systemaudit")
-@SequenceGenerator(name = SEQ_SYSTEMAUDIT, sequenceName = SEQ_SYSTEMAUDIT, allocationSize = 1)
-public class SystemAudit extends AbstractPersistable<Long> {
-    public static final String SEQ_SYSTEMAUDIT = "SEQ_EG_SYSTEMAUDIT";
+@Table(name = "eg_loginaudit")
+@SequenceGenerator(name = SEQ_LOGINAUDIT, sequenceName = SEQ_LOGINAUDIT, allocationSize = 1)
+public class LoginAudit extends AbstractPersistable<Long> {
+    protected static final String SEQ_LOGINAUDIT = "SEQ_EG_LOGINAUDIT";
     private static final long serialVersionUID = 3860739186574812587L;
+
     @Id
-    @GeneratedValue(generator = SEQ_SYSTEMAUDIT, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_LOGINAUDIT, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -93,7 +94,7 @@ public class SystemAudit extends AbstractPersistable<Long> {
     }
 
     @Override
-    protected void setId(final Long id) {
+    protected void setId(Long id) {
         this.id = id;
     }
 
@@ -101,7 +102,7 @@ public class SystemAudit extends AbstractPersistable<Long> {
         return user;
     }
 
-    public void setUser(final User user) {
+    public void setUser(User user) {
         this.user = user;
     }
 
@@ -109,7 +110,7 @@ public class SystemAudit extends AbstractPersistable<Long> {
         return ipAddress;
     }
 
-    public void setIpAddress(final String ipAddress) {
+    public void setIpAddress(String ipAddress) {
         this.ipAddress = ipAddress;
     }
 
@@ -117,7 +118,7 @@ public class SystemAudit extends AbstractPersistable<Long> {
         return userAgentInfo;
     }
 
-    public void setUserAgentInfo(final String userAgentInfo) {
+    public void setUserAgentInfo(String userAgentInfo) {
         this.userAgentInfo = userAgentInfo;
     }
 
@@ -125,7 +126,7 @@ public class SystemAudit extends AbstractPersistable<Long> {
         return loginTime;
     }
 
-    public void setLoginTime(final Date loginTime) {
+    public void setLoginTime(Date loginTime) {
         this.loginTime = loginTime;
     }
 
@@ -133,7 +134,7 @@ public class SystemAudit extends AbstractPersistable<Long> {
         return logoutTime;
     }
 
-    public void setLogoutTime(final Date logoutTime) {
+    public void setLogoutTime(Date logoutTime) {
         this.logoutTime = logoutTime;
     }
 }

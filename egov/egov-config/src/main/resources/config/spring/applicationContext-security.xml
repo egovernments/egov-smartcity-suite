@@ -49,19 +49,6 @@
     <security:global-method-security secured-annotations="disabled"
                                      access-decision-manager-ref="accessDecisionManager"/>
 
-    <bean class="org.egov.infstr.security.spring.event.listeners.ApplicationSecurityEventListenerAdaptor">
-        <property name="applicationSecurityEventActions">
-            <!-- Here the Map entry key must be of type EventType and values are list of bean which implements ApplicationSecurityAction -->
-            <map key-type="org.egov.infstr.security.spring.event.EventType">
-                <entry key="InteractiveAuthenticationSuccessEvent">
-                    <list>
-                        <bean class="org.egov.infstr.security.spring.event.actions.AuthenticationSuccessEventAction"/>
-                    </list>
-                </entry>
-            </map>
-        </property>
-    </bean>
-
     <bean id="concurrentSessionFilter" class="org.springframework.security.web.session.ConcurrentSessionFilter">
         <constructor-arg name="sessionRegistry" ref="springSessionBackedSessionRegistry"/>
     </bean>
@@ -85,7 +72,7 @@
         <constructor-arg value="/index.jsp"/>
         <constructor-arg>
             <list>
-                <ref bean="customLogoutHandler"/>
+                <ref bean="applicationLogoutHandler"/>
                 <bean class="org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler"/>
             </list>
         </constructor-arg>
@@ -93,7 +80,7 @@
     </bean>
 
     <bean id="authenticationProcessingFilter"
-          class="org.egov.infstr.security.spring.filter.EgovAuthenticationProcessingFilter">
+          class="org.egov.infra.config.security.authentication.filter.ApplicationAuthenticationFilter">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="filterProcessesUrl" value="/j_security_check"/>
         <property name="rememberMeServices" ref="rememberMeServices"/>
@@ -118,7 +105,7 @@
     </bean>
 
     <bean id="authenticationSuccessHandler"
-          class="org.egov.infra.config.security.handler.LastAccessedUrlAwareAuthenticationSuccessHandler">
+          class="org.egov.infra.config.security.authentication.handler.ApplicationAuthenticationSuccessHandler">
         <property name="alwaysUseDefaultTargetUrl" value="false"/>
         <property name="defaultTargetUrl" value="/home"/>
         <property name="excludedUrlRegex">
@@ -181,7 +168,7 @@
           class="org.springframework.security.web.access.intercept.FilterSecurityInterceptor">
         <property name="authenticationManager" ref="authenticationManager"/>
         <property name="accessDecisionManager" ref="accessDecisionManager"/>
-        <property name="securityMetadataSource" ref="egovFilterInvocationDefinitionSource"/>
+        <property name="securityMetadataSource" ref="applicationAuthorizationMetadataSource"/>
         <property name="rejectPublicInvocations" value="true"/>
     </bean>
 
@@ -206,7 +193,7 @@
     <bean id="authenticationManager" class="org.springframework.security.authentication.ProviderManager">
         <constructor-arg>
             <list>
-                <ref bean="daoAuthenticationProvider"/>
+                <ref bean="applicationAuthenticationProvider"/>
                 <ref bean="anonymousAuthenticationProvider"/>
                 <ref bean="rememberMeAuthenticationProvider"/>
             </list>
@@ -214,9 +201,10 @@
         <property name="eraseCredentialsAfterAuthentication" value="false"/>
     </bean>
 
-    <bean id="daoAuthenticationProvider" class="org.egov.infstr.security.spring.dao.EgovDaoAuthenticationProvider">
+    <bean id="applicationAuthenticationProvider"
+          class="org.egov.infra.config.security.authentication.provider.ApplicationAuthenticationProvider">
         <property name="userDetailsService" ref="userDetailsService"/>
-        <property name="preAuthenticationChecks" ref="activationPreAuthenticationChecker"></property>
+        <property name="preAuthenticationChecks" ref="userActivationChecker"></property>
     </bean>
 
     <bean id="anonymousAuthenticationProvider"
@@ -229,10 +217,11 @@
         <constructor-arg index="0" value="23_*!cdU='612./e;NrI"/>
     </bean>
 
-    <bean id="userDetailsService" class="org.egov.infra.config.security.authentication.UserDetailService">
+    <bean id="userDetailsService"
+          class="org.egov.infra.config.security.authentication.userdetail.service.UserDetailService">
         <constructor-arg ref="userService"/>
     </bean>
 
-    <bean id="egovFilterInvocationDefinitionSource"
-          class="org.egov.infstr.security.spring.EGovFilterInvocationDefinitionSource"/>
+    <bean id="applicationAuthorizationMetadataSource"
+          class="org.egov.infra.config.security.authorization.ApplicationAuthorizationMetadataSource"/>
 </beans>

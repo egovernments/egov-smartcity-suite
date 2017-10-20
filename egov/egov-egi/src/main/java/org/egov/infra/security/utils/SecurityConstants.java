@@ -45,7 +45,8 @@ public interface SecurityConstants {
     String LOCATION_FIELD = "locationId";
     String IPADDR_FIELD = "ipAddress";
     String USERAGENT_FIELD = "userAgentInfo";
-    String LOGINTYPE = "loginType";
+    String SESSION_COOKIE_PATH = "/";
+    String SESSION_COOKIE_NAME = "JSESSIONID";
     String PWD_FIELD = "j_password";
     String USERNAME_FIELD = "j_username";
     String LOGIN_LOG_ID = "loginLogId";

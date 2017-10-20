@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,10 +38,10 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infstr.security.spring.filter;
+package org.egov.infra.config.security.authentication.filter;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.egov.infra.security.utils.SecurityConstants;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -59,8 +59,9 @@ import java.util.List;
 
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERNAME_KEY;
+import static org.egov.infra.utils.StringUtils.emptyIfNull;
 
-public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenticationFilter {
+public class ApplicationAuthenticationFilter extends UsernamePasswordAuthenticationFilter {
 
     private List<String> credentialFields = new ArrayList<>();
 
@@ -76,14 +77,13 @@ public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenti
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response,
                                             FilterChain filterChain, Authentication authResult) throws IOException, ServletException {
-        // Add information to session variables
         String location = request.getParameter(SecurityConstants.LOCATION_FIELD);
         HttpSession session = request.getSession();
         if (StringUtils.isNotBlank(location))
             session.setAttribute(SecurityConstants.LOCATION_FIELD, location);
 
         if (authResult != null) {
-            SecureUser principal = (SecureUser) authResult.getPrincipal();
+            CurrentUser principal = (CurrentUser) authResult.getPrincipal();
             session.setAttribute(USERID_KEY, principal.getUserId());
             session.setAttribute(USERNAME_KEY, principal.getUsername());
         }
@@ -94,7 +94,7 @@ public class EgovAuthenticationProcessingFilter extends UsernamePasswordAuthenti
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) {
         HashMap<String, String> credentials = new HashMap<>();
         for (String credential : credentialFields) {
-            String field = request.getParameter(credential) == null ? "" : request.getParameter(credential);
+            String field = emptyIfNull(request.getParameter(credential));
             credentials.put(credential, field);
         }
         String username = request.getParameter(SecurityConstants.USERNAME_FIELD);

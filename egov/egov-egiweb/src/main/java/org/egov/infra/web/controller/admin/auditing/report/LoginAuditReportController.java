@@ -42,8 +42,8 @@ package org.egov.infra.web.controller.admin.auditing.report;
 
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.audit.contract.LoginAuditReportRequest;
-import org.egov.infra.security.audit.entity.SystemAudit;
-import org.egov.infra.security.audit.service.SystemAuditService;
+import org.egov.infra.security.audit.entity.LoginAudit;
+import org.egov.infra.security.audit.service.LoginAuditService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -63,7 +63,7 @@ import static org.springframework.http.MediaType.APPLICATION_JSON_UTF8_VALUE;
 public class LoginAuditReportController {
 
     @Autowired
-    private SystemAuditService systemAuditService;
+    private LoginAuditService loginAuditService;
 
     @ModelAttribute("userTypes")
     public List<UserType> userTypes() {
@@ -82,8 +82,8 @@ public class LoginAuditReportController {
 
     @PostMapping(produces = APPLICATION_JSON_UTF8_VALUE)
     @ResponseBody
-    public DataTable<SystemAudit> loginAuditReportSearchResult(@ModelAttribute LoginAuditReportRequest loginAuditReportRequest) {
-        return new DataTable<>(systemAuditService.getAllSystemAudit(loginAuditReportRequest),
+    public DataTable<LoginAudit> loginAuditReport(@ModelAttribute LoginAuditReportRequest loginAuditReportRequest) {
+        return new DataTable<>(loginAuditService.getLoginAudits(loginAuditReportRequest),
                 loginAuditReportRequest.draw());
     }
 }

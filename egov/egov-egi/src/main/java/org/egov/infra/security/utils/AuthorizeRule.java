@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,9 +38,15 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infstr.security.spring.event;
+package org.egov.infra.security.utils;
 
+import org.egov.infra.admin.master.entity.User;
 
-public enum EventType {
-	AuthorizedEvent,AuthorizationFailureEvent,AuthenticationFailureBadCredentialsEvent,InteractiveAuthenticationSuccessEvent,HttpSessionDestroyedEvent
+/**
+ * Any object that needs to use the eGovAuthorize tag needs to implement this interface
+ * @author sahinab
+ */
+public interface AuthorizeRule {
+
+	boolean isAuthorized(User user);
 }
