@@ -1,0 +1,231 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~ accountability and the service delivery of the government  organizations.
+  ~
+  ~  Copyright (C) <2017>  eGovernments Foundation
+  ~
+  ~  The updated version of eGov suite of products as by eGovernments Foundation
+  ~  is available at http://www.egovernments.org
+  ~
+  ~  This program is free software: you can redistribute it and/or modify
+  ~  it under the terms of the GNU General Public License as published by
+  ~  the Free Software Foundation, either version 3 of the License, or
+  ~  any later version.
+  ~
+  ~  This program is distributed in the hope that it will be useful,
+  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~  GNU General Public License for more details.
+  ~
+  ~  You should have received a copy of the GNU General Public License
+  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~  http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~  In addition to the terms of the GPL license to be adhered to in using this
+  ~  program, the following additional terms are to be complied with:
+  ~
+  ~      1) All versions of this program, verbatim or modified must carry this
+  ~         Legal Notice.
+  ~ 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~         derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~ 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~ 	For any further queries on attribution, including queries on brand guidelines,
+  ~         please contact contact@egovernments.org
+  ~
+  ~      2) Any misrepresentation of the origin of the material is prohibited. It
+  ~         is required that all modified versions of this material be marked in
+  ~         reasonable ways as different from the original version.
+  ~
+  ~      3) This license does not grant any rights to any user of the program
+  ~         with regards to rights under trademark law for use of the trade names
+  ~         or trademarks of eGovernments Foundation.
+  ~
+  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tl_search_acknowledgment" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="0fb5ab7a-a79d-48b7-afb8-b09ab625257e">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<parameter name="License" class="java.lang.Object"/>
+	<parameter name="amount" class="java.lang.String"/>
+	<field name="applicationNumber" class="java.lang.String"/>
+	<field name="licensee" class="java.lang.Object"/>
+	<field name="applicationDate" class="java.util.Date"/>
+	<field name="parentBoundary" class="java.lang.Object"/>
+	<field name="boundary" class="java.lang.Object"/>
+	<field name="tradeName" class="java.lang.Object"/>
+	<field name="commencementDate" class="java.util.Date"/>
+	<field name="licenseNumber" class="java.lang.String"/>
+	<field name="licenseAppType" class="java.lang.Object"/>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<title>
+		<band height="79" splitType="Stretch">
+			<textField>
+				<reportElement x="180" y="30" width="391" height="20" uuid="5a0eca92-c470-4e78-a47b-e90c6b91441e"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{licenseAppType}.getName()+"  License Application Acknowledgement"]]></textFieldExpression>
+			</textField>
+		</band>
+	</title>
+	<pageHeader>
+		<band splitType="Stretch"/>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="246" splitType="Stretch">
+			<staticText>
+				<reportElement positionType="Float" x="31" y="23" width="149" height="32" isPrintInFirstWholeBand="true" uuid="594d921e-460e-46d2-8143-851ae113fbf2"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Application No. :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="398" y="87" width="173" height="32" isPrintInFirstWholeBand="true" uuid="7e9d6970-193d-4b7a-be06-34bd53aa64a1"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Trade Name :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="31" y="87" width="149" height="32" isPrintInFirstWholeBand="true" uuid="b18f7bac-c510-455b-9c1d-ad015e8e78d7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Trade Owner Name :]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="398" y="119" width="173" height="32" isPrintInFirstWholeBand="true" uuid="c12cc72e-17fb-4155-b0a3-57e2d63a2cb9">
+					<printWhenExpression><![CDATA[$F{licenseAppType}.getName()!="Closure"]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[License Fee(Payable) :]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="180" y="23" width="218" height="32" isPrintInFirstWholeBand="true" uuid="5dd8328a-e38d-492f-8d58-9da60f23f612"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applicationNumber}]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="571" y="87" width="211" height="32" isPrintInFirstWholeBand="true" uuid="8a30ad96-36f4-49c3-b95d-b3dd30752424"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tradeName}.getName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="180" y="87" width="218" height="32" isPrintInFirstWholeBand="true" uuid="71c532bd-c66d-4d0d-ba4e-22f75fd1c4c3"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{licensee}.getApplicantName()]]></textFieldExpression>
+			</textField>
+			<textField>
+				<reportElement positionType="Float" x="571" y="119" width="211" height="32" isPrintInFirstWholeBand="true" uuid="3c09aadb-31ab-43dd-a64c-634231f52618">
+					<printWhenExpression><![CDATA[$F{licenseAppType}.getName()!="Closure"]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{amount}.isEmpty()? BigInteger.ZERO :$P{amount}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="31" y="119" width="149" height="32" isPrintWhenDetailOverflows="true" uuid="e4a2dd13-d95f-4007-bf3d-1ff22cf16af9"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Trade Commencement Date :]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="571" y="55" width="211" height="32" isPrintWhenDetailOverflows="true" uuid="9713092c-0342-4aea-a391-c951852b1853"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{licensee}.getAddress()+", "+$F{boundary}.getName()+" , "+$F{parentBoundary}.getName()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="398" y="23" width="173" height="32" isPrintInFirstWholeBand="true" uuid="5ec96ec2-69fd-42bb-80f7-640c39aba71a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Application Date :]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="180" y="119" width="218" height="32" isPrintInFirstWholeBand="true" uuid="2dadcbed-c827-4f77-8e38-814926838781"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("dd/MMM/yyyy E h:mm a").format($F{commencementDate}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement positionType="Float" x="398" y="55" width="173" height="32" isPrintInFirstWholeBand="true" uuid="900eb568-04cd-441a-83c7-6205974e23cd"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[Trade Address :]]></text>
+			</staticText>
+			<textField>
+				<reportElement positionType="Float" x="571" y="23" width="211" height="32" isPrintInFirstWholeBand="true" uuid="642506a0-afab-42e2-8bd9-49c4a5b99e32"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[(new SimpleDateFormat("dd/MMM/yyyy E h:mm a").format($F{applicationDate}))]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="31" y="55" width="149" height="32" uuid="f11180bc-5d38-4b9b-9eeb-f44d07b877c7"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[License No :]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="180" y="55" width="218" height="32" uuid="c573fc67-88f7-4168-a09e-73430aabde2a"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{licenseNumber}.equals(null) ? "NA":$F{licenseNumber}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+	<columnFooter>
+		<band splitType="Stretch"/>
+	</columnFooter>
+	<pageFooter>
+		<band splitType="Stretch"/>
+	</pageFooter>
+	<summary>
+		<band height="84" splitType="Stretch">
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="31" y="28" width="367" height="20" isPrintWhenDetailOverflows="true" uuid="182e16be-5dcb-4320-aa54-952196ac5995">
+					<printWhenExpression><![CDATA[$F{licenseAppType}.getName()!="Closure"]]></printWhenExpression>
+				</reportElement>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Final License Fee will be subjected to inspection.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement stretchType="RelativeToTallestObject" x="31" y="48" width="367" height="20" isPrintWhenDetailOverflows="true" uuid="16cc5fef-a4c6-42ca-846e-85f8fa9f7cf3"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[This is computer generated acknowledgement, signature not required.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="31" y="8" width="100" height="20" uuid="7c279b5a-0722-4520-b415-a09433f72d83"/>
+				<textElement verticalAlignment="Middle"/>
+				<text><![CDATA[Note :]]></text>
+			</staticText>
+		</band>
+	</summary>
+</jasperReport>

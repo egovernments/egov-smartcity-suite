@@ -46,9 +46,13 @@
  */
 package org.egov.tl.web.controller;
 
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -58,6 +62,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
@@ -67,10 +72,19 @@ public class LicenseController {
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
+    @Autowired
+    private ReportService reportService;
+
     @GetMapping(value = "/document/{licenseId}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Map<String, List<LicenseDocument>>> getAttachedDocument(@PathVariable Long licenseId) {
         return tradeLicenseService.getAttachedDocument(licenseId);
     }
 
+    @GetMapping("/acknowledgement/{licenseId}")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable Long licenseId) {
+        ReportRequest reportRequest = tradeLicenseService.generateAcknowledgment(licenseId);
+        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    }
 }

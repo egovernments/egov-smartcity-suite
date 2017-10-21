@@ -63,6 +63,8 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.reporting.engine.ReportDisposition;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -120,7 +122,6 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
@@ -520,5 +521,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             }
         }
         return licenseDocumentDetails;
+    }
+
+    public ReportRequest generateAcknowledgment(Long licenseId) {
+        Map<String, Object> reportparam = new HashMap<>();
+        License license = getLicenseById(licenseId);
+        ReportRequest reportRequest = new ReportRequest("tl_license_acknowledgment", license, reportparam);
+        reportparam.put("amount", license.getTotalBalance());
+        reportRequest.setReportParams(reportparam);
+        reportRequest.setReportFormat(ReportFormat.PDF);
+        reportRequest.setReportName("license_ack_" + license.getApplicationNumber());
+        reportRequest.setReportDisposition(ReportDisposition.ATTACHMENT);
+        return reportRequest;
     }
 }

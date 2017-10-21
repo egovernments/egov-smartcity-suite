@@ -500,5 +500,7 @@ function goToAction(obj, id) {
         window.open("/tl/viewtradelicense/showclosureform.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if(obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
         window.open("/tl/demand/licensedemandgenerate?licenseId=" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if(obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
+        window.open("/tl/license/acknowledgement/" + id);
     $(obj).val('');
 }
