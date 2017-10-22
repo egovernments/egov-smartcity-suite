@@ -43,87 +43,93 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-  <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-    <definition name="error" template="/WEB-INF/views/template/error.jsp"/>
-	
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
+
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>
-    
+
     <definition name="designation-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createdesignation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/designation/designation-form.jsp"/>
     </definition>
-    
-     <definition name="success-designation" extends="base_layout">
+
+    <definition name="success-designation" extends="base_layout">
         <put-attribute name="page-title" value="title.createdesignation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/designation/designation-success.jsp"/>
     </definition>
-    
+
     <definition name="designation-list" extends="base_layout">
         <put-attribute name="page-title" value="title.searchdesignation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/designation/designation-search.jsp"/>
     </definition>
-    
-      <definition name="designation-view" extends="base_layout">
+
+    <definition name="designation-view" extends="base_layout">
         <put-attribute name="page-title" value="title.searchdesignation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/designation/designation-view.jsp"/>
     </definition>
-    
-     <definition name="position-form" extends="base_layout">
+
+    <definition name="position-form" extends="base_layout">
         <put-attribute name="page-title" value="title.createposition" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/position/position-form.jsp"/>
     </definition>
-    <definition name="position-search" template="/WEB-INF/views/masters/position/position-search.jsp" >
-         <put-attribute name="title" value="Search Position"/>
-     </definition>
-    
+    <definition name="position-search" template="/WEB-INF/views/masters/position/position-search.jsp">
+        <put-attribute name="title" value="Search Position"/>
+    </definition>
+
     <definition name="employee-form-simple" extends="base_layout">
-		<put-attribute name="page-title" value="title.createemployee" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-form-simple.jsp"/>
-	</definition>
-	
-	<definition name="employee-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.createemployee" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-form.jsp"/>
-	</definition>
-	
+        <put-attribute name="page-title" value="title.createemployee" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-form-simple.jsp"/>
+    </definition>
+
+    <definition name="employee-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.createemployee" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-form.jsp"/>
+    </definition>
+
     <definition name="employee-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.viewemployee" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-success.jsp"/>
-	</definition>
-	
-	<definition name="employeedetails-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.empdetails" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employeedetails-form.jsp"/>
-	</definition>
-	
+        <put-attribute name="page-title" value="title.viewemployee" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/employee/employee-success.jsp"/>
+    </definition>
+
+    <definition name="employeedetails-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.empdetails" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/employee/employeedetails-form.jsp"/>
+    </definition>
+
     <definition name="employeesearch-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.searchemployee" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/masters/employee/employeesearch-form.jsp"/>
-	</definition>
-	
-	<definition name="employeeassignment-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.employeeassignmentreport" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/reports/employeeassignmentreport-searchform.jsp"/>
-	</definition>  
-	
-	<definition name="employeeassignmentpdf-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.employeeassignmentreport" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/reports/employeeassignmentpdf-result.jsp"/>
-	</definition>  
-	
-	<definition name="employeePositionReport-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.searchemployeeposition" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/reports/employeePositionReport-form.jsp"/>
-	</definition>
+        <put-attribute name="page-title" value="title.searchemployee" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/employee/employeesearch-form.jsp"/>
+    </definition>
+
+    <definition name="employeeassignment-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.employeeassignmentreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/employeeassignmentreport-searchform.jsp"/>
+    </definition>
+
+    <definition name="employeeassignmentpdf-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.employeeassignmentreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/employeeassignmentpdf-result.jsp"/>
+    </definition>
+
+    <definition name="employeePositionReport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchemployeeposition" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/employeePositionReport-form.jsp"/>
+    </definition>
 </tiles-definitions>

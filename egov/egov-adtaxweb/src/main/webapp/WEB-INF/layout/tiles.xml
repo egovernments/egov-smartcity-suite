@@ -45,321 +45,325 @@
 
     <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
-         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-   </definition>
-    
-	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
+    </definition>
+
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
 
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/views/index.jsp"/>
     </definition>
-    
-     <definition name="scheduleOfRate-form" extends="base_layout">
-	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
-	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-form.jsp"/>
+
+    <definition name="scheduleOfRate-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-form.jsp"/>
     </definition>
-      <definition name="scheduleOfRate-result" extends="base_layout">
-	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
-	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-result.jsp"/>
+    <definition name="scheduleOfRate-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-result.jsp"/>
     </definition>
-     <definition name="scheduleOfRate-success" extends="base_layout">
-	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
-	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-success.jsp"/>
+    <definition name="scheduleOfRate-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-success.jsp"/>
     </definition>
     <definition name="generateDemand-success" extends="base_layout">
-	    <put-attribute name="page-title" value="title.adtax.generateDemand" cascade="true"/>
-	    <put-attribute name="body" value="/WEB-INF/views/hoarding/generateDemand-success.jsp"/>
+        <put-attribute name="page-title" value="title.adtax.generateDemand" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/hoarding/generateDemand-success.jsp"/>
     </definition>
-    <definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	
-	<definition name="agency-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+    <definition name="agency-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.agency.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/agency/agency-form.jsp"/>
     </definition>
-    
+
     <definition name="agency/agency-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.agency.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/agency/agency-success.jsp"/>
     </definition>
-    
+
     <definition name="agency-search" extends="base_layout">
         <put-attribute name="page-title" value="title.agency.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/agency/agency-search.jsp"/>
     </definition>
-    
+
     <definition name="agency/agency-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.agency.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.agency.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/agency/agency-form.jsp"/>
     </definition>
-    
+
     <definition name="hoarding-create" extends="base_layout">
-    	<put-attribute name="page-title" value="title.new.hoarding" cascade="true"/>
+        <put-attribute name="page-title" value="title.new.hoarding" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-create.jsp"/>
     </definition>
-    
+
     <definition name="hoarding-search-for-update" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-search-for-update.jsp"/>
     </definition>
     <definition name="hoarding-generate" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.generateDemand" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.generateDemand" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-generateDemand.jsp"/>
     </definition>
-    
+
     <definition name="hoarding-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-search.jsp"/>
     </definition>
-    
+
     <definition name="hoarding-update" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.modify" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.modify" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-update.jsp"/>
     </definition>
-    
+
     <definition name="hoarding-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.view" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-view.jsp"/>
     </definition>
-    
+
     <definition name="ratesClass-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-form.jsp"/>
     </definition>
-        <definition name="ratesClass/ratesClass-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+    <definition name="ratesClass/ratesClass-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-form.jsp"/>
     </definition>
-    
+
     <definition name="ratesClass-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-search.jsp"/>
     </definition>
-    
+
     <definition name="ratesClass/ratesClass-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.ratesClass.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/ratesClass/ratesClass-success.jsp"/>
     </definition>
 
 
-
     <definition name="unitOfMeasure-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.uom.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-form.jsp"/>
     </definition>
-        <definition name="unitOfMeasure/unitOfMeasure-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+    <definition name="unitOfMeasure/unitOfMeasure-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.uom.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-form.jsp"/>
     </definition>
-    
+
     <definition name="unitOfMeasure-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.uom.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-search.jsp"/>
     </definition>
-    
+
     <definition name="unitOfMeasure/unitOfMeasure-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.uom.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.uom.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/unitOfMeasure/unitOfMeasure-success.jsp"/>
     </definition>
 
 
     <definition name="category-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.category.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/category-form.jsp"/>
     </definition>
-        <definition name="category/category-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+    <definition name="category/category-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.category.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/category-form.jsp"/>
     </definition>
-    
+
     <definition name="category-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.category.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/category-search.jsp"/>
     </definition>
-    
+
     <definition name="category/category-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.category.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.category.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/category-success.jsp"/>
     </definition>
 
 
-  <definition name="subcategory-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+    <definition name="subcategory-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/subcategory-form.jsp"/>
     </definition>
-        <definition name="subcategory/subcategory-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+    <definition name="subcategory/subcategory-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/subcategory-form.jsp"/>
     </definition>
-    
+
     <definition name="subcategory-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/subcategory-search.jsp"/>
     </definition>
-    
+
     <definition name="subcategory/subcategory-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
+        <put-attribute name="page-title" value="title.subcategory.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/category/subcategory-success.jsp"/>
     </definition>
 
 
-  <definition name="collectAdvtax-redirection" extends="base_layout">	 
+    <definition name="collectAdvtax-redirection" extends="base_layout">
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-redirection.jsp"/>
     </definition>
- <definition name="agencyWiseTaxCollect" extends="base_layout">	 
+    <definition name="agencyWiseTaxCollect" extends="base_layout">
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/agencyWiseTaxCollection.jsp"/>
     </definition>
-  <definition name="collectAdvtax-error" extends="base_layout">	 
+    <definition name="collectAdvtax-error" extends="base_layout">
         <put-attribute name="page-title" value="title.collect.Advtax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectAdvtax-error.jsp"/>
     </definition>
-  <definition name="hoarding-createLegacy" extends="base_layout">
-    	<put-attribute name="page-title" value="title.legacy.hoarding" cascade="true"/>
+    <definition name="hoarding-createLegacy" extends="base_layout">
+        <put-attribute name="page-title" value="title.legacy.hoarding" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-createLegacy.jsp"/>
     </definition>
-     <definition name="hoarding-updateLegacy" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.update" cascade="true"/>
+    <definition name="hoarding-updateLegacy" extends="base_layout">
+        <put-attribute name="page-title" value="title.adtax.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-updateLegacy.jsp"/>
     </definition>
     <definition name="report-dcb" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+        <put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/report-dcb.jsp"/>
     </definition>
-     <definition name="report-dcbview" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+    <definition name="report-dcbview" extends="base_layout">
+        <put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/report-dcbview.jsp"/>
     </definition>
     <definition name="hoarding/hoarding-success" extends="base_layout">
-    	<put-attribute name="page-title" value="lbl.hoarding.details" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.hoarding.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-success.jsp"/>
     </definition>
-    
+
     <definition name="scheduleOfRate-search" extends="base_layout">
-	    <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
-	    <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-search.jsp"/>
+        <put-attribute name="page-title" value="title.scheduleofrates" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/rates/scheduleOfRate-search.jsp"/>
     </definition>
     <definition name="advertisement-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/advertisement-search.jsp"/>
     </definition>
     <definition name="renewal-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-search.jsp"/>
     </definition>
     <definition name="renewal-newform" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.renewal" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.renewal" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-newform.jsp"/>
     </definition>
 
-     <definition name="statuschange-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+    <definition name="statuschange-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/statuschange-search.jsp"/>
     </definition>
-    
+
     <definition name="statusChange-deactivate" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/statusChange-deactivate.jsp"/>
     </definition>
-    
-     <definition name="statusChange-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
+
+    <definition name="statusChange-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/statusChange-success.jsp"/>
     </definition>
-    
-       <definition name="tpbo-create" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.createTpbo" cascade="true"/>
+
+    <definition name="tpbo-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.adtax.createTpbo" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-create.jsp"/>
     </definition>
-    
+
     <definition name="tpbo-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.searchTpbo" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.searchTpbo" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-search.jsp"/>
     </definition>
-    
-     <definition name="tpbo/tpbo-searchSuccess" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.searchTpbo" cascade="true"/>
+
+    <definition name="tpbo/tpbo-searchSuccess" extends="base_layout">
+        <put-attribute name="page-title" value="title.adtax.searchTpbo" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-search-success.jsp"/>
     </definition>
 
     <definition name="tpbo-update" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.updateTpbo" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.updateTpbo" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/tpbo/tpbo-update.jsp"/>
     </definition>
-    <definition name="renewal-error" extends="base_layout">	 
+    <definition name="renewal-error" extends="base_layout">
         <put-attribute name="page-title" value="title.adtax.renewal" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-error.jsp"/>
     </definition>
-    
-     <definition name="deactive-error" extends="base_layout">	 
+
+    <definition name="deactive-error" extends="base_layout">
         <put-attribute name="page-title" value="title.adtax.deactivate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/renewal-error.jsp"/>
     </definition>
-   
-      <definition name="report-agencywise" extends="base_layout">
-    	<put-attribute name="page-title" value="title.agencywise.report" cascade="true"/>
+
+    <definition name="report-agencywise" extends="base_layout">
+        <put-attribute name="page-title" value="title.agencywise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/report-agencywise.jsp"/>
     </definition>
-    
+
     <definition name="report-agencywise-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.agencywise.report" cascade="true"/>
+        <put-attribute name="page-title" value="title.agencywise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/report-agencywise-view.jsp"/>
     </definition>
-    
-     <definition name="penaltyRates-change" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.penaltyRateChange" cascade="true"/>
+
+    <definition name="penaltyRates-change" extends="base_layout">
+        <put-attribute name="page-title" value="title.adtax.penaltyRateChange" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-change.jsp"/>
     </definition>
-    
-     <definition name="penaltyRate-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.penaltyRateChange" cascade="true"/>
+
+    <definition name="penaltyRate-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.adtax.penaltyRateChange" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRate-success.jsp"/>
     </definition>
-    
+
     <definition name="demand-status-form" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.viewdemandstatus" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/demand/adtax-demand-status.jsp"/>
+        <put-attribute name="page-title" value="title.adtax.viewdemandstatus" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demand/adtax-demand-status.jsp"/>
     </definition>
-    
+
     <definition name="adtax-demand-status-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.viewdemandstatus" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/demand/adtax-demand-status-view.jsp"/>
+        <put-attribute name="page-title" value="title.adtax.viewdemandstatus" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/demand/adtax-demand-status-view.jsp"/>
     </definition>
-    
+
     <definition name="hoarding-ack" extends="base_layout">
-    	<put-attribute name="page-title" value="lbl.hoarding.details" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.hoarding.details" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/hoarding-ack.jsp"/>
     </definition>
-    
+
     <definition name="search-adtax-online-payment" extends="base_layout">
-    	<put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
+        <put-attribute name="page-title" value="title.adtax.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/citizen/search-adtax-online-payment.jsp"/>
     </definition>
-    
+
     <definition name="citizen/citizen-online-dcbview" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+        <put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/citizen/citizen-online-dcbview.jsp"/>
     </definition>
-    
+
     <definition name="onlinepayment-redirection" extends="base_layout">
-    	<put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
+        <put-attribute name="page-title" value="title.hoardingwise.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/citizen/onlinepayment-redirection.jsp"/>
     </definition>
-        <definition name="advertisement-reassign" extends="base_layout">
-    	<put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
+    <definition name="advertisement-reassign" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.reassign.title" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/advertisement-reassign.jsp"/>
     </definition>
-            <definition name="reassign-success" extends="base_layout">
-    	<put-attribute name="page-title" value="lbl.reassign.success" cascade="true"/>
+    <definition name="reassign-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.reassign.success" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/hoarding/reassign-success.jsp"/>
     </definition>
     <definition name="mobilePayment-form" extends="base_layout">
- 	   	<put-attribute name="page-title" value="mobilePayment.title" cascade="true"/>
- 	   	<put-attribute name="body" value="/WEB-INF/views/mobile/mobilePayment-form.jsp"/>
-  	</definition>  
-    
+        <put-attribute name="page-title" value="mobilePayment.title" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/mobile/mobilePayment-form.jsp"/>
+    </definition>
+
 </tiles-definitions>

@@ -145,7 +145,8 @@
 
     <definition name="license-bulk-digisign-forward" extends="base_layout">
         <put-attribute name="page-title" value="lbl.digitalSignature" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/newtradelicense/newTradeLicense-digitalSignatureRedirection.jsp"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/jsp/newtradelicense/newTradeLicense-digitalSignatureRedirection.jsp"/>
     </definition>
 
     <definition name="demand-generate" extends="base_layout">
@@ -252,12 +253,12 @@
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/search/search-demandnotice.jsp"/>
     </definition>
-      <definition name="searchtrade-licenseforpay" extends="base_layout">
+    <definition name="searchtrade-licenseforpay" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/search/searchtrade-licenseforpay.jsp"/>
     </definition>
     <definition name="license-onlinepayment" extends="base_layout">
-      	<put-attribute name="page-title" value="title.document.new" cascade="true"/>
+        <put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/jsp/payment/license-onlinepayment.jsp"/>
     </definition>
     <definition name="dcr-search" extends="base_layout">
@@ -265,7 +266,7 @@
         <put-attribute name="body" value="/WEB-INF/views/dailycitizenreport/dcr-search.jsp"/>
     </definition>
     <definition name="view-license-dcb" extends="base_layout">
-      	<put-attribute name="page-title" value="title.document.new" cascade="true"/>
+        <put-attribute name="page-title" value="title.document.new" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/jsp/payment/view-license-dcb.jsp"/>
     </definition>
     <definition name="create-legacylicense" extends="base_layout">
@@ -281,7 +282,7 @@
         <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-update.jsp"/>
     </definition>
     <definition name="yearwiseDCBReport-search" extends="base_layout">
-            <put-attribute name="page-title" value="lbl.installmentwise.dcb.report" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.installmentwise.dcb.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dcb/installmentwisedcbreport-search.jsp"/>
     </definition>
 </tiles-definitions>

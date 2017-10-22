@@ -43,119 +43,124 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-  <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-    <definition name="error" template="/WEB-INF/views/template/error.jsp"/>
-	
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
+
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>
-    
+
     <definition name="uomcategory-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.uomcategory.new" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-new.jsp"/>
+        <put-attribute name="page-title" value="title.uomcategory.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-new.jsp"/>
     </definition>
 
     <definition name="uomcategory-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.uomcategory.view" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-view.jsp"/>
+        <put-attribute name="page-title" value="title.uomcategory.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-view.jsp"/>
     </definition>
 
     <definition name="uomcategory-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.uomcategory.edit" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-edit.jsp"/>
-	</definition>
+        <put-attribute name="page-title" value="title.uomcategory.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-edit.jsp"/>
+    </definition>
 
-	<definition name="uomcategory-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.uomcategory.result" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-result.jsp"/>
-	</definition>
+    <definition name="uomcategory-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.uomcategory.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-result.jsp"/>
+    </definition>
 
-	<definition name="uomcategory-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.uomcategory.search" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-search.jsp"/>
-	</definition>
+    <definition name="uomcategory-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.uomcategory.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uomcategory/uomcategory-search.jsp"/>
+    </definition>
 
-	<definition name="uom-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.uom.new" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uom/uom-new.jsp"/>
-	</definition>
+    <definition name="uom-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.uom.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uom/uom-new.jsp"/>
+    </definition>
 
-	<definition name="uom-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.uom.view" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uom/uom-view.jsp"/>
-	</definition>
+    <definition name="uom-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.uom.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uom/uom-view.jsp"/>
+    </definition>
 
-	<definition name="uom-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.uom.edit" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uom/uom-edit.jsp"/>
-	</definition>
+    <definition name="uom-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.uom.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uom/uom-edit.jsp"/>
+    </definition>
 
-	<definition name="uom-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.uom.result" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uom/uom-result.jsp"/>
-	</definition>
+    <definition name="uom-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.uom.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uom/uom-result.jsp"/>
+    </definition>
 
-	<definition name="uom-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.uom.edit" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/uom/uom-search.jsp"/>
-	</definition>
+    <definition name="uom-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.uom.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/uom/uom-search.jsp"/>
+    </definition>
 
-	<definition name="nationality-new" extends="base_layout">
-		<put-attribute name="page-title" value="title.nationality.new" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-new.jsp"/>
-	</definition>
-	
-	<definition name="nationality-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.nationality.result" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-result.jsp"/>
-	</definition>
+    <definition name="nationality-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.nationality.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/nationality/nationality-new.jsp"/>
+    </definition>
 
-	<definition name="nationality-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.nationality.edit" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-search.jsp"/>
-	</definition>
-	
-		<definition name="nationality-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.nationality.view" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-view.jsp"/>
-	</definition>
-	
-	<definition name="nationality-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.nationality.edit" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/nationality/nationality-edit.jsp"/>
-	</definition>
-	<definition name="qualification-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.qualification.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-new.jsp"/>
-	</definition>
-	
-	<definition name="qualification-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.qualification.view" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-view.jsp"/>
-	</definition>
-	
-	<definition name="qualification-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.qualification.edit" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-edit.jsp"/>
-	</definition>
-	
-	<definition name="qualification-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.qualification.result" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-result.jsp"/>
-	</definition>
-	
-	<definition name="qualification-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.qualification.search" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/qualification/qualification-search.jsp"/>
-	</definition>
+    <definition name="nationality-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.nationality.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/nationality/nationality-result.jsp"/>
+    </definition>
+
+    <definition name="nationality-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.nationality.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/nationality/nationality-search.jsp"/>
+    </definition>
+
+    <definition name="nationality-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.nationality.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/nationality/nationality-view.jsp"/>
+    </definition>
+
+    <definition name="nationality-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.nationality.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/nationality/nationality-edit.jsp"/>
+    </definition>
+    <definition name="qualification-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.qualification.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/qualification/qualification-new.jsp"/>
+    </definition>
+
+    <definition name="qualification-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.qualification.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/qualification/qualification-view.jsp"/>
+    </definition>
+
+    <definition name="qualification-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.qualification.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/qualification/qualification-edit.jsp"/>
+    </definition>
+
+    <definition name="qualification-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.qualification.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/qualification/qualification-result.jsp"/>
+    </definition>
+
+    <definition name="qualification-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.qualification.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/qualification/qualification-search.jsp"/>
+    </definition>
 </tiles-definitions>

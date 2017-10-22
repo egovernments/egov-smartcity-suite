@@ -46,11 +46,11 @@
 
     <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
-         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-   </definition>
-    
+    </definition>
+
     <definition name="dashboard_layout" template="/WEB-INF/views/template/dashboard.jsp">
         <put-attribute name="title" value="Complaint Redressal Dashboard"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
@@ -58,385 +58,390 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page" cascade="true"/>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-	</definition>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
 
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/views/index.jsp"/>
     </definition>
-	<definition name="caseType-new" extends="base_layout">
+    <definition name="caseType-new" extends="base_layout">
         <put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/caseType-new.jsp"/> 
+        <put-attribute name="body" value="/WEB-INF/views/masters/caseType-new.jsp"/>
     </definition>
     <definition name="case-type-sucess" extends="base_layout">
         <put-attribute name="page-title" value="title.createCaseType" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/caseType-sucess.jsp"/> 
+        <put-attribute name="body" value="/WEB-INF/views/masters/caseType-sucess.jsp"/>
     </definition>
     <definition name="interimorder-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.interimorder.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-new.jsp"/>
-</definition>
+        <put-attribute name="page-title" value="title.interimorder.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-new.jsp"/>
+    </definition>
 
-<definition name="interimorder-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.interimorder.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-view.jsp"/>
-</definition>
+    <definition name="interimorder-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.interimorder.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-view.jsp"/>
+    </definition>
 
-<definition name="interimorder-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.interimorder.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-edit.jsp"/>
-</definition>
+    <definition name="interimorder-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.interimorder.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-edit.jsp"/>
+    </definition>
 
-<definition name="interimorder-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.interimorder.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-result.jsp"/>
-</definition>
+    <definition name="interimorder-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.interimorder.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-result.jsp"/>
+    </definition>
 
-<definition name="interimorder-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.interimorder.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-search.jsp"/>
-	
-</definition><definition name="courttypemaster-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.courttypemaster.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-new.jsp"/>
-</definition>
+    <definition name="interimorder-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.interimorder.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/interimorder/interimorder-search.jsp"/>
 
-<definition name="courttypemaster-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.courttypemaster.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-view.jsp"/>
-</definition>
+    </definition>
+    <definition name="courttypemaster-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.courttypemaster.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-new.jsp"/>
+    </definition>
 
-<definition name="courttypemaster-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.courttypemaster.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-edit.jsp"/>
-</definition>
+    <definition name="courttypemaster-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.courttypemaster.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-view.jsp"/>
+    </definition>
 
-<definition name="courttypemaster-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.courttypemaster.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-result.jsp"/>
-</definition>
+    <definition name="courttypemaster-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.courttypemaster.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-edit.jsp"/>
+    </definition>
 
-<definition name="courttypemaster-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.courttypemaster.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-search.jsp"/>
-</definition>
-<definition name="casetypemaster-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.casetypemaster.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-new.jsp"/>
-</definition>
+    <definition name="courttypemaster-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.courttypemaster.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-result.jsp"/>
+    </definition>
 
-<definition name="casetypemaster-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.casetypemaster.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-view.jsp"/>
-</definition>
+    <definition name="courttypemaster-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.courttypemaster.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courttypemaster/courttypemaster-search.jsp"/>
+    </definition>
+    <definition name="casetypemaster-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.casetypemaster.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-new.jsp"/>
+    </definition>
 
-<definition name="casetypemaster-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.casetypemaster.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-edit.jsp"/>
-</definition>
+    <definition name="casetypemaster-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.casetypemaster.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-view.jsp"/>
+    </definition>
 
-<definition name="casetypemaster-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.casetypemaster.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-result.jsp"/>
-</definition>
+    <definition name="casetypemaster-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.casetypemaster.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-edit.jsp"/>
+    </definition>
 
-<definition name="casetypemaster-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.casetypemaster.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-search.jsp"/>
-</definition>
+    <definition name="casetypemaster-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.casetypemaster.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-result.jsp"/>
+    </definition>
 
-<definition name="courtmaster-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.courtmaster.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-new.jsp"/>
-</definition>
+    <definition name="casetypemaster-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.casetypemaster.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/casetypemaster/casetypemaster-search.jsp"/>
+    </definition>
 
-<definition name="courtmaster-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.courtmaster.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-view.jsp"/>
-</definition>
+    <definition name="courtmaster-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.courtmaster.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-new.jsp"/>
+    </definition>
 
-<definition name="courtmaster-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.courtmaster.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-edit.jsp"/>
-</definition>
+    <definition name="courtmaster-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.courtmaster.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-view.jsp"/>
+    </definition>
 
-<definition name="courtmaster-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.courtmaster.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-result.jsp"/>
-</definition>
+    <definition name="courtmaster-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.courtmaster.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-edit.jsp"/>
+    </definition>
 
-<definition name="courtmaster-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.courtmaster.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-search.jsp"/>
-</definition>
+    <definition name="courtmaster-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.courtmaster.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-result.jsp"/>
+    </definition>
 
-<definition name="petitiontypemaster-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.petitiontypemaster.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-new.jsp"/>
-</definition>
+    <definition name="courtmaster-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.courtmaster.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/courtmaster/courtmaster-search.jsp"/>
+    </definition>
 
-<definition name="petitiontypemaster-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.petitiontypemaster.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-view.jsp"/>
-</definition>
+    <definition name="petitiontypemaster-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.petitiontypemaster.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-new.jsp"/>
+    </definition>
 
-<definition name="petitiontypemaster-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.petitiontypemaster.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-edit.jsp"/>
-</definition>
+    <definition name="petitiontypemaster-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.petitiontypemaster.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-view.jsp"/>
+    </definition>
 
-<definition name="petitiontypemaster-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.petitiontypemaster.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-result.jsp"/>
-</definition>
+    <definition name="petitiontypemaster-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.petitiontypemaster.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-edit.jsp"/>
+    </definition>
 
-<definition name="petitiontypemaster-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.petitiontypemaster.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-search.jsp"/>
-</definition>
-<definition name="legalCase-newForm" extends="base_layout">
-	<put-attribute name="page-title" value="title.createcase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-new.jsp"/>
-</definition>
+    <definition name="petitiontypemaster-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.petitiontypemaster.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-result.jsp"/>
+    </definition>
 
-<definition name="legalcasedetails-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.legalcasedetailsview" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedetails-view.jsp"/>
-</definition>
+    <definition name="petitiontypemaster-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.petitiontypemaster.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/petitiontypemaster/petitiontypemaster-search.jsp"/>
+    </definition>
+    <definition name="legalCase-newForm" extends="base_layout">
+        <put-attribute name="page-title" value="title.createcase" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-new.jsp"/>
+    </definition>
 
-<definition name="judgmenttype-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgmenttype.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-new.jsp"/>
-</definition>
+    <definition name="legalcasedetails-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.legalcasedetailsview" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedetails-view.jsp"/>
+    </definition>
 
-<definition name="judgmenttype-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgmenttype.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-view.jsp"/>
-</definition>
+    <definition name="judgmenttype-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgmenttype.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-new.jsp"/>
+    </definition>
 
-<definition name="judgmenttype-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgmenttype.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-edit.jsp"/>
-</definition>
+    <definition name="judgmenttype-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgmenttype.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-view.jsp"/>
+    </definition>
 
-<definition name="judgmenttype-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgmenttype.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-result.jsp"/>
-</definition>
+    <definition name="judgmenttype-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgmenttype.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-edit.jsp"/>
+    </definition>
 
-<definition name="judgmenttype-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgmenttype.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-search.jsp"/>
-</definition>
-<definition name="governmentdepartment-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.governmentdepartment.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-new.jsp"/>
-</definition>
+    <definition name="judgmenttype-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgmenttype.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-result.jsp"/>
+    </definition>
 
-<definition name="governmentdepartment-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.governmentdepartment.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-view.jsp"/>
-</definition>
+    <definition name="judgmenttype-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgmenttype.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/judgmenttype/judgmenttype-search.jsp"/>
+    </definition>
+    <definition name="governmentdepartment-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.governmentdepartment.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-new.jsp"/>
+    </definition>
 
-<definition name="governmentdepartment-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.governmentdepartment.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-edit.jsp"/>
-</definition>
+    <definition name="governmentdepartment-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.governmentdepartment.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-view.jsp"/>
+    </definition>
 
-<definition name="governmentdepartment-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.governmentdepartment.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-result.jsp"/>
-</definition>
+    <definition name="governmentdepartment-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.governmentdepartment.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-edit.jsp"/>
+    </definition>
 
-<definition name="governmentdepartment-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.governmentdepartment.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-search.jsp"/>
-</definition>
+    <definition name="governmentdepartment-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.governmentdepartment.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-result.jsp"/>
+    </definition>
 
-<definition name="advocatemaster-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.advocatemaster.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-new.jsp"/>
-</definition>
+    <definition name="governmentdepartment-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.governmentdepartment.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/governmentdepartment/governmentdepartment-search.jsp"/>
+    </definition>
 
-<definition name="advocatemaster-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.advocatemaster.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-view.jsp"/>
-</definition>
+    <definition name="advocatemaster-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.advocatemaster.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-new.jsp"/>
+    </definition>
 
-<definition name="advocatemaster-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.advocatemaster.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-edit.jsp"/>
-</definition>
+    <definition name="advocatemaster-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.advocatemaster.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-view.jsp"/>
+    </definition>
 
-<definition name="advocatemaster-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.advocatemaster.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-result.jsp"/>
-</definition>
+    <definition name="advocatemaster-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.advocatemaster.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-edit.jsp"/>
+    </definition>
 
-<definition name="advocatemaster-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.advocatemaster.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-search.jsp"/>
-</definition>
+    <definition name="advocatemaster-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.advocatemaster.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-result.jsp"/>
+    </definition>
 
-<definition name="searchlegalcase-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.legalcase.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/search/searchlegalcase-form.jsp"/>
-</definition>
+    <definition name="advocatemaster-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.advocatemaster.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/advocatemaster/advocatemaster-search.jsp"/>
+    </definition>
 
-<definition name="judgment-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgment.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/judgment-new.jsp"/>
-</definition>
+    <definition name="searchlegalcase-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.legalcase.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/search/searchlegalcase-form.jsp"/>
+    </definition>
 
-<definition name="judgment-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgment.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/judgment-edit.jsp"/>
-</definition>
+    <definition name="judgment-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgment.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/judgment-new.jsp"/>
+    </definition>
 
-<definition name="judgment-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgment.success" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/judgment-success.jsp"/>
-</definition>
+    <definition name="judgment-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgment.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/judgment-edit.jsp"/>
+    </definition>
 
-<definition name="legalcase-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.editcase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-edit.jsp"/>
-</definition>
+    <definition name="judgment-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgment.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/judgment-success.jsp"/>
+    </definition>
 
-<definition name="legalcase-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.viewcase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-success.jsp"/>
-</definition>
-<definition name="hearings-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-success.jsp"/>
-</definition>
-<definition name="hearings-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-new.jsp"/>
-</definition>
-<definition name="lcinterimorder-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.lcinterimorder.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-new.jsp"/>
-</definition>
+    <definition name="legalcase-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.editcase" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-edit.jsp"/>
+    </definition>
 
-<definition name="lcinterimorder-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.lcinterimorder.success" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-success.jsp"/>
-</definition>
+    <definition name="legalcase-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewcase" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-success.jsp"/>
+    </definition>
+    <definition name="hearings-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.hearing" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/hearings-success.jsp"/>
+    </definition>
+    <definition name="hearings-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.hearing" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/hearings-new.jsp"/>
+    </definition>
+    <definition name="lcinterimorder-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.lcinterimorder.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-new.jsp"/>
+    </definition>
 
-<definition name="legalcase-standingCouncil" extends="base_layout">
-	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standingcouncil-new.jsp"/>
-</definition>
+    <definition name="lcinterimorder-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.lcinterimorder.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-success.jsp"/>
+    </definition>
 
-<definition name="lcinterimorder-list" extends="base_layout">
-	<put-attribute name="page-title" value="title.lcinterimorder.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-list.jsp"/>
-</definition>
+    <definition name="legalcase-standingCouncil" extends="base_layout">
+        <put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standingcouncil-new.jsp"/>
+    </definition>
 
-<definition name="lcinterimorder-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.lcinterimorder.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-edit.jsp"/>
-</definition>
+    <definition name="lcinterimorder-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.lcinterimorder.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-list.jsp"/>
+    </definition>
 
-<definition name="legalcaseDisposal-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.closecase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-new.jsp"/>
-</definition>
+    <definition name="lcinterimorder-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.lcinterimorder.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/lcinterimorder-edit.jsp"/>
+    </definition>
 
-<definition name="legalcaseDisposal-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.closecase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-success.jsp"/>
-</definition>
+    <definition name="legalcaseDisposal-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.closecase" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-new.jsp"/>
+    </definition>
 
-<definition name="legalcaseDisposal-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.editclosecase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-edit.jsp"/>
-</definition>
-<!-- <definition name="legalcase-standingCouncil" extends="base_layout">
-	<put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing-form.jsp"/>
-</definition> -->
-<definition name="legalcase-caaffidavit" extends="base_layout">
-	<put-attribute name="page-title" value="title.caaffidavittile" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit-new.jsp"/>
-</definition>
+    <definition name="legalcaseDisposal-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.closecase" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-success.jsp"/>
+    </definition>
 
-<definition name="vacatestay-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.vacatestay.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/vacatestay-new.jsp"/>
-</definition>
+    <definition name="legalcaseDisposal-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.editclosecase" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcasedisposal-edit.jsp"/>
+    </definition>
+    <!-- <definition name="legalcase-standingCouncil" extends="base_layout">
+        <put-attribute name="page-title" value="title.standingCouncil" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-standing-form.jsp"/>
+    </definition> -->
+    <definition name="legalcase-caaffidavit" extends="base_layout">
+        <put-attribute name="page-title" value="title.caaffidavittile" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-caaffidavit-new.jsp"/>
+    </definition>
 
-<definition name="vacatestay-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.vacatestay.success" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/vacatestay-success.jsp"/>
-</definition>
+    <definition name="vacatestay-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.vacatestay.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/vacatestay-new.jsp"/>
+    </definition>
 
-<definition name="hearings-list" extends="base_layout">
-	<put-attribute name="page-title" value="title.hearing" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-list.jsp"/>
-</definition>
+    <definition name="vacatestay-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.vacatestay.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/vacatestay-success.jsp"/>
+    </definition>
 
-<definition name="hearings-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.editcase" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/hearings-edit.jsp"/>
-</definition>
+    <definition name="hearings-list" extends="base_layout">
+        <put-attribute name="page-title" value="title.hearing" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/hearings-list.jsp"/>
+    </definition>
 
-<definition name="judgmentimpl-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgmentimpl.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/judgmentimpl-new.jsp"/>
-</definition>
+    <definition name="hearings-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.editcase" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/hearings-edit.jsp"/>
+    </definition>
 
-<definition name="judgmentimpl-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.judgmentimpl.success" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/judgmentimpl-success.jsp"/>
-</definition>
+    <definition name="judgmentimpl-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgmentimpl.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/judgmentimpl-new.jsp"/>
+    </definition>
 
-<definition name="dailyboardreport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.dailyboardreport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/dailyboardreport-form.jsp"/>
-</definition>
-<definition name="timeseriesreport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.timeseriesreport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/timeseriesreport-form.jsp"/>
-</definition>
+    <definition name="judgmentimpl-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.judgmentimpl.success" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/judgmentimpl-success.jsp"/>
+    </definition>
 
-<definition name="genericsub-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.genericsubreport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/genericsub-form.jsp"/>
-</definition>
+    <definition name="dailyboardreport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.dailyboardreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dailyboardreport-form.jsp"/>
+    </definition>
+    <definition name="timeseriesreport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.timeseriesreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/timeseriesreport-form.jsp"/>
+    </definition>
 
-<definition name="pwrDueReport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/pwrDueReport-form.jsp"/>
-</definition>
-<definition name="duereport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/dueReport-form.jsp"/>
-</definition>
+    <definition name="genericsub-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.genericsubreport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/genericsub-form.jsp"/>
+    </definition>
 
-<definition name="counterAffidavitDueReport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/counterAffidavitDueReport-form.jsp"/>
-</definition>
+    <definition name="pwrDueReport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.duereport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/pwrDueReport-form.jsp"/>
+    </definition>
+    <definition name="duereport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.duereport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dueReport-form.jsp"/>
+    </definition>
 
-<definition name="judgementImplDueReport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.duereport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/judgementImplDueReport-form.jsp"/>
-</definition>
-<definition name="legalcase-ca-success" extends="base_layout">
-	<put-attribute name="page-title" value="title.caaffidavitdetails" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-ca-success.jsp"/>
-</definition>
+    <definition name="counterAffidavitDueReport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.duereport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/counterAffidavitDueReport-form.jsp"/>
+    </definition>
 
-<definition name="employeehearingDueReport-form" extends="base_layout">
-	<put-attribute name="page-title" value="title.employeehearingduereport" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/reports/employeehearingDueReport-form.jsp"/>
-</definition>
+    <definition name="judgementImplDueReport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.duereport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/judgementImplDueReport-form.jsp"/>
+    </definition>
+    <definition name="legalcase-ca-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.caaffidavitdetails" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legalcase-ca-success.jsp"/>
+    </definition>
+
+    <definition name="employeehearingDueReport-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.employeehearingduereport" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/employeehearingDueReport-form.jsp"/>
+    </definition>
 
 </tiles-definitions>

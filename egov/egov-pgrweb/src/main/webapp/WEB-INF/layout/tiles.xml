@@ -53,11 +53,11 @@
 
     <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
-         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-   </definition>
-    
+    </definition>
+
     <definition name="dashboard_layout" template="/WEB-INF/views/template/dashboard.jsp">
         <put-attribute name="title" value="Complaint Redressal Dashboard"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
@@ -65,12 +65,16 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page" cascade="true"/>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-	</definition>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
 
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/views/index.jsp"/>
@@ -80,159 +84,155 @@
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complaint-type.jsp"/>
     </definition>
-    
-     <definition name="complaint-edit" extends="base_layout">
+
+    <definition name="complaint-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintUpdate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/view-complaint.jsp"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-edit.jsp"/>
     </definition>
-    
-     <definition name="complaint-citizen-edit" extends="base_layout">
+
+    <definition name="complaint-citizen-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintUpdate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/view-complaint.jsp"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-citizen-edit.jsp"/>
     </definition>
-    
-     <definition name="update-success" extends="base_layout">
+
+    <definition name="update-success" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/complaint-update-success.jsp"/>
     </definition>
-	
-	<definition name="complaint/*/*" extends="base_layout">
+
+    <definition name="complaint/*/*" extends="base_layout">
         <put-attribute name="page-title" value="title.complaint.reg" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/{1}/{2}.jsp"/>
     </definition>
-    
+
     <definition name="complaint/reg-success" extends="base_layout">
         <put-attribute name="page-title" value="title.viewComplaint" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/reg-success.jsp"/>
     </definition>
-    
-	<definition name="view-complaint" extends="base_layout">
+
+    <definition name="view-complaint" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintInfo" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/view-complaint.jsp"/>
     </definition>
 
-	<definition name="complaint-search" extends="base_layout">
+    <definition name="complaint-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchComplaints" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/complaint/search-complaint.jsp"/>
     </definition>
-	
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	
-	<definition name="view-complaintType" extends="base_layout">
+
+    <definition name="view-complaintType" extends="base_layout">
         <put-attribute name="page-title" value="title.viewComplaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/view-complaintType.jsp"/>
     </definition>
-    
-	<definition name="complaintType-list" extends="base_layout">
+
+    <definition name="complaintType-list" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-list.jsp"/>
     </definition>
-    
+
     <definition name="complaintType/complaintType-success" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-success.jsp"/>
     </definition>
-    
+
     <definition name="router-create" extends="base_layout">
-    <put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-create.jsp"/>
     </definition>
-    
+
     <definition name="router-success" extends="base_layout">
         <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-success.jsp"/>
     </definition>
-    
+
     <definition name="router-update" extends="base_layout">
         <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-update.jsp"/>
     </definition>
-    
+
     <definition name="router-deleteMsg" extends="base_layout">
-    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-deleteMsg.jsp"/>
     </definition>
-    
+
     <definition name="router-searchView" extends="base_layout">
-    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-searchView.jsp"/>
     </definition>
-    
+
     <definition name="router-searchUpdate" extends="base_layout">
-    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-searchUpdate.jsp"/>
     </definition>
-    
+
     <definition name="router-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-view.jsp"/>
     </definition>
-    
+
     <definition name="router-updateSearch" extends="base_layout">
-    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSearch.jsp"/>
     </definition>
-    
+
     <definition name="router-updateSuccess" extends="base_layout">
-    	<put-attribute name="page-title" value="title.router" cascade="true"/>
+        <put-attribute name="page-title" value="title.router" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSuccess.jsp"/>
     </definition>
-    
-        <definition name="escalationTime-searchView" extends="base_layout">
-    	<put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
+
+    <definition name="escalationTime-searchView" extends="base_layout">
+        <put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationTime-searchView.jsp"/>
     </definition>
-     <definition name="escalationTime-search" extends="base_layout">
-    	<put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
+    <definition name="escalationTime-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationTime-search.jsp"/>
     </definition>
-     <definition name="escalation-searchView" extends="base_layout">
-    	<put-attribute name="page-title" value="title.escalation" cascade="true"/>
+    <definition name="escalation-searchView" extends="base_layout">
+        <put-attribute name="page-title" value="title.escalation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-view.jsp"/>
     </definition>
     <definition name="escalation-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
+        <put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-search.jsp"/>
     </definition>
-   <definition name="escalation-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
+    <definition name="escalation-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-success.jsp"/>
-    </definition>  
-      
+    </definition>
+
     <definition name="dashboard/*" extends="dashboard_layout">
-    	<put-attribute name="page-title" value="lbl.dashboard.title" cascade="true"/>
+        <put-attribute name="page-title" value="lbl.dashboard.title" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/{1}.jsp"/>
     </definition>
-    
-    <definition name="grievance-list" extends="base_layout"> 
-    	<put-attribute name="page-title" value="lbl.pending.grievance.heading" cascade="true"/>
+
+    <definition name="grievance-list" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.pending.grievance.heading" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/grievance-list.jsp"/>
     </definition>
-    
+
     <definition name="complainttype-category-create" extends="base_layout">
         <put-attribute name="page-title" value="lbl.create.comptype.category" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-create.jsp"/>
     </definition>
-    
+
     <definition name="complainttype-category-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.search.comptype.category" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-search.jsp"/>
     </definition>
-    
+
     <definition name="complainttype-category-update" extends="base_layout">
         <put-attribute name="page-title" value="lbl.update.comptype.category" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-update.jsp"/>
     </definition>
-    
+
     <definition name="bulkRouter-new" extends="base_layout">
         <put-attribute name="page-title" value="lbl.bulkrouter.generation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/bulkrouter/bulkRouter-new.jsp"/>
     </definition>
-    
+
     <definition name="bulkEscalation-new" extends="base_layout">
         <put-attribute name="page-title" value="lbl.bulkescalation.generation" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/escalation/bulkEscalation-new.jsp"/>

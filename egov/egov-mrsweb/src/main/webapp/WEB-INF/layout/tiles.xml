@@ -25,466 +25,467 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-	<definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
-		<put-attribute name="title" value="eGov Urban Portal" />
-		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp" />
-		<put-attribute name="body" value="" />
-		<put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp" />
-	</definition>
+    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+        <put-attribute name="title" value="eGov Urban Portal"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page"
-			cascade="true" />
-		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp" />
-		<put-attribute name="body" value="" />
-		<put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp" />
-	</definition>
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
 
-	<definition name="religion-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.create.religion"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/religion/religion-create.jsp" />
-	</definition>
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
 
-	<definition name="act-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.create.religion"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/act/act-create.jsp" />
-	</definition>
+    <definition name="religion-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.religion"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/religion/religion-create.jsp"/>
+    </definition>
 
-	<definition name="registration-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-form.jsp" />
-	</definition>
+    <definition name="act-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.religion"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/act/act-create.jsp"/>
+    </definition>
 
-	<definition name="registration-ack" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-ack.jsp" />
-	</definition>
+    <definition name="registration-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-form.jsp"/>
+    </definition>
 
-	<definition name="registration-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-view.jsp" />
-	</definition>
+    <definition name="registration-ack" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-ack.jsp"/>
+    </definition>
 
-	<definition name="registration-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-search.jsp" />
-	</definition>
+    <definition name="registration-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-view.jsp"/>
+    </definition>
 
-	<definition name="registrationCollection-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/collection/registrationCollection-view.jsp" />
-	</definition>
+    <definition name="registration-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-search.jsp"/>
+    </definition>
 
-	<definition name="registration-certificate" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-certificate.jsp" />
-	</definition>
+    <definition name="registrationCollection-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/collection/registrationCollection-view.jsp"/>
+    </definition>
 
-	<definition name="registration-correction" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-correction.jsp" />
-	</definition>
+    <definition name="registration-certificate" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-certificate.jsp"/>
+    </definition>
 
-	<definition name="report-registrationstatus" extends="base_layout">
-		<put-attribute name="page-title" value="title.mrg.reg.status.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/report-registrationstatus.jsp" />
-	</definition>
+    <definition name="registration-correction" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-correction.jsp"/>
+    </definition>
 
-	<definition name="report-datewiseregsitration" extends="base_layout">
-		<put-attribute name="page-title" value="title.datewise.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/report-datewiseregsitration.jsp" />
-	</definition>
-	<definition name="report-monthwiseregistration" extends="base_layout">
-		<put-attribute name="page-title" value="title.monthly.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/report-monthwiseregistration.jsp" />
-	</definition>
-	<definition name="reissue-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.reissue"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/reissue/reissue-form.jsp" />
-	</definition>
+    <definition name="report-registrationstatus" extends="base_layout">
+        <put-attribute name="page-title" value="title.mrg.reg.status.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/report-registrationstatus.jsp"/>
+    </definition>
 
-	<definition name="reissue-ack" extends="base_layout">
-		<put-attribute name="page-title" value="title.reissue"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/reissue/reissue-ack.jsp" />
-	</definition>
+    <definition name="report-datewiseregsitration" extends="base_layout">
+        <put-attribute name="page-title" value="title.datewise.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/report-datewiseregsitration.jsp"/>
+    </definition>
+    <definition name="report-monthwiseregistration" extends="base_layout">
+        <put-attribute name="page-title" value="title.monthly.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/report-monthwiseregistration.jsp"/>
+    </definition>
+    <definition name="reissue-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.reissue"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/reissue/reissue-form.jsp"/>
+    </definition>
 
-	<definition name="reissue-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.reissue"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/reissue/reissue-view.jsp" />
-	</definition>
+    <definition name="reissue-ack" extends="base_layout">
+        <put-attribute name="page-title" value="title.reissue"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/reissue/reissue-ack.jsp"/>
+    </definition>
 
-	<definition name="religion-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.Religion.success"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/religion/religion-success.jsp" />
-	</definition>
-	<definition name="act-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.Religion.success"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/act/act-success.jsp" />
-	</definition>
+    <definition name="reissue-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.reissue"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/reissue/reissue-view.jsp"/>
+    </definition>
 
-	<definition name="religion-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.Religion.search"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/religion/religion-search.jsp" />
-	</definition>
+    <definition name="religion-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.success"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/religion/religion-success.jsp"/>
+    </definition>
+    <definition name="act-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.success"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/act/act-success.jsp"/>
+    </definition>
 
-	<definition name="religion-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.Religion.update"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/religion/religion-update.jsp" />
-	</definition>
+    <definition name="religion-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/religion/religion-search.jsp"/>
+    </definition>
 
-	<definition name="act-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.Act.search"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/act/act-search.jsp" />
-	</definition>
+    <definition name="religion-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.Religion.update"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/religion/religion-update.jsp"/>
+    </definition>
 
-	<definition name="act-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.Act.update"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/act/act-update.jsp" />
-	</definition>
+    <definition name="act-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.Act.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/act/act-search.jsp"/>
+    </definition>
 
-	<definition name="fee-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.create.fee"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/fee/fee-create.jsp" />
-	</definition>
-	<definition name="fee-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.Fee.search"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/fee/fee-search.jsp" />
-	</definition>
+    <definition name="act-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.Act.update"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/act/act-update.jsp"/>
+    </definition>
 
-	<definition name="fee-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.Fee.update"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/fee/fee-update.jsp" />
-	</definition>
+    <definition name="fee-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.fee"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/fee/fee-create.jsp"/>
+    </definition>
+    <definition name="fee-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.Fee.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/fee/fee-search.jsp"/>
+    </definition>
 
-	<definition name="fee-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.Fee.success"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/fee/fee-success.jsp" />
-	</definition>
-	<definition name="registration-search-approved" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.search"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-search-approved.jsp" />
-	</definition>
+    <definition name="fee-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.Fee.update"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/fee/fee-update.jsp"/>
+    </definition>
 
-	<definition name="registration-update-approved" extends="base_layout">
-		<put-attribute name="page-title" value="title.modify.mrg.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-update-approved.jsp" />
-	</definition>
-	<definition name="registration-search-forfee" extends="base_layout">
-		<put-attribute name="page-title" value="title.collect.fee"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-search-forfee.jsp" />
-	</definition>
+    <definition name="fee-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.Fee.success"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/fee/fee-success.jsp"/>
+    </definition>
+    <definition name="registration-search-approved" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-search-approved.jsp"/>
+    </definition>
 
-	<definition name="collectmarriagefee-error" extends="base_layout">
-		<put-attribute name="page-title" value="title.marriageFee.view"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/collection/marriage-error.jsp" />
-	</definition>
-	<definition name="registration-search-certificateissue"
-		extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.search"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-search-certificateissue.jsp" />
-	</definition>
+    <definition name="registration-update-approved" extends="base_layout">
+        <put-attribute name="page-title" value="title.modify.mrg.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-update-approved.jsp"/>
+    </definition>
+    <definition name="registration-search-forfee" extends="base_layout">
+        <put-attribute name="page-title" value="title.collect.fee"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-search-forfee.jsp"/>
+    </definition>
 
-	<definition name="registrationunit-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.create.registrationunit"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/registrationunit/registrationunit-create.jsp" />
-	</definition>
+    <definition name="collectmarriagefee-error" extends="base_layout">
+        <put-attribute name="page-title" value="title.marriageFee.view"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/collection/marriage-error.jsp"/>
+    </definition>
+    <definition name="registration-search-certificateissue"
+                extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-search-certificateissue.jsp"/>
+    </definition>
 
-	<definition name="registrationunit-result" extends="base_layout">
-		<put-attribute name="page-title" value="title.registrationunit.result"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/registrationunit/registrationunit-result.jsp" />
-	</definition>
+    <definition name="registrationunit-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.registrationunit"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/registrationunit/registrationunit-create.jsp"/>
+    </definition>
 
-	<definition name="registrationunit-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.search.registrationunit"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/registrationunit/registrationunit-search.jsp" />
-	</definition>
+    <definition name="registrationunit-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.registrationunit.result"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/registrationunit/registrationunit-result.jsp"/>
+    </definition>
 
-	<definition name="registrationunit-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.create.registrationunit"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/registrationunit/registrationunit-view.jsp" />
-	</definition>
+    <definition name="registrationunit-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.registrationunit"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/registrationunit/registrationunit-search.jsp"/>
+    </definition>
 
-	<definition name="registrationunit-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.edit.registrationunit"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/registrationunit/registrationunit-update.jsp" />
-	</definition>
+    <definition name="registrationunit-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.registrationunit"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/registrationunit/registrationunit-view.jsp"/>
+    </definition>
 
-	<definition name="registration-search-certificate" extends="base_layout">
-		<put-attribute name="page-title" value="title.search.certificate"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/registration-search-certificate.jsp" />
-	</definition>
+    <definition name="registrationunit-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.edit.registrationunit"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/registrationunit/registrationunit-update.jsp"/>
+    </definition>
 
-	<definition name="mrgreg-dataentryform" extends="base_layout">
-		<put-attribute name="page-title" value="title.mrgRegistration.dataEntry"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/registration/mrgreg-dataentryform.jsp" />
-	</definition>
-	<definition name="marriagecommon-error" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.common.error"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/collection/marriage-error.jsp" />
-	</definition>
-	<definition name="report-registration-agewise" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.agewise.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/report-registration-agewise.jsp" />
-	</definition>
+    <definition name="registration-search-certificate" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.certificate"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/registration-search-certificate.jsp"/>
+    </definition>
 
-	<definition name="marriage-agewise-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.agewise.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/marriage-agewise-view.jsp" />
-	</definition>
+    <definition name="mrgreg-dataentryform" extends="base_layout">
+        <put-attribute name="page-title" value="title.mrgRegistration.dataEntry"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/registration/mrgreg-dataentryform.jsp"/>
+    </definition>
+    <definition name="marriagecommon-error" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.common.error"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/collection/marriage-error.jsp"/>
+    </definition>
+    <definition name="report-registration-agewise" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.agewise.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/report-registration-agewise.jsp"/>
+    </definition>
 
-	<definition name="registration-certificates-report" extends="base_layout">
-		<put-attribute name="page-title"
-			value="title.registration.certificate.report" cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/registration-certificates-report.jsp" />
-	</definition>
-	<definition name="religion-view" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.religion"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/religion/religion-view.jsp" />
-	</definition>
-	<definition name="fee-view" extends="base_layout">
-		<put-attribute name="page-title" value="tiltle.fee"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/fee/fee-view.jsp" />
-	</definition>
-	<definition name="act-view" extends="base_layout">
-		<put-attribute name="page-title" value="tiltle.act"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/act/act-view.jsp" />
-	</definition>
-	<definition name="report-actwiseregistration" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.actwise.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/report-actwiseregistration.jsp" />
-	</definition>
+    <definition name="marriage-agewise-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.agewise.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/marriage-agewise-view.jsp"/>
+    </definition>
 
-	<definition name="religionwise-report" extends="base_layout">
-		<put-attribute name="page-title"
-			value="title.registration.religionwise.report" cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/religionwise-report.jsp" />
-	</definition>
-	<definition name="marriage-actwise-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.actwise.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/actwisereport-view.jsp" />
-	</definition>
+    <definition name="registration-certificates-report" extends="base_layout">
+        <put-attribute name="page-title"
+                       value="title.registration.certificate.report" cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/registration-certificates-report.jsp"/>
+    </definition>
+    <definition name="religion-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.religion"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/religion/religion-view.jsp"/>
+    </definition>
+    <definition name="fee-view" extends="base_layout">
+        <put-attribute name="page-title" value="tiltle.fee"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/fee/fee-view.jsp"/>
+    </definition>
+    <definition name="act-view" extends="base_layout">
+        <put-attribute name="page-title" value="tiltle.act"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/act/act-view.jsp"/>
+    </definition>
+    <definition name="report-actwiseregistration" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.actwise.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/report-actwiseregistration.jsp"/>
+    </definition>
 
-	<definition name="statustime-ofmarriage-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.status.time.ofmrg.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/statustime-ofmarriage-report.jsp" />
-	</definition>
+    <definition name="religionwise-report" extends="base_layout">
+        <put-attribute name="page-title"
+                       value="title.registration.religionwise.report" cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/religionwise-report.jsp"/>
+    </definition>
+    <definition name="marriage-actwise-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.actwise.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/actwisereport-view.jsp"/>
+    </definition>
 
-	<definition name="status-timeofmrg-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.status.time.ofmrg.details"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/status-timeofmrg-view.jsp" />
-	</definition>
+    <definition name="statustime-ofmarriage-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.status.time.ofmrg.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/statustime-ofmarriage-report.jsp"/>
+    </definition>
 
-	<definition name="reissue-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.reissue"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/application/reissue/reissue-success.jsp" />
-	</definition>
+    <definition name="status-timeofmrg-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.status.time.ofmrg.details"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/status-timeofmrg-view.jsp"/>
+    </definition>
 
-	<definition name="ageing-report" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.ageing.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/ageing-report.jsp" />
-	</definition>
+    <definition name="reissue-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.reissue"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/reissue/reissue-success.jsp"/>
+    </definition>
 
-	<definition name="ageingreport-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.registration.ageing.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/ageingreport-view.jsp" />
-	</definition>
-	<definition name="show-monthlyapplns-details" extends="base_layout">
-		<put-attribute name="page-title" value="title.monthly.report"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/show-monthlyapplns-details.jsp" />
-	</definition>
-	<definition name="report-viewregistration-statusdetails"
-		extends="base_layout">
-		<put-attribute name="page-title" value="title.mrg.reg.status.details"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/report-viewregistration-statusdetails.jsp" />
-	</definition>
-	<definition name="religion-wise-statutory-report" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.religion.wise.registration"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/religion-wise-statutory-report.jsp" />
-	</definition>
-	<definition name="handicapped-marriage-report" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.handicapped.report.title"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/handicapped-marriage-report.jsp" />
-	</definition>
-	<definition name="report-monthwisefundcollection" extends="base_layout">
-		<put-attribute name="page-title" value="title.hdr.monthlycollection"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/collection-report.jsp" />
-	</definition>
+    <definition name="ageing-report" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.ageing.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/ageing-report.jsp"/>
+    </definition>
 
-	<definition name="document-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.Document.update"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/document/document-update.jsp" />
-	</definition>
-	<definition name="document-view" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.document"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/document/document-view.jsp" />
-	</definition>
-	<definition name="document-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.Document.search"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/document/document-search.jsp" />
-	</definition>
+    <definition name="ageingreport-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration.ageing.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/ageingreport-view.jsp"/>
+    </definition>
+    <definition name="show-monthlyapplns-details" extends="base_layout">
+        <put-attribute name="page-title" value="title.monthly.report"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/show-monthlyapplns-details.jsp"/>
+    </definition>
+    <definition name="report-viewregistration-statusdetails"
+                extends="base_layout">
+        <put-attribute name="page-title" value="title.mrg.reg.status.details"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/report-viewregistration-statusdetails.jsp"/>
+    </definition>
+    <definition name="religion-wise-statutory-report" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.religion.wise.registration"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/religion-wise-statutory-report.jsp"/>
+    </definition>
+    <definition name="handicapped-marriage-report" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.handicapped.report.title"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/handicapped-marriage-report.jsp"/>
+    </definition>
+    <definition name="report-monthwisefundcollection" extends="base_layout">
+        <put-attribute name="page-title" value="title.hdr.monthlycollection"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/collection-report.jsp"/>
+    </definition>
 
-	<definition name="document-create" extends="base_layout">
-		<put-attribute name="page-title" value="title.create.document"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/document/document-create.jsp" />
-	</definition>
+    <definition name="document-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.Document.update"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/document/document-update.jsp"/>
+    </definition>
+    <definition name="document-view" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.document"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/document/document-view.jsp"/>
+    </definition>
+    <definition name="document-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.Document.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/document/document-search.jsp"/>
+    </definition>
 
-	<definition name="document-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.document.success"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/document/document-success.jsp" />
-	</definition>
-	
-	 <definition name="marriagereg-digitalsignature" extends="base_layout">
-    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/marriagereg-digitalsignature.jsp"/>
-     </definition>
-     
-     <definition name="mrdigitalsignature-success" extends="base_layout">
-    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/mrdigitalsignature-success.jsp"/>
-     </definition>
-     
-      <definition name="reissue-digitalsignature" extends="base_layout">
-    	<put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/reissue-digitalsignature.jsp"/>
-     </definition>
-     
-     <definition name="acknowledgement" extends="base_layout">
-    	<put-attribute name="page-title" value="title.registration" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/application/registration/acknowledgement.jsp"/>
-     </definition>
-          
-     <definition name="marriage-reassign" extends="base_layout">
-    	<put-attribute name="page-title" value="title.reassign" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/application/registration/marriage-reassign.jsp"/>
-     </definition>
+    <definition name="document-create" extends="base_layout">
+        <put-attribute name="page-title" value="title.create.document"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/document/document-create.jsp"/>
+    </definition>
 
-               <definition name="reassign-success" extends="base_layout">
-    	<put-attribute name="page-title" value="title.reassign" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/application/registration/reassign-success.jsp"/>
-     </definition>
+    <definition name="document-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.document.success"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/document/document-success.jsp"/>
+    </definition>
+
+    <definition name="marriagereg-digitalsignature" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/application/digitalsignature/marriagereg-digitalsignature.jsp"/>
+    </definition>
+
+    <definition name="mrdigitalsignature-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/mrdigitalsignature-success.jsp"/>
+    </definition>
+
+    <definition name="reissue-digitalsignature" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/digitalsignature/reissue-digitalsignature.jsp"/>
+    </definition>
+
+    <definition name="acknowledgement" extends="base_layout">
+        <put-attribute name="page-title" value="title.registration" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/acknowledgement.jsp"/>
+    </definition>
+
+    <definition name="marriage-reassign" extends="base_layout">
+        <put-attribute name="page-title" value="title.reassign" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/marriage-reassign.jsp"/>
+    </definition>
+
+    <definition name="reassign-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.reassign" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/application/registration/reassign-success.jsp"/>
+    </definition>
 </tiles-definitions>

@@ -51,11 +51,17 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-    <definition name="error" template="/WEB-INF/views/template/error.jsp"/>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
 
     <definition name="error/*" extends="error">
         <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
     </definition>
+
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>

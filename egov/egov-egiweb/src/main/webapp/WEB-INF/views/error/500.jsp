@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~ accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2016  eGovernments Foundation
+  ~  Copyright (C) 2017  eGovernments Foundation
   ~
   ~  The updated version of eGov suite of products as by eGovernments Foundation
   ~  is available at http://www.egovernments.org
@@ -39,22 +39,23 @@
   --%>
 
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <c:choose>
-<c:when test="${not empty error}">
-	<div class="alert alert-danger" role="alert">
-		<i class="fa fa-exclamation-triangle error-symbol"></i>
-		<hr/>
-		<spring:message code="${error}" text="Application Error"/>
-		<hr/>
-	</div>
-</c:when>
-<c:otherwise>
-	<div class="alert alert-danger" role="alert">
-		<i class="fa fa-exclamation-triangle error-symbol"></i>
-		<hr/>
-		<p style="color:#000;font-size:17px"><spring:message code="error.500"/></p>
-		<hr/>
-	</div>
-</c:otherwise>
+    <c:when test="${not empty error}">
+        <div class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-triangle error-symbol"></i>
+            <hr/>
+            <spring:message code="error.500" var="altError"/>
+            <p style="color:#000;font-size:17px"><spring:message code="${error}" text="${altError}"/></p>
+            <hr/>
+        </div>
+    </c:when>
+    <c:otherwise>
+        <div class="alert alert-danger" role="alert">
+            <i class="fa fa-exclamation-triangle error-symbol"></i>
+            <hr/>
+            <p style="color:#000;font-size:17px"><spring:message code="error.500"/></p>
+            <hr/>
+        </div>
+    </c:otherwise>
 </c:choose>

@@ -50,142 +50,144 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page" cascade="true"/>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-	</definition>
+    </definition>
 
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
 
-	<definition name="newLineEstimate-form" extends="base_layout">
+    <definition name="newLineEstimate-form" extends="base_layout">
         <put-attribute name="page-title" value="title.new.lineestimate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/newLineEstimate-form.jsp"/>
     </definition>
-    
+
     <definition name="newLineEstimate-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.lineestimate.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/newLineEstimate-edit.jsp"/>
     </definition>
-    
-	<definition name="lineestimate-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.search.lineestimate" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimate-header.jsp"/>
-	</definition>
-	
-	<definition name="createLetterOfAcceptance-form" extends="base_layout">
+
+    <definition name="lineestimate-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.lineestimate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimate-header.jsp"/>
+    </definition>
+
+    <definition name="createLetterOfAcceptance-form" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/createLetterOfAcceptance-form.jsp"/>
     </definition>
-    	
+
     <definition name="letterofacceptance-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.letterofacceptance" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-success.jsp"/>
     </definition>
-    
+
     <definition name="search-searchmilestone" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.seachloa" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptance-search.jsp"/>
     </definition>
-    
+
     <definition name="searchLineEstimateForLoa-form" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForLoa-header.jsp"/>
     </definition>
-    
+
     <definition name="lineestimate-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.new.lineestimate"	cascade="true" />
-		<put-attribute name="body" value="/WEB-INF/views/lineestimate/lineestimate-success.jsp" />
-	</definition>
-	
-	<definition name="contractorBill-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.new.lineestimate" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/lineestimate/lineestimate-success.jsp"/>
+    </definition>
+
+    <definition name="contractorBill-form" extends="base_layout">
         <put-attribute name="page-title" value="title.contractorbill.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/contractorBill-form.jsp"/>
     </definition>
-    
+
     <definition name="contractorBill-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.contractorbill" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/contractorBill-success.jsp"/>
     </definition>
-        
-	<definition name="searchletterofacceptance-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfacceptance-header.jsp"/>
-	</definition>
-	
-	<definition name="letterOfAcceptance-view" extends="base_layout">
-		<put-attribute name="page-title" value="hdr.letterofacceptance" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
-	</definition>
-	
-	<definition name="spillOverLineEstimate-form" extends="base_layout">
+
+    <definition name="searchletterofacceptance-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfacceptance-header.jsp"/>
+    </definition>
+
+    <definition name="letterOfAcceptance-view" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.letterofacceptance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
+    </definition>
+
+    <definition name="spillOverLineEstimate-form" extends="base_layout">
         <put-attribute name="page-title" value="title.spillover.lineestimate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/spillover/spillOverLineEstimate-form.jsp"/>
     </definition>
 
-	<definition name="searchloatocreatecontractorbill-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.contractorbill.create" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAForContractorBill-header.jsp"/>
-	</definition>
-	
-	<definition name="contractorBill-update" extends="base_layout">
+    <definition name="searchloatocreatecontractorbill-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.contractorbill.create" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchLOAForContractorBill-header.jsp"/>
+    </definition>
+
+    <definition name="contractorBill-update" extends="base_layout">
         <put-attribute name="page-title" value="title.contractorbill.update" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/contractorBill-update.jsp"/>
     </definition>
-    
+
     <definition name="searchcontractorbill-search" extends="base_layout">
         <put-attribute name="page-title" value="hdr.contractorbill" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchContractorBill-header.jsp"/>
     </definition>
-    
+
     <definition name="workProgressRegister-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.title.search.workprogressregister" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/workProgressRegisterReport-form.jsp"/>
     </definition>
-    
+
     <definition name="estimateAppropriationRegister-search" extends="base_layout">
         <put-attribute name="page-title" value="title.estimateappropriationregister.searchresult" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAppropriationRegister-form.jsp"/>
     </definition>
-    
+
     <definition name="contractor-search" extends="base_layout">
         <put-attribute name="page-title" value="title.search.contractor" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchContractor-header.jsp"/>
     </definition>
-    
+
     <definition name="letterofacceptancetomodify-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfacceptanceToModify-header.jsp"/>
-	</definition>
-	
-	<definition name="letterOfAcceptance-modify" extends="base_layout">
-		<put-attribute name="page-title" value="hdr.letterofacceptance.modify" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
-	</definition>
-	
-	<definition name="searchcontractorbill-cancel" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.letterofacceptance" cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/letterofacceptance/searchLetterOfacceptanceToModify-header.jsp"/>
+    </definition>
+
+    <definition name="letterOfAcceptance-modify" extends="base_layout">
+        <put-attribute name="page-title" value="hdr.letterofacceptance.modify" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/letterOfAcceptance-view.jsp"/>
+    </definition>
+
+    <definition name="searchcontractorbill-cancel" extends="base_layout">
         <put-attribute name="page-title" value="title.contractor.cancel" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/contractorbill/searchContractorBillToCancel-header.jsp"/>
     </definition>
-    
+
     <definition name="searchloa-cancel" extends="base_layout">
         <put-attribute name="page-title" value="title.loa.cancel" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptanceToCancel-header.jsp"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/letterofacceptance/searchLetterOfAcceptanceToCancel-header.jsp"/>
     </definition>
-    
+
     <definition name="searchmilestone-form" extends="base_layout">
         <put-attribute name="page-title" value="title.search.milestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone-header.jsp"/>
     </definition>
-    
+
     <definition name="newMilestone-form" extends="base_layout">
         <put-attribute name="page-title" value="title.new.milestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/newMilestone-form.jsp"/>
     </definition>
-    
+
     <definition name="milestoneTemplate-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestone.jsp"/>
@@ -195,7 +197,7 @@
         <put-attribute name="page-title" value="hdr.viewmilestonetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/milestoneTemplate-view.jsp"/>
     </definition>
-    
+
     <definition name="milestone-success" extends="base_layout">
         <put-attribute name="page-title" value="title.new.milestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-success.jsp"/>
@@ -205,28 +207,30 @@
         <put-attribute name="page-title" value="title.search.milestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneForView-header.jsp"/>
     </definition>
-    
+
     <definition name="milestone-view" extends="base_layout">
         <put-attribute name="page-title" value="lbl.searchmilestonetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/milestone-view.jsp"/>
-	</definition>
+    </definition>
 
-	<definition name="searchTrackMilestone-form" extends="base_layout">
+    <definition name="searchTrackMilestone-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.searchtrackmilestonetemplate" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchTrackMilestone-header.jsp"/>
-	</definition>
-	
-	<definition name="estimateAbstractReportByDepartmentWise-search" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbydepartmentwise" cascade="true"/>
+    </definition>
+
+    <definition name="estimateAbstractReportByDepartmentWise-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbydepartmentwise"
+                       cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByDepartmentWise-form.jsp"/>
     </definition>
 
-	<definition name="estimateAbstractReportByTypeOfWorkWise-search" extends="base_layout">
-        <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbytypeofworkwise" cascade="true"/>
+    <definition name="estimateAbstractReportByTypeOfWorkWise-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.title.search.estimateabstractreportbytypeofworkwise"
+                       cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/estimateAbstractReportByTypeOfWorkWise-form.jsp"/>
-	</definition>
+    </definition>
 
-	<definition name="searchlineestimate-cancel" extends="base_layout">
+    <definition name="searchlineestimate-cancel" extends="base_layout">
         <put-attribute name="page-title" value="title.lineestimate.cancel" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateToCancel-header.jsp"/>
     </definition>
@@ -235,36 +239,37 @@
         <put-attribute name="page-title" value="lbl.trackmilestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-form.jsp"/>
     </definition>
-    
+
     <definition name="milestonecancel-form" extends="base_layout">
         <put-attribute name="page-title" value="title.milestone.cancel" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/searchMilestoneToCancel-header.jsp"/>
     </definition>
-    
+
     <definition name="trackmilestone-view" extends="base_layout">
         <put-attribute name="page-title" value="lbl.trackmilestone" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/milestone/track/trackMilestone-view.jsp"/>
     </definition>
-    
+
     <definition name="searchLineEstimateForEstimatePhotograph-form" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.uploadestimatephotograph" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/lineestimate/searchLineEstimateForEstimatePhotograph-form.jsp"/>
-	</definition>
-	
+        <put-attribute name="page-title" value="lbl.uploadestimatephotograph" cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/lineestimate/searchLineEstimateForEstimatePhotograph-form.jsp"/>
+    </definition>
+
     <definition name="estimatePhotographs-form" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.uploadestimatephotograph" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/estimatephotograph/estimatePhotographs-form.jsp"/>
-	</definition>
+        <put-attribute name="page-title" value="lbl.uploadestimatephotograph" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/estimatephotograph/estimatePhotographs-form.jsp"/>
+    </definition>
 
     <definition name="estimatePhotographs-view" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.viewestimatephotograph" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/estimatephotograph/estimatePhotograph-view.jsp"/>
-	</definition>
-	
-	<definition name="searchEstimatePhotograph-form" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.viewestimatephotograph" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/estimatephotograph/searchEstimatePhotograph-form.jsp"/>
-	</definition>
+        <put-attribute name="page-title" value="lbl.viewestimatephotograph" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/estimatephotograph/estimatePhotograph-view.jsp"/>
+    </definition>
+
+    <definition name="searchEstimatePhotograph-form" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.viewestimatephotograph" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/estimatephotograph/searchEstimatePhotograph-form.jsp"/>
+    </definition>
 
 </tiles-definitions>
 

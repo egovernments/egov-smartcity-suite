@@ -43,328 +43,329 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-	<definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
-		<put-attribute name="title" value="eGov Urban Portal" />
-		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp" />
-		<put-attribute name="body" value="" />
-		<put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp" />
-	</definition>
+    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+        <put-attribute name="title" value="eGov Urban Portal"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page"
-			cascade="true" />
-		<put-attribute name="header" value="/WEB-INF/views/template/header.jsp" />
-		<put-attribute name="body" value="" />
-		<put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp" />
-	</definition>
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	<definition name="newconnection-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.newconnection"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/newConnection-form.jsp" />
-	</definition>
-	<definition name="application-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.newconnection"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/application-success.jsp" />
-	</definition>
-	<definition name="newconnection-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.viewapplication"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/newConnection-edit.jsp" />
-	</definition>
-	<definition name="newSewerageConnection-ack" extends="base_layout">
-		<put-attribute name="page-title" value="title.ack"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/newSewerageConnection-ack.jsp" />
-	</definition>
-	<definition name="application-view" extends="base_layout">	 
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
+
+    <definition name="newconnection-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.newconnection"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/newConnection-form.jsp"/>
+    </definition>
+    <definition name="application-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.newconnection"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/application-success.jsp"/>
+    </definition>
+    <definition name="newconnection-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewapplication"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/newConnection-edit.jsp"/>
+    </definition>
+    <definition name="newSewerageConnection-ack" extends="base_layout">
+        <put-attribute name="page-title" value="title.ack"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/newSewerageConnection-ack.jsp"/>
+    </definition>
+    <definition name="application-view" extends="base_layout">
         <put-attribute name="page-title" value="title.viewapplication" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/application-view.jsp"/>
     </definition>
-	<definition name="sewerageRates-master" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.master"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/sewerageRates-master.jsp" />
-	</definition>
-	<definition name="seweragemonthlyRates-master" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.master"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/seweragemonthlyRates-master.jsp" />
-	</definition>
-	<definition name="sewerageRates-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.success"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/sewerageRates-success.jsp" />
-	</definition>
-	<definition name="seweragemonthlyRates-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.success"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/seweragemonthlyRates-success.jsp" />
-	</definition>
-	
-	<definition name="donation-master" extends="base_layout">
-		<put-attribute name="page-title" value="title.donation.master"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/donation-master.jsp" />
-	</definition>
-	<definition name="donation-master-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.donation.master"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/donation-master-success.jsp" />
-	</definition>
-	<definition name="sewerageRates-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.master.view"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/sewerageRates-view.jsp" />
-	</definition>
-	<definition name="donationMaster-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.donation.master.search"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/donationMaster-view.jsp" />
-	</definition>
-	<definition name="sewerageTaxSearch-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerageTaxSearch"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/search/sewerageTaxSearch-form.jsp" />
-	</definition>
-	<definition name="viewseweragedetails" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.view"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/viewseweragedetails.jsp" />
-	</definition>
-	 <definition name="collecttax-redirection" extends="base_layout">	 
+    <definition name="sewerageRates-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.master"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/sewerageRates-master.jsp"/>
+    </definition>
+    <definition name="seweragemonthlyRates-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.master"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/seweragemonthlyRates-master.jsp"/>
+    </definition>
+    <definition name="sewerageRates-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.success"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/sewerageRates-success.jsp"/>
+    </definition>
+    <definition name="seweragemonthlyRates-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.success"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/seweragemonthlyRates-success.jsp"/>
+    </definition>
+
+    <definition name="donation-master" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/donation-master.jsp"/>
+    </definition>
+    <definition name="donation-master-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/donation-master-success.jsp"/>
+    </definition>
+    <definition name="sewerageRates-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.master.view"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/sewerageRates-view.jsp"/>
+    </definition>
+    <definition name="donationMaster-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master.search"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/donationMaster-view.jsp"/>
+    </definition>
+    <definition name="sewerageTaxSearch-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerageTaxSearch"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/search/sewerageTaxSearch-form.jsp"/>
+    </definition>
+    <definition name="viewseweragedetails" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.view"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/viewseweragedetails.jsp"/>
+    </definition>
+    <definition name="collecttax-redirection" extends="base_layout">
         <put-attribute name="page-title" value="title.collect.SWtTax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectSwtTax-redirection.jsp"/>
     </definition>
-    <definition name="collectSwtTax-error" extends="base_layout">	 
+    <definition name="collectSwtTax-error" extends="base_layout">
         <put-attribute name="page-title" value="title.collect.SWtTax.view" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/collection/collectSwtTax-error.jsp"/>
     </definition>
-   <definition name="donation-master-view-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.donation.master.view"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/donation-master-view-success.jsp" />
-	</definition>
-	<definition name="donation-master-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.donation.master.modify"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/donation-master-update.jsp" />
-	</definition>
-	<definition name="donation-master-update-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.donation.master.modify"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/donation-master-update-success.jsp" />
-	</definition>
-	<definition name="sewerageRates-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.rates.modify"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/sewerageRates-update.jsp" />
-	</definition>
-	
-	<definition name="seweragemonthlyRates-update" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.rates.modify"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/seweragemonthlyRates-update.jsp" />
-	</definition>
-	
-	<definition name="sewerageRates-update-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.rates.modify"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/sewerageRates-update-success.jsp" />  
-	</definition>
-	<definition name="sewerageRates-view-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.master.view"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/masters/sewerageRates-view-success.jsp" />
-	</definition>
-	<definition name="report-sewerageRate-view" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.rate.dcbReport"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/report-sewerageRate-view.jsp" /> 
-	</definition>
-	<definition name="changeInClosetsConnection-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.ChangeInClosets"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/changeInClosetsConnection-form.jsp" />
-	</definition>
-	<definition name="changeInClosets-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.ChangeInClosets"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/changeInClosets-success.jsp" /> 
-	</definition>
-	<definition name="searchSewerageNotices" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.notice"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/searchSewerageNotices.jsp" />
-	</definition>
-	<definition name="changeInClosets-edit" extends="base_layout">
-		<put-attribute name="page-title" value="title.viewapplication"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/changeInClosets-edit.jsp" />
-	</definition>
-	<definition name="dailySTCollection-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.dailySTCollection"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/reports/dailySTCollection-search.jsp" />
-	</definition>
-	<definition name="common-error" extends="base_layout">
-		<put-attribute name="page-title" value="title.SWtTax.common.error.page"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/common/common-error.jsp" />
-	</definition>
-	<definition name="seweragecollectcharges-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerageTaxSearch"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/search/seweragecollectcharges-form.jsp" />
-	</definition>
-		<definition name="sewerage-dcbwardwise" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.dcbDrillDownWardwiseReport" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/reports/sewerage-dcbwardwise.jsp" />	
-	</definition>
-	<definition name="sewerage-dcbWardConnections" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.dcbDrillDownWardwiseReport" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/reports/sewerage-dcbWardConnections.jsp" />	
-	</definition>
-	 
-	<definition name="legacySewerageConnection-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.legacySewerageApplication" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/transactions/legacySewerageConnection-form.jsp" />	
-	</definition>
-	
-	<definition name="edit-legacySewerageConnection-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.legacySewerageApplication" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/transactions/edit-legacySewerageConnection-form.jsp" />	
-	</definition>
+    <definition name="donation-master-view-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master.view"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/donation-master-view-success.jsp"/>
+    </definition>
+    <definition name="donation-master-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master.modify"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/donation-master-update.jsp"/>
+    </definition>
+    <definition name="donation-master-update-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.donation.master.modify"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/donation-master-update-success.jsp"/>
+    </definition>
+    <definition name="sewerageRates-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.rates.modify"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/sewerageRates-update.jsp"/>
+    </definition>
 
-	<definition name="sewerageLegacyApplication-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.legacySewerageApplication"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/sewerageLegacyApplication-success.jsp" />
-	</definition>
-	<definition name="closeSewerageConnection" extends="base_layout">
-		<put-attribute name="page-title" value="title.lbl.closeSewerageConnection" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/transactions/closeSewerageConnection.jsp" />	
-	</definition>
-	<definition name="closeConnection-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.lbl.closeSewerageConnection" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/transactions/closeConnection-success.jsp" />	
-	</definition>
-	<definition name="sewerage-connection-report-search" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerageNumberOfApplications" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/reports/sewerage-connection-report-search.jsp" />	
-	</definition>
-		<definition name="seweragedemand-generate" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.generateDemand" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/transactions/seweragedemand-generate.jsp" />	
-	</definition>
-			<definition name="generate-success" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerageNumberOfApplications" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/transactions/generate-success.jsp" />	
-	</definition>
-	    <definition name="sewerage-demand-status" extends="base_layout">
-    	<put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status.jsp"/>
+    <definition name="seweragemonthlyRates-update" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.rates.modify"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/seweragemonthlyRates-update.jsp"/>
     </definition>
-       
-	    <definition name="seweragestatus-view" extends="base_layout">
-    	<put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status-view.jsp"/>
+
+    <definition name="sewerageRates-update-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.rates.modify"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/sewerageRates-update-success.jsp"/>
     </definition>
-    	    <definition name="sewerage-acknowledgement" extends="base_layout">
-    	<put-attribute name="page-title" value="title.newconnection" cascade="true"/>
-    	<put-attribute name="body" value="/WEB-INF/views/transactions/new-sewerage-ackowledgement.jsp"/>
+    <definition name="sewerageRates-view-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.master.view"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/masters/sewerageRates-view-success.jsp"/>
+    </definition>
+    <definition name="report-sewerageRate-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.rate.dcbReport"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/report-sewerageRate-view.jsp"/>
+    </definition>
+    <definition name="changeInClosetsConnection-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.ChangeInClosets"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/changeInClosetsConnection-form.jsp"/>
+    </definition>
+    <definition name="changeInClosets-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.ChangeInClosets"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/changeInClosets-success.jsp"/>
+    </definition>
+    <definition name="searchSewerageNotices" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.notice"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/searchSewerageNotices.jsp"/>
+    </definition>
+    <definition name="changeInClosets-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.viewapplication"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/changeInClosets-edit.jsp"/>
+    </definition>
+    <definition name="dailySTCollection-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.dailySTCollection"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/dailySTCollection-search.jsp"/>
+    </definition>
+    <definition name="common-error" extends="base_layout">
+        <put-attribute name="page-title" value="title.SWtTax.common.error.page"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/common/common-error.jsp"/>
+    </definition>
+    <definition name="seweragecollectcharges-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerageTaxSearch"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/search/seweragecollectcharges-form.jsp"/>
+    </definition>
+    <definition name="sewerage-dcbwardwise" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.dcbDrillDownWardwiseReport"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/sewerage-dcbwardwise.jsp"/>
+    </definition>
+    <definition name="sewerage-dcbWardConnections" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.dcbDrillDownWardwiseReport"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/sewerage-dcbWardConnections.jsp"/>
+    </definition>
+
+    <definition name="legacySewerageConnection-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.legacySewerageApplication"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/legacySewerageConnection-form.jsp"/>
+    </definition>
+
+    <definition name="edit-legacySewerageConnection-form" extends="base_layout">
+        <put-attribute name="page-title" value="title.legacySewerageApplication"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/edit-legacySewerageConnection-form.jsp"/>
+    </definition>
+
+    <definition name="sewerageLegacyApplication-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.legacySewerageApplication"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/sewerageLegacyApplication-success.jsp"/>
+    </definition>
+    <definition name="closeSewerageConnection" extends="base_layout">
+        <put-attribute name="page-title" value="title.lbl.closeSewerageConnection"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/closeSewerageConnection.jsp"/>
+    </definition>
+    <definition name="closeConnection-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.lbl.closeSewerageConnection"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/closeConnection-success.jsp"/>
+    </definition>
+    <definition name="sewerage-connection-report-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerageNumberOfApplications"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/sewerage-connection-report-search.jsp"/>
+    </definition>
+    <definition name="seweragedemand-generate" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.generateDemand"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/seweragedemand-generate.jsp"/>
+    </definition>
+    <definition name="generate-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerageNumberOfApplications"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/generate-success.jsp"/>
+    </definition>
+    <definition name="sewerage-demand-status" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status.jsp"/>
+    </definition>
+
+    <definition name="seweragestatus-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerage.viewdemandstatus" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/sewerage-demand-status-view.jsp"/>
+    </definition>
+    <definition name="sewerage-acknowledgement" extends="base_layout">
+        <put-attribute name="page-title" value="title.newconnection" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/new-sewerage-ackowledgement.jsp"/>
     </definition>
     <definition name="baseRegisterSearch-form" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerage.BaseRegisterReport" 
-			cascade="true"/>
-		<put-attribute name="body" 
-			value="/WEB-INF/views/reports/baseRegisterSearch-form.jsp" />	
-	</definition>
-	<definition name="search-sewerage-online-payment" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerageTaxSearch"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/citizen/search-sewearge-online-payment.jsp" />
-	</definition>	
-	<definition name="sewerage-onlinepayment-redirection" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerageTaxSearch"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/citizen/sewerage-onlinepayment-redirection.jsp" />
-	</definition>
-	<definition name="citizen/sewerage-citizen-dcbview" extends="base_layout">
-		<put-attribute name="page-title" value="title.sewerageTaxSearch"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/citizen/sewerage-citizen-dcbview.jsp" />
-	</definition>
-	<definition name="sewerage-reassign" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.reassign.title"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/sewerage-reassign.jsp" />
-	</definition>
-	<definition name="reassign-success" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.reassign.success"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/seweragereassign-success.jsp" />
-	</definition>
-	<definition name="sewerageExecution-search" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.execution.execute"
-			cascade="true" />
-		<put-attribute name="body"
-			value="/WEB-INF/views/transactions/sewerageExecution-search.jsp" />
-	</definition>
+        <put-attribute name="page-title" value="title.sewerage.BaseRegisterReport"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/reports/baseRegisterSearch-form.jsp"/>
+    </definition>
+    <definition name="search-sewerage-online-payment" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerageTaxSearch"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/citizen/search-sewearge-online-payment.jsp"/>
+    </definition>
+    <definition name="sewerage-onlinepayment-redirection" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerageTaxSearch"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/citizen/sewerage-onlinepayment-redirection.jsp"/>
+    </definition>
+    <definition name="citizen/sewerage-citizen-dcbview" extends="base_layout">
+        <put-attribute name="page-title" value="title.sewerageTaxSearch"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/citizen/sewerage-citizen-dcbview.jsp"/>
+    </definition>
+    <definition name="sewerage-reassign" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.reassign.title"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/sewerage-reassign.jsp"/>
+    </definition>
+    <definition name="reassign-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.reassign.success"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/seweragereassign-success.jsp"/>
+    </definition>
+    <definition name="sewerageExecution-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.execution.execute"
+                       cascade="true"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/sewerageExecution-search.jsp"/>
+    </definition>
 </tiles-definitions>

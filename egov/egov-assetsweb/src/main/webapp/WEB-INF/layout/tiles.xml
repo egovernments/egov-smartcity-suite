@@ -44,76 +44,80 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-  <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-    <definition name="error" template="/WEB-INF/views/template/error.jsp"/>
-	
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
+
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/index.jsp"/>
     </definition>
-    
-    
-<definition name="assetcategory-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.assetcategory.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-new.jsp"/>
-</definition>
-
-<definition name="assetcategory-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.assetcategory.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-view.jsp"/>
-</definition>
-
-<definition name="assetcategory-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.assetcategory.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-edit.jsp"/>
-</definition>
-
-<definition name="assetcategory-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.assetcategory.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-result.jsp"/>
-</definition>
-
-<definition name="assetcategory-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.assetcategory.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-search.jsp"/>
-</definition>
 
 
+    <definition name="assetcategory-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.assetcategory.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-new.jsp"/>
+    </definition>
+
+    <definition name="assetcategory-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.assetcategory.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-view.jsp"/>
+    </definition>
+
+    <definition name="assetcategory-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.assetcategory.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-edit.jsp"/>
+    </definition>
+
+    <definition name="assetcategory-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.assetcategory.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-result.jsp"/>
+    </definition>
+
+    <definition name="assetcategory-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.assetcategory.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/assetcategory/assetcategory-search.jsp"/>
+    </definition>
 
 
-<definition name="asset-new" extends="base_layout">
-	<put-attribute name="page-title" value="title.asset.new" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/asset/asset-new.jsp"/>
-</definition>
+    <definition name="asset-new" extends="base_layout">
+        <put-attribute name="page-title" value="title.asset.new" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/asset/asset-new.jsp"/>
+    </definition>
 
-<definition name="asset-view" extends="base_layout">
-	<put-attribute name="page-title" value="title.asset.view" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/asset/asset-view.jsp"/>
-</definition>
+    <definition name="asset-view" extends="base_layout">
+        <put-attribute name="page-title" value="title.asset.view" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/asset/asset-view.jsp"/>
+    </definition>
 
-<definition name="asset-edit" extends="base_layout">
-	<put-attribute name="page-title" value="title.asset.edit" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/asset/asset-edit.jsp"/>
-</definition>
+    <definition name="asset-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.asset.edit" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/asset/asset-edit.jsp"/>
+    </definition>
 
-<definition name="asset-result" extends="base_layout">
-	<put-attribute name="page-title" value="title.asset.result" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/asset/asset-result.jsp"/>
-</definition>
+    <definition name="asset-result" extends="base_layout">
+        <put-attribute name="page-title" value="title.asset.result" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/asset/asset-result.jsp"/>
+    </definition>
 
-<definition name="asset-search" extends="base_layout">
-	<put-attribute name="page-title" value="title.asset.search" cascade="true"/>
-	<put-attribute name="body" value="/WEB-INF/views/asset/asset-search.jsp"/>
-</definition>
-<definition name="assetcategory-properties" template="/WEB-INF/views/assetcategory/assetcategory-properties.jsp"/>
+    <definition name="asset-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.asset.search" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/asset/asset-search.jsp"/>
+    </definition>
+    <definition name="assetcategory-properties" template="/WEB-INF/views/assetcategory/assetcategory-properties.jsp"/>
 
 
 </tiles-definitions>

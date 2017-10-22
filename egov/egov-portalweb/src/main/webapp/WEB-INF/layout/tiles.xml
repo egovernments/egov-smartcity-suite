@@ -43,59 +43,64 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp"/>
-	
-	<definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
+        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="body" value=""/>
+        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
+
     <definition name="citizen-home" extends="base_layout">
         <put-attribute name="page-title" value="title.citizenHome" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/citizen-home.jsp"/>
     </definition>
-    
+
     <definition name="signup" template="/WEB-INF/views/signup/signup.jsp">
     </definition>
 
-    <definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	
-	<definition name="firm-create" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-create.jsp"/>
-	</definition>
-	
-	<definition name="firm-success" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-success.jsp"/>
-	</definition>
-	
-	<definition name="firm-search" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.searchfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-search.jsp"/>
-	</definition>
-	
-	<definition name="firm-update" extends="base_layout">
-		<put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
-		<put-attribute name="body" value="/WEB-INF/views/firm/firm-update.jsp"/>
-	</definition>
-    
+    <definition name="firm-create" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/firm/firm-create.jsp"/>
+    </definition>
+
+    <definition name="firm-success" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/firm/firm-success.jsp"/>
+    </definition>
+
+    <definition name="firm-search" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.searchfirm" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/firm/firm-search.jsp"/>
+    </definition>
+
+    <definition name="firm-update" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.createfirm" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/firm/firm-update.jsp"/>
+    </definition>
+
     <definition name="portalservicetype-search" extends="base_layout">
-      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-search.jsp"/>
     </definition>
-	
-	 <definition name="portalservicetype-edit" extends="base_layout">
-      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+
+    <definition name="portalservicetype-edit" extends="base_layout">
+        <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-edit.jsp"/>
     </definition>
-    
+
     <definition name="portalservicetype-ack" extends="base_layout">
-      	<put-attribute name="page-title" value="title.servicetype" cascade="true"/>
+        <put-attribute name="page-title" value="title.servicetype" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/servicetype/portalservicetype-ack.jsp"/>
     </definition>
 </tiles-definitions>
