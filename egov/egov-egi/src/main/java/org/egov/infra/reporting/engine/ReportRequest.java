@@ -51,13 +51,15 @@ public class ReportRequest {
     private static final Properties REPORT_CONFIG = ReportUtil.loadReportConfig();
     private ReportDataSourceType reportDataSourceType;
     private String reportTemplate;
-    private String reportName;
     private ReportFormat reportFormat;
     private Object reportInputData;
-    private Map<String, Object> reportParams = new HashMap<>();
+    private Map<String, Object> reportParams;
     private boolean printDialogOnOpenReport = false;
-    private ReportDisposition reportDisposition = ReportDisposition.INLINE;
 
+
+    public ReportRequest(String reportTemplate, Object reportInputData) {
+        this(reportTemplate, reportInputData, new HashMap<>());
+    }
 
     public ReportRequest(String reportTemplate, Object reportInputData, Map<String, Object> reportParams) {
         initialize(reportTemplate, reportParams);
@@ -122,19 +124,5 @@ public class ReportRequest {
 
     public void setPrintDialogOnOpenReport(boolean printDialogOnOpenReport) {
         this.printDialogOnOpenReport = printDialogOnOpenReport;
-    }
-
-    public void setReportName(String reportName) {
-        this.reportName = reportName;
-    }
-
-    public void setReportDisposition(ReportDisposition reportDisposition) {
-        this.reportDisposition = reportDisposition;
-    }
-
-    public String reportDisposition() {
-        return new StringBuilder()
-                .append(this.reportDisposition.toString()).append(";filename=\"")
-                .append(reportName).append(".").append(reportFormat).append("\"").toString();
     }
 }

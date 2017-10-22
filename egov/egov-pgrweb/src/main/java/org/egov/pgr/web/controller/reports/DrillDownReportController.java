@@ -48,12 +48,11 @@
 package org.egov.pgr.web.controller.reports;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
+import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
 import org.egov.pgr.report.service.DrillDownReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -64,9 +63,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -76,9 +73,6 @@ public class DrillDownReportController {
 
     @Autowired
     private DrillDownReportService drillDownReportService;
-
-    @Autowired
-    private ReportService reportService;
 
     @GetMapping("boundarywise")
     public String showBoundarywiseDrilldownReportForm(Model model) {
@@ -113,21 +107,14 @@ public class DrillDownReportController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadDrilldownReport(DrilldownReportRequest request) {
-        final ReportRequest reportRequest;
-        final Map<String, Object> reportparam = new HashMap<>();
-        if (StringUtils.isNotBlank(request.getDeptid()) &&
-                StringUtils.isNotBlank(request.getComplainttypeid()) && StringUtils.isNotBlank(request.getSelecteduserid())) {
-            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
-                    drillDownReportService.getDrilldownRecordsByComplaintId(request), new HashMap<>());
-        } else
-            reportRequest = new ReportRequest("pgr_functionarywise_report",
-                    drillDownReportService.getAllDrilldownRecords(request), new HashMap<>());
-        reportparam.put("groupBy", request.getGroupBy());
-        reportparam.put("reportTitle", request.getReportTitle());
-        reportRequest.setReportParams(reportparam);
-        reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("drillDown_report");
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadDrilldownReport(DrilldownReportRequest reportCriteria) {
+        ReportOutput reportOutput;
+        if (isNotBlank(reportCriteria.getDeptid()) && isNotBlank(reportCriteria.getComplainttypeid())
+                && isNotBlank(reportCriteria.getSelecteduserid()))
+            reportOutput = drillDownReportService.generateComplaintwiseDrilldownReport(reportCriteria);
+        else
+            reportOutput = drillDownReportService.generateDrilldownReport(reportCriteria);
+        reportOutput.setReportName("drilldown_report");
+        return reportToResponseEntity(reportOutput);
     }
 }

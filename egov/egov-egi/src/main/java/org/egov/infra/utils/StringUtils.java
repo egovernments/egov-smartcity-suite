@@ -49,14 +49,12 @@ package org.egov.infra.utils;
 
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.commons.text.RandomStringGenerator;
-import org.json.simple.JSONObject;
 
 import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
+import static org.apache.commons.lang3.StringUtils.toEncodedString;
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.ApplicationConstant.NO;
 import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
@@ -70,47 +68,16 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     public static final RandomStringGenerator UNIQUE_STRING_GENERATOR = new RandomStringGenerator.Builder()
             .withinRange('a', 'z').build();
 
-    public static final Pattern SPL_CHAR_PATRN = Pattern.compile("([&;,+=\\[\\]\\{\\}><^\\(\\)#:~`/\\\\!\'\"])");
-
-    /**
-     * Helper method to remove special characters like new line, space and single quote
-     *
-     * @return String
-     */
     public static String escapeSpecialChars(final String str) {
         return str.replaceAll("\\s\\s+|\\r\\n", "<br/>").replaceAll("\'", "\\\\'");
     }
 
-    /**
-     * Escape the given string so that it can be safely used inside javascript
-     *
-     * @return String the escaped string
-     */
     public static String escapeJavaScript(final String str) {
         return StringEscapeUtils.escapeJavaScript(str);
     }
 
-    public static String escapeJSON(final String str) {
-        return JSONObject.escape(str);
-    }
-
-    /**
-     * Checks if the given String value contains special characters ([,&,;,,,+,=,{,},>,<,^,(,),#,:,~,`,/,\,!,',",])
-     *
-     * @param str a String value
-     * @return boolean hasSpecialChars
-     */
-    public static boolean hasSpecialChars(final String str) {
-        final Matcher matcher = SPL_CHAR_PATRN.matcher(str);
-        return matcher.find();
-    }
-
     public static String emptyIfNull(final String value) {
         return value == null ? EMPTY : value;
-    }
-
-    public static String[] toStringArray(final String... values) {
-        return values;
     }
 
     public static List<String> toList(final String... values) {
@@ -118,7 +85,7 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
     }
 
     public static String encodeString(String string) {
-        return org.apache.commons.lang3.StringUtils.toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
+        return toEncodedString(string.getBytes(), Charset.forName("UTF-8"));
     }
 
     public static String[] listToStringArray(List<String> values) {
@@ -135,6 +102,14 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 
     public static String appendTimestamp(String name) {
         return new StringBuilder().append(name).append(UNDERSCORE).append(currentDateToFileNameFormat()).toString();
+    }
+
+    public static String append(String value, String append) {
+        return new StringBuilder().append(value).append(append).toString();
+    }
+
+    public static String prepend(String value, String prepend) {
+        return new StringBuilder().append(prepend).append(value).toString();
     }
 
     public static boolean isUnsignedNumber(String value) {

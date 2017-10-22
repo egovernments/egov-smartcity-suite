@@ -46,8 +46,8 @@
  */
 package org.egov.tl.web.controller;
 
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportDisposition;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,9 +72,6 @@ public class LicenseController {
     @Autowired
     private TradeLicenseService tradeLicenseService;
 
-    @Autowired
-    private ReportService reportService;
-
     @GetMapping(value = "/document/{licenseId}", produces = APPLICATION_JSON_VALUE)
     @ResponseBody
     public Map<String, Map<String, List<LicenseDocument>>> getAttachedDocument(@PathVariable Long licenseId) {
@@ -84,7 +81,8 @@ public class LicenseController {
     @GetMapping("/acknowledgement/{licenseId}")
     @ResponseBody
     public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable Long licenseId) {
-        ReportRequest reportRequest = tradeLicenseService.generateAcknowledgment(licenseId);
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+        ReportOutput reportOutput = tradeLicenseService.generateAcknowledgment(licenseId);
+        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
+        return reportToResponseEntity(reportOutput);
     }
 }

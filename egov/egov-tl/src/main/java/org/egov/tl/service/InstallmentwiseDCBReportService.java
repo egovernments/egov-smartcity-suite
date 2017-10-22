@@ -43,6 +43,9 @@ package org.egov.tl.service;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.services.Page;
 import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
@@ -53,7 +56,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 @Service
@@ -65,6 +70,9 @@ public class InstallmentwiseDCBReportService {
 
     @Autowired
     private InstallmentwiseDCBReportRepository installmentwiseDCBReportRepository;
+
+    @Autowired
+    private ReportService reportService;
 
     public List<CFinancialYear> getFinancialYears() {
         final List<CFinancialYear> financialYearList = cFinancialYearService.findAll();
@@ -85,9 +93,14 @@ public class InstallmentwiseDCBReportService {
     }
 
     @ReadOnly
-    public List<InstallmentWiseDCB> prepareReport(final InstallmentWiseDCBRequest installmentWiseDCBRequest) {
-        return installmentwiseDCBReportRepository.findInstallmentWiseReport(installmentWiseDCBRequest,
-                financialYearStartDate(installmentWiseDCBRequest));
+    public ReportOutput generateInstallmentwiseDCBReport(InstallmentWiseDCBRequest reportCriteria) {
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("year", reportCriteria.getInstallment());
+        ReportRequest reportRequest = new ReportRequest("tl_installment_yearwise_dcb_report",
+                installmentwiseDCBReportRepository.findInstallmentWiseReport(reportCriteria,
+                        financialYearStartDate(reportCriteria)), reportParams);
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
     @ReadOnly

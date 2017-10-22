@@ -43,8 +43,7 @@ package org.egov.pgr.web.controller.masters.router;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.reporting.engine.ReportDisposition;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.contract.ComplaintRouterResponseAdaptor;
@@ -60,7 +59,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.List;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
@@ -72,12 +70,10 @@ import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 public class SearchRoutingController {
 
     private static final String ADMINISTRATION = "ADMINISTRATION";
-    protected BoundaryTypeService boundaryTypeService;
 
-    protected ComplaintRouterService complaintRouterService;
+    private BoundaryTypeService boundaryTypeService;
 
-    @Autowired
-    private ReportService reportService;
+    private ComplaintRouterService complaintRouterService;
 
     @Autowired
     public SearchRoutingController(final BoundaryTypeService boundaryTypeService,
@@ -117,13 +113,10 @@ public class SearchRoutingController {
 
     @GetMapping("/download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadRouterView(ComplaintRouterSearchRequest routerSearchRequest) {
-        ReportRequest reportRequest = new ReportRequest("pgr_routerView",
-                complaintRouterService.getAllRouterRecords(routerSearchRequest), new HashMap<>());
-        reportRequest.setReportFormat(routerSearchRequest.getPrintFormat());
-        reportRequest.setReportName(appendTimestamp("pgr_routerView"));
-        reportRequest.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadRouterView(ComplaintRouterSearchRequest reportCriteria) {
+        ReportOutput reportOutput = complaintRouterService.generateRouterReport(reportCriteria);
+        reportOutput.setReportName(appendTimestamp("pgr_routerView"));
+        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
+        return reportToResponseEntity(reportOutput);
     }
-
 }

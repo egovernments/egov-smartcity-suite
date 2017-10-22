@@ -47,13 +47,12 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
+import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
 import org.egov.pgr.report.service.GrievanceTypewiseReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -64,9 +63,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
-
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -76,9 +73,6 @@ public class GrievanceTypewiseReportController {
 
     @Autowired
     private GrievanceTypewiseReportService grievanceTypewiseReportService;
-
-    @Autowired
-    private ReportService reportService;
 
     @GetMapping
     public String grievanceTypewiseSearchForm() {
@@ -107,19 +101,13 @@ public class GrievanceTypewiseReportController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadGrievanceTypewiseReport(DrilldownReportRequest request) {
-        final ReportRequest reportRequest;
-        final Map<String, Object> reportparam = new HashMap<>();
-        if (StringUtils.isNotBlank(request.getComplaintDateType()) && StringUtils.isNotBlank(request.getStatus())) {
-            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
-                    grievanceTypewiseReportService.getGrievanceTypewiseRecordsByComplaintId(request), new HashMap<>());
-        } else
-            reportRequest = new ReportRequest("pgr_functionarywise_report",
-                    grievanceTypewiseReportService.getAllGrievanceTypewiseRecords(request), new HashMap<>());
-        reportparam.put("type", "complaintwise");
-        reportRequest.setReportParams(reportparam);
-        reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("grievancetypewise_report");
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadGrievanceTypewiseReport(DrilldownReportRequest reportCriteria) {
+        ReportOutput reportOutput;
+        if (isNotBlank(reportCriteria.getComplaintDateType()) && isNotBlank(reportCriteria.getStatus()))
+            reportOutput = grievanceTypewiseReportService.generateGrievanceTypewiseReportByComplaintId(reportCriteria);
+        else
+            reportOutput = grievanceTypewiseReportService.generateGrievanceTypewiseReport(reportCriteria);
+        reportOutput.setReportName("grievancetypewise_report");
+        return reportToResponseEntity(reportOutput);
     }
 }

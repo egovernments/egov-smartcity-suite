@@ -49,9 +49,7 @@ package org.egov.tl.web.controller.report;
 
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportDisposition;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.DateUtils;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.dto.BaseRegisterRequest;
 import org.egov.tl.entity.view.BaseRegister;
@@ -59,8 +57,6 @@ import org.egov.tl.service.BaseRegisterService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.web.response.adaptor.BaseRegisterResponseAdaptor;
-import org.joda.time.DateTime;
-import org.joda.time.LocalDate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -73,7 +69,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashMap;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
@@ -98,9 +93,6 @@ public class BaseRegisterController {
 
     @Autowired
     private BoundaryService boundaryService;
-
-    @Autowired
-    private ReportService reportService;
 
     @GetMapping("search")
     public String baseRegisterSearchForm(Model model) {
@@ -132,11 +124,9 @@ public class BaseRegisterController {
     @GetMapping("download")
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadReport(BaseRegisterRequest baseRegisterRequest) {
-        ReportRequest reportRequest = new ReportRequest("tl_baseregister_report",
-                baseRegisterService.getAllBaseRegisterRecords(baseRegisterRequest), new HashMap<>());
-        reportRequest.setReportFormat(baseRegisterRequest.getPrintFormat());
-        reportRequest.setReportName(appendTimestamp("base_register_report"));
-        reportRequest.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+        ReportOutput reportOutput = baseRegisterService.generateBaseRegisterReport(baseRegisterRequest);
+        reportOutput.setReportName(appendTimestamp("base_register_report"));
+        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
+        return reportToResponseEntity(reportOutput);
     }
 }

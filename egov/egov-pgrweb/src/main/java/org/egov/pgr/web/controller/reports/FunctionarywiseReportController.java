@@ -47,13 +47,12 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownAdaptor;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
+import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
 import org.egov.pgr.report.service.FunctionarywiseReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
@@ -64,8 +63,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
@@ -75,9 +73,6 @@ public class FunctionarywiseReportController {
 
     @Autowired
     private FunctionarywiseReportService functionarywiseReportService;
-
-    @Autowired
-    private ReportService reportService;
 
     @GetMapping
     public String functionarywiseSearchForm() {
@@ -106,17 +101,14 @@ public class FunctionarywiseReportController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadFunctionarywiseReport(DrilldownReportRequest request) {
-        final ReportRequest reportRequest;
-        if (StringUtils.isNotBlank(request.getUsrid()) && StringUtils.isNotBlank(request.getStatus())) {
-            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
-                    functionarywiseReportService.getFunctionarywiseRecordsByEmployee(request), new HashMap<>());
-        } else
-            reportRequest = new ReportRequest("pgr_functionarywise_report",
-                    functionarywiseReportService.getAllFunctionarywiseRecords(request), new HashMap<>());
-        reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("functionarywise_report");
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadFunctionarywiseReport(DrilldownReportRequest reportCriteria) {
+        ReportOutput reportOutput;
+        if (isNotBlank(reportCriteria.getUsrid()) && isNotBlank(reportCriteria.getStatus()))
+            reportOutput = functionarywiseReportService.generateFunctionaryEmployeewiseReport(reportCriteria);
+        else
+            reportOutput = functionarywiseReportService.generateFunctionarywiseReport(reportCriteria);
+        reportOutput.setReportName("functionarywise_report");
+        return reportToResponseEntity(reportOutput);
     }
 
 }

@@ -48,6 +48,9 @@
 package org.egov.pgr.report.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.pgr.entity.contract.EscalationRouterRequest;
 import org.egov.pgr.entity.contract.EscalationRouterView;
 import org.egov.pgr.report.repository.EscalationRouterReportRepository;
@@ -59,8 +62,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class EscalationRouterReportService {
@@ -68,9 +69,12 @@ public class EscalationRouterReportService {
     @Autowired
     private EscalationRouterReportRepository escalationRouterReportRepository;
 
+    @Autowired
+    private ReportService reportService;
+
     @ReadOnly
     public Page<EscalationRouterView> pagedEscalationRouterReport(final EscalationRouterRequest escalationRouterRequest) {
-        final Pageable pageable = new PageRequest(escalationRouterRequest.pageNumber(),
+        Pageable pageable = new PageRequest(escalationRouterRequest.pageNumber(),
                 escalationRouterRequest.pageSize(),
                 escalationRouterRequest.orderDir(),
                 escalationRouterRequest.orderBy());
@@ -78,8 +82,11 @@ public class EscalationRouterReportService {
     }
 
     @ReadOnly
-    public List<EscalationRouterView> getEscalationRouterReportRecords(final EscalationRouterRequest escalationRouterRequest) {
-        return escalationRouterReportRepository.findAll(new EscalationRouterSpec(escalationRouterRequest));
+    public ReportOutput generateEscalationRouterReport(EscalationRouterRequest reportCriteria) {
+        ReportRequest reportRequest = new ReportRequest("pgr_routerescalation_report",
+                escalationRouterReportRepository.findAll(new EscalationRouterSpec(reportCriteria)));
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
 }

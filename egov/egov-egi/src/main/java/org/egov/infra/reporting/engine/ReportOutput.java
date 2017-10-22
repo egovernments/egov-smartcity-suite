@@ -46,6 +46,8 @@ public class ReportOutput implements Serializable {
     private static final long serialVersionUID = -2559611205589631905L;
     private byte[] reportOutputData;
     private ReportFormat reportFormat;
+    private String reportName;
+    private ReportDisposition reportDisposition = ReportDisposition.INLINE;
 
     public ReportOutput() {
         //default constructor
@@ -70,5 +72,19 @@ public class ReportOutput implements Serializable {
 
     public void setReportFormat(ReportFormat reportFormat) {
         this.reportFormat = reportFormat;
+    }
+
+    public void setReportName(String reportName) {
+        this.reportName = reportName;
+    }
+
+    public void setReportDisposition(ReportDisposition reportDisposition) {
+        this.reportDisposition = reportDisposition;
+    }
+
+    public String reportDisposition() {
+        return new StringBuilder()
+                .append(this.reportDisposition.toString()).append(";filename=\"")
+                .append(reportName).append(".").append(reportFormat).append("\"").toString();
     }
 }

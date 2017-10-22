@@ -40,6 +40,9 @@
 package org.egov.tl.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.dto.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.repository.DCBReportRepository;
@@ -60,6 +63,9 @@ public class DCBReportService {
     @Autowired
     private DCBReportRepository dCBReportRepository;
 
+    @Autowired
+    private ReportService reportService;
+
     @ReadOnly
     public Page<DCBReportResult> pagedDCBRecords(final DCBReportSearchRequest searchRequest) {
         final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
@@ -70,8 +76,15 @@ public class DCBReportService {
     }
 
     @ReadOnly
-    public List<DCBReportResult> getAllDCBRecords(final DCBReportSearchRequest searchRequest) {
-        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(searchRequest));
+    public List<DCBReportResult> getDCBRecords(DCBReportSearchRequest reportCriteria) {
+        return dCBReportRepository.findAll(DCBReportSpec.dCBReportSpecification(reportCriteria));
+    }
+
+    @ReadOnly
+    public ReportOutput generateDCBReport(DCBReportSearchRequest reportCriteria) {
+        ReportRequest reportRequest = new ReportRequest("tl_dcb_report", getDCBRecords(reportCriteria));
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
     @ReadOnly

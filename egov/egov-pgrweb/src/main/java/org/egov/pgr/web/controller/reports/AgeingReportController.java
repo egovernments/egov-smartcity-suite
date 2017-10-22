@@ -47,8 +47,7 @@
 
 package org.egov.pgr.web.controller.reports;
 
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.report.entity.contract.AgeingReportAdaptor;
 import org.egov.pgr.report.entity.contract.AgeingReportRequest;
@@ -63,7 +62,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -76,9 +74,6 @@ public class AgeingReportController {
 
     @Autowired
     private AgeingReportService ageingReportService;
-
-    @Autowired
-    private ReportService reportService;
 
     @ModelAttribute
     public void ageingReportSearchForm(Model model) {
@@ -117,14 +112,9 @@ public class AgeingReportController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadAgeingReport(AgeingReportRequest request) {
-        ReportRequest reportRequest = new ReportRequest("pgr_ageing_report",
-                ageingReportService.getAllAgeingReportRecords(request), new HashMap<>());
-        Map<String, Object> reportparam = new HashMap<>();
-        reportparam.put("status", request.getStatus());
-        reportRequest.setReportParams(reportparam);
-        reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("ageing_report");
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadAgeingReport(AgeingReportRequest reportCriteria) {
+        ReportOutput reportOutput = ageingReportService.generateAgeingReport(reportCriteria);
+        reportOutput.setReportName("ageing_report");
+        return reportToResponseEntity(reportOutput);
     }
 }

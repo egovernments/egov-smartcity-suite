@@ -41,6 +41,9 @@
 package org.egov.tl.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.tl.entity.dto.BaseRegisterRequest;
 import org.egov.tl.entity.view.BaseRegister;
 import org.egov.tl.repository.BaseRegisterReportRepository;
@@ -51,14 +54,15 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class BaseRegisterService {
 
     @Autowired
     private BaseRegisterReportRepository baseRegisterReportRepository;
+
+    @Autowired
+    private ReportService reportService;
 
     @ReadOnly
     public Page<BaseRegister> pagedBaseRegisterRecords(BaseRegisterRequest baseRegisterRequest) {
@@ -69,8 +73,11 @@ public class BaseRegisterService {
     }
 
     @ReadOnly
-    public List<BaseRegister> getAllBaseRegisterRecords(BaseRegisterRequest baseRegisterRequest) {
-        return baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(baseRegisterRequest));
+    public ReportOutput generateBaseRegisterReport(BaseRegisterRequest reportCriteria) {
+        ReportRequest reportRequest = new ReportRequest("tl_baseregister_report",
+                baseRegisterReportRepository.findAll(BaseRegisterSpec.baseRegisterSpecification(reportCriteria)));
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
     @ReadOnly

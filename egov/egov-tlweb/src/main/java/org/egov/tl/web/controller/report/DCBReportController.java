@@ -49,8 +49,7 @@ package org.egov.tl.web.controller.report;
 
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportDisposition;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.dto.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
@@ -67,9 +66,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
@@ -85,9 +81,6 @@ public class DCBReportController {
 
     @Autowired
     private DCBReportService dCBReportService;
-
-    @Autowired
-    private ReportService reportService;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -121,13 +114,10 @@ public class DCBReportController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> dcbReportDownload(final DCBReportSearchRequest searchRequest) {
-        final Map<String, Object> responseParams = new HashMap<>();
-        final ReportRequest reportRequest = new ReportRequest("tl_dcb_report", dCBReportService.getAllDCBRecords(searchRequest),
-                responseParams);
-        reportRequest.setReportFormat(searchRequest.getPrintFormat());
-        reportRequest.setReportName(appendTimestamp("dcb_report"));
-        reportRequest.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> dcbReportDownload(DCBReportSearchRequest reportCriteria) {
+        ReportOutput reportOutput = dCBReportService.generateDCBReport(reportCriteria);
+        reportOutput.setReportName(appendTimestamp("dcb_report"));
+        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
+        return reportToResponseEntity(reportOutput);
     }
 }

@@ -51,6 +51,9 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
@@ -72,7 +75,11 @@ import java.util.List;
 public class ComplaintRouterService {
 
     private final ComplaintRouterRepository complaintRouterRepository;
+
     private final BoundaryService boundaryService;
+
+    @Autowired
+    private ReportService reportService;
 
     @Autowired
     public ComplaintRouterService(final ComplaintRouterRepository complaintRouterRepository,
@@ -132,21 +139,21 @@ public class ComplaintRouterService {
     }
 
     @Transactional
-    public ComplaintRouter createComplaintRouter(final ComplaintRouter complaintRouter) {
+    public ComplaintRouter createComplaintRouter(ComplaintRouter complaintRouter) {
         return complaintRouterRepository.save(complaintRouter);
     }
 
     @Transactional
-    public ComplaintRouter updateComplaintRouter(final ComplaintRouter complaintRouter) {
+    public ComplaintRouter updateComplaintRouter(ComplaintRouter complaintRouter) {
         return complaintRouterRepository.save(complaintRouter);
     }
 
     @Transactional
-    public void deleteComplaintRouter(final ComplaintRouter complaintRouter) {
+    public void deleteComplaintRouter(ComplaintRouter complaintRouter) {
         complaintRouterRepository.delete(complaintRouter);
     }
 
-    public Boolean validateRouter(final ComplaintRouter complaintRouter) {
+    public Boolean validateRouter(ComplaintRouter complaintRouter) {
         Boolean exist = false;
         ComplaintRouter queryResult = null;
         if (null != complaintRouter.getComplaintType() && null != complaintRouter.getBoundary())
@@ -161,7 +168,7 @@ public class ComplaintRouterService {
         return exist;
     }
 
-    public ComplaintRouter getExistingRouter(final ComplaintRouter complaintRouter) {
+    public ComplaintRouter getExistingRouter(ComplaintRouter complaintRouter) {
         ComplaintRouter router = null;
         if (null != complaintRouter.getComplaintType() && null != complaintRouter.getBoundary())
             router = complaintRouterRepository.findByComplaintTypeAndBoundary(complaintRouter.getComplaintType(),
@@ -173,12 +180,12 @@ public class ComplaintRouterService {
         return router != null ? router : null;
     }
 
-    public ComplaintRouter getRouterById(final Long id) {
+    public ComplaintRouter getRouterById(Long id) {
         return complaintRouterRepository.findOne(id);
     }
 
     @ReadOnly
-    public Page<ComplaintRouter> getComplaintRouter(final ComplaintRouterSearchRequest routerSearchRequest) {
+    public Page<ComplaintRouter> getComplaintRouter(ComplaintRouterSearchRequest routerSearchRequest) {
         final Pageable pageable = new PageRequest(routerSearchRequest.pageNumber(),
                 routerSearchRequest.pageSize(),
                 routerSearchRequest.orderDir(), routerSearchRequest.orderBy());
@@ -187,21 +194,24 @@ public class ComplaintRouterService {
     }
 
     @ReadOnly
-    public List<ComplaintRouter> getAllRouterRecords(ComplaintRouterSearchRequest routerSearchRequest) {
-        return complaintRouterRepository.findAll(ComplaintRouterSpec.search(routerSearchRequest));
+    public ReportOutput generateRouterReport(ComplaintRouterSearchRequest reportCriteria) {
+        ReportRequest reportRequest = new ReportRequest("pgr_routerView",
+                complaintRouterRepository.findAll(ComplaintRouterSpec.search(reportCriteria)));
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
-    public void getParentBoundaries(final Long bndryId, final List<Boundary> boundaryList) {
-        final Boundary bndry = boundaryService.getBoundaryById(bndryId);
-        if (bndry != null) {
-            boundaryList.add(bndry);
-            if (bndry.getParent() != null)
-                getParentBoundaries(bndry.getParent().getId(), boundaryList);
-        }
-    }
-
-    public List<ComplaintRouter> getRoutersByComplaintTypeBoundary(final List<ComplaintType> complaintTypes,
-                                                                   final List<Boundary> boundaries) {
+    public List<ComplaintRouter> getRoutersByComplaintTypeBoundary(List<ComplaintType> complaintTypes,
+                                                                   List<Boundary> boundaries) {
         return complaintRouterRepository.findRoutersByComplaintTypesBoundaries(complaintTypes, boundaries);
+    }
+
+    private void getParentBoundaries(Long boundaryId, List<Boundary> boundaryList) {
+        Boundary boundary = boundaryService.getBoundaryById(boundaryId);
+        if (boundary != null) {
+            boundaryList.add(boundary);
+            if (boundary.getParent() != null)
+                getParentBoundaries(boundary.getParent().getId(), boundaryList);
+        }
     }
 }

@@ -43,7 +43,6 @@ package org.egov.infra.web.utils;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
-import org.egov.infra.reporting.engine.ReportRequest;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.CacheControl;
 import org.springframework.http.MediaType;
@@ -57,8 +56,14 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.utils.ApplicationConstant.COLON;
+import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
 public class WebUtils {
+
+    private static final char QUESTION_MARK = '?';
+    private static final char FORWARD_SLASH = '/';
+    private static final String SCHEME_DOMAIN_SEPARATOR = "://";
 
     private WebUtils() {
         //Since utils are with static methods
@@ -78,12 +83,12 @@ public class WebUtils {
      * eg: http://www.domain.com/cxt/xyz will return www.domain.com http://somehost:8090/cxt/xyz will return somehost
      **/
     public static String extractRequestedDomainName(String requestURL) {
-        int domainNameStartIndex = requestURL.indexOf("://") + 3;
-        int domainNameEndIndex = requestURL.indexOf('/', domainNameStartIndex);
+        int domainNameStartIndex = requestURL.indexOf(SCHEME_DOMAIN_SEPARATOR) + 3;
+        int domainNameEndIndex = requestURL.indexOf(FORWARD_SLASH, domainNameStartIndex);
         String domainName = requestURL.substring(domainNameStartIndex,
                 domainNameEndIndex > 0 ? domainNameEndIndex : requestURL.length());
-        if (domainName.contains(":"))
-            domainName = domainName.split(":")[0];
+        if (domainName.contains(COLON))
+            domainName = domainName.split(COLON)[0];
         return domainName;
     }
 
@@ -95,34 +100,34 @@ public class WebUtils {
     public static String extractRequestDomainURL(HttpServletRequest httpRequest, boolean withContext) {
         StringBuilder url = new StringBuilder(httpRequest.getRequestURL());
         String uri = httpRequest.getRequestURI();
-        return withContext ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + "/"
+        return withContext ? url.substring(0, url.length() - uri.length() + httpRequest.getContextPath().length()) + FORWARD_SLASH
                 : url.substring(0, url.length() - uri.length());
     }
 
     public static String extractQueryParamsFromUrl(String url) {
-        return url.substring(url.indexOf('?') + 1, url.length());
+        return url.substring(url.indexOf(QUESTION_MARK) + 1, url.length());
     }
 
     public static String extractURLWithoutQueryParams(String url) {
-        return url.substring(0, url.indexOf('?'));
+        return url.substring(0, url.indexOf(QUESTION_MARK));
     }
 
     public static String currentContextPath(ServletRequest request) {
-        return request.getServletContext().getContextPath().toUpperCase().replace("/", EMPTY);
+        return request.getServletContext().getContextPath().toUpperCase().replace(SLASH, EMPTY);
     }
 
-    public static ResponseEntity<InputStreamResource> reportToResponseEntity(ReportRequest reportRequest, ReportOutput reportOutput) {
+    public static ResponseEntity<InputStreamResource> reportToResponseEntity(ReportOutput reportOutput) {
         MediaType mediaType = MediaType.TEXT_PLAIN;
-        if (reportRequest.getReportFormat().equals(ReportFormat.PDF))
-            mediaType = MediaType.parseMediaType("application/pdf");
-        else if (reportRequest.getReportFormat().equals(ReportFormat.XLS))
-            mediaType = MediaType.parseMediaType("application/vnd.ms-excel");
+        if (reportOutput.getReportFormat().equals(ReportFormat.PDF))
+            mediaType = MediaType.APPLICATION_PDF;
+        else if (reportOutput.getReportFormat().equals(ReportFormat.XLS))
+            mediaType = MediaType.APPLICATION_OCTET_STREAM;
         return ResponseEntity.
                 ok().
                 contentType(mediaType).
                 cacheControl(CacheControl.noCache()).
                 contentLength(reportOutput.getReportOutputData().length).
-                header("content-disposition", reportRequest.reportDisposition()).
+                header("content-disposition", reportOutput.reportDisposition()).
                 body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
     }
 

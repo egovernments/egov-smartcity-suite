@@ -48,6 +48,9 @@
 package org.egov.pgr.report.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.services.Page;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
@@ -56,14 +59,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-
 @Service
 @Transactional(readOnly = true)
 public class FunctionarywiseReportService {
 
     @Autowired
     private FunctionarywiseReportRepository functionarywiseReportRepository;
+
+    @Autowired
+    private ReportService reportService;
 
     @ReadOnly
     public Page<DrilldownReportView> pagedFunctionarwiseRecords(DrilldownReportRequest request) {
@@ -81,12 +85,18 @@ public class FunctionarywiseReportService {
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getAllFunctionarywiseRecords(DrilldownReportRequest request) {
-        return functionarywiseReportRepository.findFunctionarywiseReportByRequest(request);
+    public ReportOutput generateFunctionarywiseReport(DrilldownReportRequest reportCriteria) {
+        ReportRequest reportRequest = new ReportRequest("pgr_functionarywise_report",
+                functionarywiseReportRepository.findFunctionarywiseReportByRequest(reportCriteria));
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getFunctionarywiseRecordsByEmployee(DrilldownReportRequest request) {
-        return functionarywiseReportRepository.findFunctionarywiseReportByEmployeeId(request);
+    public ReportOutput generateFunctionaryEmployeewiseReport(DrilldownReportRequest reportCriteria) {
+        ReportRequest reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
+                functionarywiseReportRepository.findFunctionarywiseReportByEmployeeId(reportCriteria));
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 }

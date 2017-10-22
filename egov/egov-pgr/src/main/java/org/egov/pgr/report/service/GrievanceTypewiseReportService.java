@@ -48,6 +48,9 @@
 package org.egov.pgr.report.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.services.Page;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
@@ -56,7 +59,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -64,6 +68,9 @@ public class GrievanceTypewiseReportService {
 
     @Autowired
     private GrievanceTypewiseReportRepository grievanceTypewiseReportRepository;
+
+    @Autowired
+    private ReportService reportService;
 
     @ReadOnly
     public Page<DrilldownReportView> pagedGrievanceTypewiseRecords(DrilldownReportRequest reportRequest) {
@@ -81,12 +88,22 @@ public class GrievanceTypewiseReportService {
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getAllGrievanceTypewiseRecords(DrilldownReportRequest reportRequest) {
-        return grievanceTypewiseReportRepository.findGrievanceTypewiseRecordList(reportRequest);
+    public ReportOutput generateGrievanceTypewiseReport(DrilldownReportRequest reportCriteria) {
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("type", "complaintwise");
+        ReportRequest reportRequest = new ReportRequest("pgr_functionarywise_report",
+                grievanceTypewiseReportRepository.findGrievanceTypewiseRecordList(reportCriteria), reportParams);
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getGrievanceTypewiseRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return grievanceTypewiseReportRepository.findGrievanceTypewiseRecordlistByComplaintId(reportRequest);
+    public ReportOutput generateGrievanceTypewiseReportByComplaintId(DrilldownReportRequest reportCriteria) {
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("type", "complaintwise");
+        ReportRequest reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
+                grievanceTypewiseReportRepository.findGrievanceTypewiseRecordlistByComplaintId(reportCriteria), reportParams);
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 }

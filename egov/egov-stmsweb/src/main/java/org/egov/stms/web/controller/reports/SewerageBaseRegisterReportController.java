@@ -40,16 +40,8 @@
 
 package org.egov.stms.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.support.ui.DataTable;
@@ -67,17 +59,24 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 @Controller
 @RequestMapping(value = "/reports")
 public class SewerageBaseRegisterReportController {
 
+    private static final String BASE_REGISTER_REPORT = "stms_base_register_report";
+
     @Autowired
     private BoundaryService boundaryService;
-
     @Autowired
     private SewerageBaseRegisterReportService sewerageBaseRegisterReportService;
-    private final String baseRegisterReport = "stms_base_register_report";
-
     @Autowired
     private ReportService reportService;
 
@@ -99,26 +98,27 @@ public class SewerageBaseRegisterReportController {
             @ModelAttribute final SewerageBaseRegisterResult sewerageBaseRegisterResult, final Model model) {
         return new DataTable<>(sewerageBaseRegisterReportService.getBaseRegisterDetails(sewerageBaseRegisterResult, model),
                 sewerageBaseRegisterResult.draw())
-                        .toJson(SewerageBaseRegisterAdaptor.class);
+                .toJson(SewerageBaseRegisterAdaptor.class);
 
     }
 
     @GetMapping("/seweragebaseregister/grand-total")
     @ResponseBody
     public List<BigDecimal> sewerageBaseRegisterGrandTotal(final SewerageBaseRegisterResult sewerageBaseRegisterResult,
-            final Model model) {
+                                                           final Model model) {
         return sewerageBaseRegisterReportService.baseRegisterGrandTotal(sewerageBaseRegisterResult, model);
     }
 
     @GetMapping("/seweragebaseregister/download")
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadReport(final SewerageBaseRegisterResult sewerageBaseRegisterResult,
-            final Model model) {
-        final ReportRequest reportRequest = new ReportRequest(baseRegisterReport,
-                sewerageBaseRegisterReportService.getAllBaseRegisterRecords(sewerageBaseRegisterResult, model), new HashMap<>());
+                                                              final Model model) {
+        final ReportRequest reportRequest = new ReportRequest(BASE_REGISTER_REPORT,
+                sewerageBaseRegisterReportService.getAllBaseRegisterRecords(sewerageBaseRegisterResult, model));
         reportRequest.setReportFormat(sewerageBaseRegisterResult.getPrintFormat());
-        reportRequest.setReportName(baseRegisterReport);
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+        ReportOutput reportOutput = reportService.createReport(reportRequest);
+        reportOutput.setReportName(BASE_REGISTER_REPORT);
+        return reportToResponseEntity(reportOutput);
     }
 
 }

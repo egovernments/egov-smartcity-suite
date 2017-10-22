@@ -48,6 +48,9 @@
 package org.egov.pgr.report.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.services.Page;
 import org.egov.pgr.report.entity.contract.AgeingReportRequest;
 import org.egov.pgr.report.entity.view.AgeingReportView;
@@ -56,7 +59,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -64,6 +68,9 @@ public class AgeingReportService {
 
     @Autowired
     private AgeingReportRepository ageingReportRepository;
+
+    @Autowired
+    private ReportService reportService;
 
     @ReadOnly
     public Page<AgeingReportView> pagedAgeingRecords(AgeingReportRequest request) {
@@ -76,7 +83,12 @@ public class AgeingReportService {
     }
 
     @ReadOnly
-    public List<AgeingReportView> getAllAgeingReportRecords(AgeingReportRequest request) {
-        return ageingReportRepository.getAgeingReportRecords(request);
+    public ReportOutput generateAgeingReport(AgeingReportRequest reportCriteria) {
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("status", reportCriteria.getStatus());
+        ReportRequest reportRequest = new ReportRequest("pgr_ageing_report",
+                ageingReportRepository.getAgeingReportRecords(reportCriteria), reportParams);
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 }

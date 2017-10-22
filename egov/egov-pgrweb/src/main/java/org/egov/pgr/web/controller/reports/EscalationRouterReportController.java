@@ -48,8 +48,7 @@
 package org.egov.pgr.web.controller.reports;
 
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.contract.EscalationRouterRequest;
 import org.egov.pgr.entity.contract.EscalationRouterView;
@@ -69,8 +68,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
 
@@ -87,16 +84,13 @@ public class EscalationRouterReportController {
     @Autowired
     private EscalationRouterReportService escalationRouterReportService;
 
-    @Autowired
-    private ReportService reportService;
-
     @ModelAttribute
     public EscalationRouterView escalationRouterView() {
         return new EscalationRouterView();
     }
 
     @GetMapping
-    public String escalationRouterReportSearchForm(final Model model) {
+    public String escalationRouterReportSearchForm(Model model) {
         model.addAttribute("categories", complaintTypeCategoryService.findAll());
         model.addAttribute("complaintTypes", Collections.emptyList());
         model.addAttribute("wardList",
@@ -114,14 +108,9 @@ public class EscalationRouterReportController {
 
     @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadEscalationRouterReport(EscalationRouterRequest escalationRouterRequest) {
-
-        final Map<String, Object> responseParams = new HashMap<>();
-        final ReportRequest reportRequest = new ReportRequest("pgr_routerescalation_report",
-                escalationRouterReportService.getEscalationRouterReportRecords(escalationRouterRequest),
-                responseParams);
-        reportRequest.setReportFormat(escalationRouterRequest.getPrintFormat());
-        reportRequest.setReportName("escalation_router_report");
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadEscalationRouterReport(EscalationRouterRequest reportCriteria) {
+        ReportOutput reportOutput = escalationRouterReportService.generateEscalationRouterReport(reportCriteria);
+        reportOutput.setReportName("escalation_router_report");
+        return reportToResponseEntity(reportOutput);
     }
 }

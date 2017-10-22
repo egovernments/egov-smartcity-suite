@@ -63,7 +63,6 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.persistence.entity.enums.UserType;
-import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -117,6 +116,7 @@ import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.infra.utils.StringUtils.append;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
@@ -249,17 +249,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public ReportOutput generateLicenseCertificate(License license,boolean isProvisional) {
+    public ReportOutput generateLicenseCertificate(License license, boolean isProvisional) {
         if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade())) {
             return reportService.createReport(
-                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license,isProvisional)));
+                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license, isProvisional)));
         } else {
             return reportService.createReport(
-                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license,isProvisional)));
+                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license, isProvisional)));
         }
     }
 
-    private Map<String, Object> getReportParamsForCertificate(License license,boolean isProvisional) {
+    private Map<String, Object> getReportParamsForCertificate(License license, boolean isProvisional) {
 
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("applicationnumber", license.getApplicationNumber());
@@ -497,8 +497,8 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return demandGenericDao.getBillReceipts(license.getCurrentDemand());
     }
 
-    public LicenseDocumentType getLicenseDocumentType(Long id){
-       return licenseDocumentTypeRepository.findOne(id);
+    public LicenseDocumentType getLicenseDocumentType(Long id) {
+        return licenseDocumentTypeRepository.findOne(id);
     }
 
     public Map<String, Map<String, List<LicenseDocument>>> getAttachedDocument(Long licenseId) {
@@ -506,7 +506,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         List<LicenseDocument> licenseDocuments = getLicenseById(licenseId).getDocuments();
         Map<String, Map<String, List<LicenseDocument>>> licenseDocumentDetails = new HashMap<>();
         licenseDocumentDetails.put(NEW_LIC_APPTYPE.toUpperCase(), new HashMap<>());
-            licenseDocumentDetails.put(RENEWAL_LIC_APPTYPE.toUpperCase(), new HashMap<>());
+        licenseDocumentDetails.put(RENEWAL_LIC_APPTYPE.toUpperCase(), new HashMap<>());
 
         for (LicenseDocument document : licenseDocuments) {
             String docType = document.getType().getName();
@@ -523,15 +523,14 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         return licenseDocumentDetails;
     }
 
-    public ReportRequest generateAcknowledgment(Long licenseId) {
-        Map<String, Object> reportparam = new HashMap<>();
+    public ReportOutput generateAcknowledgment(Long licenseId) {
         License license = getLicenseById(licenseId);
-        ReportRequest reportRequest = new ReportRequest("tl_license_acknowledgment", license, reportparam);
-        reportparam.put("amount", license.getTotalBalance());
-        reportRequest.setReportParams(reportparam);
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("amount", license.getTotalBalance());
+        ReportRequest reportRequest = new ReportRequest("tl_license_acknowledgment", license, reportParams);
         reportRequest.setReportFormat(ReportFormat.PDF);
-        reportRequest.setReportName("license_ack_" + license.getApplicationNumber());
-        reportRequest.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportRequest;
+        ReportOutput reportOutput = reportService.createReport(reportRequest);
+        reportOutput.setReportName(append("license_ack_", license.getApplicationNumber()));
+        return reportOutput;
     }
 }

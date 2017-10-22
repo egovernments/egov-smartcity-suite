@@ -99,6 +99,8 @@ public final class ApplicationConstant {
     public static final String UNDERSCORE = "_";
     public static final String HYPHEN = "-";
     public static final String WHITESPACE = " ";
+    public static final String SLASH = "/";
+    public static final String COLON = ":";
 
     private ApplicationConstant() {
     }

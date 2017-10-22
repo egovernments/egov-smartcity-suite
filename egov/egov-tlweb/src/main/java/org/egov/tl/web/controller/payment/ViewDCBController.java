@@ -52,8 +52,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import java.io.IOException;
-
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
@@ -67,15 +65,13 @@ public class ViewDCBController {
     private DCBReportService dCBReportService;
 
     @GetMapping("{id}")
-    public String search(@PathVariable Long id, Model model, DCBReportSearchRequest searchRequest)
-            throws IOException {
+    public String search(@PathVariable Long id, Model model, DCBReportSearchRequest searchRequest) {
         License licenseObj = tradeLicenseService.getLicenseById(id);
         searchRequest.setLicenseid(licenseObj.getId());
         model.addAttribute("license", licenseObj);
-        model.addAttribute("dcbreport", toJSON(dCBReportService.getAllDCBRecords(searchRequest), DCBReportResult.class,
+        model.addAttribute("dcbreport", toJSON(dCBReportService.getDCBRecords(searchRequest), DCBReportResult.class,
                 OnlineDCBReportResponseAdaptor.class));
-        model.addAttribute("receipts",tradeLicenseService.getReceipts(licenseObj));
-
+        model.addAttribute("receipts", tradeLicenseService.getReceipts(licenseObj));
         return "view-license-dcb";
     }
 }

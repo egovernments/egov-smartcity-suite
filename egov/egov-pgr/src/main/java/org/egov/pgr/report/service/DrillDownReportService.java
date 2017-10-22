@@ -48,6 +48,9 @@
 package org.egov.pgr.report.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infstr.services.Page;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
@@ -56,7 +59,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.HashMap;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -64,6 +68,9 @@ public class DrillDownReportService {
 
     @Autowired
     private DrilldownReportRepository drilldownReportRepository;
+
+    @Autowired
+    private ReportService reportService;
 
     @ReadOnly
     public Page<DrilldownReportView> pagedDrilldownRecords(DrilldownReportRequest reportRequest) {
@@ -81,12 +88,24 @@ public class DrillDownReportService {
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getAllDrilldownRecords(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordList(reportRequest);
+    public ReportOutput generateDrilldownReport(DrilldownReportRequest reportCriteria) {
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("groupBy", reportCriteria.getGroupBy());
+        reportParams.put("reportTitle", reportCriteria.getReportTitle());
+        ReportRequest reportRequest = new ReportRequest("pgr_functionarywise_report",
+                drilldownReportRepository.findDrilldownRecordList(reportCriteria), reportParams);
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 
     @ReadOnly
-    public List<DrilldownReportView> getDrilldownRecordsByComplaintId(DrilldownReportRequest reportRequest) {
-        return drilldownReportRepository.findDrilldownRecordsByRequest(reportRequest);
+    public ReportOutput generateComplaintwiseDrilldownReport(DrilldownReportRequest reportCriteria) {
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("groupBy", reportCriteria.getGroupBy());
+        reportParams.put("reportTitle", reportCriteria.getReportTitle());
+        ReportRequest reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
+                drilldownReportRepository.findDrilldownRecordsByRequest(reportCriteria), reportParams);
+        reportRequest.setReportFormat(reportCriteria.getPrintFormat());
+        return reportService.createReport(reportRequest);
     }
 }
