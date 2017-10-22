@@ -119,7 +119,7 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
     }
 
     private void auditLoginDetails(Authentication authentication) {
-        HashMap<String, String> credentials = ((HashMap<String, String>) authentication.getCredentials());
+        HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
         LoginAudit loginAudit = new LoginAudit();
         loginAudit.setLoginTime(new Date());
         loginAudit.setUser(securityUtils.getCurrentUser());

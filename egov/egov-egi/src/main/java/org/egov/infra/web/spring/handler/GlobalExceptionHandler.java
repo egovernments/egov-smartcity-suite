@@ -43,11 +43,9 @@ package org.egov.infra.web.spring.handler;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.core.annotation.AnnotationUtils;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.servlet.FlashMap;
 import org.springframework.web.servlet.support.RequestContextUtils;
 import org.springframework.web.servlet.view.RedirectView;
@@ -60,22 +58,9 @@ public class GlobalExceptionHandler {
 
     private static final String DEFAULT_ERROR_VIEW = "/error/500";
 
-    @ExceptionHandler(Exception.class)
-    public RedirectView defaultErrorHandler(HttpServletRequest req, Exception e) throws Exception {
-        // If the exception is annotated with @ResponseStatus rethrow it and let
-        // the framework handle it.
+    @ExceptionHandler({Exception.class, ApplicationRuntimeException.class})
+    public RedirectView handleGenericException(HttpServletRequest request, Exception e) {
         LOG.error("An error occurred while processing the request", e);
-        if (AnnotationUtils.findAnnotation(e.getClass(), ResponseStatus.class) != null)
-            throw e;
-        return createErrorMV(req, e);
-    }
-
-    @ExceptionHandler(value = ApplicationRuntimeException.class)
-    public RedirectView egovErrorHandler(HttpServletRequest req, ApplicationRuntimeException e) throws Exception {
-        return createErrorMV(req, e);
-    }
-
-    private RedirectView createErrorMV(HttpServletRequest request, Exception e) {
         RedirectView rw = new RedirectView(DEFAULT_ERROR_VIEW, true);
         FlashMap outputFlashMap = RequestContextUtils.getOutputFlashMap(request);
         if (outputFlashMap != null) {
@@ -84,5 +69,4 @@ public class GlobalExceptionHandler {
         }
         return rw;
     }
-
 }

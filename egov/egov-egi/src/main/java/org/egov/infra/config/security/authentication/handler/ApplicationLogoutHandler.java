@@ -82,7 +82,7 @@ public class ApplicationLogoutHandler implements LogoutHandler {
 
     private void auditLogout(Authentication authentication) {
         if (authentication != null) {
-            Map<String, String> authCredentials = ((HashMap<String, String>) authentication.getCredentials());
+            Map<String, String> authCredentials = (HashMap<String, String>) authentication.getCredentials();
             if (authCredentials != null && isNotBlank(authCredentials.get(LOGIN_LOG_ID))) {
                 loginAuditService.auditLogout(Long.valueOf(authCredentials.get(LOGIN_LOG_ID)));
             }
