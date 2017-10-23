@@ -39,21 +39,48 @@
 #-------------------------------------------------------------------------------*/
 $(document).ready(function(){
 	
-	var fileformatsinclude = ['pdf','jpeg','jpg','png']; 
+	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','zip','rar']; 
 	
-	$('.upload-file').change( function(e) {		
+	$('.file-ellipsis.upload-file').change( function(e) {		
 		/*validation for file upload*/
 		myfile= $( this ).val();
 		var ext = myfile.split('.').pop();
-		if($.inArray(ext.toLowerCase(), fileformatsinclude) > -1){
-			//do something    
-		}
-		else{
-			alert("Please upload .pdf, jpeg, .jpg and .png format documents only");
+		if($.inArray(ext.toLowerCase(), fileformatsinclude) == -1){
+			bootbox.alert("Please upload "+fileformatsinclude+" format documents only");
 			$( this ).val('');
-			return false;
+			return false; 
+		}
+		
+		var fileInput = $(this);
+   		var maxSize = 2097152; //file size  in bytes(2MB)
+		if(fileInput.get(0).files.length){
+			var fileSize = this.files[0].size; // in bytes
+			var charlen = (this.value.split('/').pop().split('\\').pop()).length;
+			if(charlen > 50){
+				bootbox.alert('Document name should not exceed 50 characters!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;			
+			} 
+			else if(fileSize > maxSize){
+				bootbox.alert('File size should not exceed 2 MB!');
+				fileInput.replaceWith(fileInput.val('').clone(true));
+				return false;
+			}			
 		}	
 		
+	});
+	
+var fileimageformatsinclude = ['jpeg','jpg','png','gif']; 
+	
+	$('.validate-file').change( function(e) {		
+		/*validation for file upload*/
+		myfile= $( this ).val();
+		var ext = myfile.split('.').pop();
+		if($.inArray(ext.toLowerCase(), fileimageformatsinclude) == -1){
+			bootbox.alert("Please upload "+fileimageformatsinclude+" format images only");
+			$( this ).val('');
+			return false;    
+		}
 		var image = $( this ).prop('files')[0];
 		var fileReader = new FileReader();
 		var inputUpload = $(this);
@@ -65,9 +92,31 @@ $(document).ready(function(){
 		fileReader.readAsDataURL(image);
 		
 		var fileInput = $(this);
-   		var maxSize = 2097152; //file size  in bytes(2MB)
-		var inMB = maxSize/1024/1024;
-		
+		var maxSize = 2097152; // file size in
+								// bytes(2MB)
+		var inMB = maxSize / 1024 / 1024;
+		if (fileInput.get(0).files.length) {
+			var fileSize = this.files[0].size; // in
+												// bytes
+			var charlen = (this.value
+					.split('/').pop().split(
+							'\\').pop()).length;
+			if (charlen > 50) {
+				bootbox
+						.alert('File length should not exceed 50 characters!');
+				fileInput.replaceWith(fileInput
+						.val('').clone(true));
+				return false;
+			} else if (fileSize > maxSize) {
+				bootbox
+						.alert('File size should not exceed '
+								+ inMB + ' MB!');
+				fileInput.replaceWith(fileInput
+						.val('').clone(true));
+				return false;
+			}
+		}
 	});
+	
 	
 });

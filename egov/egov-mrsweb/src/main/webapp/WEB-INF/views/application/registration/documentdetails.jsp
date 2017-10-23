@@ -42,118 +42,138 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<!-- <div class="panel panel-primary" data-collapsed="0"> -->
-	<div class="panel-heading slide-document-menu">
-		<div class="panel-title">
-			<spring:message  code="lbl.applicant.docs"/>
-		</div>
-		<div class="history-icon">
-			<i class="fa fa-angle-up fa-2x" id="toggle-his-icon"></i>
-		</div>
+<div class="panel-heading slide-document-menu">
+	<div class="panel-title">
+		<spring:message code="lbl.applicant.docs" />
 	</div>
-<div class="panel-body documentAttach-slide display-hide">
-	
-
+	<div class="history-icon">
+		<i class="fa fa-angle-up fa-2x" id="toggle-his-icon"></i>
+	</div>
+</div>
+<div class="documentAttach-slide display-hide">
 	<div class="panel-heading">
 		<div class="panel-title">
-				<spring:message code="lbl.common.docs"/>
+			<spring:message code="lbl.common.docs" />
 		</div>
 	</div>
-	
+
 	<div class="form-group">
-		<label class="col-sm-offset-5 view-content">
-			<spring:message code="lbl.submitted.by.couple"/>
+		<label class="col-sm-offset-5 view-content"> <spring:message
+				code="lbl.submitted.by.couple" />
 		</label>
 	</div>
 
-<c:forEach var="doc" items="${generalDocuments}" varStatus="status">	
-	<div class="form-group">	
-		<div class="col-sm-1"></div>
-		<form:hidden id="documents[${status.index}].id" path="documents[${status.index}].id" value="${doc.id}" /> 
-		<div class="col-sm-4 add-margin text-right">
-			<c:out value="${doc.name}"></c:out>
-		</div>
-		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="file${status.index}id" name="documents[${status.index}].file" class="file-ellipsis upload-file">
-			<form:errors path="documents[${status.index}].file" cssClass="add-margin error-msg" />
-		</div>
-		<div class="col-sm-2">
-			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${marriageRegistration.registrationDocuments}" var="regdoc" varStatus="loopStatus">
-				<c:if test="${regdoc.document.id == doc.id}">
-					<c:set value="true" var="isDocFound"></c:set>
-					<input type="hidden" id="registrationfile${status.index}" value="${regdoc.fileStoreMapper.fileName}|${regdoc.fileStoreMapper.contentType}|${regdoc.base64EncodedFile}">
-					<a id="regdoc${status.index}"> ${regdoc.fileStoreMapper.fileName}</a>
-				</c:if>
-			</c:forEach>
-			<%-- <c:if test="${!isDocFound}">
+	<c:forEach var="doc" items="${generalDocuments}" varStatus="status">
+		<div class="form-group">
+			<div class="col-sm-1"></div>
+			<form:hidden id="documents[${status.index}].id"
+				path="documents[${status.index}].id" value="${doc.id}" />
+			<div class="col-sm-4 add-margin text-right">
+				<c:out value="${doc.name}"></c:out>
+			</div>
+			<div class="col-sm-2 add-margin text-center">
+				<input type="file" id="file${status.index}id"
+					name="documents[${status.index}].file"
+					class="file-ellipsis upload-file">
+				<form:errors path="documents[${status.index}].file"
+					cssClass="add-margin error-msg" />
+			</div>
+			<div class="col-sm-2">
+				<c:set value="false" var="isDocFound"></c:set>
+				<c:forEach items="${marriageRegistration.registrationDocuments}"
+					var="regdoc" varStatus="loopStatus">
+					<c:if test="${regdoc.document.id == doc.id}">
+						<c:set value="true" var="isDocFound"></c:set>
+						<input type="hidden" id="registrationfile${status.index}"
+							value="${regdoc.fileStoreMapper.fileName}|${regdoc.fileStoreMapper.contentType}|${regdoc.base64EncodedFile}">
+						<a id="regdoc${status.index}">
+							${regdoc.fileStoreMapper.fileName}</a>
+					</c:if>
+				</c:forEach>
+				<%-- <c:if test="${!isDocFound}">
 				NA
 			</c:if> --%>
+			</div>
 		</div>
-	</div>
-</c:forEach>
-</b></b>
+	</c:forEach>
 
 	<div class="panel-heading">
 		<div class="panel-title">
-				<spring:message code="lbl.indi.docs"/>
+			<spring:message code="lbl.indi.docs" />
 		</div>
 	</div>
-	
+
 	<div class="form-group">
 		<div class="col-sm-offset-5 col-sm-1 view-content">
-			<spring:message code="lbl.husband"/>
+			<spring:message code="lbl.husband" />
 		</div>
 		<div class="col-sm-5 text-center view-content">
-			<spring:message code="lbl.wife"/>
+			<spring:message code="lbl.wife" />
 		</div>
 	</div>
-	
-<c:forEach var="doc" items="${individualDocuments}" varStatus="status">	
-	
-	<div class="form-group">	
-		<div class="col-sm-1"></div>
-		<form:hidden id="husband.documents[${status.index}].id" path="husband.documents[${status.index}].id" value="${doc.id}" /> 
-		<form:hidden id="wife.documents[${status.index}].id" path="wife.documents[${status.index}].id" value="${doc.id}" /> 
-		<div class="col-sm-4 add-margin text-right">
-			<c:out value="${doc.name}"></c:out>
-		</div>
-		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="file${status.index}id" name="husband.documents[${status.index}].file" class="file-ellipsis upload-file">
-			<form:errors path="husband.documents[${status.index}].file" cssClass="add-margin error-msg" />
-			&nbsp;&nbsp;
-			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${marriageRegistration.husband.applicantDocuments}" var="appdoc" varStatus="loopStatus">
-				<c:if test="${appdoc.document.id == doc.id}">
-					<c:set value="true" var="isDocFound"></c:set>
-					<input type="hidden" id="husbandfile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
-					<a id="husbanddoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
-				</c:if>
-			</c:forEach>
-			<%-- <c:if test="${!isDocFound}">
+
+	<c:forEach var="doc" items="${individualDocuments}" varStatus="status">
+
+		<div class="form-group">
+			<div class="col-sm-1"></div>
+			<form:hidden id="husband.documents[${status.index}].id"
+				path="husband.documents[${status.index}].id" value="${doc.id}" />
+			<form:hidden id="wife.documents[${status.index}].id"
+				path="wife.documents[${status.index}].id" value="${doc.id}" />
+			<div class="col-sm-4 add-margin text-right">
+				<c:out value="${doc.name}"></c:out>
+			</div>
+			<div class="col-sm-2 add-margin text-center">
+				<input type="file" id="file${status.index}id"
+					name="husband.documents[${status.index}].file"
+					class="file-ellipsis upload-file">
+				<form:errors path="husband.documents[${status.index}].file"
+					cssClass="add-margin error-msg" />
+				&nbsp;&nbsp;
+				<c:set value="false" var="isDocFound"></c:set>
+				<c:forEach
+					items="${marriageRegistration.husband.applicantDocuments}"
+					var="appdoc" varStatus="loopStatus">
+					<c:if test="${appdoc.document.id == doc.id}">
+						<c:set value="true" var="isDocFound"></c:set>
+						<input type="hidden" id="husbandfile${status.index}"
+							value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+						<a id="husbanddoc${status.index}">
+							${appdoc.fileStoreMapper.fileName}</a>
+					</c:if>
+				</c:forEach>
+				<%-- <c:if test="${!isDocFound}">
 				NA
 			</c:if> --%>
-		</div>
-		<div class="col-sm-1"></div>
-		<div class="col-sm-2 add-margin text-center">
-			<input type="file" id="file${status.index}id" name="wife.documents[${status.index}].file" class="file-ellipsis upload-file">
-			<form:errors path="wife.documents[${status.index}].file" cssClass="add-margin error-msg" />
-			
-			<c:set value="false" var="isDocFound"></c:set>
-			<c:forEach items="${marriageRegistration.wife.applicantDocuments}" var="appdoc" varStatus="loopStatus">
-				<c:if test="${appdoc.document.id == doc.id}">
-					<c:set value="true" var="isDocFound"></c:set>
-					<input type="hidden" id="wifefile${status.index}" value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
-					<a id="wifedoc${status.index}"> ${appdoc.fileStoreMapper.fileName}</a>
-				</c:if>
-			</c:forEach>
-			<%-- <c:if test="${!isDocFound}">
+			</div>
+			<div class="col-sm-1"></div>
+			<div class="col-sm-2 add-margin text-center">
+				<input type="file" id="file${status.index}id"
+					name="wife.documents[${status.index}].file"
+					class="file-ellipsis upload-file">
+				<form:errors path="wife.documents[${status.index}].file"
+					cssClass="add-margin error-msg" />
+
+				<c:set value="false" var="isDocFound"></c:set>
+				<c:forEach items="${marriageRegistration.wife.applicantDocuments}"
+					var="appdoc" varStatus="loopStatus">
+					<c:if test="${appdoc.document.id == doc.id}">
+						<c:set value="true" var="isDocFound"></c:set>
+						<input type="hidden" id="wifefile${status.index}"
+							value="${appdoc.fileStoreMapper.fileName}|${appdoc.fileStoreMapper.contentType}|${appdoc.base64EncodedFile}">
+						<a id="wifedoc${status.index}">
+							${appdoc.fileStoreMapper.fileName}</a>
+					</c:if>
+				</c:forEach>
+				<%-- <c:if test="${!isDocFound}">
 				NA
 			</c:if> --%>
+			</div>
 		</div>
-		
-	</div>
-</c:forEach> 
-</div><!-- </div> -->
-<script src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
-<script src="<cdn:url value='/resources/js/app/viewdocumentsupload.js?rnd=${app_release_no}'/>"></script>
+	</c:forEach>
+</div>
+
+<script
+	src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/viewdocumentsupload.js?rnd=${app_release_no}'/>"></script>

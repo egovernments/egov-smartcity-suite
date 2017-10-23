@@ -45,93 +45,109 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
 <div class="row" id="page-content">
-	<div class="col-md-12"> 
-		<div class="text-right error-msg" style="font-size:14px;"></div>
+	<div class="col-md-12">
+		<div class="text-right error-msg" style="font-size: 14px;"></div>
 		<form:form role="form" method="post" action="/mrs/registration/update"
-			modelAttribute="marriageRegistration" id="form-updateregistration"
+			modelAttribute="marriageRegistration"
+			id="updateMarriageRegistrationForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
-			<input type="hidden" id="marriageRegistration" value="${marriageRegistration.id}" />
+			<input type="hidden" id="marriageRegistration"
+				value="${marriageRegistration.id}" />
 			<input type="hidden" id="registrationStatus"
 				value="${marriageRegistration.status.code}" />
-			<input type="hidden" id="allowDaysValidation" value="${allowDaysValidation}" />
-			<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
+			<input type="hidden" id="allowDaysValidation"
+				value="${allowDaysValidation}" />
+			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+			<form:hidden path="" id="serialNoExists" value="${serialNoExists}" />
 			<input type="hidden" id="pendingActions" value="${pendingActions}" />
 			<input type="hidden" id="nextActn" value="${nextActn}" />
-			<input type="hidden" id="feeCollected" value="${marriageRegistration.feeCollected}" />
-				<c:if test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected && nextActn!='Junior/Senior Assistance approval pending'}">  
-				 <div  data-collapsed="0">
+			<input type="hidden" id="feeCollected"
+				value="${marriageRegistration.feeCollected}" />
+			<c:if
+				test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected && nextActn!='Junior/Senior Assistance approval pending'}">
+				<div data-collapsed="0">
 					<div class="panel-heading">
-						<div  style="color: red; font-size: 16px;" align="center">
-							<spring:message  code="lbl.collect.marriageFee"/> 
-						</div> 
+						<div style="color: red; font-size: 16px;" align="center">
+							<spring:message code="lbl.collect.marriageFee" />
+						</div>
 					</div>
-				</div>	
-				</c:if>
-				<div>
-					<spring:hasBindErrors name="marriageRegistration">
-					<div class="alert alert-danger col-md-10 col-md-offset-1">
-					<form:errors path="*" /><br/>
-					</div>
-					</spring:hasBindErrors> 
-					<br/>
 				</div>
+			</c:if>
+			<div>
+				<spring:hasBindErrors name="marriageRegistration">
+					<div class="alert alert-danger col-md-10 col-md-offset-1">
+						<form:errors path="*" />
+						<br />
+					</div>
+				</spring:hasBindErrors>
+				<br />
+			</div>
 			<ul class="nav nav-tabs" id="settingstab">
-			    <li class="active"><a data-toggle="tab" href="#applicant-info" data-tabidx=0>Applicant's Information</a></li>
-			    <li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses Information</a></li>
-			    <li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
-			  </ul>
-			  <div class="tab-content">	 
-				    <div id="applicant-info" class="tab-pane fade in active">
-				    	<div class="panel panel-primary" data-collapsed="0">
-				    		<jsp:include page="generalinfo.jsp"></jsp:include>
-				    	</div>
-				    </div>
-					<div id="witness-info" class="tab-pane fade">
-				    	<div class="panel panel-primary" data-collapsed="0">
-				    		<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
-				    		<form:hidden path="witnesses[0].id"/>
-				    		<input type="hidden" name="marriageRegistration" value="${marriageRegistration.id}" />
-				    		<form:hidden path="witnesses[0].applicantType" />
-					    	<jsp:include page="witnessinfo.jsp">
+				<li class="active"><a data-toggle="tab" href="#applicant-info"
+					data-tabidx=0>Applicant's Information</a></li>
+				<li><a data-toggle="tab" href="#witness-info" data-tabidx=1>Witnesses
+						Information</a></li>
+				<li><a data-toggle="tab" href="#checklist-info" data-tabidx=2>Checklist</a></li>
+			</ul>
+			<div class="tab-content">
+				<div id="applicant-info" class="tab-pane fade in active">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<jsp:include page="generalinfo.jsp"></jsp:include>
+						</div>
+					</div>
+				</div>
+				<div id="witness-info" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
+							<form:hidden path="witnesses[0].id" />
+							<input type="hidden" name="marriageRegistration"
+								value="${marriageRegistration.id}" />
+							<form:hidden path="witnesses[0].applicantType" />
+							<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness1.info" name="subhead" />
 								<jsp:param value="husbandside.witness" name="header" />
-								
+
 							</jsp:include>
-							
+
 							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[1].id"/>
-				    		<form:hidden path="witnesses[1].applicantType"/>
+							<form:hidden path="witnesses[1].id" />
+							<form:hidden path="witnesses[1].applicantType" />
 							<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness2.info" name="subhead" />
 								<jsp:param value="" name="header" />
-								
+
 							</jsp:include>
-							
+
 							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[2].id"/>
-				    		<form:hidden path="witnesses[2].applicantType" />
+							<form:hidden path="witnesses[2].id" />
+							<form:hidden path="witnesses[2].applicantType" />
 							<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness1.info" name="subhead" />
 								<jsp:param value="wifeside.witness" name="header" />
-							</jsp:include>	
-							
+							</jsp:include>
+
 							<c:set value="witnesses[3]" var="witness" scope="request"></c:set>
-							<form:hidden path="witnesses[3].id"/>
-				    		<form:hidden path="witnesses[3].applicantType"/>
+							<form:hidden path="witnesses[3].id" />
+							<form:hidden path="witnesses[3].applicantType" />
 							<jsp:include page="witnessinfo.jsp">
 								<jsp:param value="subheading.witness2.info" name="subhead" />
 								<jsp:param value="" name="header" />
-							</jsp:include>	
-							
+							</jsp:include>
+
 							<%-- <jsp:include page="priestinfo.jsp"></jsp:include> --%>
 						</div>
-				    </div>
-				    <div id="checklist-info" class="tab-pane fade">
-				    	<div class="panel panel-primary" data-collapsed="0">
-				    		<jsp:include page="checklist.jsp"></jsp:include>
-				    	</div>
-				    </div>
+					</div>
+				</div>
+				<div id="checklist-info" class="tab-pane fade">
+					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<jsp:include page="checklist.jsp"></jsp:include>
+						</div>
+					</div>
+				</div>
 			</div>
 
 			<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
@@ -141,31 +157,42 @@
 			</c:if>
 
 			<c:choose>
-				<c:when test="${marriageRegistration.status.code =='CREATED' && nextActn!=null && nextActn=='Junior/Senior Assistance approval pending'}">  
+				<c:when
+					test="${marriageRegistration.status.code =='CREATED' && nextActn!=null && nextActn=='Junior/Senior Assistance approval pending'}">
+					<div class="buttonbottom" align="center">
+						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+					</div>
+				</c:when>
+				<c:otherwise>
+					<c:choose>
+						<c:when
+							test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected}">
 							<div class="buttonbottom" align="center">
-								<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
-							</div>	
-						 </c:when>
-					<c:otherwise>
-						<c:choose>
-						<c:when test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected}">  
-							<div class="buttonbottom" align="center">
-							<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
-							</div>	
-						 </c:when>
+								<input type="button" name="button2" id="button2" value="Close"
+									class="btn btn-default" onclick="window.close();" />
+							</div>
+						</c:when>
 						<c:otherwise>
 							<div class="buttonbottom" align="center">
-							<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
-						</div>
-						</c:otherwise> 
-				</c:choose>
-				</c:otherwise> 
+								<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
+							</div>
+						</c:otherwise>
+					</c:choose>
+				</c:otherwise>
 			</c:choose>
 		</form:form>
 	</div>
 </div>
 
-<script src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
-<script src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
-<script src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
-<script src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/global/js/egov/inbox.js' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/registration-common.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/registration-update.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/viewregistration.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/> "></script>
