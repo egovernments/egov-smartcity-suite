@@ -37,11 +37,22 @@
   ~
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
-
-<%@ page import="net.tanesha.recaptcha.ReCaptcha" %>
-<%@ page import="net.tanesha.recaptcha.ReCaptchaFactory" %>
-
-<%
-    ReCaptcha c = ReCaptchaFactory.newReCaptcha((String)session.getAttribute("siteKey"), (String)session.getAttribute("siteSecret"), false);
-    out.print(c.createRecaptchaHtml(null, null));
-%>
+<div class="row">
+    <div class="col-sm-12 col-md-12 col-lg-12">
+        <br/>
+        <img id="captchaimg" style="border:1px dashed DarkSlateBlue;">
+        <i class="fa fa-refresh" id="refresh" style="cursor: pointer" title="Choose a different word"></i>
+        <br/><br/>
+        <input type='text' class="form-control" name='j_captcha_response' value='' placeholder="Enter the above displayed text"
+               required="required" style="width:95%;margin-left:19px">
+        <input type='hidden' name='j_captcha_key' value='' id="captchakey" required="required">
+    </div>
+</div>
+<script>
+    $("#refresh").click(function () {
+        var key = Date.parse(new Date()).toString();
+        $("#captchakey").val(key);
+        $("#captchaimg").attr('src', '/egi/jcaptcha?key=' + key);
+    });
+    $("#refresh").trigger('click');
+</script>

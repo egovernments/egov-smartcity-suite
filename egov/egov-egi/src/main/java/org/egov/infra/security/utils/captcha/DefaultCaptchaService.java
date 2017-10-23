@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,30 +38,14 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.security;
+package org.egov.infra.security.utils.captcha;
 
-import org.egov.infra.security.utils.captcha.DefaultCaptchaService;
-import org.egov.infra.security.utils.captcha.DefaultCaptchaStore;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import com.octo.captcha.engine.image.gimpy.DefaultGimpyEngine;
+import com.octo.captcha.service.image.DefaultManageableImageCaptchaService;
 
-@Configuration
-public class SecurityConfiguration {
+public class DefaultCaptchaService extends DefaultManageableImageCaptchaService {
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
-    @Bean
-    public DefaultCaptchaService captchaService() {
-        return new DefaultCaptchaService(defaultCaptchaStore());
-    }
-
-    @Bean
-    protected DefaultCaptchaStore defaultCaptchaStore() {
-        return new DefaultCaptchaStore();
+    public DefaultCaptchaService(DefaultCaptchaStore defaultCaptchaStore) {
+        super(defaultCaptchaStore, new DefaultGimpyEngine(), 180, 1000, 750);
     }
 }

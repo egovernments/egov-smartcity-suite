@@ -211,10 +211,22 @@
         <async-supported>true</async-supported>
     </servlet>
 
+    <servlet>
+        <servlet-name>jcaptcha</servlet-name>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
+    </servlet>
+
     <servlet-mapping>
         <servlet-name>egiweb</servlet-name>
         <url-pattern>/</url-pattern>
     </servlet-mapping>
+
+    <servlet-mapping>
+        <servlet-name>jcaptcha</servlet-name>
+        <url-pattern>/jcaptcha</url-pattern>
+    </servlet-mapping>
+
     <!-- Servlet Declaration Ends -->
 
     <jsp-config>

@@ -41,9 +41,8 @@
 package org.egov.pgr.web.controller.complaint.citizen;
 
 import org.egov.infra.admin.master.entity.CrossHierarchy;
-import org.egov.infra.security.utils.RecaptchaUtils;
+import org.egov.infra.security.utils.captcha.CaptchaUtils;
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pgr.web.controller.complaint.GenericComplaintController;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,6 +60,7 @@ import javax.validation.ValidationException;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.pgr.utils.constants.PGRConstants.DEFAULT_RECEIVING_MODE;
+import static org.egov.pgr.utils.constants.PGRConstants.MODULE_NAME;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
@@ -71,8 +71,9 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     private static final String CITIZEN_COMPLAINT_REGISTRATION_FORM = "complaint/citizen/registration-form";
     private static final String ANONYMOUS_COMPLAINT_REGISTRATION_FORM = "complaint/citizen/anonymous-registration-form";
     private static final String LOCATION = "location";
+
     @Autowired
-    private RecaptchaUtils recaptchaUtils;
+    private CaptchaUtils captchaUtils;
 
     @RequestMapping(value = "show-reg-form", method = GET)
     public String showComplaintRegistrationForm(@ModelAttribute Complaint complaint) {
@@ -91,7 +92,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
     public String registerComplaint(@Valid @ModelAttribute Complaint complaint, BindingResult resultBinder,
                                     RedirectAttributes redirectAttributes, @RequestParam("files") MultipartFile[] files, Model model) {
 
-        if (null != complaint.getCrossHierarchyId()) {
+        if (complaint.getCrossHierarchyId() != null) {
             CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
             complaint.setChildLocation(crosshierarchy.getChild());
@@ -100,16 +101,16 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
             resultBinder.rejectValue(LOCATION, "location.required");
 
         if (resultBinder.hasErrors()) {
-            if (null != complaint.getCrossHierarchyId())
+            if (complaint.getCrossHierarchyId() != null)
                 model.addAttribute("crossHierarchyLocation",
                         complaint.getChildLocation().getName() + " - " + complaint.getLocation().getName());
             return CITIZEN_COMPLAINT_REGISTRATION_FORM;
         }
 
         try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
+            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, MODULE_NAME, true));
             complaintService.createComplaint(complaint);
-        } catch (final ValidationException e) {
+        } catch (ValidationException e) {
             resultBinder.rejectValue(LOCATION, e.getMessage());
             return CITIZEN_COMPLAINT_REGISTRATION_FORM;
         }
@@ -122,7 +123,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
                                              RedirectAttributes redirectAttributes, HttpServletRequest request,
                                              @RequestParam("files") MultipartFile[] files, Model model) {
 
-        if (!recaptchaUtils.captchaIsValid(request))
+        if (!captchaUtils.captchaIsValid(request))
             resultBinder.reject("captcha.not.valid");
 
         if (isBlank(complaint.getComplainant().getEmail())
@@ -132,7 +133,7 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         if (isBlank(complaint.getComplainant().getName()))
             resultBinder.rejectValue("complainant.name", "complainant.name.ismandatory");
 
-        if (null != complaint.getCrossHierarchyId()) {
+        if (complaint.getCrossHierarchyId() != null) {
             CrossHierarchy crosshierarchy = crossHierarchyService.findById(complaint.getCrossHierarchyId());
             complaint.setLocation(crosshierarchy.getParent());
             complaint.setChildLocation(crosshierarchy.getChild());
@@ -149,9 +150,9 @@ public class CitizenComplaintRegistrationController extends GenericComplaintCont
         }
 
         try {
-            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, PGRConstants.MODULE_NAME, true));
+            complaint.setSupportDocs(fileStoreUtils.addToFileStore(files, MODULE_NAME, true));
             complaintService.createComplaint(complaint);
-        } catch (final ValidationException e) {
+        } catch (ValidationException e) {
             resultBinder.rejectValue(LOCATION, e.getMessage());
             return ANONYMOUS_COMPLAINT_REGISTRATION_FORM;
         }

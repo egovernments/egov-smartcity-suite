@@ -52,6 +52,7 @@
 			<list>
 				<security:filter-chain pattern="/resources/**" filters="none" />
 				<security:filter-chain pattern="/help*" filters="none" />
+				<security:filter-chain pattern="/jcaptcha*" filters="none"/>
 				<security:filter-chain pattern="/index.jsp" filters="none" />
 				<security:filter-chain pattern="/login/secure**" filters="none" />
 				<security:filter-chain pattern="/login/password/recover**" filters="none" />

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,11 +38,9 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.security.utils;
+package org.egov.infra.security.utils.captcha;
 
 import com.google.gson.GsonBuilder;
-import net.tanesha.recaptcha.ReCaptchaImpl;
-import net.tanesha.recaptcha.ReCaptchaResponse;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
@@ -51,6 +49,7 @@ import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.message.BasicNameValuePair;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -61,19 +60,23 @@ import java.util.HashMap;
 import java.util.List;
 
 @Service
-public class RecaptchaUtils {
+public class CaptchaUtils {
 
-    private static final Logger LOG = LoggerFactory.getLogger(RecaptchaUtils.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CaptchaUtils.class);
 
-    private static final String RECAPTCHA_VERIFY_URL = "https://www.google.com/recaptcha/api/siteverify";
+    @Value("${captcha.verification.url}")
+    private String captchaVerificationUrl;
 
-    @Value("${captcha.strength}")
-    private String captchaStrength;
+    @Value("#{'${captcha.strength}'.equals('high')}")
+    private boolean highlySecure;
+
+    @Autowired
+    private DefaultCaptchaService captchaService;
 
     public boolean captchaIsValid(HttpServletRequest request) {
         try {
-            if ("high".equals(captchaStrength)) {
-                HttpPost post = new HttpPost(RECAPTCHA_VERIFY_URL);
+            if (highlySecure) {
+                HttpPost post = new HttpPost(captchaVerificationUrl);
                 List<NameValuePair> urlParameters = new ArrayList<>();
                 urlParameters.add(new BasicNameValuePair("secret", (String) request.getSession().getAttribute("siteSecret")));
                 urlParameters.add(new BasicNameValuePair("response", request.getParameter("g-recaptcha-response")));
@@ -82,13 +85,9 @@ public class RecaptchaUtils {
                 String responseJson = IOUtils.toString(HttpClientBuilder.create().build().execute(post).getEntity().getContent(), Charset.defaultCharset());
                 return Boolean.valueOf(new GsonBuilder().create().fromJson(responseJson, HashMap.class).get("success").toString());
             } else {
-                String remoteAddr = request.getRemoteAddr();
-                ReCaptchaImpl reCaptcha = new ReCaptchaImpl();
-                reCaptcha.setPrivateKey((String) request.getSession().getAttribute("siteSecret"));
-                String challenge = request.getParameter("recaptcha_challenge_field");
-                String uresponse = request.getParameter("recaptcha_response_field");
-                ReCaptchaResponse reCaptchaResponse = reCaptcha.checkAnswer(remoteAddr, challenge, uresponse);
-                return reCaptchaResponse.isValid();
+                String captchaId = request.getParameter("j_captcha_key");
+                String response = request.getParameter("j_captcha_response");
+                return captchaService.validateResponseForID(captchaId, response);
             }
         } catch (Exception e) {
             LOG.error("Recaptcha verification failed", e);

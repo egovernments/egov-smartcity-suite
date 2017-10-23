@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,30 +38,44 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.security;
+package org.egov.infra.security.utils.captcha;
 
-import org.egov.infra.security.utils.captcha.DefaultCaptchaService;
-import org.egov.infra.security.utils.captcha.DefaultCaptchaStore;
-import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.web.HttpRequestHandler;
 
-@Configuration
-public class SecurityConfiguration {
+import javax.imageio.ImageIO;
+import javax.servlet.ServletException;
+import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
+@Component("jcaptcha")
+public class CaptchaServlet implements HttpRequestHandler {
 
-    @Bean
-    public DefaultCaptchaService captchaService() {
-        return new DefaultCaptchaService(defaultCaptchaStore());
-    }
+    @Autowired
+    private DefaultCaptchaService defaultCaptchaService;
 
-    @Bean
-    protected DefaultCaptchaStore defaultCaptchaStore() {
-        return new DefaultCaptchaStore();
+    @Override
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try (ByteArrayOutputStream jpegOutputStream = new ByteArrayOutputStream()) {
+            String captchaId = request.getParameter("key");
+            BufferedImage challenge = defaultCaptchaService.getImageChallengeForID(captchaId, response.getLocale());
+            ImageIO.write(challenge, "jpg", jpegOutputStream);
+            response.setHeader("Cache-Control", "no-store");
+            response.setHeader("Pragma", "no-cache");
+            response.setDateHeader("Expires", 0);
+            response.setContentType("image/jpeg");
+            ServletOutputStream responseStream = response.getOutputStream();
+            responseStream.write(jpegOutputStream.toByteArray());
+            responseStream.flush();
+            responseStream.close();
+        } catch (IOException | RuntimeException e) {
+            response.sendError(HttpServletResponse.SC_NOT_FOUND);
+            return;
+        }
     }
 }

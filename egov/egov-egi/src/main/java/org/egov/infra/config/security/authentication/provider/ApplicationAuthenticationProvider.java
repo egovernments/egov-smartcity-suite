@@ -42,7 +42,7 @@ package org.egov.infra.config.security.authentication.provider;
 
 import org.egov.infra.security.audit.entity.LoginAttempt;
 import org.egov.infra.security.audit.service.LoginAttemptService;
-import org.egov.infra.security.utils.RecaptchaUtils;
+import org.egov.infra.security.utils.captcha.CaptchaUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.LockedException;
@@ -71,8 +71,8 @@ public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider
     private static final String ACCOUNT_LOCKED_DEFAULT_MSG = "User account is locked";
     private static final String TOO_MANY_ATTEMPTS_MSG_FORMAT = "Too many attempts [%d]";
     private static final String INVALID_CAPTCHA_MSG_FORMAT = "%s - Recaptcha Invalid";
-    private static final String RECAPTCHA_V1_FIELD = "recaptcha_response_field";
-    private static final String RECAPTCHA_V2_FIELD = "g-recaptcha-response";
+    private static final String CAPTCHA_FIELD = "j_captcha_response";
+    private static final String RECAPTCHA_FIELD = "g-recaptcha-response";
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -81,7 +81,7 @@ public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider
     private LoginAttemptService loginAttemptService;
 
     @Autowired
-    private RecaptchaUtils recaptchaUtils;
+    private CaptchaUtils recaptchaUtils;
 
     @Override
     public Authentication authenticate(Authentication authentication) {
@@ -98,7 +98,7 @@ public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider
     private Authentication unlockAccount(Authentication authentication, LockedException le) {
         ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.currentRequestAttributes();
         HttpServletRequest request = attributes.getRequest();
-        if (isNotBlank(request.getParameter(RECAPTCHA_V2_FIELD)) || isNotBlank(request.getParameter(RECAPTCHA_V1_FIELD))) {
+        if (isNotBlank(request.getParameter(RECAPTCHA_FIELD)) || isNotBlank(request.getParameter(CAPTCHA_FIELD))) {
             if (recaptchaUtils.captchaIsValid(request)) {
                 loginAttemptService.resetFailedAttempt(authentication.getName());
                 return super.authenticate(authentication);

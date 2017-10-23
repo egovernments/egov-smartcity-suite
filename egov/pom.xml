@@ -225,6 +225,7 @@
         <google-guava-version>23.0</google-guava-version>
         <google.zxing.version>3.3.0</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
+        <jcaptcha.version>2.0-alpha-1</jcaptcha.version>
         <javaxt.core.version>1.7.8</javaxt.core.version>
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
@@ -832,6 +833,32 @@
                 <version>${recaptcha.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.octo.captcha</groupId>
+                <artifactId>jcaptcha</artifactId>
+                <version>${jcaptcha.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-logging</artifactId>
+                        <groupId>commons-logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>imaging</artifactId>
+                        <groupId>com.jhlabs</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.octo.captcha</groupId>
+                <artifactId>jcaptcha-api</artifactId>
+                <version>${jcaptcha.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jhlabs</groupId>
+                <artifactId>filters</artifactId>
+                <version>2.0.235-1</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javaxt</groupId>
                 <artifactId>javaxt-core</artifactId>
                 <version>${javaxt.core.version}</version>
@@ -1173,6 +1200,19 @@
             <groupId>com.google.code.maven-play-plugin.net.tanesha.recaptcha4j</groupId>
             <artifactId>recaptcha4j</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.octo.captcha</groupId>
+            <artifactId>jcaptcha</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.octo.captcha</groupId>
+            <artifactId>jcaptcha-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jhlabs</groupId>
+            <artifactId>filters</artifactId>
+        </dependency>
+
         <dependency>
             <groupId>javaxt</groupId>
             <artifactId>javaxt-core</artifactId>
