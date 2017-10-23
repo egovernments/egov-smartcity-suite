@@ -67,7 +67,6 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.entity.dto.LicenseStateInfo;
-import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -75,9 +74,21 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.*;
+import java.util.Arrays;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Date;
+import java.util.Optional;
 
-import static org.egov.tl.utils.Constants.*;
+import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
+import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.DELIMITER_COLON;
+import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
+import static org.egov.tl.utils.Constants.NEW_NATUREOFWORK;
+import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.STATUS_REJECTED;
 
 /**
  * Created by jayashree on 7/9/17.
@@ -139,7 +150,7 @@ public class LicenseProcessWorkflowService {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
-            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_CANCELLED));
+            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
             tradeLicense.setActive(false);
             tradeLicense.setNewWorkflow(null);
         } else if (SIGNWORKFLOWACTION.equals(workflowBean.getWorkFlowAction())) {
@@ -187,7 +198,7 @@ public class LicenseProcessWorkflowService {
                     .withNatureOfTask(tradeLicense.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(owner)
                     .withNextAction(workFlowMatrix.getNextAction()).withExtraInfo(licenseStateInfo);
-            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_UNDERWORKFLOW));
+            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
         }
 
     }
@@ -238,7 +249,7 @@ public class LicenseProcessWorkflowService {
             WorkFlowMatrix workFlowMatrix = workFlowMatrixService.getWorkFlowObjectbyId(Long.valueOf(licenseStateInfo.getWfMatrixRef()));
             if (workFlowMatrix != null)
                 if (licenseUtils.isDigitalSignEnabled() || tradeLicense.isCollectionPending() == null)
-                    tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + Constants.DELIMITER_COLON + currentUser.getName())
+                    tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                             .withComments(workFlowMatrix.getNextState()).withNatureOfTask(natureOfWork)
                             .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withNextAction(workFlowMatrix.getNextAction());
@@ -252,7 +263,7 @@ public class LicenseProcessWorkflowService {
     }
 
     private void updateActiveStatus(TradeLicense tradeLicense) {
-        tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_ACTIVE));
+        tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_ACTIVE));
         tradeLicense.setActive(true);
         tradeLicense.setLegacy(false);
         validityService.applyLicenseValidity(tradeLicense);
@@ -300,7 +311,7 @@ public class LicenseProcessWorkflowService {
                     .withNatureOfTask(tradeLicense.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(ownerPosition)
                     .withNextAction(workFlowMatrix.getNextAction()).withExtraInfo(licenseStateInfo);
-            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(Constants.STATUS_REJECTED));
+            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_REJECTED));
         }
     }
 

@@ -52,8 +52,6 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_APPROVED_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;

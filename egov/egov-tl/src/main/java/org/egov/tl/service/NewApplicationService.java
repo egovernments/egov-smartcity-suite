@@ -53,7 +53,6 @@ import org.egov.tl.entity.License;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.utils.Constants;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -64,7 +63,11 @@ import java.util.Date;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.tl.utils.Constants.*;
+import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONREJECT;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
+import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
+import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
 
 /**
  * Created by jayashree on 20/9/17.
@@ -73,7 +76,7 @@ import static org.egov.tl.utils.Constants.*;
 @Transactional(readOnly = true)
 public class NewApplicationService extends TradeLicenseService {
     @Autowired
-    TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
+    private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     @Autowired
     private LicenseProcessWorkflowService licenseProcessWorkflowService;
     @Autowired
@@ -139,7 +142,7 @@ public class NewApplicationService extends TradeLicenseService {
         if (isNotBlank(applicationNumber)) {
             License license = licenseRepository.findByApplicationNumber(applicationNumber);
             WorkflowBean workflowBean = new WorkflowBean();
-            workflowBean.setWorkFlowAction("SIGNWORKFLOWACTION");
+            workflowBean.setWorkFlowAction(SIGNWORKFLOWACTION);
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
             licenseRepository.save(license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);
@@ -148,7 +151,7 @@ public class NewApplicationService extends TradeLicenseService {
     }
 
     public void collectionTransition(TradeLicense tradeLicense) {
-        licenseUtils.licenseStatusUpdate(tradeLicense, Constants.STATUS_UNDERWORKFLOW);
+        licenseUtils.licenseStatusUpdate(tradeLicense, STATUS_UNDERWORKFLOW);
         licenseProcessWorkflowService.collectionWorkflowTransition(tradeLicense);
     }
 }

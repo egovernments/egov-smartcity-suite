@@ -67,7 +67,7 @@ import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.STATUS_ACKNOLEDGED;
+import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
 import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
@@ -508,7 +508,7 @@ public class License extends StateAware {
     }
 
     public boolean isAcknowledged() {
-        return getStatus() != null && STATUS_ACKNOLEDGED.equals(getStatus().getStatusCode());
+        return getStatus() != null && STATUS_ACKNOWLEDGED.equals(getStatus().getStatusCode());
     }
 
     public boolean canCollectFee() {
