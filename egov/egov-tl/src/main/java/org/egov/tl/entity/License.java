@@ -46,6 +46,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.tl.entity.dto.LicenseStateInfo;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
@@ -228,6 +229,10 @@ public class License extends StateAware {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
+
+    private Boolean newWorkflow;
+
+    private Boolean collectionPending;
 
     @Override
     public Long getId() {
@@ -497,6 +502,8 @@ public class License extends StateAware {
     }
 
     public boolean isApproved() {
+
+
         return hasState() && WF_STATE_COMMISSIONER_APPROVED_STR.equals(getState().getValue());
     }
 
@@ -556,5 +563,29 @@ public class License extends StateAware {
 
     public boolean isLegacyWithNoState() {
         return isLegacy() && !hasState();
+    }
+
+    public Boolean isNewWorkflow() {
+        return newWorkflow;
+    }
+
+    public void setNewWorkflow(Boolean newWorkflow) {
+        this.newWorkflow = newWorkflow;
+    }
+
+    public Boolean isCollectionPending() {
+        return collectionPending;
+    }
+
+    public void setCollectionPending(Boolean collectionPending) {
+        this.collectionPending = collectionPending;
+    }
+
+    public LicenseStateInfo extraInfo() {
+        return super.extraInfoAs(LicenseStateInfo.class);
+    }
+
+    public boolean canCollectLicenseFee() {
+        return !isPaid() && !isRejected();
     }
 }

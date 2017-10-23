@@ -66,6 +66,8 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.egov.tl.utils.Constants.BUTTONFORWARD;
@@ -135,8 +137,8 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String generateProvisionalCertificate() {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-            reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(),true));
-            return "report";
+        reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(),true));
+        return "report";
     }
 
     private void setLicenseIdIfServletRedirect() {
@@ -218,6 +220,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String saveClosure() {
         populateWorkflowBean();
         if (getLicenseid() != null) {
+            applicationNo = license().getApplicationNumber();
             tradeLicense = tradeLicenseService.getLicenseById(getLicenseid());
             if (tradeLicenseService.currentUserIsMeeseva()) {
                 tradeLicense.setApplicationNumber(getApplicationNo());
@@ -312,5 +315,22 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     public void setApplNum(String applNum) {
         this.applNum = applNum;
+    }
+    @Override
+    public List<String> getValidActions() {
+        List<String> validActions = Collections.emptyList();
+        if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null || getModel().getCurrentState().getValue().endsWith("NEW")
+                ||(getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false)){
+
+            validActions = Arrays.asList(FORWARD);
+        } else {
+            if (getModel().getCurrentState() != null) {
+                validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
+                                .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                        getAdditionalRule(), getModel().getCurrentState().getValue(),
+                        getPendingActions(), getModel().getCreatedDate());
+            }
+        }
+        return validActions;
     }
 }

@@ -45,28 +45,29 @@
   ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   --%>
 
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8" %>
 <html>
-	<head>
-		<title>Digital Signature</title>
-		<script type="text/javascript">
+<head>
+    <title>Digital Signature</title>
+    <script type="text/javascript">
 
-		$(document).ready( function() {
+        $(document).ready(function () {
 
-	 		var ulbCode = '${ulbCode}' ;
-	 		var fileStoreIds='${fileStoreIds}';
-	 		var applicationNo='${applicationNo}';
-	 		var callBackUrl =encodeURIComponent('/tl/tradelicense/digisign-transition?applicationNumbers='+applicationNo+'&fileStoreIds='+fileStoreIds+'&r=');
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=TL&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
-				target: '_self'
-			})
-			.appendTo(document.body).submit();  
-		});
-		
-		</script>
-	</head>
-	<body>
-	</body>
+            var ulbCode = '${ulbCode}';
+            var fileStoreIds = '${fileStoreIds}';
+            var applicationNo = '${applicationNo}';
+            var workFlowAction = $("#workFlowAction").val();
+            var callBackUrl = encodeURIComponent('/tl/tradelicense/digisign-transition?applicationNumbers=' + applicationNo + '&fileStoreIds=' + fileStoreIds + '&r=');
+            jQuery('<form>.').attr({
+                method: 'post',
+                action: callBackUrl + '?fileStoreId=' + fileStoreIds + '&moduleName=TL&ulbCode=' + ulbCode,
+                target: '_self'
+            })
+                .appendTo(document.body).submit();
+        });
+
+    </script>
+</head>
+<body>
+</body>
 </html>

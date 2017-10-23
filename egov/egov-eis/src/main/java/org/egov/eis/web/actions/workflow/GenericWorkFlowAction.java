@@ -58,7 +58,7 @@ import java.util.List;
 public abstract class GenericWorkFlowAction extends BaseFormAction {
 
     private static final long serialVersionUID = 1L;
-    private final static String FORWARD = "Forward";
+    public final static String FORWARD = "Forward";
     protected CustomizedWorkFlowService customizedWorkFlowService;
     protected String workFlowAction;
     protected String approverComments;

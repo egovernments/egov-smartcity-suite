@@ -288,7 +288,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(), nextAssigneeDesig.getId(), new Date());
     }
 
-    private BigDecimal raiseNewDemand(final T license) {
+    public BigDecimal raiseNewDemand(final T license) {
         final LicenseDemand ld = new LicenseDemand();
         final Module moduleName = this.getModuleName();
         BigDecimal totalAmount = ZERO;
@@ -717,8 +717,7 @@ public abstract class AbstractLicenseService<T extends License> {
         if (workflowBean.getApproverPositionId() != null) {
             position = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
         }
-        if (license.getState() == null || "END".equals(license.getState().getValue())
-                || "Closed".equals(license.getState().getValue())) {
+        if (license.getState() == null || (license.hasState() && license.getState().isEnded())) {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());

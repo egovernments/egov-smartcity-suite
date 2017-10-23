@@ -95,7 +95,7 @@
                     return false;
                 }
             }
-            if ((name == "Reject" || name == "reject")) {
+            if ((name == "Reject" || name == "reject" || name == "Cancel")) {
                 if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
                     bootbox.alert("Please Enter Rejection Remarks ");
                     return false;

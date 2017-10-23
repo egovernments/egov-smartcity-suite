@@ -47,11 +47,6 @@
 
 package org.egov.tl.web.actions.newtradelicense;
 
-import static org.egov.tl.utils.Constants.LOCALITY;
-import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -98,10 +93,12 @@ import org.springframework.context.MessageSource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 
+import static org.egov.tl.utils.Constants.*;
+
 
 @ParentPackage("egov")
 @Results({@Result(name = NewTradeLicenseAction.NEW, location = "newTradeLicense-new.jsp"),
-        @Result(name = Constants.ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
+        @Result(name = ACKNOWLEDGEMENT, location = "newTradeLicense-acknowledgement.jsp"),
         @Result(name = Constants.MESSAGE, location = "newTradeLicense-message.jsp"),
         @Result(name = Constants.BEFORE_RENEWAL, location = "newTradeLicense-beforeRenew.jsp"),
         @Result(name = Constants.PRINTACK, location = "newTradeLicense-printAck.jsp"),
@@ -136,6 +133,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @SkipValidation
     @Action(value = "/newtradelicense/newTradeLicense-newForm")
     public String newForm() {
+        tradeLicense.setNewWorkflow(true);
         tradeLicense.setApplicationDate(new Date());
         return super.newForm();
     }
@@ -206,27 +204,30 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String showForApproval() throws IOException {
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
                 .getLicenseAppType().getName().toUpperCase()));
-        if (license().getState().getValue().equals(Constants.WF_LICENSE_CREATED)
-                || license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR) && license()
-                .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
-            mode = Constants.ACK_MODE;
-            message = Constants.PENDING_COLLECTION_MSG;
-        } else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)
-                || license().getState().getValue().equals(Constants.WF_SI_APPROVED))
-            mode = VIEW;
-        else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
-            mode = Constants.EDIT_REJECT_MODE;
-        else if (license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
-            mode = Constants.EDIT_APPROVAL_MODE;
-        else if (license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
-                || license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
-                && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
-            mode = Constants.DISABLE_APPROVER_MODE;
-        else if (licenseUtils.isDigitalSignEnabled()
-                && license().getState().getValue().equals(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
-                || license().getState().getValue().equals(Constants.WF_DIGI_SIGNED)
-                || license().getState().getValue().equals(Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
-            mode = Constants.DISABLE_APPROVER_MODE;
+        //TODO to be removed
+        if (license().isNewWorkflow() == null) {
+            if (license().getState().getValue().equals(Constants.WF_LICENSE_CREATED)
+                    || license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR) && license()
+                    .getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
+                mode = Constants.ACK_MODE;
+                message = Constants.PENDING_COLLECTION_MSG;
+            } else if (license().getState().getValue().equals(Constants.WF_FIRST_LVL_FEECOLLECTED)
+                    || license().getState().getValue().equals(Constants.WF_SI_APPROVED))
+                mode = VIEW;
+            else if (license().getState().getValue().contains(Constants.WORKFLOW_STATE_REJECTED))
+                mode = Constants.EDIT_REJECT_MODE;
+            else if (license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
+                mode = Constants.EDIT_APPROVAL_MODE;
+            else if (license().getState().getValue().contains(Constants.WF_SECOND_LVL_FEECOLLECTED)
+                    || license().getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE)
+                    && license().getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR))
+                mode = Constants.DISABLE_APPROVER_MODE;
+            else if (licenseUtils.isDigitalSignEnabled()
+                    && license().getState().getValue().equals(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED)
+                    || license().getState().getValue().equals(Constants.WF_DIGI_SIGNED)
+                    || license().getState().getValue().equals(Constants.WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
+                mode = Constants.DISABLE_APPROVER_MODE;
+        }
         List<Position> positionList = positionMasterService
                 .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
         if (!positionList.isEmpty() && !positionList.contains(license().getState().getOwnerPosition())) {
@@ -250,8 +251,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
         tradeLicense.setBoundary(locality);
         tradeLicense.setParentBoundary(ward);
-        if (license().hasState() && license().getState().getValue().contains(Constants.WF_REVENUECLERK_APPROVED))
-            tradeLicense.setTradeArea_weight(newTradeAreWt);
+        tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
                 && tradeLicense.getState().getValue().contains(Constants.WF_STATE_COMMISSIONER_APPROVED_STR)
                 && !tradeLicense.isPaid() && !workFlowAction.equalsIgnoreCase(Constants.BUTTONREJECT)) {
@@ -359,10 +359,21 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Override
     public String getAdditionalRule() {
-        if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
-            return Constants.RENEW_ADDITIONAL_RULE;
-        else
-            return Constants.NEW_ADDITIONAL_RULE;
+        if (tradeLicense.isNewWorkflow() != null && tradeLicense.isNewWorkflow()) {
+            if (!securityUtils.currentUserIsEmployee())
+                return "CSCOPERATORNEWLICENSE";
+            else if (license().isCollectionPending() != null && license().isCollectionPending())
+                return "NEWLICENSECOLLECTION";
+            else if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+                return "RENEWLICENSE";
+            else
+                return "NEWLICENSE";
+        } else {//TODO to be removed
+            if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
+                return Constants.RENEW_ADDITIONAL_RULE;
+            else
+                return Constants.NEW_ADDITIONAL_RULE;
+        }
     }
 
     public String getMessage() {
@@ -373,5 +384,17 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         this.message = message;
     }
 
+    public void prepareSave() {
+        tradeLicense.setId((Long) getSession().get("model.id"));
+        prepareNewForm();
+    }
+
+    @ValidationErrorPage(Constants.NEW)
+    @Action(value = "/newtradelicense/newTradeLicense-save")
+    public String save() {
+        tradeLicenseService.save(tradeLicense);
+        addActionMessage(this.getText("license.saved.succesful"));
+        return MESSAGE;
+    }
 
 }

@@ -77,4 +77,8 @@
     <bean id="tradeLicenseSmsAndEmailService" class="org.egov.tl.service.TradeLicenseSmsAndEmailService"/>
 
     <bean id="tradeLicenseNumberGenerator" class="org.egov.tl.service.TradeLicenseNumberGenerator"/>
+
+    <bean id="licenseProcessWorkflowService" class="org.egov.tl.service.LicenseProcessWorkflowService">
+        <property name="licenseWorkflowService" ref="tradeLicenseWorkflowService"/>
+    </bean>
 </beans>

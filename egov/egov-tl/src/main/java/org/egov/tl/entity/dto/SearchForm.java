@@ -124,10 +124,13 @@ public class SearchForm extends DataTableSearchRequest {
     }
 
     private void addRoleSpecificActions(final License license, final String userRoles, final List<String> licenseActions) {
-
-        if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee()
+        if (license.isNewWorkflow() != null && license.isNewWorkflow() && userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectLicenseFee()
                 && !Constants.CLOSURE_NATUREOFTASK.equals(license.getState().getNatureOfTask()))
             licenseActions.add("Collect Fees");
+        else if (userRoles.contains(Constants.ROLE_BILLCOLLECTOR) && license.canCollectFee()
+                && !Constants.CLOSURE_NATUREOFTASK.equals(license.getState().getNatureOfTask()))
+            licenseActions.add("Collect Fees");
+
         else if (userRoles.contains(Constants.TL_CREATOR_ROLENAME) || userRoles.contains(Constants.TL_APPROVER_ROLENAME)) {
             if (license.isStatusActive() && !license.isLegacy())
                 licenseActions.add("Print Certificate");
@@ -141,7 +144,6 @@ public class SearchForm extends DataTableSearchRequest {
             if (currentDate.after(fromRange) && currentDate.before(toRange))
                 demandGenerationOption(licenseActions, license);
         }
-
     }
 
     private void demandGenerationOption(final List<String> licenseActions, final License license) {

@@ -107,7 +107,8 @@ public class LicenseApplicationIndexService {
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
-                .withStatus(license.getEgwStatus().getDescription()).withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
+                .withStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue())
+                .withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
                         user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY)
                 .withChannel(getChannel())
@@ -134,14 +135,14 @@ public class LicenseApplicationIndexService {
 
     private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
         Optional<User> user = getApplicationCurrentOwner(license);
-        applicationIndex.setStatus(license.getEgwStatus().getDescription());
+        applicationIndex.setStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue());
         applicationIndex.setApplicantAddress(license.getAddress());
         applicationIndex
                 .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);
-        if (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE)) {
+        if (license.getIsActive() || (license.getEgwStatus()!=null && license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE))) {
             applicationIndex.setClosed(ClosureStatus.YES);
             applicationIndex.setApproved(ApprovalStatus.APPROVED);
         }

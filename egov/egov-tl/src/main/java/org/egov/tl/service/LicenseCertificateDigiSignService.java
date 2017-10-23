@@ -79,9 +79,16 @@ public class LicenseCertificateDigiSignService {
     @Autowired
     private PositionMasterService positionMasterService;
 
+    @Autowired
+    private NewApplicationService newApplicationService;
+
     public void digitalSignTransition(List<String> applicationNumbers) {
         for (String applicationNumber : applicationNumbers) {
-            tradeLicenseService.digitalSignTransition(applicationNumber);
+            License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
+            if (license.isNewWorkflow() == null)
+                tradeLicenseService.digitalSignTransition(applicationNumber);
+            else
+                newApplicationService.digitalSignature(applicationNumber);
         }
     }
 
@@ -95,7 +102,7 @@ public class LicenseCertificateDigiSignService {
         List<License> licenses = new ArrayList<>();
         for (Long licenseId : licenseIds) {
             License license = tradeLicenseService.getLicenseById(Long.valueOf(licenseId));
-            ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license,false);
+            ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license, false);
             if (reportOutput != null) {
                 InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());
                 FileStoreMapper fileStore = fileStoreService.store(fileStream,

@@ -163,6 +163,15 @@
             // $("#licenseForm").submit();
         }
 
+        function onSave() {
+
+            if (!validateLicenseForm()) {
+                return false;
+            }
+            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-save.action';
+            return true;
+        }
+
         $(document).ready(function () {
             $("#mobilePhoneNumber").change(function () {
                 var mobileno = document.getElementById('mobilePhoneNumber').value;
@@ -198,8 +207,9 @@
         function onSubmit() {
             var mode = $("#mode").val();
             var workflowaction = $("#workFlowAction").val();
+            <s:if test="%{newWorkflow==null}">
             <s:if test="%{workflowaction != null && workflowaction == 'Generate Provisional Certificate'}">
-            window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + $('#id').val(),'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+            window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + $('#id').val(), 'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
             return false;
             </s:if>
             <s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
@@ -212,24 +222,31 @@
             toggleFields(false, "");
             document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
             </s:elseif>
-            <s:elseif test="%{mode!=null && mode=='edit'}">
-            clearMessage('newLicense_error');
-            toggleFields(false, "");
-            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/editTradeLicense-edit.action';
-            </s:elseif>
             <s:else>
             clearMessage('newLicense_error');
             toggleFields(false, "");
             document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
             </s:else>
-
             return true;
+            </s:if>
+            <s:else>
+            clearMessage('newLicense_error');
+            toggleFields(false, "");
+            <s:if test="%{hasState()}">
+            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
+            </s:if>
+            <s:else>
+            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
+            </s:else>
+            return true;
+            </s:else>
         }
     </script>
     <script>
         function onBodyLoad() {
             var currentState = document.getElementById("currentWfstate").value;
             showHideAgreement();
+            <s:if test="%{newWorkflow==null}">
             if (currentState == 'Second level fee collected') {
                 $("span").remove(".mandatory");
             }
@@ -320,6 +337,24 @@
             if ($("#mode").val() != 'disableApprover') {
                 $(".supportdocs").prop("disabled", false);
             }
+            </s:if>
+            <s:else>
+            $('#licenseForm :input').not(':hidden').not(':button').each(function (input, item) {
+                if ($(item).closest('#workflowDiv').length == 0)
+                    $(item).attr('disabled', true);
+            });
+            var fields = $("#fieldenabled").val();
+            fields = fields.split(",");
+            if (fields == 'all')
+                $('#licenseForm :input').each(function (input, item) {
+                    $(item).attr('disabled', false);
+                });
+            else if (fields != 'none')
+                $.each(fields, function (key, value) {
+                    $('#' + (value)).attr('disabled', false);
+                    console.log($('#' + (value)));
+                });
+            </s:else>
         }
     </script>
 
@@ -356,9 +391,7 @@
                 cssClass="form-horizontal form-groups-bordered" validate="true">
             <s:push value="model">
                 <s:token/>
-                <s:if test="%{state==null}">
-                    <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
-                </s:if>
+
                 <s:hidden name="actionName" value="create"/>
                 <s:hidden id="detailChanged" name="detailChanged"/>
                 <s:hidden id="applicationDate" name="applicationDate"/>
@@ -367,81 +400,148 @@
                 <s:hidden name="id" id="id"/>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <s:if test="%{mode=='edit'}">
-                            <div class="panel-title" style="text-align:center">
-                                <s:text name='page.title.edittrade'/>
-                            </div>
-                        </s:if>
-                        <s:else>
-                            <div class="panel-title" style="text-align:center">
-                                <s:if test="%{licenseAppType.name=='Renew'}">
-                                    <s:text name='renewtradeLicense.heading'/>
-                                </s:if>
-                                <s:else>
-                                    <s:text name='newtradeLicense.heading'/>
-                                </s:else>
-                            </div>
-                        </s:else>
+                <s:hidden name="newWorkflow" id="newWorkflow"/>
+                <s:if test="%{newWorkflow ==null}">
+                    <s:if test="%{state==null}">
+                        <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
+                    </s:if>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <s:if test="%{mode=='edit'}">
+                                <div class="panel-title" style="text-align:center">
+                                    <s:text name='page.title.edittrade'/>
+                                </div>
+                            </s:if>
+                            <s:else>
+                                <div class="panel-title" style="text-align:center">
+                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                        <s:text name='renewtradeLicense.heading'/>
+                                    </s:if>
+                                    <s:else>
+                                        <s:text name='newtradeLicense.heading'/>
+                                    </s:else>
+                                </div>
+                            </s:else>
 
-                        <ul class="nav nav-tabs" id="settingstab">
-                            <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
-                                                  aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
-                            <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
-                                            aria-expanded="false"><s:text name="license.support.docs"/></a></li>
-                        </ul>
-                    </div>
+                            <ul class="nav nav-tabs" id="settingstab">
+                                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
+                                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                            </ul>
+                        </div>
 
-                    <div class="panel-body">
-                        <div class="tab-content">
-                            <div class="tab-pane fade active in" id="tradedetails">
-                                <%@ include file='../common/licensee.jsp' %>
-                                <%@ include file='../common/license-address.jsp' %>
-                                <%@ include file='../common/license.jsp' %>
-                                <s:if test="%{transitionInprogress()}">
-                                    <%@ include file='../common/license-workflow-history.jsp' %>
-                                </s:if>
-                            </div>
-                            <div class="tab-pane fade" id="tradeattachments">
-                                <%@include file="../common/supportdocs-new.jsp" %>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="tradedetails">
+                                    <%@ include file='../common/licensee.jsp' %>
+                                    <%@ include file='../common/license-address.jsp' %>
+                                    <%@ include file='../common/license.jsp' %>
+                                    <s:if test="%{transitionInprogress()}">
+                                        <%@ include file='../common/license-workflow-history.jsp' %>
+                                    </s:if>
+                                </div>
+                                <div class="tab-pane fade" id="tradeattachments">
+                                    <%@include file="../common/supportdocs-new.jsp" %>
+                                </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div style="text-align: center;" hidden="true" id="closeDiv">
-                    <input type="button" name="closeBtn" id="closeBtn" value="Close"
-                           class="button" onclick="window.close();" style="margin:0 5px"/>
-                </div>
-                <s:if test="%{state!=null && state.value!='License Created' && egwStatus.code!='SECONDLVLCOLLECTIONPENDING'}">
-                    <div class="panel panel-primary" id="workflowDiv">
-                        <%@ include file='../common/license-workflow-dropdown.jsp' %>
-                        <%@ include file='../common/license-workflow-button.jsp' %>
+                    <div style="text-align: center;" hidden="true" id="closeDiv">
+                        <input type="button" name="closeBtn" id="closeBtn" value="Close"
+                               class="button" onclick="window.close();" style="margin:0 5px"/>
                     </div>
-                </s:if>
-                <s:elseif
-                        test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
-                    <div class="text-center">
-                        <s:hidden id="workFlowAction" name="workFlowAction"/>
-                        <s:hidden name="currentState" value="%{state.value}"/>
-                        <button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">
-                            Cancel
-                        </button>
-                        <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">
-                            Close
-                        </button>
-                    </div>
-                </s:elseif>
-                <s:else>
-                    <div class="row">
+                    <s:if test="%{state!=null && state.value!='License Created' && egwStatus.code!='SECONDLVLCOLLECTIONPENDING'}">
+                        <div class="panel panel-primary" id="workflowDiv">
+                            <%@ include file='../common/license-workflow-dropdown.jsp' %>
+                            <%@ include file='../common/license-workflow-button.jsp' %>
+                        </div>
+                    </s:if>
+                    <s:elseif
+                            test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
                         <div class="text-center">
-                            <button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
-                                Save
+                            <s:hidden id="workFlowAction" name="workFlowAction"/>
+                            <s:hidden name="currentState" value="%{state.value}"/>
+                            <button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">
+                                Cancel
                             </button>
-                            <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+                            <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">
                                 Close
                             </button>
                         </div>
+                    </s:elseif>
+                    <s:else>
+                        <div class="row">
+                            <div class="text-center">
+                                <button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
+                                    Save
+                                </button>
+                                <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </s:else>
+                </s:if>
+                <s:else>
+                    <div class="panel panel-primary">
+                        <s:hidden id="fieldenabled" name="enabledFields" value="%{getEnabledFields()}"/>
+                        <div class="panel-heading">
+                            <s:if test="%{mode=='edit'}">
+                                <div class="panel-title" style="text-align:center">
+                                    <s:text name='page.title.edittrade'/>
+                                </div>
+                            </s:if>
+                            <s:else>
+                                <div class="panel-title" style="text-align:center">
+                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                        <s:text name='renewtradeLicense.heading'/>
+                                    </s:if>
+                                    <s:else>
+                                        <s:text name='newtradeLicense.heading'/>
+                                    </s:else>
+                                </div>
+                            </s:else>
+
+                            <ul class="nav nav-tabs" id="settingstab">
+                                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
+                                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                            </ul>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="tradedetails">
+                                    <%@ include file='../common/licensee.jsp' %>
+                                    <%@ include file='../common/license-address.jsp' %>
+                                    <%@ include file='../common/license.jsp' %>
+                                </div>
+                                <div class="tab-pane fade" id="tradeattachments">
+                                    <%@include file="../common/supportdocs-new.jsp" %>
+                                </div>
+                            </div>
+                        </div>
+                        <s:if test="%{transitionInprogress()}">
+                            <%@ include file='../common/license-workflow-history.jsp' %>
+                        </s:if>
+                    </div>
+                    <div style="text-align: center;" hidden="true" id="closeDiv">
+                        <input type="button" name="closeBtn" id="closeBtn" value="Close"
+                               class="button" onclick="window.close();" style="margin:0 5px"/>
+                    </div>
+
+                    <div class="panel panel-primary" id="workflowDiv">
+                        <%@ include file='../common/license-workflow-dropdown.jsp' %>
+                        <%@ include file='../common/license-workflow-button.jsp' %>
+                        <s:if test="%{hasState()}">
+                            <div class="text-center">
+                                <button type="submit" id="btsave" class="btn btn-primary"
+                                        onclick="return onSave();">Save
+                                </button>
+                            </div>
+                        </s:if>
                     </div>
                 </s:else>
             </s:push>
@@ -453,13 +553,16 @@
                 </button>
             </s:if>
             <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
-                   style="display: none;" onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+                   style="display: none;"
+                   onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=
+                   <s:property
+                           value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
         </div>
 
     </div>
 </div>
 <s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && mode!=('editForReject') && state.value!='License Created'">
-<jsp:include page="../common/process-owner-reassignment.jsp"/>
+    <jsp:include page="../common/process-owner-reassignment.jsp"/>
 </s:if>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>

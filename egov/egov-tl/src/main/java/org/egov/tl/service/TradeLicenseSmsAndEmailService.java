@@ -180,7 +180,7 @@ public class TradeLicenseSmsAndEmailService {
                         emailCode,
                         new String[]{license.getLicensee().getApplicantName(),
                                 license.getApplicationNumber(),
-                                license.getNameOfEstablishment(),license.getLicenseNumber(), license.getTotalBalance().toString(), ApplicationThreadLocals.getDomainURL(),
+                                license.getNameOfEstablishment(), license.getLicenseNumber(), license.getTotalBalance().toString(), ApplicationThreadLocals.getDomainURL(),
                                 getMunicipalityName()}, locale);
                 smsCode = "msg.digi.enabled.newTradeLicenseapprovalAmt.sms";
                 smsMsg = licenseMessageSource.getMessage(
@@ -240,9 +240,7 @@ public class TradeLicenseSmsAndEmailService {
         String emailBody;
         String emailSubject;
         final Locale locale = Locale.getDefault();
-
-        if (APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE.equals(license.getEgwStatus().getCode())) {
-
+        if ("First Level Fee Collected".equals(license.getState().getValue()) || (license.getEgwStatus() != null && APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE.equals(license.getEgwStatus().getCode()))) {
             smsMsg = licenseMessageSource.getMessage(
                     String.format(MSG_LICENSE_FIRSTLEVEL_SMS, license.getLicenseAppType().getName().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
@@ -334,32 +332,26 @@ public class TradeLicenseSmsAndEmailService {
     }
 
     public void sendSMsAndEmailOnDigitalSign(final License license) {
-        String smsMsg = "";
-        String emailBody = "";
-        String emailSubject = "";
         final Locale locale = Locale.getDefault();
-
-        if (WF_DIGI_SIGNED.equals(license.getState().getValue()) && APPLICATION_STATUS_APPROVED_CODE.equals(license.getEgwStatus().getCode())) {
-            String smsCode = "msg.digi.sign.no.collection";
-            smsMsg = licenseMessageSource.getMessage(
-                    smsCode,
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getApplicationNumber(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
-                            getMunicipalityName()},
-                    locale);
-            emailSubject = licenseMessageSource.getMessage("msg.Licensedigisign.email.subject",
-                    new String[]{license.getNameOfEstablishment()}, locale);
-            emailBody = licenseMessageSource.getMessage(
-                    "msg.digi.sign.no.collection",
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getApplicationNumber(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
-                            getMunicipalityName()},
-                    locale);
-        }
+        String smsCode = "msg.digi.sign.no.collection";
+        String smsMsg = licenseMessageSource.getMessage(
+                smsCode,
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getApplicationNumber(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
+                        getMunicipalityName()},
+                locale);
+        String emailSubject = licenseMessageSource.getMessage("msg.Licensedigisign.email.subject",
+                new String[]{license.getNameOfEstablishment()}, locale);
+        String emailBody = licenseMessageSource.getMessage(
+                "msg.digi.sign.no.collection",
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getApplicationNumber(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
+                        getMunicipalityName()},
+                locale);
         sendSMSOnLicense(license.getLicensee().getMobilePhoneNumber(), smsMsg);
         sendEmailOnLicense(license.getLicensee().getEmailId(), emailBody,
                 emailSubject);
