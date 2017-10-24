@@ -59,7 +59,7 @@ import org.egov.tl.entity.WorkflowBean;
 import org.egov.tl.repository.LicenseCategoryRepository;
 import org.egov.tl.repository.LicenseSubCategoryRepository;
 import org.egov.tl.repository.NatureOfBusinessRepository;
-import org.egov.tl.service.TradeLicenseService;
+import org.egov.tl.service.LicenseApplicationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,7 +74,7 @@ import static org.apache.commons.lang.StringUtils.isNotBlank;
 public class LicenseCreateAPIService {
 
     @Autowired
-    private TradeLicenseService tradeLicenseService;
+    private LicenseApplicationService licenseApplicationService;
     @Autowired
     private BoundaryRepository boundaryRepository;
     @Autowired
@@ -127,6 +127,6 @@ public class LicenseCreateAPIService {
         tradeLicense.setBoundary(childBoundary);
         tradeLicense.setCategory(licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()));
         tradeLicense.setTradeName(licenseSubCategoryRepository.findByCode(license.getSubCategory()));
-        return tradeLicenseService.create(tradeLicense, new WorkflowBean());
+        return licenseApplicationService.create(tradeLicense, new WorkflowBean());
     }
 }

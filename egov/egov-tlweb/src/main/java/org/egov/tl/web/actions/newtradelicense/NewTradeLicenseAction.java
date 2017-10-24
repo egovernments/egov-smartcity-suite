@@ -272,8 +272,9 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     .write("<center style='color:red;font-weight:bolder'>Renewal workflow is in progress !</center>");
             return null;
         }
-        if (!tradeLicense.hasState() || "Closed".equals(tradeLicense.getCurrentState().getValue()))
+        if (!tradeLicense.hasState() || (tradeLicense.hasState() && tradeLicense.getCurrentState().isEnded()))
             currentState = "";
+        tradeLicense.setNewWorkflow(true);
         renewAppType = RENEWAL_LIC_APPTYPE;
         return super.beforeRenew();
     }
@@ -359,13 +360,13 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String getAdditionalRule() {
         if (tradeLicense.isNewWorkflow() != null && tradeLicense.isNewWorkflow()) {
             if (!securityUtils.currentUserIsEmployee())
-                return "CSCOPERATORNEWLICENSE";
+                return RENEWAL_LIC_APPTYPE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
             else if (license().isCollectionPending() != null && license().isCollectionPending())
-                return "NEWLICENSECOLLECTION";
+                return tradeLicense.isNewApplication() ? NEWLICENSECOLLECTION : RENEWLICENSECOLLECTION;
             else if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
-                return "RENEWLICENSE";
+                return RENEWLICENSE;
             else
-                return "NEWLICENSE";
+                return NEWLICENSE;
         } else {//TODO to be removed
             if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
                 return RENEW_ADDITIONAL_RULE;

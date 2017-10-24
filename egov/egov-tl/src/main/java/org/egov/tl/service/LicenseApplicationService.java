@@ -74,13 +74,23 @@ import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
  */
 @Service
 @Transactional(readOnly = true)
-public class NewApplicationService extends TradeLicenseService {
+public class LicenseApplicationService extends TradeLicenseService {
     @Autowired
     private TradeLicenseSmsAndEmailService tradeLicenseSmsAndEmailService;
     @Autowired
     private LicenseProcessWorkflowService licenseProcessWorkflowService;
     @Autowired
     private LicenseUtils licenseUtils;
+
+    @Override
+    public License createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
+        return create(license, wfBean);
+    }
+
+    @Override
+    public License renewWithMeeseva(TradeLicense license, WorkflowBean wfBean) {
+        return renew(license, wfBean);
+    }
 
     @Transactional
     @Override
@@ -108,6 +118,28 @@ public class NewApplicationService extends TradeLicenseService {
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         return license;
     }
+
+    @Transactional
+    @Override
+    public License renew(final TradeLicense license, final WorkflowBean workflowBean) {
+        if (!currentUserIsMeeseva())
+            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
+        recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
+                license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
+        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
+        license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
+        processAndStoreDocument(license);
+        if (securityUtils.currentUserIsEmployee())
+            licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
+
+        else
+            licenseProcessWorkflowService.getWfWithThirdPartyOp((TradeLicense) license, workflowBean);
+        this.licenseRepository.save(license);
+        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
+        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
+        return license;
+    }
+
 
     @Transactional
     public License save(final TradeLicense license) {

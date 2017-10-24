@@ -105,7 +105,7 @@ import static org.egov.tl.utils.Constants.*;
                 "/viewtradelicense", "method", "showForApproval"}),
         @Result(name = "tl_generateCertificate", type = "redirectAction", location = "../viewtradelicense/viewTradeLicense-generateCertificate"),
         @Result(name = "approve", location = "newTradeLicense-new.jsp"),
-        @Result(name = "report", location = "newTradeLicense-report.jsp"),
+        @Result(name = REPORT_PAGE, location = "newTradeLicense-report.jsp"),
         @Result(name = "digitalSignatureRedirection", location = "newTradeLicense-digitalSignatureRedirection.jsp"),
         @Result(name = MEESEVA_RESULT_ACK, location = "/meeseva/generatereceipt", type = "redirect",
                 params = {"prependServletContext", "false", "transactionServiceNumber", "${applicationNo}"})})
@@ -162,7 +162,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     @Autowired
     private transient ProcessOwnerReassignmentService processOwnerReassignmentService;
     @Autowired
-    private NewApplicationService newApplicationService;
+    private LicenseApplicationService licenseApplicationService;
 
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
@@ -183,22 +183,21 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         populateWorkflowBean();
         //TODO to be removed
         if (license().isNewWorkflow() == null) {
+            licenseService().create(license, workflowBean);
+            addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
+            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
+        } else {
             if (tradeLicenseService.currentUserIsMeeseva()) {
                 license.setApplicationNumber(getApplicationNo());
-                licenseService().createWithMeseva(license, workflowBean);
+                licenseApplicationService.createWithMeseva((TradeLicense) license, workflowBean);
             } else {
-                licenseService().create(license, workflowBean);
+                licenseApplicationService.create((TradeLicense) license, workflowBean);
                 addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
                 setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
             }
 
-            return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
-        } else {
-            newApplicationService.create((TradeLicense) license, workflowBean);
-            addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-            setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
-            return ACKNOWLEDGEMENT;
         }
+        return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
 
     // sub class should get the object of the model and set to license()
@@ -230,7 +229,12 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             else
                 return MESSAGE;
         } else {
-            newApplicationService.updateTradeLicense((TradeLicense) license(), workflowBean);
+            if (GENERATE_PROVISIONAL_CERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+                reportId = reportViewerUtil
+                        .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), true));
+                return REPORT_PAGE;
+            }
+            licenseApplicationService.updateTradeLicense((TradeLicense) license(), workflowBean);
             successMessage();
             if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
                 return GENERATE_CERTIFICATE;
@@ -241,7 +245,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     private String redirectToPrintCertificate() {
         reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), false));
-        return "report";
+        return REPORT_PAGE;
     }
 
     private String digitalSignRedirection() {
@@ -257,24 +261,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             applicationNo = license().getApplicationNumber();
         }
         return "digitalSignatureRedirection";
-    }
-
-    @SkipValidation
-    public String approveRenew() {
-        populateWorkflowBean();
-        if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
-            WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
-            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
-                addActionMessage(this.getText(WF_ITEM_PROCESSED));
-                return MESSAGE;
-            }
-        }
-        if (GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && "END".equalsIgnoreCase(license().getCurrentState().getValue())) {
-            addActionMessage(this.getText(WF_ITEM_PROCESSED));
-            return MESSAGE;
-        }
-        processWorkflow();
-        return MESSAGE;
     }
 
     protected void populateWorkflowBean() {
@@ -295,13 +281,19 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String renew() {
         addNewDocuments();
         populateWorkflowBean();
-        if (tradeLicenseService.currentUserIsMeeseva()) {
-            license().setApplicationNumber(getApplicationNo());
-            licenseService().renewWithMeeseva(license(), workflowBean);
-        } else {
+        if (license().isNewWorkflow() == null) {
             licenseService().renew(license(), workflowBean);
             addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
             setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
+        } else {
+            if (tradeLicenseService.currentUserIsMeeseva()) {
+                license().setApplicationNumber(getApplicationNo());
+                licenseApplicationService.renewWithMeeseva((TradeLicense) license(), workflowBean);
+            } else {
+                licenseApplicationService.renew((TradeLicense) license(), workflowBean);
+                addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
+                setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
+            }
         }
         return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
@@ -385,9 +377,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             String nextDesgn = !assignments.isEmpty() ? assignments.get(0).getDesignation().getName() : "";
             final String userName = !assignments.isEmpty() ? assignments.get(0).getEmployee().getName() : "";
             addActionMessage(this.getText("license.sent") + " " + nextDesgn + " - " + userName);
-        } else if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
+        } else if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             rejectActionMessage();
-        } else if (BUTTONGENERATEDCERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+        else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            addActionMessage(this.getText("license.rejected") + license().getApplicationNumber());
+        else if (BUTTONGENERATEDCERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
             addActionMessage(this.getText("license.certifiacte.print.complete.recorded"));
     }
 

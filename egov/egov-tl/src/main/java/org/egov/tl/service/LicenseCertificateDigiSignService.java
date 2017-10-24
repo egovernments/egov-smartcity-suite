@@ -80,7 +80,7 @@ public class LicenseCertificateDigiSignService {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private NewApplicationService newApplicationService;
+    private LicenseApplicationService licenseApplicationService;
 
     public void digitalSignTransition(List<String> applicationNumbers) {
         for (String applicationNumber : applicationNumbers) {
@@ -88,7 +88,7 @@ public class LicenseCertificateDigiSignService {
             if (license.isNewWorkflow() == null)
                 tradeLicenseService.digitalSignTransition(applicationNumber);
             else
-                newApplicationService.digitalSignature(applicationNumber);
+                licenseApplicationService.digitalSignature(applicationNumber);
         }
     }
 

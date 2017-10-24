@@ -854,17 +854,15 @@ public abstract class AbstractLicenseService<T extends License> {
         return licenseRepository.findByNatureOfBusinessNameAndStatusName(natureOfBusiness, LICENSE_STATUS_ACTIVE, installment.getFromDate());
     }
 
-    @Transactional
+
     public License createWithMeseva(T license, WorkflowBean wfBean) {
         return create(license, wfBean);
     }
 
-    @Transactional
     public License renewWithMeeseva(T license, WorkflowBean wfBean) {
         return renew(license, wfBean);
     }
 
-    @Transactional
     public License closureWithMeeseva(T license, WorkflowBean wfBean) {
         return saveClosure(license, wfBean);
     }

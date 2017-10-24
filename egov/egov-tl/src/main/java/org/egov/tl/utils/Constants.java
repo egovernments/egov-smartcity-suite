@@ -73,6 +73,7 @@ public final class Constants {
     public static final String BUTTONAPPROVE = "Approve";
     public static final String BUTTONFORWARD = "Forward";
     public static final String BUTTONREJECT = "Reject";
+    public static final String BUTTONCANCEL = "Cancel";
     public static final String BUTTONGENERATEDCERTIFICATE = "GeneratedCertificate";
     public static final String WORKFLOW_STATE_REJECTED = "Rejected";
     public static final String WORKFLOW_STATE_GENERATECERTIFICATE = "Generate Certificate";
@@ -182,7 +183,17 @@ public final class Constants {
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
     public static final String MEESEVAOPERATOR = "MeeSeva Operator";
-    private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
+    public static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
+    public static final String NEWLICENSECOLLECTION = "NEWLICENSECOLLECTION";
+    public static final String RENEWLICENSECOLLECTION = "RENEWLICENSECOLLECTION";
+    public static final String NEWLICENSE = "NEWLICENSE";
+    public static final String RENEWLICENSE = "RENEWLICENSE";
+    public static final String CSCOPERATORRENEWLICENSE = "CSCOPERATORRENEWLICENSE";
+    public static final String CSCOPERATORNEWLICENSE = "CSCOPERATORNEWLICENSE";
+    public static final String NEWLICENSEREJECT = "NEWLICENSEREJECT";
+    public static final String RENEWLICENSEREJECT = "RENEWLICENSEREJECT";
+    public static final String GENERATE_PROVISIONAL_CERTIFICATE = "Generate Provisional Certificate";
+    public static final String REPORT_PAGE = "report";
 
     static {
 

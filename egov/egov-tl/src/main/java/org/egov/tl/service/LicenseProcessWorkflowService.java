@@ -88,8 +88,14 @@ import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
 import static org.egov.tl.utils.Constants.NEW_NATUREOFWORK;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
+import static org.egov.tl.utils.Constants.BUTTONCANCEL;
 import static org.egov.tl.utils.Constants.STATUS_REJECTED;
-
+import static org.egov.tl.utils.Constants.NEWLICENSECOLLECTION;
+import static org.egov.tl.utils.Constants.RENEWLICENSECOLLECTION;
+import static org.egov.tl.utils.Constants.NEWLICENSE;
+import static org.egov.tl.utils.Constants.RENEWLICENSE;
+import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
+import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 /**
  * Created by jayashree on 7/9/17.
  */
@@ -134,8 +140,11 @@ public class LicenseProcessWorkflowService {
         List<Position> userPositions = positionMasterService.getPositionsForEmployee(currentUser.getId());
         Position wfInitiator;
         WorkFlowMatrix workFlowMatrix;
-        if ("Approve".equals(workflowBean.getWorkFlowAction()) && tradeLicense.isCollectionPending())
-            workflowBean.setAdditionaRule("NEWLICENSECOLLECTION");
+        if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && tradeLicense.isCollectionPending())
+            if (tradeLicense.isNewApplication())
+                workflowBean.setAdditionaRule(NEWLICENSECOLLECTION);
+            else
+                workflowBean.setAdditionaRule(RENEWLICENSECOLLECTION);
         workFlowMatrix = getWorkFlowMatrix(tradeLicense, workflowBean);
 
         if (!tradeLicense.hasState()) {
@@ -146,7 +155,7 @@ public class LicenseProcessWorkflowService {
                     .withNatureOfTask(tradeLicense.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
                     .withNextAction(workFlowMatrix.getNextAction()).withInitiator(wfInitiator).withExtraInfo(licenseStateInfo);
-        } else if ("CANCEL".equalsIgnoreCase(workflowBean.getWorkFlowAction()) && userPositions.contains(tradeLicense.getCurrentState().getInitiatorPosition())) {
+        } else if (BUTTONCANCEL.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && userPositions.contains(tradeLicense.getCurrentState().getInitiatorPosition())) {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
@@ -187,7 +196,7 @@ public class LicenseProcessWorkflowService {
         User currentUser = securityUtils.getCurrentUser();
         Position owner = getCurrentPositionByWorkFlowBean(workflowBean, tradeLicense.getCurrentState());
 
-        if (!licenseUtils.isDigitalSignEnabled() && "Approve".equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
+        if (!licenseUtils.isDigitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withStateValue(workFlowMatrix.getNextState())
                     .withDateInfo(currentDate.toDate()).withOwner(tradeLicense.getCurrentState().getOwnerPosition()).withExtraInfo(licenseStateInfo);
@@ -275,9 +284,10 @@ public class LicenseProcessWorkflowService {
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null, new Date(), null);
         List<Assignment> assignmentList = getAssignments(workFlowMatrix);
         if (!assignmentList.isEmpty()) {
+            String additionalRule = license.isNewApplication() ? NEWLICENSE : RENEWLICENSE;
             final Assignment wfAssignment = assignmentList.get(0);
             WorkFlowMatrix nextWorkFlowMatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), "ANY",
-                    null, "NEWLICENSE", workFlowMatrix.getNextState(), null, new Date(), "%" + wfAssignment.getDesignation().getName() + "%");
+                    null, additionalRule, workFlowMatrix.getNextState(), null, new Date(), "%" + wfAssignment.getDesignation().getName() + "%");
             LicenseStateInfo licenseStateInfo = new LicenseStateInfo();
             if (nextWorkFlowMatrix != null)
                 licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
@@ -297,7 +307,7 @@ public class LicenseProcessWorkflowService {
 
     public void getRejectTransition(TradeLicense tradeLicense, WorkflowBean workflowBean) {
         User currentUser = securityUtils.getCurrentUser();
-        workflowBean.setAdditionaRule("NEWLICENSEREJECT");
+        workflowBean.setAdditionaRule(tradeLicense.isNewApplication() ? NEWLICENSEREJECT : RENEWLICENSEREJECT);
         WorkFlowMatrix workFlowMatrix = getWorkFlowMatrix(tradeLicense, workflowBean);
         Position ownerPosition;
         if (!tradeLicense.getCurrentState().getExtraInfo().isEmpty()) {

@@ -88,7 +88,7 @@ import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.service.NewApplicationService;
+import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
@@ -199,7 +199,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
     protected LicenseNumberUtils licenseNumberUtils;
 
     @Autowired
-    protected NewApplicationService newApplicationService;
+    protected LicenseApplicationService licenseApplicationService;
 
     @Transactional
     public String createLicenseBillXML(License license) {
@@ -439,7 +439,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                     if (ld.getLicense().isNewWorkflow() != null && ld.getLicense().isNewWorkflow()) {
                         if (ld.getLicense().isCollectionPending() != null)
                             ld.getLicense().setCollectionPending(false);
-                        newApplicationService.collectionTransition((TradeLicense) ld.getLicense());
+                        licenseApplicationService.collectionTransition((TradeLicense) ld.getLicense());
                     } else
                         updateWorkflowState(ld.getLicense());
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());

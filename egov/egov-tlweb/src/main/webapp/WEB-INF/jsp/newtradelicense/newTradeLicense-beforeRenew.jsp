@@ -74,6 +74,7 @@
                 <s:hidden name="model.id" id="id"/>
                 <s:hidden id="detailChanged" name="detailChanged"></s:hidden>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
+                <s:hidden name="newWorkflow" id="newWorkflow"/>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}"
                        id="applicationNo"/>
                 <s:if test="%{status=='Active'}">
@@ -165,22 +166,30 @@
                         </div>
                     </div>
                 </div>
-                <s:if test="%{status!='Active'}">
+                <s:if test="%{newWorkflow ==null}">
+                    <s:if test="%{status!='Active'}">
+                        <div class="panel panel-primary" id="workflowDiv">
+                            <%@ include file='../common/license-workflow-dropdown.jsp' %>
+                            <%@ include file='../common/license-workflow-button.jsp' %>
+                        </div>
+                    </s:if>
+                    <s:else>
+                        <div class="row">
+                            <div class="text-center">
+                                <button type="submit" id="btnsave" class="btn btn-primary" onclick="return onSubmit();">
+                                    Save
+                                </button>
+                                <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </s:else>
+                </s:if>
+                <s:else>
                     <div class="panel panel-primary" id="workflowDiv">
                         <%@ include file='../common/license-workflow-dropdown.jsp' %>
                         <%@ include file='../common/license-workflow-button.jsp' %>
-                    </div>
-                </s:if>
-                <s:else>
-                    <div class="row">
-                        <div class="text-center">
-                            <button type="submit" id="btnsave" class="btn btn-primary" onclick="return onSubmit();">
-                                Save
-                            </button>
-                            <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
-                                Close
-                            </button>
-                        </div>
                     </div>
                 </s:else>
             </s:push>

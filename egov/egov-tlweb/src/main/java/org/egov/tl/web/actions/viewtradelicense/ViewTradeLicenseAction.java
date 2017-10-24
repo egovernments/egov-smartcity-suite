@@ -52,7 +52,6 @@ import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
-import org.apache.struts2.interceptor.validation.SkipValidation;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
@@ -75,10 +74,12 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
 import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
+import static org.egov.tl.utils.Constants.MESSAGE;
+import static org.egov.tl.utils.Constants.REPORT_PAGE;
 
 @ParentPackage("egov")
-@Results({@Result(name = "report", location = "viewTradeLicense-report.jsp"),
-        @Result(name = "message", location = "viewTradeLicense-message.jsp"),
+@Results({@Result(name = REPORT_PAGE, location = "viewTradeLicense-report.jsp"),
+        @Result(name = MESSAGE, location = "viewTradeLicense-message.jsp"),
         @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
         @Result(name = "digisigncertificate", type = "redirect", location = "/tradelicense/download/digisign-certificate", params = {"file", "${digiSignedFile}", "applnum", "${applNum}"})
 })
@@ -116,7 +117,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return Constants.VIEW;
     }
 
-    @ValidationErrorPage("report")
+    @ValidationErrorPage(REPORT_PAGE)
     @Action(value = "/viewtradelicense/viewTradeLicense-generateCertificate")
     public String generateCertificate() {
         setLicenseIdIfServletRedirect();
@@ -127,18 +128,18 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             return "digisigncertificate";
         } else {
             reportId = reportViewerUtil
-                    .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(),false));
-            return "report";
+                    .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), false));
+            return REPORT_PAGE;
         }
     }
 
-    @ValidationErrorPage("report")
+    @ValidationErrorPage(REPORT_PAGE)
     @Action(value = "/viewtradelicense/generate-provisional-certificate")
     public String generateProvisionalCertificate() {
         setLicenseIdIfServletRedirect();
         tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(),true));
-        return "report";
+        reportId = reportViewerUtil.addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), true));
+        return REPORT_PAGE;
     }
 
     private void setLicenseIdIfServletRedirect() {
@@ -151,23 +152,6 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @Override
     protected TradeLicense license() {
         return tradeLicense;
-    }
-
-    @Override
-    @SkipValidation
-    @ValidationErrorPageExt(action = "approve", makeCall = true, toMethod = "setupWorkflowDetails")
-    public String approve() {
-        setRoleName(securityUtils.getCurrentUser().getRoles().toString());
-        return super.approve();
-    }
-
-    @Override
-    @SkipValidation
-    @ValidationErrorPageExt(action = "approveRenew", makeCall = true, toMethod = "setupWorkflowDetails")
-    public String approveRenew() {
-        setRoleName(securityUtils.getCurrentUser().getRoles().toString());
-        tradeLicense = tradeLicenseService.getLicenseById(license().getId());
-        return super.approveRenew();
     }
 
     @Override
@@ -247,7 +231,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
             if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
                 addActionMessage(this.getText("wf.item.processed"));
-                return "message";
+                return MESSAGE;
             }
             tradeLicenseService.cancelLicenseWorkflow(tradeLicense, workflowBean);
             if (BUTTONFORWARD.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
@@ -264,7 +248,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
             } else
                 addActionMessage(this.getText("license.closure.msg") + license().getLicenseNumber());
         }
-        return "message";
+        return MESSAGE;
     }
 
     @Override
@@ -316,11 +300,12 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public void setApplNum(String applNum) {
         this.applNum = applNum;
     }
+
     @Override
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
         if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null || getModel().getCurrentState().getValue().endsWith("NEW")
-                ||(getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false)){
+                || (getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false)) {
 
             validActions = Arrays.asList(FORWARD);
         } else {
