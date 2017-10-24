@@ -72,6 +72,10 @@ $(document).ready(function () {
     }).on('typeahead:selected typeahead:autocompleted typeahead:matched', function(event, data){
         $("#agencyId").val(data.value);
    });*/
+    if($('#nextAction').val() == "Commissioner approval pending"){
+    	$('#taxAmount').attr("disabled", "disabled");
+		$('#encroachmentFee').attr("disabled", "disabled");  	
+    }
     var agency_typeahead = $('#agencyTypeAhead').typeahead({
         hint: true,
         highlight: true,
