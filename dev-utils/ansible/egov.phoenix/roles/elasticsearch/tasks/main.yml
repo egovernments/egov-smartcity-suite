@@ -1,2 +1,42 @@
 ---
 # tasks file for elasticsearch
+
+- name: Download elasticsearch tarball {{ elasticsearch_archive }}
+  local_action: get_url url={{ elasticsearch_download_url }}/{{ elasticsearch_archive }} dest={{ elasticsearch_install_dir }}/{{ elasticsearch_archive }}
+  become: False
+  run_once: True
+
+- name: Unpack JDK tarball {{ elasticsearch_archive }}
+  unarchive:
+    src: "{{ elasticsearch_install_dir }}/{{ elasticsearch_archive }}"
+    dest: "{{ elasticsearch_install_dir }}"
+    remote_src: yes
+    creates: "elasticsearch-{{elasticsearch_version}}.Final"
+
+- name: Set default ES_HOME {{elasticsearch_home}}
+  become: yes
+  template: >
+    src=elasticsearch.sh.j2
+    dest=/etc/profile.d/elasticsearch.sh
+    mode=755
+# - name: Adding Elasticsearch as a startup Service
+#   become: yes
+#   become_method: sudo
+#   template: >
+#     src=elasticsearch_init.sh.j2
+#     dest=/etc/init.d/elasticsearch
+#     mode=755
+#  when: ("{{elasticsearch_service_startonboot}}" == "yes")
+- name: Adding Elasticsearch as a startup Service
+  become: yes
+  action: template src=templates/elasticsearch_init.sh.j2 dest=/etc/init.d/elasticsearch mode=0755
+- name: enable elasticsearch service
+  become: yes
+  #service: name=elasticsearch enabled=yes
+  #when: '{{elasticsearch_service_startonboot}} == "yes"'
+  action: service name=elasticsearch enabled=yes
+
+- name: start elasticsearch service
+  become: yes
+  action: service name=elasticsearch state=started
+  #when: '{{elasticsearch_service_startonboot}} == "yes"'

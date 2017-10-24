@@ -1,20 +1,43 @@
 USERNAME: "{{ lookup('env','USER') }}"
 HOME: "{{ lookup('env','HOME') }}"
-ANSIBLE_WORKSPACE: "{{HOME}}/EGOV-PHOENIX"
+ANSIBLE_WORKSPACE: "{{HOME}}/EGOV-PHOENIX-STACK"
 
 # TECH STACK VERSIONS
-java_version: 8
-java_subversion: 92
 
+# Maven Vesion details
+maven_version: 3.3.9
+maven_home_parent_directory: "{{ANSIBLE_WORKSPACE}}"
+
+# Java Vesion details
+java_version: 8
+java_subversion: 131
+java_install_dir: "{{ANSIBLE_WORKSPACE}}"
+java_home: "{{java_install_dir}}/jdk1.{{java_version}}.0_{{java_subversion}}"
+java_download_url: 'https://devops.egovernments.org/downloads/jdk'
+java_archive: 'jdk-{{java_version}}u{{java_subversion}}-linux-x64.tar.gz'
+
+#Postgres Version details
 postgresql_version: 9.4
 
-maven_version: 3.3.9
+#ELASTICSEARCH details
+elasticsearch_version: 2.4.1
+elasticsearch_install_dir: "{{ANSIBLE_WORKSPACE}}"
+elasticsearch_home: "{{elasticsearch_install_dir}}/elasticsearch-{{elasticsearch_version}}"
+elasticsearch_download_url: 'https://devops.egovernments.org/downloads/es'
+elasticsearch_archive: 'elasticsearch-{{elasticsearch_version}}.zip'
+#elasticsearch_service_startonboot: yes
 
-elastic_version: 2.4.1
+#Wildfly Version
+wildfly_version: 10.1.0
+wildfly_install_dir: "{{ANSIBLE_WORKSPACE}}"
+wildfly_home: "{{wildfly_install_dir}}/wildfly-{{wildfly_version}}.Final"
+wildfly_download_url: 'https://devops.egovernments.org/downloads/wildfly'
+wildfly_archive: 'wildfly-{{wildfly_version}}.Final.zip'
 
-wildfly_version: 10.0.0
+#Redis Version 
+redis_version: latest
 
-redis_version: 
-
+#Kiban Version
 kibana_version:
 
+ 

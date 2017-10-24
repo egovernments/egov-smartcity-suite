@@ -1,0 +1,11 @@
+
+- name: "Install Redis"
+ # hosts: localhost
+  sudo: yes
+  #become: yes
+  #become_method: sudo
+  tasks:
+    - include: tasks/main.yml
+
+
+

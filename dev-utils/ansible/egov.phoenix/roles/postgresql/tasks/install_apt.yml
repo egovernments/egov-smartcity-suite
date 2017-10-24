@@ -3,7 +3,7 @@
 # Official PostgreSQL [repository] for debian-based distributions
 # [repository]: http://www.postgresql.org/download/
 
-- name: Adding APT repository key
+- name: Adding Postgres APT repository key
   become: yes
   apt_key:
     id: ACCC4CF8
@@ -27,7 +27,7 @@
   apt:
     name: "postgresql-{{postgresql_version}}"
     state: present
-    update_cache: yes
+    update_cache: no
     cache_valid_time: 3600
   tags:
     - postgresql

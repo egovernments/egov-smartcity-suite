@@ -1,2 +1,23 @@
 ---
 # tasks file for wildfly
+
+- name: Download wildfly tarball {{ wildfly_archive }}
+  local_action: get_url url={{ wildfly_download_url }}/{{ wildfly_archive }} dest={{ wildfly_install_dir }}/{{ wildfly_archive }}
+  become: False
+  run_once: True
+
+- name: Unpack JDK tarball {{ wildfly_archive }}
+  unarchive:
+    src: "{{ wildfly_install_dir }}/{{ wildfly_archive }}"
+    dest: "{{ wildfly_install_dir }}"
+    remote_src: yes
+    creates: "wildfly-{{wildfly_version}}.Final"
+
+- name: Set default WILDFLY_HOME {{wildfly_home}}
+  become: yes
+  become_method: sudo
+  template: >
+    src=wildfly.sh.j2
+    dest=/etc/profile.d/wildfly.sh
+    mode=644
+
