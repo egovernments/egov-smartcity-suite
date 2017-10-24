@@ -614,8 +614,7 @@ public class SewerageConnectionSmsAndEmailService {
                                 sewerageApplicationDetails.getConnection().getShscNumber() }, null);
             }
 
-        else if (SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type)
-                || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE))
+        else if (SMSEMAILTYPECLOSINGCONNAPPROVE.equalsIgnoreCase(type))
             smsMsg = stmsMessageSource.getMessage(code,
                     new String[] { applicantName, sewerageApplicationDetails.getApplicationNumber(), muncipalityName,
                             sewerageApplicationDetails.getConnection().getShscNumber() }, null);
@@ -627,6 +626,7 @@ public class SewerageConnectionSmsAndEmailService {
                             sewerageApplicationDetails.getConnection().getShscNumber(), pdfLink },
                     null);
         }
+          
         else if (SMSEMAILTYPECLOSINGCONNSANCTIONED.equalsIgnoreCase(type)
                 || type.equalsIgnoreCase(SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED))
             smsMsg = stmsMessageSource.getMessage(code,

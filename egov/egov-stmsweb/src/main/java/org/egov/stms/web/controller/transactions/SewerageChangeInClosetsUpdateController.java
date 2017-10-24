@@ -375,7 +375,7 @@ public class SewerageChangeInClosetsUpdateController extends GenericWorkFlowCont
 
         return currentDonationCharge.compareTo(oldDonationCharge) <= 0
                 && currentSewerageTax.compareTo(oldSewerageTax.add(oldApplicationAdvanceAmount)) <= 0
-                && currentEstimationCharge.compareTo(BigDecimal.ZERO) <= 0 ? true : false;
+                && currentEstimationCharge.compareTo(BigDecimal.ZERO) <= 0 ? false : true;
     }
 
     private void createSewerageConnectionFee(final SewerageApplicationDetails sewerageApplicationDetails, final String feeCode) {
