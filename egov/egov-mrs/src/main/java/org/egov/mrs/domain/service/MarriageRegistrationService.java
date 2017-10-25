@@ -532,10 +532,11 @@ public class MarriageRegistrationService {
                                 MarriageConstants.MODULE_NAME));
         marriageRegistration.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
+        marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
         if (marriageRegistration.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(marriageRegistration.getSource())
                 && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
-        marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
+            updatePortalMessage(marriageRegistration);
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.REJECTED.toString());
         return marriageRegistration;
