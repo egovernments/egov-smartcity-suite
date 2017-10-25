@@ -22,6 +22,32 @@ The eGov suit is released under version 3.0 of the [GPL][].
 This section contains steps that are involved in build and deploy the application.
 FAQ related to various deployment and development issues are discussed [here][FAQ]
 
+## Setup with auto installer
+* Clone the eGov repository (development is done on the develop branch).
+```bash
+$ mkdir -p ${HOME}/egovgithub && cd egovgithub
+$ git clone  -b develop --single-branch  https://github.com/egovernments/eGov.git
+```
+* First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
+```bash
+$ cd ${HOME}/egovgithub/eGov && make all
+```
+-----
+* To install the prerequisites Phoenix stacks
+```bash
+$ cd ${HOME}/egovgithub/eGov &&  make install
+```
+* To build the source code base
+```bash
+$ cd ${HOME}/egovgithub/eGov && make build
+```
+* To deploy the artifact to WILDFLY
+```bash
+$ cd ${HOME}/egovgithub/eGov && make deploy
+```
+
+## Manual Setup Instruction
+
 #### Prerequisites
 
 * Install [maven v3.2.x][Maven]
@@ -30,7 +56,6 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Install [Jboss Wildfly v10.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 112 or higher][JDK8 build]
-
 #### Database Setup
 1. Create a database and user in postgres
 2. Create a schema called `generic`
@@ -262,3 +287,4 @@ Browser:-
 [versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
 [codacy]:https://www.codacy.com/app/egovernments/eGov
 [codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987
+

@@ -18,5 +18,5 @@
   template: >
     src=java.sh.j2
     dest=/etc/profile.d/java.sh
-    mode=644
+    mode=755
 

@@ -15,5 +15,4 @@
     state: present
   with_items:
     - { line: 'export M2_HOME={{maven_home_parent_directory}}/apache-maven-{{maven_version}}' }
-    - { line: 'export PATH=$PATH:$M2_HOME/bin' }
-    
+    - { line: 'export PATH=$M2_HOME/bin:$PATH' }

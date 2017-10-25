@@ -2,7 +2,7 @@
 # tasks file for wildfly
 
 - name: Download wildfly tarball {{ wildfly_archive }}
-  local_action: get_url url={{ wildfly_download_url }}/{{ wildfly_archive }} dest={{ wildfly_install_dir }}/{{ wildfly_archive }}
+  local_action: get_url force=yes url={{ wildfly_download_url }}/{{ wildfly_archive }} dest={{ wildfly_install_dir }}/{{ wildfly_archive }}
   become: False
   run_once: True
 
@@ -19,5 +19,10 @@
   template: >
     src=wildfly.sh.j2
     dest=/etc/profile.d/wildfly.sh
-    mode=644
+    mode=755
+- name: Set database details in {{wildfly_home}}/standalone/configuration/standalone.xml
+  template: >
+    src=standalone.xml.j2
+    dest={{wildfly_home}}/standalone/configuration/standalone.xml
+    mode=755
 

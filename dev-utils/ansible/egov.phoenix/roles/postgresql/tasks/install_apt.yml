@@ -41,7 +41,22 @@
     state: latest
   with_items:
     - python-psycopg2
+    - libpq-dev
   tags:
     - postgresql
     - db
     - deps
+
+- name: ensure database is created
+  become: yes
+  become_user: postgres
+  postgresql_db: name={{postgresql_dbname}} owner={{postgresql_dbuser}}
+- name: ensure user has access to database
+  become: yes
+  become_user: postgres
+  postgresql_user: db={{postgresql_dbname}} name={{postgresql_dbuser}} password={{postgresql_dbpasswd}} priv=ALL
+- name: create psql schema generic.
+  become: yes
+  become_user: postgres
+  command: psql -d {{postgresql_dbname}} -c "CREATE SCHEMA IF NOT EXISTS generic AUTHORIZATION {{postgresql_dbuser}}; ALTER USER {{postgresql_dbuser}} SET search_path TO generic, public;"
+    
