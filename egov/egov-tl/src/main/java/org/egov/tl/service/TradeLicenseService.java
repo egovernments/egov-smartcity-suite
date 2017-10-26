@@ -96,6 +96,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -121,6 +122,7 @@ import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
@@ -296,6 +298,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", amtPaid);
 
+        List<Assignment> commissionerAssignments = assignmentService.findPrimaryAssignmentForDesignationName(COMMISSIONER_DESGN);
+        if (!commissionerAssignments.isEmpty()) {
+            User commissioner = commissionerAssignments.get(0).getEmployee();
+            ByteArrayInputStream commissionerSign = new ByteArrayInputStream(
+                    commissioner.getSignature() == null ? new byte[0] : commissioner.getSignature());
+            reportParams.put("commissionerSign", commissionerSign);
+        }
         if (isProvisional)
             reportParams.put("certificateType", "provisional");
         else {

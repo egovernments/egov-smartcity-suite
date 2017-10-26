@@ -49,7 +49,7 @@
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="192"/>
+	<property name="ireport.y" value="158"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
@@ -69,14 +69,18 @@
 	<parameter name="certificateType" class="java.lang.String"/>
 	<parameter name="appType" class="java.lang.String"/>
 	<parameter name="qrCode" class="java.io.File"/>
+	<parameter name="commissionerSign" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="currentDate" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="category" class="java.lang.String"/>
 	<background>
-		<band height="780" splitType="Stretch">
+		<band height="802">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="775" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+				<reportElement x="0" y="0" width="555" height="802" uuid="113c06ab-af78-4c8c-8872-6fe284a565af"/>
+				<graphicElement>
+					<pen lineWidth="1.25"/>
+				</graphicElement>
 			</rectangle>
 		</band>
 	</background>
@@ -187,10 +191,13 @@
 				<textFieldExpression><![CDATA["2. License Fee Rs: "+$P{demandTotalamt}+"/- is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}+".\n\n"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="165"/>
-		<band height="126">
+		<band/>
+		<band/>
+	</detail>
+	<lastPageFooter>
+		<band height="151">
 			<staticText>
-				<reportElement x="352" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
+				<reportElement x="343" y="41" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -198,7 +205,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="12" y="34" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="40" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -212,7 +219,7 @@
 				<text><![CDATA[Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="58" y="34" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
+				<reportElement stretchType="RelativeToTallestObject" x="49" y="40" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -225,10 +232,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
-			<image scaleImage="RetainShape" isUsingCache="true" onErrorType="Blank">
-				<reportElement mode="Transparent" x="277" y="56" width="260" height="70" uuid="2b22371f-417f-42af-bb21-16b7dca8a245"/>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="138" y="63" width="260" height="70" uuid="2b22371f-417f-42af-bb21-16b7dca8a245"/>
 				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
 			</image>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="343" y="6" width="194" height="32" uuid="739ec1f9-740e-4b0c-b848-183308ff8ddf"/>
+				<imageExpression><![CDATA[$P{commissionerSign}]]></imageExpression>
+			</image>
 		</band>
-	</detail>
+	</lastPageFooter>
+	<summary>
+		<band/>
+	</summary>
 </jasperReport>
