@@ -528,11 +528,10 @@ public class PtDemandHibernateDao implements PtDemandDao {
                     .createQuery(
                             "from  Ptdemand egptDem left join fetch egptDem.egDemandDetails dd left join fetch dd.egDemandReason dr "
                                     + "where egptDem.egptProperty =:property "
-                                    + "and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) ");
+                                    + "and (egptDem.egInstallmentMaster.fromDate <= :fromYear and egptDem.egInstallmentMaster.toDate >=:toYear) and egptDem.isHistory='N' ");
             qry.setEntity(PROPERTY, property);
             qry.setDate("fromYear", currentFinancialYear.getStartingDate());
             qry.setDate("toYear", currentFinancialYear.getStartingDate());
-
             final List<Ptdemand> ptDemandResult = qry.list();
             if (ptDemandResult != null && ptDemandResult.size() > 0)
                 egptPtdemand = ptDemandResult.get(0);

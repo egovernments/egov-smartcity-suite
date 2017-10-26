@@ -96,7 +96,8 @@ public class BulkBoundaryResultAdaptor implements DataTableJsonAdapter<PropertyM
 			jsonObject.addProperty("assessmentNumber", bulkBoundaryResultObj.getPropertyId());
 			jsonObject.addProperty("doorNo", bulkBoundaryResultObj.getHouseNo());
 			jsonObject.addProperty("ownerName", bulkBoundaryResultObj.getOwnerName());
-			jsonObject.addProperty("zone", bulkBoundaryResultObj.getZone().getName());
+			jsonObject.addProperty("zone",
+					bulkBoundaryResultObj.getZone() != null ? bulkBoundaryResultObj.getZone().getName() : "NA");
 			jsonObject.addProperty("selectedlocality", bulkBoundaryResultObj.getLocality().getId());
 			jsonObject.addProperty("selectedblock", bulkBoundaryResultObj.getBlock().getId());
 			jsonObject.addProperty("selectedrevward", bulkBoundaryResultObj.getWard().getId());

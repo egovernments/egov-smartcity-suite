@@ -384,58 +384,79 @@
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalDmdTax()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalDmdTax() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalDmdTax()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalDmdPnlty()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalDmdPnlty() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalDmdPnlty()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalLpayPnlty()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalLpayPnlty() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalLpayPnlty()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalColTax()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalColTax() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalColTax()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalColPnlty()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalColPnlty() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalColPnlty()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalColLpayPnlty()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalColLpayPnlty() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalColLpayPnlty()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalRebate()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalRebate() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalRebate()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
@@ -566,10 +587,13 @@
 
 									<td class="blueborderfortd">
 										<div align="right">
-											<span class="bold"> <s:text name="format.money">
-													<s:param value="dcbReport.getTotalBalance()" />
-												</s:text>
-											</span>
+											<s:if test="%{dcbReport.getTotalRebate() != null}">
+												<span class="bold"> <s:text name="format.money">
+														<s:param value="dcbReport.getTotalBalance()" />
+													</s:text>
+												</span>
+											</s:if>
+											<s:else><span class="bold">0</s:else>
 										</div>
 									</td>
 									<td class="blueborderfortd">
