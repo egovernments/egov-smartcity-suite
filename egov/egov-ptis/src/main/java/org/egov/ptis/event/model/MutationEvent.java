@@ -40,6 +40,8 @@
 
 package org.egov.ptis.event.model;
 
+import java.math.BigInteger;
+
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.springframework.context.ApplicationEvent;
 
@@ -57,6 +59,7 @@ public class MutationEvent extends ApplicationEvent {
 
     private final PropertyMutation propertyMutation;
 
+    private BigInteger random;
     private String cityCode;
     private String districtCode;
     private String propertyType;
@@ -164,6 +167,14 @@ public class MutationEvent extends ApplicationEvent {
 
     public void setDoorNumber(final String doorNumber) {
         this.doorNumber = doorNumber;
+    }
+
+    public BigInteger getRandom() {
+        return random;
+    }
+
+    public void setRandom(BigInteger random) {
+        this.random = random;
     }
 
 }

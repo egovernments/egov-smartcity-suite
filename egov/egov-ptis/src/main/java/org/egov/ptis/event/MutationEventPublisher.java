@@ -42,6 +42,9 @@ package org.egov.ptis.event;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 
+import java.math.BigInteger;
+import java.util.Random;
+
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.event.model.MutationEvent;
@@ -69,13 +72,14 @@ public class MutationEventPublisher {
         event.setAadharNumber(basicProperty.getAadharNumber());
         event.setMobileNumber(basicProperty.getMobileNumber());
         event.setSurveyNumber(basicProperty.getActiveProperty().getPropertyDetail().getSurveyNumber());
-        //Hard coded values to be removed once get the clarification
+        // Hard coded values to be removed once get the clarification
         event.setDistrictCode("510");
         event.setCityCode("251744");
         event.setWard("15");
         event.setBlock("12");
         event.setDoorNumber(basicProperty.getAddress().getHouseNoBldgApt());
         event.setLayoutNumber(basicProperty.getActiveProperty().getPropertyDetail().getLayoutPermitNo());
+        event.setRandom(new BigInteger(32, new Random()));
         applicationEventPublisher.publishEvent(event);
     }
 }
