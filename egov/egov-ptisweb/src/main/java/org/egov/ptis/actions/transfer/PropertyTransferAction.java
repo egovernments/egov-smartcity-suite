@@ -565,6 +565,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             propertyTaxUtil.makeTheEgBillAsHistory(basicproperty);
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
+        if (propertyTaxCommonUtils.isMuadIntegrationRequired()) {
+            mutationEventPublisher.publishEvent(propertyMutation);
+        }
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature for the property : ");
         return ACK;
