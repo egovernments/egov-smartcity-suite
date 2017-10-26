@@ -42,6 +42,7 @@ package org.egov.ptis.service.utils;
 import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_MAUD_INTEGRATION_REQUIRED;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
@@ -308,6 +309,12 @@ public class PropertyTaxCommonUtils {
     public boolean isDigitalSignatureEnabled() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 APPCONFIG_DIGITAL_SIGNATURE);
+        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
+    }
+    
+    public boolean isMuadIntegrationRequired() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                APPCONFIG_MAUD_INTEGRATION_REQUIRED);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
 

@@ -1547,6 +1547,7 @@ public interface PropertyTaxConstants {
     public static final String REVISIONPETITION_STATUS_CODE = "RP";
 
     public static final String APPCONFIG_DIGITAL_SIGNATURE = "PTIS_DIGITAL_SIGNATURE_REQUIRED";
+    public static final String APPCONFIG_MAUD_INTEGRATION_REQUIRED = "PTIS_MAUD_INTEGRATION_REQUIRED";
     
     public static final String APPCONFIG_CLIENT_SPECIFIC_DMD_BILL = "IS_CLIENT_SPECIFIC_DEMANDBILL";
  

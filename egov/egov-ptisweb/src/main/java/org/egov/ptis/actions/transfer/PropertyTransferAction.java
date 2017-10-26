@@ -138,6 +138,7 @@ import org.egov.ptis.domain.service.notice.NoticeService;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.domain.service.transfer.PropertyTransferService;
+import org.egov.ptis.event.MutationEventPublisher;
 import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.joda.time.DateTime;
@@ -222,6 +223,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     
     @Autowired
     private ReassignService reassignmentservice;
+    
+    @Autowired
+    private MutationEventPublisher mutationEventPublisher;
 
     // Model and View data
     private Long mutationId;
@@ -374,6 +378,9 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
+        if (propertyTaxCommonUtils.isMuadIntegrationRequired()) {
+            mutationEventPublisher.publishEvent(propertyMutation);
+        }
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" with assessment number : ");
 
