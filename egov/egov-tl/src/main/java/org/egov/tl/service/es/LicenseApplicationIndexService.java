@@ -63,6 +63,7 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
@@ -110,7 +111,7 @@ public class LicenseApplicationIndexService {
                 .withStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue())
                 .withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
-                        user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY)
+                        user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA)
                 .withChannel(getChannel())
                 .withMobileNumber(license.getLicensee().getMobilePhoneNumber())
                 .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
@@ -142,7 +143,7 @@ public class LicenseApplicationIndexService {
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);
-        if (license.getIsActive() || (license.getEgwStatus()!=null && license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE))) {
+        if (license.getIsActive() || (license.getEgwStatus() != null && license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE))) {
             applicationIndex.setClosed(ClosureStatus.YES);
             applicationIndex.setApproved(ApprovalStatus.APPROVED);
         }
