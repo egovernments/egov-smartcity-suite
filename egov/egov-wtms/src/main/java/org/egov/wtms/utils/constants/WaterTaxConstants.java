@@ -400,4 +400,5 @@ public class WaterTaxConstants {
     public static final String REASSIGNMENT = "REASSIGNMENT";
     public static final String SOURCECHANNEL_ONLINE = "ONLINE";
     public static final String CITIZENPORTAL = "CITIZENPORTAL";
+    public static final String SURVEY = "Survey";
 }

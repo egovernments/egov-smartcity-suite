@@ -51,6 +51,7 @@ import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.entity.PropertyPipeSize;
+import org.egov.wtms.masters.entity.WaterChargesDetailInfo;
 import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.service.ApplicationTypeService;
@@ -185,7 +186,7 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateChangOfUsageWaterConnectionDetails(final WaterConnectionInfo connectionInfo)
+    public ErrorDetails validateChangOfUsageWaterConnectionDetails(final WaterChargesDetailInfo connectionInfo)
             throws IOException {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
@@ -202,7 +203,7 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
     
-    public ErrorDetails validateCombinationOfChangOfUsage(final WaterConnectionInfo connectionInfo)
+    public ErrorDetails validateCombinationOfChangOfUsage(final WaterChargesDetailInfo connectionInfo)
             throws IOException {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
@@ -223,4 +224,40 @@ public class RestWaterConnectionValidationService {
 
         return errorDetails;
     }
+    
+    public ErrorDetails validateRequest(final WaterChargesDetailInfo connectionInfo) {
+        ErrorDetails errorDetails = null;
+        if (connectionInfo.getPropertyType() != null) {
+            final WaterPropertyUsage usageTypesList = waterPropertyUsageService.findByPropertyTypecodeAndUsageTypecode(
+                    connectionInfo.getPropertyType(), connectionInfo.getUsageType());
+
+            if (usageTypesList == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID);
+                return errorDetails;
+            }
+            final PropertyPipeSize pipeSizeList = propertyPipeSizeService.findByPropertyTypecodeAndPipeSizecode(
+                    connectionInfo.getPropertyType(), connectionInfo.getPipeSize());
+            if (pipeSizeList == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID);
+                return errorDetails;
+            }
+
+            final PropertyCategory categoryTypes = propertyCategoryService
+                    .getAllCategoryTypesByPropertyTypeAndCategory(connectionInfo.getPropertyType(),
+                            connectionInfo.getCategory());
+
+            if (categoryTypes == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID);
+                return errorDetails;
+            }
+        }
+        return errorDetails;
+    }
+
 }
