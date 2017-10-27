@@ -114,9 +114,12 @@
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				Rs.
+				<s:if test='%{viewMap.ARV != null}'>
 				<s:text name="format.money">
 					<s:param value="viewMap.ARV" />
 				</s:text>
+				</s:if>
+				<s:else>0</s:else>
 			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="effectivedt" />
