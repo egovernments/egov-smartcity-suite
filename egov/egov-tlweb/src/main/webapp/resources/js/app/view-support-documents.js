@@ -64,53 +64,60 @@ $(document).ready(function () {
                     for (var i = 0, len = applicationTypes.length; i < len; i++) {
                         var applicationType = applicationTypes[i];
                         var documentDetails = Object.keys(data[applicationType]);
-                        $.each(documentDetails, function (j) {
-                            var documentTypeName = documentDetails[j];
-                            var licenseDocument = data[applicationType][documentTypeName];
-                            var table = $("<table/>");
-                            var files = [];
-                            for (var fileIndex = 0; fileIndex < licenseDocument.length; fileIndex++) {
-                                files = files.concat(licenseDocument[fileIndex].files);
-                            }
-                            if(files !="") {
-                                docTable = table.DataTable({
-                                    destroy: true,
-                                    sort: false,
-                                    filter: false,
-                                    searching: false,
-                                    responsive: true,
-                                    data: files,
-                                    columns: [
-                                        {
-                                            "data": function (row) {
-                                                return {fileName: row.fileName, fileStoreId: row.fileStoreId};
-                                            },
-                                            "sTitle": "File Name",
-                                            "render": function (data, type, row) {
-                                                if (data) {
-                                                    return '<a href="javascript:void(0);" onclick="viewDocument(\''
-                                                        + data.fileStoreId
-                                                        + '\');">'
-                                                        + data.fileName + '</a>';
-                                                }
-                                                else return "NA";
-                                            },
-                                        }, {
-                                            "data": "createdDate",
-                                            "sTitle": "Uploaded Date",
-                                            "render": function (data) {
-                                                var date = new Date(data);
-                                                var month = date.getMonth() + 1;
-                                                return date.getDate() + "/" + (month.length > 1 ? month : "0" + month) + "/" + date.getFullYear();
-                                            }
-                                        }
-                                    ]
-                                });
+                        var table = $("<table/>");
+                        if (documentDetails.length > 0) {
+                            $.each(documentDetails, function (j) {
+                                var documentTypeName = documentDetails[j];
+                                var licenseDocument = data[applicationType][documentTypeName];
 
-                                $("#" + applicationType.toLowerCase() + "Tbl").append("<strong><h4 div class='panel-heading'>" +
-                                    "<div class='panel-title aqua-background'>" + documentTypeName + "</div></h4></strong>").append(table).append("<br/>");
-                            }
-                        });
+                                var files = [];
+                                for (var fileIndex = 0; fileIndex < licenseDocument.length; fileIndex++) {
+                                    files = files.concat(licenseDocument[fileIndex].files);
+                                }
+                                if (files != "") {
+                                    docTable = table.DataTable({
+                                        destroy: true,
+                                        sort: false,
+                                        filter: false,
+                                        searching: false,
+                                        responsive: true,
+                                        data: files,
+                                        columns: [
+                                            {
+                                                "data": function (row) {
+                                                    return {fileName: row.fileName, fileStoreId: row.fileStoreId};
+                                                },
+                                                "sTitle": "File Name",
+                                                "render": function (data, type, row) {
+                                                    if (data) {
+                                                        return '<a href="javascript:void(0);" onclick="viewDocument(\''
+                                                            + data.fileStoreId
+                                                            + '\');">'
+                                                            + data.fileName + '</a>';
+                                                    }
+                                                    else return "NA";
+                                                },
+                                            }, {
+                                                "data": "createdDate",
+                                                "sTitle": "Uploaded Date",
+                                                "render": function (data) {
+                                                    var date = new Date(data);
+                                                    var month = date.getMonth() + 1;
+                                                    return date.getDate() + "/" + (month.length > 1 ? month : "0" + month) + "/" + date.getFullYear();
+                                                }
+                                            }
+                                        ]
+                                    });
+
+                                    $("#" + applicationType.toLowerCase() + "Tbl").append("<strong><h4 div class='panel-heading'>" +
+                                        "<div class='panel-title aqua-background'>" + documentTypeName + "</div></h4></strong>").append(table).append("<br/>");
+                                }
+
+                            });
+                        }
+                        else {
+                            $("#" + applicationType.toLowerCase() + "Tbl").append("<strong><h4 div class='align-center'><span>No documents are attached</span></h4></strong>");
+                        }
                     }
                 }
             });

@@ -198,6 +198,4 @@
     </table>
 </s:if>
 </br></br>
-<s:if test="%{transitionInprogress()}">
-    <%@ include file='license-workflow-history.jsp' %>
-</s:if>
+<%@ include file='license-workflow-history.jsp' %>
