@@ -114,7 +114,7 @@ public class GenericComplaintAjaxController {
     @ResponseBody
     public boolean isCrnRequired(@RequestParam Long receivingCenterId) {
         ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
-        return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
+        return receivingCenter == null || receivingCenter.isCrnRequired();
     }
 
     @GetMapping(value = {"/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
@@ -126,6 +126,7 @@ public class GenericComplaintAjaxController {
         crossHierarchyService
                 .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration", "%" + locationName + "%")
                 .stream()
+                .filter(ch -> ch.getParent().isActive() && ch.getChild().isActive())
                 .forEach(location ->
                         locationJSONData.append("{\"name\":\"")
                                 .append(location.getChild().getName()).append(" - ").append(location.getParent().getName())
@@ -148,11 +149,11 @@ public class GenericComplaintAjaxController {
         employeeViewService
                 .getEmployeeByNameOrCodeOrPositionLike(likePositionName, likePositionName, likePositionName, new Date())
                 .stream()
-                .forEach(position ->
+                .forEach(employee ->
                         positionUser.append("{\"name\":\"")
-                                .append(position.getPosition().getName()).append('-')
-                                .append(position.getName()).append('-').append(position.getCode())
-                                .append("\",\"id\":").append(position.getPosition().getId()).append("},")
+                                .append(employee.getPosition().getName()).append('-')
+                                .append(employee.getName()).append('-').append(employee.getCode())
+                                .append("\",\"id\":").append(employee.getPosition().getId()).append("},")
                 );
         if (positionUser.lastIndexOf(",") != -1)
             positionUser.deleteCharAt(positionUser.lastIndexOf(","));
@@ -164,7 +165,7 @@ public class GenericComplaintAjaxController {
     @GetMapping(value = {"/complaint/router/boundaries-by-type", "/complaint/escalation/boundaries-by-type"},
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Boundary> getBoundariesbyType(@RequestParam String boundaryName,
+    public List<Boundary> getBoundariesByType(@RequestParam String boundaryName,
                                               @RequestParam Long boundaryTypeId) {
         return boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc("%" + boundaryName + "%", boundaryTypeId);
     }
