@@ -157,7 +157,7 @@ $('#bankId').blur(function(){
 			});
 			}
 	});
-$('#monthlyRenumeration').keyup(function(e) { // validate two decimal points
+/*$('#monthlyRenumeration').keyup(function(e) { // validate two decimal points
 	var regex = /^\d+(\.\d{0,2})?$/g;
 	if (!regex.test(this.value)) {
 		$(this).val($(this).getNum());
@@ -174,7 +174,20 @@ jQuery.fn.getNum = function() {
 		num = '';
 	}
 	return num;
-}
+}*/
+
+$("#monthlyRenumeration").on("keyup", function(){  // validate 7 digits and two decimal points
+    var valid = /^\d{0,7}(\.\d{0,2})?$/.test(this.value),
+        val = this.value;
+    
+    if(!valid){
+        console.log("Invalid input!");
+        this.value = val.substring(0, val.length - 1);
+    }
+});
+
+
+
 function checkPanNumber() {
 	var text =document.getElementById('panNumber').value;
 	var panNumber = document.getElementById('panNumber').value.length;

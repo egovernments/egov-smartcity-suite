@@ -173,7 +173,7 @@
 						<form:input path="monthlyRenumeration" maxlength="10"
 							id="monthlyRenumeration"
 							class="form-control patternvalidation" 
-							data-pattern="decimalvalues" required="required"  pattern="\d{0,5}(\.\d{1,2})?" title="It will allow upto 5 digits and 2 decimal points"  data-first-option="false&true"/>
+							data-pattern="decimalvalues" required="required"  pattern="\d{0,6}(\.\d{1,2})?" title="It will allow upto 7 digits and 2 decimal points"  data-first-option="false&true"/>
 						<form:errors path="monthlyRenumeration" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
