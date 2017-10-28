@@ -71,21 +71,17 @@ var tableContainer;
     		if( validateEmail($('#ct-email').val())) { 
     			var urlStr="";
             	if($('#currentLoggedUser').val()=='anonymous'){
-            		//bootbox.alert(" citizen");
                		urlStr="/pgr/complaint/citizen/anonymous/search";
             	}
             	else{
             		urlStr="/pgr/complaint/search";
             	}
             	
-        	//	$.post("/pgr/complaint/citizen/anonymous/search", $('#searchComplaintForm').serialize())
             	$.post(urlStr,$('#searchComplaintForm').serialize())
             	.done(function (searchResult) {
-        			console.log(JSON.stringify(searchResult));
-        			
+
         			tableContainer1 = $('#complaintSearchResults').dataTable({
         				destroy:true,
-        				//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
         				"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
         				"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         				"autoWidth": false,
@@ -130,7 +126,6 @@ var tableContainer;
     
    tableContainer = $("#csearch").dataTable({
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
 		"oTableTools": {
@@ -138,14 +133,9 @@ var tableContainer;
 			"aButtons": ["copy", "csv", "xls", "pdf", "print"]
 		}
 	});
-	
-	/*tableContainer.columnFilter({
-		"sPlaceHolder": "head:after"
-	});*/
-	
+
 	$("#complaintSearchResults").on('click','tbody tr',function(event) {
 		
-		//bootbox.alert(tableContainer1.fnGetData(this,0));
 		var crn=tableContainer1.fnGetData(this,0);
 		var currentOwner=tableContainer1.fnGetData(this,7);
 		var currentStatus=tableContainer1.fnGetData(this,4);
@@ -216,15 +206,7 @@ var tableContainer;
 		
         return quarter;
 	}
-	
-	/*$(".checkdate").focus(function () {
-		
-        $(".checkdate").change(function () {
-			console.log("custom dates");
-		//	$("select#when_date").prop('selectedIndex', 4);
-		});
-		
-	});*/
+
 	
 	$("form").submit(function(event){
 		if($("select#when_date option:selected").index() == 0){
@@ -280,7 +262,6 @@ var tableContainer;
 	
 	$("#department").dataTable({
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
 		"oTableTools": {
@@ -313,7 +294,6 @@ var tableContainer;
 	
     $("#agingtable").dataTable({
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
 		"oTableTools": {
@@ -339,7 +319,6 @@ var tableContainer;
     
     $("#complaintgrouptable").dataTable({
 		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
-		//"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-6 col-md-3 col-left'i><'col-xs-6 col-md-3 text-right col-left'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-xs-12 col-md-3 col-right'p>>",
 		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
 		"autoWidth": false,
 		"oTableTools": {
