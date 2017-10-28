@@ -158,10 +158,10 @@ public class ComplaintService {
             complaint.setPriority(configurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
-        complaintIndexService.createComplaintIndex(complaint);
         if (securityUtils.currentUserIsCitizen())
             citizenComplaintDataPublisher.onRegistration(complaint);
         complaintNotificationService.sendRegistrationMessage(complaint);
+        complaintIndexService.createComplaintIndex(complaint);
         return complaint;
     }
 
@@ -174,9 +174,9 @@ public class ComplaintService {
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         complaintRepository.saveAndFlush(complaint);
         complaintEventPublisher.publishEvent(complaint);
-        complaintIndexService.updateComplaintIndex(complaint);
         citizenComplaintDataPublisher.onUpdation(complaint);
         complaintNotificationService.sendUpdateMessage(complaint);
+        complaintIndexService.updateComplaintIndex(complaint);
         return complaint;
     }
 
