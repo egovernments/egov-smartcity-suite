@@ -75,8 +75,8 @@ public class MutationEventPublisher {
         // Hard coded values to be removed once get the clarification
         event.setDistrictCode("510");
         event.setCityCode("251744");
-        event.setWard("15");
-        event.setBlock("12");
+        event.setWard(String.valueOf(basicProperty.getPropertyID().getWard().getBoundaryNum()));
+        event.setBlock(String.valueOf(basicProperty.getPropertyID().getArea().getBoundaryNum()));
         event.setDoorNumber(basicProperty.getAddress().getHouseNoBldgApt());
         event.setLayoutNumber(basicProperty.getActiveProperty().getPropertyDetail().getLayoutPermitNo());
         event.setRandom(new BigInteger(32, new Random()));
