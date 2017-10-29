@@ -73,6 +73,8 @@ import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
+import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
@@ -512,7 +514,7 @@ public class License extends StateAware {
     }
 
     public boolean canCollectFee() {
-        return !isPaid() && !isRejected() && (isAcknowledged() || isApproved());
+        return !isPaid() && !isRejected() && !CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask()) && (isAcknowledged() || isApproved());
     }
 
     public boolean isStatusActive() {
@@ -586,6 +588,7 @@ public class License extends StateAware {
     }
 
     public boolean canCollectLicenseFee() {
-        return !isPaid() && !isRejected();
+        return this.isNewWorkflow() != null && this.isNewWorkflow() && !CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask()) &&
+                (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
     }
 }

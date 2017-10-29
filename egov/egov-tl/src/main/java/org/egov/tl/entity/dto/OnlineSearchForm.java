@@ -77,7 +77,7 @@ public class OnlineSearchForm {
         setArrDmd(dmdColl[0]);
         setCurrDmd(dmdColl[1]);
         setTotColl(dmdColl[2]);
-        if (!CLOSURE_LIC_APPTYPE.equals(license.getLicenseAppType().getName()) && license.canCollectFee())
+        if (license.canCollectLicenseFee() || license.canCollectFee())
             actions.add("Payment");
         if (license.getIsActive())
             actions.add("View DCB");

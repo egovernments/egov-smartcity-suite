@@ -194,7 +194,7 @@ public final class Constants {
     public static final String RENEWLICENSEREJECT = "RENEWLICENSEREJECT";
     public static final String GENERATE_PROVISIONAL_CERTIFICATE = "Generate Provisional Certificate";
     public static final String REPORT_PAGE = "report";
-
+    public static final String STATUS_COLLECTIONPENDING="COLLECTIONPENDING";
     static {
 
         OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN);

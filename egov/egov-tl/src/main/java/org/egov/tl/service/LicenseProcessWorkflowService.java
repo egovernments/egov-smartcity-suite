@@ -96,6 +96,8 @@ import static org.egov.tl.utils.Constants.NEWLICENSE;
 import static org.egov.tl.utils.Constants.RENEWLICENSE;
 import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
+import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
+
 /**
  * Created by jayashree on 7/9/17.
  */
@@ -206,8 +208,11 @@ public class LicenseProcessWorkflowService {
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(tradeLicense.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(owner)
-                    .withNextAction(workFlowMatrix.getNextAction()).withExtraInfo(licenseStateInfo);
-            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
+                    .withNextAction(BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) ? workFlowMatrix.getNextAction() : StringUtils.EMPTY).withExtraInfo(licenseStateInfo);
+            if (BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()) && tradeLicense.isCollectionPending())
+                tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_COLLECTIONPENDING));
+            else
+                tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
         }
 
     }
@@ -257,12 +262,13 @@ public class LicenseProcessWorkflowService {
         if (!StringUtils.isEmpty(tradeLicense.getState().getExtraInfo())) {
             WorkFlowMatrix workFlowMatrix = workFlowMatrixService.getWorkFlowObjectbyId(Long.valueOf(licenseStateInfo.getWfMatrixRef()));
             if (workFlowMatrix != null)
-                if (licenseUtils.isDigitalSignEnabled() || tradeLicense.isCollectionPending() == null)
+                if (licenseUtils.isDigitalSignEnabled() || tradeLicense.isCollectionPending() == null) {
                     tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                             .withComments(workFlowMatrix.getNextState()).withNatureOfTask(natureOfWork)
                             .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate())
                             .withNextAction(workFlowMatrix.getNextAction());
-                else {
+                    tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_UNDERWORKFLOW));
+                } else {
                     tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                             .withComments(workFlowMatrix.getNextState()).withStateValue(workFlowMatrix.getNextState())
                             .withDateInfo(currentDate.toDate());
