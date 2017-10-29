@@ -1,0 +1,10 @@
+ALTER TABLE eg_boundary ADD COLUMN code VARCHAR(25);
+ALTER TABLE eg_boundary_type ADD COLUMN code VARCHAR(25);
+ALTER TABLE eg_hierarchy_type DROP column code;
+ALTER TABLE eg_hierarchy_type ADD COLUMN code VARCHAR(25);
+UPDATE eg_boundary SET code=LPAD(id::text,5,'0');
+UPDATE eg_boundary_type SET code=LPAD(id::text,5,'0');
+UPDATE eg_hierarchy_type SET code=LPAD(id::text,5,'0');
+ALTER TABLE eg_boundary ADD CONSTRAINT unq_boundary_code UNIQUE(code);
+ALTER TABLE eg_boundary_type ADD CONSTRAINT unq_boundary_type_code UNIQUE(code);
+ALTER TABLE eg_hierarchy_type ADD CONSTRAINT unq_hierarchy_type_code UNIQUE(code);

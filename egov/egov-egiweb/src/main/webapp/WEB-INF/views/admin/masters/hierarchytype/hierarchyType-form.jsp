@@ -44,56 +44,56 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <div class="row" id="page-content">
-	<div class="col-md-12">
-				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-                </c:if>
-		<form:form  method ="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeForm" >
-			<div class="panel panel-primary" data-collapsed="0">
-				<div class="panel-heading">
-					<div class="panel-title">
-						<strong><spring:message code="lbl.hdr.createHierarchyType"/></strong>
-					</div>
-				</div> 
-				
-				<div class="panel-body custom-form">
-					<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.hierarchyType.name"/><span class="mandatory"></span>
-						</label>
-						<div class="col-sm-6">
-							<form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
+    <div class="col-md-12">
+        <c:if test="${not empty message}">
+            <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+        </c:if>
+        <form:form method="post" action="create" class="form-horizontal form-groups-bordered" modelAttribute="hierarchyType" id="hierarchyTypeForm">
+            <div class="panel panel-primary" data-collapsed="0">
+                <div class="panel-heading">
+                    <div class="panel-title">
+                        <strong><spring:message code="lbl.hdr.createHierarchyType"/></strong>
+                    </div>
+                </div>
+
+                <div class="panel-body custom-form">
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.hierarchyType.name"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6">
+                            <form:input path="name" id="name" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.hierarchyType.code"/><span class="mandatory"></span>
-						</label>
-						<div class="col-sm-6">
-							<form:input path="code" id="code" type="text" class="form-control low-width is_valid_alphabet" placeholder="" autocomplete="off" required="required"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.hierarchyType.code"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6">
+                            <form:input path="code" id="code" type="text" class="form-control low-width patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off" required="required" maxlength="25"/>
                             <form:errors path="code" cssClass="add-margin error-msg"/>
-						</div>
-					</div>	
-					<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.hierarchyType.localName"/>
-						</label>
-						<div class="col-sm-6">
-							<form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.hierarchyType.localName"/>
+                        </label>
+                        <div class="col-sm-6">
+                            <form:input path="localName" id="localName" type="text" class="form-control low-width is_valid_alphanumeric" placeholder="" autocomplete="off"/>
                             <form:errors path="localName" cssClass="add-margin error-msg"/>
-						</div>
-					</div>						
-				</div>
-			</div>
-			<div class="row">
-				<div class="text-center">
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
-			        <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-				</div>
-			</div>
-		</form:form>
-			</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary"><spring:message code="lbl.submit"/></button>
+                    <button type="reset" class="btn btn-default"><spring:message code="lbl.reset"/></button>
+                    <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
+                </div>
+            </div>
+        </form:form>
+    </div>
 </div>
 <script src="<cdn:url  value='/resources/js/app/hierarchytype.js?rnd=${app_release_no}'/>"></script>

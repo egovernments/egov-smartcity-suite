@@ -76,7 +76,7 @@ public class HierarchyType extends AbstractAuditable {
     private String name;
 
     @NotBlank
-    @Length(max = 50)
+    @Length(max = 25)
     @SafeHtml
     private String code;
 

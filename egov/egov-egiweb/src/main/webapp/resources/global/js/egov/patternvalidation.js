@@ -100,6 +100,9 @@ var regexp_numerichyphen = /[^0-9-]/g ;
 //This will allow you to enter alphabets and numbers with space, hyphen(-) and slash(/) and brackets. data-pattern="specialName";
 var regexp_special_name = /[^a-zA-Z0-9 ()/-]/g ;
 
+//Master data code pattern. data-pattern="masterCode";
+var regexp_code = /[^a-zA-Z0-9_-]/g ;
+
 function patternvalidation(){
 	
 	jQuery('.patternvalidation').on("input", function(){
@@ -112,6 +115,13 @@ function patternvalidation(){
 	});
 	
 }
+
+function masterCode(obj){
+    if(jQuery(obj).val().match(regexp_code)){
+        jQuery(obj).val( jQuery(obj).val().replace(regexp_code,'') );
+    }
+}
+
 
 function alphabets(obj){
     if(jQuery(obj).val().match(regexp_alphabets)){

@@ -72,14 +72,25 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryType"/><span class="mandatory"></span></label>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.name"/><span class="mandatory"></span>
+                        </label>
                         <div class="col-sm-6">
                             <form:input path="name" id="name" type="text" class="form-control low-width" placeholder="" autocomplete="off" required="required"/>
                             <form:errors path="name" cssClass="add-margin error-msg"/>
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label"><spring:message code="lbl.boundaryType.boundaryTypeLocal"/></label>
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.code"/><span class="mandatory"></span>
+                        </label>
+                        <div class="col-sm-6">
+                            <form:input path="code" id="code" type="text" class="form-control low-width patternvalidation" data-pattern="masterCode" placeholder="" autocomplete="off" required="required"  maxlength="25"/>
+                            <form:errors path="code" cssClass="add-margin error-msg"/>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label"><spring:message code="lbl.local.name"/></label>
                         <div class="col-sm-6">
                             <form:input path="localName" id="localName" type="text" class="form-control low-width" placeholder="" autocomplete="off"/>
                             <form:errors path="localName" cssClass="add-margin error-msg"/>

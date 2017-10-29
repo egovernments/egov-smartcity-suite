@@ -78,7 +78,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    <spring:message code="lbl.boundary.name"/>
+                                    <spring:message code="lbl.name"/>
                                 </label>
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <strong><c:out value="${boundary.name}"/></strong>
@@ -87,7 +87,15 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    <spring:message code="lbl.boundary.nameLocal"/>
+                                    <spring:message code="lbl.code"/>
+                                </label>
+                                <div class="col-sm-6" style="padding-top: 7px">
+                                    <strong><c:out value="${boundary.code}"/></strong>
+                                </div>
+                            </div>
+                            <div class="form-group">
+                                <label class="col-sm-3 control-label">
+                                    <spring:message code="lbl.local.name"/>
                                 </label>
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <strong><c:out value="${boundary.localName}" default="NA"/></strong>
@@ -111,7 +119,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    <spring:message code="lbl.boundary.fromDate"/>
+                                    <spring:message code="lbl.fromDate"/>
                                 </label>
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <fmt:formatDate value="${boundary.fromDate}" pattern="dd/MM/yyyy" var="fromDate"/>
@@ -120,7 +128,7 @@
                             </div>
                             <div class="form-group">
                                 <label class="col-sm-3 control-label">
-                                    <spring:message code="lbl.boundary.toDate"/>
+                                    <spring:message code="lbl.toDate"/>
                                 </label>
                                 <div class="col-sm-6" style="padding-top: 7px">
                                     <fmt:formatDate value="${boundary.toDate}" pattern="dd/MM/yyyy" var="toDate"/>

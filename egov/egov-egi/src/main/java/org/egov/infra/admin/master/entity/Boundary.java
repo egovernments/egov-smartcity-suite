@@ -46,6 +46,7 @@ import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.FetchMode;
 import org.hibernate.validator.constraints.Length;
@@ -73,6 +74,7 @@ import static org.egov.infra.admin.master.entity.Boundary.SEQ_BOUNDARY;
 
 @Entity
 @CompositeUnique(fields = {"boundaryNum", "boundaryType"}, enableDfltMsg = true)
+@Unique(fields = "code", enableDfltMsg = true)
 @Table(name = "EG_BOUNDARY")
 @NamedQuery(name = "Boundary.findBoundariesByBoundaryType",
         query = "select b from Boundary b where b.boundaryType.id = :boundaryTypeId")
@@ -90,6 +92,11 @@ public class Boundary extends AbstractAuditable {
     @SafeHtml
     @NotBlank
     private String name;
+
+    @Length(max = 25)
+    @SafeHtml
+    @NotBlank
+    private String code;
 
     private Long boundaryNum;
 
@@ -167,8 +174,15 @@ public class Boundary extends AbstractAuditable {
     }
 
     public void setName(final String name) {
-
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(final String code) {
+        this.code = code;
     }
 
     public boolean isLeaf() {

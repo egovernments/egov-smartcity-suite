@@ -43,6 +43,8 @@ package org.egov.infra.admin.master.entity;
 import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -62,6 +64,7 @@ import static org.egov.infra.admin.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
 
 @Entity
 @Table(name = "EG_BOUNDARY_TYPE")
+@Unique(fields = "code", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_BOUNDARY_TYPE, sequenceName = SEQ_BOUNDARY_TYPE, allocationSize = 1)
 public class BoundaryType extends AbstractAuditable {
 
@@ -75,6 +78,11 @@ public class BoundaryType extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     private String name;
+
+    @NotBlank
+    @Length(max = 25)
+    @SafeHtml
+    private String code;
 
     @ManyToOne
     @NotNull
@@ -112,6 +120,14 @@ public class BoundaryType extends AbstractAuditable {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public HierarchyType getHierarchyType() {
