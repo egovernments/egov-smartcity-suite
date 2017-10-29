@@ -63,7 +63,8 @@ import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterPropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
-
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
 import java.io.IOException;
 
 @RestController
@@ -203,27 +204,39 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
     
-    public ErrorDetails validateCombinationOfChangOfUsage(final WaterChargesDetailInfo connectionInfo)
-            throws IOException {
-        String responseMessage = "";
-        ErrorDetails errorDetails = null;
-        final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
-                .findByConsumerCodeAndConnectionStatus(connectionInfo.getConsumerCode(), ConnectionStatus.ACTIVE);
-        if(connectionUnderChange.getCategory().getCode().equals(connectionInfo.getCategory()) &&
-                connectionUnderChange.getUsageType().getCode().equals(connectionInfo.getUsageType()) &&
-                connectionUnderChange.getPropertyType().getCode().equals(connectionInfo.getPropertyType()) &&
-                connectionUnderChange.getPipeSize().getCode().equals(connectionInfo.getPipeSize())&&
-                connectionUnderChange.getConnectionType().name().equals(connectionInfo.getConnectionType())){
-        responseMessage = "Please modify at least one mandatory field";
-        }
-        if (responseMessage != "" && responseMessage != null) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorMessage(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION);
-            errorDetails.setErrorCode(responseMessage);
-        }
+	public ErrorDetails validateCombinationOfChangOfUsage(final WaterChargesDetailInfo connectionInfo) {
+		String responseMessage = "";
+		ErrorDetails errorDetails = null;
+		final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
+				.findByConsumerCodeAndConnectionStatus(connectionInfo.getConsumerCode(), ConnectionStatus.ACTIVE);
+		if (isBlank(connectionInfo.getPropertyID()))
+			connectionInfo.setPropertyID(connectionUnderChange.getConnection().getPropertyIdentifier());
+		if (isBlank(connectionInfo.getWaterSource()))
+			connectionInfo.setWaterSource(connectionUnderChange.getWaterSource().getCode());
+		if (isBlank(connectionInfo.getConnectionType()))
+			connectionInfo.setConnectionType(connectionUnderChange.getConnectionType().toString());
+		if (isBlank(connectionInfo.getPropertyType()))
+			connectionInfo.setPropertyType(connectionUnderChange.getPropertyType().getCode());
+		if (isBlank(connectionInfo.getCategory()))
+			connectionInfo.setCategory(connectionUnderChange.getCategory().getCode());
+		if (isBlank(connectionInfo.getPipeSize()))
+			connectionInfo.setPipeSize(connectionUnderChange.getPipeSize().getCode());
 
-        return errorDetails;
-    }
+		if (connectionUnderChange.getCategory().getCode().equals(connectionInfo.getCategory())
+				&& connectionUnderChange.getUsageType().getCode().equals(connectionInfo.getUsageType())
+				&& connectionUnderChange.getPropertyType().getCode().equals(connectionInfo.getPropertyType())
+				&& connectionUnderChange.getPipeSize().getCode().equals(connectionInfo.getPipeSize())
+				&& connectionUnderChange.getConnectionType().name().equals(connectionInfo.getConnectionType())) {
+			responseMessage = "Please modify at least one mandatory field";
+		}
+		if (isNotBlank(responseMessage)) {
+			errorDetails = new ErrorDetails();
+			errorDetails.setErrorMessage(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION);
+			errorDetails.setErrorCode(responseMessage);
+		}
+
+		return errorDetails;
+	}
     
     public ErrorDetails validateRequest(final WaterChargesDetailInfo connectionInfo) {
         ErrorDetails errorDetails = null;
