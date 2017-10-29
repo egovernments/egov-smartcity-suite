@@ -47,7 +47,7 @@
 
 package org.egov.pgr.report.repository;
 
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
 import org.egov.pgr.report.entity.view.DrilldownReportView;
 

@@ -45,7 +45,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.wtms.application.entity.UsageSlabSearchRequest;
 import org.egov.wtms.masters.entity.UsageSlab;
 import org.egov.wtms.masters.repository.UsageSlabRepository;

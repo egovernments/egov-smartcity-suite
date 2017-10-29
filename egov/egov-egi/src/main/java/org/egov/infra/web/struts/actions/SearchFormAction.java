@@ -46,7 +46,7 @@ import org.displaytag.tags.TableTagParameters;
 import org.displaytag.util.ParamEncoder;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuery;
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 
 /**
  * Generic Search Form Action. Can be extended by any action class that intends to provide 

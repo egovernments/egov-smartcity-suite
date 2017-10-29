@@ -59,7 +59,7 @@ import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeServiceOld;

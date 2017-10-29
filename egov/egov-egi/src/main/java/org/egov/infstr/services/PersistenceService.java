@@ -43,6 +43,7 @@ package org.egov.infstr.services;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.BaseModel;
@@ -73,12 +74,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+/**
+ * Old persistence service
+ * @deprecated use Repositories
+ **/
 @Transactional(readOnly = true)
+@Deprecated
 public class PersistenceService<T, ID extends Serializable> {
     private static final Logger LOG = LoggerFactory.getLogger(PersistenceService.class);
+
     @PersistenceContext
-    EntityManager entityManager;
+    protected EntityManager entityManager;
+
     private Class<T> type;
+
     @Autowired
     @Qualifier("entityValidator")
     private LocalValidatorFactoryBean entityValidator;
@@ -103,7 +112,7 @@ public class PersistenceService<T, ID extends Serializable> {
 
     public List<ValidationError> validateModel(final T model) {
         LOG.debug("Validating Model");
-        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        final List<ValidationError> errors = new ArrayList<>();
         if (model == null) {
             errors.add(new ValidationError("", "model.null"));
             return errors;

@@ -49,7 +49,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.model.PersonalInformation;
 import org.hibernate.Criteria;

@@ -48,6 +48,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+/**
+ * Old base entity class
+ *
+ * @deprecated
+ **/
+@Deprecated
 public class BaseModel implements Serializable {
 
     private static final long serialVersionUID = 1L;
@@ -102,7 +108,7 @@ public class BaseModel implements Serializable {
     }
 
     public List<ValidationError> validate() {
-        return new ArrayList<ValidationError>();
+        return new ArrayList<>();
     }
 
     @Override

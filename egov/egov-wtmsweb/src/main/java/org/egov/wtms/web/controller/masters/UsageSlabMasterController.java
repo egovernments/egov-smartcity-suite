@@ -44,7 +44,7 @@ import static org.springframework.web.bind.annotation.RequestMethod.GET;
 import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.wtms.application.entity.UsageSlabSearchRequest;
 import org.egov.wtms.masters.entity.UsageSlab;
 import org.egov.wtms.masters.entity.UsageSlabJsonAdapter;

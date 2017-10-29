@@ -42,7 +42,7 @@ package org.egov.infra.web.utils;
 
 import org.displaytag.pagination.PaginatedList;
 import org.displaytag.properties.SortOrderEnum;
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 
 import java.util.List;
 

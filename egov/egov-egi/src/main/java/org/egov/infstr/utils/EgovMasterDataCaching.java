@@ -65,6 +65,9 @@ import java.util.Map;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 
+/**
+ * @deprecated no longer supported
+ * */
 @Deprecated
 public class EgovMasterDataCaching {
     private static final Logger LOGGER = LoggerFactory.getLogger(EgovMasterDataCaching.class);

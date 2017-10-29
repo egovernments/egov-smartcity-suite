@@ -41,7 +41,10 @@
 package org.egov.infstr.utils;
 
 import java.io.Serializable;
-
+/**
+ * @deprecated no longer supported
+ * */
+@Deprecated
 public class LabelValueBean implements Serializable {
 
 	private static final long serialVersionUID = 1L;

@@ -60,7 +60,7 @@ public class DataTable<T> {
         this(draw, pages.getTotalElements(), pages.getNumber(), pages.getTotalElements(), pages.getContent());
     }
 
-    public DataTable(org.egov.infstr.services.Page<T> pages, long draw) {
+    public DataTable(org.egov.infra.persistence.utils.Page<T> pages, long draw) {
         this(draw, pages.getRecordTotal(), pages.getPageSize(), pages.getRecordTotal(), pages.getList());
     }
 

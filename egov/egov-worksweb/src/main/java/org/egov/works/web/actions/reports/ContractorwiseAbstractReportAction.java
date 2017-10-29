@@ -60,7 +60,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infstr.search.SearchQuerySQL;
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.pims.service.PersonalInformationService;
 import org.egov.works.services.WorkProgressAbstractReportService;

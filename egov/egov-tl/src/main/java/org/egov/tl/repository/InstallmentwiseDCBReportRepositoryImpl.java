@@ -47,7 +47,7 @@
 
 package org.egov.tl.repository;
 
-import org.egov.infstr.services.Page;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.springframework.data.domain.Sort.Direction;

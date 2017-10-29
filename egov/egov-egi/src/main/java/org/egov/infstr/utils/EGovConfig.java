@@ -54,6 +54,9 @@ import java.util.Properties;
 /**
  * The Class EGovConfig. Used to read the values from properties file and XMl configuration files
  * @author Manu Srivastava
+ *
+ * @deprecated no longer supported
+ *
  */
 @Deprecated
 public final class EGovConfig {
