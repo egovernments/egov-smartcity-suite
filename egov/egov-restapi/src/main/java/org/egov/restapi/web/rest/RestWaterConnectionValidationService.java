@@ -39,6 +39,9 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.constants.RestApiConstants;
 import org.egov.restapi.model.WaterConnectionInfo;
@@ -54,30 +57,14 @@ import org.egov.wtms.masters.entity.PropertyPipeSize;
 import org.egov.wtms.masters.entity.WaterChargesDetailInfo;
 import org.egov.wtms.masters.entity.WaterPropertyUsage;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.egov.wtms.masters.service.ApplicationTypeService;
-import org.egov.wtms.masters.service.ConnectionCategoryService;
-import org.egov.wtms.masters.service.PipeSizeService;
 import org.egov.wtms.masters.service.PropertyCategoryService;
 import org.egov.wtms.masters.service.PropertyPipeSizeService;
-import org.egov.wtms.masters.service.UsageTypeService;
 import org.egov.wtms.masters.service.WaterPropertyUsageService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RestController;
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import java.io.IOException;
 
 @RestController
 public class RestWaterConnectionValidationService {
-
-    @Autowired
-    private ApplicationTypeService applicationTypeService;
-
-    @Autowired
-    private PipeSizeService pipeSizeService;
-
-    @Autowired
-    private UsageTypeService usageTypeService;
     
     @Autowired
     private WaterPropertyUsageService waterPropertyUsageService;
@@ -93,9 +80,6 @@ public class RestWaterConnectionValidationService {
 
     @Autowired
     private AdditionalConnectionService additionalConnectionService;
-    
-    @Autowired
-    private ConnectionCategoryService connectionCategoryService;
     
     @Autowired
     private PropertyCategoryService propertyCategoryService;
@@ -141,7 +125,7 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validatePropertyID(final String propertyid) throws IOException {
+    public ErrorDetails validatePropertyID(final String propertyid) {
         ErrorDetails errorDetails = null;
         final String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(propertyid);
         if (errorMessage != null && !errorMessage.equals("")) {
@@ -153,14 +137,14 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateWaterConnectionDetails(final WaterConnectionInfo connectionInfo) throws IOException {
+    public ErrorDetails validateWaterConnectionDetails(final WaterConnectionInfo connectionInfo) {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
         responseMessage = newConnectionService.checkValidPropertyAssessmentNumber(connectionInfo.getPropertyID());
         if (responseMessage.isEmpty()) {
             final String responseMessagedet = newConnectionService.checkConnectionPresentForProperty(connectionInfo
                     .getPropertyID());
-            if (responseMessagedet != "" && responseMessagedet != null) {
+            if (isNotBlank(responseMessagedet)) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorMessage(RestApiConstants.PROPERTYID_IS_VALID_CONNECTION);
                 errorDetails.setErrorCode(RestApiConstants.PROPERTYID_IS_VALID_CONNECTION_CODE);
@@ -169,8 +153,7 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateAdditionalWaterConnectionDetails(final WaterConnectionInfo connectionInfo)
-            throws IOException {
+    public ErrorDetails validateAdditionalWaterConnectionDetails(final WaterConnectionInfo connectionInfo) {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
         final WaterConnection connection = waterConnectionService.findByConsumerCode(connectionInfo.getConsumerCode());
@@ -178,7 +161,7 @@ public class RestWaterConnectionValidationService {
                 .getParentConnectionDetails(connection.getPropertyIdentifier(), ConnectionStatus.ACTIVE);
         responseMessage = additionalConnectionService.validateAdditionalConnection(parentConnectionDetails);
 
-        if (responseMessage != "" && responseMessage != null) {
+        if (isNotBlank(responseMessage)) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorMessage(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION);
             errorDetails.setErrorCode(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION_CODE);
@@ -187,15 +170,14 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateChangOfUsageWaterConnectionDetails(final WaterChargesDetailInfo connectionInfo)
-            throws IOException {
+    public ErrorDetails validateChangOfUsageWaterConnectionDetails(final WaterChargesDetailInfo connectionInfo) {
         String responseMessage = "";
         ErrorDetails errorDetails = null;
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(connectionInfo.getConsumerCode(), ConnectionStatus.ACTIVE);
         responseMessage = changeOfUseService.validateChangeOfUseConnection(connectionUnderChange);
 
-        if (responseMessage != "" && responseMessage != null) {
+        if (isNotBlank(responseMessage)) {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorMessage(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION);
             errorDetails.setErrorCode(RestApiConstants.CONSUMERCODE_IS_NOT_VALID_CONNECTION_CODE);
