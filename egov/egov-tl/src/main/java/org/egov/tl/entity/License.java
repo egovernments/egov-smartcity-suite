@@ -504,8 +504,6 @@ public class License extends StateAware {
     }
 
     public boolean isApproved() {
-
-
         return hasState() && WF_STATE_COMMISSIONER_APPROVED_STR.equals(getState().getValue());
     }
 
@@ -514,7 +512,11 @@ public class License extends StateAware {
     }
 
     public boolean canCollectFee() {
-        return !isPaid() && !isRejected() && !CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask()) && (isAcknowledged() || isApproved());
+        return !isPaid() && !isRejected() && !isNatureOfTaskClosure() && (isAcknowledged() || isApproved());
+    }
+
+    private boolean isNatureOfTaskClosure() {
+        return this.hasState() && CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask());
     }
 
     public boolean isStatusActive() {
@@ -588,7 +590,7 @@ public class License extends StateAware {
     }
 
     public boolean canCollectLicenseFee() {
-        return this.isNewWorkflow() != null && this.isNewWorkflow() && !CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask()) &&
+        return this.isNewWorkflow() != null && this.isNewWorkflow() && !isNatureOfTaskClosure() &&
                 (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
     }
 }
