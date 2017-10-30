@@ -66,7 +66,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -115,6 +114,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.validation.regex.Constants.EMAIL;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
@@ -275,17 +278,16 @@ public class ComplaintController extends ApiController {
                 if (complaintRequest.containsKey(COMPLAINANT_NAME) &&
                         complaintRequest.containsKey(COMPLAINANT_MOBILE_NO)) {
 
-                    if (org.apache.commons.lang.StringUtils.isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
-                            || org.apache.commons.lang.StringUtils
-                            .isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
+                    if (isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
+                            || isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
                         return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
 
                     complaint.getComplainant().setName(complaintRequest.get(COMPLAINANT_NAME).toString());
                     complaint.getComplainant().setMobile(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString());
 
                     if (complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
-                        final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString();
-                        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$"))
+                        final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString().trim();
+                        if (!email.matches(EMAIL))
                             return getResponseHandler().error(getMessage("msg.invalid.mail"));
                         complaint.getComplainant().setEmail(email);
                     }
@@ -296,15 +298,15 @@ public class ComplaintController extends ApiController {
                     final User currentUser = securityUtils.getCurrentUser();
                     complaint.getComplainant().setName(currentUser.getName());
                     complaint.getComplainant().setMobile(currentUser.getMobileNumber());
-                    if (!org.apache.commons.lang.StringUtils.isEmpty(currentUser.getEmailId()))
-                        complaint.getComplainant().setEmail(currentUser.getEmailId());
+                    if (!isEmpty(currentUser.getEmailId()))
+                        complaint.getComplainant().setEmail(currentUser.getEmailId().trim());
                 } else
                     return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
 
             if (!complaintRequest.containsKey(COMPLAINT_TYPE_ID))
                 return getResponseHandler().error(getMessage("msg.complaint.type.required"));
 
-            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || StringUtils.isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
+            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
                 return getResponseHandler().error(getMessage("msg.complaint.desc.required"));
             else if (complaintRequest.get(COMPLAINT_DETAILS).toString().length() < 10)
                 return getResponseHandler().error(getMessage("msg.complaint.desc.min.required"));
@@ -343,7 +345,7 @@ public class ComplaintController extends ApiController {
 
             String priorityCode = "NORMAL";
 
-            if (complaintRequest.get(receivingModeKey) != null && StringUtils.isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
+            if (complaintRequest.get(receivingModeKey) != null && isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
                 String receivingModeVal = complaintRequest.get(receivingModeKey).toString();
                 receivingMode = receivingModeService.getReceivingModeByCode(receivingModeVal);
                 if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal)) {
@@ -583,7 +585,7 @@ public class ComplaintController extends ApiController {
 
             Page<Complaint> pagelist = null;
             boolean hasNextPage = false;
-            if (org.apache.commons.lang.StringUtils.isEmpty(complaintStatus)
+            if (isEmpty(complaintStatus)
                     || complaintStatus.equals(PGRConstants.COMPLAINT_ALL)) {
                 pagelist = complaintService.getMyComplaint(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
@@ -727,7 +729,7 @@ public class ComplaintController extends ApiController {
             if ("COMPLETED".equals(complaint.getStatus().getName())) {
                 if (UNSATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.TWO.name();
-                else if (StringUtils.isBlank(citizenfeedback) || SATISFACTORY.equals(citizenfeedback))
+                else if (isBlank(citizenfeedback) || SATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.FIVE.name();
                 complaint.setCitizenFeedback(CitizenFeedback.valueOf(citizenfeedback));
             }
@@ -832,7 +834,7 @@ public class ComplaintController extends ApiController {
                 hasNextPage = true;
                 list.remove(pageSize);
             }
-            if (list != null) {
+            if (!list.isEmpty()) {
                 for (final StateAware stateAware : list)
                     inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
                 final ApiResponse res = ApiResponse.newInstance();
