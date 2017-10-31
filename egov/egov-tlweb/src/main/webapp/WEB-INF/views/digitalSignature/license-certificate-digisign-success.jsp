@@ -69,7 +69,7 @@
                     <div class="row">
                         <div class="text-center">
                             <c:if test='${fileStoreId != null && fileStoreId != ""}'>
-                                <button id="previewButn" class="btn btn-primary"><spring:message
+                                <button type="button" id="previewButn" class="btn btn-primary"><spring:message
                                         code="lbl.download"/></button>
                             </c:if>
                             <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message
@@ -77,6 +77,11 @@
                         </div>
                     </div>
                 </form:form>
+                <script>
+                    $('#previewButn').click(function () {
+                        location.href = "/tl/tradelicense/download/digisign-certificate?applnum=${applnum}&file=${fileStoreId}";
+                    });
+                </script>
             </div>
         </div>
     </div>

@@ -99,18 +99,17 @@ public class LicenseCertificateDigiSignController {
         return "digitalSignature-success";
     }
 
-    @GetMapping(value = "/download/digisign-certificate", produces = APPLICATION_PDF_VALUE)
+    @GetMapping("/download/digisign-certificate")
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file,
                                                                                 @RequestParam String applnum) {
-
         try {
             File signedFile = fileStoreService.fetch(file, Constants.FILESTORE_MODULECODE);
             byte[] bytes = FileUtils.readFileToByteArray(signedFile);
 
             return ResponseEntity.
                     ok().
-                    contentType(MediaType.parseMediaType("application/pdf")).
+                    contentType(MediaType.parseMediaType(APPLICATION_PDF_VALUE)).
                     cacheControl(CacheControl.noCache()).
                     contentLength(bytes.length).
                     header("content-disposition", "inline;filename=\"" + applnum + ".pdf\"").
