@@ -153,6 +153,6 @@ public class CityService {
     public void addToCityCache(String key, String value) {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs != null)
-            cityPrefs.put(key, value);
+            cityPrefCache.put(cityPrefCacheKey(), key, value);
     }
 }
