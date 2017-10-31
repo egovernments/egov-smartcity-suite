@@ -236,12 +236,12 @@ public class LicenseProcessWorkflowService {
 
     }
 
-    public WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense, WorkflowBean workflowBean) {
+    private WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense, WorkflowBean workflowBean) {
         WorkFlowMatrix wfmatrix;
         if (tradeLicense.hasState() && !tradeLicense.getState().isEnded()) {
             State state = tradeLicense.getState();
             wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), "ANY",
-                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState() != null ? workflowBean.getCurrentState() : state.getValue(), null, new Date(), workflowBean.getCurrentDesignation() != null ? workflowBean.getCurrentDesignation() : "%" + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
+                    null, workflowBean.getAdditionaRule(), state.getValue(), null, new Date(), "%" + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
         } else
             wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), "ANY",
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null, new Date(), null);

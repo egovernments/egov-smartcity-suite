@@ -69,8 +69,6 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
-import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
-import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.NEWLICENSE;
 import static org.egov.tl.utils.Constants.RENEWLICENSE;
 
@@ -190,9 +188,4 @@ public class LicenseApplicationService extends TradeLicenseService {
         licenseProcessWorkflowService.collectionWorkflowTransition(tradeLicense);
     }
 
-    public WorkFlowMatrix getWorkflowAPI(TradeLicense tradeLicense, WorkflowBean workflowBean) {
-        if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
-            workflowBean.setAdditionaRule(tradeLicense.isNewApplication() ? NEWLICENSEREJECT : RENEWLICENSEREJECT);
-        return licenseProcessWorkflowService.getWorkFlowMatrix(tradeLicense, workflowBean);
-    }
 }

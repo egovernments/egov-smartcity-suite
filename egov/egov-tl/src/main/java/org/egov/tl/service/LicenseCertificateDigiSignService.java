@@ -55,6 +55,7 @@ import org.egov.tl.entity.License;
 import org.egov.tl.repository.LicenseRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
@@ -82,6 +83,7 @@ public class LicenseCertificateDigiSignService {
     @Autowired
     private LicenseApplicationService licenseApplicationService;
 
+    @Transactional
     public void digitalSignTransition(List<String> applicationNumbers) {
         for (String applicationNumber : applicationNumbers) {
             License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
