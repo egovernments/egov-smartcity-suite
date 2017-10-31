@@ -75,12 +75,13 @@ public final class ApplicationConstant {
     public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
     public static final String CITY_LOGO_PATH_KEY = "logopath";
     public static final String CITY_LOGIN_URL = "%s/egi/login/secure";
+    public static final String CITY_LOGO_STATIC_URL = "%s/egi%s";
 
     public static final String CDN_ATTRIB_NAME = "cdn";
     public static final String APP_RELEASE_ATTRIB_NAME = "app_release_no";
 
-    public static final Character Y = Character.valueOf('Y');
-    public static final Character N = Character.valueOf('N');
+    public static final Character Y = 'Y';
+    public static final Character N = 'N';
 
     public static final String ES_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String DEFAULT_TIMEZONE = "IST";

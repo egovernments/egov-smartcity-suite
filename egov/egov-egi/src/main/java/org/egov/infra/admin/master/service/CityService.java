@@ -59,7 +59,7 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_PATH_KEY;
 
 @Service
 @Transactional(readOnly = true)
@@ -84,20 +84,20 @@ public class CityService {
     }
 
     @Transactional
-    public City updateCity(final City city) {
+    public City updateCity(City city) {
         redisTemplate.delete(cityPrefCacheKey());
         return cityRepository.save(city);
     }
 
-    public City getCityByURL(final String url) {
+    public City getCityByURL(String url) {
         return cityRepository.findByDomainURL(url);
     }
 
-    public City getCityByName(final String cityName) {
+    public City getCityByName(String cityName) {
         return cityRepository.findByName(cityName);
     }
 
-    public City getCityByCode(final String code) {
+    public City getCityByCode(String code) {
         return cityRepository.findByCode(code);
     }
 
@@ -105,7 +105,7 @@ public class CityService {
         return cityRepository.findAll();
     }
 
-    public void sentFeedBackMail(final String email, final String subject, final String message) {
+    public void sentFeedBackMail(String email, String subject, String message) {
         notificationService.sendEmail(email, subject, message);
     }
 
@@ -139,14 +139,20 @@ public class CityService {
     }
 
     public String getCityLogoPath() {
-        return (String) cityDataForKey(CITY_LOGO_KEY);
+        return (String) cityDataForKey(CITY_LOGO_PATH_KEY);
     }
 
     public String cityPrefCacheKey() {
         return String.format(CITY_PREFS_CK, ApplicationThreadLocals.getDomainName());
     }
 
-    public Object cityDataForKey(final String key) {
+    public Object cityDataForKey(String key) {
         return cityPrefCache.entries(cityPrefCacheKey()).get(key);
+    }
+
+    public void addToCityCache(String key, String value) {
+        Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
+        if (cityPrefs != null)
+            cityPrefs.put(key, value);
     }
 }

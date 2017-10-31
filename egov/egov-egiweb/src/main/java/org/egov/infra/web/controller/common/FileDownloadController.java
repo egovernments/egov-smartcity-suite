@@ -41,6 +41,7 @@
 package org.egov.infra.web.controller.common;
 
 import org.apache.commons.io.IOUtils;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.utils.ImageUtils;
@@ -49,28 +50,32 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
+import static java.lang.String.format;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_PATH_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_STATIC_URL;
 
 @Controller
 @RequestMapping("/downloadfile")
 public class FileDownloadController {
 
-    public static final String LOGO_IMAGE_PATH = "/resources/global/images/";
+    private static final String LOGO_IMAGE_PATH = "/resources/global/images/";
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
+
+    @Autowired
+    private CityService cityService;
 
     @RequestMapping
     public void download(@RequestParam String fileStoreId, @RequestParam String moduleName,
@@ -80,17 +85,20 @@ public class FileDownloadController {
     }
 
     @RequestMapping("/logo")
-    public String download(@RequestParam String fileStoreId, @RequestParam String moduleName, HttpSession session) throws IOException, ServletException {
-        String logoPath =  LOGO_IMAGE_PATH + fileStoreId + ImageUtils.JPG_EXTN;
-        Path logoRealPath = Paths.get(session.getServletContext().getRealPath(LOGO_IMAGE_PATH)+ File.separator + fileStoreId + ImageUtils.JPG_EXTN);
-        if (!Files.exists(logoRealPath)) {
-            String cityLogoKey = (String)session.getAttribute(CITY_LOGO_KEY);
-            if ( cityLogoKey != null && cityLogoKey.contains(fileStoreId)) {
+    public String download(@RequestParam String fileStoreId, @RequestParam String moduleName,
+                           HttpSession session) throws IOException {
+        String logoPath = new StringBuilder().append(LOGO_IMAGE_PATH).append(fileStoreId).append(ImageUtils.JPG_EXTN).toString();
+        Path logoRealPath = Paths.get(new StringBuilder().append(session.getServletContext().getRealPath(LOGO_IMAGE_PATH))
+                .append(File.separator).append(fileStoreId).append(ImageUtils.JPG_EXTN).toString());
+        if (!logoRealPath.toFile().exists()) {
+            String cityLogoKey = (String) session.getAttribute(CITY_LOGO_KEY);
+            if (cityLogoKey != null && cityLogoKey.contains(fileStoreId)) {
                 this.fileStoreUtils.copyFileToPath(logoRealPath, fileStoreId, moduleName);
             }
         }
         session.setAttribute(CITY_LOGO_PATH_KEY, logoPath);
-        return "forward:"+logoPath;
+        cityService.addToCityCache(CITY_LOGO_PATH_KEY, format(CITY_LOGO_STATIC_URL, getDomainURL(), logoPath));
+        return "forward:" + logoPath;
     }
 
     @RequestMapping("/gis")
