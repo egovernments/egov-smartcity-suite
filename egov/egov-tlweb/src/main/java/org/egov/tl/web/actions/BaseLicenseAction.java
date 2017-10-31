@@ -229,6 +229,11 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
             else
                 return MESSAGE;
         } else {
+            WorkFlowMatrix wfmatrix = licenseApplicationService.getWorkflowAPI((TradeLicense) license(), workflowBean);
+            if (!license().getCurrentState().getValue().equals(wfmatrix.getCurrentState())) {
+                addActionMessage(this.getText(WF_ITEM_PROCESSED));
+                return MESSAGE;
+            }
             if (GENERATE_PROVISIONAL_CERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 reportId = reportViewerUtil
                         .addReportToTempCache(tradeLicenseService.generateLicenseCertificate(license(), true));
@@ -269,7 +274,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         workflowBean.setWorkFlowAction(workFlowAction);
         workflowBean.setCurrentState(currentState);
         workflowBean.setAdditionaRule(additionalRule);
-        workflowBean.setCurrentDesignation(getCurrentDesignation());
+        workflowBean.setCurrentDesignation(currentDesignation);
     }
 
     @SkipValidation

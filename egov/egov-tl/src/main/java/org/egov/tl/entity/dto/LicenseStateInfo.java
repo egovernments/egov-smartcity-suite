@@ -1,8 +1,6 @@
 package org.egov.tl.entity.dto;
 
-/**
- * Created by jayashree on 10/10/17.
- */
+
 public class LicenseStateInfo {
     private Long wfMatrixRef;
     private Long rejectionPosition;
@@ -22,4 +20,5 @@ public class LicenseStateInfo {
     public void setRejectionPosition(Long rejectionPosition) {
         this.rejectionPosition = rejectionPosition;
     }
+
 }

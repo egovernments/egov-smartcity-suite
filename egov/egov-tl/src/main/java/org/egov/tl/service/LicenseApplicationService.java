@@ -49,6 +49,7 @@
 package org.egov.tl.service;
 
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.entity.TradeLicense;
@@ -68,10 +69,9 @@ import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
+import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
+import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 
-/**
- * Created by jayashree on 20/9/17.
- */
 @Service
 @Transactional(readOnly = true)
 public class LicenseApplicationService extends TradeLicenseService {
@@ -185,5 +185,11 @@ public class LicenseApplicationService extends TradeLicenseService {
     public void collectionTransition(TradeLicense tradeLicense) {
         licenseUtils.licenseStatusUpdate(tradeLicense, STATUS_UNDERWORKFLOW);
         licenseProcessWorkflowService.collectionWorkflowTransition(tradeLicense);
+    }
+
+    public WorkFlowMatrix getWorkflowAPI(TradeLicense tradeLicense, WorkflowBean workflowBean) {
+        if (BUTTONREJECT.equalsIgnoreCase(workflowBean.getWorkFlowAction()))
+            workflowBean.setAdditionaRule(tradeLicense.isNewApplication() ? NEWLICENSEREJECT : RENEWLICENSEREJECT);
+        return licenseProcessWorkflowService.getWorkFlowMatrix(tradeLicense, workflowBean);
     }
 }

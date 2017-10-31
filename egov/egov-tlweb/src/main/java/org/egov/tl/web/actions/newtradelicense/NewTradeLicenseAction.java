@@ -48,7 +48,6 @@
 package org.egov.tl.web.actions.newtradelicense;
 
 import java.io.IOException;
-import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -243,13 +242,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     @ValidationErrorPageExt(action = NEW, makeCall = true, toMethod = "prepareShowForApproval")
     @Action(value = "/newtradelicense/newTradeLicense-approve")
     public String approve() {
-        BigDecimal newTradeAreWt = tradeLicense.getTradeArea_weight();
-        Boundary locality = tradeLicense.getBoundary();
-        Boundary ward = tradeLicense.getParentBoundary();
-        tradeLicense = tradeLicenseService.getLicenseById((Long) getSession().get("model.id"));
-        tradeLicense.setBoundary(locality);
-        tradeLicense.setParentBoundary(ward);
-        tradeLicense.setTradeArea_weight(newTradeAreWt);
         if ("Submit".equals(workFlowAction) && mode.equalsIgnoreCase(VIEW)
                 && tradeLicense.getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR)
                 && !tradeLicense.isPaid() && !workFlowAction.equalsIgnoreCase(BUTTONREJECT)) {
@@ -396,4 +388,8 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         return MESSAGE;
     }
 
+    public void prepareApprove() {
+        tradeLicense.setId((Long) getSession().get("model.id"));
+        prepareNewForm();
+    }
 }
