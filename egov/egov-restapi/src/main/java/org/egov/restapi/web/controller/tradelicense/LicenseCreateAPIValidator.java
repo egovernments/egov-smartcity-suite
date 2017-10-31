@@ -93,9 +93,16 @@ public class LicenseCreateAPIValidator implements Validator {
         if (natureOfBusinessRepository.findOne(license.getNatureOfBusiness()) == null)
             errors.rejectValue("natureOfBusiness", "Invalid Nature Of Business", "Invalid Nature Of Business");
 
-        Long categoryId = licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()).getId();
-        List<LicenseSubCategory> subCategories = licenseSubCategoryRepository.findByCategoryIdOrderByNameAsc(categoryId);
+        Long categoryId = null;
+        if (license.getCategory() != null && license.getCategory().length() < 6)
+            categoryId = licenseCategoryRepository.findByCodeIgnoreCase(license.getCategory()).getId();
 
+        if (categoryId == null) {
+            errors.rejectValue("category", "Invalid Category", "Invalid Category");
+            return;
+        }
+
+        List<LicenseSubCategory> subCategories = licenseSubCategoryRepository.findByCategoryIdOrderByNameAsc(categoryId);
         if (!subCategories.stream().anyMatch(subCategory -> subCategory.getCode().equalsIgnoreCase(license.getSubCategory())))
             errors.rejectValue("subCategory", "Invalid SubCategory", "Invalid SubCategory");
 

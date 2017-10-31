@@ -98,6 +98,7 @@ public class LicenseCreateAPIService {
         licensee.setFatherOrSpouseName(license.getFatherOrSpouseName());
         licensee.setAddress(license.getLicenseeAddress());
         licensee.setEmailId(license.getEmailId());
+        tradeLicense.setNewWorkflow(true);
         tradeLicense.setLicensee(licensee);
         tradeLicense.setApplicationDate(new Date());
         tradeLicense.setAddress(license.getTradeAddress());
