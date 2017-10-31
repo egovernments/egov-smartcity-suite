@@ -105,10 +105,7 @@
 </div>
 
 <div class="row display-hide report-section">
-    <div class="col-md-12 table-header text-left">
-        <spring:message code="lbl.drill.report"/>
-        Report Details
-    </div>
+    <div class="col-md-12 table-header text-left"><spring:message code="lbl.drill.report"/></div>
     <div class="col-md-12 form-group report-table-container">
         <table
                 class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
