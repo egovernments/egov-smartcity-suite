@@ -55,6 +55,7 @@ import javax.persistence.PersistenceContext;
 
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingMOM;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.restapi.model.CouncilAgendaItems;
 import org.egov.restapi.model.CouncilMeetingDetails;
@@ -94,7 +95,7 @@ public class CouncilMeetingDetailService {
         final List<CouncilMeetingDetails> councilMeetingDetailsList = new ArrayList<>();
         for (final CouncilMeeting councilMeeting : councilMeetingList) {
             final CouncilMeetingDetails councilMeetingDetails = new CouncilMeetingDetails();
-            councilMeetingDetails.setMeetingDate(councilMeeting.getMeetingDate());
+            councilMeetingDetails.setMeetingDate(DateUtils.getDefaultFormattedDate(councilMeeting.getMeetingDate()));
             councilMeetingDetails.setMeetingNo(councilMeeting.getMeetingNumber());
             councilMeetingDetails.setMeetingPlace(councilMeeting.getMeetingLocation());
             councilMeetingDetails.setMeetingTime(councilMeeting.getMeetingTime());

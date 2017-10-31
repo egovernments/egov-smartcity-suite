@@ -53,7 +53,7 @@ public class CouncilMeetingDetails {
 
     private String meetingType;
     private String meetingNo;
-    private Date meetingDate;
+    private String meetingDate;
     private String meetingTime;
     private String meetingPlace;
     private List<CouncilAgendaItems> agendaItems;
@@ -74,11 +74,11 @@ public class CouncilMeetingDetails {
         this.meetingNo = meetingNo;
     }
 
-    public Date getMeetingDate() {
+    public String getMeetingDate() {
         return meetingDate;
     }
 
-    public void setMeetingDate(Date meetingDate) {
+    public void setMeetingDate(String meetingDate) {
         this.meetingDate = meetingDate;
     }
 
