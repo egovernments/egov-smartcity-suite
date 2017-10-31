@@ -40,6 +40,7 @@
 
 package org.egov.council.service.es;
 
+import static java.lang.Math.toIntExact;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_ADJOURNED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
 import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
@@ -58,11 +59,16 @@ import org.egov.council.repository.es.CouncilMeetingIndexRepository;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.aggregations.AggregationBuilders;
+import org.elasticsearch.search.aggregations.Aggregations;
+import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.elasticsearch.search.sort.FieldSortBuilder;
 import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
@@ -72,6 +78,14 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class CouncilMeetingIndexService {
+
+    private static final String COUNCILMEETING = "councilmeeting";
+
+    private static final String MEETING_NUMBER = "meetingNumber";
+
+    private static final String COMMITTEE_TYPE = "committeeType";
+
+    private static final String APPLICATION_COUNT = "application_count";
 
     @Autowired
     private CityService cityService;
@@ -148,17 +162,25 @@ public class CouncilMeetingIndexService {
                 .to(searchRequest.getTo()));
         }
         if (StringUtils.isNotBlank(searchRequest.getCommitteeType()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("committeeType", searchRequest.getCommitteeType()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(COMMITTEE_TYPE, searchRequest.getCommitteeType()));
         if (StringUtils.isNotBlank(searchRequest.getMeetingNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("meetingNumber", searchRequest.getMeetingNumber()));
-        final FieldSortBuilder sort = new FieldSortBuilder("committeeType").order(SortOrder.DESC);
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(MEETING_NUMBER, searchRequest.getMeetingNumber()));
+        final FieldSortBuilder sort = new FieldSortBuilder(COMMITTEE_TYPE).order(SortOrder.DESC);
         
         return getSearchResultByBoolQuery(boolQuery,sort);
     }
 
     public List<CouncilMeetingIndex> getSearchResultByBoolQuery(final BoolQueryBuilder boolQuery, final FieldSortBuilder sort) {
-        final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices("councilmeeting").withQuery(boolQuery)
-                .withSort(sort).build();
+        SearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .addAggregation(AggregationBuilders.count(APPLICATION_COUNT).field(MEETING_NUMBER))
+                .withIndices(COUNCILMEETING).withQuery(boolQuery).build();
+        final Aggregations applicationCountAggr = elasticsearchTemplate.query(searchQuery, SearchResponse::getAggregations);
+        final ValueCount aggr = applicationCountAggr.get(APPLICATION_COUNT);
+        searchQuery = new NativeSearchQueryBuilder().withIndices(COUNCILMEETING)
+                .withQuery(boolQuery)
+                .addAggregation(AggregationBuilders.count(APPLICATION_COUNT).field(MEETING_NUMBER)).withSort(sort)
+                .withPageable(new PageRequest(0, toIntExact(aggr.getValue() == 0 ? 1 : aggr.getValue())))
+                .build();
         return elasticsearchTemplate.queryForList(searchQuery, CouncilMeetingIndex.class);
     }
     
@@ -170,9 +192,9 @@ public class CouncilMeetingIndexService {
                 .to(searchRequest.getTo()));
         }
         if (StringUtils.isNotBlank(searchRequest.getCommitteeType()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("committeeType", searchRequest.getCommitteeType()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(COMMITTEE_TYPE, searchRequest.getCommitteeType()));
         if (StringUtils.isNotBlank(searchRequest.getMeetingNumber()))
-            boolQuery = boolQuery.filter(QueryBuilders.matchQuery("meetingNumber", searchRequest.getMeetingNumber()));
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(MEETING_NUMBER, searchRequest.getMeetingNumber()));
         
         return boolQuery;
     }
