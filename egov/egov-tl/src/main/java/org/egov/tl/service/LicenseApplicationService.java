@@ -71,6 +71,8 @@ import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
 import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
 import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
+import static org.egov.tl.utils.Constants.NEWLICENSE;
+import static org.egov.tl.utils.Constants.RENEWLICENSE;
 
 @Service
 @Transactional(readOnly = true)
@@ -175,6 +177,7 @@ public class LicenseApplicationService extends TradeLicenseService {
             License license = licenseRepository.findByApplicationNumber(applicationNumber);
             WorkflowBean workflowBean = new WorkflowBean();
             workflowBean.setWorkFlowAction(SIGNWORKFLOWACTION);
+            workflowBean.setAdditionaRule(license.isNewApplication() ? NEWLICENSE : RENEWLICENSE);
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
             licenseRepository.save(license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);
