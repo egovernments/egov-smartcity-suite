@@ -65,8 +65,8 @@
           <header>
             <nav class="navbar">
               <div class="col-md-6 col-sm-9 col-xs-12 left-section">
-                <span><img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" height="52px">
-                
+                <span>
+					<img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context="/egi"/>" height="60" class="homepage_logo">
                 </span>
                 <span class="corporation-name"><spring:message code="lbl.portalservices" /></span>
               </div>
