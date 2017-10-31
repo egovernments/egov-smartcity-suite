@@ -163,15 +163,21 @@
 								</div>
 							</div>
 						</c:if>
-				</c:if>
-				<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
-				<div class="row add-border">
-					<div class="col-xs-3 add-margin"><spring:message code="lbl.addconnection.reason" /></div>
-					<div class="col-xs-3 add-margin view-content">
-						<c:out value="${waterConnectionDetails.connectionReason}"/>
+					</c:if>
+					<div class="row add-border">
+						<c:if test="${waterConnectionDetails.connection.parentConnection.id!=null}">
+							<div class="col-xs-3 add-margin"><spring:message code="lbl.addconnection.reason" /></div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${waterConnectionDetails.connectionReason}"/>
+							</div>
+						</c:if>
+						<c:if test="${waterConnectionDetails.applicationType.code == 'CLOSINGCONNECTION' && waterConnectionDetails.closeConnectionType!=null}">
+							<div class="col-xs-3 add-margin"><spring:message code="lbl.closure.type" /></div>
+							<div class="col-xs-3 add-margin view-content">
+								<c:out value="${waterConnectionDetails.closeConnectionType=='P'?'PERMANENT':'TEMPORARY'}"/>
+							</div>
+						</c:if>
 					</div>
-				</div>
-				</c:if>
 				</div>
 			</div>
 		</div>					
