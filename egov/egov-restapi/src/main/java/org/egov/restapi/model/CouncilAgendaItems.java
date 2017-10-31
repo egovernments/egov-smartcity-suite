@@ -46,6 +46,8 @@
  */
 package org.egov.restapi.model;
 
+import java.math.BigDecimal;
+
 public class CouncilAgendaItems {
 
     private String serialNo;
@@ -56,6 +58,7 @@ public class CouncilAgendaItems {
     private String resolution;
     private String status;
     private String gistOfPreamble;
+    private BigDecimal sanctionAmount;
 
     public String getSerialNo() {
         return serialNo;
@@ -119,5 +122,13 @@ public class CouncilAgendaItems {
 
     public void setGistOfPreamble(String gistOfPreamble) {
         this.gistOfPreamble = gistOfPreamble;
+    }
+
+    public BigDecimal getSanctionAmount() {
+        return sanctionAmount;
+    }
+
+    public void setSanctionAmount(BigDecimal sanctionAmount) {
+        this.sanctionAmount = sanctionAmount;
     }
 }

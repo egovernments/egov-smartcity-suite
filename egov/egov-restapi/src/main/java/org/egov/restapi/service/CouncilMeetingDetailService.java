@@ -46,6 +46,7 @@
  */
 package org.egov.restapi.service;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -115,6 +116,8 @@ public class CouncilMeetingDetailService {
                                 : StringUtils.EMPTY);
                 councilAgendaItems.setStatus(meetingMOM.getResolutionStatus() != null ? meetingMOM.getResolutionStatus().getCode()
                         : StringUtils.EMPTY);
+                councilAgendaItems.setSanctionAmount(meetingMOM.getPreamble().getSanctionAmount() != null
+                        ? meetingMOM.getPreamble().getSanctionAmount() : BigDecimal.ZERO);
                 councilAgendaItemsList.add(councilAgendaItems);
 
             }
