@@ -171,7 +171,7 @@ public class SewerageDemandService {
      */
     public Installment getCurrentInstallment() {
         return installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), new Date());
+                moduleService.getModuleByName(MODULE_NAME), new Date());
 
     }
 
@@ -183,26 +183,26 @@ public class SewerageDemandService {
             calendar.setTime(currentInstlalment.getToDate());
             calendar.add(Calendar.DAY_OF_MONTH, 1);
             return installmentDao.getInsatllmentByModuleForGivenDate(
-                    moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), calendar.getTime());
+                    moduleService.getModuleByName(MODULE_NAME), calendar.getTime());
         }
         return null;
     }
 
     public Installment getInstallmentByDescription(final String description) {
         return installmentDao.getInsatllmentByModuleAndDescription(
-                moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), description);
+                moduleService.getModuleByName(MODULE_NAME), description);
 
     }
 
     public Installment getInsatllmentByModuleForGivenDate(final Date installmentDate) {
         return installmentDao.getInsatllmentByModuleForGivenDate(
-                moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), installmentDate);
+                moduleService.getModuleByName(MODULE_NAME), installmentDate);
 
     }
 
     public List<Installment> getPreviousInstallment(final Date curentInstalmentEndate) {
         return installmentDao.fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), curentInstalmentEndate, 1);
+                moduleService.getModuleByName(MODULE_NAME), curentInstalmentEndate, 1);
 
     }
 
@@ -1025,7 +1025,7 @@ public class SewerageDemandService {
     private List<Object> getDmdCollAmtInstallmentWiseUptoCurrentInstallmemt(final EgDemand egDemand,
             final SewerageApplicationDetails sewerageApplicationDetails) {
         Installment currInstallment = installmentDao.getInsatllmentByModuleAndDescription(
-                moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME),
+                moduleService.getModuleByName(MODULE_NAME),
                 sewerageApplicationDetails.getCurrentDemand().getEgInstallmentMaster().getDescription());
         final StringBuffer strBuf = new StringBuffer(2000);
         strBuf.append(
