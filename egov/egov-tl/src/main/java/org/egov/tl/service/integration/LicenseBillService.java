@@ -435,13 +435,14 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                     + rcptAccInfo.getCrAmount());
                     }
 
-                if (ld.getLicense().getState() != null)
-                    if (ld.getLicense().isNewWorkflow() != null && ld.getLicense().isNewWorkflow()) {
-                        if (ld.getLicense().isCollectionPending() != null)
-                            ld.getLicense().setCollectionPending(false);
-                        licenseApplicationService.collectionTransition((TradeLicense) ld.getLicense());
-                    } else
+                if (ld.getLicense().hasState())
+                    if (!ld.getLicense().isNewWorkflow())
                         updateWorkflowState(ld.getLicense());
+                    else {
+                        ld.getLicense().setCollectionPending(false);
+                        licenseApplicationService.collectionTransition((TradeLicense) ld.getLicense());
+                    }
+
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(ld.getLicense(), billReceipt.getTotalAmount());
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))

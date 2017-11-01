@@ -122,7 +122,7 @@
     <s:hidden id="workFlowDepartment" name="workFlowDepartment" value="%{workFlowDepartment}"/>
     <s:hidden id="pendingActions" name="pendingActions" value="%{pendingActions}"/>
     <s:hidden id="approverName" name="approverName"/>
-    <s:if test="%{newWorkflow== null}">
+    <s:if test="%{!isNewWorkflow()}">
         <s:hidden id="currentDesignation" name="currentDesignation" value=""/>
         <s:if test="%{getNextAction()!='Second level collection pending'}">
             <div class="panel-heading custom_form_panel_heading">

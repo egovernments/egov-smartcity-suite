@@ -182,7 +182,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         addNewDocuments();
         populateWorkflowBean();
         //TODO to be removed
-        if (license().isNewWorkflow() == null) {
+        if (!license().isNewWorkflow()) {
             licenseService().create(license, workflowBean);
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
             setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
@@ -208,7 +208,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         if (SIGNWORKFLOWACTION.equals(workFlowAction))
             return digitalSignRedirection();
         //TODO to be removed
-        if (license().isNewWorkflow() == null) {
+        if (!license().isNewWorkflow()) {
             tradeLicenseService.updateStatusInWorkFlowProgress((TradeLicense) license(), workFlowAction);
             if (!GENERATECERTIFICATE.equalsIgnoreCase(workflowBean.getWorkFlowAction())) {
                 WorkFlowMatrix wfmatrix = tradeLicenseService.getWorkFlowMatrixApi(license(), workflowBean);
@@ -281,7 +281,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String renew() {
         addNewDocuments();
         populateWorkflowBean();
-        if (license().isNewWorkflow() == null) {
+        if (!license().isNewWorkflow()) {
             licenseService().renew(license(), workflowBean);
             addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
             setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
@@ -387,7 +387,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     private void rejectActionMessage() {
         //TODO to be removed
-        if (license().isNewWorkflow() == null) {
+        if (!license().isNewWorkflow()) {
             User user = getInitiatorUserObj();
             if (user != null && (!UserType.EMPLOYEE.equals(user.getType()))) {
                 List<Assignment> assignments = assignmentService.getAssignmentsForPosition(license().getState().getInitiatorPosition().getId());

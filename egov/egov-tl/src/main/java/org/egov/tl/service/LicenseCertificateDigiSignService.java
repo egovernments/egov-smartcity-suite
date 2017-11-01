@@ -87,7 +87,7 @@ public class LicenseCertificateDigiSignService {
     public void digitalSignTransition(List<String> applicationNumbers) {
         for (String applicationNumber : applicationNumbers) {
             License license = tradeLicenseService.getLicenseByApplicationNumber(applicationNumber);
-            if (license.isNewWorkflow() == null)
+            if (!license.isNewWorkflow())
                 tradeLicenseService.digitalSignTransition(applicationNumber);
             else
                 licenseApplicationService.digitalSignature(applicationNumber);

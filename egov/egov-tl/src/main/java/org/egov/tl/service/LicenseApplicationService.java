@@ -49,7 +49,6 @@
 package org.egov.tl.service;
 
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.LicenseUtils;
 import org.egov.tl.entity.TradeLicense;
@@ -184,7 +183,6 @@ public class LicenseApplicationService extends TradeLicenseService {
     }
 
     public void collectionTransition(TradeLicense tradeLicense) {
-        licenseUtils.licenseStatusUpdate(tradeLicense, STATUS_UNDERWORKFLOW);
         licenseProcessWorkflowService.collectionWorkflowTransition(tradeLicense);
     }
 

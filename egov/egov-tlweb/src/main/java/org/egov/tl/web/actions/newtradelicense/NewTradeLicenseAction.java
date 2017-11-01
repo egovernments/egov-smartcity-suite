@@ -202,7 +202,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
                 .getLicenseAppType().getName().toUpperCase()));
         //TODO to be removed
-        if (license().isNewWorkflow() == null) {
+        if (!license().isNewWorkflow()) {
             if (license().getState().getValue().equals(WF_LICENSE_CREATED)
                     || license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR) && license()
                     .getEgwStatus().getCode().equals(APPLICATION_STATUS_SECONDCOLLECTION_CODE)) {
@@ -350,10 +350,10 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Override
     public String getAdditionalRule() {
-        if (tradeLicense.isNewWorkflow() != null && tradeLicense.isNewWorkflow()) {
+        if (tradeLicense.isNewWorkflow()) {
             if (!securityUtils.currentUserIsEmployee())
                 return RENEWAL_LIC_APPTYPE.equals(renewAppType) ? CSCOPERATORRENEWLICENSE : CSCOPERATORNEWLICENSE;
-            else if (license().isCollectionPending() != null && license().isCollectionPending())
+            else if (license().isCollectionPending())
                 return tradeLicense.isNewApplication() ? NEWLICENSECOLLECTION : RENEWLICENSECOLLECTION;
             else if (RENEWAL_LIC_APPTYPE.equals(renewAppType) || tradeLicense != null && tradeLicense.isReNewApplication())
                 return RENEWLICENSE;

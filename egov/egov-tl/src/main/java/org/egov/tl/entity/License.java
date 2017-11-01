@@ -232,9 +232,9 @@ public class License extends StateAware {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
 
-    private Boolean newWorkflow;
+    private boolean newWorkflow;
 
-    private Boolean collectionPending;
+    private boolean collectionPending;
 
     @Override
     public Long getId() {
@@ -569,19 +569,19 @@ public class License extends StateAware {
         return isLegacy() && !hasState();
     }
 
-    public Boolean isNewWorkflow() {
+    public boolean isNewWorkflow() {
         return newWorkflow;
     }
 
-    public void setNewWorkflow(Boolean newWorkflow) {
+    public void setNewWorkflow(boolean newWorkflow) {
         this.newWorkflow = newWorkflow;
     }
 
-    public Boolean isCollectionPending() {
+    public boolean isCollectionPending() {
         return collectionPending;
     }
 
-    public void setCollectionPending(Boolean collectionPending) {
+    public void setCollectionPending(boolean collectionPending) {
         this.collectionPending = collectionPending;
     }
 
@@ -590,7 +590,7 @@ public class License extends StateAware {
     }
 
     public boolean canCollectLicenseFee() {
-        return this.isNewWorkflow() != null && this.isNewWorkflow() && !isNatureOfTaskClosure() &&
+        return this.isNewWorkflow() && !isNatureOfTaskClosure() &&
                 (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
     }
 }

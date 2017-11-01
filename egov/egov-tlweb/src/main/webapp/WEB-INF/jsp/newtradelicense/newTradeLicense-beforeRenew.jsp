@@ -166,7 +166,7 @@
                         </div>
                     </div>
                 </div>
-                <s:if test="%{newWorkflow ==null}">
+                <s:if test="%{!isNewWorkflow()}">
                     <s:if test="%{status!='Active'}">
                         <div class="panel panel-primary" id="workflowDiv">
                             <%@ include file='../common/license-workflow-dropdown.jsp' %>

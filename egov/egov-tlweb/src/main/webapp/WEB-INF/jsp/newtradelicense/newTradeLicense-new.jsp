@@ -207,7 +207,7 @@
         function onSubmit() {
             var mode = $("#mode").val();
             var workflowaction = $("#workFlowAction").val();
-            <s:if test="%{newWorkflow==null}">
+            <s:if test="%{!isNewWorkflow()}">
             <s:if test="%{workflowaction != null && workflowaction == 'Generate Provisional Certificate'}">
             window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + $('#id').val(), 'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
             return false;
@@ -246,7 +246,7 @@
         function onBodyLoad() {
             var currentState = document.getElementById("currentWfstate").value;
             showHideAgreement();
-            <s:if test="%{newWorkflow==null}">
+            <s:if test="%{!isNewWorkflow()}">
             if (currentState == 'Second level fee collected') {
                 $("span").remove(".mandatory");
             }
@@ -401,7 +401,7 @@
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
                 <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
                 <s:hidden name="newWorkflow" id="newWorkflow"/>
-                <s:if test="%{newWorkflow ==null}">
+                <s:if test="%{!isNewWorkflow()}">
                     <s:if test="%{state==null}">
                         <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
                     </s:if>

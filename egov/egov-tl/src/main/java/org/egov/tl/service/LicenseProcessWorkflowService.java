@@ -97,7 +97,7 @@ import static org.egov.tl.utils.Constants.RENEWLICENSE;
 import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
 import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
-
+import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
 
 @Service
 @Transactional(readOnly = true)
@@ -160,12 +160,11 @@ public class LicenseProcessWorkflowService {
                     .withDateInfo(currentDate.toDate());
             tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
             tradeLicense.setActive(false);
-            tradeLicense.setNewWorkflow(null);
+            tradeLicense.setNewWorkflow(false);
         } else if (SIGNWORKFLOWACTION.equals(workflowBean.getWorkFlowAction())) {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withStateValue(workFlowMatrix.getCurrentState())
-                    .withDateInfo(currentDate.toDate()).withOwner(tradeLicense.getCurrentState().getOwnerPosition())
-                    .withNextAction(workFlowMatrix.getCurrentStatus());
+                    .withDateInfo(currentDate.toDate()).withNextAction(workFlowMatrix.getCurrentStatus());
             updateActiveStatus(tradeLicense);
         } else {
             Position owner = getCurrentPositionByWorkFlowBean(workflowBean, currentState);
@@ -255,7 +254,7 @@ public class LicenseProcessWorkflowService {
         if (!StringUtils.isEmpty(tradeLicense.getState().getExtraInfo())) {
             WorkFlowMatrix workFlowMatrix = workFlowMatrixService.getWorkFlowObjectbyId(Long.valueOf(licenseStateInfo.getWfMatrixRef()));
             if (workFlowMatrix != null) {
-                if (licenseUtils.isDigitalSignEnabled() || tradeLicense.isCollectionPending() == null) {
+                if (licenseUtils.isDigitalSignEnabled() || STATUS_ACKNOWLEDGED.equals(tradeLicense.getStatus().getStatusCode())) {
                     tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                             .withComments(workFlowMatrix.getNextState())
                             .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate())
@@ -276,7 +275,7 @@ public class LicenseProcessWorkflowService {
         tradeLicense.setActive(true);
         tradeLicense.setLegacy(false);
         validityService.applyLicenseValidity(tradeLicense);
-        tradeLicense.setNewWorkflow(null);
+        tradeLicense.setNewWorkflow(false);
     }
 
     public void getWfWithThirdPartyOp(final TradeLicense license, final WorkflowBean workflowBean) {
