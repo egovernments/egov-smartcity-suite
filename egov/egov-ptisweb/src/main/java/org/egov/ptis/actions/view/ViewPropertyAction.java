@@ -122,7 +122,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 		@Result(name = "viewApplication", location = "viewApplication-view.jsp") })
 public class ViewPropertyAction extends BaseFormAction {
 
-    private static final long serialVersionUID = 4609817011534083012L;
+    private static final String DOCUMENTDATE = "documentdate";
+	private static final String DOCUMENTNO = "documentno";
+	private static final long serialVersionUID = 4609817011534083012L;
     private static final Logger LOGGER = Logger.getLogger(ViewPropertyAction.class);
     private String propertyId;
     private BasicProperty basicProperty;
@@ -286,8 +288,12 @@ public class ViewPropertyAction extends BaseFormAction {
             }
             if (applicationNo != null && !applicationNo.isEmpty())
             	return "viewApplication";
-            else
+            else{
+            	viewMap.put(DOCUMENTNO,
+                        basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
+                viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
             	return "view";
+            }
         } catch (final Exception e) {
             LOGGER.error("Exception in View Property: ", e);
             throw new ApplicationRuntimeException("Exception in View Property : " + e);
@@ -380,13 +386,13 @@ public class ViewPropertyAction extends BaseFormAction {
             final Query query = entityManager.createNamedQuery("DOCUMENT_TYPE_DETAILS_BY_ID");
             query.setParameter(1, basicProperty.getId());
             DocumentTypeDetails documentTypeDetails = (DocumentTypeDetails) query.getSingleResult();
-            viewMap.put("documentno", documentTypeDetails.getDocumentNo());
-            viewMap.put("documentdate", documentTypeDetails.getDocumentDate());
+            viewMap.put(DOCUMENTNO, documentTypeDetails.getDocumentNo());
+            viewMap.put(DOCUMENTDATE, documentTypeDetails.getDocumentDate());
         } catch (Exception e) {
             LOGGER.error("No Document type details present for Basicproperty " + e);
-            viewMap.put("documentno",
+            viewMap.put(DOCUMENTNO,
                     basicProperty.getRegdDocNo() != null ? basicProperty.getRegdDocNo() : StringUtils.EMPTY);
-            viewMap.put("documentdate", basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
+            viewMap.put(DOCUMENTDATE, basicProperty.getRegdDocDate() != null ? basicProperty.getRegdDocDate() : null);
         }
         if (property.getStatus().equals('W'))
             viewMap.put("propertyWF", "WF");
