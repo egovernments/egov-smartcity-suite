@@ -52,6 +52,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import javax.persistence.EntityManager;
@@ -60,6 +61,7 @@ import javax.persistence.PersistenceContext;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
+import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.model.BillReceipt;
 import org.egov.demand.model.EgDemand;
@@ -68,6 +70,8 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.ptis.client.util.PropertyTaxUtil;
+import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
@@ -118,9 +122,15 @@ public class SewerageDemandService {
     private SewerageDemandGenerationLogService stDemandGenerationLogService;
     @Autowired
     private SewerageDemandGenerationLogRepository demandGenerationLogRepository;
-
     @Autowired
-    private SewerageTaxUtils sewerageTaxUtils;
+    private SewerageTaxUtils sewerageTaxUtils; 
+    @Autowired
+    private PropertyTaxUtil propertyTaxUtil;
+    
+    @SuppressWarnings("rawtypes")
+    @Autowired
+    private InstallmentHibDao installmentHibDao;
+
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -587,7 +597,7 @@ public class SewerageDemandService {
 
                             }
                             // check sewerage tax, we need to adjust ? save remaining amount as advance for current demand.
-                            // if tax is less and advance also present.. then add amount into current demand..
+                            // if taxgetCurrentDemand is less and advance also present.. then add amount into current demand..
                         } else if (oldSewerageTax.compareTo(BigDecimal.ZERO) > 0)// Mean, paid more amount in old installment.
                         // Difference amount will be used as next
                         // installment tax.
@@ -918,7 +928,7 @@ public class SewerageDemandService {
                 }
             }
 
-        final List<SewerageTaxPaidDetails> rateResultList = new ArrayList<SewerageTaxPaidDetails>();
+        final List<SewerageTaxPaidDetails> rateResultList = new ArrayList<>();
         if (sewerageReportMap.size() > 0)
             sewerageReportMap.forEach((key, value) -> {
                 rateResultList.add(value);
@@ -940,4 +950,93 @@ public class SewerageDemandService {
 
     }
 
+    public Map<String, BigDecimal> getDemandDetailsMap(final SewerageApplicationDetails sewerageApplicationDetails) {
+        final EgDemand currDemand = sewerageApplicationDetails.getCurrentDemand();
+        Installment installment;
+        List<Object> dmdCollList = new ArrayList<>(0);
+        Installment currFirstHalf;
+        Installment currSecondHalf;
+        Integer instId;
+        BigDecimal currDmd = BigDecimal.ZERO;
+        BigDecimal arrDmd = BigDecimal.ZERO;
+        BigDecimal currCollection = BigDecimal.ZERO;
+        BigDecimal arrCollection = BigDecimal.ZERO;
+        final Map<String, BigDecimal> retMap = new HashMap<>(0);
+        if (currDemand != null)
+            dmdCollList = getDmdCollAmtInstallmentWise(currDemand);
+        currFirstHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                .get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+        currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+        for (final Object object : dmdCollList) {
+            final Object[] listObj = (Object[]) object;
+            instId = Integer.valueOf(listObj[1].toString());
+            installment = installmentHibDao.findById(instId, false);
+            if (currFirstHalf.getDescription().equals(installment.getDescription())
+                    || currSecondHalf.getDescription().equals(installment.getDescription())) {
+                if (listObj[3] != null && BigDecimal.valueOf((Double) listObj[3]).compareTo(BigDecimal.ZERO) > 0)
+                    currCollection = currCollection.add(BigDecimal.valueOf((Double) listObj[3]));
+                currDmd = currDmd.add(BigDecimal.valueOf((Double) listObj[2]));
+            } else if (listObj[2] != null) {
+                arrDmd = arrDmd.add(BigDecimal.valueOf((Double) listObj[2]));
+                if (BigDecimal.valueOf((Double) listObj[3]).compareTo(BigDecimal.ZERO) > 0)
+                    arrCollection = arrCollection.add(BigDecimal.valueOf((Double) listObj[3]));
+            }
+        }
+        retMap.put(SewerageTaxConstants.CURR_DMD_STR, currDmd);
+        retMap.put(SewerageTaxConstants.ARR_DMD_STR, arrDmd);
+        retMap.put(SewerageTaxConstants.CURR_COLL_STR, currCollection);
+        retMap.put(SewerageTaxConstants.ARR_COLL_STR, arrCollection);
+        return retMap;
+    }
+
+    public BigDecimal getCurrentDue(final SewerageApplicationDetails sewerageApplicationDetails) {
+        final EgDemand currentDemand = sewerageApplicationDetails.getCurrentDemand();
+        BigDecimal balance = BigDecimal.ZERO;
+        if (currentDemand != null) {
+            final List<Object> instVsAmt = getDmdCollAmtInstallmentWiseUptoCurrentInstallmemt(currentDemand,
+                    sewerageApplicationDetails);
+            for (final Object object : instVsAmt) {
+                final Object[] ddObject = (Object[]) object;
+                final BigDecimal dmdAmt = new BigDecimal((Double) ddObject[2]);
+                BigDecimal collAmt = BigDecimal.ZERO;
+                if (ddObject[2] != null)
+                    collAmt = new BigDecimal((Double) ddObject[3]);
+                balance = balance.add(dmdAmt.subtract(collAmt));
+            }
+        }
+        return balance;
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
+        final StringBuilder queryStringBuilder = new StringBuilder();
+        queryStringBuilder
+                .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
+                        + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
+                        + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
+                        + "and dmdDet.id_demand =:dmdId and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
+                        + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        return getCurrentSession().createSQLQuery(queryStringBuilder.toString()).setLong("dmdId", egDemand.getId())
+                .list();
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Object> getDmdCollAmtInstallmentWiseUptoCurrentInstallmemt(final EgDemand egDemand,
+            final SewerageApplicationDetails sewerageApplicationDetails) {
+        Installment currInstallment = installmentDao.getInsatllmentByModuleAndDescription(
+                moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME),
+                sewerageApplicationDetails.getCurrentDemand().getEgInstallmentMaster().getDescription());
+        final StringBuffer strBuf = new StringBuffer(2000);
+        strBuf.append(
+                "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, "
+                        + "sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, "
+                        + "eg_installment_master inst,eg_demand_reason_master dmdresmas where dmdDet.id_demand_reason=dmdRes.id "
+                        + "and dmdDet.id_demand =:dmdId and inst.start_date<=:currInstallmentDate and dmdRes.id_installment = inst.id and dmdresmas.id = dmdres.id_demand_reason_master "
+                        + "group by dmdRes.id,dmdRes.id_installment, inst.start_date order by inst.start_date ");
+        final Query query = getCurrentSession().createSQLQuery(strBuf.toString())
+                .setParameter("dmdId", egDemand.getId())
+                .setParameter("currInstallmentDate", currInstallment.getToDate());
+        return query.list();
+    }
 }

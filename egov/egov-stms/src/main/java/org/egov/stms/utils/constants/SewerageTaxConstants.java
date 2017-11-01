@@ -348,7 +348,15 @@ public class SewerageTaxConstants {
     public static final String PAYMENT_TYPE_FULLY = "Fully";
     //reassignment
     public static final String APPCONFKEY_REASSIGN_BUTTONENABLED = "REASSIGN_BUTTONENABLED_SEWERAGE";
-    public static final String SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT = "SEWERAGEDEPARTMENTFORREASSIGNMENT";
+    public static final String SEWERAGE_DEPARTEMENT_FOR_REASSIGNMENT = "SEWERAGEDEPARTMENTFORREASSIGNMENT";  
+    //Rest Api
+    public static final String CURR_DMD_STR = "CURR_DMD";
+    public static final String ARR_DMD_STR = "ARR_DMD";
+    public static final String CURR_COLL_STR = "CURR_COLL";
+    public static final String ARR_COLL_STR = "ARR_COLL";
+    public static final String STAXDETAILS_PROPERTYID_NOT_EXIST_ERR_MSG_PREFIX = "Sewerage Connection details with Assessment Number ";
+
+
 
     
 }
