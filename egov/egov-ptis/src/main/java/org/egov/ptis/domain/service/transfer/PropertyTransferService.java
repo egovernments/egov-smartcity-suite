@@ -245,7 +245,8 @@ public class PropertyTransferService {
         basicProperty.setUnderWorkflow(true);
         processAndStoreDocument(propertyMutation.getDocuments());
         
-		if (MUTATIONRS_SALES_DEED.equalsIgnoreCase(propertyMutation.getMutationReason().getMutationDesc()))
+		if (propertyMutation.getMutationReason() != null
+				&& MUTATIONRS_SALES_DEED.equalsIgnoreCase(propertyMutation.getMutationReason().getMutationDesc()))
 			propertyMutation.setSaleDetail(propertyMutation.getSaleDetail().replaceAll("[\\t\\n\\r]+", " "));
         
         propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
