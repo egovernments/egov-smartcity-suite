@@ -49,6 +49,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
@@ -56,6 +57,7 @@ import org.egov.commons.Bank;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.lcms.utils.constants.LcmsConstants;
@@ -171,6 +173,12 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     @JoinColumn(name = "bankbranch")
     @NotAudited
     private Bankbranch bankBranch;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @Valid
+    @JoinColumn(name = "advocateuser")
+    @Audited
+    private User advocateUser;
 
     @Override
     public Long getId() {
@@ -345,6 +353,7 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     public void setTinNumber(final String tinNumber) {
         this.tinNumber = tinNumber;
     }
+
     @Override
     public String getName() {
         return name;
@@ -405,6 +414,14 @@ public class AdvocateMaster extends AbstractAuditable implements EntityType {
     @Override
     public EgwStatus getEgwStatus() {
         return null;
+    }
+
+    public User getAdvocateUser() {
+        return advocateUser;
+    }
+
+    public void setAdvocateUser(final User advocateUser) {
+        this.advocateUser = advocateUser;
     }
 
 }
