@@ -93,6 +93,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -138,6 +139,8 @@ public class CollectionCommon {
     @Qualifier("branchUserMapService")
     private PersistenceService<BranchUserMap, Long> branchUserMapService;
 
+    @Autowired
+    private CityService cityService;
     /**
      * @param receiptHeaderService
      *            the receipt header Service to be set
@@ -337,7 +340,7 @@ public class CollectionCommon {
         LOGGER.info(" template name : " + templateName);
         final Map<String, Object> reportParams = new HashMap<>(0);
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
-
+        reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         if (receiptType == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
             reportParams.put(CollectionConstants.REPORT_PARAM_EGOV_COMMON, egovCommon);
             for (final ReceiptHeader receiptHeader : receipts) {

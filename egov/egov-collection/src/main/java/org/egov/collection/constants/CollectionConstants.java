@@ -584,6 +584,7 @@ public final class CollectionConstants {
     public static final String REMITTANCE_STATUS_CODE_NEW = "NEW";
     public static final String REMITTANCE_STATUS_CODE_APPROVED = "APPROVED";
 
+    public static final String LOGO_PATH ="CITY_LOGO_PATH";
     public static final String REMITTANCE_BY_VOUCHER_NUMBER = "getRemitanceByVoucherNumber";
     public static final TreeMap<String, String> SERVICE_TYPE_CLASSIFICATION = new TreeMap<String, String>() {
         {
