@@ -39,7 +39,10 @@
  */
 package org.egov.ptis.domain.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -67,6 +70,12 @@ public class AssessmentDetails implements Serializable {
     private double longitude;
     private boolean status;
     private boolean exempted;
+    private String oldAssessmentNo = StringUtils.EMPTY;
+    private String owners = StringUtils.EMPTY;
+    private BigDecimal propertyDue = BigDecimal.ZERO;
+    private BigDecimal waterTaxDue = BigDecimal.ZERO;
+    private BigDecimal sewerageDue = BigDecimal.ZERO;
+    private int connectionCount;
 
     public String getPropertyID() {
         return propertyID;
@@ -187,5 +196,52 @@ public class AssessmentDetails implements Serializable {
     public void setExempted(boolean exempted) {
         this.exempted = exempted;
     }
-    
+
+    public String getOldAssessmentNo() {
+        return oldAssessmentNo;
+    }
+
+    public void setOldAssessmentNo(String oldAssessmentNo) {
+        this.oldAssessmentNo = oldAssessmentNo;
+    }
+
+    public String getOwners() {
+        return owners;
+    }
+
+    public void setOwners(String owners) {
+        this.owners = owners;
+    }
+
+    public BigDecimal getPropertyDue() {
+        return propertyDue;
+    }
+
+    public void setPropertyDue(BigDecimal propertyDue) {
+        this.propertyDue = propertyDue;
+    }
+
+    public BigDecimal getWaterTaxDue() {
+        return waterTaxDue;
+    }
+
+    public void setWaterTaxDue(BigDecimal waterTaxDue) {
+        this.waterTaxDue = waterTaxDue;
+    }
+
+    public BigDecimal getSewerageDue() {
+        return sewerageDue;
+    }
+
+    public void setSewerageDue(BigDecimal sewerageDue) {
+        this.sewerageDue = sewerageDue;
+    }
+
+    public int getConnectionCount() {
+        return connectionCount;
+    }
+
+    public void setConnectionCount(int connectionCount) {
+        this.connectionCount = connectionCount;
+    }
 }

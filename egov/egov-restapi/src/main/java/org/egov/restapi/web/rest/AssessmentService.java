@@ -50,6 +50,7 @@ import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
+import org.springframework.http.MediaType;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -691,6 +692,30 @@ public class AssessmentService {
         List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
                 .getReasonsForChangeProperty(PropertyTaxConstants.PROP_MUTATION_RSN);
         return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
+
+    /**
+     * This method gives the various dues related to a property - property dues, water dues, sewerage dues
+     * @param assessmentRequest
+     * @param request
+     * @return AssessmentDetails
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/taxDues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    public AssessmentDetails getCollectionDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request){
+        AssessmentDetails assessmentDetails = null;
+        ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentRequest);
+        if(errorDetails != null){
+            assessmentDetails = new AssessmentDetails();
+            assessmentDetails.setErrorDetails(errorDetails);
+        } else {
+            assessmentDetails = propertyExternalService.getDuesForProperty(request, assessmentRequest.getAssessmentNo());
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            assessmentDetails.setErrorDetails(errorDetails);
+        }
+        return assessmentDetails;
     }
 
     /**

@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.service.property;
 
 import static java.math.BigDecimal.ZERO;
+import static java.lang.String.format;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
 import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
@@ -55,6 +56,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTL
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_VACANT_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PENALTY_FINES;
 import static org.egov.ptis.constants.PropertyTaxConstants.DOCS_CREATE_PROPERTY;
@@ -152,6 +155,7 @@ import java.util.Set;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -185,7 +189,9 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.infstr.services.PersistenceService;
@@ -335,6 +341,9 @@ public class PropertyExternalService {
 	
 	@Autowired	
 	PropertyTaxUtil propertyTaxUtil;
+
+	@Autowired
+	private SimpleRestClient simpleRestClient;
 
 	private PropertyImpl propty = new PropertyImpl();
 
@@ -2925,4 +2934,28 @@ public class PropertyExternalService {
 		return isMappingExists;
 	}
 
+	public AssessmentDetails getDuesForProperty(final HttpServletRequest request, String propertyId){
+		AssessmentDetails assessmentDetails = new AssessmentDetails();
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+		if(basicProperty != null){
+			assessmentDetails.setPropertyID(propertyId);
+			assessmentDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
+			assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+			assessmentDetails.setOwners(basicProperty.getFullOwnerName());
+			Map<String, BigDecimal> dmdCollMap = ptDemandDAO.getDemandIncludingPenaltyCollMap(basicProperty.getProperty());
+			if(!dmdCollMap.isEmpty()){
+				BigDecimal totalDemand = dmdCollMap.get(ARR_DMD_STR).add(dmdCollMap.get(CURR_FIRSTHALF_DMD_STR)).add(dmdCollMap.get(CURR_SECONDHALF_DMD_STR));
+				BigDecimal totalColl = dmdCollMap.get(ARR_COLL_STR).add(dmdCollMap.get(CURR_FIRSTHALF_COLL_STR)).add(dmdCollMap.get(CURR_SECONDHALF_COLL_STR));
+				assessmentDetails.setPropertyDue(totalDemand.subtract(totalColl));
+			}
+			String restURL = format(PropertyTaxConstants.WTMS_TAXDUE_RESTURL,
+					WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
+			Map<String, Object> waterTaxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
+			if(!waterTaxDetails.isEmpty()){
+				assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) waterTaxDetails.get("totalTaxDue")));
+				assessmentDetails.setConnectionCount(Double.valueOf(waterTaxDetails.get("connectionCount").toString()).intValue());
+			}
+		}
+		return assessmentDetails;
+	}
 }
