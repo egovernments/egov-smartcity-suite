@@ -115,6 +115,7 @@ import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.LongType;
 import org.hibernate.type.StringType;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -1926,7 +1927,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + " group by vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto, "
                                     + " ba.accountnumber, ba.id , bill.id, bill.billnumber,bill.expenditureType "
                                     + " order by ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -1934,8 +1935,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
-                    .addScalar("billId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
+                    .addScalar("billId", LongType.INSTANCE)
                     .addScalar("billNumber")
                     .addScalar("expenditureType")
                     .setResultTransformer(
@@ -1981,7 +1982,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + "') "
                                     + " group by   vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto,ba.accountnumber,"
                                     + " ba.id , bill.id, bill.billnumber ,bill.expenditureType order by ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -1989,8 +1990,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
-                    .addScalar("billId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
+                    .addScalar("billId", LongType.INSTANCE)
                     .addScalar("billNumber")
                     .addScalar("expenditureType")
                     .setResultTransformer(
@@ -2144,7 +2145,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION
                                     + "') "
                                     + " GROUP BY vh.id,vh.voucherNumber,dept.name , vh.voucherDate, ba.accountnumber, ba.id , ph.paymentamount ORDER BY ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -2152,7 +2153,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
                     .setResultTransformer(
                             Transformers.aliasToBean(ChequeAssignment.class));
 
@@ -2196,7 +2197,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION
                                     + "') "
                                     + " GROUP BY vh.id,vh.voucherNumber,dept.name , vh.voucherDate, ba.accountnumber, ba.id , ph.paymentamount ORDER BY ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -2204,7 +2205,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
                     .setResultTransformer(
                             Transformers.aliasToBean(ChequeAssignment.class));
             if (LOGGER.isDebugEnabled())
@@ -2333,7 +2334,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + statusId
                                     + ") GROUP BY vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,  misbill.paidto,  ba.accountnumber,  ba.id,  vh.name                                           "
                                     + " order by bankAccountId, departmentName,  voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -2341,7 +2342,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
                     .addScalar("expenditureType")
                     .setResultTransformer(
                             Transformers.aliasToBean(ChequeAssignment.class));
@@ -2481,7 +2482,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY
                                         + "'"
                                         + " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount")
@@ -2514,7 +2515,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY
                                         + "'"
                                         + " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -2584,7 +2585,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION
                                         + "'"
                                         + " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -2617,7 +2618,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION
                                         + "'"
                                         + " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ")
-                        .addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -2701,7 +2702,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION
                                         + "') "
                                         + " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                        .addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -2738,7 +2739,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                         + FinancialConstants.PAYMENTVOUCHER_NAME_PENSION
                                         + "') "
                                         + " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                        .addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -2771,7 +2772,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 tempquery1.append("'");
                 tempquery1.append(" group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ");
                 query = getSession()
-                        .createSQLQuery(tempquery1.toString()).addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .createSQLQuery(tempquery1.toString()).addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -2812,7 +2813,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                 tempquery.append("'");
                 tempquery.append(" group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by vh.voucherNumber ");
                 query = getSession()
-                        .createSQLQuery(tempquery.toString()).addScalar("voucherid", BigDecimalType.INSTANCE)
+                        .createSQLQuery(tempquery.toString()).addScalar("voucherid", LongType.INSTANCE)
                         .addScalar("voucherNumber")
                         .addScalar("voucherDate")
                         .addScalar("paidAmount", BigDecimalType.INSTANCE)
@@ -3649,7 +3650,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + " ba.accountnumber, ba.id ,"
                                     + " gl.glcodeid,DO.name,do.tan,recovery.remitted "
                                     + " order by ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -3657,8 +3658,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
-                    .addScalar("glcodeId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
+                    .addScalar("glcodeId", LongType.INSTANCE)
                     .addScalar("drawingOfficerNameTAN")
                     .setResultTransformer(
                             Transformers
@@ -3706,7 +3707,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + " group by   vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto,ba.accountnumber,"
                                     + " ba.id ,"
                                     + " gl.glcodeid,DO.name,do.tan,recovery.remitted  order by ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -3714,8 +3715,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
-                    .addScalar("glcodeId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
+                    .addScalar("glcodeId", LongType.INSTANCE)
                     .addScalar("drawingOfficerNameTAN")
                     .setResultTransformer(
                             Transformers
@@ -3754,7 +3755,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + " ba.accountnumber, ba.id ,"
                                     + " gl.glcodeid,DO.name,do.tan "
                                     + " order by ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -3762,8 +3763,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId")
-                    .addScalar("glcodeId")
+                    .addScalar("bankAccountId", LongType.INSTANCE)
+                    .addScalar("glcodeId", LongType.INSTANCE)
                     .addScalar("drawingOfficerNameTAN")
                     .setResultTransformer(
                             Transformers
@@ -3809,7 +3810,7 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                                     + " group by   vh.id,  vh.voucherNumber,  dept.name ,  vh.voucherDate,misbill.paidto,ba.accountnumber,"
                                     + " ba.id ,"
                                     + " gl.glcodeid,DO.name,do.tan  order by ba.id,dept.name,vh.voucherNumber ")
-                    .addScalar("voucherid", BigDecimalType.INSTANCE)
+                    .addScalar("voucherid", LongType.INSTANCE)
                     .addScalar("voucherNumber")
                     .addScalar("departmentName")
                     .addScalar("voucherDate")
@@ -3817,8 +3818,8 @@ public class PaymentService extends PersistenceService<Paymentheader, Long> {
                     .addScalar("paidAmount", BigDecimalType.INSTANCE)
                     .addScalar("chequeDate")
                     .addScalar("bankAccNumber")
-                    .addScalar("bankAccountId", BigDecimalType.INSTANCE)
-                    .addScalar("glcodeId", BigDecimalType.INSTANCE)
+                    .addScalar("bankAccountId", LongType.INSTANCE)
+                    .addScalar("glcodeId", LongType.INSTANCE)
                     .addScalar("drawingOfficerNameTAN")
                     .setResultTransformer(
                             Transformers

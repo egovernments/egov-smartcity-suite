@@ -61,6 +61,7 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -180,7 +181,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 + "' , '"
                                 + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "') " +
                                 " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
@@ -272,9 +273,9 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + statusId + ")) " +
                 " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by paidto,voucherNumber ";
         query = getSession().createSQLQuery(supplierBillPaymentQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE).addScalar("paidTo")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE).addScalar("paidTo")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
@@ -338,8 +339,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + statusId + "))  group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto  " +
                 " order by paidto,voucherNumber ";
         query = getSession().createSQLQuery(bankPaymentQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber")
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE).addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber")
+                .addScalar("detailtypeid", LongType.INSTANCE).addScalar("detailkeyid", LongType.INSTANCE)
                 .addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
@@ -378,11 +379,11 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT + "' and iv.id is null  " +
                 " group by  misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
         query = getSession().createSQLQuery(strQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
-                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("NOT YET ASSIGNED No cheques - " + strQuery);
@@ -422,8 +423,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("NOT YET ASSIGNED: checking getDetailTypeKeyAmtForBillVHId for Net payable codes");
 
-            List<Object[]> detailTypeKeyAmtList = billVHIdAndgeneralLedgerDetailListMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndgeneralLedgerDetailListMap
-                    .get(chqAssgn.getBillVHId().longValue())
+            List<Object[]> detailTypeKeyAmtList = billVHIdAndgeneralLedgerDetailListMap.get(chqAssgn.getBillVHId()) != null ? billVHIdAndgeneralLedgerDetailListMap
+                    .get(chqAssgn.getBillVHId())
                     : new ArrayList<Object[]>();
 
             if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() != 0) {
@@ -447,8 +448,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         ca.setChequeDate(chqAssgn.getChequeDate());
                         ca.setPaidTo(getEntity(Integer.parseInt(detailTypeKeyAmtObj[0].toString()),
                                 (Serializable) detailTypeKeyAmtObj[1]).getName());
-                        ca.setDetailtypeid((BigDecimal.valueOf(Integer.valueOf(detailTypeKeyAmtObj[0].toString()).longValue())));
-                        ca.setDetailkeyid((BigDecimal.valueOf(Integer.valueOf(detailTypeKeyAmtObj[1].toString()).longValue())));
+                        ca.setDetailtypeid(Long.valueOf(detailTypeKeyAmtObj[0].toString()));
+                        ca.setDetailkeyid(Long.valueOf(detailTypeKeyAmtObj[1].toString()));
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("NOT YET ASSIGNED: detailTypeKeyAmtList.size()>=2 block to Assignment List\n" + ca);
                         tempExpenseChequeAssignmentList.add(ca);
@@ -456,8 +457,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             } else {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("NOT YET ASSIGNED:  checking getDetailTypeKeyAmtForDebtitSideCC for " + chqAssgn.getBillVHId());
-                detailTypeKeyAmtList = billVHIdAndGLDListForDebtitSideCCMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndGLDListForDebtitSideCCMap
-                        .get(chqAssgn.getBillVHId().longValue())
+                detailTypeKeyAmtList = billVHIdAndGLDListForDebtitSideCCMap.get(chqAssgn.getBillVHId()) != null ? billVHIdAndGLDListForDebtitSideCCMap
+                        .get(chqAssgn.getBillVHId())
                         : new ArrayList<Object[]>();
                 if (detailTypeKeyAmtList == null || detailTypeKeyAmtList.size() == 0) {
                     if (LOGGER.isDebugEnabled())
@@ -487,13 +488,13 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("NOT YET ASSIGNED: Voucher Number  :" + chqAssgn.getVoucherNumber());
                         c.setVoucherDate(chqAssgn.getVoucherDate());
-                        c.setDetailtypeid(BigDecimal.valueOf(Long.valueOf(obj[0].toString())));
-                        c.setDetailkeyid(BigDecimal.valueOf(Long.valueOf(obj[1].toString())));
+                        c.setDetailtypeid(Long.valueOf(obj[0].toString()));
+                        c.setDetailkeyid(Long.valueOf(obj[1].toString()));
                         key = obj[0].toString() + DELIMETER + obj[1].toString();
                         // deduct only if deduction is available
                         if (deduction != null)
-                            obj[2] = (BigDecimal.valueOf(Long.valueOf(obj[2].toString()))).subtract(deduction);
-                        c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Long.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Long.valueOf(obj[2].toString()))).subtract(dedMap
+                            obj[2] = (BigDecimal.valueOf(Double.valueOf(obj[2].toString()))).subtract(deduction);
+                        c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Double.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Double.valueOf(obj[2].toString()))).subtract(dedMap
                                 .get(key)));
                         c.setPaidTo(getEntity(Integer.valueOf(obj[0].toString()), (Serializable) obj[1]).getName());
                         if (LOGGER.isDebugEnabled())
@@ -507,7 +508,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             LOGGER.debug("Completed getExpenseBillPaymentsHavingNoCheques.");
     }
 
-    private BigDecimal getNonSubledgerDeductions(final BigDecimal billVHId) {
+    private BigDecimal getNonSubledgerDeductions(final Long billVHId) {
         final Query query = getSession().createSQLQuery("SELECT SUM(gl.creditamount) " +
                 "FROM generalledger gl " +
                 "WHERE gl.creditamount>0 " +
@@ -557,11 +558,11 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 +
                 " and exists (select 1 from egf_instrumentvoucher iv where  iv.voucherheaderid=vh.id) group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
         final Query query = getSession().createSQLQuery(strQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
-                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ALREADY ASSIGNED: No surrendered cheques - " + strQuery);
@@ -672,8 +673,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             ca.setChequeDate(chqAssgn.getChequeDate());
                             ca.setPaidTo(getEntity(Integer.parseInt(detailTypeKeyAmtObj[0].toString()),
                                     (Serializable) detailTypeKeyAmtObj[1]).getName());
-                            ca.setDetailtypeid(BigDecimal.valueOf(Long.valueOf(detailTypeKeyAmtObj[0].toString())));
-                            ca.setDetailkeyid(BigDecimal.valueOf(Long.valueOf(detailTypeKeyAmtObj[1].toString())));
+                            ca.setDetailtypeid(Long.valueOf(detailTypeKeyAmtObj[0].toString()));
+                            ca.setDetailkeyid(Long.valueOf(detailTypeKeyAmtObj[1].toString()));
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(" ALREADY ASSIGNED: adding to chequeAssignlist" + ca);
                             tempExpenseChequeAssignmentList.add(ca);
@@ -739,10 +740,10 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             c.setVoucherHeaderId(chqAssgn.getVoucherid());
                             c.setVoucherNumber(chqAssgn.getVoucherNumber());
                             c.setVoucherDate(chqAssgn.getVoucherDate());
-                            c.setDetailtypeid(BigDecimal.valueOf(Long.valueOf(obj[0].toString())));
-                            c.setDetailkeyid(BigDecimal.valueOf(Long.valueOf(obj[1].toString())));
+                            c.setDetailtypeid(Long.valueOf(obj[0].toString()));
+                            c.setDetailkeyid(Long.valueOf(obj[1].toString()));
                             key = obj[0].toString() + DELIMETER + obj[1].toString();
-                            c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Long.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Long.valueOf(obj[2].toString())))
+                            c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Double.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Double.valueOf(obj[2].toString())))
                                     .subtract(dedMap.get(key)));
                             c.setPaidTo(getEntity(Integer.valueOf(obj[0].toString()), (Serializable) obj[1]).getName());
                             if (LOGGER.isDebugEnabled())
@@ -791,11 +792,11 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + statusId + ") ) " +
                 " group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
         final Query query = getSession().createSQLQuery(strQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
-                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ASSIGNED BUT SURRENDARD: With surrendered cheques - " + strQuery);
@@ -882,8 +883,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             ca.setChequeDate(chqAssgn.getChequeDate());
                             ca.setPaidTo(getEntity(Integer.parseInt(detailTypeKeyAmtObj[0].toString()),
                                     (Serializable) detailTypeKeyAmtObj[1]).getName());
-                            ca.setDetailtypeid(BigDecimal.valueOf(((Integer) detailTypeKeyAmtObj[0]).longValue()));
-                            ca.setDetailkeyid(BigDecimal.valueOf(((Integer) detailTypeKeyAmtObj[1]).longValue()));
+                            ca.setDetailtypeid(Long.valueOf(detailTypeKeyAmtObj[0].toString()));
+                            ca.setDetailkeyid(Long.valueOf(detailTypeKeyAmtObj[1].toString()));
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ASSIGNED BUT SURRENDARD: inside loop adding  " + ca);
                             tempExpenseChequeAssignmentList.add(ca);
@@ -973,10 +974,10 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             c.setVoucherHeaderId(chqAssgn.getVoucherid());
                             c.setVoucherNumber(chqAssgn.getVoucherNumber());
                             c.setVoucherDate(chqAssgn.getVoucherDate());
-                            c.setDetailtypeid(BigDecimal.valueOf(Long.valueOf(obj[0].toString())));
-                            c.setDetailkeyid(BigDecimal.valueOf(Long.valueOf(obj[1].toString())));
+                            c.setDetailtypeid(Long.valueOf(obj[0].toString()));
+                            c.setDetailkeyid(Long.valueOf(obj[1].toString()));
                             key = obj[0].toString() + DELIMETER + obj[1].toString();
-                            c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Long.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Long.valueOf(obj[2].toString())))
+                            c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Double.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Double.valueOf(obj[2].toString())))
                                     .subtract(dedMap.get(key)));
                             c.setPaidTo(getEntity(Integer.valueOf(obj[0].toString()), (Serializable) obj[1]).getName());
                             if (LOGGER.isDebugEnabled())
@@ -1185,7 +1186,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, BigDecimal> getSubledgerAmtForDeduction(final BigDecimal billVHId) {
+    private Map<String, BigDecimal> getSubledgerAmtForDeduction(final Long billVHId) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getSubledgerAmtForDeduction...");
         final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();

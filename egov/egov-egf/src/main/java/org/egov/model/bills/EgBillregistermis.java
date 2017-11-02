@@ -107,7 +107,7 @@ public class EgBillregistermis extends AbstractPersistable<Integer> implements j
     @Length(max = 200)
     private String sanctiondetail;
 
-    @Length(max = 300)
+    @Length(max = 1024)
     private String narration;
 
     private Date lastupdatedtime;

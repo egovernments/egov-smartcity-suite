@@ -799,6 +799,10 @@ public class DirectBankPaymentAction extends BasePaymentAction {
         // isValFailed = validateOnlyRTGS();
         for (final VoucherDetails voucherDetails : billDetailslist) {
             index = index + 1;
+            if (voucherDetails.getDebitAmountDetail() == null)
+                voucherDetails.setDebitAmountDetail(BigDecimal.ZERO);
+            if (voucherDetails.getCreditAmountDetail() == null)
+                voucherDetails.setCreditAmountDetail(BigDecimal.ZERO);
             totalDrAmt = totalDrAmt.add(voucherDetails.getDebitAmountDetail());
             totalCrAmt = totalCrAmt.add(voucherDetails.getCreditAmountDetail());
             if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0
