@@ -71,7 +71,6 @@ import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.pims.commons.Designation;
@@ -323,7 +322,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     @Override
-    public StateAware getModel() {
+    public License getModel() {
         return license();
     }
 
@@ -592,17 +591,16 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public List<String> getValidActions() {
         List<String> validActions = Collections.emptyList();
         if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null || getModel().getCurrentState().getValue().endsWith("NEW")
-                || (getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false)) {
-
+                || (getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false))
             validActions = Arrays.asList("Save");
-        } else {
-            if (getModel().getCurrentState() != null) {
+        else if (getModel().hasState())
+            if (getModel().isNewWorkflow())
                 validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
                                 .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), getModel().getCurrentState().getValue(),
                         getPendingActions(), getModel().getCreatedDate(), "%" + license().getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
-            }
-        }
+            else return super.getValidActions();
+
         return validActions;
     }
 
