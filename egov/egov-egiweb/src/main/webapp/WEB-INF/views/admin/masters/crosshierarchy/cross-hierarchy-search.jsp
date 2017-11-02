@@ -2,7 +2,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~ accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2016  eGovernments Foundation
+  ~  Copyright (C) 2017  eGovernments Foundation
   ~
   ~  The updated version of eGov suite of products as by eGovernments Foundation
   ~  is available at http://www.egovernments.org
@@ -69,7 +69,7 @@
                                          id="boundaryTypeName" cssClass="form-control" cssErrorClass="form-control error"
                                          required="required">
                                 <form:option value=""> <spring:message code="lbl.select"/> </form:option>
-                                <form:options items="${boundaryTypes}" itemValue="id" itemLabel="hierarchyType.code"/>
+                                <form:options items="${boundaryTypes}" itemValue="id" itemLabel="hierarchyType.name"/>
                             </form:select><input type="hidden" id="boundaryTypeId" value=""/>
                             <form:errors path="boundaryType" cssClass="error-msg"/>
                         </div>
