@@ -119,6 +119,7 @@ public class PropertyImpl extends StateAware implements Property {
                                             // integration.
     private String meesevaServiceCode;
     private String source;
+    private String referenceId;
 
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is
@@ -778,4 +779,15 @@ public class PropertyImpl extends StateAware implements Property {
         getTaxExemptionDocuments().add(exemptionDocument);
     }
 
+    @Override
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    @Override
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
+
+    
 }

@@ -308,4 +308,8 @@ public interface BasicProperty extends Serializable {
     Character getIsIntgBillCreated();
 
     void setIsIntgBillCreated(Character isIntgBillCreated);
+
+    String getParcelId();
+
+    void setParcelId(String parcelId);
 }

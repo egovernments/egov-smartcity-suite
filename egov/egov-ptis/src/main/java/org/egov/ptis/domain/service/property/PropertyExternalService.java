@@ -1246,6 +1246,7 @@ public class PropertyExternalService {
 		final Address ownerCorrAddr = createCorrespondenceAddress(viewpropertyDetails, basicProperty.getAddress());
 		PropertyImpl property = (PropertyImpl) basicProperty.getProperty();
 		property.setSource(SOURCE_SURVEY);
+                property.setReferenceId(viewpropertyDetails.getReferenceId());
 		List<File> fileAttachments = new ArrayList<>(0);
 		List<String> uploadContentTypes = new ArrayList<>(0);
 		List<String> uploadFileNames = new ArrayList<>(0);
@@ -1291,6 +1292,9 @@ public class PropertyExternalService {
 		final PropertyStatus propertyStatus = getPropertyStatus();
 		basicProperty.setStatus(propertyStatus);
 		basicProperty.setUnderWorkflow(Boolean.TRUE);
+                basicProperty.setParcelId(viewPropertyDetails.getParcelId());
+                basicProperty.setLatitude(viewPropertyDetails.getLatitude());
+                basicProperty.setLongitude(viewPropertyDetails.getLongitude());
 
 		// Set PropertyMutationMaster object
 		final PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(viewPropertyDetails.getMutationReason());
@@ -2310,6 +2314,11 @@ public class PropertyExternalService {
 		PropertyImpl property = (PropertyImpl) basicProperty.getWFProperty();
 		property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
 		basicProperty.setUnderWorkflow(Boolean.TRUE);
+                basicProperty.setParcelId(viewPropertyDetails.getParcelId());
+                basicProperty.setLatitude(viewPropertyDetails.getLatitude());
+                basicProperty.setLongitude(viewPropertyDetails.getLongitude());
+                property.setReferenceId(viewPropertyDetails.getReferenceId());
+
 		transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
 		basicPropertyService.applyAuditing(property.getState());
 		propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
@@ -2687,6 +2696,9 @@ public class PropertyExternalService {
 		final PropertyStatus propertyStatus = getPropertyStatus();
 		basicProperty.setStatus(propertyStatus);
 		basicProperty.setUnderWorkflow(Boolean.TRUE);
+                basicProperty.setParcelId(viewPropertyDetails.getParcelId());
+                basicProperty.setLatitude(viewPropertyDetails.getLatitude());
+                basicProperty.setLongitude(viewPropertyDetails.getLongitude());
 
 		// Set PropertyMutationMaster object
 		final PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(viewPropertyDetails.getMutationReason());
@@ -2770,6 +2782,7 @@ public class PropertyExternalService {
 		}
 		propertyImpl.setBasicProperty(basicProperty);
 		propertyImpl.setPropertyModifyReason(PROP_CREATE_RSN);
+                propertyImpl.setReferenceId(viewPropertyDetails.getReferenceId());
 
 		Date propCompletionDate = null;
 		if (!propertyImpl.getPropertyDetail().getPropertyTypeMaster().getCode()

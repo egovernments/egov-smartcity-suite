@@ -112,7 +112,11 @@ public class ViewPropertyDetails {
     
     private Boolean floorDetailsEntered = false;
     private String propertyDepartment;
-    
+    private String parcelId;
+    private String referenceId;
+    private Double latitude;
+    private Double longitude;
+
 
 	public String getUlbCode() {
         return ulbCode;
@@ -642,4 +646,35 @@ public class ViewPropertyDetails {
 		this.propertyDepartment = propertyDepartment;
 	}
 
+    public String getParcelId() {
+        return parcelId;
+    }
+
+    public void setParcelId(String parcelId) {
+        this.parcelId = parcelId;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }

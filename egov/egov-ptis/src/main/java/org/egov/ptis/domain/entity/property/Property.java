@@ -224,4 +224,9 @@ public interface Property extends Auditable {
 
     void addTaxExemptionDocuments(Document exemptionDocument);
 
+    String getReferenceId();
+    
+    void setReferenceId(String referenceId);
+
+
 }

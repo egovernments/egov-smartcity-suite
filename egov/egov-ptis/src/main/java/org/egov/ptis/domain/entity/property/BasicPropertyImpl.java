@@ -105,6 +105,7 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
     private List<Amalgamation> amalgamations = new ArrayList<>();
     private List<Amalgamation> amalgamationsProxy = new ArrayList<>();
     private Character isIntgBillCreated = 'N';
+    private String parcelId;
 
     @Override
     public List<PropertyOwnerInfo> getPropertyOwnerInfo() {
@@ -855,4 +856,13 @@ public class BasicPropertyImpl extends BaseModel implements BasicProperty {
         this.isIntgBillCreated = isIntgBillCreated;
     }
 
+    @Override
+    public String getParcelId() {
+        return parcelId;
+    }
+
+    @Override
+    public void setParcelId(String parcelId) {
+        this.parcelId = parcelId;
+    }
 }

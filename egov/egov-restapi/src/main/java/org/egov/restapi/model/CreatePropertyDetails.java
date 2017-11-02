@@ -67,6 +67,10 @@ public class CreatePropertyDetails implements Serializable {
 	private SurroundingBoundaryDetails surroundingBoundaryDetails;
 	private DocumentTypeDetails documentTypeDetails;
 	private String assessmentNo;
+	private String parcelId;
+	private String referenceId;
+	private Double latitude;
+	private Double longitude;
 
 	@Override
 	public String toString() {
@@ -223,4 +227,35 @@ public class CreatePropertyDetails implements Serializable {
 		this.assessmentNumber = assessmentNumber;
 	}
 
+    public String getParcelId() {
+        return parcelId;
+    }
+
+    public void setParcelId(String parcelId) {
+        this.parcelId = parcelId;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(String referenceId) {
+        this.referenceId = referenceId;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
 }

@@ -230,6 +230,10 @@ public class CreateAssessmentController {
     	viewPropertyDetails.setMroProcNo(documentTypeDetails.getMroProceedingNumber());
     	viewPropertyDetails.setMroProcDate(documentTypeDetails.getMroProceedingDate());
     	viewPropertyDetails.setTwSigned(documentTypeDetails.getSigned()== null? Boolean.FALSE:documentTypeDetails.getSigned());
+        viewPropertyDetails.setParcelId(createPropDetails.getParcelId());
+        viewPropertyDetails.setReferenceId(createPropDetails.getReferenceId());
+        viewPropertyDetails.setLatitude(createPropDetails.getLatitude());
+        viewPropertyDetails.setLongitude(createPropDetails.getLongitude());
     	return viewPropertyDetails;
     }
 

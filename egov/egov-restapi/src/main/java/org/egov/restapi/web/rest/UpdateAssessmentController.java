@@ -186,6 +186,10 @@ public class UpdateAssessmentController {
     		viewPropertyDetails.setFloorDetails(createPropDetails.getFloorDetails());
     		viewPropertyDetails.setEffectiveDate(createPropDetails.getFloorDetails().get(0).getOccupancyDate());
     	}
+        viewPropertyDetails.setParcelId(createPropDetails.getParcelId());
+        viewPropertyDetails.setReferenceId(createPropDetails.getReferenceId());
+        viewPropertyDetails.setLatitude(createPropDetails.getLatitude());
+        viewPropertyDetails.setLongitude(createPropDetails.getLongitude());
     	return viewPropertyDetails;
     }
 
