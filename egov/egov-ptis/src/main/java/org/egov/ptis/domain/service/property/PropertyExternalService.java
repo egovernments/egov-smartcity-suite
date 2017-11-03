@@ -2934,11 +2934,11 @@ public class PropertyExternalService {
 		return isMappingExists;
 	}
 
-	public AssessmentDetails getDuesForProperty(final HttpServletRequest request, String propertyId){
+	public AssessmentDetails getDuesForProperty(final HttpServletRequest request, String assessmentNo, String oldAssessmentNo){
 		AssessmentDetails assessmentDetails = new AssessmentDetails();
-		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(propertyId);
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyForUpicNoOrOldUpicNo(assessmentNo, oldAssessmentNo);
 		if(basicProperty != null){
-			assessmentDetails.setPropertyID(propertyId);
+			assessmentDetails.setPropertyID(basicProperty.getUpicNo());
 			assessmentDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
 			assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
 			assessmentDetails.setOwners(basicProperty.getFullOwnerName());

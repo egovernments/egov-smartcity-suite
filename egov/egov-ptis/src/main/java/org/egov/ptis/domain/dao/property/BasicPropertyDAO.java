@@ -104,4 +104,6 @@ public interface BasicPropertyDAO {
     public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId, String upicNo, String doorNo, String oldUpicNo);
     
     public BasicProperty getBasicPropertyByProperty(Long propertyId);
+
+    BasicProperty getBasicPropertyForUpicNoOrOldUpicNo(String upicNo, String oldUpicNo);
 }

@@ -565,4 +565,23 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         basicProperty = (BasicProperty) query.uniqueResult();
         return basicProperty;
     }
+
+    @Override
+    public BasicProperty getBasicPropertyForUpicNoOrOldUpicNo(String upicNo, String oldUpicNo){
+        String queryStr = "select bp from BasicPropertyImpl bp where bp.active = 'Y'";
+
+        if (StringUtils.isNotBlank(upicNo))
+            queryStr = queryStr.concat(" and bp.upicNo =:upicNo ");
+        if(StringUtils.isNotBlank(oldUpicNo))
+            queryStr = queryStr.concat(" and bp.oldMuncipalNum =:oldUpicNo ");
+
+        Query query = getCurrentSession().createQuery(queryStr);
+
+        if (StringUtils.isNotBlank(upicNo))
+            query.setString("upicNo", upicNo);
+        if (StringUtils.isNotBlank(oldUpicNo))
+            query.setString("oldUpicNo", oldUpicNo);
+
+        return (BasicProperty) query.uniqueResult();
+    }
 }

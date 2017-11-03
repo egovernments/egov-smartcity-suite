@@ -934,7 +934,9 @@ public class ValidationUtil {
 	public ErrorDetails validateAssessmentDetailsRequest(final AssessmentRequest assessmentRequest) {
 		ErrorDetails errorDetails = null;
 
-		if (!basicPropertyDAO.isAssessmentNoExist(assessmentRequest.getAssessmentNo())) {
+		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyForUpicNoOrOldUpicNo(assessmentRequest.getAssessmentNo(),
+				assessmentRequest.getOldAssessmentNo());
+		if (basicProperty == null) {
 			errorDetails = new ErrorDetails();
 			errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
 			errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);

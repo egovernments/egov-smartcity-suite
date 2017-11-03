@@ -702,14 +702,15 @@ public class AssessmentService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/taxDues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public AssessmentDetails getCollectionDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request){
+    public AssessmentDetails getDCBDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request){
         AssessmentDetails assessmentDetails = null;
         ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentRequest);
         if(errorDetails != null){
             assessmentDetails = new AssessmentDetails();
             assessmentDetails.setErrorDetails(errorDetails);
         } else {
-            assessmentDetails = propertyExternalService.getDuesForProperty(request, assessmentRequest.getAssessmentNo());
+            assessmentDetails = propertyExternalService.getDuesForProperty(request, assessmentRequest.getAssessmentNo(),
+                    assessmentRequest.getOldAssessmentNo());
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
             errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
