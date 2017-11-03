@@ -378,9 +378,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
 
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        if (propertyTaxCommonUtils.isMuadIntegrationRequired()) {
-            mutationEventPublisher.publishEvent(propertyMutation);
-        }
+        mutationEventPublisher.publishEvent(propertyMutation);
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" with assessment number : ");
 
@@ -565,9 +563,7 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
             propertyTaxUtil.makeTheEgBillAsHistory(basicproperty);
         buildSMS(propertyMutation);
         buildEmail(propertyMutation);
-        if (propertyTaxCommonUtils.isMuadIntegrationRequired()) {
-            mutationEventPublisher.publishEvent(propertyMutation);
-        }
+        mutationEventPublisher.publishEvent(propertyMutation);
         setAckMessage("Transfer of ownership is created successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" for Digital Signature for the property : ");
         return ACK;
