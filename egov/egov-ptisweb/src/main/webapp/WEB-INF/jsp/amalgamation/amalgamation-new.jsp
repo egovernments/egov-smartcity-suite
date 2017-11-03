@@ -76,6 +76,10 @@
 		}
 		jQuery('.amalgamation-form').find('input').removeAttr('readonly');
 		jQuery('.amalgamation-form').find('select').removeAttr('disabled');
+		jQuery('#amalgamatedPropertiesTbl tbody tr')
+		.find('.amlgpropassessmentno').attr('readonly', false);
+		jQuery('#amalgamatedPropertiesTbl tbody tr')
+		.find('.amlgpropassessmentno').removeAttr('disabled');
 		enableOccupancyDate();
 		document.forms[0].action = action;
 		document.forms[0].submit;

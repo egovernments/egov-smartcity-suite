@@ -173,7 +173,6 @@ function calculatePlinthArea(length, breadth, rowIdx){
 }
 
 jQuery(document).on('blur', ".amlgpropassessmentno", function () {
-
 	var retainerProp=jQuery('#retainerPropertyId').val();
 	var rowIdx=jQuery(this).data('idx');
 	if(retainerProp == jQuery(this).val()){
@@ -181,7 +180,16 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
 		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input').val('');
 		return;
 	}
-
+	var tableObj=document.getElementById('amalgamatedPropertiesTbl');
+	var lastRow = tableObj.rows.length;
+	var currentAssessment = jQuery(this).val();
+    for(var i=0;i<lastRow-2;i++){
+    	if(lastRow-1!=1 && currentAssessment == jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+i+')').find('.amlgpropassessmentno').val()){
+    		bootbox.alert('This property is already added to Amalgamated Properties list! Please give other property which is not added');
+    		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input').val('');
+    		return;
+    	}
+	}
     jQuery.ajax({
         url: "/ptis/common/amalgamation/getamalgamatedpropdetails",
         type: "GET",
@@ -195,11 +203,53 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
         	{
         		if(property.validationMsg == ''){
         			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+    				.find('.amlgpropassessmentno').attr("value",property.assessmentNo);
+        			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+    				.find('.amlgpropassessmentno').attr('readonly', true);
+        			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+    				.find('.amlgpropassessmentno').attr('disabled', 'disabled');
+        			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
         				.find('.amlgpropownername').val(property.ownerName);
 	        		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
 	    				.find('.amlgpropmobileno').val(property.mobileNo);
 	        		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
 	    				.find('.amlgpropaddress').val(property.propertyAddress);
+	        		for (i = 0; i < property.owners.length; i++) { 
+	        			var tableObj=document.getElementById('ownerInfoTbl');
+	        			var tbody=tableObj.tBodies[0];
+	        			var lastRow = tableObj.rows.length;
+	        			var rowObj = tableObj.rows[1].cloneNode(true);
+	        			var nextIdx=(lastRow-1);
+	        			jQuery(rowObj).find("input, select").each(function() {
+	        				jQuery(this).attr({
+	    								'id' : function(_, id) {
+	    									return id.replace('[0]', '['
+	    											+ nextIdx + ']');
+	    								},
+	    								'name' : function(_, name) {
+	    									return name.replace('[0]', '['
+	    											+ nextIdx + ']');
+	    									
+	    								}
+	        				});  
+	        				if(jQuery(this).attr('data-idx'))
+	        					{
+	        						jQuery(this).attr('data-idx', nextIdx);
+	        					}
+	        						jQuery(this).val('');
+	    					
+	        				});
+	        				tbody.appendChild(rowObj);
+	        				jQuery('#ownerInfoTbl tbody tr:last').find('input').val('');
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].upicNo']").val(currentAssessment);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.aadhaarNumber']").val(property.owners[i].aadhaarNumber);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.mobileNumber']").val(property.owners[i].mobileNumber);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.name']").val(property.owners[i].ownerName);
+	        				jQuery("select[name='amalgamationOwnersProxy["+ nextIdx +"].owner.gender']").val(property.owners[i].gender);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.emailId']").val(property.owners[i].emailId);
+	        				jQuery("select[name='amalgamationOwnersProxy["+ nextIdx +"].owner.guardianRelation']").val(property.owners[i].guardianRelation);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.guardian']").val(property.owners[i].guardian);
+	        			}
         		} else {
         			bootbox.alert(property.validationMsg);
         			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input')
@@ -353,7 +403,7 @@ function addAmalgamatedProperties()
 											+ nextIdx + ']');
 									
 								}
-					});  
+					}).attr("value",'');  
 					
 					if(jQuery(this).attr('data-idx'))
 					{
@@ -363,7 +413,10 @@ function addAmalgamatedProperties()
 					
 		   });
 			tbody.appendChild(rowObj);
-			
+			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+nextIdx+')')
+			.find('.amlgpropassessmentno').attr('readonly', false);
+			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+nextIdx+')')
+			.find('.amlgpropassessmentno').removeAttr('disabled');
 			 jQuery('#amalgamatedPropertiesTbl tbody tr:last').find('input').val('');
 		   
 }
@@ -371,21 +424,34 @@ function addAmalgamatedProperties()
 jQuery(document).on('click',"#delete_row",function (){
 	var table = document.getElementById('amalgamatedPropertiesTbl');
     var rowCount = table.rows.length;
+    var currentAssessment = jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+jQuery(this).closest('tr').index()+')')
+	.find('.amlgpropassessmentno').val();
     var counts = rowCount - 1;
     if(counts==1)
 	{
 		bootbox.alert("This Row cannot be deleted");
 		return false;
 	}else{	
-
+		removeOwners(currentAssessment);
 		jQuery(this).closest('tr').remove();		
-		
 		jQuery("#amalgamatedPropertiesTbl tr:eq(1) td span[alt='AddF']").show();
 		//regenerate index existing inputs in table row
 		regenerateIndex('amalgamatedPropertiesTbl');
 		return true;
 	}
 });
+
+function removeOwners(currentAssessment){
+	var table = document.getElementById('ownerInfoTbl');
+    for(var i=(table.rows.length)-1;i>0;i--){
+    	if(jQuery("input[name='amalgamationOwnersProxy["+ i +"].upicNo']").val() == currentAssessment){
+    		jQuery("#ownerInfoTbl tbody tr:eq("+i+")").remove();
+			jQuery("#ownerInfoTbl tr:eq(1) td span[alt='AddF']").show();
+   	 	}
+    }
+    regenerateIndex('ownerInfoTbl');
+    return true;
+} 
 
 function regenerateIndex(tableId){
 	var idx=0;

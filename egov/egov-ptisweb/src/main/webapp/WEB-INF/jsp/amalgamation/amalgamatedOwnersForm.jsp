@@ -60,6 +60,7 @@
 				<th class="text-center"><s:text name="Guardian" /><span
 					class="mandatory1">*</span></th>
 <!-- 				<th class="text-center" id="addDelOwners"><s:text name="Add/Delete" /></th> -->
+				<th class="text-center" id="addDelOwners"><s:text name="Delete" /></th>
 			</tr>
 		</thead>
 		<tbody>
@@ -67,6 +68,10 @@
 				<s:iterator value="(amalgamationOwnersProxy.size).{#this}"
 					status="ownerStatus">
 					<tr id="ownerDetailsRow">
+					<s:hidden
+							name="amalgamationOwnersProxy[%{#ownerStatus.index}].upicNo"
+							id="amalgamationOwnersProxy[%{#ownerStatus.index}].upicNo"
+							value="%{amalgamationOwnersProxy[#ownerStatus.index].upicNo}"></s:hidden>
 						<s:hidden
 							name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.type"
 							id="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.type"
@@ -122,13 +127,15 @@
 								cssClass="form-control guardianname"
 								onblur="trim(this,this.value);checkSpecialCharForName(this);"
 								data-optional="0" data-errormsg="Guardian name is mandatory!" /></td>
-<!-- 						<td class="text-center"><span id="addOwnerBtn" -->
-<!-- 							name="addOwnerBtn" class="btn-sm btn-default" alt="addOwnerBtn" -->
-<!-- 							onclick="addOwners();"> <i class="fa fa-plus"></i> -->
-<!-- 						</span> &nbsp; <span id="delete_owner_row" name="removeOwnerBtn" -->
-<!-- 							class="btn-sm btn-default deleteowner" alt="removeOwnerBtn"> <i -->
-<!-- 								class="fa fa-trash"></i> -->
-<!-- 						</span></td> -->
+ 						<td class="text-center">
+                          <!--  <span id="addOwnerBtn"
+							name="addOwnerBtn" class="btn-sm btn-default" alt="addOwnerBtn"
+							onclick="addOwners();"> <i class="fa fa-plus"></i>
+						</span> &nbsp; -->
+                        <span id="delete_owner_row" name="removeOwnerBtn" 
+							class="btn-sm btn-default deleteowner" alt="removeOwnerBtn"> <i
+								class="fa fa-trash"></i>
+						</span></td>
 
 					</tr>
 				</s:iterator>

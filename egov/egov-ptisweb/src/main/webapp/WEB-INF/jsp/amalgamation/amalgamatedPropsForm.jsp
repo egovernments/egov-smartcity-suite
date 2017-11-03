@@ -92,11 +92,20 @@
 				<s:iterator value="(basicProp.amalgamationsProxy.size).{#this}"
 					status="item">
 					<tr id="amalgamatedPropRow">
+					<s:if test="%{modelId != null}">
 						<td><s:textfield
 								name="basicProp.amalgamationsProxy[%{#item.index}].assessmentNo"
 								id="assessmentNo" cssClass="form-control amlgpropassessmentno"
 								value="%{basicProp.amalgamationsProxy[#item.index].assessmentNo}"
+								cssStyle="width:100%" data-idx="%{#item.index}" readOnly="true" disabled="disabled"/></td>
+								</s:if>
+								<s:else>
+							<td><s:textfield
+								name="basicProp.amalgamationsProxy[%{#item.index}].assessmentNo"
+								id="assessmentNo" cssClass="form-control amlgpropassessmentno"
+								value="%{basicProp.amalgamationsProxy[#item.index].assessmentNo}"
 								cssStyle="width:100%" data-idx="%{#item.index}" /></td>
+								</s:else>	
 						<td><s:textfield
 								name="basicProp.amalgamationsProxy[%{#item.index}].ownerName"
 								id="ownerName" cssClass="form-control amlgpropownername"

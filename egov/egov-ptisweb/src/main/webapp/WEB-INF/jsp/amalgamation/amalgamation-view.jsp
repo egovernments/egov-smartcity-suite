@@ -71,6 +71,10 @@ function onSubmit() {
 			|| state == 'Alter:Rejected') {
 			jQuery('.amalgamation-form').find('input').removeAttr('readonly');
 			jQuery('.amalgamation-form').find('select').removeAttr('disabled');
+			jQuery('#amalgamatedPropertiesTbl tbody tr')
+			.find('.amlgpropassessmentno').attr('readonly', false);
+			jQuery('#amalgamatedPropertiesTbl tbody tr')
+			.find('.amlgpropassessmentno').removeAttr('disabled');
 			enableOccupancyDate();
 			action = 'amalgamation-forwardModify.action';
 		} else {

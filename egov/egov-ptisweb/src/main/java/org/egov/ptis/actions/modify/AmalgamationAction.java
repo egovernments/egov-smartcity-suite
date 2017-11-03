@@ -410,6 +410,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 amlgOwner.setOwner(ownerInfo.getOwner());
                 amlgOwner.setProperty(propertyModel);
                 amlgOwner.setOwnerOfParent(true);
+                amlgOwner.setUpicNo(basicProp.getUpicNo());
                 propertyModel.getAmalgamationOwnersProxy().add(amlgOwner);
             }
         else
@@ -417,6 +418,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
                 amlgOwner = new AmalgamationOwner();
                 amlgOwner.setOwner(ownerInfo.getOwner());
                 amlgOwner.setProperty(propertyModel);
+                amlgOwner.setOwnerOfParent(ownerInfo.isOwnerOfParent());
+                amlgOwner.setUpicNo(ownerInfo.getUpicNo()!=null?ownerInfo.getUpicNo():null);
                 propertyModel.getAmalgamationOwnersProxy().add(amlgOwner);
             }
     }
@@ -899,6 +902,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             logger.debug("approve: Workflow property: " + propertyModel);
         basicProp = propertyModel.getBasicProperty();
         oldProperty = (PropertyImpl) basicProp.getProperty();
+        amalgamateOwners();
         for (final Amalgamation childProperty : basicProp.getAmalgamations()) {
             childProperties.add(childProperty.getAmalgamatedProperty().getUpicNo());
         }
@@ -929,6 +933,12 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("Exiting approve");
         return RESULT_ACK;
+    }
+
+    private void amalgamateOwners() {
+        for (Amalgamation childProperty : basicProp.getAmalgamations())
+            basicPropertyService.createAmalgamatedOwners(childProperty.getAmalgamatedProperty().getPropertyOwnerInfo(),
+                    childProperty.getParentProperty());
     }
 
     private void createPropertyStatusValues() {

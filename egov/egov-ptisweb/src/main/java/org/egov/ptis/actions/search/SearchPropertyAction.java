@@ -70,7 +70,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_S
 import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
@@ -353,11 +352,6 @@ public class SearchPropertyAction extends SearchFormAction {
              * (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
              * addActionError(getText("tax.dues.error")); return COMMON_FORM; }
              */
-            if (property != null
-                    && property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
-                addActionError(getText("amalgamation.vlt.error"));
-                return COMMON_FORM;
-            }
             if (basicProperty.isUnderWorkflow()) {
                 addActionError(getText("amalgamation.wf.error"));
                 return COMMON_FORM;

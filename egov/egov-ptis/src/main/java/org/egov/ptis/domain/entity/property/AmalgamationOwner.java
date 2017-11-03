@@ -50,6 +50,7 @@ public class AmalgamationOwner extends AbstractPersistable<Long> {
     private User owner;
     private Long id;
     private boolean ownerOfParent;
+    private String upicNo;
 
     public AmalgamationOwner() {
 
@@ -94,4 +95,12 @@ public class AmalgamationOwner extends AbstractPersistable<Long> {
         this.ownerOfParent = ownerOfParent;
     }
 
+    public String getUpicNo() {
+        return upicNo;
+    }
+
+    public void setUpicNo(String upicNo) {
+        this.upicNo = upicNo;
+    }
+    
 }

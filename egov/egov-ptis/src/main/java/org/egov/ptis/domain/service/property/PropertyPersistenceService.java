@@ -41,9 +41,11 @@
 package org.egov.ptis.domain.service.property;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
@@ -288,5 +290,26 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
 
     public BasicProperty updateBasicProperty(final BasicProperty basicProperty, final HashMap<String, String> meesevaParams) {
         return update(basicProperty);
+    }
+    
+    public void createAmalgamatedOwners(final List<PropertyOwnerInfo> childOwners, final BasicProperty basicProperty) {
+        int orderNo = 0;
+        List<Long> parentOwners = new ArrayList<>();
+        for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
+            if (ownerInfo.getOrderNo() != null && orderNo < ownerInfo.getOrderNo())
+                orderNo = ownerInfo.getOrderNo();
+            parentOwners.add(ownerInfo.getOwner().getId());
+        }
+        for (PropertyOwnerInfo ownerInfo : childOwners) {
+            orderNo++;
+            if (ownerInfo != null && !parentOwners.contains(ownerInfo.getOwner().getId())) {
+                PropertyOwnerInfo childOwnerInfo = new PropertyOwnerInfo();
+                childOwnerInfo.setOwner(ownerInfo.getOwner());
+                childOwnerInfo.setOrderNo(orderNo);
+                childOwnerInfo.setSource(ownerInfo.getSource());
+                childOwnerInfo.setBasicProperty(basicProperty);
+                basicProperty.addPropertyOwners(childOwnerInfo);
+            }
+        }
     }
 }

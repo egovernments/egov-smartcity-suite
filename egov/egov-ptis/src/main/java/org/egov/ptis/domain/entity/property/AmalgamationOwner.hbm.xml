@@ -50,5 +50,6 @@
 		<many-to-one name="property" column="PROPERTY" not-null="true"
 			class="org.egov.ptis.domain.entity.property.PropertyImpl"  fetch="select"/>
 		<property name="ownerOfParent" column="OWNEROFPARENT" type="boolean" />
+		<property name="upicNo" column="UPICNO"/>
 		</class>
 </hibernate-mapping>

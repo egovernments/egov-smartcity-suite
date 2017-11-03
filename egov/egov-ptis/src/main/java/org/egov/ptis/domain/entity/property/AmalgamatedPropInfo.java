@@ -38,6 +38,8 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.ptis.domain.entity.property;
+import java.util.List;
+import java.util.Map;
 
 public class AmalgamatedPropInfo {
 
@@ -47,7 +49,8 @@ public class AmalgamatedPropInfo {
     private String propertyAddress;
     private boolean paymentDone;
     private String validationMsg;
-
+    private List<Map<String,Object>> owners;
+    
     public String getAssessmentNo() {
         return assessmentNo;
     }
@@ -96,4 +99,12 @@ public class AmalgamatedPropInfo {
         this.validationMsg = validationMsg;
     }
 
+    public List<Map<String, Object>> getOwners() {
+        return owners;
+    }
+
+    public void setOwners(List<Map<String, Object>> owners) {
+        this.owners = owners;
+    }
+    
 }

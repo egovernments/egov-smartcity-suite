@@ -46,8 +46,11 @@ import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.AmalgamatedPropInfo;
@@ -99,21 +102,48 @@ public class AjaxCommonController {
                 final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;
                 if (hasDues)
                     amalgamatedProp.setValidationMsg("This property has dues!");
-                else
-                    for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
-						final List<Address> addrSet = propOwner.getOwner().getAddress().isEmpty()
-								? Arrays.asList(basicProp.getAddress()) : propOwner.getOwner().getAddress();
-                        for (final Address address : addrSet) {
-                            amalgamatedProp.setOwnerName(propOwner.getOwner().getName());
-                            amalgamatedProp.setMobileNo(propOwner.getOwner().getMobileNumber());
-                            amalgamatedProp.setPropertyAddress(address.toString());
-                            amalgamatedProp.setPaymentDone(totalDue.compareTo(BigDecimal.ZERO) == 0 ? true : false);
-                            break;
-                        }
-                    }
+                else {
+                    getChildPropertyDetails(assessmentNo, amalgamatedProp, basicProp, totalDue);
+                }
             }
         }
         return amalgamatedProp;
+    }
+
+    private void getChildPropertyDetails(final String assessmentNo, final AmalgamatedPropInfo amalgamatedProp,
+            final BasicProperty basicProp, final BigDecimal totalDue) {
+        List<Map<String, Object>> childPropOwners = new ArrayList<>();
+        for (final PropertyOwnerInfo propOwner : basicProp.getPropertyOwnerInfo()) {
+            final List<Address> addrSet = propOwner.getOwner().getAddress().isEmpty()
+                    ? Arrays.asList(basicProp.getAddress()) : propOwner.getOwner().getAddress();
+            getChildPropertyOwners(assessmentNo, childPropOwners, propOwner);
+            for (final Address address : addrSet) {
+                amalgamatedProp.setOwnerName(propOwner.getOwner().getName());
+                amalgamatedProp.setMobileNo(propOwner.getOwner().getMobileNumber());
+                amalgamatedProp.setPropertyAddress(address.toString());
+                amalgamatedProp.setPaymentDone(totalDue.compareTo(BigDecimal.ZERO) == 0 ? true : false);
+                break;
+            }
+        }
+        amalgamatedProp.setOwners(childPropOwners);
+    }
+
+    private void getChildPropertyOwners(final String assessmentNo, List<Map<String, Object>> childPropOwners,
+            final PropertyOwnerInfo propOwner) {
+        User user = propOwner.getOwner();
+        Map<String, Object> owner = new HashMap<>();
+        if (user != null) {
+            owner.put("upicNo", assessmentNo);
+            owner.put("aadhaarNumber", user.getAadhaarNumber());
+            owner.put("mobileNumber", user.getMobileNumber());
+            owner.put("ownerId", user.getId());
+            owner.put("ownerName", user.getName());
+            owner.put("gender", user.getGender().toString());
+            owner.put("emailId", user.getEmailId());
+            owner.put("guardian", user.getGuardian());
+            owner.put("guardianRelation", user.getGuardianRelation());
+        }
+        childPropOwners.add(owner);
     }
 
     /**
