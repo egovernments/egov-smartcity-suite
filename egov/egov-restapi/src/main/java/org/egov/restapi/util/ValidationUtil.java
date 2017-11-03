@@ -511,7 +511,8 @@ public class ValidationUtil {
 							return errorDetails;
 						}
 					}
-					if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)
+					if (StringUtils.isNotBlank(documentTypeDetails.getDocumentDate()) &&
+							!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)
 							&& propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate()).after(
 									propertyExternalService.convertStringToDate(floorDetails.getOccupancyDate()))) {
 						errorDetails.setErrorCode(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE);
@@ -589,6 +590,7 @@ public class ValidationUtil {
 		}
 		return errorDetails;
 	}
+
 
 	public Date convertStringToDate(final String dateInString) throws ParseException {
 		final SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy");
