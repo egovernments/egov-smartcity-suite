@@ -42,6 +42,7 @@ package org.egov.wtms.application.workflow;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_STATE_REJECTED;
@@ -159,13 +160,16 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     .isCitizenPortalUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
             recordCreatedByAnonymousUser = waterTaxUtils
                     .isAnonymousUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
-            recordCreatedBySuperUser = waterTaxUtils.isSuperUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
-            recordCreatedByRoleAdmin = waterTaxUtils.isRoleAdmin(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
+            recordCreatedBySuperUser = waterTaxUtils
+                    .isSuperUser(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
+            recordCreatedByRoleAdmin = waterTaxUtils
+                    .isRoleAdmin(userService.getUserById(waterConnectionDetails.getCreatedBy().getId()));
         }
         String currState = "";
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
         final String natureOfwork = getNatureOfTask(waterConnectionDetails);
-        if (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal || recordCreatedByAnonymousUser || recordCreatedBySuperUser || recordCreatedByRoleAdmin) {
+        if (recordCreatedBYNonEmployee || recordCreatedBYCitizenPortal || recordCreatedByAnonymousUser || recordCreatedBySuperUser
+                || recordCreatedByRoleAdmin) {
             currState = WFLOW_ACTION_STEP_THIRDPARTY_CREATED;
             if (!waterConnectionDetails.getStateHistory().isEmpty()) {
                 wfInitiator = assignmentService.getPrimaryAssignmentForPositon(
@@ -277,7 +281,11 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                 waterConnectionDetails.transition().start().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent).withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                         .withOwner(pos).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-            } else if (WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON.equalsIgnoreCase(workFlowAction)) {
+            } else if (SIGNWORKFLOWACTION.equalsIgnoreCase(workFlowAction))
+                waterConnectionDetails.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork)
+                        .withNextAction("END");
+            else if (WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 if (null != workFlowAction && !workFlowAction.isEmpty()
                         && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_STATE_TAP_EXECUTION_DATE_BUTTON)
                         && waterConnectionDetails.getApplicationType().getCode()

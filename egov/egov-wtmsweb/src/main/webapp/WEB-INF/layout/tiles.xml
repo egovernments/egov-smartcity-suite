@@ -453,4 +453,8 @@
         <put-attribute name="page-title" value="title.search.donation" cascade="true"></put-attribute>
         <put-attribute name="body" value="/WEB-INF/views/reports/search-donation.jsp"></put-attribute>
     </definition>
+    <definition name="execute-update-search" extends="base_layout">
+    	<put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/execute-update-search.jsp"></put-attribute>
+    </definition>
 </tiles-definitions>
