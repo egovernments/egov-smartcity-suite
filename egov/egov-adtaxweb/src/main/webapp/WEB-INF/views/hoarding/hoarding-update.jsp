@@ -363,7 +363,7 @@ if(statuscode=='APPROVED' || statuscode=='ADTAXAMTPAYMENTPAID' || statuscode=='A
 $( ".workflow-submit" ).click(function( e ) {
 	if($('#advertisementform').valid()){
 		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
-			if(parseInt($('#measurement').val()) <= 0){
+			if(parseFloat($('#measurement').val()) <= 0){
 				bootbox.alert('Please enter valid measurement');
 				e.preventDefault();
 				return false;
