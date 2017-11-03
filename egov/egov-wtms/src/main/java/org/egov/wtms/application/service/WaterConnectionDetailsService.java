@@ -212,6 +212,7 @@ public class WaterConnectionDetailsService {
     private static final String APPROVED = "Approved";
     private static final String EXECUTION_DATE = "executionDate";
     private static final String DATE_VALIDATION_FAILED = "DateValidationFailed";
+    private static final String DEPARTMENT = "department";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -462,12 +463,12 @@ public class WaterConnectionDetailsService {
             user = state.getOwnerUser();
             if (null != user) {
                 map.put("user", user.getUsername() + "::" + user.getName());
-                map.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId())
                         ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
             } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
                 user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
                 map.put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                map.put("department", null != ownerPosition.getDeptDesig().getDepartment()
+                map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment()
                         ? ownerPosition.getDeptDesig().getDepartment().getName() : "");
             }
             historyTable.add(map);
@@ -484,7 +485,7 @@ public class WaterConnectionDetailsService {
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
                     historyMap.put("user", user.getUsername() + "::" + user.getName());
-                    historyMap.put("department", null != eisCommonService.getDepartmentForUser(user.getId())
+                    historyMap.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId())
                             ? eisCommonService.getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     try {
@@ -496,7 +497,7 @@ public class WaterConnectionDetailsService {
                     }
                     historyMap.put("user",
                             null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    historyMap.put("department", null != owner.getDeptDesig().getDepartment()
+                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment()
                             ? owner.getDeptDesig().getDepartment().getName() : "");
                 }
                 historyTable.add(historyMap);
@@ -508,9 +509,8 @@ public class WaterConnectionDetailsService {
     @Transactional
     public WaterConnectionDetails updateWaterConnection(final WaterConnectionDetails waterConnectionDetails,
             final Long approvalPosition, final String approvalComent, String additionalRule,
-            final String workFlowAction, final String mode, final ReportOutput reportOutput, final String sourceChannel)
-            throws ValidationException {
-        applicationStatusChange(waterConnectionDetails, workFlowAction, mode, sourceChannel);
+            final String workFlowAction, final String mode, final ReportOutput reportOutput, final String sourceChannel) {
+        applicationStatusChange(waterConnectionDetails, workFlowAction, mode);
         if (APPLICATION_STATUS_CLOSERDIGSIGNPENDING
                 .equals(waterConnectionDetails.getStatus().getCode())
                 && waterConnectionDetails.getCloseConnectionType() != null
@@ -653,7 +653,7 @@ public class WaterConnectionDetailsService {
     }
 
     public void applicationStatusChange(final WaterConnectionDetails waterConnectionDetails,
-            final String workFlowAction, final String mode, final String sourceChannel) {
+            final String workFlowAction, final String mode) {
         if (null != waterConnectionDetails && null != waterConnectionDetails.getStatus()
                 && null != waterConnectionDetails.getStatus().getCode())
             if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CREATED)
@@ -825,12 +825,11 @@ public class WaterConnectionDetailsService {
                                     .equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
                             || waterConnectionDetails.getStatus().getCode()
                                     .equals(APPLICATION_STATUS__RECONNCTIONAPPROVED)
-                            || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) && waterConnectionDetails.getStatus()
-                                    .getCode().equals(WORKFLOW_RECONNCTIONINITIATED)
-                            || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) && waterConnectionDetails.getStatus()
-                                    .getCode().equals(WORKFLOW_RECONNCTIONINITIATED)
-                            || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) && waterConnectionDetails.getStatus()
-                                    .getCode().equals(APPLICATION_STATUS_CLOSERINITIATED)))
+                            || workFlowAction.equals(WFLOW_ACTION_STEP_REJECT) &&
+                                    (waterConnectionDetails.getStatus()
+                                            .getCode().equals(WORKFLOW_RECONNCTIONINITIATED)
+                                            || waterConnectionDetails.getStatus()
+                                                    .getCode().equals(APPLICATION_STATUS_CLOSERINITIATED))))
                 approvalPosition = waterTaxUtils.getApproverPosition(wfmatrix.getNextDesignation(),
                         waterConnectionDetails);
             else if (wfmatrix.getNextDesignation() != null && (!workFlowAction.equals(WFLOW_ACTION_STEP_REJECT)
@@ -1456,6 +1455,31 @@ public class WaterConnectionDetailsService {
             return true;
         }
         return false;
+    }
+
+    public List<WaterConnExecutionDetails> getConnExecutionObjectList(final List<Object[]> detailList) {
+        final List<WaterConnExecutionDetails> resultList = new ArrayList<>();
+        for (final Object[] resultObject : detailList) {
+            final WaterConnExecutionDetails details = new WaterConnExecutionDetails();
+            if (resultObject[0] != null)
+                details.setApplicationNumber(resultObject[0].toString());
+            if (resultObject[1] != null)
+                details.setConsumerNumber(resultObject[1].toString());
+            if (resultObject[2] != null)
+                details.setOwnerName(resultObject[2].toString());
+            if (resultObject[3] != null)
+                details.setApplicationType(resultObject[3].toString());
+            if (resultObject[4] != null)
+                details.setApplicationStatus(resultObject[4].toString());
+            if (resultObject[5] != null)
+                details.setApprovalDate(resultObject[5].toString());
+            if (resultObject[6] != null)
+                details.setRevenueWard(resultObject[6].toString());
+            if (resultObject[7] != null)
+                details.setId(Long.parseLong(resultObject[7].toString()));
+            resultList.add(details);
+        }
+        return resultList;
     }
 
 }

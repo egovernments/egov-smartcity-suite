@@ -40,6 +40,8 @@
 
 package org.egov.wtms.reports.entity;
 
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+
 import java.lang.reflect.Type;
 
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
@@ -57,19 +59,13 @@ public class ExecuteWaterConnectionAdaptor implements JsonSerializer<WaterConnEx
     public JsonElement serialize(final WaterConnExecutionDetails applicationDetails, final Type type,
             final JsonSerializationContext jsonSerializationContext) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("applicationNumber",
-                applicationDetails.getApplicationNumber() != null ? applicationDetails.getApplicationNumber() : "");
-        jsonObject.addProperty("consumerNumber",
-                applicationDetails.getConsumerNumber() != null ? applicationDetails.getConsumerNumber() : "");
-        jsonObject.addProperty("ownerName", applicationDetails.getOwnerName() != null ? applicationDetails.getOwnerName() : "");
-        jsonObject.addProperty("applicationType",
-                applicationDetails.getApplicationType() != null ? applicationDetails.getApplicationType() : "");
-        jsonObject.addProperty("status",
-                applicationDetails.getApplicationStatus() != null ? applicationDetails.getApplicationStatus() : "");
-        jsonObject.addProperty("applicationDate",
-                applicationDetails.getApprovalDate() != null ? applicationDetails.getApprovalDate() : "");
-        jsonObject.addProperty("revenueWard",
-                applicationDetails.getRevenueWard() != null ? applicationDetails.getRevenueWard() : "");
+        jsonObject.addProperty("applicationNumber", defaultIfBlank(applicationDetails.getApplicationNumber()));
+        jsonObject.addProperty("consumerNumber", defaultIfBlank(applicationDetails.getConsumerNumber()));
+        jsonObject.addProperty("ownerName", defaultIfBlank(applicationDetails.getOwnerName()));
+        jsonObject.addProperty("applicationType", defaultIfBlank(applicationDetails.getApplicationType()));
+        jsonObject.addProperty("status", defaultIfBlank(applicationDetails.getApplicationStatus()));
+        jsonObject.addProperty("applicationDate", defaultIfBlank(applicationDetails.getApprovalDate()));
+        jsonObject.addProperty("revenueWard", defaultIfBlank(applicationDetails.getRevenueWard()));
         jsonObject.addProperty("id", applicationDetails.getId() != null ? applicationDetails.getId() : null);
         return jsonObject;
     }

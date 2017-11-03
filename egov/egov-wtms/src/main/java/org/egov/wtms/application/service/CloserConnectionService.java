@@ -138,8 +138,7 @@ public class CloserConnectionService {
             final Long approvalPosition, final String approvalComent, String additionalRule,
             final String workFlowAction, final String sourceChannel) {
 
-        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "",
-                sourceChannel);
+        waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "");
         final WaterConnectionDetails savedwaterConnectionDetails = waterConnectionDetailsRepository
                 .saveAndFlush(waterConnectionDetails);
 

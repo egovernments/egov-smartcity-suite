@@ -47,6 +47,7 @@
 
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_HIERARCHY_TYPE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
 
@@ -71,9 +72,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-
 @Controller
 @RequestMapping(value = "/application/execute-update")
 public class UpdateWaterConnectionExecutionController {
@@ -90,9 +88,6 @@ public class UpdateWaterConnectionExecutionController {
 
     @Autowired
     private ApplicationTypeService applicationTypeService;
-
-    @Autowired
-    private ExecuteWaterConnectionAdaptor executeWaterApplicationAdaptor;
 
     @GetMapping(value = "/search")
     public String getSearchScreen(final Model model) {
@@ -111,31 +106,13 @@ public class UpdateWaterConnectionExecutionController {
     @PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchResult(final WaterConnExecutionDetails executeWaterApplicationDetails) {
-        final List<WaterConnExecutionDetails> resultList = new ArrayList<>();
         final List<Object[]> detailList = waterConnectionDetailsService.getApplicationResultList(executeWaterApplicationDetails);
-
-        for (final Object[] resultObject : detailList) {
-            final WaterConnExecutionDetails details = new WaterConnExecutionDetails();
-            if (resultObject[0] != null)
-                details.setApplicationNumber(resultObject[0].toString());
-            if (resultObject[1] != null)
-                details.setConsumerNumber(resultObject[1].toString());
-            if (resultObject[2] != null)
-                details.setOwnerName(resultObject[2].toString());
-            if (resultObject[3] != null)
-                details.setApplicationType(resultObject[3].toString());
-            if (resultObject[4] != null)
-                details.setApplicationStatus(resultObject[4].toString());
-            if (resultObject[5] != null)
-                details.setApprovalDate(resultObject[5].toString());
-            if (resultObject[6] != null)
-                details.setRevenueWard(resultObject[6].toString());
-            if (resultObject[7] != null)
-                details.setId(Long.parseLong(resultObject[7].toString()));
-            resultList.add(details);
-        }
-
-        return new StringBuilder(" { \"data\" : ").append(getJsonData(resultList)).append("}").toString();
+        return new StringBuilder(" { \"data\" : ")
+                .append(toJSON(waterConnectionDetailsService.getConnExecutionObjectList(detailList),
+                        WaterConnExecutionDetails.class,
+                        ExecuteWaterConnectionAdaptor.class))
+                .append("}")
+                .toString();
     }
 
     @PostMapping(value = "/result", consumes = MediaType.APPLICATION_JSON_VALUE)
@@ -155,13 +132,6 @@ public class UpdateWaterConnectionExecutionController {
         else
             response = SUCCESS;
         return response;
-    }
-
-    public Object getJsonData(final Object object) {
-        final GsonBuilder gsonBuilder = new GsonBuilder();
-        final Gson gson = gsonBuilder.registerTypeAdapter(WaterConnExecutionDetails.class, executeWaterApplicationAdaptor)
-                .create();
-        return gson.toJson(object);
     }
 
 }
