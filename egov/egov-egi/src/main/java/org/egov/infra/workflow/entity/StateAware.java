@@ -54,7 +54,6 @@ import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.JsonUtils;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
-import org.egov.pims.commons.Position;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -73,12 +72,12 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @MappedSuperclass
-public abstract class StateAware extends AbstractAuditable {
+public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable {
     private static final long serialVersionUID = 5776408218810221246L;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
-    private State state;
+    private State<T> state;
 
     @Transient
     @JsonIgnore
@@ -101,7 +100,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    public State getState() {
+    public State<T> getState() {
         return state;
     }
 
@@ -109,27 +108,27 @@ public abstract class StateAware extends AbstractAuditable {
         this.state = state;
     }
 
-    public final State getCurrentState() {
-        return state;
+    public final State<T> getCurrentState() {
+        return getState();
     }
 
-    public final Position currentAssignee() {
-        return state.getOwnerPosition();
+    public final T currentAssignee() {
+        return getState().getOwnerPosition();
     }
 
-    public final Position previousAssignee() {
-        return state.getPreviousOwner();
+    public final T previousAssignee() {
+        return getState().getPreviousOwner();
     }
 
-    public final List<StateHistory> getStateHistory() {
-        return state == null ? Collections.emptyList() : new LinkedList<>(state.getHistory());
+    public final List<StateHistory<T>> getStateHistory() {
+        return state == null ? Collections.emptyList() : new LinkedList(getState().getHistory());
     }
 
     public final String getStateType() {
         return this.getClass().getSimpleName();
     }
 
-    public <T> T extraInfoAs(Class<T> type) {
+    public <S> S extraInfoAs(Class<S> type) {
         return state.extraInfoAs(type);
     }
 
@@ -155,12 +154,12 @@ public abstract class StateAware extends AbstractAuditable {
         return this.transition;
     }
 
-    public final void changeProcessOwner(Position position) {
+    public final void changeProcessOwner(T position) {
         if (transitionInprogress())
             this.state.setOwnerPosition(position);
     }
 
-    public final void changeProcessInitiator(Position position) {
+    public final void changeProcessInitiator(T position) {
         if (transitionInprogress())
             this.state.setInitiatorPosition(position);
     }
@@ -218,7 +217,7 @@ public abstract class StateAware extends AbstractAuditable {
         }
 
         public final Transition progress() {
-            Position previousOwner = state.getOwnerPosition();
+            T previousOwner = state.getOwnerPosition();
             progressWithStateCopy();
             resetState();
             state.setPreviousOwner(previousOwner);
@@ -268,13 +267,13 @@ public abstract class StateAware extends AbstractAuditable {
             return this;
         }
 
-        public final Transition withOwner(Position owner) {
+        public final Transition withOwner(T owner) {
             checkTransitionStatus();
             state.setOwnerPosition(owner);
             return this;
         }
 
-        public final Transition withInitiator(Position owner) {
+        public final Transition withInitiator(T owner) {
             checkTransitionStatus();
             state.setInitiatorPosition(owner);
             return this;

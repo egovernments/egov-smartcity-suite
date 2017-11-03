@@ -39,54 +39,25 @@
  */
 package org.egov.works.milestone.entity;
 
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.StateAware;
-
 @Entity
 @Table(name = "EGW_TRACK_MILESTONE")
 @Unique(id = "id", tableName = "EGW_TRACK_MILESTONE")
 @SequenceGenerator(name = TrackMilestone.SEQ_EGW_TRACK_MILESTONE, sequenceName = TrackMilestone.SEQ_EGW_TRACK_MILESTONE, allocationSize = 1)
-public class TrackMilestone extends StateAware {
-
-    private static final long serialVersionUID = -366602348464540736L;
+public class TrackMilestone extends StateAware<Position> {
 
     public static final String SEQ_EGW_TRACK_MILESTONE = "SEQ_EGW_TRACK_MILESTONE";
-
-    public enum TrackMilestoneStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
-    }
-
-    public enum Actions {
-        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
+    private static final long serialVersionUID = -366602348464540736L;
     @Id
     @GeneratedValue(generator = SEQ_EGW_TRACK_MILESTONE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -108,7 +79,7 @@ public class TrackMilestone extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "trackMilestone", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = TrackMilestoneActivity.class)
-    private List<TrackMilestoneActivity> activities = new LinkedList<TrackMilestoneActivity>();
+    private List<TrackMilestoneActivity> activities = new LinkedList<>();
 
     private transient String ownerName;
 
@@ -174,12 +145,12 @@ public class TrackMilestone extends StateAware {
         return activities;
     }
 
-    public void addActivity(final TrackMilestoneActivity activity) {
-        activities.add(activity);
-    }
-
     public void setActivities(final List<TrackMilestoneActivity> activities) {
         this.activities = activities;
+    }
+
+    public void addActivity(final TrackMilestoneActivity activity) {
+        activities.add(activity);
     }
 
     public String getApprovalComent() {
@@ -196,6 +167,19 @@ public class TrackMilestone extends StateAware {
 
     public void setProjectCompleted(final boolean projectCompleted) {
         this.projectCompleted = projectCompleted;
+    }
+
+    public enum TrackMilestoneStatus {
+        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
+    }
+
+    public enum Actions {
+        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 
 }

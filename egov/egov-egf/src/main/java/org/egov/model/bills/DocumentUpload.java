@@ -53,12 +53,13 @@ import org.hibernate.validator.constraints.SafeHtml;
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.io.ByteArrayInputStream;
+import java.io.Serializable;
 import java.util.Date;
 
 @Entity
 @Table(name = "EGF_DOCUMENTS")
 @SequenceGenerator(name = DocumentUpload.SEQ_EGF_DOCUMENTS, sequenceName = DocumentUpload.SEQ_EGF_DOCUMENTS, allocationSize = 1)
-public class DocumentUpload {
+public class DocumentUpload implements Serializable {
 
     public static final String SEQ_EGF_DOCUMENTS = "SEQ_EGF_DOCUMENTS";
 

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,11 +49,11 @@ import com.lowagie.text.pdf.PdfPCell;
 import com.lowagie.text.pdf.PdfPTable;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
-import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.DeptDesig;
+import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -77,23 +77,23 @@ import java.util.Locale;
 import java.util.Map;
 
 public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
+    public static final String MEASUREMENTBOOK_PDF_ERROR = "measurementbook.pdf.error";
     private static final Logger logger = Logger.getLogger(MeasurementBookPDFGenerator.class);
+    private final Map<String, String> pdfLabel;
+    private final MBHeader mbHeader;
+    private final NumberFormat formatter = new DecimalFormat("#0.00");
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     private MeasurementBookService measurementBookService;
     private WorkOrderService workOrderService;
-    public static final String MEASUREMENTBOOK_PDF_ERROR = "measurementbook.pdf.error";
     @Autowired
     private EmployeeServiceOld employeeService;
-    private final Map<String, String> pdfLabel;
-    private final MBHeader mbHeader;
-    private final NumberFormat formatter = new DecimalFormat("#0.00");
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     private boolean includeRevisionTypeColumn;
 
     public MeasurementBookPDFGenerator(final MBHeader mbHeader, final OutputStream out,
-            final Map<String, String> pdfLabel) {
+                                       final Map<String, String> pdfLabel) {
         super(out, "landscape");
         this.pdfLabel = pdfLabel;
         this.mbHeader = mbHeader;
@@ -154,13 +154,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             document.close();
         } catch (final DocumentException e) {
             throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, e);
-        } catch (final ApplicationException ex) {
-            throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, ex);
         }
     }
 
     private void areNTOrLSItemsPresent(final MBHeader mbHeader) {
-        if (mbHeader != null && mbHeader.getMbDetails() != null && mbHeader.getMbDetails().size() > 0)
+        if (mbHeader != null && mbHeader.getMbDetails() != null && !mbHeader.getMbDetails().isEmpty())
             for (final MBDetails mbdetails : mbHeader.getMbDetails())
                 if (mbdetails.getWorkOrderActivity() != null && mbdetails.getWorkOrderActivity().getActivity() != null
                         && mbdetails.getWorkOrderActivity().getActivity().getRevisionType() != null)
@@ -171,17 +169,17 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
         try {
             final PdfPTable approvaldetailsTable = new PdfPTable(5);
             approvaldetailsTable.setWidthPercentage(100);
-            approvaldetailsTable.setWidths(new float[] { 2f, 1f, 1f, 1.5f, 2f });
+            approvaldetailsTable.setWidths(new float[]{2f, 1f, 1f, 1.5f, 2f});
             addRow(approvaldetailsTable, true, makePara(8, pdfLabel.get("mbpdf.aprvalstep")),
                     centerPara(8, pdfLabel.get("mbpdf.name")), centerPara(8, pdfLabel.get("mbpdf.designation")),
                     centerPara(8, pdfLabel.get("mbpdf.aprvdon")), centerPara(8, pdfLabel.get("mbpdf.remarks")));
-            List<StateHistory> history = null;
+            List<StateHistory<Position>> history = null;
             String code = "";
             if (mbHeader.getCurrentState() != null && mbHeader.getCurrentState().getHistory() != null)
                 history = mbHeader.getStateHistory();
             if (history != null) {
                 Collections.reverse(history);
-                for (final StateHistory ad : history)
+                for (final StateHistory<Position> ad : history)
                     if (!ad.getValue().equals("NEW") && !ad.getValue().equals("END")) {
                         String nextAction = "";
                         if (ad.getNextAction() != null)
@@ -189,19 +187,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                         Long positionId = null;
                         String desgName = null;
                         DeptDesig deptdesig = null;
-                        // if(ad.getPrevious()==null){
                         positionId = ad.getOwnerPosition().getId();
                         deptdesig = ad.getOwnerPosition().getDeptDesig();
                         desgName = deptdesig.getDesignation().getName();
-                        /*
-                         * } else{ positionId =ad.getPrevious().getOwner().getId(); deptdesig=
-                         * ad.getPrevious().getOwner().getDeptDesigId(); desgName = deptdesig.getDesigId().getDesignationName(); }
-                         */
                         final PersonalInformation emp = employeeService.getEmpForPositionAndDate(ad.getCreatedDate(),
                                 Integer.parseInt(positionId.toString()));
-                        /*
-                         * if(ad.getValue().equals("END")) code = ad.getPrevious().getValue(); else
-                         */
                         code = ad.getValue();
                         final EgwStatus status = (EgwStatus) getPersistenceService().find(
                                 "from EgwStatus where moduletype=? and code=?", "MBHeader", code);
@@ -232,14 +222,14 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     }
 
     // label row method definition
-    private PdfPTable createMbTable() throws DocumentException, ApplicationException {
+    private PdfPTable createMbTable() throws DocumentException {
         PdfPTable mbTable;
         if (includeRevisionTypeColumn) {
             mbTable = new PdfPTable(12);
-            mbTable.setWidths(new float[] { 1f, 1.5f, 4f, 1.4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f });
+            mbTable.setWidths(new float[]{1f, 1.5f, 4f, 1.4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f});
         } else {
             mbTable = new PdfPTable(11);
-            mbTable.setWidths(new float[] { 1f, 1.5f, 4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f });
+            mbTable.setWidths(new float[]{1f, 1.5f, 4f, 1.9f, 1.6f, 1.4f, 1.8f, 1.9f, 1.9f, 1.9f, 1.6f});
         }
         // main table
         mbTable.setWidthPercentage(100);
@@ -270,16 +260,14 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
 
             // last column
             mbTable.addCell(new PdfPCell(new Phrase(pdfLabel.get("mbpdf.currentcost"), font)));
-        } catch (final DocumentException e) {
+        } catch (final RuntimeException e) {
             throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, e);
-        } catch (final ApplicationException ex) {
-            throw new ApplicationRuntimeException(MEASUREMENTBOOK_PDF_ERROR, ex);
         }
         return mbTable;
     }
 
     // creating table for previous mb
-    public PdfPTable createPreviousMbTable() throws DocumentException, ApplicationException {
+    public PdfPTable createPreviousMbTable() {
         final PdfPTable previousMbTable = new PdfPTable(2);
         final Font font = new Font();
         font.setSize(8);
@@ -294,8 +282,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
     }
 
     // for creating mbheader data
-    private PdfPTable createMbData(final PdfPTable mbTable, final MBHeader mbHeader) throws DocumentException,
-            ApplicationException {
+    private PdfPTable createMbData(final PdfPTable mbTable, final MBHeader mbHeader) {
         Integer i = 0;
         double uomFactor = 0.0;
 
@@ -304,15 +291,13 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             String description = "";
             String per = "";
             String schNo = "";
-            double currentMeasurement = 0.0;
+            double currentMeasurement;
             currentMeasurement = mbDetails.getQuantity();
             ++i;
             mbTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
             mbTable.addCell(rightPara(8, i.toString()));
-            // if(mbDetails!=null){
             final WorkOrderActivity workOrderActivity = mbDetails.getWorkOrderActivity();
             final Activity activity = workOrderActivity.getActivity();
-            // peformActivity();
             if (activity != null) {
                 if (activity.getSchedule() != null && activity.getSchedule().getCode() != null)
                     schNo = activity.getSchedule().getCode();
@@ -339,16 +324,16 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
                     mbTable.addCell(makePara(8, ""));
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                                .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
+                        .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                     mbTable.addCell(makePara(8, "Non Tendered"));
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                                .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
+                        .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
                     mbTable.addCell(makePara(8, "Lump Sum"));
             }
 
-            double completedMeasurement = 0.0;
-            double cumlPrevMb = 0.0;
+            double completedMeasurement;
+            double cumlPrevMb;
             try {
 
                 long woaId = 0l;
@@ -365,8 +350,7 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             mbTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
             mbTable.addCell(rightPara(8, completedMeasurement));
 
-            double approveRateWo = 0.0;
-            approveRateWo = workOrderActivity.getApprovedRate();
+            double approveRateWo = workOrderActivity.getApprovedRate();
             mbTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
             mbTable.addCell(rightPara(8, formatter.format(approveRateWo)));
 
@@ -424,12 +408,11 @@ public class MeasurementBookPDFGenerator extends AbstractPDFGenerator {
             // Estimate Percentage
             // a)Current MB entry---->Measurements (Col5-8) i.e (area-previous
             // measurement)
-            // double finalCurMeasurement=area-prevMeasurement;
 
             mbTable.addCell(rightPara(8, currentMeasurement));
 
             // current cost
-            double currentCost = 0.0;
+            double currentCost;
             currentCost = currentMeasurement * approveRateWo * uomFactor;
             mbTable.addCell(rightPara(8, formatter.format(currentCost)));
             // } //end of if mbDetails

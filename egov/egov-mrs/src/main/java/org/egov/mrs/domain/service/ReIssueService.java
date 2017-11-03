@@ -39,18 +39,6 @@
 
 package org.egov.mrs.domain.service;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
 import org.egov.eis.service.EisCommonService;
@@ -87,6 +75,17 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @Transactional(readOnly = true)
 public class ReIssueService {
@@ -122,7 +121,7 @@ public class ReIssueService {
     @Autowired
     private ReIssueCertificateUpdateIndexesService reiSsueUpdateIndexesService;
     @Autowired
-    protected AppConfigValueService appConfigValuesService;
+    private AppConfigValueService appConfigValuesService;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -189,7 +188,7 @@ public class ReIssueService {
 
     @Transactional
     public ReIssue forwardReIssue(final Long id, final ReIssue reissue,
-            final WorkflowContainer workflowContainer) {
+                                  final WorkflowContainer workflowContainer) {
         updateReIssueData(reissue);
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
@@ -205,7 +204,7 @@ public class ReIssueService {
 
     @Transactional
     public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
-            final HttpServletRequest request) throws IOException {
+                                  final HttpServletRequest request) throws IOException {
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
@@ -226,13 +225,13 @@ public class ReIssueService {
 
     @Transactional
     public ReIssue rejectReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
-            final HttpServletRequest request)
+                                 final HttpServletRequest request)
             throws IOException {
         reissue.setStatus(
                 workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ? marriageUtils
                         .getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME)
                         : marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CANCELLED.toString(),
-                                MarriageConstants.MODULE_NAME));
+                        MarriageConstants.MODULE_NAME));
 
         if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
             final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -285,7 +284,7 @@ public class ReIssueService {
 
     @Transactional
     public MarriageCertificate generateReIssueCertificate(final ReIssue reIssue,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                                          final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
         final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
                 reIssue, request, MarriageCertificateType.REISSUE);
         reIssue.addCertificate(marriageCertificate);
@@ -294,7 +293,7 @@ public class ReIssueService {
 
     @Transactional
     public ReIssue digiSignCertificate(final ReIssue reIssue,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                       final WorkflowContainer workflowContainer, final HttpServletRequest request) {
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
@@ -310,7 +309,7 @@ public class ReIssueService {
 
     @Transactional
     public ReIssue printCertificate(final ReIssue reIssue, final WorkflowContainer workflowContainer,
-            final HttpServletRequest request)
+                                    final HttpServletRequest request)
             throws IOException {
         if (reIssue.getMarriageCertificate().isEmpty()) {
             final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
@@ -336,14 +335,14 @@ public class ReIssueService {
     public List<Map<String, Object>> getHistory(final ReIssue reIssue) {
         User user;
         final List<Map<String, Object>> historyTable = new ArrayList<>();
-        final State state = reIssue.getState();
+        final State<Position> state = reIssue.getState();
         final Map<String, Object> map = new HashMap<>(0);
         if (null != state) {
             if (!reIssue.getStateHistory().isEmpty()
                     && reIssue.getStateHistory() != null)
                 Collections.reverse(reIssue.getStateHistory());
             Map<String, Object> historyMap;
-            for (final StateHistory stateHistory : reIssue.getStateHistory()) {
+            for (final StateHistory<Position> stateHistory : reIssue.getStateHistory()) {
                 historyMap = new HashMap<>(0);
                 historyMap.put("date", stateHistory.getDateInfo());
                 historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");

@@ -40,6 +40,25 @@
 
 package org.egov.ptis.domain.entity.property;
 
+import org.apache.log4j.Logger;
+import org.egov.commons.Installment;
+import org.egov.exceptions.InvalidPropertyException;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.persistence.entity.Address;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.egov.portal.entity.Citizen;
+import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
+import org.egov.ptis.domain.entity.demand.Ptdemand;
+
+import javax.validation.Valid;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import static org.egov.ptis.constants.PropertyTaxConstants.BUILT_UP_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
@@ -51,26 +70,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_EXE
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NAME_GRP;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_CREATE;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.Valid;
-
-import org.apache.log4j.Logger;
-import org.egov.commons.Installment;
-import org.egov.exceptions.InvalidPropertyException;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.Address;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.portal.entity.Citizen;
-import org.egov.ptis.domain.entity.demand.FloorwiseDemandCalculations;
-import org.egov.ptis.domain.entity.demand.Ptdemand;
-
-public class PropertyImpl extends StateAware implements Property {
+public class PropertyImpl extends StateAware<Position> implements Property {
 
     private static final long serialVersionUID = -5353928708732980539L;
 
@@ -116,16 +116,16 @@ public class PropertyImpl extends StateAware implements Property {
     private String applicationNo;
     private String demolitionReason;
     private String meesevaApplicationNumber;// Temporary number for meeseva
-                                            // integration.
+    // integration.
     private String meesevaServiceCode;
     private String source;
     private String referenceId;
 
     /**
      * @Size(min=1) is not working when we modify a migrated property, Reason is
-     *              because for the migrated property the tax xml is not there
-     *              so when we try to modify the migrated property the active
-     *              property will not be having the unitCalculationDetails
+     * because for the migrated property the tax xml is not there
+     * so when we try to modify the migrated property the active
+     * property will not be having the unitCalculationDetails
      */
     @Valid
     private Set<UnitCalculationDetail> unitCalculationDetails = new HashSet<>();
@@ -159,19 +159,12 @@ public class PropertyImpl extends StateAware implements Property {
         final PropertyImpl other = (PropertyImpl) obj;
 
         if (getId() != null && other.getId() != null) {
-            if (getId().equals(other.getId()))
-                return true;
-            else
-                return false;
-
+            return getId().equals(other.getId());
         } else if ((getPropertySource() != null || other.getPropertySource() != null)
                 && (getBasicProperty() != null || other.getBasicProperty() != null))
-            if (getPropertySource().equals(other.getPropertySource())
+            return getPropertySource().equals(other.getPropertySource())
                     && getBasicProperty().equals(other.getBasicProperty())
-                    && getInstallment().equals(other.getInstallment()) && getStatus().equals(other.getStatus()))
-                return true;
-            else
-                return false;
+                    && getInstallment().equals(other.getInstallment()) && getStatus().equals(other.getStatus());
         return false;
 
     }
@@ -188,10 +181,6 @@ public class PropertyImpl extends StateAware implements Property {
         return hashCode;
     }
 
-    /*
-     * @Override public List<ValidationError> validate() { return new
-     * ArrayList<ValidationError>(); }
-     */
     @Override
     public boolean validateProperty() throws InvalidPropertyException {
 
@@ -202,7 +191,7 @@ public class PropertyImpl extends StateAware implements Property {
             throw new InvalidPropertyException("PropertyImpl.validate : Created By is not Set, Please Check !!");
         if (getPropertySource() == null)
             throw new InvalidPropertyException("PropertyImpl.validate : PropertySource is not set, Please Check !!");
-        else if (getPropertySource().validate() == false)
+        else if (!getPropertySource().validate())
             throw new InvalidPropertyException(
                     "PropertyImpl.validate : PropertySource validate() failed, Please Check !!");
 
@@ -262,11 +251,6 @@ public class PropertyImpl extends StateAware implements Property {
         return vacant;
     }
 
-    @Override
-    public void setVacant(final Boolean vacant) {
-        this.vacant = vacant;
-    }
-
     public Citizen getCitizen() {
         return citizen;
     }
@@ -297,6 +281,11 @@ public class PropertyImpl extends StateAware implements Property {
 
     public Boolean getVacant() {
         return vacant;
+    }
+
+    @Override
+    public void setVacant(final Boolean vacant) {
+        this.vacant = vacant;
     }
 
     @Override
@@ -435,7 +424,7 @@ public class PropertyImpl extends StateAware implements Property {
      * This method returns Demand details as a Set
      */
     private Set<Ptdemand> cloneDemand(List<Floor> floors) {
-        final Set<Ptdemand> newdemandSet = new HashSet<Ptdemand>();
+        final Set<Ptdemand> newdemandSet = new HashSet<>();
         for (final Ptdemand demand : getPtDemandSet())
             newdemandSet.add((Ptdemand) demand.clone());
         for (Ptdemand clonedDemand : newdemandSet) {
@@ -458,7 +447,7 @@ public class PropertyImpl extends StateAware implements Property {
      */
     private PropertyDetail clonePropertyDetail(final Property newProperty) {
         PropertyDetail propDetails = null;
-        if (getPropertyDetail().getPropertyType().toString().equals(BUILT_UP_PROPERTY)) {
+        if (getPropertyDetail().getPropertyType().equals(BUILT_UP_PROPERTY)) {
             final BuiltUpProperty bup = (BuiltUpProperty) getPropertyDetail();
             propDetails = new BuiltUpProperty(getPropertyDetail().getSitalArea(),
                     getPropertyDetail().getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(),
@@ -482,13 +471,13 @@ public class PropertyImpl extends StateAware implements Property {
                     getPropertyDetail().getSiteOwner(), getPropertyDetail().getApartment(),
                     getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
                     getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(), getPropertyDetail()
-                    .getOccupancyCertificationNo(), getPropertyDetail().getOccupancyCertificationDate(), 
+                    .getOccupancyCertificationNo(), getPropertyDetail().getOccupancyCertificationDate(),
                     getPropertyDetail().isAppurtenantLandChecked(), getPropertyDetail().isCorrAddressDiff(),
                     getPropertyDetail().getPropertyDepartment(), getPropertyDetail().getVacantLandPlotArea(),
                     getPropertyDetail().getLayoutApprovalAuthority(), getPropertyDetail().getLayoutPermitNo(),
                     getPropertyDetail().getLayoutPermitDate());
 
-        } else if (getPropertyDetail().getPropertyType().toString().equals(VACANT_PROPERTY)) {
+        } else if (getPropertyDetail().getPropertyType().equals(VACANT_PROPERTY)) {
             final VacantProperty vcp = (VacantProperty) getPropertyDetail();
             propDetails = new VacantProperty(getPropertyDetail().getSitalArea(),
                     getPropertyDetail().getTotalBuiltupArea(), getPropertyDetail().getCommBuiltUpArea(),
@@ -512,7 +501,7 @@ public class PropertyImpl extends StateAware implements Property {
                     getPropertyDetail().isCable(), getPropertyDetail().getSiteOwner(),
                     getPropertyDetail().getPattaNumber(), getPropertyDetail().getCurrentCapitalValue(),
                     getPropertyDetail().getMarketValue(), getPropertyDetail().getCategoryType(),
-                    getPropertyDetail().getOccupancyCertificationNo(),getPropertyDetail().getOccupancyCertificationDate(),
+                    getPropertyDetail().getOccupancyCertificationNo(), getPropertyDetail().getOccupancyCertificationDate(),
                     getPropertyDetail().isAppurtenantLandChecked(),
                     getPropertyDetail().isCorrAddressDiff(), getPropertyDetail().getPropertyDepartment(),
                     getPropertyDetail().getVacantLandPlotArea(), getPropertyDetail().getLayoutApprovalAuthority(),
@@ -526,7 +515,7 @@ public class PropertyImpl extends StateAware implements Property {
      */
     private List<Floor> cloneFlrDtls() {
         Floor floor = null;
-        final List<Floor> flrDtlsSet = new ArrayList<Floor>();
+        final List<Floor> flrDtlsSet = new ArrayList<>();
         for (final Floor flr : getPropertyDetail().getFloorDetails()) {
             floor = new Floor(flr.getConstructionTypeSet(), flr.getStructureClassification(), flr.getPropertyUsage(),
                     flr.getPropertyOccupation(), flr.getFloorNo(), flr.getDepreciationMaster(), flr.getBuiltUpArea(),
@@ -546,7 +535,7 @@ public class PropertyImpl extends StateAware implements Property {
      * @return set of UnitCalculaitonDetail
      */
     private Set<UnitCalculationDetail> cloneUnitCalculationDetails() {
-        final Set<UnitCalculationDetail> unitCalculationDetailClones = new HashSet<UnitCalculationDetail>();
+        final Set<UnitCalculationDetail> unitCalculationDetailClones = new HashSet<>();
 
         for (final UnitCalculationDetail unitCalcDetail : getUnitCalculationDetails())
             unitCalculationDetailClones.add(new UnitCalculationDetail(unitCalcDetail));
@@ -556,7 +545,7 @@ public class PropertyImpl extends StateAware implements Property {
 
     @Override
     public String getStateDetails() {
-        final StringBuffer stateDetails = new StringBuffer("");
+        final StringBuilder stateDetails = new StringBuilder();
         final String upicNo = getBasicProperty().getUpicNo() != null && !getBasicProperty().getUpicNo().isEmpty()
                 ? getBasicProperty().getUpicNo() : "";
         final String applicationNo = getApplicationNo() != null && !getApplicationNo().isEmpty() ? getApplicationNo()
@@ -645,8 +634,8 @@ public class PropertyImpl extends StateAware implements Property {
         String url = "";
         if (getState() != null && getState().getValue() != null
                 && (getState().getValue().startsWith(WFLOW_ACTION_NAME_ALTER)
-                        || getState().getValue().startsWith(WFLOW_ACTION_NAME_BIFURCATE)
-                        || getState().getValue().startsWith(WFLOW_ACTION_NAME_GRP)))
+                || getState().getValue().startsWith(WFLOW_ACTION_NAME_BIFURCATE)
+                || getState().getValue().startsWith(WFLOW_ACTION_NAME_GRP)))
             url = "/ptis/modify/modifyProperty-view.action?modelId=" + getId();
         else if (getState() != null && getState().getValue() != null
                 && getState().getValue().startsWith(WFLOW_ACTION_STEP_CREATE))
@@ -773,7 +762,7 @@ public class PropertyImpl extends StateAware implements Property {
     public void setTaxExemptionDocumentsProxy(List<Document> taxExemptionDocumentsProxy) {
         this.taxExemptionDocumentsProxy = taxExemptionDocumentsProxy;
     }
-    
+
     @Override
     public void addTaxExemptionDocuments(Document exemptionDocument) {
         getTaxExemptionDocuments().add(exemptionDocument);

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -68,7 +68,7 @@ public class WorkFlowAmountRule extends AbstractPersistable<Long> {
     private BigDecimal toQty;
     private String ruleDesc;
     @OneToMany
-    private Set<WorkFlowMatrix> workFlowMatrixes = new HashSet<WorkFlowMatrix>(0);
+    private Set<WorkFlowMatrix> workFlowMatrixes = new HashSet<>();
 
     @Override
     public Long getId() {

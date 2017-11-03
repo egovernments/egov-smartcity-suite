@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~ accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2016  eGovernments Foundation
+  ~  Copyright (C) 2017  eGovernments Foundation
   ~
   ~  The updated version of eGov suite of products as by eGovernments Foundation
   ~  is available at http://www.egovernments.org
@@ -40,28 +40,28 @@
   -->
 
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
-	<class name="org.egov.commons.EgwStatus" table="EGW_STATUS">
-		<id name="id" type="integer">
-			<column name="ID" precision="22" scale="0" />
-			<generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-				<param name="sequence_name">SEQ_EGW_STATUS</param>
-			</generator>
-		</id>
-		<timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property" unsaved-value="null" />
-		<property name="moduletype" type="string">
-			<column name="MODULETYPE" length="10" not-null="true" />
-		</property>
-		<property name="description" type="string">
-			<column name="DESCRIPTION" length="20" />
-		</property>
-		<property name="code">
-			<column name="CODE" />
-		</property>
-		<property name="orderId">
-			<column name="ORDER_ID" />
-		</property>
-	</class>
+    <class name="org.egov.commons.EgwStatus" table="EGW_STATUS">
+        <id name="id" type="integer">
+            <column name="ID" precision="22" scale="0"/>
+            <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
+                <param name="sequence_name">SEQ_EGW_STATUS</param>
+            </generator>
+        </id>
+        <timestamp column="LASTMODIFIEDDATE" name="lastmodifieddate" access="property" unsaved-value="null"/>
+        <property name="moduletype" type="string">
+            <column name="MODULETYPE" length="10" not-null="true"/>
+        </property>
+        <property name="description" type="string">
+            <column name="DESCRIPTION" length="20"/>
+        </property>
+        <property name="code">
+            <column name="CODE"/>
+        </property>
+        <property name="orderId">
+            <column name="ORDER_ID"/>
+        </property>
+    </class>
 </hibernate-mapping>

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -451,7 +451,7 @@ public class WaterConnectionDetailsService {
     public List<HashMap<String, Object>> getHistory(final WaterConnectionDetails waterConnectionDetails) {
         User user;
         final List<HashMap<String, Object>> historyTable = new ArrayList<>(0);
-        final State state = waterConnectionDetails.getState();
+        final State<Position> state = waterConnectionDetails.getState();
         final HashMap<String, Object> map = new HashMap<>(0);
         if (null != state) {
             map.put("date", state.getDateInfo());
@@ -473,7 +473,7 @@ public class WaterConnectionDetailsService {
             historyTable.add(map);
             if (!waterConnectionDetails.getStateHistory().isEmpty() && waterConnectionDetails.getStateHistory() != null)
                 Collections.reverse(waterConnectionDetails.getStateHistory());
-            for (final StateHistory stateHistory : waterConnectionDetails.getStateHistory()) {
+            for (final StateHistory<Position> stateHistory : waterConnectionDetails.getStateHistory()) {
                 final HashMap<String, Object> historyMap = new HashMap<>(0);
                 historyMap.put("date", stateHistory.getDateInfo());
                 historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");

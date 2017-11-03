@@ -50,7 +50,6 @@ package org.egov.infra.workflow.entity;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.JsonUtils;
-import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
@@ -77,7 +76,7 @@ import static org.egov.infra.workflow.entity.State.SEQ_STATE;
 @Entity
 @Table(name = "EG_WF_STATES")
 @SequenceGenerator(name = SEQ_STATE, sequenceName = SEQ_STATE, allocationSize = 1)
-public class State extends AbstractAuditable {
+public class State<T extends OwnerGroup> extends AbstractAuditable {
 
     public static final String DEFAULT_STATE_VALUE_CREATED = "Created";
     public static final String DEFAULT_STATE_VALUE_CLOSED = "Closed";
@@ -96,17 +95,18 @@ public class State extends AbstractAuditable {
     @Length(min = 1)
     private String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_POS")
-    private Position ownerPosition;
+    private T ownerPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_USER")
     private User ownerUser;
 
-    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE}, fetch = FetchType.LAZY, mappedBy = "state")
+    @OneToMany(cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.LAZY, mappedBy = "state", targetEntity = StateHistory.class)
     @OrderBy("id")
-    private Set<StateHistory> history = new HashSet<>();
+    private Set<StateHistory<T>> history = new HashSet<>();
 
     private String senderName;
 
@@ -126,17 +126,17 @@ public class State extends AbstractAuditable {
     @NotNull
     private StateStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "INITIATOR_POS")
-    private Position initiatorPosition;
+    private T initiatorPosition;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "previousOwner")
-    private Position previousOwner;
+    private T previousOwner;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "previousStateRef")
-    private State previousStateRef;
+    private State<T> previousStateRef;
 
     protected State() {
         //Explicit state initialization not allowed
@@ -168,11 +168,11 @@ public class State extends AbstractAuditable {
         this.value = value;
     }
 
-    public Position getOwnerPosition() {
+    public T getOwnerPosition() {
         return ownerPosition;
     }
 
-    protected void setOwnerPosition(final Position ownerPosition) {
+    protected void setOwnerPosition(final T ownerPosition) {
         this.ownerPosition = ownerPosition;
     }
 
@@ -184,11 +184,11 @@ public class State extends AbstractAuditable {
         this.ownerUser = ownerUser;
     }
 
-    public Set<StateHistory> getHistory() {
+    public Set<StateHistory<T>> getHistory() {
         return history;
     }
 
-    protected void setHistory(final Set<StateHistory> history) {
+    protected void setHistory(final Set<StateHistory<T>> history) {
         this.history = history;
     }
 
@@ -273,19 +273,19 @@ public class State extends AbstractAuditable {
         return status.equals(StateStatus.INPROGRESS);
     }
 
-    public Position getInitiatorPosition() {
+    public T getInitiatorPosition() {
         return initiatorPosition;
     }
 
-    protected void setInitiatorPosition(Position initiatorPosition) {
+    protected void setInitiatorPosition(T initiatorPosition) {
         this.initiatorPosition = initiatorPosition;
     }
 
-    public Position getPreviousOwner() {
+    public T getPreviousOwner() {
         return previousOwner;
     }
 
-    protected void setPreviousOwner(final Position previousOwner) {
+    protected void setPreviousOwner(final T previousOwner) {
         this.previousOwner = previousOwner;
     }
 
@@ -297,7 +297,7 @@ public class State extends AbstractAuditable {
         this.previousStateRef = previousStateRef;
     }
 
-    public <T> T extraInfoAs(Class<T> type) {
+    public <S> S extraInfoAs(Class<S> type) {
         return JsonUtils.fromJSON(getExtraInfo(), type);
     }
 

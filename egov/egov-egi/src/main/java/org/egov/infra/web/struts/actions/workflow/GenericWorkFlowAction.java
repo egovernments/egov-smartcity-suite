@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -53,132 +53,136 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Generic WorkFlow Action. Can be extended by any action class that intends to provide 
+ * Generic WorkFlow Action. Can be extended by any action class that intends to provide
  * Work flow functionality.
  */
 public abstract class GenericWorkFlowAction extends SearchFormAction {
 
-	private static final long serialVersionUID = 1L;
-	private final static String FORWARD = "Forward";
-	protected CustomizedWorkFlowService customizedWorkFlowService;
+    private static final long serialVersionUID = 1L;
+    private static final String FORWARD = "Forward";
+    protected transient CustomizedWorkFlowService customizedWorkFlowService;
 
-	// place holder to Set actionValue that will be used to call workflow script
-	protected String workFlowAction;
+    // place holder to Set actionValue that will be used to call workflow script
+    protected String workFlowAction;
 
-	// place holder to set approver comments
-	protected String approverComments;
+    // place holder to set approver comments
+    protected String approverComments;
 
-	@Override
-	public abstract StateAware getModel();
+    @Override
+    public abstract StateAware getModel();
 
-	/**
-	 * @inherit doc Implementations must override this method to achieve search functionality with pagination
-	 */
+    /**
+     * @inherit doc Implementations must override this method to achieve search functionality with pagination
+     */
 
-	@Override
-	public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
-		return null;
-	}
+    @Override
+    public SearchQuery prepareQuery(final String sortField, final String sortOrder) {
+        return null;
+    }
 
-	@Override
-	public void prepare() {
-		super.prepare();
-		addDropdownData("approverDepartmentList", this.persistenceService.findAllBy("from Department order by name"));
-		addDropdownData("approverList", Collections.EMPTY_LIST);
-		addDropdownData("desgnationList", Collections.EMPTY_LIST);
-	}
+    @Override
+    public void prepare() {
+        super.prepare();
+        addDropdownData("approverDepartmentList", this.persistenceService.findAllBy("from Department order by name"));
+        addDropdownData("approverList", Collections.emptyList());
+        addDropdownData("desgnationList", Collections.emptyList());
+    }
 
-	/**
-	 * Implementations must override this method based on their object's value that needs to be used in workflow
-	 * @return the value that needs to be compared in the Amount rule table against FromAmount and ToAmount
-	 */
+    /**
+     * Implementations must override this method based on their object's value that needs to be used in workflow
+     *
+     * @return the value that needs to be compared in the Amount rule table against FromAmount and ToAmount
+     */
 
-	protected BigDecimal getAmountRule() {
-		return null;
-	}
+    protected BigDecimal getAmountRule() {
+        return null;
+    }
 
-	/**
-	 * Implementations must override this method to get additional rule for workflow.
-	 * @return the value that needs to be compared in the matrix table against Additional rule
-	 */
+    /**
+     * Implementations must override this method to get additional rule for workflow.
+     *
+     * @return the value that needs to be compared in the matrix table against Additional rule
+     */
 
-	protected String getAdditionalRule() {
-		return null;
-	}
+    protected String getAdditionalRule() {
+        return null;
+    }
 
-	/**
-	 * Implementations must override this method to achieve department wise workflow.
-	 * @return the value that needs to be compared in the matrix table against Department.
-	 */
+    /**
+     * Implementations must override this method to achieve department wise workflow.
+     *
+     * @return the value that needs to be compared in the matrix table against Department.
+     */
 
-	protected String getWorkFlowDepartment() {
-		return null;
-	}
+    protected String getWorkFlowDepartment() {
+        return null;
+    }
 
-	/**
-	 * Used to get valid actions that needs to be performed Based on these value workflow buttons will be rendered
-	 */
+    /**
+     * Used to get valid actions that needs to be performed Based on these value workflow buttons will be rendered
+     */
 
-	public List<String> getValidActions() {
-		List<String> validActions = Collections.emptyList();
-		if (getModel().getId() == null) {
-			validActions = Arrays.asList(FORWARD);
+    public List<String> getValidActions() {
+        List<String> validActions;
+        if (getModel().getId() == null) {
+            validActions = Arrays.asList(FORWARD);
 
-		} else {
-			if (getModel().getCurrentState() != null) {
-				validActions = this.customizedWorkFlowService.getNextValidActions(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel().getCurrentState().getValue(), getPendingActions(), getModel()
-						.getCreatedDate());
-			} else {
-			  //FIXME This May not work
-				validActions = this.customizedWorkFlowService.getNextValidActions(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel().getCreatedDate());
-			}
-		}
-		return validActions;
-	}
+        } else {
+            if (getModel().getCurrentState() != null) {
+                validActions = this.customizedWorkFlowService.getNextValidActions(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel().getCurrentState().getValue(), getPendingActions(), getModel()
+                        .getCreatedDate());
+            } else {
+                validActions = this.customizedWorkFlowService.getNextValidActions(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel().getCreatedDate());
+            }
+        }
+        return validActions;
+    }
 
-	/**
-	 * Used to get next action If the nextAction value is END then approval Information won't be shown on the UI.
-	 */
+    /**
+     * Used to get next action If the nextAction value is END then approval Information won't be shown on the UI.
+     */
 
-	public String getNextAction() {
-		WorkFlowMatrix wfMatrix = null;
-		if (getModel().getId() != null) {
-			if (getModel().getCurrentState() != null) {
-				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel().getCurrentState().getValue(), getPendingActions(), getModel().getCreatedDate());
-			} else {
-				wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel().getCreatedDate());
-			}
-		}
-		return wfMatrix == null ? "" : wfMatrix.getNextAction();
-	}
+    public String getNextAction() {
+        WorkFlowMatrix wfMatrix = null;
+        if (getModel().getId() != null) {
+            if (getModel().getCurrentState() != null) {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), getModel().getCurrentState().getValue(), getPendingActions(), getModel().getCreatedDate());
+            } else {
+                wfMatrix = this.customizedWorkFlowService.getWfMatrix(getModel().getStateType(), getWorkFlowDepartment(), getAmountRule(), getAdditionalRule(), State.DEFAULT_STATE_VALUE_CREATED, getPendingActions(), getModel().getCreatedDate());
+            }
+        }
+        return wfMatrix == null ? "" : wfMatrix.getNextAction();
+    }
 
-	public void setCustomizedWorkFlowService(final CustomizedWorkFlowService customizedWorkFlowService) {
-		this.customizedWorkFlowService = customizedWorkFlowService;
-	}
+    public void setCustomizedWorkFlowService(final CustomizedWorkFlowService customizedWorkFlowService) {
+        this.customizedWorkFlowService = customizedWorkFlowService;
+    }
 
-	/**
-	 * Used to Set actionValue that will be used to call workflow script.
-	 * @param workFlowAction
-	 */
+    /**
+     * Used to Set actionValue that will be used to call workflow script.
+     *
+     * @param workFlowAction
+     */
 
-	public void setWorkFlowAction(final String workFlowAction) {
-		this.workFlowAction = workFlowAction;
-	}
+    public void setWorkFlowAction(final String workFlowAction) {
+        this.workFlowAction = workFlowAction;
+    }
 
-	/**
-	 * This parameter is used to get matrix object Implementations must override this method to get pendingActions
-	 * @return the value needs to be compared against matrix table pendingActions
-	 */
+    /**
+     * This parameter is used to get matrix object Implementations must override this method to get pendingActions
+     *
+     * @return the value needs to be compared against matrix table pendingActions
+     */
 
-	protected String getPendingActions() {
-		return null;
-	}
+    protected String getPendingActions() {
+        return null;
+    }
 
-	public String getApproverComments() {
-		return this.approverComments;
-	}
+    public String getApproverComments() {
+        return this.approverComments;
+    }
 
-	public void setApproverComments(final String approverComments) {
-		this.approverComments = approverComments;
-	}
+    public void setApproverComments(final String approverComments) {
+        this.approverComments = approverComments;
+    }
 }

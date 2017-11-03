@@ -45,6 +45,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
@@ -67,7 +68,7 @@ import static org.egov.model.budget.Budget.SEQ_BUDGET;
 @Table(name = "EGF_BUDGET")
 @SequenceGenerator(name = SEQ_BUDGET, sequenceName = SEQ_BUDGET, allocationSize = 1)
 @Unique(fields = "name", enableDfltMsg = true)
-public class Budget extends StateAware {
+public class Budget extends StateAware<Position> {
 
     public static final String SEQ_BUDGET = "SEQ_EGF_BUDGET";
     private static final long serialVersionUID = 3592259793739732756L;
@@ -263,7 +264,7 @@ public class Budget extends StateAware {
     }
 
     public void setWfState(State state) {
-       // setState(state);
+        //Won't work
     }
 
     public String getSearchBere() {

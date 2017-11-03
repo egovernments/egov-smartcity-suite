@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -40,8 +40,12 @@
 
 package org.egov.commons;
 
-import java.util.HashSet;
-import java.util.Set;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -54,18 +58,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.envers.AuditJoinTable;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
-
-import com.fasterxml.jackson.annotation.JsonIgnore;
+import static org.egov.commons.CChartOfAccounts.SEQ_CHARTOFACCOUNTS;
 
 @Entity
 @Table(name = "CHARTOFACCOUNTS")
-@SequenceGenerator(name = CChartOfAccounts.SEQ_CHARTOFACCOUNTS, sequenceName = CChartOfAccounts.SEQ_CHARTOFACCOUNTS, allocationSize = 1)
+@SequenceGenerator(name = SEQ_CHARTOFACCOUNTS, sequenceName = SEQ_CHARTOFACCOUNTS, allocationSize = 1)
 @AuditOverrides({
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
         @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
@@ -73,12 +73,10 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 @Audited
 public class CChartOfAccounts extends AbstractAuditable {
 
-    private static final long serialVersionUID = 61219209022946300L;
-
     public static final String SEQ_CHARTOFACCOUNTS = "SEQ_CHARTOFACCOUNTS";
-
+    private static final long serialVersionUID = 61219209022946300L;
     @Id
-    @GeneratedValue(generator = CChartOfAccounts.SEQ_CHARTOFACCOUNTS, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CHARTOFACCOUNTS, strategy = GenerationType.SEQUENCE)
     private Long id;
 
     private String glcode;

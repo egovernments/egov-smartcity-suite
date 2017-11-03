@@ -39,24 +39,6 @@
  */
 package org.egov.works.web.actions.workorder;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -74,6 +56,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -87,9 +70,9 @@ import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.service.WorkflowService;
-import org.egov.infra.persistence.utils.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.EmployeeServiceOld;
@@ -119,55 +102,40 @@ import org.egov.works.web.actions.estimate.AjaxEstimateAction;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 @ParentPackage("egov")
 @Results(value = {
         @Result(name = WorkOrderAction.PRINT, type = "stream", location = "WorkOrderPDF", params = {
-                "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition", "no-cache" }),
+                "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition", "no-cache"}),
         @Result(name = WorkOrderAction.WORKORDERNOTICEPDF, type = "stream", location = "WorkOrderPDF", params = {
                 "inputName", "WorkOrderPDF", "contentType", "application/pdf", "contentDisposition",
-                "no-cache;filename=WorkOrderNotice.pdf" }),
-        @Result(name = WorkOrderAction.NEW, location = "workOrder-new.jsp") })
+                "no-cache;filename=WorkOrderNotice.pdf"}),
+        @Result(name = WorkOrderAction.NEW, location = "workOrder-new.jsp")})
 public class WorkOrderAction extends BaseFormAction {
 
+    public static final String APPROVED = "APPROVED";
+    public static final String PRINT = "print";
+    public static final String WORKFLOW_ENDS = "END";
+    protected static final String WORKORDERNOTICEPDF = "workOrderNotice";
     private static final long serialVersionUID = -8902400945730474523L;
     private static final String SAVE_ACTION = "save";
-    public final static String APPROVED = "APPROVED";
-    private final NumberFormat formatter = new DecimalFormat("#0.00");
-    private WorkOrder workOrder = new WorkOrder();
-    private WorkOrderService workOrderService;
-    private WorksService worksService;
-    private TenderResponseService tenderResponseService;
-    private AbstractEstimateService abstractEstimateService;
-    private PersistenceService<OfflineStatus, Long> worksStatusService;
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-    @Autowired
-    private AssignmentService assignmentService;
-    @Autowired
-    private EmployeeServiceOld employeeServiceOld;
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private DepartmentService departmentService;
-    private EisUtilService eisService;
-    private Long tenderRespId;
-    private TenderResponse tenderResponse;
-    private Long deptId;
-    private Integer empId;
-    private String editableDate;
-    private String createdBySelection;
-    private String status;
-    private Double activityAssignedAmt;
-    private Date fromDate;
-    private Date toDate;
-    private Long assignedTo1;
-    private Long assignedTo2;
-    private String messageKey;
-    private Long id;
-    private String setStatus;
-    private String mode;
     private static final String PREPARED_BY_LIST = "preparedByList";
     private static final String DEPARTMENT_LIST = "departmentList";
     private static final String ASSIGNED_TO_LIST = "assignedToList";
@@ -183,56 +151,81 @@ public class WorkOrderAction extends BaseFormAction {
     private static final String SEARCH_WO = "searchWorkOrder";
     private static final String DATE_FORMAT = "dd-MMM-yyyy";
     private static final String SOURCE_INBOX = "inbox";
-
-    private List<Designation> workOrderDesigList = new ArrayList<Designation>();
-    private List<WorkOrder> workOrderList = null;
-    // private List<String> workOrderActions;
+    private static final Logger logger = Logger.getLogger(WorkOrderAction.class);
+    private final NumberFormat formatter = new DecimalFormat("#0.00");
+    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
+    private final String loggedInUserEmployeeCode = null;
+    private transient WorkOrder workOrder = new WorkOrder();
+    private transient WorkOrderService workOrderService;
+    private transient WorksService worksService;
+    private transient TenderResponseService tenderResponseService;
+    private transient AbstractEstimateService abstractEstimateService;
+    private transient PersistenceService<OfflineStatus, Long> worksStatusService;
+    @Autowired
+    private transient EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private transient AssignmentService assignmentService;
+    @Autowired
+    private transient EmployeeServiceOld employeeServiceOld;
+    @Autowired
+    private transient UserService userService;
+    @Autowired
+    private transient DepartmentService departmentService;
+    private transient EisUtilService eisService;
+    private Long tenderRespId;
+    private transient TenderResponse tenderResponse;
+    private Long deptId;
+    private Integer empId;
+    private String editableDate;
+    private String createdBySelection;
+    private String status;
+    private Double activityAssignedAmt;
+    private Date fromDate;
+    private Date toDate;
+    private Long assignedTo1;
+    private Long assignedTo2;
+    private String messageKey;
+    private Long id;
+    private String setStatus;
+    private String mode;
+    private transient List<Designation> workOrderDesigList = new ArrayList<>();
+    private transient List<WorkOrder> workOrderList = null;
     private Long workOrderId;
     private String sourcepage = "";
     private String percTenderType = "";
     private String tenderResponseType = null;
-
-    private WorkflowService<WorkOrder> workOrderWorkflowService;
-
-    private OfflineStatus setStatusObj;
-    public static final String PRINT = "print";
-    private InputStream workOrderPDF;
-    private ReportService reportService;
-
+    private transient WorkflowService<WorkOrder> workOrderWorkflowService;
+    private transient OfflineStatus setStatusObj;
+    private transient InputStream workOrderPDF;
+    private transient ReportService reportService;
     private String employeeName;
     private String designation;
     private String estimateNumber;
     private String wpNumber;
     private String tenderFileNumber;
-    private PersonalInformationService personalInformationService;
+    private transient PersonalInformationService personalInformationService;
     private Long tenderRespContrId;
-    private TenderResponseContractors tenderResponseContractor;
-    private PersistenceService<TenderResponseContractors, Long> tenderResponseContractorsService;
+    private transient TenderResponseContractors tenderResponseContractor;
+    private transient PersistenceService<TenderResponseContractors, Long> tenderResponseContractorsService;
     private Double securityDepositConfValue;
     private Double labourWelfareFundConfValue;
-    private List<WorkOrderActivity> actionWorkOrderActivities = new LinkedList<WorkOrderActivity>();
-    private List<WorkOrderActivity> woActivities = new LinkedList<WorkOrderActivity>();
-    private PersistenceService<Activity, Long> activityService;
-
+    private transient List<WorkOrderActivity> actionWorkOrderActivities = new LinkedList<>();
+    private transient List<WorkOrderActivity> woActivities = new LinkedList<>();
+    private transient PersistenceService<Activity, Long> activityService;
     private Integer page = 1;
     private Integer pageSize = 30;
-    private EgovPaginatedList pagedResults;
+    private transient EgovPaginatedList pagedResults;
     private String cancellationReason;
     private String cancelRemarks;
     private String workOrderNo;
     private String woStatus;
-    private static final Logger logger = Logger.getLogger(WorkOrderAction.class);
-    private final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
     private Date contractPeriodCutOffDate;
     private Integer defaultPreparedBy;
     private Long defaultDepartmentId;
-    private final String loggedInUserEmployeeCode = null;
     private Long estimateId;
-    private AbstractEstimate abstractEstimate = null;
+    private transient AbstractEstimate abstractEstimate = null;
     private Boolean isWorkCommenced;
     private Integer reportId = -1;
-    protected static final String WORKORDERNOTICEPDF = "workOrderNotice";
-    public static final String WORKFLOW_ENDS = "END";
 
     public WorkOrderAction() {
         addRelatedEntity("contractor", Contractor.class);
@@ -278,7 +271,7 @@ public class WorkOrderAction extends BaseFormAction {
 
             if (workOrder.getEgwStatus().getCode().equalsIgnoreCase("cancelled"))
                 tenderResponse = tenderResponseService.findByNamedQuery("getTenderFortenderIdCanceledWO", workOrder
-                        .getNegotiationNumber(), workOrder.getId(), workOrder.getTenderNumber(), workOrder
+                                .getNegotiationNumber(), workOrder.getId(), workOrder.getTenderNumber(), workOrder
                                 .getContractor().getId(),
                         workOrder.getPackageNumber());
             else
@@ -378,7 +371,6 @@ public class WorkOrderAction extends BaseFormAction {
                 || WorksConstants.REJECTED.equalsIgnoreCase(workOrder.getEgwStatus().getCode())
                 || NEW.equalsIgnoreCase(workOrder.getEgwStatus().getCode())) {
             workOrder.getWorkOrderEstimates().clear();
-            // populateAssets();
             populateWorkOrderActivities();
         }
         try {
@@ -457,23 +449,23 @@ public class WorkOrderAction extends BaseFormAction {
                 && workOrder.getWorkOrderDate() != null
                 && tenderResponse.getEgwStatus() != null
                 && TenderResponse.TenderResponseStatus.APPROVED.toString().equals(
-                        tenderResponse.getEgwStatus().getCode())
+                tenderResponse.getEgwStatus().getCode())
                 && DateConversionUtil.isBeforeByDate(workOrder.getWorkOrderDate(), tenderResponse.getState()
-                        .getCreatedDate()))
+                .getCreatedDate()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "workorder.workorderDate.lessthan.approvedDate", "workorder.workorderDate.lessthan.approvedDate")));
         else if (getWorkOrderCreationDate() != null && workOrder.getWorkOrderDate() != null
                 && DateConversionUtil.isBeforeByDate(workOrder.getWorkOrderDate(), getWorkOrderCreationDate()))
             throw new ValidationException(Arrays.asList(new ValidationError(
                     "workorder.workorderDate.lessthan.statusDate", getText(
-                            "workorder.workorderDate.lessthan.statusDate", new String[] { setStatusObj.getEgwStatus()
-                                    .getDescription() }))));
+                    "workorder.workorderDate.lessthan.statusDate", new String[]{setStatusObj.getEgwStatus()
+                            .getDescription()}))));
     }
 
     @SkipValidation
-    public String viewWorkOrderPdf() throws JRException, Exception {
-        ReportRequest reportRequest = null;
-        Map<String, Object> reportParams = null;
+    public String viewWorkOrderPdf() {
+        ReportRequest reportRequest;
+        Map<String, Object> reportParams;
         Double quotedPerc = null;
         Double negotiatedPerc = null;
         Double quotedAmount = null;
@@ -498,8 +490,6 @@ public class WorkOrderAction extends BaseFormAction {
                 && tenderResponse.getTenderEstimate().getTenderType().equalsIgnoreCase(percTenderType)) {
             quotedPerc = tenderResponse.getPercQuotedRate();
             negotiatedPerc = tenderResponse.getPercNegotiatedAmountRate();
-            quotedAmount = null;
-            negotiatedAmount = null;
             if (tenderResponse.getTenderResponseContractors().size() > 1) {
                 if (negotiatedPerc >= 0)
                     estimateAmt = workOrder.getWorkOrderAmount() / (1 + Math.abs(negotiatedPerc) / 100);
@@ -568,7 +558,7 @@ public class WorkOrderAction extends BaseFormAction {
                     workOrder.addWorkOrderEstimate(workOrderEstimate);
                 }
         } else {
-            final Map<Long, WorkOrderEstimate> workOrderEstimateMap = new HashMap<Long, WorkOrderEstimate>();
+            final Map<Long, WorkOrderEstimate> workOrderEstimateMap = new HashMap<>();
             for (final WorkOrderActivity woActivity : getActionWorkOrderActivityList()) {
                 if (!workOrderEstimateMap.containsKey(woActivity.getActivity().getAbstractEstimate().getId())) {
                     WorkOrderEstimate workOrderEstimate = new WorkOrderEstimate();
@@ -654,14 +644,14 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void addTenderResponseActivities(final WorkOrderEstimate workOrderEstimate,
-            final TenderResponseActivity tenderResponseActivity) {
+                                             final TenderResponseActivity tenderResponseActivity) {
         final WorkOrderActivity workOrderActivity = new WorkOrderActivity();
         workOrderActivity.setActivity(tenderResponseActivity.getActivity());
         workOrderActivity.setApprovedRate(tenderResponseActivity.getNegotiatedRate());
         workOrderActivity.setApprovedQuantity(tenderResponseActivity.getNegotiatedQuantity());
         workOrderActivity.setApprovedAmount(new Money(workOrderActivity.getApprovedRate()
                 * workOrderActivity.getApprovedQuantity() * tenderResponseActivity.getActivity().getConversionFactor())
-                        .getValue());
+                .getValue());
         workOrderActivity.setWorkOrderEstimate(workOrderEstimate);
         workOrderEstimate.addWorkOrderActivity(workOrderActivity);
     }
@@ -715,8 +705,8 @@ public class WorkOrderAction extends BaseFormAction {
 
     @ValidationErrorPage(value = SEARCH_WO)
     public String searchWorkOrderDetails() {
-        final Map<String, Object> criteriaMap = new HashMap<String, Object>();
-        final List<Object> paramList = new ArrayList<Object>();
+        final Map<String, Object> criteriaMap = new HashMap<>();
+        final List<Object> paramList = new ArrayList<>();
 
         if (StringUtils.isNotBlank(status) && !getStatus().equals("-1"))
             criteriaMap.put("STATUS", status);
@@ -760,7 +750,6 @@ public class WorkOrderAction extends BaseFormAction {
             Page resPage;
             qryObj = workOrderService.searchWOToPaginatedView(criteriaMap, paramList);
             if (paramList.isEmpty()) {
-                params = null;
                 count = (Long) persistenceService.find(qryObj.get(0));
                 final Query qryWithNoParam = persistenceService.getSession().createQuery(qryObj.get(1));
                 resPage = new Page(qryWithNoParam, page, pageSize);
@@ -872,7 +861,7 @@ public class WorkOrderAction extends BaseFormAction {
             } else
                 addDropdownData("deptListForMB", departmentService.getAllDepartments());
         } else
-            addDropdownData("deptListForMB", Collections.EMPTY_LIST);
+            addDropdownData("deptListForMB", Collections.emptyList());
     }
 
     public String getCreatedBy() {
@@ -880,45 +869,45 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private void populatePreparedByList(final AjaxEstimateAction ajaxEstimateAction,
-            final boolean executingDeptPopulated) {
+                                        final boolean executingDeptPopulated) {
         if (executingDeptPopulated) {
             ajaxEstimateAction.setExecutingDepartment(deptId);
             ajaxEstimateAction.usersInExecutingDepartment();
             addDropdownData(PREPARED_BY_LIST, ajaxEstimateAction.getUsersInExecutingDepartment());
         } else
-            addDropdownData(PREPARED_BY_LIST, Collections.EMPTY_LIST);
+            addDropdownData(PREPARED_BY_LIST, Collections.emptyList());
     }
 
     private void populateWorkOrderAssignedToList(final AjaxWorkOrderAction ajaxWorkOrderAction,
-            final boolean executingDeptPopulated) {
+                                                 final boolean executingDeptPopulated) {
         if (executingDeptPopulated && deptId > 0) {
             ajaxWorkOrderAction.setDepartmentName(departmentService.getDepartmentById(Long.valueOf(deptId)).getName());
             ajaxWorkOrderAction.getDesignationByDeptId();
             addDropdownData(ASSIGNED_TO_LIST, ajaxWorkOrderAction.getWorkOrderDesigList());
         } else
-            addDropdownData(ASSIGNED_TO_LIST, Collections.EMPTY_LIST);
+            addDropdownData(ASSIGNED_TO_LIST, Collections.emptyList());
     }
 
     private void populateWorkOrderUsersList1(final AjaxWorkOrderAction ajaxWorkOrderAction, final boolean desgId,
-            final boolean executingDeptPopulated) {
+                                             final boolean executingDeptPopulated) {
         if (desgId && executingDeptPopulated && deptId > 0) {
             ajaxWorkOrderAction.setDesgId(getAssignedTo1());
             ajaxWorkOrderAction.setExecutingDepartment(deptId);
             ajaxWorkOrderAction.getUsersForDesg();
             addDropdownData(ASSIGNED_USER_LIST1, ajaxWorkOrderAction.getUserList());
         } else
-            addDropdownData(ASSIGNED_USER_LIST1, Collections.EMPTY_LIST);
+            addDropdownData(ASSIGNED_USER_LIST1, Collections.emptyList());
     }
 
     private void populateWorkOrderUsersList2(final AjaxWorkOrderAction ajaxWorkOrderAction, final boolean desgId,
-            final boolean executingDeptPopulated) {
+                                             final boolean executingDeptPopulated) {
         if (desgId && executingDeptPopulated && deptId > 0) {
             ajaxWorkOrderAction.setDesgId(getAssignedTo2());
             ajaxWorkOrderAction.setExecutingDepartment(deptId);
             ajaxWorkOrderAction.getUsersForDesg();
             addDropdownData(ASSIGNED_USER_LIST2, ajaxWorkOrderAction.getUserList());
         } else
-            addDropdownData(ASSIGNED_USER_LIST2, Collections.EMPTY_LIST);
+            addDropdownData(ASSIGNED_USER_LIST2, Collections.emptyList());
     }
 
     public String viewWorkOrderNotice() {
@@ -937,7 +926,7 @@ public class WorkOrderAction extends BaseFormAction {
             nameOfWO = workOrder.getWorkOrderEstimates().get(0).getEstimate().getName();
         else
             nameOfWO = workOrderService.getWorksPackageName(workOrder.getPackageNumber());
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("executingDept", workOrder.getWorkOrderEstimates().get(0).getEstimate()
                 .getExecutingDepartment().getName());
         reportParams.put("workOrderNo", workOrder.getWorkOrderNumber());
@@ -959,8 +948,8 @@ public class WorkOrderAction extends BaseFormAction {
 
     protected String getApproverName(final WorkOrder wo) {
         String approver = "";
-        final List<StateHistory> history = wo.getStateHistory();
-        for (final StateHistory st : history)
+        final List<StateHistory<Position>> history = wo.getStateHistory();
+        for (final StateHistory<Position> st : history)
             if (st.getValue().equalsIgnoreCase(WORKFLOW_ENDS)) {
                 final PersonalInformation pInfo = employeeServiceOld.getEmployeeforPosition(st.getOwnerPosition());
                 if (pInfo != null && StringUtils.isNotBlank(pInfo.getName()))
@@ -970,7 +959,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     protected List<WorkOrderNoticeEsimateInfo> getEstimatesForWO(final WorkOrder wo) {
-        final List<WorkOrderNoticeEsimateInfo> woEstimateList = new ArrayList<WorkOrderNoticeEsimateInfo>();
+        final List<WorkOrderNoticeEsimateInfo> woEstimateList = new ArrayList<>();
         Double woEstimateAmount = 0D;
         final Object[] obj = (Object[]) workOrderService.getTenderNegotiationInfo(workOrder.getNegotiationNumber());
         final String tenderType = (String) obj[1];
@@ -1069,12 +1058,12 @@ public class WorkOrderAction extends BaseFormAction {
         return empId;
     }
 
-    public Collection<EstimateLineItemsForWP> getActivitiesForWorkorderList() {
-        return tenderResponse.getActivitiesForWorkorder();
-    }
-
     public void setEmpId(final Integer empId) {
         this.empId = empId;
+    }
+
+    public Collection<EstimateLineItemsForWP> getActivitiesForWorkorderList() {
+        return tenderResponse.getActivitiesForWorkorder();
     }
 
     public Long getTenderRespId() {
@@ -1145,12 +1134,8 @@ public class WorkOrderAction extends BaseFormAction {
         this.toDate = toDate;
     }
 
-    /*
-     * public List<String> getWorkOrderActions() { return workOrderActions ; }
-     */
-
     public Map<String, Object> getContractorForApprovedWorkOrder() {
-        final Map<String, Object> contractorsWithWOList = new HashMap<String, Object>();
+        final Map<String, Object> contractorsWithWOList = new HashMap<>();
         if (workOrderService.getContractorsWithWO() != null)
             for (final Contractor contractor : workOrderService.getContractorsWithWO())
                 contractorsWithWOList.put(contractor.getId() + "", contractor.getCode() + " - " + contractor.getName());
@@ -1356,7 +1341,7 @@ public class WorkOrderAction extends BaseFormAction {
                 for (final WorkOrderActivity workOrderActivity : workOrderEstimate.getWorkOrderActivities()) {
                     workOrderActivity.setUnAssignedQuantity(workOrderActivity.getActivity().getQuantity()
                             - getAssignedQuantity(workOrderActivity.getActivity().getId(), workOrderActivity
-                                    .getWorkOrderEstimate().getWorkOrder().getNegotiationNumber()));
+                            .getWorkOrderEstimate().getWorkOrder().getNegotiationNumber()));
                     woActivities.add(workOrderActivity);
                 }
     }
@@ -1380,7 +1365,7 @@ public class WorkOrderAction extends BaseFormAction {
                 }
                 if (workOrder.getEgwStatus() != null
                         && (workOrder.getEgwStatus().getCode().equalsIgnoreCase("NEW") || workOrder.getEgwStatus()
-                                .getCode().equalsIgnoreCase("REJECTED"))
+                        .getCode().equalsIgnoreCase("REJECTED"))
                         && id != null) {
                     validateMandatoryFields();
                     if (contractPeriodCutOffDate != null) {
@@ -1452,7 +1437,7 @@ public class WorkOrderAction extends BaseFormAction {
     }
 
     private double getAssignedQuantity(final Long activityId, final String negotiationNumber) {
-        final Object[] params = new Object[] { negotiationNumber, WorksConstants.CANCELLED_STATUS, activityId };
+        final Object[] params = new Object[]{negotiationNumber, WorksConstants.CANCELLED_STATUS, activityId};
         final Double assignedQty = (Double) getPersistenceService().findByNamedQuery("getAssignedQuantityForActivity",
                 params);
 
@@ -1529,7 +1514,7 @@ public class WorkOrderAction extends BaseFormAction {
             }
         if (!arfNo.equals(""))
             throw new ValidationException(Arrays.asList(new ValidationError("cancelWO.arf.created.message", getText(
-                    "cancelWO.arf.created.message", new String[] { arfNo, estimateNo }))));
+                    "cancelWO.arf.created.message", new String[]{arfNo, estimateNo}))));
     }
 
     public void setUserService(final UserService userService) {
@@ -1596,12 +1581,12 @@ public class WorkOrderAction extends BaseFormAction {
         return page;
     }
 
-    public Integer getPageSize() {
-        return pageSize;
-    }
-
     public void setPage(final Integer page) {
         this.page = page;
+    }
+
+    public Integer getPageSize() {
+        return pageSize;
     }
 
     public void setPageSize(final Integer pageSize) {

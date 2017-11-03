@@ -90,7 +90,6 @@ import org.springframework.transaction.annotation.Transactional;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.script.ScriptContext;
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.*;
 
@@ -225,15 +224,11 @@ public class ExpenseBillService {
         }
         List<DocumentUpload> files = egBillregister.getDocumentDetail() == null ? null : egBillregister.getDocumentDetail();
         final List<DocumentUpload> documentDetails;
-        try {
-            documentDetails = financialUtils.getDocumentDetails(files, savedEgBillregister,
-                    FinancialConstants.FILESTORE_MODULEOBJECT);
-            if (!documentDetails.isEmpty()) {
-                savedEgBillregister.setDocumentDetail(documentDetails);
-                persistDocuments(documentDetails);
-            }
-        } catch (IOException e) {
-
+        documentDetails = financialUtils.getDocumentDetails(files, savedEgBillregister,
+                FinancialConstants.FILESTORE_MODULEOBJECT);
+        if (!documentDetails.isEmpty()) {
+            savedEgBillregister.setDocumentDetail(documentDetails);
+            persistDocuments(documentDetails);
         }
 
 
@@ -271,7 +266,7 @@ public class ExpenseBillService {
 
     @Transactional
     public EgBillregister update(final EgBillregister egBillregister, final Long approvalPosition, final String approvalComent,
-                                 final String additionalRule, final String workFlowAction, final String mode) throws ValidationException, IOException {
+                                 final String additionalRule, final String workFlowAction, final String mode) {
         EgBillregister updatedegBillregister = null;
         if ("edit".equals(mode)) {
             egBillregister.setPassedamount(egBillregister.getBillamount());
@@ -333,8 +328,7 @@ public class ExpenseBillService {
         return updatedegBillregister;
     }
 
-    public void expenseBillRegisterStatusChange(final EgBillregister egBillregister, final String workFlowAction)
-            throws ValidationException {
+    public void expenseBillRegisterStatusChange(final EgBillregister egBillregister, final String workFlowAction) {
         if (null != egBillregister && null != egBillregister.getStatus()
                 && null != egBillregister.getStatus().getCode())
             if (FinancialConstants.CONTINGENCYBILL_CREATED_STATUS.equals(egBillregister.getStatus().getCode())
@@ -396,12 +390,12 @@ public class ExpenseBillService {
         final User user = securityUtils.getCurrentUser();
         final DateTime currentDate = new DateTime();
         Assignment wfInitiator = null;
-        Map<String, String> finalDesignationNames = new HashMap<String, String>();
+        Map<String, String> finalDesignationNames = new HashMap<>();
         final String currState = "";
         String stateValue = "";
         if (null != egBillregister.getId())
             wfInitiator = assignmentService.getPrimaryAssignmentForUser(egBillregister.getCreatedBy().getId());
-        if (FinancialConstants.BUTTONREJECT.toString().equalsIgnoreCase(workFlowAction)) {
+        if (FinancialConstants.BUTTONREJECT.equalsIgnoreCase(workFlowAction)) {
             stateValue = FinancialConstants.WORKFLOW_STATE_REJECTED;
             egBillregister.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())
                     .withComments(approvalComent)
@@ -441,16 +435,14 @@ public class ExpenseBillService {
                         .withStateValue(stateValue).withDateInfo(new Date()).withOwner(wfInitiator.getPosition())
                         .withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(FinancialConstants.WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME);
-            } else if (FinancialConstants.BUTTONCANCEL.toString().equalsIgnoreCase(workFlowAction)) {
+            } else if (FinancialConstants.BUTTONCANCEL.equalsIgnoreCase(workFlowAction)) {
                 stateValue = FinancialConstants.WORKFLOW_STATE_CANCELLED;
-                wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
-                        null, additionalRule, egBillregister.getCurrentState().getValue(), null);
                 egBillregister.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvalComent)
                         .withStateValue(stateValue).withDateInfo(currentDate.toDate())
                         .withNextAction("")
                         .withNatureOfTask(FinancialConstants.WORKFLOWTYPE_EXPENSE_BILL_DISPLAYNAME);
-            } else if (FinancialConstants.BUTTONAPPROVE.toString().equalsIgnoreCase(workFlowAction)) {
+            } else if (FinancialConstants.BUTTONAPPROVE.equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = egBillregisterRegisterWorkflowService.getWfMatrix(egBillregister.getStateType(), null,
                         null, additionalRule, egBillregister.getCurrentState().getValue(), null);
 

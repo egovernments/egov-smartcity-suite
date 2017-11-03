@@ -63,7 +63,7 @@ import static org.egov.pims.model.EmpPosition.SEQ_EMPPOSITION;
 @Entity
 @Table(name = "EGEIS_POST_CREATION")
 @SequenceGenerator(name = SEQ_EMPPOSITION, sequenceName = SEQ_EMPPOSITION, allocationSize = 1)
-public class EmpPosition extends StateAware {
+public class EmpPosition extends StateAware<Position> {
 
     public static final String SEQ_EMPPOSITION = "SEQ_EGEIS_POST_CREATION";
     private static final long serialVersionUID = 9220002621595085170L;

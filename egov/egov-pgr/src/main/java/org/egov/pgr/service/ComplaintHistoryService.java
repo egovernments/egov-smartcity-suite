@@ -92,7 +92,7 @@ public class ComplaintHistoryService {
     @ReadOnly
     public List<HashMap<String, Object>> getHistory(Complaint complaint) {
         List<HashMap<String, Object>> historyTable = new ArrayList<>();
-        State state = complaint.getState();
+        State<Position> state = complaint.getState();
         HashMap<String, Object> map = new HashMap<>();
         map.put(DATE, state.getDateInfo());
         map.put(COMMENT, defaultString(state.getComments()));
@@ -132,12 +132,13 @@ public class ComplaintHistoryService {
         }
         historyTable.add(map);
 
-        complaint.getStateHistory().stream().sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed())
+        complaint.getStateHistory().stream()
+                .sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed())
                 .forEach(stateHistory -> historyTable.add(constructComplaintHistory(complaint, stateHistory)));
         return historyTable;
     }
 
-    private HashMap<String, Object> constructComplaintHistory(Complaint complaint, StateHistory stateHistory) {
+    private HashMap<String, Object> constructComplaintHistory(Complaint complaint, StateHistory<Position> stateHistory) {
         HashMap<String, Object> complaintHistory = new HashMap<>();
         complaintHistory.put(DATE, stateHistory.getDateInfo());
         complaintHistory.put(COMMENT, defaultString(stateHistory.getComments()));

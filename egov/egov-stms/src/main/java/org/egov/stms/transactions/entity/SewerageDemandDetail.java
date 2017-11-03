@@ -39,9 +39,10 @@
  */
 package org.egov.stms.transactions.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class SewerageDemandDetail {
+public class SewerageDemandDetail implements Serializable {
 
     private Long demandReasonId;
     private Integer installmentId;
@@ -65,9 +66,6 @@ public class SewerageDemandDetail {
 
     public void setInstallment(final String installment) {
         this.installment = installment;
-    }
-
-    public SewerageDemandDetail() {
     }
 
     public String getReasonMaster() {

@@ -457,7 +457,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<HashMap<String, Object>> populateHistory(final TradeLicense tradeLicense) {
         final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
         if (tradeLicense.hasState()) {
-            State state = tradeLicense.getCurrentState();
+            State<Position> state = tradeLicense.getCurrentState();
             User lastModifiedUser = state.getLastModifiedBy();
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
@@ -473,13 +473,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
 
             processHistoryDetails.add(currentStateDetail);
-            state.getHistory().stream().sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed()).
+           state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
                     forEach(sh -> processHistoryDetails.add(constructHistory(sh, tradeLicense)));
         }
         return processHistoryDetails;
     }
 
-    private HashMap<String, Object> constructHistory(StateHistory stateHistory, TradeLicense tradeLicense) {
+    private HashMap<String, Object> constructHistory(StateHistory<Position> stateHistory, TradeLicense tradeLicense) {
         final HashMap<String, Object> processHistory = new HashMap<>();
         User lastModifiedUser = stateHistory.getLastModifiedBy();
         processHistory.put("date", stateHistory.getLastModifiedDate());

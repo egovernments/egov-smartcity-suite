@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -40,10 +40,14 @@
 
 package org.egov.pims.commons;
 
-import static org.egov.pims.commons.Designation.SEQ_DESIGNATION;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.regex.Constants;
+import org.hibernate.annotations.NamedQuery;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -58,19 +62,14 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Pattern;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.regex.Constants;
-import org.hibernate.annotations.NamedQuery;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.pims.commons.Designation.SEQ_DESIGNATION;
 
 @Entity
 @Table(name = "eg_designation")
-@Unique(fields = { "name", "code" }, enableDfltMsg = true)
+@Unique(fields = {"name", "code"}, enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_DESIGNATION, sequenceName = SEQ_DESIGNATION, allocationSize = 1)
 @NamedQuery(name = "getDesignationForListOfDesgNames", query = "from Designation where trim(upper(name)) in(:param_0)")
 public class Designation extends AbstractAuditable {
@@ -86,8 +85,6 @@ public class Designation extends AbstractAuditable {
     private String name;
     @NotBlank
     @SafeHtml
-    // @Pattern(regexp = Constants.ALLTYPESOFALPHABETS_WITHMIXEDCHAR, message =
-    // "Name should contain letters with space and (-,_)")
     private String code;
     @SafeHtml
     private String description;
@@ -96,7 +93,8 @@ public class Designation extends AbstractAuditable {
     private CChartOfAccounts chartOfAccounts;
 
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JoinTable(name = "egeis_desig_rolemapping", joinColumns = @JoinColumn(name = "designationid"), inverseJoinColumns = @JoinColumn(name = "roleid"))
+    @JoinTable(name = "egeis_desig_rolemapping", joinColumns = @JoinColumn(name = "designationid"),
+            inverseJoinColumns = @JoinColumn(name = "roleid"))
     private Set<Role> roles = new HashSet<>();
 
     @Override

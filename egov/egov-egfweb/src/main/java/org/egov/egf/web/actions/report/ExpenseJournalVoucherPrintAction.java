@@ -41,7 +41,6 @@ package org.egov.egf.web.actions.report;
 
 
 import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -54,22 +53,17 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.voucher.VoucherReport;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBillregistermis;
-import org.egov.services.budget.BudgetAppropriationService;
+import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -81,49 +75,43 @@ import java.util.Map;
 
 
 @Results(value = {
-		
-		@Result(name = ExpenseJournalVoucherPrintAction.PRINT ,location="expenseJournalVoucherPrint-print.jsp"),
-        @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/pdf", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.xls" }),
-                        @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "text/html" })
+
+        @Result(name = ExpenseJournalVoucherPrintAction.PRINT, location = "expenseJournalVoucherPrint-print.jsp"),
+        @Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/pdf", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.pdf"}),
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.xls"}),
+        @Result(name = "HTML", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "text/html"})
 })
 
 @ParentPackage("egov")
 public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
-    String jasperpath = "/reports/templates/expenseJournalVoucherReport.jasper";
+    protected static final String PRINT = "print";
     private static final long serialVersionUID = 1L;
-    static final String PRINT = "print";
-    private CVoucherHeader voucher = new CVoucherHeader();
-    List<Object> voucherReportList = new ArrayList<Object>();
-    InputStream inputStream;
-    ReportHelper reportHelper;
-    Long id;
-    EgBillregistermis billRegistermis;
-    List<EgBillPayeedetails> billPayeeDetails = new ArrayList<EgBillPayeedetails>();
     private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
-    private EgovCommon egovCommon;
+    private static final String JASPERPATH = "/reports/templates/expenseJournalVoucherReport.jasper";
+    private transient List<Object> voucherReportList = new ArrayList<>();
+
+    private transient InputStream inputStream;
+    private transient ReportHelper reportHelper;
+    private Long id;
+    private transient EgBillregistermis billRegistermis;
+    private CVoucherHeader voucher = new CVoucherHeader();
+
+    @Autowired
+    private transient EgovCommon egovCommon;
 
     public Long getId() {
         return id;
     }
 
-    public void setBudgetAppropriationService(final BudgetAppropriationService budgetAppropriationService) {
+    public void setId(final Long id) {
+        this.id = id;
     }
 
     public void setReportHelper(final ReportHelper helper) {
         reportHelper = helper;
-    }
-
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public List<Object> getVoucherReportList() {
@@ -159,15 +147,15 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
             final Long id = Long.valueOf(parameters.get("id")[0]);
-            final CVoucherHeader voucherHeader = (CVoucherHeader) persistenceService.getSession().get(CVoucherHeader.class, id);
+            final CVoucherHeader voucherHeader = persistenceService.getSession().get(CVoucherHeader.class, id);
             if (voucherHeader != null) {
                 voucher = voucherHeader;
                 billRegistermis = (EgBillregistermis) persistenceService.find("from EgBillregistermis where voucherHeader.id=?",
                         voucherHeader.getId());
                 if (billRegistermis != null)
-                    billPayeeDetails = persistenceService.findAllBy(
+                    persistenceService.findAllBy(
                             "from EgBillPayeedetails where egBilldetailsId.egBillregister.id=?", billRegistermis
-                            .getEgBillregister().getId());
+                                    .getEgBillregister().getId());
                 generateVoucherReportList();
             }
         }
@@ -176,7 +164,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
     private void generateVoucherReportList() {
         if (voucher != null) {
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount()))==0) {
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount())) == 0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd, egovCommon);
                     if (billRegistermis != null)
@@ -184,7 +172,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
                     voucherReportList.add(voucherReport);
                 }
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount()))==0) {
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount())) == 0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd, egovCommon);
                     if (billRegistermis != null)
@@ -194,34 +182,26 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
         }
     }
 
-    private String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
-        final List<String> result = query.list();
-        if (result != null)
-            return result.get(0);
-        return "";
-    }
-
     public String exportPdf() throws JRException, IOException {
         populateVoucher();
-        inputStream = reportHelper.exportPdf(inputStream, jasperpath, getParamMap(), voucherReportList);
+        inputStream = reportHelper.exportPdf(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "PDF";
     }
 
     public String exportHtml() {
         populateVoucher();
-        inputStream = reportHelper.exportHtml(inputStream, jasperpath, getParamMap(), voucherReportList, "px");
+        inputStream = reportHelper.exportHtml(inputStream, JASPERPATH, getParamMap(), voucherReportList, "px");
         return "HTML";
     }
 
     public String exportXls() throws JRException, IOException {
         populateVoucher();
-        inputStream = reportHelper.exportXls(inputStream, jasperpath, getParamMap(), voucherReportList);
+        inputStream = reportHelper.exportXls(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "XLS";
     }
 
     protected Map<String, Object> getParamMap() {
-        final Map<String, Object> paramMap = new HashMap<String, Object>();
+        final Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("voucherNumber", getVoucherNumber());
         paramMap.put("voucherDate", getVoucherDate());
         paramMap.put("voucherDescription", getVoucherDescription());
@@ -235,8 +215,8 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
             paramMap.put("billNumber", billRegistermis.getEgBillregister().getBillnumber());
             final BigDecimal billamount = billRegistermis.getEgBillregister().getBillamount();
             final String amountInFigures = billamount == null ? " " : billamount.setScale(2).toPlainString();
-            final String amountInWords = billamount == null ? " " : NumberToWord.convertToWord(billamount.toPlainString());
-            paramMap.put("certificate", getText("ejv.report.text", new String[] { amountInFigures, amountInWords }));
+            final String amountInWords = billamount == null ? " " : NumberToWordConverter.amountInWordsWithCircumfix(billamount);
+            paramMap.put("certificate", getText("ejv.report.text", new String[]{amountInFigures, amountInWords}));
         }
         paramMap.put("ulbName", ReportUtil.getCityName());
 
@@ -244,7 +224,7 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
     }
 
     public Map<String, Object> getAccountDetails(final Integer detailtypeid, final Integer detailkeyid,
-            final Map<String, Object> tempMap) throws ApplicationException {
+                                                 final Map<String, Object> tempMap) throws ApplicationException {
         final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY, detailtypeid);
         tempMap.put("detailtype", detailtype.getName());
         tempMap.put("detailtypeid", detailtype.getId());
@@ -269,9 +249,9 @@ public class ExpenseJournalVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-    void loadInboxHistoryData(final List<StateHistory> stateHistory, final Map<String, Object> paramMap) throws ApplicationRuntimeException {
-        final List<String> history = new ArrayList<String>();
-        final List<String> workFlowDate = new ArrayList<String>();
+    void loadInboxHistoryData(final List<StateHistory<Position>> stateHistory, final Map<String, Object> paramMap) {
+        final List<String> history = new ArrayList<>();
+        final List<String> workFlowDate = new ArrayList<>();
         for (final StateHistory historyState : stateHistory)
             if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
                 history.add(historyState.getSenderName());

@@ -39,13 +39,14 @@
  */
 package org.egov.commons;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
 import javax.persistence.Transient;
 
-public class CGeneralLedger {
+public class CGeneralLedger implements Serializable {
 
     private Long id = null;
     private Integer voucherlineId;
@@ -57,7 +58,7 @@ public class CGeneralLedger {
     private String description;
     private CVoucherHeader voucherHeaderId;
     private Integer functionId;
-    private Set<CGeneralLedgerDetail> generalLedgerDetails = new HashSet<CGeneralLedgerDetail>();
+    private Set<CGeneralLedgerDetail> generalLedgerDetails = new HashSet<>();
 
     @Transient
     private Boolean isSubLedger;

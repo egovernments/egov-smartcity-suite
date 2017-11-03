@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -49,6 +49,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.DeptDesig;
+import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.abstractestimate.entity.Activity;
@@ -64,17 +65,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
+
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 
 @Result(name = BaseFormAction.SUCCESS, type = "stream", location = "measurementBookPDF", params = {
         "inputName", "measurementBookPDF", "contentType", "application/pdf", "contentDisposition",
-        "no-cache;filename=MeasurementBook.pdf" })
+        "no-cache;filename=MeasurementBook.pdf"})
 @ParentPackage("egov")
 public class MeasurementBookPDFAction extends BaseFormAction {
 
@@ -83,18 +84,18 @@ public class MeasurementBookPDFAction extends BaseFormAction {
     private static final Logger logger = Logger.getLogger(MeasurementBookPDFAction.class);
 
     private Long measurementBookId;
-    private InputStream measurementBookPDF;
-    private MeasurementBookService measurementBookService;
-    private WorkOrderService workOrderService;
+    private transient InputStream measurementBookPDF;
+    private transient MeasurementBookService measurementBookService;
+    private transient WorkOrderService workOrderService;
     @Autowired
-    private EmployeeServiceOld employeeService;
-    private ReportService reportService;
+    private transient EmployeeServiceOld employeeService;
+    private transient ReportService reportService;
 
     @Override
     public String execute() {
         if (measurementBookId != null) {
             final MBHeader mbHeader = getMBHeader();
-            ReportRequest reportRequest = null;
+            ReportRequest reportRequest;
             if (areNTOrLSItemsPresent(mbHeader))
                 reportRequest = new ReportRequest("mbWithRevisionType", createMbData(mbHeader), getParamMap(mbHeader));
             else
@@ -107,12 +108,11 @@ public class MeasurementBookPDFAction extends BaseFormAction {
     }
 
     private Map<String, Object> getParamMap(final MBHeader mbHeader) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("mbNumber", mbHeader.getMbRefNo());
         reportParams.put("pageNumber", mbHeader.getFromPageNo()
                 + (mbHeader.getToPageNo() == null ? "" : " to " + mbHeader.getToPageNo()));
-        final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy", Locale.getDefault());
-        reportParams.put("mbDate", dateFormatter.format(mbHeader.getMbDate()));
+        reportParams.put("mbDate", toDefaultDateFormat(mbHeader.getMbDate()));
         reportParams.put("reportTitle", getText("page.title.measurement.book"));
         reportParams.put("approvalDetails", createApprovalDetailsTable(mbHeader));
         return reportParams;
@@ -120,14 +120,13 @@ public class MeasurementBookPDFAction extends BaseFormAction {
 
     private List<Object> createMbData(final MBHeader mbHeader) {
         double uomFactor = 0.0;
-        final List<Object> mbPDFList = new ArrayList<Object>();
+        final List<Object> mbPDFList = new ArrayList<>();
         for (final MBDetails mbDetails : mbHeader.getMbDetails()) {
             final MeasurementBookPDF mbPDF = new MeasurementBookPDF();
             String description = "";
             String per = "";
             String schNo = "";
-            double currentMeasurement = 0.0;
-            currentMeasurement = mbDetails.getQuantity();
+            double currentMeasurement = mbDetails.getQuantity();
             final WorkOrderActivity workOrderActivity = mbDetails.getWorkOrderActivity();
             final Activity activity = workOrderActivity.getActivity();
             if (activity != null) {
@@ -144,11 +143,11 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                 mbPDF.setWorkDescription(description);
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                                .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
+                        .equalsIgnoreCase(RevisionType.NON_TENDERED_ITEM.toString()))
                     mbPDF.setRevisionType("Non Tendered");
                 if (activity.getRevisionType() != null
                         && activity.getRevisionType().toString()
-                                .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
+                        .equalsIgnoreCase(RevisionType.LUMP_SUM_ITEM.toString()))
                     mbPDF.setRevisionType("Lump Sum");
             }
 
@@ -158,8 +157,8 @@ public class MeasurementBookPDFAction extends BaseFormAction {
             // ( cumulative MB measurement for line item) for selected MB
             // including MB entry
 
-            double completedMeasurement = 0.0;
-            double cumlPrevMb = 0.0;
+            double completedMeasurement;
+            double cumlPrevMb;
             try {
                 long woaId = 0l;
                 if (workOrderActivity.getId() != null)
@@ -173,7 +172,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
             completedMeasurement = cumlPrevMb + currentMeasurement;
             mbPDF.setCompletedMeasurement(completedMeasurement);
 
-            double approveRateWo = 0.0;
+            double approveRateWo;
             approveRateWo = workOrderActivity.getApprovedRate();
             mbPDF.setUnitRate(approveRateWo);
 
@@ -225,11 +224,10 @@ public class MeasurementBookPDFAction extends BaseFormAction {
             // Estimate Percentage
             // a)Current MB entry---->Measurements (Col5-8) i.e (area-previous
             // measurement)
-            // double finalCurMeasurement=area-prevMeasurement;
             mbPDF.setCurrentMeasurement(currentMeasurement);
 
             // current cost
-            double currentCost = 0.0;
+            double currentCost;
             currentCost = currentMeasurement * approveRateWo * uomFactor;
             mbPDF.setCurrentCost(currentCost);
             mbPDFList.add(mbPDF);
@@ -239,7 +237,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
 
     // Are nontendered or lumpsum items present
     private boolean areNTOrLSItemsPresent(final MBHeader mbHeader) {
-        if (mbHeader != null && mbHeader.getMbDetails() != null && mbHeader.getMbDetails().size() > 0)
+        if (mbHeader != null && mbHeader.getMbDetails() != null && !mbHeader.getMbDetails().isEmpty())
             for (final MBDetails mbdetails : mbHeader.getMbDetails())
                 if (mbdetails.getWorkOrderActivity() != null && mbdetails.getWorkOrderActivity().getActivity() != null
                         && mbdetails.getWorkOrderActivity().getActivity().getRevisionType() != null)
@@ -249,14 +247,14 @@ public class MeasurementBookPDFAction extends BaseFormAction {
 
     private List<ApprovalDetails> createApprovalDetailsTable(final MBHeader mbHeader) {
         try {
-            List<StateHistory> history = null;
-            String code = "";
-            final List<ApprovalDetails> approvalDetList = new ArrayList<ApprovalDetails>();
+            List<StateHistory<Position>> history = new ArrayList<>();
+            String code;
+            final List<ApprovalDetails> approvalDetList = new ArrayList<>();
             if (mbHeader.getCurrentState() != null && mbHeader.getCurrentState().getHistory() != null)
                 history = mbHeader.getStateHistory();
             if (history != null) {
                 Collections.reverse(history);
-                for (final StateHistory state : history)
+                for (final StateHistory<Position> state : history)
                     if (!state.getValue().equals("NEW") && !state.getValue().equals("END")) {
                         final ApprovalDetails approvalDet = new ApprovalDetails();
                         String nextAction = "";
@@ -265,21 +263,13 @@ public class MeasurementBookPDFAction extends BaseFormAction {
                         Long positionId = null;
                         String desgName = null;
                         DeptDesig deptdesig = null;
-                        // if(state.getPrevious()==null){
                         positionId = state.getOwnerPosition().getId();
                         deptdesig = state.getOwnerPosition().getDeptDesig();
                         desgName = deptdesig.getDesignation().getName();
-                        // }
-                        /*
-                         * else{ positionId =state.getPrevious().getOwner().getId(); deptdesig=
-                         * state.getPrevious().getOwner().getDeptDesigId(); desgName =
-                         * deptdesig.getDesigId().getDesignationName(); }
-                         */
+
                         final PersonalInformation emp = employeeService.getEmpForPositionAndDate(
                                 state.getCreatedDate(), Integer.parseInt(positionId.toString()));
-                        // if(state.getValue().equals("END"))
-                        // code = state.getPrevious().getValue();
-                        // else
+
                         code = state.getValue();
                         final EgwStatus status = (EgwStatus) getPersistenceService().find(
                                 "from EgwStatus where moduletype=? and code=?", "MBHeader", code);
@@ -296,7 +286,7 @@ public class MeasurementBookPDFAction extends BaseFormAction {
             }
             return approvalDetList;
         } catch (final Exception e) {
-            return null;
+            return Collections.emptyList();
         }
     }
 

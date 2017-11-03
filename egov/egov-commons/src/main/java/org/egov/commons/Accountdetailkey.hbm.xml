@@ -3,7 +3,7 @@
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~ accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2016  eGovernments Foundation
+  ~  Copyright (C) 2017  eGovernments Foundation
   ~
   ~  The updated version of eGov suite of products as by eGovernments Foundation
   ~  is available at http://www.egovernments.org
@@ -40,18 +40,18 @@
   -->
 
 <!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+        "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 <hibernate-mapping>
-    <class name="org.egov.commons.Accountdetailkey" table="ACCOUNTDETAILKEY" >
+    <class name="org.egov.commons.Accountdetailkey" table="ACCOUNTDETAILKEY">
         <id name="id" type="integer">
-            <column name="ID" precision="22" scale="0" />
+            <column name="ID" precision="22" scale="0"/>
             <generator class="org.hibernate.id.enhanced.SequenceStyleGenerator">
-			<param name="sequence_name">SEQ_ACCOUNTDETAILKEY</param>
-	</generator>
+                <param name="sequence_name">SEQ_ACCOUNTDETAILKEY</param>
+            </generator>
         </id>
         <many-to-one name="accountdetailtype" class="org.egov.commons.Accountdetailtype" column="DETAILTYPEID"/>
-        <property name="groupid" column="GROUPID" 	/>
-        <property name="detailname" column="DETAILNAME" 	/>
-        <property name="detailkey" column="DETAILKEY" />       
-      </class>
+        <property name="groupid" column="GROUPID"/>
+        <property name="detailname" column="DETAILNAME"/>
+        <property name="detailkey" column="DETAILKEY"/>
+    </class>
 </hibernate-mapping>

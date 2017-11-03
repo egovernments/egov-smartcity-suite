@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -66,10 +66,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * @author venki
@@ -127,7 +132,7 @@ public class FinancialUtils {
         return egwStatusHibernateDAO.findById(id, true);
     }
 
-    public String getApproverDetails(final String workFlowAction, final State state, final Long id, final Long approvalPosition) {
+    public String getApproverDetails(final String workFlowAction, final State<Position> state, final Long id, final Long approvalPosition) {
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 
@@ -139,7 +144,7 @@ public class FinancialUtils {
         if (assignObj != null) {
             asignList = new ArrayList<>();
             asignList.add(assignObj);
-        } else if (assignObj == null && approvalPosition != null)
+        } else if (approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
         String nextDesign = "";
@@ -168,7 +173,7 @@ public class FinancialUtils {
         if (assignment != null) {
             asignList = new ArrayList<>();
             asignList.add(assignment);
-        } else if (assignment == null)
+        } else
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
@@ -209,7 +214,7 @@ public class FinancialUtils {
         return approverPosition;
     }
 
-    public boolean isBillEditable(final State state) {
+    public boolean isBillEditable(final State<Position> state) {
         boolean isEditable = false;
         if (state.getOwnerPosition() != null && state.getOwnerPosition().getDeptDesig() != null
                 && state.getOwnerPosition().getDeptDesig().getDesignation() != null) {
@@ -223,35 +228,35 @@ public class FinancialUtils {
         return isEditable;
     }
 
-    public List<HashMap<String, Object>> getHistory(final State state, final List<StateHistory> history) {
+    public List<HashMap<String, Object>> getHistory(final State<Position> state, final List<StateHistory<Position>> history) {
         User user = null;
         final List<HashMap<String, Object>> historyTable = new ArrayList<>();
         final HashMap<String, Object> map = new HashMap<>(0);
         if (null != state) {
             if (!history.isEmpty() && history != null)
                 Collections.reverse(history);
-            for (final StateHistory stateHistory : history) {
-                final HashMap<String, Object> HistoryMap = new HashMap<>(0);
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
-                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+            for (final StateHistory<Position> stateHistory : history) {
+                final HashMap<String, Object> workflowHistory = new HashMap<>(0);
+                workflowHistory.put("date", stateHistory.getDateInfo());
+                workflowHistory.put("comments", stateHistory.getComments());
+                workflowHistory.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
                         + stateHistory.getLastModifiedBy().getName());
-                HistoryMap.put("status", stateHistory.getValue());
+                workflowHistory.put("status", stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
                 if (null != user) {
-                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put("department",
+                    workflowHistory.put("user", user.getUsername() + "::" + user.getName());
+                    workflowHistory.put("department",
                             null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                                     .getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    HistoryMap
+                    workflowHistory
                             .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                    workflowHistory.put("department", null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
-                historyTable.add(HistoryMap);
+                historyTable.add(workflowHistory);
             }
             map.put("date", state.getDateInfo());
             map.put("comments", state.getComments() != null ? state.getComments() : "");
@@ -280,8 +285,7 @@ public class FinancialUtils {
 
     }
 
-    public List<DocumentUpload> getDocumentDetails(final List<DocumentUpload> files, final Object object, final String objectType)
-            throws IOException {
+    public List<DocumentUpload> getDocumentDetails(final List<DocumentUpload> files, final Object object, final String objectType) {
         final List<DocumentUpload> documentDetailsList = new ArrayList<>();
 
         Long id;

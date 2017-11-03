@@ -38,10 +38,21 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.workflow.matrix.repository;
+package org.egov.infra.workflow.entity;
 
-import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.annotations.Proxy;
 
-public interface WorkflowMatrixRepository extends JpaRepository<WorkFlowMatrix, Long> {
+import javax.persistence.Entity;
+import javax.persistence.Id;
+import javax.persistence.Inheritance;
+
+import static javax.persistence.InheritanceType.TABLE_PER_CLASS;
+
+@Entity
+@Inheritance(strategy = TABLE_PER_CLASS)
+@Proxy(lazy = false)
+public abstract class OwnerGroup extends AbstractAuditable {
+    @Id
+    private Long id;
 }

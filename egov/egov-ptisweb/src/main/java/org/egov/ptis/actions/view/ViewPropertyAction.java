@@ -71,7 +71,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -163,11 +162,11 @@ public class ViewPropertyAction extends BaseFormAction {
     @PersistenceContext
     private transient EntityManager entityManager;
     
-	private Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
+	private transient Map<String, Map<String, BigDecimal>> demandCollMap = new TreeMap<>();
 	
-	private List<Hashtable<String, Object>> historyMap = new ArrayList<>();
+	private transient List<HashMap<String, Object>> historyMap = new ArrayList<>();
 	
-	private List<Document> documents = new ArrayList<>();
+	private transient List<Document> documents = new ArrayList<>();
        
     @Override
     public StateAware getModel() {
@@ -549,11 +548,11 @@ public class ViewPropertyAction extends BaseFormAction {
         this.propService = propService;
     }
 
-    public List<Hashtable<String, Object>> getHistoryMap() {
+    public List<HashMap<String, Object>> getHistoryMap() {
         return historyMap;
     }
 
-    public void setHistoryMap(List<Hashtable<String, Object>> historyMap) {
+    public void setHistoryMap(List<HashMap<String, Object>> historyMap) {
         this.historyMap = historyMap;
     }
 

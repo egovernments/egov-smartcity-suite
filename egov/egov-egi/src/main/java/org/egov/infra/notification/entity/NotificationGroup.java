@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -41,7 +41,7 @@
 package org.egov.infra.notification.entity;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Position;
+import org.egov.infra.workflow.entity.OwnerGroup;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -82,10 +82,8 @@ public class NotificationGroup extends AbstractAuditable {
 
     private boolean active;
 
-    //Should think about using UserGroup rather than depending on EIS, when add this feature.
-    //It should be an many to many relation with notification_users table, contains group id and UserGroup id
     @Transient
-    private Set<Position> members;
+    private Set<OwnerGroup> members;
 
     @Override
     public Long getId() {
@@ -121,11 +119,11 @@ public class NotificationGroup extends AbstractAuditable {
         this.effectiveDate = effectiveDate;
     }
 
-    public Set<Position> getMembers() {
+    public Set<OwnerGroup> getMembers() {
         return this.members;
     }
 
-    public void setMembers(Set<Position> members) {
+    public void setMembers(Set<OwnerGroup> members) {
         this.members = members;
     }
 

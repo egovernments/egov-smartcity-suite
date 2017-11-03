@@ -42,6 +42,7 @@ package org.egov.ptis.domain.entity.property;
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
@@ -49,7 +50,7 @@ import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
 
-public class UnitCalculationDetail {
+public class UnitCalculationDetail implements Serializable {
 
 	@NotNull
 	private Long id;
@@ -145,7 +146,7 @@ public class UnitCalculationDetail {
 	 */
 
     @Valid
-    private Set<UnitAreaCalculationDetail> unitAreaCalculationDetails = new HashSet<UnitAreaCalculationDetail>();
+    private Set<UnitAreaCalculationDetail> unitAreaCalculationDetails = new HashSet<>();
 
     public UnitCalculationDetail() {}
 
@@ -564,248 +565,10 @@ public class UnitCalculationDetail {
 
 	}
 
-	/*@Override
-	public int hashCode() {
-		int seedValue = HashCodeUtil.SEED;
-
-        seedValue = HashCodeUtil.hash(seedValue, this.unitNumber);
-        seedValue = HashCodeUtil.hash(seedValue, this.unitArea);
-        seedValue = HashCodeUtil.hash(seedValue, this.occupancyDate);
-        seedValue = HashCodeUtil.hash(seedValue, this.guidanceValue);
-        seedValue = HashCodeUtil.hash(seedValue, this.guidValEffectiveDate);
-        seedValue = HashCodeUtil.hash(seedValue, this.installmentFromDate);
-        seedValue = HashCodeUtil.hash(seedValue, this.unitOccupation);
-        seedValue = HashCodeUtil.hash(seedValue, this.alv);
-        seedValue = HashCodeUtil.hash(seedValue, this.residentialALV);
-        seedValue = HashCodeUtil.hash(seedValue, this.nonResidentialALV);
-        seedValue = HashCodeUtil.hash(seedValue, this.waterTaxALV);
-        seedValue = HashCodeUtil.hash(seedValue, this.bigBuildingTaxALV);
-        seedValue = HashCodeUtil.hash(seedValue, this.taxPayable);
-        seedValue = HashCodeUtil.hash(seedValue, this.generalTax);
-        seedValue = HashCodeUtil.hash(seedValue, this.sewerageTax);
-        seedValue = HashCodeUtil.hash(seedValue, this.fireTax);
-        seedValue = HashCodeUtil.hash(seedValue, this.lightTax);
-        seedValue = HashCodeUtil.hash(seedValue, this.waterTax);
-        seedValue = HashCodeUtil.hash(seedValue, this.eduCessResd);
-        seedValue = HashCodeUtil.hash(seedValue, this.eduCessNonResd);
-        seedValue = HashCodeUtil.hash(seedValue, this.empGrntCess);
-        seedValue = HashCodeUtil.hash(seedValue, this.bigBuildingTax);
-        seedValue = HashCodeUtil.hash(seedValue, this.fromDate);
-
-        return seedValue;
-	}
-
-
-	@Override
-	public boolean equals(Object obj) {
-
-		if (this == obj) {
-			return true;
-		}
-
-		if (obj == null) {
-			return false;
-		}
-
-		if (!(obj instanceof UnitCalculationDetail)) {
-			return false;
-		}
-
-		UnitCalculationDetail other = (UnitCalculationDetail) obj;
-
-		if (unitNumber == null) {
-			if (other.unitNumber != null) {
-				return false;
-			}
-		} else if (!unitNumber.equals(other.unitNumber)) {
-			return false;
-		}
-
-		if (unitArea == null) {
-			if (other.unitArea != null) {
-				return false;
-			}
-		} else if (!unitArea.equals(other.unitArea)) {
-			return false;
-		}
-
-		if (occupancyDate == null) {
-			if (other.occupancyDate != null) {
-				return false;
-			}
-		} else if (!occupancyDate.equals(other.occupancyDate)) {
-			return false;
-		}
-
-		if (guidanceValue == null) {
-			if (other.guidanceValue != null) {
-				return false;
-			}
-		} else if (!guidanceValue.equals(other.guidanceValue)) {
-			return false;
-		}
-
-		if (installmentFromDate == null) {
-			if (other.installmentFromDate != null) {
-				return false;
-			}
-		} else if (!installmentFromDate.equals(other.installmentFromDate)) {
-			return false;
-		}
-
-		if (unitOccupation == null) {
-			if (other.unitOccupation != null) {
-				return false;
-			}
-		} else if (!unitOccupation.equals(other.unitOccupation)) {
-			return false;
-		}
-
-		if (alv == null) {
-			if (other.alv != null) {
-				return false;
-			}
-		} else if (!alv.equals(other.alv)) {
-			return false;
-		}
-
-		if (residentialALV == null) {
-			if (other.residentialALV != null) {
-				return false;
-			}
-		} else if (!residentialALV.equals(other.residentialALV)) {
-			return false;
-		}
-
-		if (nonResidentialALV == null) {
-			if (other.nonResidentialALV != null) {
-				return false;
-			}
-		} else if (!nonResidentialALV.equals(other.nonResidentialALV)) {
-			return false;
-		}
-
-		if (waterTaxALV == null) {
-			if (other.waterTaxALV != null) {
-				return false;
-			}
-		} else if (!waterTaxALV.equals(other.waterTaxALV)) {
-			return false;
-		}
-
-		if (bigBuildingTaxALV == null) {
-			if (other.bigBuildingTaxALV != null) {
-				return false;
-			}
-		} else if (!bigBuildingTaxALV.equals(other.bigBuildingTaxALV)) {
-			return false;
-		}
-
-		if (taxPayable == null) {
-			if (other.taxPayable != null) {
-				return false;
-			}
-		} else if (!taxPayable.equals(other.taxPayable)) {
-			return false;
-		}
-
-		if (generalTax == null) {
-			if (other.generalTax != null) {
-				return false;
-			}
-		} else if (!generalTax.equals(other.generalTax)) {
-			return false;
-		}
-
-		if (sewerageTax == null) {
-			if (other.sewerageTax != null) {
-				return false;
-			}
-		} else if (!sewerageTax.equals(other.sewerageTax)) {
-			return false;
-		}
-
-		if (fireTax == null) {
-			if (other.fireTax != null) {
-				return false;
-			}
-		} else if (!fireTax.equals(other.fireTax)) {
-			return false;
-		}
-
-		if (lightTax == null) {
-			if (other.lightTax != null) {
-				return false;
-			}
-		} else if (!lightTax.equals(other.lightTax)) {
-			return false;
-		}
-
-		if (waterTax == null) {
-			if (other.waterTax != null) {
-				return false;
-			}
-		} else if (!waterTax.equals(other.waterTax)) {
-			return false;
-		}
-
-		if (eduCessResd == null) {
-			if (other.eduCessResd != null) {
-				return false;
-			}
-		} else if (!eduCessResd.equals(other.eduCessResd)) {
-			return false;
-		}
-
-		if (eduCessNonResd == null) {
-			if (other.eduCessNonResd != null) {
-				return false;
-			}
-		} else if (!eduCessNonResd.equals(other.eduCessNonResd)) {
-			return false;
-		}
-
-		if (empGrntCess == null) {
-			if (other.empGrntCess != null) {
-				return false;
-			}
-		} else if (!empGrntCess.equals(other.empGrntCess)) {
-			return false;
-		}
-
-		if (bigBuildingTax == null) {
-			if (other.bigBuildingTax != null) {
-				return false;
-			}
-		} else if (!bigBuildingTax.equals(other.bigBuildingTax)) {
-			return false;
-		}
-
-		if (fromDate == null) {
-			if (other.fromDate != null) {
-				return false;
-			}
-		} else if (!fromDate.equals(other.fromDate)) {
-			return false;
-		}
-
-
-
-		if (property == null) {
-			if (other.property != null) {
-				return false;
-			}
-		} else if (!property.equals(other.property)) {
-			return false;
-		}
-
-		return true;
-	}*/
-
 	@Override
 	public String toString() {
 
-		StringBuilder stringBuilder = new StringBuilder(250);
+		StringBuilder stringBuilder = new StringBuilder();
 
 		stringBuilder.append("UnitCalculationDetail [idProperty = ")
 				.append(this.property == null ? "null" : this.property.getId())

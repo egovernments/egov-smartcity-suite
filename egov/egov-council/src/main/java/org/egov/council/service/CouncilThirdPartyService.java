@@ -39,12 +39,6 @@
  */
 package org.egov.council.service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.Hashtable;
-import java.util.List;
-
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.User;
@@ -55,6 +49,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
 @Service
 @Transactional(readOnly = true)
 public class CouncilThirdPartyService {
@@ -62,17 +62,17 @@ public class CouncilThirdPartyService {
     @Autowired
     private EisCommonService eisCommonService;
 
-    public List<Hashtable<String, Object>> getHistory(final CouncilPreamble councilPreamble) {
+    public List<HashMap<String, Object>> getHistory(final CouncilPreamble councilPreamble) {
         User userObject;
-        final List<Hashtable<String, Object>> historyTable = new ArrayList<>();
-        final State workflowState = councilPreamble.getState();
-        final Hashtable<String, Object> workFlowHistory = new Hashtable<>(0);
+        final List<HashMap<String, Object>> historyTable = new ArrayList<>();
+        final State<Position> workflowState = councilPreamble.getState();
+        final HashMap<String, Object> workFlowHistory = new HashMap<>();
         if (null != workflowState) {
             if (null != councilPreamble.getStateHistory() && !councilPreamble.getStateHistory().isEmpty())
                 Collections.reverse(councilPreamble.getStateHistory());
 
-            for (final StateHistory stateHistory : councilPreamble.getStateHistory()) {
-                final Hashtable<String, Object> historyMap = new Hashtable<>(0);
+            for (final StateHistory<Position> stateHistory : councilPreamble.getStateHistory()) {
+                final HashMap<String, Object> historyMap = new HashMap<>();
                 historyMap.put("date", stateHistory.getDateInfo());
                 historyMap.put("comments", stateHistory.getComments());
                 historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"

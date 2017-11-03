@@ -65,7 +65,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_I
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
 
 import java.util.Date;
-import java.util.Hashtable;
+import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -187,7 +187,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         boolean isExempted = property.getBasicProperty().getActiveProperty().getIsExemptedFromTax();
         String userDesignationList;
         boolean endorsementRequired = Boolean.FALSE;
-        List<Hashtable<String, Object>> historyMap;
+        List<HashMap<String, Object>> historyMap;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
         User loggedInUser = securityUtils.getCurrentUser();

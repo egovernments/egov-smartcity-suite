@@ -49,6 +49,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
@@ -77,7 +78,7 @@ import static org.egov.model.budget.BudgetDetail.SEQ_BUDGETDETAIL;
 @Entity
 @Table(name = "EGF_BUDGETDETAIL")
 @SequenceGenerator(name = SEQ_BUDGETDETAIL, sequenceName = SEQ_BUDGETDETAIL, allocationSize = 1)
-public class BudgetDetail extends StateAware {
+public class BudgetDetail extends StateAware<Position> {
     public static final String SEQ_BUDGETDETAIL = "SEQ_EGF_BUDGETDETAIL";
     private static final long serialVersionUID = 5908792258911500512L;
     @Id
@@ -145,7 +146,7 @@ public class BudgetDetail extends StateAware {
     private String materializedPath;
 
     @OneToMany(mappedBy = "budgetDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<BudgetReAppropriation>(
+    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<>(
             0);
 
     @Column(name = "document_number")
@@ -334,9 +335,9 @@ public class BudgetDetail extends StateAware {
     }
 
     public List<BudgetReAppropriation> getNonApprovedReAppropriations() {
-        final List<BudgetReAppropriation> reAppList = new ArrayList<BudgetReAppropriation>();
+        final List<BudgetReAppropriation> reAppList = new ArrayList<>();
         budgetReAppropriations = budgetReAppropriations == null
-                ? new HashSet<BudgetReAppropriation>()
+                ? new HashSet<>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription()
@@ -348,14 +349,14 @@ public class BudgetDetail extends StateAware {
     public BigDecimal getApprovedReAppropriationsTotal() {
         BigDecimal total = BigDecimal.ZERO;
         budgetReAppropriations = budgetReAppropriations == null
-                ? new HashSet<BudgetReAppropriation>()
+                ? new HashSet<>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription()
                     .equalsIgnoreCase("Cancelled"))
                 if ((entry.getAdditionAmount() != null)
-                        && !(BigDecimal.ZERO
-                        .compareTo(entry.getAdditionAmount()) == 0))
+                        && BigDecimal.ZERO
+                        .compareTo(entry.getAdditionAmount()) != 0)
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -366,15 +367,15 @@ public class BudgetDetail extends StateAware {
             final Date asOnDate) {
         BigDecimal total = BigDecimal.ZERO;
         budgetReAppropriations = budgetReAppropriations == null
-                ? new HashSet<BudgetReAppropriation>()
+                ? new HashSet<>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription()
                     .equalsIgnoreCase("Cancelled")
                     && entry.getCreatedDate().before(asOnDate))
                 if ((entry.getAdditionAmount() != null)
-                        && !(BigDecimal.ZERO
-                        .compareTo(entry.getAdditionAmount()) == 0))
+                        && BigDecimal.ZERO
+                        .compareTo(entry.getAdditionAmount()) != 0)
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -470,7 +471,7 @@ public class BudgetDetail extends StateAware {
     }
 
     public void setWfState(final State state) {
-        //setState(state);
+        //Won't work
     }
 
     public EgwStatus getStatus() {

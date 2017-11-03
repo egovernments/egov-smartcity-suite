@@ -108,7 +108,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 
@@ -225,7 +224,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private List<String> uploadFileNames = new ArrayList<>();
     private List<String> uploadContentTypes = new ArrayList<>();
     protected Map<String, BigDecimal> propertyTaxDetailsMap = new HashMap<>(0);
-    protected List<Hashtable<String, Object>> historyMap = new ArrayList<>();
+    protected List<HashMap<String, Object>> historyMap = new ArrayList<>();
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
     protected String userDesignationList;
@@ -1198,11 +1197,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     }
 
-    public List<Hashtable<String, Object>> getHistoryMap() {
+    public List<HashMap<String, Object>> getHistoryMap() {
         return historyMap;
     }
 
-    public void setHistoryMap(final List<Hashtable<String, Object>> historyMap) {
+    public void setHistoryMap(final List<HashMap<String, Object>> historyMap) {
         this.historyMap = historyMap;
     }
 

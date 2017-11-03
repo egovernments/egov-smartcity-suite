@@ -41,7 +41,6 @@ package org.egov.egf.web.actions.bill;
 
 
 import net.sf.jasperreports.engine.JRException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -59,28 +58,24 @@ import org.egov.egf.budget.model.BudgetControlType;
 import org.egov.egf.budget.service.BudgetControlTypeService;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.eis.service.EisCommonService;
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.util.ReportUtil;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillPayeedetails;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.model.bills.EgBillregister;
 import org.egov.model.bills.EgBillregistermis;
 import org.egov.model.budget.BudgetGroup;
 import org.egov.model.voucher.VoucherDetails;
+import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 import org.egov.utils.ReportHelper;
-import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -95,37 +90,43 @@ import java.util.Set;
 
 @Results(value = {
 
-        @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/pdf", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.pdf" }),
-        @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/xls", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.xls" }),
-        @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "text/html" })
+        @Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/pdf", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.pdf"}),
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=ExpenseJournalVoucherReport.xls"}),
+        @Result(name = "HTML", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "text/html"})
 })
 @org.apache.struts2.convention.annotation.ParentPackage("egov")
 public class ExpenseBillPrintAction extends BaseFormAction {
-    final static private Logger LOGGER = Logger.getLogger(ExpenseBillPrintAction.class);
-    String jasperpath = "/reports/templates/expenseBillReport.jasper";
-    String subReportPath = "/reports/templates/budgetAppropriationDetail.jasper";
+    private static final Logger LOGGER = Logger.getLogger(ExpenseBillPrintAction.class);
     private static final long serialVersionUID = 1L;
     private static final String PRINT = "print";
-    String functionName;
-    
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired AppConfigValueService appConfigValuesService;
-    @Autowired
-    private EisCommonService eisCommonService;
-
-    private BudgetDetailsHibernateDAO budgetDetailsDAO;
-    @Autowired
-    private FinancialYearDAO financialYearDAO;
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
     private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
-    Map<String, Object> budgetDataMap = new HashMap<String, Object>();
-    Map<String, Object> paramMap = new HashMap<String, Object>();
+    private static final String jasperpath = "/reports/templates/expenseBillReport.jasper";
+    private static final String subReportPath = "/reports/templates/budgetAppropriationDetail.jasper";
+    private String functionName;
     @Autowired
-    private EgovCommon egovCommon;
+    private transient AppConfigValueService appConfigValuesService;
+    private transient Map<String, Object> budgetDataMap = new HashMap<>();
+    private transient Map<String, Object> paramMap = new HashMap<>();
+    private transient List<Object> billReportList = new ArrayList<>();
+    private transient InputStream inputStream;
+    private transient ReportHelper reportHelper;
+    private Long id;
+    private transient EgBillregistermis billRegistermis;
+    private transient EgBillregister cbill = new EgBillregister();
+    @Autowired
+    private transient EisCommonService eisCommonService;
+    private transient BudgetDetailsHibernateDAO budgetDetailsDAO;
+    @Autowired
+    private transient FinancialYearDAO financialYearDAO;
+    @Autowired
+    private transient EgovCommon egovCommon;
+    private transient CVoucherHeader voucher = new CVoucherHeader();
+    @Autowired
+    private transient BudgetControlTypeService budgetControlTypeService;
 
     public BudgetDetailsHibernateDAO getBudgetDetailsDAO() {
         return budgetDetailsDAO;
@@ -139,7 +140,13 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return functionName;
     }
 
-    private CVoucherHeader voucher = new CVoucherHeader();
+    /**
+     * @param name
+     */
+    private void setFunctionName(final String name) {
+        functionName = name;
+
+    }
 
     public List<Object> getBillReportList() {
         return billReportList;
@@ -149,29 +156,16 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         this.billReportList = billReportList;
     }
 
-    List<Object> billReportList = new ArrayList<Object>();
-    InputStream inputStream;
-    ReportHelper reportHelper;
-    Long id;
-    EgBillregistermis billRegistermis;
-    List<EgBillPayeedetails> billPayeeDetails = new ArrayList<EgBillPayeedetails>();
-    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
-    EgBillregister cbill = new EgBillregister();
-    @Autowired
-    private BudgetControlTypeService budgetControlTypeService;
-
-    // private InboxService inboxService;
-
     public Long getId() {
         return id;
     }
 
-    public void setReportHelper(final ReportHelper helper) {
-        reportHelper = helper;
-    }
-
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public void setReportHelper(final ReportHelper helper) {
+        reportHelper = helper;
     }
 
     public InputStream getInputStream() {
@@ -199,10 +193,8 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return PRINT;
     }
 
-    private void populateBill()
-    {
-        if (parameters.get("id") != null && !parameters.get("id")[0].isEmpty())
-        {
+    private void populateBill() {
+        if (parameters.get("id") != null && !parameters.get("id")[0].isEmpty()) {
             cbill = (EgBillregister) persistenceService.find("from EgBillregister where id=?",
                     Long.valueOf(parameters.get("id")[0]));
             billRegistermis = cbill.getEgBillregistermis();
@@ -214,14 +206,6 @@ public class ExpenseBillPrintAction extends BaseFormAction {
 
     private void generateVoucherReportList() {
         prepareForPrint();
-    }
-
-    private String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
-        final List<String> result = query.list();
-        if (result != null)
-            return result.get(0);
-        return "";
     }
 
     @Action(value = "/bill/expenseBillPrint-exportPdf")
@@ -250,7 +234,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         if (cbill.getBilldate() != null)
             paramMap.put("billDate", sdf.format(cbill.getBilldate()));
         paramMap.put("voucherDescription", getVoucherDescription());
-        if (cbill != null && cbill.getState() != null)
+        if (cbill.getState() != null)
             loadInboxHistoryData(cbill.getStateHistory(), paramMap);
 
         if (billRegistermis != null) {
@@ -262,7 +246,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 paramMap.put("partyBillDate", sdf.format(billRegistermis.getPartyBillDate()));
             paramMap.put("netAmount", cbill.getPassedamount());
             final BigDecimal amt = cbill.getPassedamount().setScale(2, BigDecimal.ROUND_HALF_EVEN);
-            String amountInWords = NumberToWord.convertToWord(amt.toString());
+            String amountInWords = NumberToWordConverter.amountInWordsWithCircumfix(amt);
             amountInWords = "(" + amountInWords + " )";
             amountInWords = "Bill is in order. Sanction is accorded for Rs." + amt + "/-" + amountInWords;
             paramMap.put("netAmountText", amountInWords);
@@ -276,9 +260,6 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             billRegistermis.getEgBillregister().getBillamount();
             paramMap.put("budgetApprNumber", billRegistermis.getBudgetaryAppnumber());
             paramMap.put("budgetAppropriationDetailJasper", reportHelper.getClass().getResourceAsStream(subReportPath));
-            // Stritng amountInFigures = billamount==null?" ":billamount.toPlainString();
-            // String amountInWords = billamount==null?" ":NumberToWord.convertToWord(billamount.toPlainString());
-            // paramMap.put("certificate", getText("ejv.report.text", new String[]{amountInFigures,amountInWords}));
         }
         paramMap.put("ulbName", ReportUtil.getCityName());
         return paramMap;
@@ -289,14 +270,14 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      * @return
      */
     private Map<String, Object> getBudgetDetails(final CChartOfAccounts coa, final EgBilldetails billDetail,
-            final String functionName) {
-        final Map<String, Object> budgetApprDetailsMap = new HashMap<String, Object>();
+                                                 final String functionName) {
+        final Map<String, Object> budgetApprDetailsMap = new HashMap<>();
         budgetDataMap.put(Constants.FUNCTIONID, Long.valueOf(billDetail.getFunctionid().toString()));
         if (cbill.getEgBillregistermis().getVoucherHeader() != null)
             budgetDataMap.put(Constants.ASONDATE, cbill.getEgBillregistermis().getVoucherHeader().getVoucherDate());// this date
-        // plays
-        // important
-        // roles
+            // plays
+            // important
+            // roles
         else
             budgetDataMap.put(Constants.ASONDATE, cbill.getBilldate());
 
@@ -316,12 +297,11 @@ public class ExpenseBillPrintAction extends BaseFormAction {
             LOGGER.debug("budgetedAmtForYear .......... " + budgetedAmtForYear);
 
         budgetDataMap.put("budgetApprNumber", cbill.getEgBillregistermis().getBudgetaryAppnumber());
-        // budgetDetailsDAO.getActualBudgetUtilized(budgetDataMap);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Getting actuals .............................. for print");
 
         final BigDecimal actualAmtFromVoucher = budgetDetailsDAO.getActualBudgetUtilizedForBudgetaryCheck(budgetDataMap); // get
-                                                                                                                          // actual
+        // actual
         // amount
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("actualAmtFromVoucher .............................. " + actualAmtFromVoucher);
@@ -330,22 +310,18 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("actualAmtFromBill .............................. " + actualAmtFromBill);
 
-        BigDecimal currentBillAmount = BigDecimal.ZERO;
-        BigDecimal soFarAppropriated = BigDecimal.ZERO;
-        BigDecimal actualAmount = BigDecimal.ZERO;
-        actualAmount = actualAmtFromVoucher != null ? actualAmtFromVoucher : BigDecimal.ZERO;
+        BigDecimal currentBillAmount;
+        BigDecimal soFarAppropriated;
+        BigDecimal actualAmount = actualAmtFromVoucher != null ? actualAmtFromVoucher : BigDecimal.ZERO;
         actualAmount = actualAmtFromBill != null ? actualAmount.add(actualAmtFromBill) : actualAmount;
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("actualAmount ...actualAmtFromVoucher+actualAmtFromBill........ " + actualAmount);
 
-        if (billDetail.getDebitamount() != null && billDetail.getDebitamount().compareTo(BigDecimal.ZERO) != 0)
-        {
+        if (billDetail.getDebitamount() != null && billDetail.getDebitamount().compareTo(BigDecimal.ZERO) != 0) {
             actualAmount = actualAmount.subtract(billDetail.getDebitamount());
             currentBillAmount = billDetail.getDebitamount();
 
-        }
-        else
-        {
+        } else {
             actualAmount = actualAmount.subtract(billDetail.getCreditamount());
             currentBillAmount = billDetail.getCreditamount();
         }
@@ -382,7 +358,6 @@ public class ExpenseBillPrintAction extends BaseFormAction {
      * @param cbill will set data in budgetDataMap will be called only once per bill
      */
     private void getRequiredDataForBudget(final EgBillregister cbill) {
-        final String financialYearId = null;// commonsService.getFinancialYearId(cbill.getBilldate().getTime());
         Date billDate = cbill.getBilldate();
         final CFinancialYear financialYearById = financialYearDAO.getFinYearByDate(billDate);
 
@@ -401,7 +376,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
     }
 
     public Map<String, Object> getAccountDetails(final Integer detailtypeid, final Integer detailkeyid,
-            final Map<String, Object> tempMap) throws ApplicationException {
+                                                 final Map<String, Object> tempMap) throws ApplicationException {
         final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY, detailtypeid);
         tempMap.put("detailtype", detailtype.getName());
         tempMap.put("detailtypeid", detailtype.getId());
@@ -417,70 +392,58 @@ public class ExpenseBillPrintAction extends BaseFormAction {
         return voucher == null || voucher.getDescription() == null ? "" : voucher.getDescription();
     }
 
-	void loadInboxHistoryData(List<StateHistory> stateHistory,
-			final Map<String, Object> paramMap)
-			throws ApplicationRuntimeException {
-		final List<String> history = new ArrayList<String>();
-		final List<String> workFlowDate = new ArrayList<String>();
+    void loadInboxHistoryData(List<StateHistory<Position>> stateHistory,
+                              final Map<String, Object> paramMap) {
+        final List<String> history = new ArrayList<>();
+        final List<String> workFlowDate = new ArrayList<>();
 
-		if (!stateHistory.isEmpty()) {
-			for (final StateHistory historyState : stateHistory)
+        if (!stateHistory.isEmpty()) {
+            for (final StateHistory historyState : stateHistory)
 
-				if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
-					history.add(historyState.getSenderName());
-					workFlowDate.add(Constants.DDMMYYYYFORMAT2
-							.format(historyState.getLastModifiedDate()));
-					if (historyState.getValue().equalsIgnoreCase("Rejected")) {
-						history.clear();
-						workFlowDate.clear();
-					}
-				}
+                if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+                    history.add(historyState.getSenderName());
+                    workFlowDate.add(Constants.DDMMYYYYFORMAT2
+                            .format(historyState.getLastModifiedDate()));
+                    if (historyState.getValue().equalsIgnoreCase("Rejected")) {
+                        history.clear();
+                        workFlowDate.clear();
+                    }
+                }
 
-			history.add(cbill.getState().getSenderName());
-			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(cbill.getState()
-					.getLastModifiedDate()));
-		} else {
-			history.add(cbill.getState().getSenderName());
-			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(cbill.getState()
-					.getLastModifiedDate()));
-		}
-		for (int i = 0; i < history.size(); i++) {
-			paramMap.put("workFlow_" + i, history.get(i));
-			paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
-		}
-		/*
-		 * if(cbill.getState()!=null &&
-		 * cbill.getState().getValue().equalsIgnoreCase("Closed")){
-		 * paramMap.put("workFlow_approver"
-		 * ,eisCommonService.getUserForPosition(
-		 * cbill.getState().getOwnerPosition().getId(),
-		 * cbill.getCreatedDate())); paramMap.put("workFlowDate_approval_date" ,
-		 * cbill.getState().getLastModifiedDate() ); }
-		 */
-	}
+            history.add(cbill.getState().getSenderName());
+            workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(cbill.getState()
+                    .getLastModifiedDate()));
+        } else {
+            history.add(cbill.getState().getSenderName());
+            workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(cbill.getState()
+                    .getLastModifiedDate()));
+        }
+        for (int i = 0; i < history.size(); i++) {
+            paramMap.put("workFlow_" + i, history.get(i));
+            paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
+        }
+
+    }
 
     private void prepareForPrint() {
 
         final Set<EgBilldetails> egBilldetailes = cbill.getEgBilldetailes();
         boolean budgetcheck = false;
-        
-            if (!BudgetControlType.BudgetCheckOption.NONE.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue()))
-            {	
-             budgetcheck = true;
-             getRequiredDataForBudget(cbill);
-            }
-      
-        final List<Map<String, Object>> budget = new ArrayList<Map<String, Object>>();
+
+        if (!BudgetControlType.BudgetCheckOption.NONE.toString().equalsIgnoreCase(budgetControlTypeService.getConfigValue())) {
+            budgetcheck = true;
+            getRequiredDataForBudget(cbill);
+        }
+
+        final List<Map<String, Object>> budget = new ArrayList<>();
         for (final EgBilldetails detail : egBilldetailes)
-            if (detail.getDebitamount() != null && detail.getDebitamount().compareTo(BigDecimal.ZERO) != 0)
-            {
+            if (detail.getDebitamount() != null && detail.getDebitamount().compareTo(BigDecimal.ZERO) != 0) {
                 CFunction functionById = null;
                 Map<String, Object> budgetApprDetails = null;
 
                 final VoucherDetails vd = new VoucherDetails();
                 final BigDecimal glcodeid = detail.getGlcodeid();
-                if (detail.getFunctionid() != null)
-                {
+                if (detail.getFunctionid() != null) {
                     functionById = (CFunction) persistenceService.find("from CFunction where id=?",
                             Long.valueOf(detail.getFunctionid().toString()));
                     setFunctionName(functionById.getName());
@@ -488,8 +451,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 }
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
                         Long.valueOf(glcodeid.toString()));
-                if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq())
-                {
+                if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
                     budgetApprDetails = getBudgetDetails(coa, detail, functionById.getName());
                     budget.add(budgetApprDetails);
                 }
@@ -499,8 +461,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 vd.setCreditAmountDetail(BigDecimal.ZERO);
                 vd.setDebitAmountDetail(detail.getDebitamount());
                 final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
-                for (final EgBillPayeedetails payeedetail : egBillPaydetailes)
-                {
+                for (final EgBillPayeedetails payeedetail : egBillPaydetailes) {
                     try {
                         EntityType entity = null;
                         final Accountdetailtype detailType = (Accountdetailtype) persistenceService.find(
@@ -523,7 +484,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {
-                        final List<ValidationError> errors = new ArrayList<ValidationError>();
+                        final List<ValidationError> errors = new ArrayList<>();
                         errors.add(new ValidationError("exp", e.getMessage()));
                         throw new ValidationException(errors);
                     }
@@ -534,15 +495,13 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 billReportList.add(billReport);
             }
         for (final EgBilldetails detail : egBilldetailes)
-            if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO) != 0)
-            {
+            if (detail.getCreditamount() != null && detail.getCreditamount().compareTo(BigDecimal.ZERO) != 0) {
                 CFunction functionById = null;
                 Map<String, Object> budgetApprDetails = null;
 
                 final VoucherDetails vd = new VoucherDetails();
                 final BigDecimal glcodeid = detail.getGlcodeid();
-                if (detail.getFunctionid() != null)
-                {
+                if (detail.getFunctionid() != null) {
                     functionById = (CFunction) persistenceService.find("from CFunction where id=?",
                             Long.valueOf(detail.getFunctionid().toString()));
                     setFunctionName(functionById.getName());
@@ -550,8 +509,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 }
                 final CChartOfAccounts coa = (CChartOfAccounts) persistenceService.find("from CChartOfAccounts where id=?",
                         Long.valueOf(glcodeid.toString()));
-                if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq())
-                {
+                if (budgetcheck && coa.getBudgetCheckReq() != null && coa.getBudgetCheckReq()) {
                     budgetApprDetails = getBudgetDetails(coa, detail, functionName);
                     budget.add(budgetApprDetails);
                 }
@@ -561,8 +519,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 vd.setCreditAmountDetail(detail.getCreditamount());
                 vd.setDebitAmountDetail(BigDecimal.ZERO);
                 final Set<EgBillPayeedetails> egBillPaydetailes = detail.getEgBillPaydetailes();
-                for (final EgBillPayeedetails payeedetail : egBillPaydetailes)
-                {
+                for (final EgBillPayeedetails payeedetail : egBillPaydetailes) {
 
                     try {
                         EntityType entity = null;
@@ -586,7 +543,7 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                         vd.setDetailKey(entity.getCode());
                         vd.setDetailName(entity.getName());
                     } catch (final Exception e) {
-                        final List<ValidationError> errors = new ArrayList<ValidationError>();
+                        final List<ValidationError> errors = new ArrayList<>();
                         errors.add(new ValidationError("exp", e.getMessage()));
                         throw new ValidationException(errors);
                     }
@@ -596,14 +553,6 @@ public class ExpenseBillPrintAction extends BaseFormAction {
                 billReportList.add(billReport);
             }
         paramMap.put("budgetDetail", budget);
-
-    }
-
-    /**
-     * @param name
-     */
-    private void setFunctionName(final String name) {
-        functionName = name;
 
     }
 

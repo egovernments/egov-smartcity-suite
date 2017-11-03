@@ -46,6 +46,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.tl.entity.dto.LicenseStateInfo;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
@@ -63,25 +64,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
 import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
-import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = License.SEQUENCE, sequenceName = License.SEQUENCE, allocationSize = 1)
 @Unique(fields = {"licenseNumber", "applicationNumber", "oldLicenseNumber"}, enableDfltMsg = true, isSuperclass = true)
-public class License extends StateAware {
+public class License extends StateAware<Position> {
 
     public static final String SEQUENCE = "SEQ_EGTL_LICENSE";
     private static final long serialVersionUID = -4621190785979222546L;
@@ -232,6 +233,7 @@ public class License extends StateAware {
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
 
+    //To be removed
     private boolean newWorkflow;
 
     private boolean collectionPending;

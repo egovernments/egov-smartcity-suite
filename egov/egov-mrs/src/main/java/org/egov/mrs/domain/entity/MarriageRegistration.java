@@ -1,69 +1,43 @@
 /**
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * accountability and the service delivery of the government  organizations.
+ * <p>
+ * Copyright (C) <2015>  eGovernments Foundation
+ * <p>
+ * The updated version of eGov suite of products as by eGovernments Foundation
+ * is available at http://www.egovernments.org
+ * <p>
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * any later version.
+ * <p>
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * <p>
+ * You should have received a copy of the GNU General Public License
+ * along with this program. If not, see http://www.gnu.org/licenses/ or
+ * http://www.gnu.org/licenses/gpl.html .
+ * <p>
+ * In addition to the terms of the GPL license to be adhered to in using this
+ * program, the following additional terms are to be complied with:
+ * <p>
+ * 1) All versions of this program, verbatim or modified must carry this
+ * Legal Notice.
+ * <p>
+ * 2) Any misrepresentation of the origin of the material is prohibited. It
+ * is required that all modified versions of this material be marked in
+ * reasonable ways as different from the original version.
+ * <p>
+ * 3) This license does not grant any rights to any user of the program
+ * with regards to rights under trademark law for use of the trade names
+ * or trademarks of eGovernments Foundation.
+ * <p>
+ * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.mrs.domain.entity;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
 
 import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgDemand;
@@ -74,24 +48,32 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
+import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.mrs.domain.entity.MarriageRegistration.SEQ_REGISTRATION;
+
 @Entity
-@Unique(id = "id", tableName = "egmrs_registration", columnName = { "serialno" }, fields = {
-        "serialNo" }, enableDfltMsg = true, message = "Serial No. already exist.")
+@Unique(fields = "serialNo", enableDfltMsg = true, message = "Serial No. already exist.")
 @Table(name = "egmrs_registration")
-@SequenceGenerator(name = MarriageRegistration.SEQ_REGISTRATION, sequenceName = MarriageRegistration.SEQ_REGISTRATION, allocationSize = 1)
-public class MarriageRegistration extends StateAware {
+@SequenceGenerator(name = SEQ_REGISTRATION, sequenceName = SEQ_REGISTRATION, allocationSize = 1)
+public class MarriageRegistration extends StateAware<Position> {
 
-    private static final long serialVersionUID = 6743094118312883758L;
     public static final String SEQ_REGISTRATION = "SEQ_EGMRS_REGISTRATION";
-
-    public enum RegistrationStatus {
-        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, DIGITALSIGNED
-    }
-
+    private static final long serialVersionUID = 6743094118312883758L;
     @Id
     @GeneratedValue(generator = SEQ_REGISTRATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -246,11 +228,11 @@ public class MarriageRegistration extends StateAware {
     @SafeHtml
     @Length(max = 100)
     private String registrarName;
-    
+
     @SafeHtml
     @Length(max = 15)
     private String source;
-    
+
     @Override
     public String getStateDetails() {
         return "Marriage registration application no : " + applicationNo;
@@ -671,5 +653,9 @@ public class MarriageRegistration extends StateAware {
     public void setSource(String source) {
         this.source = source;
     }
-    
+
+    public enum RegistrationStatus {
+        CREATED, APPROVED, REJECTED, REGISTERED, CANCELLED, DIGITALSIGNED
+    }
+
 }

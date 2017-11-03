@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,14 +38,15 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pims.commons;
+package org.egov.commons;
 
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditJoinTable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -54,24 +55,49 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import static org.egov.pims.commons.Position.SEQ_POSITION;
+import static org.egov.commons.CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL;
 
 @Entity
-@Table(name = "eg_position")
-@SequenceGenerator(name = SEQ_POSITION, sequenceName = SEQ_POSITION, allocationSize = 1)
-public class Position extends AbstractAuditable {
-    public static final String SEQ_POSITION = "SEQ_EG_POSITION";
-    private static final long serialVersionUID = -7237503685614187960L;
+@Table(name = "CHARTOFACCOUNTDETAIL")
+@SequenceGenerator(name = SEQ_CHARTOFACCOUNTDETAIL, sequenceName = SEQ_CHARTOFACCOUNTDETAIL, allocationSize = 1)
+@AuditOverrides({
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
+})
+@Audited
+public class CChartOfAccountDetail extends AbstractAuditable {
+
+    public static final String SEQ_CHARTOFACCOUNTDETAIL = "SEQ_CHARTOFACCOUNTDETAIL";
+    private static final long serialVersionUID = -8517026729631829413L;
     @Id
-    @GeneratedValue(generator = SEQ_POSITION, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_CHARTOFACCOUNTDETAIL, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @Column(name = "name", unique = true)
-    private String name;
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "deptDesig")
-    private DeptDesig deptDesig;
-    private boolean isPostOutsourced;
+    @AuditJoinTable
+    @ManyToOne
+    @JoinColumn(name = "glcodeid")
+    private CChartOfAccounts glCodeId;
+
+    @ManyToOne
+    @JoinColumn(name = "detailtypeid")
+    @AuditJoinTable
+    private Accountdetailtype detailTypeId;
+
+    public CChartOfAccounts getGlCodeId() {
+        return glCodeId;
+    }
+
+    public void setGlCodeId(final CChartOfAccounts glCodeId) {
+        this.glCodeId = glCodeId;
+    }
+
+    public Accountdetailtype getDetailTypeId() {
+        return detailTypeId;
+    }
+
+    public void setDetailTypeId(final Accountdetailtype detailTypeId) {
+        this.detailTypeId = detailTypeId;
+    }
 
     @Override
     public Long getId() {
@@ -81,51 +107,6 @@ public class Position extends AbstractAuditable {
     @Override
     public void setId(final Long id) {
         this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(final String name) {
-        this.name = name;
-    }
-
-    public boolean isPostOutsourced() {
-        return isPostOutsourced;
-    }
-
-    public void setPostOutsourced(final boolean isPostOutsourced) {
-        this.isPostOutsourced = isPostOutsourced;
-    }
-
-    public boolean getIsPostOutsourced() {
-        return isPostOutsourced;
-    }
-
-    public void setIsPostOutsourced(final boolean isPostOutsourced) {
-        this.isPostOutsourced = isPostOutsourced;
-    }
-
-    public DeptDesig getDeptDesig() {
-        return deptDesig;
-    }
-
-    public void setDeptDesig(final DeptDesig deptDesig) {
-        this.deptDesig = deptDesig;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (!(o instanceof Position)) return false;
-        Position position = (Position) o;
-        return this.getName().equals(position.getName());
-    }
-
-    @Override
-    public int hashCode() {
-        return 31 * this.getName().hashCode();
     }
 
 }

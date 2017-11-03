@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,8 +40,9 @@
 package org.egov.works.models.workflow;
 
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
-public class WorkFlow extends StateAware {
+public class WorkFlow extends StateAware<Position> {
 
     private static final long serialVersionUID = 4799841800672396517L;
     private Long id;

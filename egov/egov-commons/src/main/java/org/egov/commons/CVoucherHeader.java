@@ -39,13 +39,8 @@
  */
 package org.egov.commons;
 
-import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,13 +55,18 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
-import org.egov.infra.workflow.entity.StateAware;
+import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
 
 @Entity
 @Table(name = "VOUCHERHEADER")
 @SequenceGenerator(name = SEQ_VOUCHERHEADER, sequenceName = SEQ_VOUCHERHEADER, allocationSize = 1)
-public class CVoucherHeader extends StateAware {
+public class CVoucherHeader extends StateAware<Position> {
 
     public static final String SEQ_VOUCHERHEADER = "SEQ_VOUCHERHEADER";
     private static final long serialVersionUID = -1950866465902911747L;
@@ -102,10 +102,10 @@ public class CVoucherHeader extends StateAware {
     private Vouchermis vouchermis;
 
     @Transient
-    private List<CGeneralLedger> accountDetails = new ArrayList<>(0);
+    private List<CGeneralLedger> accountDetails = new ArrayList<>();
 
     @Transient
-    private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>(0);
+    private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>();
 
     @Transient
     private String partyName;

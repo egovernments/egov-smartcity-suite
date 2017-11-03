@@ -46,13 +46,13 @@ import org.egov.infra.web.support.ui.Inbox;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.infra.workflow.entity.OwnerGroup;
 import org.egov.infra.workflow.entity.WorkflowAction;
 import org.egov.infra.workflow.entity.WorkflowTypes;
 import org.egov.infra.workflow.service.StateService;
 import org.egov.infra.workflow.service.WorkflowActionService;
 import org.egov.infra.workflow.service.WorkflowTypeService;
-import org.egov.infstr.services.EISServeable;
-import org.egov.pims.commons.Position;
+import org.egov.infra.workflow.service.OwnerGroupService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
@@ -63,7 +63,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -91,7 +90,7 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
 
     @Autowired
     @Qualifier("eisService")
-    private EISServeable eisService;
+    private OwnerGroupService<? extends OwnerGroup> ownerGroupService;
 
     @Autowired
     private WorkflowTypeService workflowTypeService;
@@ -206,9 +205,9 @@ public class InboxRenderServiceDelegate<T extends StateAware> {
     }
 
     private List<Long> currentUserPositionIds() {
-        return this.eisService.getPositionsForUser(getUserId(), new Date())
+        return this.ownerGroupService.getOwnerGroupsByUserId(getUserId())
                 .parallelStream()
-                .map(Position::getId)
+                .map(OwnerGroup::getId)
                 .collect(Collectors.toList());
     }
 }

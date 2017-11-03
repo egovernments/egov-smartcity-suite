@@ -43,6 +43,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Document;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -59,17 +60,9 @@ import java.util.Locale;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_TYPE_CATEGORIES;
 
-/**
- * @author manoranjan
- */
-// @CompareDates(fromDate = "dateOfOutcome", toDate = "recievedOn", dateFormat =
-// "dd/MM/yyyy", message =
-// "dateOfOutcome.greaterThan.recievedOn")
-public class RevisionPetition extends StateAware implements Auditable {
+public class RevisionPetition extends StateAware<Position> implements Auditable {
 
-    /**
-     * Default serial version Id
-     */
+    public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
     private static final long serialVersionUID = 1L;
 
     private Long id;
@@ -81,14 +74,6 @@ public class RevisionPetition extends StateAware implements Auditable {
     @Length(max = 50, message = "objection.objectionNumber.length")
     private String objectionNumber;
 
-    /*
-     * @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message =
-     * "objection.receivedOn.futuredate")
-     */
-    /*
-     * @org.egov.infra.persistence.validator.annotation.DateFormat(message =
-     * "invalid.fieldvalue.receivedOn")
-     */
     private Date recievedOn;
 
     @Length(max = 256, message = "objection.objectionNumber.length")
@@ -107,12 +92,7 @@ public class RevisionPetition extends StateAware implements Auditable {
     @Valid
     private List<Inspection> inspections = new LinkedList<>();
 
-    /*
-     * @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message =
-     * "objection.outcomedate.futuredate")
-     * @org.egov.infra.persistence.validator.annotation.DateFormat(message =
-     * "invalid.fieldvalue.outcomedate")
-     */private Date dateOfOutcome;
+    private Date dateOfOutcome;
 
     private String remarks;// for dateOfOutcome
 
@@ -120,7 +100,6 @@ public class RevisionPetition extends StateAware implements Auditable {
     private Boolean generateSpecialNotice;
     private String meesevaApplicationNumber;
     private String applicationNo;
-    public static final DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy", Locale.ENGLISH);
     private List<Document> documents = new ArrayList<>();
     private String type;
     private String source;
@@ -140,13 +119,25 @@ public class RevisionPetition extends StateAware implements Auditable {
         return egwStatus;
     }
 
+    public void setEgwStatus(final EgwStatus egwStatus) {
+        this.egwStatus = egwStatus;
+    }
+
     public String getObjectionNumber() {
         return objectionNumber;
+    }
+
+    public void setObjectionNumber(final String objectionNumber) {
+        this.objectionNumber = objectionNumber;
     }
 
     @Required(message = "objection.receiviedOn.null")
     public Date getRecievedOn() {
         return recievedOn;
+    }
+
+    public void setRecievedOn(final Date recievedOn) {
+        this.recievedOn = recievedOn;
     }
 
     @Required(message = "objection.receiviedBy.null")
@@ -155,26 +146,14 @@ public class RevisionPetition extends StateAware implements Auditable {
         return recievedBy;
     }
 
+    public void setRecievedBy(final String recievedBy) {
+        this.recievedBy = recievedBy;
+    }
+
     @Required(message = "objection.details.null")
     @Length(max = 1024, message = "objection.details.length")
     public String getDetails() {
         return details;
-    }
-
-    public void setEgwStatus(final EgwStatus egwStatus) {
-        this.egwStatus = egwStatus;
-    }
-
-    public void setObjectionNumber(final String objectionNumber) {
-        this.objectionNumber = objectionNumber;
-    }
-
-    public void setRecievedOn(final Date recievedOn) {
-        this.recievedOn = recievedOn;
-    }
-
-    public void setRecievedBy(final String recievedBy) {
-        this.recievedBy = recievedBy;
     }
 
     public void setDetails(final String details) {
@@ -193,28 +172,28 @@ public class RevisionPetition extends StateAware implements Auditable {
         return inspections;
     }
 
-    public Date getDateOfOutcome() {
-        return dateOfOutcome;
-    }
-
-    public String getRemarks() {
-        return remarks;
-    }
-
-    public Boolean getObjectionRejected() {
-        return objectionRejected;
-    }
-
     public void setInspections(final List<Inspection> inspections) {
         this.inspections = inspections;
+    }
+
+    public Date getDateOfOutcome() {
+        return dateOfOutcome;
     }
 
     public void setDateOfOutcome(final Date dateOfOutcome) {
         this.dateOfOutcome = dateOfOutcome;
     }
 
+    public String getRemarks() {
+        return remarks;
+    }
+
     public void setRemarks(final String remarks) {
         this.remarks = remarks;
+    }
+
+    public Boolean getObjectionRejected() {
+        return objectionRejected;
     }
 
     public void setObjectionRejected(final Boolean objectionRejected) {
@@ -233,12 +212,12 @@ public class RevisionPetition extends StateAware implements Auditable {
         return docNumberObjection;
     }
 
-    public String getDocNumberOutcome() {
-        return docNumberOutcome;
-    }
-
     public void setDocNumberObjection(final String docNumberObjection) {
         this.docNumberObjection = docNumberObjection;
+    }
+
+    public String getDocNumberOutcome() {
+        return docNumberOutcome;
     }
 
     public void setDocNumberOutcome(final String docNumberOutcome) {

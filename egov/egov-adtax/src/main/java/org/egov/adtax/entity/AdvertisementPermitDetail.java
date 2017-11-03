@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,9 +40,14 @@
 
 package org.egov.adtax.entity;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import org.egov.adtax.entity.enums.AdvertisementApplicationType;
+import org.egov.adtax.entity.enums.AdvertisementDuration;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -58,26 +63,20 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
-import org.egov.adtax.entity.enums.AdvertisementApplicationType;
-import org.egov.adtax.entity.enums.AdvertisementDuration;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.StateAware;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import static org.egov.adtax.entity.AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION;
 
 @Entity
 @Table(name = "EGADTAX_PERMITDETAILS")
-@SequenceGenerator(name = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, sequenceName = AdvertisementPermitDetail.SEQ_ADTAX_APPLICATION, allocationSize = 1)
-@Unique(id = "id", tableName = "EGADTAX_PERMITDETAILS", columnName = { "applicationNumber", "permissionNumber" }, fields = {
-        "applicationNumber", "permissionNumber" }, enableDfltMsg = true)
-public class AdvertisementPermitDetail extends StateAware {
-
-    private static final long serialVersionUID = 845357231248646624L;
+@SequenceGenerator(name = SEQ_ADTAX_APPLICATION, sequenceName = SEQ_ADTAX_APPLICATION, allocationSize = 1)
+@Unique(fields = {"applicationNumber", "permissionNumber"}, enableDfltMsg = true)
+public class AdvertisementPermitDetail extends StateAware<Position> {
 
     public static final String SEQ_ADTAX_APPLICATION = "SEQ_EGADTAX_PERMITDETAILS";
-
+    private static final long serialVersionUID = 845357231248646624L;
     @Id
     @GeneratedValue(generator = SEQ_ADTAX_APPLICATION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -118,10 +117,8 @@ public class AdvertisementPermitDetail extends StateAware {
 
     private Boolean isActive = false;
 
-    // @NotNull
     private Date permissionstartdate;
 
-    // @NotNull
     private Date permissionenddate;
 
     @SafeHtml
@@ -156,10 +153,9 @@ public class AdvertisementPermitDetail extends StateAware {
     private Date deactivation_date;
 
     private String Source;
-    
-    
+
     @Enumerated(EnumType.ORDINAL)
-    private  AdvertisementApplicationType applicationtype;
+    private AdvertisementApplicationType applicationtype;
 
     @Transient
     private Long approvalDepartment;
@@ -407,9 +403,4 @@ public class AdvertisementPermitDetail extends StateAware {
     public void setApplicationtype(AdvertisementApplicationType applicationtype) {
         this.applicationtype = applicationtype;
     }
-
-    
-
-    
-    
 }

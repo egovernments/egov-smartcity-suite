@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,13 +39,6 @@
  */
 package org.egov.eis.web.actions;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
@@ -55,11 +48,21 @@ import org.apache.struts2.convention.annotation.ResultPath;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.matrix.service.CustomizedWorkFlowService;
 import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 /**
  *
@@ -70,39 +73,42 @@ import org.springframework.beans.factory.annotation.Autowired;
 @ResultPath("/WEB-INF/jsp/")
 @Results({
         @Result(name = "designations", location = "/WEB-INF/jsp/workflow/ajaxWorkFlow-designations.jsp"),
-        @Result(name = "approvers", location = "/WEB-INF/jsp/workflow/ajaxWorkFlow-approvers.jsp") })
+        @Result(name = "approvers", location = "/WEB-INF/jsp/workflow/ajaxWorkFlow-approvers.jsp")})
 public class AjaxWorkFlowAction extends BaseFormAction {
 
     private static final long serialVersionUID = -4816498948951535977L;
     private static final String WF_DESIGNATIONS = "designations";
     private static final String WF_APPROVERS = "approvers";
-    private List<Designation> designationList;
-    private List<Object> approverList;
+    private transient List<Designation> designationList;
+    private transient List approverList;
     private Long designationId;
     private Long approverDepartmentId;
 
-    private CustomizedWorkFlowService customizedWorkFlowService;
+    private transient CustomizedWorkFlowService customizedWorkFlowService;
     private String type;
     private BigDecimal amountRule;
     private String additionalRule;
     private String currentState;
     private String pendingAction;
-    // private String designationRule;
     private String departmentRule;
     private String designation;
-    private List<String> roleList;
+    private transient List<String> roleList;
+
     @Autowired
-    private AssignmentService assignmentService;
+    private transient AssignmentService assignmentService;
+
+    @Autowired
+    private transient DesignationService designationService;
 
     @Action(value = "/workflow/ajaxWorkFlow-getPositionByPassingDesigId")
     public String getPositionByPassingDesigId() {
         if (designationId != null && designationId != -1) {
 
-            final HashMap<String, String> paramMap = new HashMap<String, String>();
+            final HashMap<String, String> paramMap = new HashMap<>();
             if (approverDepartmentId != null && approverDepartmentId != -1)
                 paramMap.put("departmentId", approverDepartmentId.toString());
             paramMap.put("designationId", designationId.toString());
-            approverList = new ArrayList<Object>();
+            approverList = new ArrayList<>();
             final List<Assignment> assignmentList = assignmentService
                     .findAllAssignmentsByDeptDesigAndDates(approverDepartmentId,
                             designationId, new Date());
@@ -117,28 +123,22 @@ public class AjaxWorkFlowAction extends BaseFormAction {
         if ("END".equals(currentState))
             currentState = "";
         if (StringUtils.isNotBlank(designation))
-            designationList = customizedWorkFlowService.getNextDesignations(type,
+            designationList = designationService.getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
                     departmentRule, amountRule, additionalRule, currentState,
-                    pendingAction, new Date(), designation);
+                    pendingAction, new Date(), designation));
         else
-            designationList = customizedWorkFlowService.getNextDesignations(type,
+            designationList = designationService.getDesignationsByNames(customizedWorkFlowService.getNextDesignations(type,
                     departmentRule, amountRule, additionalRule, currentState,
-                    pendingAction, new Date());
+                    pendingAction, new Date()));
         if (designationList.isEmpty())
             designationList = persistenceService.findAllBy("from Designation");
         return WF_DESIGNATIONS;
     }
 
-    /**
-     * For Struts 1.x This method is called to get valid actions(Approve,Reject) and nextaction(END)
-     *
-     * @throws IOException
-     */
-
     public void getAjaxValidButtonsAndNextAction() throws IOException {
-        final StringBuffer actionString = new StringBuffer("");
+        final StringBuilder actionString = new StringBuilder();
         final WorkFlowMatrix matrix = getWfMatrix();
-        if (currentState == null || "".equals(currentState)) {
+        if (isBlank(currentState)) {
 
             if (matrix != null && "END".equals(matrix.getNextAction()))
                 actionString.append("Save,Approve");
@@ -166,7 +166,7 @@ public class AjaxWorkFlowAction extends BaseFormAction {
         return designationList;
     }
 
-    public List<? extends Object> getApproverList() {
+    public List getApproverList() {
         return approverList;
     }
 
@@ -194,9 +194,6 @@ public class AjaxWorkFlowAction extends BaseFormAction {
         this.approverDepartmentId = approverDepartmentId;
     }
 
-    /*
-     * public void setDesignationRule(String designationRule) { this.designationRule = designationRule; }
-     */
     public void setDepartmentRule(final String departmentRule) {
         this.departmentRule = departmentRule;
     }

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -41,6 +41,7 @@ package org.egov.model.budget;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 
 import java.util.ArrayList;
@@ -49,14 +50,14 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-public class BudgetReAppropriationMisc extends StateAware {
+public class BudgetReAppropriationMisc extends StateAware<Position> {
     private static final long serialVersionUID = 3462810824735494382L;
     private Long id;
     private String sequenceNumber;
     private String remarks;
     private Date reAppropriationDate;
     private EgwStatus status;
-    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<BudgetReAppropriation>();
+    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<>();
 
     public Set<BudgetReAppropriation> getBudgetReAppropriations() {
         return budgetReAppropriations;
@@ -106,8 +107,8 @@ public class BudgetReAppropriationMisc extends StateAware {
     }
 
     public List<BudgetReAppropriation> getNonApprovedReAppropriations() {
-        final List<BudgetReAppropriation> reAppList = new ArrayList<BudgetReAppropriation>();
-        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<BudgetReAppropriation>() : budgetReAppropriations;
+        final List<BudgetReAppropriation> reAppList = new ArrayList<>();
+        budgetReAppropriations = budgetReAppropriations == null ? new HashSet<>() : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!Constants.END.equalsIgnoreCase(entry.getState().getValue())
                     || !"APPROVED".equalsIgnoreCase(entry.getState().getValue()))

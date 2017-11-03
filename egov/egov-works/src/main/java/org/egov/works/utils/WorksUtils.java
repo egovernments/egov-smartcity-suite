@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,14 +39,6 @@
  */
 package org.egov.works.utils;
 
-import java.io.IOException;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -70,6 +62,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
 @Service
 @Transactional(readOnly = true)
@@ -107,7 +107,7 @@ public class WorksUtils {
 
     public List<DocumentDetails> getDocumentDetails(final MultipartFile[] files, final Object object, final String objectType)
             throws IOException {
-        final List<DocumentDetails> documentDetailsList = new ArrayList<DocumentDetails>();
+        final List<DocumentDetails> documentDetailsList = new ArrayList<>();
 
         Long id = null;
         Method method = null;
@@ -179,14 +179,14 @@ public class WorksUtils {
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         if (assignment != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignment);
-        } else if (assignment == null)
+        } else
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
 
-    public String getPathVars(final EgwStatus status, final State state, final Long id, final Long approvalPosition) {
+    public String getPathVars(final EgwStatus status, final State<Position> state, final Long id, final Long approvalPosition) {
         final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
                 .getCurrentUser().getId(), new Date(), new Date());
 
@@ -196,9 +196,9 @@ public class WorksUtils {
             assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
 
         if (assignObj != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignObj);
-        } else if (assignObj == null && approvalPosition != null)
+        } else if (approvalPosition != null)
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
         String nextDesign = "";
@@ -220,8 +220,7 @@ public class WorksUtils {
     }
 
     public String getUserDesignation(final User user) {
-        List<Assignment> assignmentList = new ArrayList<Assignment>();
-        assignmentList = assignmentService.findByEmployeeAndGivenDate(user != null ? user.getId() : null, new Date());
+        List<Assignment> assignmentList = assignmentService.findByEmployeeAndGivenDate(user != null ? user.getId() : null, new Date());
         if (!assignmentList.isEmpty())
             return assignmentList.get(0).getDesignation().getName();
         return null;

@@ -39,11 +39,6 @@
  */
 package org.egov.collection.entity;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedHashSet;
-import java.util.Set;
-
 import org.egov.commons.Bankaccount;
 import org.egov.commons.CFunction;
 import org.egov.commons.CVoucherHeader;
@@ -51,11 +46,14 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.Fund;
 import org.egov.infra.persistence.entity.Auditable;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
-public class Remittance extends StateAware implements Auditable {
-    /**
-     * Serial version uid
-     */
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedHashSet;
+import java.util.Set;
+
+public class Remittance extends StateAware<Position> implements Auditable {
     private static final long serialVersionUID = 1L;
     private Long id;
     private String referenceNumber;
@@ -66,9 +64,9 @@ public class Remittance extends StateAware implements Auditable {
     private String remarks;
     private String reasonForDelay;
     private EgwStatus status;
-    private Set<RemittanceDetail> remittanceDetails = new LinkedHashSet<RemittanceDetail>(0);
-    private Set<ReceiptHeader> collectionRemittance = new HashSet<ReceiptHeader>(0);
-    private Set<RemittanceInstrument> remittanceInstruments = new LinkedHashSet<RemittanceInstrument>(0);
+    private Set<RemittanceDetail> remittanceDetails = new LinkedHashSet<>();
+    private Set<ReceiptHeader> collectionRemittance = new HashSet<>();
+    private Set<RemittanceInstrument> remittanceInstruments = new LinkedHashSet<>();
 
     private Bankaccount bankAccount;
 

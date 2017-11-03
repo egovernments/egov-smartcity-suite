@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,85 +38,12 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.commons;
+package org.egov.infra.workflow.service;
 
-public class Accountdetailkey implements java.io.Serializable {
+import org.egov.infra.workflow.entity.OwnerGroup;
 
-	private static final long serialVersionUID = 1L;
+import java.util.List;
 
-	private Integer id;
-	private Integer groupid;
-	private String detailname;
-	private Integer detailkey;
-	private Accountdetailtype accountdetailtype;
-
-	/**
-	 * @return Returns the detailkey.
-	 */
-	public Integer getDetailkey() {
-		return detailkey;
-	}
-
-	/**
-	 * @param detailkey The detailkey to set.
-	 */
-	public void setDetailkey(Integer detailkey) {
-		this.detailkey = detailkey;
-	}
-
-	/**
-	 * @return Returns the detailname.
-	 */
-	public String getDetailname() {
-		return detailname;
-	}
-
-	/**
-	 * @param detailname The detailname to set.
-	 */
-	public void setDetailname(String detailname) {
-		this.detailname = detailname;
-	}
-
-	/**
-	 * @return Returns the groupid.
-	 */
-	public Integer getGroupid() {
-		return groupid;
-	}
-
-	/**
-	 * @param groupid The groupid to set.
-	 */
-	public void setGroupid(Integer groupid) {
-		this.groupid = groupid;
-	}
-
-	/**
-	 * @return Returns the id.
-	 */
-	public Integer getId() {
-		return id;
-	}
-
-	/**
-	 * @param id The id to set.
-	 */
-	public void setId(Integer id) {
-		this.id = id;
-	}
-
-	/**
-	 * @return Returns the accountdetailtype.
-	 */
-	public Accountdetailtype getAccountdetailtype() {
-		return accountdetailtype;
-	}
-
-	/**
-	 * @param accountdetailtype The accountdetailtype to set.
-	 */
-	public void setAccountdetailtype(Accountdetailtype accountdetailtype) {
-		this.accountdetailtype = accountdetailtype;
-	}
+public interface OwnerGroupService<T extends OwnerGroup> {
+    List<T> getOwnerGroupsByUserId(Long userId);
 }

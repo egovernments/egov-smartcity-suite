@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,16 +38,55 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.commons.repository;
+package org.egov.commons;
 
+public class Accountdetailkey implements java.io.Serializable {
 
-import org.egov.commons.EgwStatus;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+    private static final long serialVersionUID = 6439557237219710418L;
 
+    private Integer id;
+    private Integer groupid;
+    private String detailname;
+    private Integer detailkey;
+    private Accountdetailtype accountdetailtype;
 
-@Repository 
-public interface EgwStatusRepository extends JpaRepository<EgwStatus,Integer> {  
-	
+    public Integer getDetailkey() {
+        return detailkey;
+    }
 
+    public void setDetailkey(Integer detailkey) {
+        this.detailkey = detailkey;
+    }
+
+    public String getDetailname() {
+        return detailname;
+    }
+
+    public void setDetailname(String detailname) {
+        this.detailname = detailname;
+    }
+
+    public Integer getGroupid() {
+        return groupid;
+    }
+
+    public void setGroupid(Integer groupid) {
+        this.groupid = groupid;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Accountdetailtype getAccountdetailtype() {
+        return accountdetailtype;
+    }
+
+    public void setAccountdetailtype(Accountdetailtype accountdetailtype) {
+        this.accountdetailtype = accountdetailtype;
+    }
 }

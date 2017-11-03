@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -40,6 +40,7 @@
 package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -56,12 +57,10 @@ import java.util.Date;
 @Entity
 @Table(name = "egpt_vacancy_remission_approval")
 @SequenceGenerator(name = VacancyRemissionApproval.SEQ_VACANCY_REMISSION_APPROVAL, sequenceName = VacancyRemissionApproval.SEQ_VACANCY_REMISSION_APPROVAL, allocationSize = 1)
-public class VacancyRemissionApproval extends StateAware {
-
-    private static final long serialVersionUID = 1821640343172434474L;
+public class VacancyRemissionApproval extends StateAware<Position> {
 
     public static final String SEQ_VACANCY_REMISSION_APPROVAL = "SEQ_EGPT_VACANCY_REMISSION_APPROVAL";
-
+    private static final long serialVersionUID = 1821640343172434474L;
     @Id
     @GeneratedValue(generator = SEQ_VACANCY_REMISSION_APPROVAL, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -83,13 +82,13 @@ public class VacancyRemissionApproval extends StateAware {
     private boolean isApproved;
 
     @Override
-    protected void setId(Long id) {
-        this.id = id;
+    public Long getId() {
+        return id;
     }
 
     @Override
-    public Long getId() {
-        return id;
+    protected void setId(Long id) {
+        this.id = id;
     }
 
     public VacancyRemission getVacancyRemission() {

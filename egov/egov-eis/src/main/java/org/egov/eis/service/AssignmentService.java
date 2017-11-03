@@ -46,15 +46,6 @@
  */
 package org.egov.eis.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.Employee;
@@ -67,12 +58,21 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This service class is used to query all employee related assignments
@@ -94,59 +94,27 @@ public class AssignmentService {
 
     @Autowired
     public AssignmentService(final AssignmentRepository assignmentRepository,
-            final HeadOfDepartmentsRepository employeeDepartmentRepository) {
+                             final HeadOfDepartmentsRepository employeeDepartmentRepository) {
         this.assignmentRepository = assignmentRepository;
         this.employeeDepartmentRepository = employeeDepartmentRepository;
     }
 
-    /**
-     * Gets assignment by id
-     *
-     * @param Id
-     * @return Assignment object
-     */
-    public Assignment getAssignmentById(final Long Id) {
-        return assignmentRepository.findOne(Id);
+    public Assignment getAssignmentById(final Long id) {
+        return assignmentRepository.findOne(id);
     }
 
-    /**
-     * Get all assignments for an employee irrespective assignment dates
-     *
-     * @param empId
-     * @return List of assignment objects
-     */
     public List<Assignment> getAllAssignmentsByEmpId(final Long empId) {
         return assignmentRepository.getAllAssignmentsByEmpId(empId);
     }
 
-    /**
-     * Get all active assignments for an employee as of today
-     *
-     * @param empId
-     * @return List of assignment objects
-     */
     public List<Assignment> getAllActiveEmployeeAssignmentsByEmpId(final Long empId) {
         return assignmentRepository.getAllActiveAssignmentsByEmpId(empId);
     }
 
-    /**
-     * Get all assignments for position and given date as given date which is passed as parameter. Includes both primary and
-     * secondary assignments.
-     *
-     * @param posId
-     * @param givenDate
-     * @return List of assignment objects
-     */
     public List<Assignment> getAssignmentsForPosition(final Long posId, final Date givenDate) {
         return assignmentRepository.getAssignmentsForPosition(posId, givenDate);
     }
 
-    /**
-     * Get employee primary assignment as of today
-     *
-     * @param posId
-     * @return Assignment object
-     */
     public Assignment getPrimaryAssignmentForPositon(final Long posId) {
         return assignmentRepository.getPrimaryAssignmentForPosition(posId);
     }
@@ -161,155 +129,76 @@ public class AssignmentService {
         assignmentRepository.save(assignment);
     }
 
-    /**
-     * Get employee primary assignment for a given user
-     *
-     * @param userId
-     * @return Assignment object
-     */
     public Assignment getPrimaryAssignmentForUser(final Long userId) {
         return assignmentRepository.getPrimaryAssignmentForUser(userId);
     }
 
-    /**
-     * Get employee primary assignment by employee id
-     *
-     * @param empId
-     * @return Assignment object
-     */
     public Assignment getPrimaryAssignmentForEmployee(final Long empId) {
         return assignmentRepository.getPrimaryAssignmentForEmployee(empId);
     }
 
-    /**
-     * Get employee primary assignment for a given date
-     *
-     * @param empId
-     * @param toDate
-     * @return Assignment object
-     */
     public Assignment getPrimaryAssignmentForEmployeeByToDate(final Long empId, final Date toDate) {
         return assignmentRepository.getAssignmentByEmpAndDate(empId, toDate);
     }
 
-    /**
-     * Get employee primary assignment for given position id
-     *
-     * @param posId
-     * @return List of assignment objects
-     */
     public List<Assignment> getAssignmentsForPosition(final Long posId) {
         return assignmentRepository.getAssignmentsForPosition(posId);
     }
 
-    /**
-     * Returns true if the given employee is an HOD
-     *
-     * @param assignId
-     * @return true if HOD else false
-     */
     public Boolean isHod(final Long assignId) {
         final List<HeadOfDepartments> hodList = employeeDepartmentRepository.getAllHodDepartments(assignId);
         return !hodList.isEmpty();
     }
 
-    /**
-     * Get employee primary assignment for position and given date
-     *
-     * @param posId
-     * @param givenDate
-     * @return Assignment object
-     */
     public Assignment getPrimaryAssignmentForPositionAndDate(final Long posId, final Date givenDate) {
         return assignmentRepository.getPrimaryAssignmentForPositionAndDate(posId, givenDate);
     }
 
-    /**
-     * Get employee primary assignment for a given date range
-     *
-     * @param empId
-     * @param fromDate
-     * @param toDate
-     * @return Assignment object
-     */
     public Assignment getPrimaryAssignmentForGivenRange(final Long empId, final Date fromDate, final Date toDate) {
         return assignmentRepository.getPrimaryAssignmentForGivenRange(empId, fromDate, toDate);
     }
 
-    /**
-     * Get employee primary assignment for given department and designation
-     *
-     * @param departmentId
-     * @param designationId
-     * @param givenDate
-     * @return List of assignment objects if present, else return empty list.
-     */
     public List<Assignment> getPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
-            final Long designationId, final Date givenDate) {
+                                                                                final Long designationId, final Date givenDate) {
 
         if (departmentId != null && designationId != null)
             return assignmentRepository.getPrimaryAssignmentForDepartmentAndDesignation(departmentId, designationId,
                     givenDate);
-        else if (designationId != null && departmentId == null)
+        else if (designationId != null)
             return assignmentRepository.getPrimaryAssignmentForDesignation(designationId, givenDate);
-        else if (designationId == null && departmentId != null)
+        else if (departmentId != null)
             return assignmentRepository.getPrimaryAssignmentForDepartment(departmentId, givenDate);
-        return new ArrayList<Assignment>();
+        return new ArrayList<>();
 
     }
 
-    /**
-     * Get employee primary/temporary assignment for given department and designation
-     *
-     * @param departmentId
-     * @param designationId
-     * @param givenDate
-     * @return List of assignment objects if present, else return empty list.
-     */
     public List<Assignment> getAllPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
-            final Long designationId, final Date givenDate) {
+                                                                                   final Long designationId, final Date givenDate) {
 
         if (departmentId != null && designationId != null)
             return assignmentRepository.getAllAssignmentForDepartmentAndDesignation(departmentId, designationId,
                     givenDate);
-        else if (designationId != null && departmentId == null)
+        else if (designationId != null)
             return assignmentRepository.getAllAssignmentForDesignation(designationId, givenDate);
-        else if (designationId == null && departmentId != null)
+        else if (departmentId != null)
             return assignmentRepository.getAllAssignmentForDepartment(departmentId, givenDate);
-        return new ArrayList<Assignment>();
+        return new ArrayList<>();
 
     }
 
     public List<Assignment> getAllPositionsByDepartmentAndPositionNameForGivenRange(final Long departmentId,
-            final String positionName) {
+                                                                                    final String positionName) {
         return assignmentRepository.getAllAssignmentForDepartmentAndPositionNameLike(departmentId, new Date(),
                 positionName);
     }
 
-    /**
-     * Get list of primary assignments for deparment,designation,fromdate and todate
-     *
-     * @param deptId
-     * @param desigId
-     * @param fromDate
-     * @param toDate
-     * @return List of assignment objects if present
-     */
     public List<Assignment> getAssignmentsByDeptDesigAndDates(final Long deptId, final Long desigId,
-            final Date fromDate, final Date toDate) {
+                                                              final Date fromDate, final Date toDate) {
         return assignmentRepository.findByDeptDesigAndDates(deptId, desigId, fromDate, toDate);
     }
 
-    /**
-     * Get all assignments for department,designation and givendate
-     *
-     * @param deptId
-     * @param desigId
-     * @param givenDate
-     * @return List of assignment objects if present
-     */
     public List<Assignment> findAllAssignmentsByDeptDesigAndDates(final Long deptId, final Long desigId,
-            final Date givenDate) {
+                                                                  final Date givenDate) {
         return assignmentRepository.findAllAssignmentsByDeptDesigAndGivenDate(deptId, desigId, givenDate);
     }
 
@@ -325,17 +214,8 @@ public class AssignmentService {
         return assignmentRepository.findByDesignationAndBoundary(desigId, getBoundaries(boundaryId));
     }
 
-    /**
-     * Gets all assignments for a particular department,designation and given boundary or all the employees who can operate under
-     * this boundary
-     *
-     * @param deptId
-     * @param desigId
-     * @param boundaryId
-     * @return List of assignment objects
-     */
     public List<Assignment> findByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
-            final Long boundaryId) {
+                                                                   final Long boundaryId) {
 
         List<Assignment> assignments = null;
         if (null == deptId)
@@ -347,23 +227,15 @@ public class AssignmentService {
                     getRequiredBoundaries(boundaryId));
         return assignments;
     }
-    
+
     public List<Assignment> findByDeptDesgnAndParentAndActiveChildBoundaries(final Long deptId, final Long desigId,
-            final Long boundaryId) {
+                                                                             final Long boundaryId) {
         return assignmentRepository.findByDepartmentDesignationAndBoundary(deptId, desigId,
-                    getBoundaries(boundaryId));
+                getBoundaries(boundaryId));
     }
 
-    /**
-     * Gets all assignments for a particular department, designation and given boundary
-     *
-     * @param deptId
-     * @param desigId
-     * @param boundaryId
-     * @return List of assignment objects
-     */
     public List<Assignment> findAssignmentByDepartmentDesignationAndBoundary(final Long deptId, final Long desigId,
-            final Long boundaryId) {
+                                                                             final Long boundaryId) {
 
         List<Assignment> assignments;
         Set<Long> boundaries = new HashSet<>();
@@ -377,27 +249,27 @@ public class AssignmentService {
                     boundaries);
         return assignments;
     }
-    
+
     private Set<Long> getBoundaries(final Long boundaryId) {
-        final Set<Long> bndIds = new HashSet<Long>();
+        final Set<Long> bndIds = new HashSet<>();
         final List<Boundary> boundaries = boundaryService.findActiveChildrenWithParent(boundaryId);
-        boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
+        boundaries.forEach(bndry -> bndIds.add(bndry.getId()));
         return bndIds;
     }
 
     public Set<Long> getRequiredBoundaries(final Long boundaryId) {
-        final Set<Long> bndIds = new HashSet<Long>();
+        final Set<Long> bndIds = new HashSet<>();
         final Boundary childBndry = boundaryService.getBoundaryById(boundaryId);
         String childmpath = childBndry.getMaterializedPath();
-        final Set<String> mpathStr = new HashSet<String>();
+        final Set<String> mpathStr = new HashSet<>();
         mpathStr.add(childBndry.getMaterializedPath());
         for (int i = 0; i < childmpath.length(); i++) {
-            childmpath = childmpath.substring(0, childmpath.lastIndexOf("."));
+            childmpath = childmpath.substring(0, childmpath.lastIndexOf('.'));
             mpathStr.add(childmpath);
         }
 
         final List<Boundary> boundaries = boundaryService.findActiveBoundariesForMpath(mpathStr);
-        boundaries.forEach((bndry) -> bndIds.add(bndry.getId()));
+        boundaries.forEach(bndry -> bndIds.add(bndry.getId()));
         return bndIds;
     }
 
@@ -426,7 +298,7 @@ public class AssignmentService {
     }
 
     public List<Assignment> findByDepartmentDesignationsAndGivenDate(final Long deptId, final List<Long> desigIds,
-            final Date givenDate) {
+                                                                     final Date givenDate) {
         return assignmentRepository.findByDepartmentDesignationsAndGivenDate(deptId, desigIds, givenDate);
     }
 
@@ -467,11 +339,9 @@ public class AssignmentService {
             query.setParameter("position", employeeAssignmentSearch.getPosition());
         if (employeeAssignmentSearch.getAssignmentDate() != null)
             query.setParameter("assignDate", employeeAssignmentSearch.getAssignmentDate());
-        final List<Employee> employees = query.list();
-        return employees;
+        return query.list();
     }
 
-    @SuppressWarnings("unchecked")
     public List<Assignment> getAssignmentList(final EmployeePositionSearch employeePositionSearch) {
         final StringBuilder queryString = new StringBuilder();
         queryString.append("select distinct(assignment) from Assignment assignment where assignment.id is not null ");
@@ -482,8 +352,7 @@ public class AssignmentService {
         Query queryResult = entityManager.unwrap(Session.class).createQuery(queryString.toString());
         queryResult = setParametersToQuery(employeePositionSearch, queryResult);
 
-        final List<Assignment> assignments = queryResult.list();
-        return assignments;
+        return queryResult.list();
     }
 
     public List<Assignment> findAllAssignmentsByHODDeptAndDates(final Long deptId, final Date givenDate) {
@@ -515,15 +384,19 @@ public class AssignmentService {
     }
 
     public List<Assignment> getPrimaryAssignmentForPositionAndDateRange(final Long posId, final Date fromDate,
-            final Date toDate) {
+                                                                        final Date toDate) {
         return assignmentRepository.getPrimaryAssignmentForPositionAndDateRange(posId, fromDate, toDate);
     }
-    
-    public List<Assignment> getAssignmentByPositionAndUserAsOnDate(final Long posId,final Long userId,final Date currDate) {
-        return assignmentRepository.findByPositionAndEmployee(posId,userId,currDate);
+
+    public List<Assignment> getAssignmentByPositionAndUserAsOnDate(final Long posId, final Long userId, final Date currDate) {
+        return assignmentRepository.findByPositionAndEmployee(posId, userId, currDate);
     }
 
     public List<Assignment> findByDepartmentCodeAndDesignationCode(String departmentCode, List<String> desigCode) {
         return assignmentRepository.findByDepartmentCodeAndDesignationCode(departmentCode, desigCode, new Date());
+    }
+
+    public List<Designation> getDesignationsByActiveAssignmentAndDesignationNames(List<String> designationNames) {
+        return assignmentRepository.findAllDesignationByActiveAssignmentAndDesignationNames(designationNames);
     }
 }

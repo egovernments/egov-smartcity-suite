@@ -75,7 +75,7 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 @Table(name = "egpgr_complaint")
 @SequenceGenerator(name = SEQ_COMPLAINT, sequenceName = SEQ_COMPLAINT, allocationSize = 1)
 @Unique(fields = "crn", enableDfltMsg = true)
-public class Complaint extends StateAware {
+public class Complaint extends StateAware<Position> {
     protected static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
     private static final long serialVersionUID = 4020616083055647372L;
 

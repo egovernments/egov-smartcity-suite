@@ -1,45 +1,27 @@
 package org.egov.council.entity;
 
+import org.egov.commons.EgwStatus;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.StateAware;
-import org.springframework.web.multipart.MultipartFile;
-
 @Entity
-@Unique(id = "id", tableName = "egcncl_meeting", fields = "meetingNumber", columnName = "meetingNumber", enableDfltMsg = true)
+@Unique(fields = "meetingNumber", enableDfltMsg = true)
 @Table(name = "egcncl_meeting")
 @SequenceGenerator(name = CouncilMeeting.SEQ_MEETING, sequenceName = CouncilMeeting.SEQ_MEETING, allocationSize = 1)
-public class CouncilMeeting extends StateAware {
-
-    private static final long serialVersionUID = 5607959287745538396L;
+public class CouncilMeeting extends StateAware<Position> {
 
     public static final String SEQ_MEETING = "seq_egcncl_meeting";
-
+    private static final long serialVersionUID = 5607959287745538396L;
     @Id
     @GeneratedValue(generator = SEQ_MEETING, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -71,19 +53,19 @@ public class CouncilMeeting extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
-    private List<MeetingMOM> meetingMOMs = new ArrayList<>(0);
+    private List<MeetingMOM> meetingMOMs = new ArrayList<>();
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
-    private List<MeetingAttendence> meetingAttendence = new ArrayList<>(0);
+    private List<MeetingAttendence> meetingAttendence = new ArrayList<>();
 
     @OneToMany(mappedBy = "meeting", cascade = CascadeType.ALL)
-    private List<CouncilSmsDetails> smsDetails = new ArrayList<>(0);
+    private List<CouncilSmsDetails> smsDetails = new ArrayList<>();
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "filestore")
     private FileStoreMapper filestore;
     @Transient
-    private List<MeetingAttendence> updateMeetingAttendance = new ArrayList<>(0);
+    private List<MeetingAttendence> updateMeetingAttendance = new ArrayList<>();
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egcncl_meeting_document", joinColumns = @JoinColumn(name = "meetingid"), inverseJoinColumns = @JoinColumn(name = "filestoreid"))
@@ -188,12 +170,12 @@ public class CouncilMeeting extends StateAware {
         this.toDate = toDate;
     }
 
-    public void setFilestore(FileStoreMapper filestore) {
-        this.filestore = filestore;
-    }
-
     public FileStoreMapper getFilestore() {
         return filestore;
+    }
+
+    public void setFilestore(FileStoreMapper filestore) {
+        this.filestore = filestore;
     }
 
     public List<CouncilSmsDetails> getSmsDetails() {

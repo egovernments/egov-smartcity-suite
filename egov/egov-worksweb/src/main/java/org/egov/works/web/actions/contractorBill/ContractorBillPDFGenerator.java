@@ -53,11 +53,12 @@ import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBilldetails;
 import org.egov.pims.commons.DeptDesig;
+import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
 import org.egov.pims.service.EmployeeServiceOld;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
@@ -83,16 +84,27 @@ import java.util.Locale;
 import java.util.Map;
 
 public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
+    public static final String newLine = "\n";
+    public static final String CONTRACTOR_PDF_ERROR = "egBillRegister.pdf.error";
+    public static final String blankSpace = "   ";
+    public static final String blankSpace8 = "        ";
+    public static final String blankSpace15 = "               ";
+    public static final String blankSpace20 = "                    ";
+    public static final String tab2 = "\t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t\t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t";
+    public static final String dateLabel = "contractorbill.pdf.date";
     private static final Logger logger = Logger.getLogger(ContractorBillPDFGenerator.class);
+    private static final String WORKS_NETPAYABLE_CODE = "WORKS_NETPAYABLE_CODE";
+    private final Map<String, String> pdfLabel;
+    private final ContractorBillRegister egBillRegister;
+    private final MBHeader mbHeader;
+    private final List<MBHeader> mbHeaderList = new ArrayList<>();
+    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
+    private final ContractorBillService contractorBillService;
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
     @Autowired
     private EmployeeServiceOld employeeService;
-    private final Map<String, String> pdfLabel;
-    private final ContractorBillRegister egBillRegister;
-
-    private final MBHeader mbHeader;
     private String deptName = "";
     private String contactorName = "";
     private String contractorAddress = "";
@@ -105,24 +117,10 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     private String workCompletedOn = "";
     private String estimateNumber = "";
     private String projectCode = "";
-    public static final String newLine = "\n";
     private Long workOrderId;
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
-
-    private final List<MBHeader> mbHeaderList = new ArrayList<MBHeader>();
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy", Locale.US);
     private boolean flag = false;
-    public static final String CONTRACTOR_PDF_ERROR = "egBillRegister.pdf.error";
-    private final ContractorBillService contractorBillService;
-
-    public static final String blankSpace = "   ";
-
-    public static final String blankSpace8 = "        ";
-    public static final String blankSpace15 = "               ";
-    public static final String blankSpace20 = "                    ";
-    public static final String tab2 = "\t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t\t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t \t";
-    public static final String dateLabel = "contractorbill.pdf.date";
     private List<StatutoryDeductionsForBill> sortedStatutorySortedList;
     private List<DeductionTypeForBill> sortedStandardDeductionList;
     private List<EgBilldetails> customDeductionList;
@@ -130,13 +128,12 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     private WorksService worksService;
     private BigDecimal advanceAdjustment = new BigDecimal(0);
     private List<BigDecimal> glcodeIdList;
-    private static final String WORKS_NETPAYABLE_CODE = "WORKS_NETPAYABLE_CODE";
     private BigDecimal netPayableAmount = BigDecimal.ZERO;
     private ContractorAdvanceService contractorAdvanceService;
 
     public ContractorBillPDFGenerator(final ContractorBillRegister egBillRegister, final MBHeader mbHeader,
-            final OutputStream out,
-            final Map<String, String> pdfLabel, final ContractorBillService contractorBillService) {
+                                      final OutputStream out,
+                                      final Map<String, String> pdfLabel, final ContractorBillService contractorBillService) {
         super(out, "landscape");
         this.pdfLabel = pdfLabel;
         this.egBillRegister = egBillRegister;
@@ -152,8 +149,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
             // start header Part
             final PdfPTable contractorBillMainTable = new PdfPTable(11);
             contractorBillMainTable.setWidthPercentage(100);
-            // contractorBillMainTable.setWidths(new float[] {2f,2f,2f,2f,2f,2f,2f,2f,2f,2f});
-            contractorBillMainTable.setWidths(new float[] { 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f });
+            contractorBillMainTable.setWidths(new float[]{1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f, 1.5f});
             contractorBillMainTable.getDefaultCell().setPadding(4);
             contractorBillMainTable.getDefaultCell().setBorderWidth(1);
             createHeaderRow(contractorBillMainTable);
@@ -170,7 +166,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
                 document.add(approvaldetailsTable);
                 document.add(spacer());
             }
-            if (contractorBillMainTable != null && contractorBillMainTable.getRows().size() > 11)
+            if (contractorBillMainTable.getRows().size() > 11)
                 document.newPage();
             createFooter();
             // create certificate page
@@ -179,8 +175,6 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
             document.close();
         } catch (final DocumentException e) {
             throw new ApplicationRuntimeException(CONTRACTOR_PDF_ERROR, e);
-        } catch (final ApplicationException ex) {
-            throw new ApplicationRuntimeException(CONTRACTOR_PDF_ERROR, ex);
         }
     }
 
@@ -260,7 +254,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // 1---header part of code
-    protected void createHeaderRow(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createHeaderRow(final PdfPTable contractorBillMainTable) {
         final PdfPTable contractorBillLeftHeader = createContractorBillHeader(pdfLabel.get("contractorbill.pdf.leftheader"), 0);
         contractorBillLeftHeader.getDefaultCell().setBorderWidth(0);
         final PdfPCell contractorBillLeftHeaderCell = new PdfPCell(contractorBillLeftHeader);
@@ -281,8 +275,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         contractorBillMainTable.addCell(contractorBillRightHeaderCell);
     }
 
-    protected PdfPTable createContractorBillHeader(final String title, final int i)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createContractorBillHeader(final String title, final int i) {
         final PdfPTable contractorBillHeaderTable = new PdfPTable(3);
         contractorBillHeaderTable.getDefaultCell().setBorderWidth(0);
         if (i == 0) {
@@ -303,32 +296,30 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // def creatreDetailsRow(contractorBillMainTable)
-    protected void createDetailsRows(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createDetailsRows(final PdfPTable contractorBillMainTable) {
         createContractorRow(contractorBillMainTable);
         createWorkDescRow(contractorBillMainTable);
-        createDetailsForWorkOrder(contractorBillMainTable);		 // project code row
-        createWorkValueLabel(contractorBillMainTable);	// value of work done row
+        createDetailsForWorkOrder(contractorBillMainTable);         // project code row
+        createWorkValueLabel(contractorBillMainTable);    // value of work done row
         createWorkValueData(contractorBillMainTable);
 
-        createDeductionTypeLabel(contractorBillMainTable);	// deductions label row
+        createDeductionTypeLabel(contractorBillMainTable);    // deductions label row
         createDeductionTypeData(contractorBillMainTable);   // deductions data row
 
         createNetPayable(contractorBillMainTable);
     }
 
     // row7 createDeductionTypeLabel
-    protected void createDeductionTypeLabel(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected void createDeductionTypeLabel(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable deductionTypeTable = createDeductionTypeLabelTable(contractorBillMainTable);
+        final PdfPTable deductionTypeTable = createDeductionTypeLabelTable();
         deductionTypeTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell deductionTypeCell = new PdfPCell(deductionTypeTable);
         deductionTypeCell.setColspan(11);
         contractorBillMainTable.addCell(deductionTypeCell);
     }
 
-    protected PdfPTable createDeductionTypeLabelTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createDeductionTypeLabelTable() {
         final PdfPTable deductionTypeLabel = new PdfPTable(11);
         deductionTypeLabel.getDefaultCell().setBorderWidth(1);
         deductionTypeLabel.getDefaultCell().setColspan(7);
@@ -343,18 +334,16 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row8 createDeductionTypeData
-    protected void createDeductionTypeData(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected void createDeductionTypeData(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable createDeductionTypeDataTable = createDeductionTypeDataTable(contractorBillMainTable);
+        final PdfPTable createDeductionTypeDataTable = createDeductionTypeDataTable();
         createDeductionTypeDataTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell createWorkValueDataCell = new PdfPCell(createDeductionTypeDataTable);
         createWorkValueDataCell.setColspan(11);
         contractorBillMainTable.addCell(createWorkValueDataCell);
     }
 
-    protected PdfPTable createDeductionTypeDataTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createDeductionTypeDataTable() {
         final PdfPTable createcreateDeductionTypeDataTable = new PdfPTable(11);
         createcreateDeductionTypeDataTable.getDefaultCell().setBorderWidth(1);
 
@@ -414,9 +403,9 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
                 createcreateDeductionTypeDataTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_RIGHT);
                 createcreateDeductionTypeDataTable.getDefaultCell().setColspan(1);
                 createcreateDeductionTypeDataTable.addCell(resultTotStandardAry[0]);// Rs. amt all bill for workorder till
-                                                                                    // billdate
+                // billdate
                 createcreateDeductionTypeDataTable.addCell(resultTotStandardAry[1]);// Pa, amt all bill for workorder till
-                                                                                    // billdate
+                // billdate
                 createcreateDeductionTypeDataTable.addCell(resultAry[0]); // Rs. amt for this deduction for this bill
                 createcreateDeductionTypeDataTable.addCell(resultAry[1]);// Pa. amt for this deduction for this bill
             }
@@ -445,17 +434,16 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row 9th
-    protected void createNetPayable(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createNetPayable(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable createNetPayableTable = createNetPayableTable(contractorBillMainTable);
+        final PdfPTable createNetPayableTable = createNetPayableTable();
         createNetPayableTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell createNetPayableCell = new PdfPCell(createNetPayableTable);
         createNetPayableCell.setColspan(11);
         contractorBillMainTable.addCell(createNetPayableCell);
     }
 
-    protected PdfPTable createNetPayableTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createNetPayableTable() {
         final String resultAmt = getIntDecimalParts(netPayableAmount);
         final String[] resultAry = resultAmt.split(":");
         final PdfPTable createNetPayableData = new PdfPTable(11);
@@ -472,9 +460,9 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row6 createWorkValueData
-    protected void createWorkValueData(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createWorkValueData(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable createWorkValueDataTable = createWorkValueDataTable(contractorBillMainTable);
+        final PdfPTable createWorkValueDataTable = createWorkValueDataTable();
         createWorkValueDataTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell createWorkValueDataCell = new PdfPCell(createWorkValueDataTable);
         createWorkValueDataCell.setColspan(11);
@@ -482,8 +470,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         contractorBillMainTable.addCell(createWorkValueDataCell);
     }
 
-    protected PdfPTable createWorkValueDataTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createWorkValueDataTable() {
         final PdfPTable createWorkValueData = new PdfPTable(11);
         createWorkValueData.getDefaultCell().setBorderWidth(1);
         createWorkValueData.getDefaultCell().setColspan(7);
@@ -534,9 +521,9 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row5 createWorkValueLabe
-    protected void createWorkValueLabel(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createWorkValueLabel(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable WorkValueLabelTable = createWorkValueLabelTable(contractorBillMainTable);
+        final PdfPTable WorkValueLabelTable = createWorkValueLabelTable();
         WorkValueLabelTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell WorkValueLabelCell = new PdfPCell(WorkValueLabelTable);
         WorkValueLabelCell.setColspan(11);
@@ -544,8 +531,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
 
     }
 
-    protected PdfPTable createWorkValueLabelTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createWorkValueLabelTable() {
         final PdfPTable createWorkValueLabel = new PdfPTable(11);
         createWorkValueLabel.getDefaultCell().setBorderWidth(1);
         createWorkValueLabel.getDefaultCell().setColspan(7);
@@ -558,17 +544,15 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row3 and row4 ---createDetailForWorkOrder
-    protected void createDetailsForWorkOrder(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected void createDetailsForWorkOrder(final PdfPTable contractorBillMainTable) {
         createDetailsForWorkOrderLabel(contractorBillMainTable);
         createDetailsForWorkOrderData(contractorBillMainTable);
     }
 
     // row3
-    protected void createDetailsForWorkOrderLabel(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected void createDetailsForWorkOrderLabel(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable detailsForWorkOrderTable = createDetailsForWorkOrderLabelTable(contractorBillMainTable);
+        final PdfPTable detailsForWorkOrderTable = createDetailsForWorkOrderLabelTable();
         detailsForWorkOrderTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell detailsForWorkOrderCell = new PdfPCell(detailsForWorkOrderTable);
         detailsForWorkOrderCell.setColspan(11);
@@ -576,8 +560,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row4 ---createDetailsForWorkOrderData
-    protected void createDetailsForWorkOrderData(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected void createDetailsForWorkOrderData(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
         contractorBillMainTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
         if (!mbHeaderList.isEmpty()) {
@@ -642,8 +625,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row3 def---createDetailForWorkOrder
-    protected PdfPTable createDetailsForWorkOrderLabelTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createDetailsForWorkOrderLabelTable() {
         final PdfPTable detailsForWorkOrderLabel = new PdfPTable(11);
         detailsForWorkOrderLabel.getDefaultCell().setBorderWidth(1);
         detailsForWorkOrderLabel.getDefaultCell().setHorizontalAlignment(Element.ALIGN_CENTER);
@@ -655,10 +637,6 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         detailsForWorkOrderLabel.getDefaultCell().setColspan(2);
         detailsForWorkOrderLabel.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
 
-        // detailsForWorkOrderLabel.addCell("\t\t\t\t\t"+pdfLabel.get("contractorbill.pdf.pages")+newLine+pdfLabel.get("contractorbill.pdf.from")+"\t\t\t\t\t"+pdfLabel.get("contractorbill.pdf.to"));
-        // detailsForWorkOrderLabel.addCell("\t \t \t\t \t \t \t \t \t \t \t \t \t \t \t
-        // "+pdfLabel.get("contractorbill.pdf.pages")+"\n \t \t \t \t\t \t \t \t"+pdfLabel.get("contractorbill.pdf.from")+"\t \t
-        // \t \t \t \t \t \t \t \t \t"+pdfLabel.get("contractorbill.pdf.to"));
         detailsForWorkOrderLabel.addCell(blankSpace15 + pdfLabel.get("contractorbill.pdf.pages") +
                 "\n" + blankSpace8
                 + pdfLabel.get("contractorbill.pdf.from") + blankSpace8 + pdfLabel.get("contractorbill.pdf.to"));
@@ -669,17 +647,16 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     // row2 --- workorder row
-    protected void createWorkDescRow(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createWorkDescRow(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable workDescTable = createWorkDescTable(contractorBillMainTable);
+        final PdfPTable workDescTable = createWorkDescTable();
         workDescTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell workDescCell = new PdfPCell(workDescTable);
         workDescCell.setColspan(11);
         contractorBillMainTable.addCell(workDescCell);
     }
 
-    protected PdfPTable createWorkDescTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createWorkDescTable() {
         final PdfPTable workDescTable = new PdfPTable(11);
         workDescTable.getDefaultCell().setBorderWidth(1);
         workDescTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -694,17 +671,16 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
 
     // row1 --- createContractorRow
 
-    protected void createContractorRow(final PdfPTable contractorBillMainTable) throws DocumentException, ApplicationException {
+    protected void createContractorRow(final PdfPTable contractorBillMainTable) {
         contractorBillMainTable.getDefaultCell().setBorderWidth(1);
-        final PdfPTable contractorTable = createContractorTable(contractorBillMainTable);
+        final PdfPTable contractorTable = createContractorTable();
         contractorTable.getDefaultCell().setBorderWidth(1);
         final PdfPCell contractorCell = new PdfPCell(contractorTable);
         contractorCell.setColspan(11);
         contractorBillMainTable.addCell(contractorCell);
     }
 
-    protected PdfPTable createContractorTable(final PdfPTable contractorBillMainTable)
-            throws DocumentException, ApplicationException {
+    protected PdfPTable createContractorTable() {
         final PdfPTable contractorTable = new PdfPTable(11);
         contractorTable.getDefaultCell().setBorderWidth(1);
         contractorTable.getDefaultCell().setHorizontalAlignment(Element.ALIGN_LEFT);
@@ -803,8 +779,8 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     }
 
     public void getCustomDeductionList(final ContractorBillRegister egBillRegister) throws ApplicationException {
-        customDeductionList = new ArrayList<EgBilldetails>();
-        glcodeIdList = new ArrayList<BigDecimal>();
+        customDeductionList = new ArrayList<>();
+        glcodeIdList = new ArrayList<>();
         getStatutoryDeductionGlcode();
         getStandardDeductionGlcode();
         String advanceAdjstglCodeId = "";
@@ -835,14 +811,12 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
                     glcodeIdList.add(new BigDecimal(deductionTypeForBill.getCoa().getId()));
     }
 
-    public void getGlCodeForNetPayable() throws NumberFormatException, ApplicationException {
+    public void getGlCodeForNetPayable() throws ApplicationException {
         final List<CChartOfAccounts> coaPayableList = chartOfAccountsHibernateDAO
                 .getAccountCodeByPurpose(Integer.valueOf(worksService.getWorksConfigValue(WORKS_NETPAYABLE_CODE)));
-        // if(!coaPayableList.isEmpty()){
         if (coaPayableList != null)
             for (final CChartOfAccounts coa : coaPayableList)
                 if (coa.getId() != null) {
-                    // netPayableAmount=contractorBillService.getNetPayableAmountForGlCodeId(coa.getId(),egBillRegister.getId());
                     netPayableAmount = contractorBillService.getNetPayableAmountForGlCodeId(egBillRegister.getId());
                     glcodeIdList.add(new BigDecimal(coa.getId()));
                 }
@@ -850,16 +824,11 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
 
     protected String getIntDecimalParts(final BigDecimal totalAmount) {
         String result = "";
-        String totalAmt = "";
-        if (totalAmount == null)
-            totalAmt = "0:00";
-        else {
-            totalAmt = toCurrency(totalAmount.doubleValue());
-            String intPart = "0";
-            String decimalPart = "0";
+        if (totalAmount != null) {
+            String totalAmt = toCurrency(totalAmount.doubleValue());
             try {
-                intPart = totalAmt.substring(0, totalAmt.indexOf('.'));
-                decimalPart = totalAmt.substring(totalAmt.indexOf('.') + 1, totalAmt.length());
+                String intPart = totalAmt.substring(0, totalAmt.indexOf('.'));
+                String decimalPart = totalAmt.substring(totalAmt.indexOf('.') + 1, totalAmt.length());
                 result = intPart + ":" + decimalPart;
             } catch (final StringIndexOutOfBoundsException e) {
                 logger.error("---totalAmt has no fractional part---" + e.getMessage());
@@ -873,7 +842,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
     public String getNetPayAmtInWords() {
         String netPayAmtStr = "";
         try {
-            netPayAmtStr = NumberToWord.convertToWord(toCurrency(netPayableAmount.doubleValue()));
+            netPayAmtStr = NumberToWordConverter.amountInWordsWithCircumfix(netPayableAmount);
         } catch (final Exception e) {
             logger.debug("error -----" + e);
             netPayAmtStr = "";
@@ -885,11 +854,11 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         try {
             final PdfPTable approvaldetailsTable = new PdfPTable(5);
             approvaldetailsTable.setWidthPercentage(100);
-            approvaldetailsTable.setWidths(new float[] { 2f, 1f, 1f, 1.5f, 2f });
+            approvaldetailsTable.setWidths(new float[]{2f, 1f, 1f, 1.5f, 2f});
             addRow(approvaldetailsTable, true, makePara("Approval Step"), centerPara("Name"), centerPara("Designation"),
                     centerPara("Approved on"), centerPara("Remarks"));
 
-            List<StateHistory> history = null;
+            List<StateHistory<Position>> history = null;
             if (egBillRegister != null && egBillRegister.getCurrentState() != null
                     && egBillRegister.getCurrentState().getHistory() != null)
                 history = egBillRegister.getStateHistory();
@@ -905,26 +874,20 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         }
     }
 
-    public void displayHistory(final StateHistory ad, final PdfPTable approvaldetailsTable) throws Exception {
+    public void displayHistory(final StateHistory<Position> ad, final PdfPTable approvaldetailsTable) throws Exception {
         if (!ad.getValue().equals("NEW") && !ad.getValue().equals("END")) {
             String nextAction = "";
             if (ad.getNextAction() != null)
                 nextAction = ad.getNextAction();
-            // EgwStatus status =(EgwStatus) getPersistenceService().find("from EgwStatus where code=?",ad.getValue());
             String state = ad.getValue();
             if (!nextAction.equalsIgnoreCase(""))
                 state = ad.getValue() + " - " + nextAction;
             Long positionId = null;
             String desgName = null;
             DeptDesig deptdesig = null;
-            // if(ad.getPrevious()==null){
             positionId = ad.getOwnerPosition().getId();
             deptdesig = ad.getOwnerPosition().getDeptDesig();
             desgName = deptdesig.getDesignation().getName();
-            /*
-             * } else{ positionId =ad.getPrevious().getOwner().getId(); deptdesig= ad.getPrevious().getOwner().getDeptDesigId();
-             * desgName = deptdesig.getDesigId().getDesignationName(); }
-             */
             final PersonalInformation emp = employeeService.getEmpForPositionAndDate(ad.getCreatedDate(),
                     Integer.parseInt(positionId.toString()));
             addRow(approvaldetailsTable, true, makePara(state), makePara(emp.getEmployeeName()), makePara(desgName),
@@ -932,7 +895,7 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
         }
     }
 
-    private String getDateInFormat(final String date) throws DocumentException {
+    private String getDateInFormat(final String date) {
         String dateInFormat = null;
         try {
             dateInFormat = new SimpleDateFormat("dd-MMM-yyyy", Locale.ENGLISH)
@@ -945,31 +908,23 @@ public class ContractorBillPDFGenerator extends AbstractPDFGenerator {
 
     // calculate total amt for each deduction for a workorder upto bill date
     public BigDecimal getTotAmountForAdvanceAdjustment() {
-        BigDecimal totalDeductionAmt = BigDecimal.ZERO;
-        totalDeductionAmt = contractorBillService.getTotAmtForAdvanceAdjustment(egBillRegister.getBilldate(), workOrderId,
+        return contractorBillService.getTotAmtForAdvanceAdjustment(egBillRegister.getBilldate(), workOrderId,
                 mbHeader.getWorkOrderEstimate().getId());
-        return totalDeductionAmt;
     }
 
     public BigDecimal getTotStatoryAmountForDeduction(final StatutoryDeductionsForBill egBillPayeedetail) {
-        BigDecimal totalStatoryAmount = BigDecimal.ZERO;
-        totalStatoryAmount = contractorBillService.getTotAmtForStatutory(egBillRegister.getBilldate(), workOrderId,
+        return contractorBillService.getTotAmtForStatutory(egBillRegister.getBilldate(), workOrderId,
                 egBillPayeedetail, mbHeader.getWorkOrderEstimate().getId());
-        return totalStatoryAmount;
     }
 
     public BigDecimal getTotStandardAmountForDeduction(final DeductionTypeForBill deductionTypeForBill) {
-        BigDecimal totStandardAmt = BigDecimal.ZERO;
-        totStandardAmt = contractorBillService.getTotAmtForStandard(egBillRegister.getBilldate(), workOrderId,
+        return contractorBillService.getTotAmtForStandard(egBillRegister.getBilldate(), workOrderId,
                 deductionTypeForBill, mbHeader.getWorkOrderEstimate().getId());
-        return totStandardAmt;
     }
 
     public BigDecimal getTotStandardAmountForDeduction(final EgBilldetails egBilldetails) {
-        BigDecimal totCustomAmt = BigDecimal.ZERO;
-        totCustomAmt = contractorBillService.getTotAmtForCustom(egBillRegister.getBilldate(), workOrderId, egBilldetails,
+        return contractorBillService.getTotAmtForCustom(egBillRegister.getBilldate(), workOrderId, egBilldetails,
                 mbHeader.getWorkOrderEstimate().getId());
-        return totCustomAmt;
     }
 
     // setter and getter

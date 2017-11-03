@@ -39,12 +39,10 @@
  */
 package org.egov.wtms.application.entity;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- * @author nayeem
- */
-public class DemandDetail {
+public class DemandDetail implements Serializable {
 
     private Long id;
     private String installment;
@@ -54,6 +52,9 @@ public class DemandDetail {
     private BigDecimal revisedAmount;
     private BigDecimal actualCollection;
     private BigDecimal revisedCollection;
+
+    public DemandDetail() {
+    }
 
     public String getReasonMasterDesc() {
         return reasonMasterDesc;
@@ -69,9 +70,6 @@ public class DemandDetail {
 
     public void setInstallment(final String installment) {
         this.installment = installment;
-    }
-
-    public DemandDetail() {
     }
 
     public String getReasonMaster() {

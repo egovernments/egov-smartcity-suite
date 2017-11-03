@@ -1,7 +1,7 @@
 /* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2015>  eGovernments Foundation
+    Copyright (C) <2017>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -39,9 +39,15 @@
 
 package org.egov.mrs.domain.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.commons.EgwStatus;
+import org.egov.demand.model.EgDemand;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.mrs.masters.entity.MarriageFee;
+import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -58,35 +64,17 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import org.egov.commons.EgwStatus;
-import org.egov.demand.model.EgDemand;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.mrs.masters.entity.MarriageFee;
-import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.egov.mrs.domain.entity.MrApplicant; 
-
-/**
- * 
- * @author nayeem
- *
- */
 @Entity
 @Table(name = "egmrs_reissue")
 @SequenceGenerator(name = ReIssue.SEQ_REISSUE, sequenceName = ReIssue.SEQ_REISSUE, allocationSize = 1)
-public class ReIssue extends StateAware {
-
-    public enum ReIssueStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED, CERTIFICATEREISSUED, DIGITALSIGNED
-    }
-
-    private static final long serialVersionUID = 7398043339748917008L;
+public class ReIssue extends StateAware<Position> {
 
     public static final String SEQ_REISSUE = "SEQ_EGMRS_REISSUE";
-
+    private static final long serialVersionUID = 7398043339748917008L;
     @Id
     @GeneratedValue(generator = SEQ_REISSUE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -149,7 +137,7 @@ public class ReIssue extends StateAware {
 
     @Transient
     private String approvalComent;
-    
+
     @SafeHtml
     @Length(max = 15)
     private String source;
@@ -299,7 +287,7 @@ public class ReIssue extends StateAware {
     }
 
     public boolean isFeeCollected() {
-        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0 ? true : false; 
+        return demand.getBaseDemand().compareTo(demand.getAmtCollected()) <= 0 ? true : false;
     }
 
     public Boundary getZone() {
@@ -326,5 +314,9 @@ public class ReIssue extends StateAware {
     public void setSource(String source) {
         this.source = source;
     }
-    
+
+    public enum ReIssueStatus {
+        CREATED, APPROVED, REJECTED, CANCELLED, CERTIFICATEREISSUED, DIGITALSIGNED
+    }
+
 }

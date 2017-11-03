@@ -46,6 +46,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
@@ -59,23 +60,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MBHeader extends StateAware {
+public class MBHeader extends StateAware<Position> {
 
     private static final long serialVersionUID = 121631467636260459L;
-
-    public enum MeasurementBookStatus {
-        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
-    }
-
-    public enum Actions {
-        SAVE, SUBMIT_FOR_APPROVAL, REJECT, CANCEL, APPROVAL;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
     private Long id;
 
     @Required(message = "mbheader.workorder.null")
@@ -86,33 +73,36 @@ public class MBHeader extends StateAware {
 
     @Length(max = 400, message = "mbheader.contractorComments.length")
     private String contractorComments;
+
     @Required(message = "mbheader.mbdate.null")
     @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "mbheader.mbDate.futuredate")
     @DateFormat(message = "invalid.fieldvalue.mbDate")
     private Date mbDate;
-    // @Required(message = "mbheader.mbabstract.null")
+
     @Length(max = 400, message = "mbheader.mbabstract.length")
     private String mbAbstract;
+
     @Required(message = "mbheader.fromPageNo.null")
     @GreaterThan(value = 0, message = "mbheader.fromPageNo.non.negative")
     private Integer fromPageNo;
+
     @Min(value = 0, message = "mbheader.toPageNo.non.negative")
     private Integer toPageNo;
-
     private WorkOrderEstimate workOrderEstimate;
     private Integer approverUserId;
     private ContractorBillRegister egBillregister;
+
     @Valid
-    private List<MBDetails> mbDetails = new LinkedList<MBDetails>();
+    private List<MBDetails> mbDetails = new LinkedList<>();
     private String owner;
-    private List<String> mbActions = new ArrayList<String>();
+    private List<String> mbActions = new ArrayList<>();
     private EgwStatus egwStatus;
     private boolean isLegacyMB;
     private BigDecimal mbAmount;
     private Date approvedDate;
 
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         if (workOrder != null && (workOrder.getId() == null || workOrder.getId() == 0 || workOrder.getId() == -1))
             validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
 
@@ -125,36 +115,36 @@ public class MBHeader extends StateAware {
         return validationErrors;
     }
 
-    public void setWorkOrder(final WorkOrder workOrder) {
-        this.workOrder = workOrder;
-    }
-
     public WorkOrder getWorkOrder() {
         return workOrder;
     }
 
-    public void setMbRefNo(final String mbRefNo) {
-        this.mbRefNo = mbRefNo;
+    public void setWorkOrder(final WorkOrder workOrder) {
+        this.workOrder = workOrder;
     }
 
     public String getMbRefNo() {
         return mbRefNo;
     }
 
-    public void setMbDate(final Date mbDate) {
-        this.mbDate = mbDate;
+    public void setMbRefNo(final String mbRefNo) {
+        this.mbRefNo = mbRefNo;
     }
 
     public Date getMbDate() {
         return mbDate;
     }
 
-    public void setMbAbstract(final String mbAbstract) {
-        this.mbAbstract = mbAbstract;
+    public void setMbDate(final Date mbDate) {
+        this.mbDate = mbDate;
     }
 
     public String getMbAbstract() {
         return mbAbstract;
+    }
+
+    public void setMbAbstract(final String mbAbstract) {
+        this.mbAbstract = mbAbstract;
     }
 
     public Integer getFromPageNo() {
@@ -269,7 +259,7 @@ public class MBHeader extends StateAware {
     }
 
     public BigDecimal getTotalMBAmount() {
-        double amount = 0.0;
+        double amount;
         BigDecimal resultAmount = BigDecimal.ZERO;
         for (final MBDetails mbd : mbDetails) {
             if (mbd.getWorkOrderActivity().getActivity().getNonSor() == null)
@@ -298,6 +288,19 @@ public class MBHeader extends StateAware {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public enum MeasurementBookStatus {
+        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
+    }
+
+    public enum Actions {
+        SAVE, SUBMIT_FOR_APPROVAL, REJECT, CANCEL, APPROVAL;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 
 }

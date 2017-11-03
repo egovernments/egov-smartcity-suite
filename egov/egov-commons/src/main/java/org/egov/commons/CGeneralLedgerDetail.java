@@ -39,9 +39,10 @@
  */
 package org.egov.commons;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-public class CGeneralLedgerDetail {
+public class CGeneralLedgerDetail implements Serializable {
     private Long id;
     private CGeneralLedger generalLedgerId;
     private Integer detailKeyId;

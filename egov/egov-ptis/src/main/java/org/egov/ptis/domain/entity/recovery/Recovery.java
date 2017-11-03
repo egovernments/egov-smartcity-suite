@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -43,109 +43,103 @@ import org.egov.commons.EgwStatus;
 import org.egov.demand.model.EgBill;
 import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 
 import javax.validation.Valid;
 
-/**
- * Recovery entity. @author MyEclipse Persistence Tools
- */
+public class Recovery extends StateAware<Position> {
+    private static final long serialVersionUID = 1L;
+    private Long id;
 
-public class Recovery extends StateAware {
-	/**
-	 * Serial version uid
-	 */
-	private static final long serialVersionUID = 1L;
-	private Long id;
-	
-	private BasicProperty basicProperty;
-	private EgwStatus status;
-	private EgBill bill;
-	@Valid
-	private Warrant warrant;
-	@Valid
-	private IntimationNotice intimationNotice;
-	@Valid
-	private WarrantNotice warrantNotice;
-	@Valid
-	private CeaseNotice ceaseNotice;
+    private BasicProperty basicProperty;
+    private EgwStatus status;
+    private EgBill bill;
+    @Valid
+    private Warrant warrant;
+    @Valid
+    private IntimationNotice intimationNotice;
+    @Valid
+    private WarrantNotice warrantNotice;
+    @Valid
+    private CeaseNotice ceaseNotice;
 
-	@Override
-	public String getStateDetails() {
+    @Override
+    public String getStateDetails() {
 
-		return getBasicProperty().getUpicNo();
-	}
+        return getBasicProperty().getUpicNo();
+    }
 
-	@Required(message = "recovery.basicProperty.null")
-	public BasicProperty getBasicProperty() {
-		return basicProperty;
-	}
+    @Required(message = "recovery.basicProperty.null")
+    public BasicProperty getBasicProperty() {
+        return basicProperty;
+    }
 
-	public void setBasicProperty(BasicProperty basicProperty) {
-		this.basicProperty = basicProperty;
-	}
+    public void setBasicProperty(BasicProperty basicProperty) {
+        this.basicProperty = basicProperty;
+    }
 
-	public Warrant getWarrant() {
-		return warrant;
-	}
+    public Warrant getWarrant() {
+        return warrant;
+    }
 
-	public IntimationNotice getIntimationNotice() {
-		return intimationNotice;
-	}
+    public void setWarrant(Warrant warrant) {
+        this.warrant = warrant;
+    }
 
-	public WarrantNotice getWarrantNotice() {
-		return warrantNotice;
-	}
+    public IntimationNotice getIntimationNotice() {
+        return intimationNotice;
+    }
 
-	public void setWarrant(Warrant warrant) {
-		this.warrant = warrant;
-	}
+    public void setIntimationNotice(IntimationNotice intimationNotice) {
+        this.intimationNotice = intimationNotice;
+    }
 
-	public void setIntimationNotice(IntimationNotice intimationNotice) {
-		this.intimationNotice = intimationNotice;
-	}
+    public WarrantNotice getWarrantNotice() {
+        return warrantNotice;
+    }
 
-	public void setWarrantNotice(WarrantNotice warrantNotice) {
-		this.warrantNotice = warrantNotice;
-	}
+    public void setWarrantNotice(WarrantNotice warrantNotice) {
+        this.warrantNotice = warrantNotice;
+    }
 
-	public CeaseNotice getCeaseNotice() {
-		return ceaseNotice;
-	}
+    public CeaseNotice getCeaseNotice() {
+        return ceaseNotice;
+    }
 
-	public void setCeaseNotice(CeaseNotice ceaseNotice) {
-		this.ceaseNotice = ceaseNotice;
-	}
+    public void setCeaseNotice(CeaseNotice ceaseNotice) {
+        this.ceaseNotice = ceaseNotice;
+    }
 
-	@Required(message = "recovery.status.null")
-	public EgwStatus getStatus() {
-		return status;
-	}
+    @Required(message = "recovery.status.null")
+    public EgwStatus getStatus() {
+        return status;
+    }
 
-	@Required(message = "recovery.bill.null")
-	public EgBill getBill() {
-		return bill;
-	}
+    public void setStatus(EgwStatus status) {
+        this.status = status;
+    }
 
-	public void setStatus(EgwStatus status) {
-		this.status = status;
-	}
+    @Required(message = "recovery.bill.null")
+    public EgBill getBill() {
+        return bill;
+    }
 
-	public void setBill(EgBill bill) {
-		this.bill = bill;
-	}
+    public void setBill(EgBill bill) {
+        this.bill = bill;
+    }
 
-	@Override
-	public String toString() {
+    @Override
+    public String toString() {
 
-		StringBuilder sb = new StringBuilder();
-		sb.append("UcipNo :").append(
-				null != basicProperty ? basicProperty.getUpicNo() : " ");
-		sb.append("BillNo :").append(null != bill ? bill.getBillNo() : " ");
-		sb.append("Status :").append(
-				null != status ? status.getDescription() : " ");
-		return sb.toString();
-	}
+        StringBuilder sb = new StringBuilder();
+        sb.append("UcipNo :").append(
+                null != basicProperty ? basicProperty.getUpicNo() : " ");
+        sb.append("BillNo :").append(null != bill ? bill.getBillNo() : " ");
+        sb.append("Status :").append(
+                null != status ? status.getDescription() : " ");
+        return sb.toString();
+    }
 
     @Override
     public Long getId() {
@@ -154,6 +148,6 @@ public class Recovery extends StateAware {
 
     @Override
     public void setId(Long id) {
-       this.id = id;
+        this.id = id;
     }
 }

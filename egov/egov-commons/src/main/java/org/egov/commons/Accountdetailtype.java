@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -40,8 +40,10 @@
 
 package org.egov.commons;
 
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.Audited;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -51,22 +53,20 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.math.BigDecimal;
+import java.util.Date;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.envers.Audited;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.commons.Accountdetailtype.SEQ_ACCOUNTDETAILTYPE;
 
 @Entity
 @Table(name = "ACCOUNTDETAILTYPE")
-@SequenceGenerator(name = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, sequenceName = Accountdetailtype.SEQ_ACCOUNTDETAILTYPE, allocationSize = 1)
-@Unique(id = "id", tableName = "accountdetailtype", fields = { "name" }, columnName = { "name" }, enableDfltMsg = true)
+@SequenceGenerator(name = SEQ_ACCOUNTDETAILTYPE, sequenceName = SEQ_ACCOUNTDETAILTYPE, allocationSize = 1)
+@Unique(fields = "name", enableDfltMsg = true)
 @Audited
-public class Accountdetailtype extends AbstractPersistable<Integer> implements java.io.Serializable {
-
-    private static final long serialVersionUID = 3499589983886551123L;
+public class Accountdetailtype extends AbstractPersistable<Integer> {
 
     public static final String SEQ_ACCOUNTDETAILTYPE = "SEQ_ACCOUNTDETAILTYPE";
+    private static final long serialVersionUID = 3499589983886551123L;
 
     @Id
     @GeneratedValue(generator = SEQ_ACCOUNTDETAILTYPE, strategy = GenerationType.SEQUENCE)
@@ -110,7 +110,7 @@ public class Accountdetailtype extends AbstractPersistable<Integer> implements j
     }
 
     public Accountdetailtype(final String name, final String description, final String attributename,
-            final BigDecimal nbroflevels) {
+                             final BigDecimal nbroflevels) {
         this.name = name;
         this.description = description;
         this.attributename = attributename;
@@ -118,8 +118,8 @@ public class Accountdetailtype extends AbstractPersistable<Integer> implements j
     }
 
     public Accountdetailtype(final String name, final String description, final String tablename, final String columnname,
-            final String attributename,
-            final BigDecimal nbroflevels, final Boolean isactive) {
+                             final String attributename,
+                             final BigDecimal nbroflevels, final Boolean isactive) {
         this.name = name;
         this.description = description;
         this.tablename = tablename;
@@ -207,20 +207,20 @@ public class Accountdetailtype extends AbstractPersistable<Integer> implements j
         return createdDate;
     }
 
-    public Date getLastModifiedDate() {
-        return lastModifiedDate;
-    }
-
-    public Long getLastModifiedBy() {
-        return lastModifiedBy;
-    }
-
     public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
+    public Date getLastModifiedDate() {
+        return lastModifiedDate;
+    }
+
     public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public Long getLastModifiedBy() {
+        return lastModifiedBy;
     }
 
     public void setLastModifiedBy(Long lastModifiedBy) {

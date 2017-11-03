@@ -1,5 +1,7 @@
 package org.egov.council.entity;
 
+import org.egov.commons.EgwStatus;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -10,15 +12,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Unique;
+import java.io.Serializable;
 
 @Entity
-@Unique(id = "id", tableName = "egcncl_meeting_mom", fields = "", columnName = "", enableDfltMsg = true)
 @Table(name = "egcncl_meeting_mom")
 @SequenceGenerator(name = MeetingMOM.SEQ_MEETINGMOM, sequenceName = MeetingMOM.SEQ_MEETINGMOM, allocationSize = 1)
-public class MeetingMOM {
+public class MeetingMOM implements Serializable {
 
     public static final String SEQ_MEETINGMOM = "seq_egcncl_meetingMom";
 
@@ -26,7 +25,7 @@ public class MeetingMOM {
     @GeneratedValue(generator = SEQ_MEETINGMOM, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-   
+
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "meeting", nullable = false)
     private CouncilMeeting meeting;
@@ -37,7 +36,7 @@ public class MeetingMOM {
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "preamble", nullable = false)
-     private CouncilPreamble preamble;
+    private CouncilPreamble preamble;
 
     @Column(name = "resolutionDetail")
     private String resolutionDetail;
@@ -45,9 +44,11 @@ public class MeetingMOM {
     @ManyToOne
     @JoinColumn(name = "resolutionStatus")
     private EgwStatus resolutionStatus;
-    
+
     @Column(name = "itemnumber")
     private String itemNumber;
+    @Column(name = "resolutionNumber")
+    private String resolutionNumber;
 
     public CouncilMeeting getMeeting() {
         return meeting;
@@ -56,9 +57,6 @@ public class MeetingMOM {
     public void setMeeting(CouncilMeeting meeting) {
         this.meeting = meeting;
     }
-
-    @Column(name = "resolutionNumber")
-    private String resolutionNumber;
 
     public Long getId() {
         return id;
@@ -108,12 +106,12 @@ public class MeetingMOM {
         this.resolutionNumber = resolutionNumber;
     }
 
-	public String getItemNumber() {
-		return itemNumber;
-	}
+    public String getItemNumber() {
+        return itemNumber;
+    }
 
-	public void setItemNumber(String itemNumber) {
-		this.itemNumber = itemNumber;
-	}
+    public void setItemNumber(String itemNumber) {
+        this.itemNumber = itemNumber;
+    }
 
 }

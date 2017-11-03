@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -59,68 +59,68 @@ import java.util.List;
 public class WorkFlowAdditionalDetailsService {
 
 
-	public static final String OBJECTTYPEID_ID = "objecttypeid.id";
-	public static final String ADDITIONAL_RULE = "additionalRule";
+    public static final String OBJECTTYPEID_ID = "objecttypeid.id";
+    public static final String ADDITIONAL_RULE = "additionalRule";
 
-	@Autowired
-	@Qualifier("entityQueryService")
-	private PersistenceService entityQueryService;
+    @Autowired
+    @Qualifier("entityQueryService")
+    private PersistenceService entityQueryService;
 
-	@Autowired
-	private WorkflowTypeService workflowTypeService;
+    @Autowired
+    private WorkflowTypeService workflowTypeService;
 
-	@Autowired
-	private WorkFlowAdditionalRuleRepository workFlowAdditionalRuleRepository;
+    @Autowired
+    private WorkFlowAdditionalRuleRepository workFlowAdditionalRuleRepository;
 
-	public List getAllModuleTypeforStatus() {
-		return this.entityQueryService.findAllBy(" select distinct(moduletype) from EgwStatus order by moduletype asc");
-	}
+    public List getAllModuleTypeforStatus() {
+        return this.entityQueryService.findAllBy(" select distinct(moduletype) from EgwStatus order by moduletype asc");
+    }
 
-	public List<WorkflowTypes> getobjectTypeList() {
-		return workflowTypeService.getAllWorkflowTypes();
-	}
+    public List<WorkflowTypes> getobjectTypeList() {
+        return workflowTypeService.getAllWorkflowTypes();
+    }
 
-	@Transactional
-	public WorkFlowAdditionalRule save(WorkFlowAdditionalRule wfAdditionalRule) {
-		return workFlowAdditionalRuleRepository.save(wfAdditionalRule);
-	}
+    @Transactional
+    public WorkFlowAdditionalRule save(WorkFlowAdditionalRule wfAdditionalRule) {
+        return workFlowAdditionalRuleRepository.save(wfAdditionalRule);
+    }
 
-	public List<WorkFlowAdditionalRule> getAdditionalRulesbyObject(final Long objectType) {
-		return entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class).
+    public List<WorkFlowAdditionalRule> getAdditionalRulesbyObject(final Long objectType) {
+        return entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class).
                 add(Restrictions.eq(OBJECTTYPEID_ID, objectType)).list();
-	}
+    }
 
-	public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long objectType, final String additionalRules) {
-		final Criteria crit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
-		crit.add(Restrictions.eq(OBJECTTYPEID_ID, objectType));
-		if ("-1".equals(additionalRules)) {
-			crit.add(Restrictions.isNull(ADDITIONAL_RULE));
-		} else {
-			crit.add(Restrictions.eq(ADDITIONAL_RULE, additionalRules));
-		}
-		List<WorkFlowAdditionalRule> wfAdditionalRules = crit.list();
-		if (!wfAdditionalRules.isEmpty()) {
-			return wfAdditionalRules.get(0);
-		} else {
-			return null;
-		}
-	}
+    public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long objectType, final String additionalRules) {
+        final Criteria crit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
+        crit.add(Restrictions.eq(OBJECTTYPEID_ID, objectType));
+        if ("-1".equals(additionalRules)) {
+            crit.add(Restrictions.isNull(ADDITIONAL_RULE));
+        } else {
+            crit.add(Restrictions.eq(ADDITIONAL_RULE, additionalRules));
+        }
+        List<WorkFlowAdditionalRule> wfAdditionalRules = crit.list();
+        if (!wfAdditionalRules.isEmpty()) {
+            return wfAdditionalRules.get(0);
+        } else {
+            return null;
+        }
+    }
 
-	public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long objectId, final Long objectType, final String additionalRules) {
-		final Criteria crit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
-		crit.add(Restrictions.eq(OBJECTTYPEID_ID, objectType));
-		crit.add(Restrictions.ne("id", objectId));
-		if (additionalRules == null) {
-			crit.add(Restrictions.isNull(ADDITIONAL_RULE));
-		} else {
-			crit.add(Restrictions.eq(ADDITIONAL_RULE, additionalRules));
-		}
-		List<WorkFlowAdditionalRule> wfAdditionalRules = crit.list();
-		if (!wfAdditionalRules.isEmpty()) {
-			return wfAdditionalRules.get(0);
-		} else {
-			return null;
-		}
+    public WorkFlowAdditionalRule getObjectbyTypeandRule(final Long objectId, final Long objectType, final String additionalRules) {
+        final Criteria crit = entityQueryService.getSession().createCriteria(WorkFlowAdditionalRule.class);
+        crit.add(Restrictions.eq(OBJECTTYPEID_ID, objectType));
+        crit.add(Restrictions.ne("id", objectId));
+        if (additionalRules == null) {
+            crit.add(Restrictions.isNull(ADDITIONAL_RULE));
+        } else {
+            crit.add(Restrictions.eq(ADDITIONAL_RULE, additionalRules));
+        }
+        List<WorkFlowAdditionalRule> wfAdditionalRules = crit.list();
+        if (!wfAdditionalRules.isEmpty()) {
+            return wfAdditionalRules.get(0);
+        } else {
+            return null;
+        }
 
-	}
+    }
 }

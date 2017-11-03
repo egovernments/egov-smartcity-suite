@@ -43,18 +43,23 @@ import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.models.EgChecklists;
+import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.math.BigDecimal;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "EG_BILLREGISTER")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = EgBillregister.SEQ_EG_BILLREGISTER, sequenceName = EgBillregister.SEQ_EG_BILLREGISTER, allocationSize = 1)
-public class EgBillregister extends StateAware implements java.io.Serializable {
+public class EgBillregister extends StateAware<Position> implements java.io.Serializable {
 
     public static final String SEQ_EG_BILLREGISTER = "SEQ_EG_BILLREGISTER";
     private static final long serialVersionUID = -4312140421386028968L;
@@ -84,7 +89,7 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private Date billpasseddate;
     private Date workorderdate;
     @ManyToOne
-    @JoinColumn(name = "statusid", nullable = true)
+    @JoinColumn(name = "statusid")
     private EgwStatus status;
     @OneToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "egBillregister", targetEntity = EgBillregistermis.class)
     private EgBillregistermis egBillregistermis;
@@ -95,21 +100,21 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
     private Date approvedOn;
     @OrderBy("id")
     @OneToMany(orphanRemoval = true, cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "egBillregister", targetEntity = EgBilldetails.class)
-    private Set<EgBilldetails> egBilldetailes = new LinkedHashSet<EgBilldetails>(0);
+    private Set<EgBilldetails> egBilldetailes = new LinkedHashSet<>();
     @Transient
-    private List<EgBilldetails> billDetails = new ArrayList<EgBilldetails>(0);
+    private List<EgBilldetails> billDetails = new ArrayList<>();
     @Transient
-    private List<EgBilldetails> debitDetails = new ArrayList<EgBilldetails>(0);
+    private List<EgBilldetails> debitDetails = new ArrayList<>();
     @Transient
-    private List<EgBilldetails> creditDetails = new ArrayList<EgBilldetails>(0);
+    private List<EgBilldetails> creditDetails = new ArrayList<>();
     @Transient
-    private List<EgBilldetails> netPayableDetails = new ArrayList<EgBilldetails>(0);
+    private List<EgBilldetails> netPayableDetails = new ArrayList<>();
     @Transient
-    private List<EgBillPayeedetails> billPayeedetails = new ArrayList<EgBillPayeedetails>(0);
+    private List<EgBillPayeedetails> billPayeedetails = new ArrayList<>();
     @Transient
-    private List<EgChecklists> checkLists = new ArrayList<EgChecklists>(0);
+    private List<EgChecklists> checkLists = new ArrayList<>();
     @Transient
-    private List<DocumentUpload> documentDetail = new ArrayList<>(0);
+    private List<DocumentUpload> documentDetail = new ArrayList<>();
     @Transient
     private Long approvalDepartment;
     @Transient
@@ -125,8 +130,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.billamount = billamount;
         this.billstatus = billstatus;
         this.expendituretype = expendituretype;
-        // this.createdby = createdby;
-        // this.createddate = createddate;
     }
 
     public EgBillregister(final String billnumber, final Date billdate, final BigDecimal billamount,
@@ -147,10 +150,6 @@ public class EgBillregister extends StateAware implements java.io.Serializable {
         this.billtype = billtype;
         this.expendituretype = expendituretype;
         this.advanceadjusted = advanceadjusted;
-        // this.createdby = createdby;
-        // this.createddate = createddate;
-        // this.lastmodifiedby = lastmodifiedby;
-        // this.lastmodifieddate = lastmodifieddate;
         this.zone = zone;
         this.division = division;
         this.workordernumber = workordernumber;

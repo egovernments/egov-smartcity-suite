@@ -39,37 +39,6 @@
  */
 package org.egov.ptis.web.controller.demolition;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_WORKFLOW_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_PREVIEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -78,6 +47,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infstr.services.PersistenceService;
+import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
@@ -97,32 +67,35 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
+
 @Controller
 @RequestMapping(value = "/demolition/update/{id}")
 public class UpdatePropertyDemolitionController extends GenericWorkFlowController {
 
-    private static final String DEMOLITION_STATE_NEW = "Demolition:NEW";
+    public static final String EDIT = "edit";
+    public static final String VIEW = "view";
     protected static final String DEMOLITION_FORM = "demolition-form";
     protected static final String DEMOLITION_VIEW = "demolition-view";
     protected static final String DEMOLITION_SUCCESS = "demolition-success";
-    public static final String EDIT = "edit";
-    public static final String VIEW = "view";
+    private static final String DEMOLITION_STATE_NEW = "Demolition:NEW";
     private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String SUCCESSMESSAGE = "successMessage";
     private static final String PROPERTY_MODIFY_REJECT_FAILURE = "Initiator is not active so can not do rejection with the Assessment number :";
-    
-    PropertyDemolitionService propertyDemolitionService;
+
+    private PropertyDemolitionService propertyDemolitionService;
 
     @Autowired
     private PersistenceService<Property, Long> persistenceService;
 
     @Autowired
-    protected AssignmentService assignmentService;
-
-    @Autowired
-    public UpdatePropertyDemolitionController(final PropertyDemolitionService propertyDemolitionService) {
-        this.propertyDemolitionService = propertyDemolitionService;
-    }
+    private AssignmentService assignmentService;
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
@@ -134,10 +107,15 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
 
     @Autowired
-    private transient PropertyService propService;
-    
+    private PropertyService propService;
+
     @Autowired
     private ReassignService reassignService;
+
+    @Autowired
+    public UpdatePropertyDemolitionController(final PropertyDemolitionService propertyDemolitionService) {
+        this.propertyDemolitionService = propertyDemolitionService;
+    }
 
     @ModelAttribute
     public PropertyImpl property(@PathVariable final String id) {
@@ -150,7 +128,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
 
     @RequestMapping(method = RequestMethod.GET)
     public String view(@ModelAttribute PropertyImpl property, final Model model, @PathVariable final Long id, final HttpServletRequest request) {
-        boolean endorsementRequired ;
+        boolean endorsementRequired;
         String currentDesignation = null;
         final String currState = property.getState().getValue();
         final String nextAction = property.getState().getNextAction();
@@ -169,7 +147,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
                     property.getCurrentState().getOwnerPosition().getId(),
                     securityUtils.getCurrentUser());
         endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(),
-                    property.getCurrentState());
+                property.getCurrentState());
         model.addAttribute("endorsementRequired", endorsementRequired);
         model.addAttribute("ownersName", property.getBasicProperty().getFullOwnerName());
         model.addAttribute("applicationNo", property.getApplicationNo());
@@ -302,7 +280,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         Assignment assignment = null;
         final PropertyImpl propertyImpl = (PropertyImpl) property;
-        final List<StateHistory> history = propertyImpl.getStateHistory();
+        final List<StateHistory<Position>> history = propertyImpl.getStateHistory();
         Collections.reverse(history);
         final User user = securityUtils.getCurrentUser();
         String loggedInUserDesignation;
@@ -327,7 +305,7 @@ public class UpdatePropertyDemolitionController extends GenericWorkFlowControlle
             isNotrejection = false;
         }
         if (isNotrejection)
-            model.addAttribute(SUCCESSMESSAGE,PROPERTY_MODIFY_REJECT_FAILURE+property.getBasicProperty().getUpicNo());
+            model.addAttribute(SUCCESSMESSAGE, PROPERTY_MODIFY_REJECT_FAILURE + property.getBasicProperty().getUpicNo());
     }
 
     private String loggedInUserDesignation(final PropertyImpl propertyImpl, final User user) {

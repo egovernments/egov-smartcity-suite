@@ -1,7 +1,7 @@
 /* eGov suite of products aim to improve the internal efficiency,transparency,
    accountability and the service delivery of the government  organizations.
 
-    Copyright (C) <2016>  eGovernments Foundation
+    Copyright (C) <2017>  eGovernments Foundation
 
     The updated version of eGov suite of products as by eGovernments Foundation
     is available at http://www.egovernments.org
@@ -38,31 +38,6 @@
  */
 
 package org.egov.mrs.domain.service;
-
-import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
-import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
-import static org.egov.mrs.application.MarriageConstants.MIC;
-import static org.egov.mrs.application.MarriageConstants.MOM;
-
-import java.io.File;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
@@ -118,6 +93,31 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Base64;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
+import static org.egov.infra.utils.DateUtils.toDateUsingDefaultPattern;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.mrs.application.MarriageConstants.AFFIDAVIT;
+import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.MIC;
+import static org.egov.mrs.application.MarriageConstants.MOM;
+
 @Service
 @Transactional(readOnly = true)
 public class MarriageRegistrationService {
@@ -149,6 +149,8 @@ public class MarriageRegistrationService {
 
     @Autowired
     private final MarriageRegistrationRepository registrationRepository;
+    @Autowired
+    protected WitnessRepository witnessRepository;
     @PersistenceContext
     private EntityManager entityManager;
     @Autowired
@@ -169,8 +171,6 @@ public class MarriageRegistrationService {
     private MarriageApplicantService marriageApplicantService;
     @Autowired
     private RegistrationDocumentService registrationDocumentService;
-    @Autowired
-    protected WitnessRepository witnessRepository;
     @Autowired
     private MarriageUtils marriageUtils;
     @Autowired
@@ -275,7 +275,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration createRegistration(final MarriageRegistration registration,
-            final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
+                                                   final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
         if (org.apache.commons.lang.StringUtils.isBlank(registration.getApplicationNo()))
             registration.setApplicationNo(marriageRegistrationApplicationNumberGenerator
                     .getNextApplicationNumberForMarriageRegistration(registration));
@@ -304,7 +304,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration createMeesevaRegistration(final MarriageRegistration registration,
-            final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
+                                                          final WorkflowContainer workflowContainer, final boolean loggedUserIsMeesevaUser, final boolean citizenPortalUser) {
         createRegistration(registration, workflowContainer, loggedUserIsMeesevaUser, citizenPortalUser);
         return registration;
     }
@@ -331,7 +331,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration forwardRegistration(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer) {
+                                                    final WorkflowContainer workflowContainer) {
         updateRegistrationdata(marriageRegistration);
         updateDocuments(marriageRegistration);
         marriageRegistration.setStatus(
@@ -394,7 +394,7 @@ public class MarriageRegistrationService {
      * @param registration
      */
     private void addDocumentsToFileStore(final MarriageRegistration registration,
-            final Map<Long, MarriageDocument> documentAndId) {
+                                         final Map<Long, MarriageDocument> documentAndId) {
         final List<MarriageDocument> documents = registration.getDocuments();
         documents.stream()
                 .filter(document -> !document.getFile().isEmpty() && document.getFile().getSize() > 0)
@@ -445,7 +445,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration approveRegistration(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                                    final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
         marriageRegistration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
@@ -475,7 +475,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                                           final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
         final MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(
                 marriageRegistration, request);
         marriageRegistration.addCertificate(marriageCertificate);
@@ -484,7 +484,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration digiSignCertificate(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request){
+                                                    final WorkflowContainer workflowContainer, final HttpServletRequest request) {
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
@@ -503,7 +503,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration printCertificate(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                                 final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
         if (marriageRegistration.getMarriageCertificate().isEmpty()) {
             final MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(
                     marriageRegistration, request);
@@ -523,13 +523,13 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration rejectRegistration(final MarriageRegistration marriageRegistration,
-            final WorkflowContainer workflowContainer) {
+                                                   final WorkflowContainer workflowContainer) {
         marriageRegistration.setStatus(workflowContainer.getWorkFlowAction().equalsIgnoreCase(
                 MarriageConstants.WFLOW_ACTION_STEP_REJECT)
-                        ? marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(),
-                                MarriageConstants.MODULE_NAME)
-                        : marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CANCELLED.toString(),
-                                MarriageConstants.MODULE_NAME));
+                ? marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(),
+                MarriageConstants.MODULE_NAME)
+                : marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.CANCELLED.toString(),
+                MarriageConstants.MODULE_NAME));
         marriageRegistration.setRejectionReason(workflowContainer.getApproverComments());
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
         marriageRegistrationUpdateIndexesService.updateIndexes(marriageRegistration);
@@ -581,9 +581,9 @@ public class MarriageRegistrationService {
     public List<MarriageRegistration> searchRegistrationBetweenDateAndStatus(final SearchModel searchModel) {
         final EgwStatus status = searchModel.isRegistrationApproved()
                 ? marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(),
-                        MarriageConstants.MODULE_NAME)
+                MarriageConstants.MODULE_NAME)
                 : marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.REJECTED.toString(),
-                        MarriageConstants.MODULE_NAME);
+                MarriageConstants.MODULE_NAME);
         return registrationRepository.findByCreatedDateAfterAndCreatedDateBeforeAndStatus(searchModel.getFromDate(),
                 searchModel.getToDate(), status);
     }
@@ -613,7 +613,7 @@ public class MarriageRegistrationService {
     }
 
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> searchMarriageRegistrations(final MarriageRegistration registration) throws ParseException {
+    public List<MarriageRegistration> searchMarriageRegistrations(final MarriageRegistration registration) {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION);
         buildMarriageRegistrationSearchCriteria(registration, criteria);
         return criteria.list();
@@ -621,29 +621,28 @@ public class MarriageRegistrationService {
 
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchMarriageRegistrationsForFeeCollection(final MarriageRegistration registration)
-            throws ParseException {
+            {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION)
                 .createAlias("marriageRegistration.status", STATUS);
         buildMarriageRegistrationSearchCriteria(registration, criteria);
-        criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[] { MarriageRegistration.RegistrationStatus.CREATED.toString(),
-                MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[]{MarriageRegistration.RegistrationStatus.CREATED.toString(),
+                MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
     public List<ReIssue> searchApprovedReIssueRecordsForFeeCollection(final MarriageRegistrationSearchFilter mrSearchFilter)
-            throws ParseException {
+            {
         final Criteria criteria = getCurrentSession().createCriteria(ReIssue.class, "reIssue")
                 .createAlias("reIssue.status", STATUS);
         buildReIssueSearchCriteria(mrSearchFilter, criteria);
-        criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[] { ReIssue.ReIssueStatus.CREATED.toString(),
-                ReIssue.ReIssueStatus.APPROVED.toString() }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[]{ReIssue.ReIssueStatus.CREATED.toString(),
+                ReIssue.ReIssueStatus.APPROVED.toString()}));
         return criteria.list();
     }
 
     private void buildReIssueSearchCriteria(final MarriageRegistrationSearchFilter mrSearchFilter, final Criteria criteria)
-            throws ParseException {
-        final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            {
         criteria.createAlias("reIssue.registration", "registration");
         if (mrSearchFilter.getRegistrationNo() != null)
             criteria.add(
@@ -660,12 +659,12 @@ public class MarriageRegistrationService {
             criteria.createAlias("registration.wife", "wife").add(
                     Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getApplicationDate() != null)
-            criteria.add(Restrictions.between("reIssue.applicationDate", sdf.parse(mrSearchFilter.getApplicationDate()),
-                    org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getApplicationDate()), 1)));
+            criteria.add(Restrictions.between("reIssue.applicationDate", toDateUsingDefaultPattern(mrSearchFilter.getApplicationDate()),
+                    org.apache.commons.lang3.time.DateUtils.addDays(toDateUsingDefaultPattern(mrSearchFilter.getApplicationDate()), 1)));
         if (mrSearchFilter.getDateOfMarriage() != null)
             criteria.add(
-                    Restrictions.between("registration.dateOfMarriage", sdf.parse(mrSearchFilter.getDateOfMarriage()),
-                            org.apache.commons.lang3.time.DateUtils.addDays(sdf.parse(mrSearchFilter.getDateOfMarriage()), 0)));
+                    Restrictions.between("registration.dateOfMarriage", toDateUsingDefaultPattern(mrSearchFilter.getDateOfMarriage()),
+                            org.apache.commons.lang3.time.DateUtils.addDays(toDateUsingDefaultPattern(mrSearchFilter.getDateOfMarriage()), 0)));
         if (mrSearchFilter.getFromDate() != null)
             criteria.add(Restrictions.ge("reIssue.applicationDate",
                     marriageRegistrationReportsService.resetFromDateTimeStamp(mrSearchFilter.getFromDate())));
@@ -677,7 +676,7 @@ public class MarriageRegistrationService {
     }
 
     private void buildMarriageRegistrationSearchCriteria(final MarriageRegistration registration, final Criteria criteria)
-            throws ParseException {
+            {
         if (registration.getRegistrationNo() != null)
             criteria.add(Restrictions.ilike("marriageRegistration.registrationNo", registration.getRegistrationNo(),
                     MatchMode.ANYWHERE));
@@ -717,14 +716,14 @@ public class MarriageRegistrationService {
     public List<Map<String, Object>> getHistory(final MarriageRegistration registration) {
         User user;
         final List<Map<String, Object>> historyTable = new ArrayList<>();
-        final State state = registration.getState();
+        final State<Position> state = registration.getState();
         final Map<String, Object> map = new HashMap<>(0);
         if (null != state) {
             if (!registration.getStateHistory().isEmpty()
                     && registration.getStateHistory() != null)
                 Collections.reverse(registration.getStateHistory());
             Map<String, Object> historyMap;
-            for (final StateHistory stateHistory : registration.getStateHistory()) {
+            for (final StateHistory<Position> stateHistory : registration.getStateHistory()) {
                 historyMap = new HashMap<>(0);
                 historyMap.put("date", stateHistory.getDateInfo());
                 historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
@@ -770,13 +769,13 @@ public class MarriageRegistrationService {
 
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationByStatus(final MarriageRegistration registration, final String status)
-            throws ParseException {
+            {
 
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION)
                 .createAlias("marriageRegistration.status", STATUS);
         buildMarriageRegistrationSearchCriteria(registration, criteria);
         if (status != null)
-            criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[] { status }));
+            criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[]{status}));
         return criteria.list();
     }
 
@@ -785,7 +784,7 @@ public class MarriageRegistrationService {
     }
 
     public ReportOutput getReportParamsForAcknowdgementForMrgReg(final MarriageRegistration registration,
-            final String municipalityName, final String cityName) {
+                                                                 final String municipalityName, final String cityName) {
         String applicantName = null;
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put(MUNICIPALITY, municipalityName);
@@ -796,14 +795,13 @@ public class MarriageRegistrationService {
             applicantName = registration.getHusband().getFullName().concat(" / ").concat(registration.getWife().getFullName());
         reportParams.put(APPLICANT_NAME, applicantName);
         reportParams.put(ACKNOWLEDGEMENT_NO, registration.getApplicationNo());
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        reportParams.put(CURRENT_DATE, formatter.format(new Date()));
+        reportParams.put(CURRENT_DATE, currentDateToDefaultDateFormat());
         reportParams.put(ADDRESS, registration.getHusband().getContactInfo().getResidenceAddress());
-        reportParams.put(DUE_DATE, formatter.format(calculateDueDateForMrgReg()));
+        reportParams.put(DUE_DATE, toDefaultDateFormat(calculateDueDateForMrgReg()));
         reportParams.put(PARTY_S_COPY, PARTY_S_COPY);
         reportParams.put(OFFICE_S_COPY, OFFICE_S_COPY);
         reportParams.put(APPLICATION_CENTRE, marriageMessageSource.getMessage("msg.application.centre",
-                new String[] {}, Locale.getDefault()));
+                new String[]{}, Locale.getDefault()));
         reportParams.put(APP_TYPE, NEW_MARRIAGE_REGISTRATION);
 
         final ReportRequest reportInput = new ReportRequest(MARRIAGE_ACKNOWLEDGEMENT_REPORT_FILE, registration, reportParams);
@@ -813,7 +811,7 @@ public class MarriageRegistrationService {
     }
 
     public ReportOutput getReportParamsForAcknowdgementForMrgReissue(final ReIssue reIssue,
-            final String municipalityName, final String cityName) {
+                                                                     final String municipalityName, final String cityName) {
         String applicantName = null;
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put(MUNICIPALITY, municipalityName);
@@ -825,14 +823,13 @@ public class MarriageRegistrationService {
                     .concat(reIssue.getRegistration().getWife().getFullName());
         reportParams.put(APPLICANT_NAME, applicantName);
         reportParams.put(ACKNOWLEDGEMENT_NO, reIssue.getApplicationNo());
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-        reportParams.put(CURRENT_DATE, formatter.format(new Date()));
+        reportParams.put(CURRENT_DATE, currentDateToDefaultDateFormat());
         reportParams.put(ADDRESS, reIssue.getRegistration().getHusband().getContactInfo().getResidenceAddress());
-        reportParams.put(DUE_DATE, formatter.format(calculateDueDateForMrgReIssue()));
+        reportParams.put(DUE_DATE, toDefaultDateFormat(calculateDueDateForMrgReIssue()));
         reportParams.put(PARTY_S_COPY, PARTY_S_COPY);
         reportParams.put(OFFICE_S_COPY, OFFICE_S_COPY);
         reportParams.put(APPLICATION_CENTRE, marriageMessageSource.getMessage("msg.application.centre",
-                new String[] {}, Locale.getDefault()));
+                new String[]{}, Locale.getDefault()));
         reportParams.put(APP_TYPE, REISSUE_MARRIAGE_CERTIFICATE);
 
         final ReportRequest reportInput = new ReportRequest(MARRIAGE_ACKNOWLEDGEMENT_REPORT_FILE, reIssue, reportParams);

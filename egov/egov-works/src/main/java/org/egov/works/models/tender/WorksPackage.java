@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,6 +39,24 @@
  */
 package org.egov.works.models.tender;
 
+import org.apache.commons.lang.StringUtils;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.Auditable;
+import org.egov.infra.persistence.entity.component.Money;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
+import org.egov.works.utils.WorksConstants;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,46 +68,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.Auditable;
-import org.egov.infra.persistence.entity.component.Money;
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.utils.DateUtils;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.abstractestimate.entity.Activity;
-import org.egov.works.utils.WorksConstants;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotEmpty;
-
-public class WorksPackage extends StateAware implements Auditable {
+public class WorksPackage extends StateAware<Position> implements Auditable {
 
     private static final long serialVersionUID = -4874817415037202881L;
-
-    public enum WorkPacakgeStatus {
-        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED, RESUBMITTED;
-
-        @Override
-        public String toString() {
-            return StringUtils.capitalize(name());
-        }
-    }
-
-    public enum Actions {
-        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
     private Long id;
 
     @NotEmpty(message = "wp.name.is.null")
@@ -102,7 +83,6 @@ public class WorksPackage extends StateAware implements Auditable {
     @NotNull(message = "wp.userDepartment.is.null")
     private Department department;
 
-    // @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "invalid.wpDate")
     @NotNull(message = "wp.wpDate.is.null")
     @DateFormat(message = "invalid.fieldvalue.wpDate")
     private Date wpDate;
@@ -113,9 +93,9 @@ public class WorksPackage extends StateAware implements Auditable {
     private String employeeName;
     private Money workValueIncludingTaxes;
 
-    private List<WorksPackageDetails> worksPackageDetails = new LinkedList<WorksPackageDetails>();
-    private List<RetenderHistory> retenderHistoryDetails = new LinkedList<RetenderHistory>();
-    private List<Retender> retenderDetails = new LinkedList<Retender>();
+    private List<WorksPackageDetails> worksPackageDetails = new LinkedList<>();
+    private List<RetenderHistory> retenderHistoryDetails = new LinkedList<>();
+    private List<Retender> retenderDetails = new LinkedList<>();
 
     @NotEmpty(message = "wp.tenderFileNumber.is.null")
     @Length(max = 50, message = "wp.tenderFileNumber.length")
@@ -125,12 +105,12 @@ public class WorksPackage extends StateAware implements Auditable {
     private EgwStatus egwStatus;
     private String wpOfflineStatus;
     private OfflineStatus latestOfflineStatus;
-    private Set<OfflineStatus> offlineStatuses = Collections.EMPTY_SET;
-    private List<String> worksPackageActions = new LinkedList<String>();
+    private Set<OfflineStatus> offlineStatuses = Collections.emptySet();
+    private List<String> worksPackageActions = new LinkedList<>();
     private String worksPackageStatus;
     private Date approvedDate;
 
-    private Set<TenderEstimate> tenderEstimateSet = new HashSet<TenderEstimate>();
+    private Set<TenderEstimate> tenderEstimateSet = new HashSet<>();
 
     @Override
     public Long getId() {
@@ -195,7 +175,7 @@ public class WorksPackage extends StateAware implements Auditable {
     }
 
     public List<ValidationError> validate() {
-        final List<ValidationError> errors = new ArrayList<ValidationError>();
+        final List<ValidationError> errors = new ArrayList<>();
         if (worksPackageDetails.isEmpty())
             errors.add(new ValidationError("estimates", "estimates.null"));
         return errors;
@@ -236,7 +216,7 @@ public class WorksPackage extends StateAware implements Auditable {
     }
 
     public Collection<EstimateLineItemsForWP> getActivitiesForEstimate() {
-        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<Long, EstimateLineItemsForWP>();
+        final Map<Long, EstimateLineItemsForWP> resultMap = new HashMap<>();
         for (final Activity act : getAllActivities()) {
             final EstimateLineItemsForWP estlineItem = new EstimateLineItemsForWP();
             if (act.getSchedule() != null)
@@ -304,14 +284,14 @@ public class WorksPackage extends StateAware implements Auditable {
     }
 
     public List<Activity> getAllActivities() {
-        final List<Activity> actList = new ArrayList<Activity>();
+        final List<Activity> actList = new ArrayList<>();
         for (final AbstractEstimate ab : getAllEstimates())
             actList.addAll(ab.getActivities());
         return actList;
     }
 
     public List<Activity> getSorActivities() {
-        final List<Activity> actList = Collections.EMPTY_LIST;
+        final List<Activity> actList = Collections.emptyList();
         for (final Activity act : getAllActivities())
             if (act.getSchedule() != null)
                 actList.add(act);
@@ -319,7 +299,7 @@ public class WorksPackage extends StateAware implements Auditable {
     }
 
     public List<Activity> getNonSorActivities() {
-        final List<Activity> actList = Collections.EMPTY_LIST;
+        final List<Activity> actList = Collections.emptyList();
         for (final Activity act : getAllActivities())
             if (act.getNonSor() != null)
                 actList.add(act);
@@ -334,6 +314,7 @@ public class WorksPackage extends StateAware implements Auditable {
     }
 
     public void setTotalAmount(final double totalAmount) {
+        //Not set ?
     }
 
     public double getMarketRateTotalAmount() {
@@ -345,7 +326,7 @@ public class WorksPackage extends StateAware implements Auditable {
 
     private Collection<EstimateLineItemsForWP> getEstLineItemsWithSrlNo(final Collection<EstimateLineItemsForWP> actList) {
         int i = 1;
-        final Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<EstimateLineItemsForWP>();
+        final Collection<EstimateLineItemsForWP> latestEstLineItemList = new ArrayList<>();
         for (final EstimateLineItemsForWP act : actList) {
             act.setSrlNo(i);
             latestEstLineItemList.add(act);
@@ -355,8 +336,8 @@ public class WorksPackage extends StateAware implements Auditable {
     }
 
     public List<AbstractEstimate> getAllEstimates() {
-        final List<AbstractEstimate> abList = new ArrayList<AbstractEstimate>();
-        if (this != null && !getWorksPackageDetails().isEmpty())
+        final List<AbstractEstimate> abList = new ArrayList<>();
+        if (!getWorksPackageDetails().isEmpty())
             for (final WorksPackageDetails wpd : getWorksPackageDetails())
                 abList.add(wpd.getEstimate());
         return abList;
@@ -372,7 +353,7 @@ public class WorksPackage extends StateAware implements Auditable {
 
     public String getPackageNumberWithoutWP() {
         if (StringUtils.isNotBlank(wpNumber)) {
-            final String number[] = wpNumber.split("/");
+            final String[] number = wpNumber.split("/");
             return number.length == 0 ? "0" : number[2] + "/" + number[3];
         }
         return "0";
@@ -390,7 +371,7 @@ public class WorksPackage extends StateAware implements Auditable {
     }
 
     public Set<OfflineStatus> getOfflineStatuses() {
-        // TODO:Fixme - Commented out for time being since it is giving issue on forward for already saved object
+        //FIXME - Commented out for time being since it is giving issue on forward for already saved object
         /*
          * final Set<SetStatus> returnList = new HashSet<SetStatus>(); // Get only statuses which are of WorksPackage if
          * (setStatuses != null && setStatuses.size() > 0) for (final SetStatus ss : setStatuses) if (ss.getObjectType() != null
@@ -473,5 +454,23 @@ public class WorksPackage extends StateAware implements Auditable {
 
     public void setApprovedDate(final Date approvedDate) {
         this.approvedDate = approvedDate;
+    }
+
+    public enum WorkPacakgeStatus {
+        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED, RESUBMITTED;
+
+        @Override
+        public String toString() {
+            return StringUtils.capitalize(name());
+        }
+    }
+
+    public enum Actions {
+        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 }

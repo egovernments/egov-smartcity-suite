@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,25 +38,15 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infstr.services;
+package org.egov.commons.repository;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
+import org.egov.commons.EgwStatus;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-public interface EISServeable {
 
-    List<Position> getPositionsForUser(Long userId, Date forDate);
+@Repository
+public interface EgwStatusRepository extends JpaRepository<EgwStatus, Integer> {
 
-    User getUserForPosition(Long positionId, Date forDate);
-
-    Position getPrimaryPositionForUser(Long userId, Date forDate);
-
-    List<Designation> getAllDesignationByDept(Integer departmentId, Date givenDate);
-
-    List getEmployeeInfoList(HashMap<String, String> paramMap);
 }

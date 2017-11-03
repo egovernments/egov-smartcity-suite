@@ -201,7 +201,6 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     public String showForApproval() throws IOException {
         documentTypes = tradeLicenseService.getDocumentTypesByApplicationType(ApplicationType.valueOf(license()
                 .getLicenseAppType().getName().toUpperCase()));
-        //TODO to be removed
         if (!license().isNewWorkflow()) {
             if (license().getState().getValue().equals(WF_LICENSE_CREATED)
                     || license().getState().getValue().contains(WF_STATE_COMMISSIONER_APPROVED_STR) && license()
@@ -227,11 +226,12 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
         }
         List<Position> positionList = positionMasterService
                 .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
-        if (!positionList.isEmpty() && !positionList.contains(license().getState().getOwnerPosition())) {
+        Position owner = license().currentAssignee();
+        if (!positionList.isEmpty() && !positionList.contains(owner)) {
             ServletActionContext.getResponse().setContentType("text/html");
             ServletActionContext.getResponse().getWriter()
                     .write("<center style='color:red;font-weight:bolder'>Workflow item is in "
-                            + license().getCurrentState().getOwnerPosition().getName() + " inbox !</center>");
+                            + owner.getName() + " inbox !</center>");
             return null;
         }
         licenseHistory = tradeLicenseService.populateHistory(tradeLicense);

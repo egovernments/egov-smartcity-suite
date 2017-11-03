@@ -1,50 +1,43 @@
-/**
+/*
  * eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2015>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ * accountability and the service delivery of the government  organizations.
+ *
+ *  Copyright (C) 2017  eGovernments Foundation
+ *
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
+ *
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
+ *
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
+ *
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
+ *
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
+ *
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ *
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
+ *
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 package org.egov.stms.utils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.EgwStatus;
@@ -89,6 +82,13 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class SewerageTaxUtils {
@@ -135,7 +135,7 @@ public class SewerageTaxUtils {
 
     @Autowired
     @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+    private FileStoreService fileStoreService;
 
     /**
      * @return false by default. If configuration value is Yes, then returns true.
@@ -145,7 +145,7 @@ public class SewerageTaxUtils {
         final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(
                 SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.NEWCONNECTIONALLOWEDIFPTDUE);
 
-        if (appConfigValue != null && appConfigValue.size() > 0)
+        if (appConfigValue != null && !appConfigValue.isEmpty())
             return "YES".equalsIgnoreCase(appConfigValue.get(0).getValue());
 
         return false;
@@ -157,17 +157,8 @@ public class SewerageTaxUtils {
     }
 
     public AssessmentDetails getAssessmentDetailsForFlag(final String asessmentNumber, final Integer flagDetail) {
-        final AssessmentDetails assessmentDetails = propertyIntegrationService.getAssessmentDetailsForFlag(
-                asessmentNumber, flagDetail, BasicPropertyStatus.ACTIVE); // TODO:
-                                                                          // CHECK
-                                                                          // AGAIN.
-                                                                          // ADDED
-                                                                          // "BasicPropertyStatus.ACTIVE"
-                                                                          // TO
-                                                                          // FIX
-                                                                          // COMPILATION
-                                                                          // ISSUES.
-        return assessmentDetails;
+        return propertyIntegrationService.getAssessmentDetailsForFlag(
+                asessmentNumber, flagDetail, BasicPropertyStatus.ACTIVE);
     }
 
     public Boolean getCurrentUserRole(final User currentUser) {
@@ -181,13 +172,13 @@ public class SewerageTaxUtils {
 
     public String getApproverName(final Long approvalPosition) {
         Assignment assignment = null;
-        List<Assignment> asignList = null;
+        List<Assignment> asignList;
         if (approvalPosition != null)
             assignment = assignmentService.getPrimaryAssignmentForPositionAndDate(approvalPosition, new Date());
         if (assignment != null) {
-            asignList = new ArrayList<Assignment>();
+            asignList = new ArrayList<>();
             asignList.add(assignment);
-        } else if (assignment == null)
+        } else
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
@@ -214,16 +205,16 @@ public class SewerageTaxUtils {
      * @return Assignment
      */
     public Assignment getUserPositionByZone(final String asessmentNumber, final AssessmentDetails assessmentDetails,
-            final Boundary boundaryObj) {
+                                            final Boundary boundaryObj) {
         final String designationStr = getDesignationForThirdPartyUser();
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
         final String[] designation = designationStr.split(",");
-        List<Assignment> assignment = new ArrayList<Assignment>();
+        List<Assignment> assignment = new ArrayList<>();
         for (final String dept : department) {
             for (final String desg : designation) {
                 assignment = assignmentService.findByDepartmentDesignationAndBoundary(departmentService
-                        .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
+                                .getDepartmentByName(dept).getId(), designationService.getDesignationByName(desg).getId(),
                         boundaryObj.getId());
                 if (!assignment.isEmpty())
                     break;
@@ -253,8 +244,8 @@ public class SewerageTaxUtils {
     }
 
     public Long getApproverPosition(final String designationName,
-            final SewerageApplicationDetails sewerageApplicationDetails) {
-        final Set<StateHistory> stateHistoryList = sewerageApplicationDetails.getState().getHistory();
+                                    final SewerageApplicationDetails sewerageApplicationDetails) {
+        final Set<StateHistory<Position>> stateHistoryList = sewerageApplicationDetails.getState().getHistory();
         Long approverPosition = 0l;
         final String[] desgnArray = designationName.split(",");
         User currentUser = null;
@@ -407,16 +398,13 @@ public class SewerageTaxUtils {
     public boolean isInspectionFeeCollectionRequired() {
         final AppConfigValues inspectionFeeCollectionRqd = appConfigValuesService.getConfigValuesByModuleAndKey(
                 SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_INSPECTIONFEE).get(0);
-        if (inspectionFeeCollectionRqd != null && inspectionFeeCollectionRqd.getValue() != null
-                && inspectionFeeCollectionRqd.getValue().equals("YES"))
-            return true;
-
-        return false;
+        return inspectionFeeCollectionRqd != null && inspectionFeeCollectionRqd.getValue() != null
+                && inspectionFeeCollectionRqd.getValue().equals("YES");
     }
 
     public List<Role> getLoginUserRoles() {
 
-        final List<Role> roleList = new ArrayList<Role>();
+        final List<Role> roleList = new ArrayList<>();
         if (ApplicationThreadLocals.getUserId() != null) {
             final User currentUser = userService.getUserById(ApplicationThreadLocals.getUserId());
             for (final Role userrole : currentUser.getRoles())
@@ -444,15 +432,13 @@ public class SewerageTaxUtils {
      */
     public List<Installment> getInstallmentsForCurrYear(final Date currDate) {
         final Module module = moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME);
-        final List<Installment> installments = installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
-        return installments;
+        return installmentDao.getAllInstallmentsByModuleAndStartDate(module, currDate);
     }
 
     public List<Installment> getInstallmentsByModuledescendingorder(final Module module, final int year) {
-        final List<Installment> installments = installmentDao
+        return installmentDao
                 .getInstallmentsByModuleAndInstallmentYearOrderByInstallmentYearDescending(
                         moduleService.getModuleByName(SewerageTaxConstants.MODULE_NAME), year);
-        return installments;
     }
 
     public Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
@@ -476,10 +462,7 @@ public class SewerageTaxUtils {
     public boolean isDonationChargeCollectionRequiredForLegacy() {
         final AppConfigValues donationChargeConfig = appConfigValuesService.getConfigValuesByModuleAndKey(
                 SewerageTaxConstants.MODULE_NAME, SewerageTaxConstants.APPCONFIG_COLLECT_LEGACY_DONATIONCHARGE).get(0);
-        if (donationChargeConfig != null && donationChargeConfig.getValue() != null
-                && "YES".equals(donationChargeConfig.getValue()))
-            return true;
-
-        return false;
+        return donationChargeConfig != null && donationChargeConfig.getValue() != null
+                && "YES".equals(donationChargeConfig.getValue());
     }
 }

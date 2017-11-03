@@ -101,7 +101,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Hashtable;
 import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
@@ -215,7 +214,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 		@Result(name = RevisionPetitionAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
 		@Result(name = RevisionPetitionAction.MEESEVA_ERROR, location = "common/meeseva-errorPage.jsp") })
 public class RevisionPetitionAction extends PropertyTaxBaseAction {
-
+	private static final Logger logger = Logger.getLogger(RevisionPetitionAction.class);
 	private static final String NOTEXISTS_POSITION = "notexists.position";
 	private static final String APPROVE = "Approve";
 	private static final String PRINT_ENDORESEMENT = "Print Endoresement";
@@ -241,7 +240,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	public static final String OBJECTION_FORWARD = "objection.forward";
 	public static final String REJECT_INSPECTION = "objection.inspection.rejection";
 
-	private final Logger logger = Logger.getLogger(RevisionPetitionAction.class);
+
 	private ViewPropertyAction viewPropertyAction = new ViewPropertyAction();
 	private RevisionPetition objection = new RevisionPetition();
 	private String propertyId;
@@ -263,7 +262,6 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private String areaOfPlot;
 
 	private List<DocumentType> documentTypes = new ArrayList<>();
-	private transient List<Hashtable<String, Object>> historyMap = new ArrayList<>();
 	private String northBoundary;
 	private String southBoundary;
 	private String eastBoundary;
@@ -319,7 +317,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private transient ReportViewerUtil reportViewerUtil;
 	
 	@Autowired
-	private ReassignService reassignmentservice;
+	private transient ReassignService reassignmentservice;
 
 	private transient SMSEmailService sMSEmailService;
 	private String actionType;
@@ -1425,7 +1423,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 					|| wfmatrix.getCurrentState().equalsIgnoreCase(PropertyTaxConstants.RP_INSPECTIONVERIFIED)
 					|| wfmatrix.getCurrentState().equalsIgnoreCase(PropertyTaxConstants.RP_WF_REGISTERED)
 					|| objection.getState().getValue().equalsIgnoreCase(PropertyTaxConstants.GRP_WF_REGISTERED))) {
-				for (final StateHistory stateHistoryObj : objection.getState().getHistory()) {
+				for (final StateHistory<Position> stateHistoryObj : objection.getState().getHistory()) {
 					if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_CREATED)) {
 						position = stateHistoryObj.getOwnerPosition();
 						final User sender = eisCommonService.getUserForPosition(position.getId(), new Date());
@@ -1515,9 +1513,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 						new String[] { loggedInUser.getName().concat("~").concat(position.getName()) }));
 
 		} else if (workFlowAction.equalsIgnoreCase(REJECT_INSPECTION_STR)) {
-			final List<StateHistory> stateHistoryList = objection.getStateHistory();
+			final List<StateHistory<Position>> stateHistoryList = objection.getStateHistory();
 			Assignment wfInit = null;
-			for (final StateHistory stateHistoryObj : stateHistoryList)
+			for (final StateHistory<Position> stateHistoryObj : stateHistoryList)
 				if (stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_HEARINGCOMPLETED)
 						|| stateHistoryObj.getValue().equalsIgnoreCase(PropertyTaxConstants.GRP_HEARINGCOMPLETED)) {
 					position = stateHistoryObj.getOwnerPosition();
@@ -1541,8 +1539,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				addActionMessage(getText(REJECT_INSPECTION) + objection.getBasicProperty().getUpicNo());
 
 		} else if (workFlowAction.equalsIgnoreCase(REJECT)) {
-			final List<StateHistory> stateHistoryList = objection.getStateHistory();
-			for (final StateHistory stateHistoryObj : stateHistoryList)
+			final List<StateHistory<Position>> stateHistoryList = objection.getStateHistory();
+			for (final StateHistory<Position> stateHistoryObj : stateHistoryList)
 				if (stateHistoryObj.getValue().equalsIgnoreCase(objection.getCurrentState().getValue())) {
 					position = stateHistoryObj.getOwnerPosition();
 					break;
@@ -2056,12 +2054,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	}
 
 	@Override
-	public List<Hashtable<String, Object>> getHistoryMap() {
+	public List<HashMap<String, Object>> getHistoryMap() {
 		return historyMap;
 	}
 
 	@Override
-	public void setHistoryMap(final List<Hashtable<String, Object>> historyMap) {
+	public void setHistoryMap(final List<HashMap<String, Object>> historyMap) {
 		this.historyMap = historyMap;
 	}
 

@@ -45,7 +45,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -106,11 +105,11 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
+import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
 import org.hibernate.Query;
@@ -150,7 +149,7 @@ public class CollectionsUtil {
     private ApplicationContext context;
 
     @Autowired
-    private EISServeable eisService;
+    private EisUtilService eisService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -498,9 +497,7 @@ public class CollectionsUtil {
         validityEnd.clear(Calendar.SECOND);
         validityEnd.clear(Calendar.MILLISECOND);
 
-        if (validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0)
-            return true;
-        return false;
+        return validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0;
     }
 
     /**
@@ -823,7 +820,7 @@ public class CollectionsUtil {
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
             }
-        final CollectionIndex collectionIndex = CollectionIndex
+        return CollectionIndex
                 .builder()
                 .withReceiptDate(receiptHeader.getReceiptdate())
                 .withReceiptnumber(receiptHeader.getReceiptnumber())
@@ -854,7 +851,6 @@ public class CollectionsUtil {
                 .withRevenueWard(receiptAmountInfo.getRevenueWard())
                 .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
                 .withConflict(receiptAmountInfo.getConflict() != null ? receiptAmountInfo.getConflict() : 0).build();
-        return collectionIndex;
     }
 
     public Boolean checkVoucherCreation(final ReceiptHeader receiptHeader) {
@@ -947,7 +943,7 @@ public class CollectionsUtil {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
                         + "]");
-                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
+                templateName = "PT_collection_receipt";
 
                 if (!isValidTemplate(templateName)) {
                     // No template available for creating the receipt report.
@@ -1047,14 +1043,12 @@ public class CollectionsUtil {
     }
 
     public List<Bankbranch> getBankCollectionBankBranchList() {
-        List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
-        List<Object[]> queryResult = Collections.EMPTY_LIST;
-        User loggedInUser = getLoggedInUser();
+        List<Bankbranch> bankBranchArrayList = new ArrayList<>();
         StringBuilder queryString = new StringBuilder(
                 "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb,"
                         + " EGCL_COLLECTIONMIS cmis where bb.BANKID=b.ID  and bb.id=cmis.depositedBranch ");
         final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-        queryResult = query.list();
+        List<Object[]> queryResult = query.list();
         for (int i = 0; i < queryResult.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResult.get(i);
             final Bankbranch newBankbranch = new Bankbranch();

@@ -47,10 +47,10 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.JsonUtils;
-import org.egov.infstr.services.EISServeable;
 import org.egov.pgr.entity.contract.ProcessOwnerAdaptor;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.pims.service.EisUtilService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -68,7 +68,7 @@ import java.util.stream.Collectors;
 public class ComplaintProcessOwnerSelectionController {
 
     @Autowired
-    private EISServeable eisService;
+    private EisUtilService eisService;
 
     @Autowired
     private DesignationService designationService;
@@ -111,7 +111,7 @@ public class ComplaintProcessOwnerSelectionController {
             HashMap<String, String> paramMap = new HashMap<>();
             paramMap.put("departmentId", String.valueOf(approvalDepartment));
             paramMap.put("designationId", String.valueOf(approvalDesignation));
-            List<EmployeeView> employeeViewData = (List<EmployeeView>) eisService.getEmployeeInfoList(paramMap);
+            List<EmployeeView> employeeViewData = eisService.getEmployeeInfoList(paramMap);
             Set<EmployeeView> processOwners = employeeViewData
                     .stream()
                     .filter(employeeView -> (employeeView.getEmployee().hasRole("Redressal Officer")

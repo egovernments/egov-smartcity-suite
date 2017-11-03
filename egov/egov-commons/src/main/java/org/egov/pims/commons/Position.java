@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -40,9 +40,10 @@
 
 package org.egov.pims.commons;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.workflow.entity.OwnerGroup;
 
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -53,66 +54,78 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import static org.egov.pims.commons.DeptDesig.SEQ_DEPTDESIG;
+import static org.egov.pims.commons.Position.SEQ_POSITION;
 
 @Entity
-@Table(name = "egeis_deptdesig")
-@SequenceGenerator(name = SEQ_DEPTDESIG, sequenceName = SEQ_DEPTDESIG, allocationSize = 1)
-public class DeptDesig extends AbstractAuditable {
-    public static final String SEQ_DEPTDESIG = "SEQ_egeis_deptdesig";
-    private static final long serialVersionUID = 6184300877653586028L;
+@Table(name = "eg_position")
+@SequenceGenerator(name = SEQ_POSITION, sequenceName = SEQ_POSITION, allocationSize = 1)
+public class Position extends OwnerGroup {
+    public static final String SEQ_POSITION = "SEQ_EG_POSITION";
+    private static final long serialVersionUID = -7237503685614187960L;
     @Id
-    @GeneratedValue(generator = SEQ_DEPTDESIG, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_POSITION, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "designation")
-    private Designation designation;
+    @Column(name = "name", unique = true)
+    private String name;
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JoinColumn(name = "deptDesig")
+    private DeptDesig deptDesig;
+    private boolean isPostOutsourced;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "department")
-    private Department department;
-    private Integer sanctionedPosts;
-    private Integer outsourcedPosts;
-
+    @Override
     public Long getId() {
         return id;
     }
 
+    @Override
     public void setId(final Long id) {
         this.id = id;
     }
 
-    public Designation getDesignation() {
-        return designation;
+    public String getName() {
+        return name;
     }
 
-    public void setDesignation(final Designation designation) {
-        this.designation = designation;
+    public void setName(final String name) {
+        this.name = name;
     }
 
-    public Department getDepartment() {
-        return department;
+    public boolean isPostOutsourced() {
+        return isPostOutsourced;
     }
 
-    public void setDepartment(final Department department) {
-        this.department = department;
+    public void setPostOutsourced(final boolean isPostOutsourced) {
+        this.isPostOutsourced = isPostOutsourced;
     }
 
-    public Integer getSanctionedPosts() {
-        return sanctionedPosts;
+    public boolean getIsPostOutsourced() {
+        return isPostOutsourced;
     }
 
-    public void setSanctionedPosts(final Integer sanctionedPosts) {
-        this.sanctionedPosts = sanctionedPosts;
+    public void setIsPostOutsourced(final boolean isPostOutsourced) {
+        this.isPostOutsourced = isPostOutsourced;
     }
 
-    public Integer getOutsourcedPosts() {
-        return outsourcedPosts;
+    public DeptDesig getDeptDesig() {
+        return deptDesig;
     }
 
-    public void setOutsourcedPosts(final Integer outsourcedPosts) {
-        this.outsourcedPosts = outsourcedPosts;
+    public void setDeptDesig(final DeptDesig deptDesig) {
+        this.deptDesig = deptDesig;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Position)) return false;
+        Position position = (Position) o;
+        return this.getName().equals(position.getName());
+    }
+
+    @Override
+    public int hashCode() {
+        return 31 * this.getName().hashCode();
     }
 
 }

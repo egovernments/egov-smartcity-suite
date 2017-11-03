@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -41,17 +41,15 @@ package org.egov.model.advance;
 
 import org.egov.commons.EgwStatus;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
-public class EgAdvanceRequisition extends StateAware implements java.io.Serializable {
+public class EgAdvanceRequisition extends StateAware<Position> implements java.io.Serializable {
 
-    /**
-     *
-     */
     private static final long serialVersionUID = 5350085164408760402L;
     private Long id;
     private String advanceRequisitionNumber;
@@ -62,9 +60,24 @@ public class EgAdvanceRequisition extends StateAware implements java.io.Serializ
     private String arftype;
 
     private EgAdvanceRequisitionMis egAdvanceReqMises;
-    private Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses = new HashSet<EgAdvanceRequisitionDetails>(0);
+    private Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses = new HashSet<>();
 
     public EgAdvanceRequisition() {
+    }
+
+    public EgAdvanceRequisition(final String advanceRequisitionNumber, final EgwStatus status,
+                                final Date advanceRequisitionDate, final BigDecimal advanceRequisitionAmount, final String narration,
+                                final String arftype, final EgAdvanceRequisitionMis egAdvanceReqMises,
+                                final Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses) {
+        super();
+        this.advanceRequisitionNumber = advanceRequisitionNumber;
+        this.status = status;
+        this.advanceRequisitionDate = advanceRequisitionDate;
+        this.advanceRequisitionAmount = advanceRequisitionAmount;
+        this.narration = narration;
+        this.arftype = arftype;
+        this.egAdvanceReqMises = egAdvanceReqMises;
+        this.egAdvanceReqDetailses = egAdvanceReqDetailses;
     }
 
     @Override
@@ -149,22 +162,6 @@ public class EgAdvanceRequisition extends StateAware implements java.io.Serializ
     public void addEgAdvanceReqDetails(final EgAdvanceRequisitionDetails advanceReqDetail) {
         if (advanceReqDetail != null)
             getEgAdvanceReqDetailses().add(advanceReqDetail);
-    }
-
-    public EgAdvanceRequisition(final Long id, final String advanceRequisitionNumber, final EgwStatus status,
-            final Date advanceRequisitionDate, final BigDecimal advanceRequisitionAmount, final String narration,
-            final String arftype, final EgAdvanceRequisitionMis egAdvanceReqMises,
-            final Set<EgAdvanceRequisitionDetails> egAdvanceReqDetailses) {
-        super();
-        // this.id = id;
-        this.advanceRequisitionNumber = advanceRequisitionNumber;
-        this.status = status;
-        this.advanceRequisitionDate = advanceRequisitionDate;
-        this.advanceRequisitionAmount = advanceRequisitionAmount;
-        this.narration = narration;
-        this.arftype = arftype;
-        this.egAdvanceReqMises = egAdvanceReqMises;
-        this.egAdvanceReqDetailses = egAdvanceReqDetailses;
     }
 
     @Override

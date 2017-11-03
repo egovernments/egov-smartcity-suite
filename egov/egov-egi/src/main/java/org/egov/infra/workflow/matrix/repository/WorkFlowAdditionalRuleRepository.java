@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -43,5 +43,5 @@ package org.egov.infra.workflow.matrix.repository;
 import org.egov.infra.workflow.matrix.entity.WorkFlowAdditionalRule;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-public interface WorkFlowAdditionalRuleRepository extends JpaRepository<WorkFlowAdditionalRule, Long>{
+public interface WorkFlowAdditionalRuleRepository extends JpaRepository<WorkFlowAdditionalRule, Long> {
 }

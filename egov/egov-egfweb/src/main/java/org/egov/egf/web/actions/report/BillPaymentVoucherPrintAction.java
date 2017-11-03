@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -41,7 +41,6 @@ package org.egov.egf.web.actions.report;
 
 
 import net.sf.jasperreports.engine.JRException;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -55,24 +54,22 @@ import org.egov.commons.utils.EntityType;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.web.actions.voucher.VoucherReport;
 import org.egov.infra.exception.ApplicationException;
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.utils.NumberToWord;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.Miscbilldetail;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.model.instrument.InstrumentVoucher;
 import org.egov.model.payment.Paymentheader;
+import org.egov.pims.commons.Position;
 import org.egov.utils.Constants;
 import org.egov.utils.FinancialConstants;
 import org.egov.utils.ReportHelper;
 import org.hibernate.FlushMode;
 import org.hibernate.SQLQuery;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.io.IOException;
 import java.io.InputStream;
@@ -85,52 +82,48 @@ import java.util.Map;
 
 
 @Results(value = {
-		@Result(name=BillPaymentVoucherPrintAction.PRINT , location="billPaymentVoucherPrint-print.jsp"),
-        @Result(name = "PDF", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                "application/pdf", "contentDisposition", "no-cache;filename=BankPaymentVoucherReport.pdf" }),
-                @Result(name = "XLS", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "application/xls", "contentDisposition", "no-cache;filename=BankPaymentVoucherReport.xls" }),
-                        @Result(name = "HTML", type = "stream", location = "inputStream", params = { "inputName", "inputStream", "contentType",
-                        "text/html" })
+        @Result(name = BillPaymentVoucherPrintAction.PRINT, location = "billPaymentVoucherPrint-print.jsp"),
+        @Result(name = "PDF", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/pdf", "contentDisposition", "no-cache;filename=BankPaymentVoucherReport.pdf"}),
+        @Result(name = "XLS", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "application/xls", "contentDisposition", "no-cache;filename=BankPaymentVoucherReport.xls"}),
+        @Result(name = "HTML", type = "stream", location = "inputStream", params = {"inputName", "inputStream", "contentType",
+                "text/html"})
 })
 
 @ParentPackage("egov")
 public class BillPaymentVoucherPrintAction extends BaseFormAction {
-    Long chequeNumberPass;
-    String chequeNumber = "";
-    InstrumentHeader instrumentHeader = null;
-    String cashModePartyName = "";				// Also used as a flag to check if the mode of payment is Cash
-    String chequeDate = "";
-    String rtgsRefNo = "";
-    String rtgsDate = "";
-    String paymentMode = "";
-    String chequeNoComp = "";
-    Long chequeNoCompL;
-    String jasperpath = "/reports/templates/billPaymentVoucherReport.jasper";
-    static final long serialVersionUID = 1L;
-    static final String PRINT = "print";
-    CVoucherHeader voucher = new CVoucherHeader();
-    Paymentheader paymentHeader = new Paymentheader();
-    List<Object> voucherReportList = new ArrayList<Object>();
-    InputStream inputStream;
-    ReportHelper reportHelper;
-    Long id;
-    List<Miscbilldetail> miscBillDetailList;
-    Miscbilldetail ob = new Miscbilldetail();
-    static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
-    String bankName = "";
-    String bankAccountNumber = "";
-    ArrayList<Long> chequeNoList = new ArrayList<Long>();
-    ArrayList<String> chequeNosList = new ArrayList<String>();
-   
- @Autowired
- @Qualifier("persistenceService")
- private PersistenceService persistenceService;
- @Autowired
-    private EgovCommon egovCommon;
+    public static final String PRINT = "print";
+    private static final long serialVersionUID = 1L;
+    private static final String ACCDETAILTYPEQUERY = " from Accountdetailtype where id=?";
+    private static final String JASPERPATH = "/reports/templates/billPaymentVoucherReport.jasper";
+    private static final String MULTIPLE = "MULTIPLE";
+
+    private String chequeNumber = "";
+    private transient InstrumentHeader instrumentHeader = null;
+    private String cashModePartyName = "";                // Also used as a flag to check if the mode of payment is Cash
+    private String chequeDate = "";
+    private String rtgsRefNo = "";
+    private String rtgsDate = "";
+    private String paymentMode = "";
+
+    private transient CVoucherHeader voucher = new CVoucherHeader();
+    private transient Paymentheader paymentHeader = new Paymentheader();
+    private transient List<Object> voucherReportList = new ArrayList<>();
+    private transient InputStream inputStream;
+    private transient ReportHelper reportHelper;
+    private Long id;
+    private transient List<Miscbilldetail> miscBillDetailList;
+    private String bankName = "";
+    private String bankAccountNumber = "";
+    private transient ArrayList<Long> chequeNoList = new ArrayList<>();
+    private transient ArrayList<String> chequeNosList = new ArrayList<>();
+
+    @Autowired
+    private transient EgovCommon egovCommon;
 
     public Map<String, Object> getParamMap() {
-        final Map<String, Object> paramMap = new HashMap<String, Object>();
+        final Map<String, Object> paramMap = new HashMap<>();
         paramMap.put("bpvNumber", getVoucherNumber());
         paramMap.put("voucherDate", getVoucherDate());
         paramMap.put("bankName", bankName);
@@ -159,7 +152,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
 
     private String getLinkNo() {
         if (miscBillDetailList != null && miscBillDetailList.size() > 1)
-            return "MULTIPLE";
+            return MULTIPLE;
         else if (miscBillDetailList != null && miscBillDetailList.size() == 1
                 && miscBillDetailList.get(0).getBillVoucherHeader() != null)
             return miscBillDetailList.get(0).getBillVoucherHeader().getVoucherNumber();
@@ -168,14 +161,12 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     }
 
     private String getAmountInWords() {
-        if (miscBillDetailList != null && miscBillDetailList.size() > 1)
-        {
+        if (miscBillDetailList != null && miscBillDetailList.size() > 1) {
             Float totalAmt = 0f;
             for (final Miscbilldetail misBillDet : miscBillDetailList)
                 totalAmt += misBillDet.getPaidamount().floatValue();
-            return NumberToWord.convertToWord(new BigDecimal(totalAmt).toString());
-        }
-        else if (miscBillDetailList != null && miscBillDetailList.size() == 1)
+            return NumberToWordConverter.amountInWordsWithCircumfix(new BigDecimal(totalAmt));
+        } else if (miscBillDetailList != null && miscBillDetailList.size() == 1)
             return miscBillDetailList.get(0).getAmtInWords();
         else
             return "";
@@ -183,7 +174,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
 
     private String getBillNumber() {
         if (miscBillDetailList != null && miscBillDetailList.size() > 1)
-            return "MULTIPLE";
+            return MULTIPLE;
         else if (miscBillDetailList != null && miscBillDetailList.size() == 1)
             return miscBillDetailList.get(0).getBillnumber();
         else
@@ -197,7 +188,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         if (miscBillDetailList != null && miscBillDetailList.size() > 1 && hasSamePartyName(miscBillDetailList))
             return miscBillDetailList.get(0).getPaidto();
         else if (miscBillDetailList != null && miscBillDetailList.size() > 1)
-            return "MULTIPLE";
+            return MULTIPLE;
         else if (miscBillDetailList != null && miscBillDetailList.size() == 1)
             return miscBillDetailList.get(0).getPaidto();
         else
@@ -218,12 +209,12 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         return id;
     }
 
-    public void setReportHelper(final ReportHelper helper) {
-        reportHelper = helper;
-    }
-
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public void setReportHelper(final ReportHelper helper) {
+        reportHelper = helper;
     }
 
     public List<Object> getVoucherReportList() {
@@ -254,32 +245,28 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         return PRINT;
     }
 
-    void populateVoucher() {
+    private void populateVoucher() {
         persistenceService.getSession().setDefaultReadOnly(true);
         persistenceService.getSession().setFlushMode(FlushMode.MANUAL);
 
         if (!StringUtils.isBlank(parameters.get("id")[0])) {
-            chequeNosList = new ArrayList<String>();
+            chequeNosList = new ArrayList<>();
             final Long id = Long.valueOf(parameters.get("id")[0]);
-            paymentHeader = (Paymentheader) persistenceService.getSession().get(Paymentheader.class, id);
-            if (paymentHeader != null && paymentHeader.getType().equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS))
-            {
+            paymentHeader = persistenceService.getSession().get(Paymentheader.class, id);
+            if (paymentHeader != null && paymentHeader.getType().equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_RTGS)) {
                 paymentMode = "rtgs";
                 voucher = paymentHeader.getVoucherheader();
-                if (voucher != null)
-                {
+                if (voucher != null) {
                     final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
                             "from InstrumentVoucher where voucherHeaderId.id=?", voucher.getId());
-                    if (instrumentVoucherList != null && instrumentVoucherList.size() != 0)
-                    {
+                    if (instrumentVoucherList != null && !instrumentVoucherList.isEmpty()) {
                         final InstrumentHeader instrumentHeader = instrumentVoucherList.get(0).getInstrumentHeaderId();
                         rtgsRefNo = instrumentHeader.getTransactionNumber();
                         rtgsDate = Constants.DDMMYYYYFORMAT2.format(instrumentHeader.getTransactionDate());
                     }
                     generateVoucherReportList();
                     final Bankaccount bankAccount = paymentHeader.getBankaccount();
-                    if (bankAccount != null)
-                    {
+                    if (bankAccount != null) {
                         bankName = bankAccount.getBankbranch().getBank().getName().concat("-")
                                 .concat(bankAccount.getBankbranch().getBranchname());
                         bankAccountNumber = bankAccount.getAccountnumber();
@@ -291,7 +278,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
             }
             if (paymentHeader != null) {
                 voucher = paymentHeader.getVoucherheader();
-                final List<String> excludeChequeStatusses = new ArrayList<String>();
+                final List<String> excludeChequeStatusses = new ArrayList<>();
                 excludeChequeStatusses.add(FinancialConstants.INSTRUMENT_CANCELLED_STATUS);
                 excludeChequeStatusses.add(FinancialConstants.INSTRUMENT_SURRENDERED_FOR_REASSIGN_STATUS);
                 excludeChequeStatusses.add(FinancialConstants.INSTRUMENT_SURRENDERED_STATUS);
@@ -311,9 +298,10 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                                 chequeNosList.add(chequeNumber + "-MULTIPLE");
                             else
                                 chequeNosList.add(chequeNumber);
-                            chequeNumberPass = Long.parseLong(chequeNumber);
+                            Long chequeNumberPass = Long.parseLong(chequeNumber);
                             chequeNoList.add(chequeNumberPass);
                         } catch (final NumberFormatException ex) {
+                            //Do nothing ?
                         }
                 generateVoucherReportList();
                 final Bankaccount bankAccount = paymentHeader.getBankaccount();
@@ -323,18 +311,20 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                     bankAccountNumber = bankAccount.getAccountnumber();
                 }
                 // For Cash mode of payment, we need to take the payto of the associated cheque.
-                if (paymentHeader.getType().equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_CASH))
-                    if (instrumentHeader != null && instrumentHeader.getPayTo() != null)
-                        cashModePartyName = instrumentHeader.getPayTo();
+                if (paymentHeader.getType().equalsIgnoreCase(FinancialConstants.MODEOFPAYMENT_CASH)
+                        && instrumentHeader != null && instrumentHeader.getPayTo() != null)
+                    cashModePartyName = instrumentHeader.getPayTo();
             }
             miscBillDetailList = persistenceService.findAllBy("from Miscbilldetail where payVoucherHeader.id=?", voucher.getId());
         }
         Collections.sort(chequeNoList);
         chequeNumber = "";
+
         for (final Long lval : chequeNoList)
             for (final String sval : chequeNosList) {
-                if (sval.contains("MULTIPLE"))
-                    chequeNoCompL = Long.parseLong(sval.substring(0, sval.lastIndexOf("-")));
+                Long chequeNoCompL;
+                if (sval.contains(MULTIPLE))
+                    chequeNoCompL = Long.parseLong(sval.substring(0, sval.lastIndexOf('-')));
                 else
                     chequeNoCompL = Long.parseLong(sval);
                 if (lval.equals(chequeNoCompL)) {
@@ -351,11 +341,10 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
         final List<InstrumentVoucher> instrumentVoucherList = persistenceService.findAllBy(
                 "from InstrumentVoucher where instrumentHeaderId.id=?", instrumentHeaderId);
         boolean rep = false;
-        if (instrumentVoucherList != null && instrumentVoucherList.size() != 0) {
+        if (!instrumentVoucherList.isEmpty()) {
             final Long voucherId = instrumentVoucherList.get(0).getVoucherHeaderId().getId();
             for (final InstrumentVoucher instrumentVoucher : instrumentVoucherList)
-                if (voucherId != instrumentVoucher.getVoucherHeaderId().getId())
-                {
+                if (voucherId != instrumentVoucher.getVoucherHeaderId().getId()) {
                     rep = true;
                     break;
                 }
@@ -366,14 +355,14 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     private void generateVoucherReportList() {
         if (voucher != null) {
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue()))==0) {
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getCreditAmount().doubleValue())) == 0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd, egovCommon);
                     voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());
                     voucherReportList.add(voucherReport);
                 }
             for (final CGeneralLedger vd : voucher.getGeneralledger())
-            	  if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue()))==0){
+                if (BigDecimal.ZERO.compareTo(BigDecimal.valueOf(vd.getDebitAmount().doubleValue())) == 0) {
                     final VoucherReport voucherReport = new VoucherReport(persistenceService, Integer.valueOf(voucher.getId()
                             .toString()), vd, egovCommon);
                     voucherReport.setDepartment(voucher.getVouchermis().getDepartmentid());
@@ -383,7 +372,7 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     }
 
     String getUlbName() {
-        final SQLQuery query = persistenceService.getSession().createSQLQuery("select name from companydetail");
+        final SQLQuery query = persistenceService.getSession().createSQLQuery("SELECT name FROM companydetail");
         final List<String> result = query.list();
         if (result != null)
             return result.get(0);
@@ -397,25 +386,25 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
     @Action(value = "/report/billPaymentVoucherPrint-exportPdf")
     public String exportPdf() throws JRException, IOException {
         populateVoucher();
-        inputStream = reportHelper.exportPdf(inputStream, jasperpath, getParamMap(), voucherReportList);
+        inputStream = reportHelper.exportPdf(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "PDF";
     }
 
     public String exportHtml() {
         populateVoucher();
-        inputStream = reportHelper.exportHtml(inputStream, jasperpath, getParamMap(), voucherReportList, "px");
+        inputStream = reportHelper.exportHtml(inputStream, JASPERPATH, getParamMap(), voucherReportList, "px");
         return "HTML";
     }
 
     @Action(value = "/report/billPaymentVoucherPrint-exportXls")
     public String exportXls() throws JRException, IOException {
         populateVoucher();
-        inputStream = reportHelper.exportXls(inputStream, jasperpath, getParamMap(), voucherReportList);
+        inputStream = reportHelper.exportXls(inputStream, JASPERPATH, getParamMap(), voucherReportList);
         return "XLS";
     }
 
     public Map<String, Object> getAccountDetails(final Integer detailtypeid, final Integer detailkeyid,
-            final Map<String, Object> tempMap) throws ApplicationException {
+                                                 final Map<String, Object> tempMap) throws ApplicationException {
         final Accountdetailtype detailtype = (Accountdetailtype) getPersistenceService().find(ACCDETAILTYPEQUERY, detailtypeid);
         tempMap.put("detailtype", detailtype.getName());
         tempMap.put("detailtypeid", detailtype.getId());
@@ -436,43 +425,41 @@ public class BillPaymentVoucherPrintAction extends BaseFormAction {
                 .getVoucherDate());
     }
 
-	void loadInboxHistoryData(final List<StateHistory> stateHistory,
-			final Map<String, Object> paramMap)
-			throws ApplicationRuntimeException {
-		final List<String> history = new ArrayList<String>();
-		final List<String> workFlowDate = new ArrayList<String>();
-		if (!stateHistory.isEmpty()) {
-			for (final StateHistory historyState : stateHistory)
-				
-				if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
-					history.add(historyState.getSenderName());
-					workFlowDate.add(Constants.DDMMYYYYFORMAT2
-							.format(historyState.getLastModifiedDate()));
-					if (historyState.getValue().equalsIgnoreCase("Rejected"))
-					{
-						history.clear();
-						workFlowDate.clear();
-					}
-					
-				}
-			
-			history.add(paymentHeader.getState().getSenderName());
-			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(paymentHeader
-					.getState().getLastModifiedDate()));
-		} else {
-			history.add(paymentHeader.getState().getSenderName());
-			workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(paymentHeader
-					.getState().getLastModifiedDate()));
-		}
-		for (int i = 0; i < history.size(); i++) {
-			paramMap.put("workFlow_" + i, history.get(i));
-			paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
-		}
-	}
+    private void loadInboxHistoryData(final List<StateHistory<Position>> stateHistory,
+                              final Map<String, Object> paramMap) {
+        final List<String> history = new ArrayList<>();
+        final List<String> workFlowDate = new ArrayList<>();
+        if (!stateHistory.isEmpty()) {
+            for (final StateHistory historyState : stateHistory)
 
-	String getVoucherDescription() {
-		return voucher == null || voucher.getDescription() == null ? ""
-				: voucher.getDescription();
-	}
+                if (!"NEW".equalsIgnoreCase(historyState.getValue())) {
+                    history.add(historyState.getSenderName());
+                    workFlowDate.add(Constants.DDMMYYYYFORMAT2
+                            .format(historyState.getLastModifiedDate()));
+                    if (historyState.getValue().equalsIgnoreCase("Rejected")) {
+                        history.clear();
+                        workFlowDate.clear();
+                    }
+
+                }
+
+            history.add(paymentHeader.getState().getSenderName());
+            workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(paymentHeader
+                    .getState().getLastModifiedDate()));
+        } else {
+            history.add(paymentHeader.getState().getSenderName());
+            workFlowDate.add(Constants.DDMMYYYYFORMAT2.format(paymentHeader
+                    .getState().getLastModifiedDate()));
+        }
+        for (int i = 0; i < history.size(); i++) {
+            paramMap.put("workFlow_" + i, history.get(i));
+            paramMap.put("workFlowDate_" + i, workFlowDate.get(i));
+        }
+    }
+
+    String getVoucherDescription() {
+        return voucher == null || voucher.getDescription() == null ? ""
+                : voucher.getDescription();
+    }
 
 }

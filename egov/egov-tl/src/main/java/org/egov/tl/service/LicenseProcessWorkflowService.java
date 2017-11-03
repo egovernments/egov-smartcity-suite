@@ -2,7 +2,7 @@
  * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -74,30 +74,13 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Arrays;
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Arrays;
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
-import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
-import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
-import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.NEW_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.SIGNWORKFLOWACTION;
-import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.BUTTONCANCEL;
-import static org.egov.tl.utils.Constants.STATUS_REJECTED;
-import static org.egov.tl.utils.Constants.NEWLICENSECOLLECTION;
-import static org.egov.tl.utils.Constants.RENEWLICENSECOLLECTION;
-import static org.egov.tl.utils.Constants.NEWLICENSE;
-import static org.egov.tl.utils.Constants.RENEWLICENSE;
-import static org.egov.tl.utils.Constants.NEWLICENSEREJECT;
-import static org.egov.tl.utils.Constants.RENEWLICENSEREJECT;
-import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
-import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
+import static org.egov.tl.utils.Constants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -211,7 +194,7 @@ public class LicenseProcessWorkflowService {
 
     }
 
-    private Position getCurrentPositionByWorkFlowBean(WorkflowBean workflowBean, State currentState) {
+    private Position getCurrentPositionByWorkFlowBean(WorkflowBean workflowBean, State<Position> currentState) {
         if (workflowBean.getApproverPositionId() != null && workflowBean.getWorkFlowAction() != null && !BUTTONAPPROVE.equals(workflowBean.getWorkFlowAction()))
             return positionMasterService.getPositionById(workflowBean.getApproverPositionId());
         else
@@ -238,7 +221,7 @@ public class LicenseProcessWorkflowService {
     public WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense, WorkflowBean workflowBean) {
         WorkFlowMatrix wfmatrix;
         if (tradeLicense.hasState() && !tradeLicense.getState().isEnded()) {
-            State state = tradeLicense.getState();
+            State<Position> state = tradeLicense.getState();
             wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), "ANY",
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState() != null ? workflowBean.getCurrentState() : state.getValue(), null, new Date(), workflowBean.getCurrentDesignation() != null ? workflowBean.getCurrentDesignation() : "%" + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
         } else
@@ -328,7 +311,7 @@ public class LicenseProcessWorkflowService {
         List<Designation> nextDesig = designationService.getDesignationsByNames(Arrays.asList(StringUtils.upperCase(workFlowMatrix.getNextDesignation()).split(",")));
         List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextDesig);
         if (assignmentList.isEmpty())
-            new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
+            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
         return assignmentList;
     }
 

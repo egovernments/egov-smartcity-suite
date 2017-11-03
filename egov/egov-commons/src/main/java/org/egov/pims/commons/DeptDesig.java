@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -38,9 +38,13 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.commons;
+package org.egov.pims.commons;
+
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -49,64 +53,66 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.envers.AuditJoinTable;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
+import static org.egov.pims.commons.DeptDesig.SEQ_DEPTDESIG;
 
 @Entity
-@Table(name = "CHARTOFACCOUNTDETAIL")
-@SequenceGenerator(name = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL, sequenceName = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL, allocationSize = 1)
-@AuditOverrides({
-        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")
-})
-@Audited
-public class CChartOfAccountDetail extends AbstractAuditable {
-
-    private static final long serialVersionUID = -8517026729631829413L;
-
-    public static final String SEQ_CHARTOFACCOUNTDETAIL = "SEQ_CHARTOFACCOUNTDETAIL";
-
+@Table(name = "egeis_deptdesig")
+@SequenceGenerator(name = SEQ_DEPTDESIG, sequenceName = SEQ_DEPTDESIG, allocationSize = 1)
+public class DeptDesig extends AbstractAuditable {
+    public static final String SEQ_DEPTDESIG = "SEQ_egeis_deptdesig";
+    private static final long serialVersionUID = 6184300877653586028L;
     @Id
-    @GeneratedValue(generator = CChartOfAccountDetail.SEQ_CHARTOFACCOUNTDETAIL, strategy = GenerationType.SEQUENCE)
+    @GeneratedValue(generator = SEQ_DEPTDESIG, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @AuditJoinTable
-    @ManyToOne
-    @JoinColumn(name = "glcodeid")
-    private CChartOfAccounts glCodeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "designation")
+    private Designation designation;
 
-    @ManyToOne
-    @JoinColumn(name = "detailtypeid")
-    @AuditJoinTable
-    private Accountdetailtype detailTypeId;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "department")
+    private Department department;
+    private Integer sanctionedPosts;
+    private Integer outsourcedPosts;
 
-    public CChartOfAccounts getGlCodeId() {
-        return glCodeId;
-    }
-
-    public void setGlCodeId(final CChartOfAccounts glCodeId) {
-        this.glCodeId = glCodeId;
-    }
-
-    public Accountdetailtype getDetailTypeId() {
-        return detailTypeId;
-    }
-
-    public void setDetailTypeId(final Accountdetailtype detailTypeId) {
-        this.detailTypeId = detailTypeId;
-    }
-
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public Designation getDesignation() {
+        return designation;
+    }
+
+    public void setDesignation(final Designation designation) {
+        this.designation = designation;
+    }
+
+    public Department getDepartment() {
+        return department;
+    }
+
+    public void setDepartment(final Department department) {
+        this.department = department;
+    }
+
+    public Integer getSanctionedPosts() {
+        return sanctionedPosts;
+    }
+
+    public void setSanctionedPosts(final Integer sanctionedPosts) {
+        this.sanctionedPosts = sanctionedPosts;
+    }
+
+    public Integer getOutsourcedPosts() {
+        return outsourcedPosts;
+    }
+
+    public void setOutsourcedPosts(final Integer outsourcedPosts) {
+        this.outsourcedPosts = outsourcedPosts;
     }
 
 }

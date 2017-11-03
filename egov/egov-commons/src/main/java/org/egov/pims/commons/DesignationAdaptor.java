@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -47,14 +47,16 @@ import com.google.gson.JsonSerializer;
 
 import java.lang.reflect.Type;
 
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+
 public class DesignationAdaptor implements JsonSerializer<Designation> {
 
-	@Override
+    @Override
     public JsonElement serialize(Designation designation, Type type, JsonSerializationContext jsc) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.addProperty("name", designation.getName());
         jsonObject.addProperty("code", designation.getCode());
-        jsonObject.addProperty("description", null != designation.getDescription() ? designation.getDescription() : "NA");
+        jsonObject.addProperty("description", defaultIfBlank(designation.getDescription()));
         return jsonObject;
     }
 }
