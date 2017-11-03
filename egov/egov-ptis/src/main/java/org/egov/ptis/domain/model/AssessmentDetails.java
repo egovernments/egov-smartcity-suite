@@ -57,14 +57,14 @@ public class AssessmentDetails implements Serializable {
 
     private static final long serialVersionUID = 355399781881256186L;
     private String propertyID;
-    private String houseNo;
+    private String houseNo = StringUtils.EMPTY;
     private Set<OwnerName> ownerNames;
     private BoundaryDetails boundaryDetails;
     private String propertyAddress;
     private PropertyDetails propertyDetails;
     private ErrorDetails errorDetails;
-    private String primaryEmail;
-    private String primaryMobileNo;
+    private String primaryEmail = StringUtils.EMPTY;
+    private String primaryMobileNo = StringUtils.EMPTY;
     private Integer flag;
     private double latitude;
     private double longitude;
