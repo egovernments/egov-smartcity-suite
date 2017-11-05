@@ -581,12 +581,19 @@ public class PropertyTaxCommonUtils {
     }
     
     public boolean isRoOrCommissioner(final String designation) {
+        return isCommissioner(designation) || isRevenueOfficer(designation);
+    }
+
+    public boolean isRevenueOfficer(final String designation) {
+        return REVENUE_OFFICER_DESGN.equalsIgnoreCase(designation);
+    }
+
+    public boolean isCommissioner(final String designation) {
         return commissionerDesginations().contains(designation);
     }
 
     public List<String> commissionerDesginations() {
         List<String> designations = new ArrayList<>();
-        designations.add(REVENUE_OFFICER_DESGN);
         designations.add(ASSISTANT_COMMISSIONER_DESIGN);
         designations.add(ADDITIONAL_COMMISSIONER_DESIGN);
         designations.add(DEPUTY_COMMISSIONER_DESIGN);

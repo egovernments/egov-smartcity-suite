@@ -231,10 +231,6 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             loggedInUserDesignation = !loggedInUserAssign.isEmpty() ? loggedInUserAssign.get(0).getDesignation().getName() : null;
         }
         Assignment wfInitiator = null;
-        final List<StateHistory> history = vacancyRemission.getStateHistory();
-        if (!history.isEmpty() && vacancyRemissionService.isRoOrCommissioner(loggedInUserDesignation))
-            wfInitiator = propertyService.getUserOnRejection(vacancyRemission);
-        else if (history.isEmpty() || !vacancyRemissionService.isRoOrCommissioner(loggedInUserDesignation))
             wfInitiator = vacancyRemissionService.getWorkflowInitiator(vacancyRemission);
         if (wfInitiator != null) {
             successMsg = "Vacancy Remission rejected successfully and forwarded to : "
