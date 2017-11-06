@@ -59,6 +59,7 @@ import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.ChartOfAccountsHibernateDAO;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
@@ -97,6 +98,9 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
     private Integer branchId = -1;
+
+    @Autowired
+    private CityService cityService;
 
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -178,6 +182,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         } else {
             setBranchName("All Bank Branch");
         }
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(),
                 getSource(), getGlCode(), getStatusId(), getBranchId()));
         return super.report();

@@ -64,13 +64,11 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.collection.web.actions.receipts.AjaxBankRemittanceAction;
 import org.egov.commons.dao.BankBranchHibernateDAO;
 import org.egov.commons.dao.BankaccountHibernateDAO;
-import org.egov.eis.service.EmployeeService;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
@@ -88,7 +86,7 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
 
     private static final String EGOV_VOUCHER_NUMBER = "EGOV_VOUCHER_NUMBER";
     private static final String EGOV_RECEIPT_NUMBER = "EGOV_RECEIPT_NUMBER";
-    private static final String EGOV_REMITTANCE_NUMBER= "EGOV_REMITTANCE_NUMBER";
+    private static final String EGOV_REMITTANCE_NUMBER = "EGOV_REMITTANCE_NUMBER";
     private static final String EGOV_REMITTANCE_DATE = "EGOV_REMITTANCE_DATE";
     private static final String EGOV_BANKACCOUNT_ID = "EGOV_BANKACCOUNT_ID";
     private static final String EGOV_BRANCH_ID = "EGOV_BRANCH_ID";
@@ -113,13 +111,16 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     @Autowired
     private BankBranchHibernateDAO bankbranchDAO;
     private PersistenceService<ServiceDetails, Long> serviceDetailsService;
-        @Autowired
-        private CollectionsUtil collectionsUtil;
+    @Autowired
+    private CollectionsUtil collectionsUtil;
+    @Autowired
+    private CityService cityService;
 
     /*
      * (non-Javadoc)
      * @see org.egov.web.actions.BaseFormAction#prepare()
      */
+    @Override
     public void prepare() {
         setReportFormat(ReportFormat.PDF);
         setDataSourceType(ReportDataSourceType.SQL);
@@ -144,6 +145,7 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
      * 
      * @return index
      */
+
     @Action(value = "/reports/remittanceVoucherReport-criteria")
     public String criteria() {
         populateBankAccountList();
@@ -160,13 +162,12 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
                 .findByNamedQuery(CollectionConstants.REMITTANCE_BY_VOUCHER_NUMBER, voucherNumber);
         critParams.put(EGOV_REMITTANCE_DATE, new Date());
         final List<CollectionBankRemittanceReport> reportList = new ArrayList<CollectionBankRemittanceReport>(0);
-        if (remittanceObj != null)
-        {
+        if (remittanceObj != null) {
             for (final ReceiptHeader receiptHead : remittanceObj.getCollectionRemittance()) {
                 final Iterator<InstrumentHeader> itr = receiptHead.getReceiptInstrument().iterator();
                 while (itr.hasNext()) {
                     final CollectionBankRemittanceReport collBankRemitReport = new CollectionBankRemittanceReport();
-                    final InstrumentHeader instHead = (InstrumentHeader) itr.next();
+                    final InstrumentHeader instHead = itr.next();
                     collBankRemitReport.setPaymentMode(instHead.getInstrumentType().getType());
                     collBankRemitReport.setAmount(instHead.getInstrumentAmount().doubleValue());
                     collBankRemitReport.setReceiptNumber(receiptHead.getReceiptnumber());
@@ -177,14 +178,15 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
             }
         }
         ServiceDetails service = serviceDetailsService.findById(srvId, false);
-      //  setEgovVoucherNumber(voucherNumber);
-       /* critParams.put(EGOV_SERVICE_NAME, service != null ? service.getName() : null);
-        critParams.put(EGOV_BANK_NAME, bankBranchId != -1 ? bankbranchDAO.findById(bankBranchId, false).getBank().getName()
-                : null);
-        critParams.put(EGOV_BANKACCOUNT_NAME, bankAcctId != -1 ? bankAccountHibernateDAO.findById(bankAcctId, false)
-                .getBankbranch().getBank().getName()
-                + "-" + bankAccountHibernateDAO.findById(bankAcctId, false).getAccountnumber() : null);
-        critParams.put(EGOV_CREATED_BY_NAME, createdId != -1 ? userservice.getUserById(createdId).getName() : null);*/
+        // setEgovVoucherNumber(voucherNumber);
+        /*
+         * critParams.put(EGOV_SERVICE_NAME, service != null ? service.getName() : null); critParams.put(EGOV_BANK_NAME,
+         * bankBranchId != -1 ? bankbranchDAO.findById(bankBranchId, false).getBank().getName() : null);
+         * critParams.put(EGOV_BANKACCOUNT_NAME, bankAcctId != -1 ? bankAccountHibernateDAO.findById(bankAcctId, false)
+         * .getBankbranch().getBank().getName() + "-" + bankAccountHibernateDAO.findById(bankAcctId, false).getAccountnumber() :
+         * null); critParams.put(EGOV_CREATED_BY_NAME, createdId != -1 ? userservice.getUserById(createdId).getName() : null);
+         */
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         collReportResult.setCollectionBankRemittanceReportList(reportList);
         final ReportRequest reportInput = new ReportRequest(RECIEPT_DETAILS_TEMPLATE, collReportResult, critParams);
@@ -193,9 +195,9 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         return REPORT;
     }
 
-
     @Action(value = "/reports/remittanceVoucherReport-report")
     public String report() {
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         final ReportRequest reportInput = new ReportRequest(getReportTemplateName(), critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
@@ -209,7 +211,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     public void setFromDate(final Date fromDate) {
         critParams.put(EGOV_REMITTANCE_DATE, fromDate);
     }
-
 
     public static String getReceiptdetailslist() {
         return RECEIPTDETAILSLIST;
@@ -242,41 +243,38 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     public Date getRemittanceDate() {
         return (Date) getReportParam(EGOV_REMITTANCE_DATE);
     }
-    
+
     /**
      * @return the remittance date
      */
     public void setRemittanceDate(final Date remittanceDate) {
-        critParams.put(EGOV_REMITTANCE_DATE,remittanceDate);
+        critParams.put(EGOV_REMITTANCE_DATE, remittanceDate);
     }
 
-    public String getReceiptNumber()
-    {
+    public String getReceiptNumber() {
         return (String) getReportParam(EGOV_RECEIPT_NUMBER);
     }
 
-     public void setReceiptNumber(String receiptNumber)
-     {
-         critParams.put(EGOV_RECEIPT_NUMBER,receiptNumber);
-     }
-     
-     public String getRemittanceNumber()
-     {
-         return (String) getReportParam(EGOV_REMITTANCE_NUMBER);
-     }
-     public void setRemittanceNumber(String remittanceNumber)
-     {
-         critParams.put(EGOV_REMITTANCE_NUMBER, remittanceNumber);
-     }
-     
-     public String getVoucherNumber(){
-         return (String) getReportParam(EGOV_VOUCHER_NUMBER);
-     }
-     
-     public void setVoucherNumber(String voucherNumber){
-         critParams.put(EGOV_VOUCHER_NUMBER,voucherNumber);
-     }
-     
+    public void setReceiptNumber(String receiptNumber) {
+        critParams.put(EGOV_RECEIPT_NUMBER, receiptNumber);
+    }
+
+    public String getRemittanceNumber() {
+        return (String) getReportParam(EGOV_REMITTANCE_NUMBER);
+    }
+
+    public void setRemittanceNumber(String remittanceNumber) {
+        critParams.put(EGOV_REMITTANCE_NUMBER, remittanceNumber);
+    }
+
+    public String getVoucherNumber() {
+        return (String) getReportParam(EGOV_VOUCHER_NUMBER);
+    }
+
+    public void setVoucherNumber(String voucherNumber) {
+        critParams.put(EGOV_VOUCHER_NUMBER, voucherNumber);
+    }
+
     @Override
     public String getReportId() {
         return reportId;
@@ -290,7 +288,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
         this.bankRemittanceList = bankRemittanceList;
     }
 
-
     public Long getBankAcctId() {
         return bankAcctId;
     }
@@ -298,7 +295,6 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
     public void setBankAcctId(Long bankAcctId) {
         this.bankAcctId = bankAcctId;
     }
-
 
     public Integer getBankBranchId() {
         return bankBranchId;

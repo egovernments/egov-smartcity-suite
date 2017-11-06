@@ -43,14 +43,17 @@ package org.egov.collection.web.actions.reports;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
+import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "bankRemittanceReport-index.jsp"),
-    @Result(name = BankRemittanceReportAction.REPORT, location = "bankRemittanceReport-report.jsp") })
+        @Result(name = BankRemittanceReportAction.REPORT, location = "bankRemittanceReport-report.jsp") })
 public class BankRemittanceReportAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -59,6 +62,8 @@ public class BankRemittanceReportAction extends ReportFormAction {
     private static final String BANK_REMITTANCE_REPORT_TEMPLATE = "bank_remittance";
 
     private CollectionsUtil collectionsUtil;
+    @Autowired
+    private CityService cityService;
 
     /*
      * (non-Javadoc)
@@ -109,6 +114,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/bankRemittanceReport-report")
     public String report() {
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         return super.report();
     }
 

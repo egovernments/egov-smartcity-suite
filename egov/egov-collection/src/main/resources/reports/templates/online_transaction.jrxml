@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.2.0.final using JasperReports Library version 6.2.0  -->
-<!-- 2017-01-19T17:33:02 -->
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-11-02T18:08:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="online_transaction" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c32d2bb-93b0-4b77-9de8-d1cb8d0afd9f">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<style name="eGov Basic" isDefault="true" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" rotation="None" fontName="Times New Roman" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman">
@@ -82,6 +121,7 @@
 	<parameter name="Q_COLLECTION_TYPE" class="java.lang.String">
 		<defaultValueExpression><![CDATA[($P{EGOV_COLLECTION_TYPE} == null || $P{EGOV_COLLECTION_TYPE} == "-1") ? "AND EGCL_COLLECTIONHEADER.collectiontype in ('C','O')" : "AND EGCL_COLLECTIONHEADER.collectiontype = '" + $P{EGOV_COLLECTION_TYPE} + "'"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT EGCL_COLLECTIONHEADER.REFERENCENUMBER as referencenumber, EGCL_COLLECTIONHEADER.CONSUMERCODE as consumerCode, EGCL_COLLECTIONHEADER.RECEIPTNUMBER as receiptnumber, EGCL_COLLECTIONHEADER.CREATEDDATE as createdDate, EGCL_COLLECTIONHEADER.TOTALAMOUNT as totalAmount,
 		EGCL_SERVICEDETAILS.NAME as service, EGW_STATUS.description as status,EGCL_ONLINEPAYMENTS.transactionnumber as transactionNumber, EGCL_ONLINEPAYMENTS.transactiondate, (CASE WHEN EG_USER.name  in ('Anonymous','999999999') THEN 'NA' ELSE (select name from EG_USER where id=EGCL_ONLINEPAYMENTS.CREATEDBY) END) AS userName
@@ -145,7 +185,7 @@
 			</staticText>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="537c4785-f758-4469-a8db-ad7c2f7a85e3"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="495" y="120" width="100" height="20" uuid="eacb5559-c866-4327-8f6a-a3f454050537"/>
@@ -673,7 +713,7 @@
 			</staticText>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="36830bfe-46f8-42a5-92e1-9e6f901644ca"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="236" y="198" width="368" height="31" uuid="63f655ee-0049-4443-a296-d4a150e4bc99"/>

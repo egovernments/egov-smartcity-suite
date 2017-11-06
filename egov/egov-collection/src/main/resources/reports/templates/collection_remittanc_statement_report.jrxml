@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-06-02T14:35:36 -->
+<!-- 2017-11-02T15:52:20 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -116,6 +116,7 @@
 		<parameterDescription><![CDATA[where clause query for bank collection bank branch id]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKCOLL_BANKBRANCH_ID} == -1) ? "" : "AND CHMIS.depositedbranch = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID}]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select * from (select distinct CH.receiptnumber as RECEIPT_NUMBER ,to_char(date(CH.receiptdate),'DD/mm/YYYY')as RECEIPT_DATE,
  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' WHEN  EGF_INSTRUMENTTYPE.TYPE='cheque' THEN 'cheque' WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN 'dd' END) as PAY_MODE,
@@ -608,7 +609,7 @@ $P!{Q_EGOV_BANKCOLL_BANKBRANCH_ID}) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 			</textField>
 			<image onErrorType="Blank">
 				<reportElement stretchType="RelativeToBandHeight" x="69" y="17" width="91" height="92" isRemoveLineWhenBlank="true" uuid="45e36de2-66fe-4c96-8503-4b7b0091e1ac"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="52" y="192" width="112" height="20" uuid="f5bd8043-ea6b-40d4-aed1-aba32837b998"/>
@@ -1067,7 +1068,7 @@ $P!{Q_EGOV_BANKCOLL_BANKBRANCH_ID}) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 			</staticText>
 			<image>
 				<reportElement x="177" y="6" width="60" height="60" uuid="d1cda97a-1840-4174-8354-892eaff8b3e7"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="164" y="151" width="227" height="20" uuid="0fdda9bb-20a4-4182-9601-12bf934aedaa"/>

@@ -38,9 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-
-<!-- Created with Jaspersoft Studio version 6.1.0.final using JasperReports Library version 6.1.0  -->
-<!-- 2015-10-05T12:54:57 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-11-02T12:46:51 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="bank_remittance" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="22d06118-8d4e-4e71-8645-fd13b3ff63bf">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="Postgresql"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -75,6 +74,7 @@
 	<parameter name="Q_DEPT_ID" class="java.lang.String">
 		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND cm.department = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT * FROM 
     egf_InstrumentHeader ih,
@@ -120,7 +120,7 @@ WHERE
 			</staticText>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="1ca1108a-4e11-4198-9525-191bf6bf70fd"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<textField pattern="dd/MM/yyyy">
 				<reportElement x="109" y="80" width="337" height="25" uuid="8228659b-3498-4741-a786-53f3819a149a"/>
@@ -310,7 +310,7 @@ Collected]]></text>
 			</staticText>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="b251b8a7-6f6d-49de-8251-857d31efaf9f"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="93" y="117" width="368" height="31" uuid="6cf3fa3f-f052-493f-a8dd-b776fc0b1fb6"/>

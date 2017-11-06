@@ -59,9 +59,11 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Action class for the receipt register report
@@ -91,6 +93,8 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     private TreeMap<String, String> serviceTypeMap = new TreeMap<String, String>();
     @PersistenceContext
     private EntityManager entityManager;
+    @Autowired
+    private CityService cityService;
 
     /**
      * @return the payment mode list to be shown to user in criteria screen
@@ -250,6 +254,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/receiptRegisterReport-report")
     public String report() {
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         return super.report();
     }
 

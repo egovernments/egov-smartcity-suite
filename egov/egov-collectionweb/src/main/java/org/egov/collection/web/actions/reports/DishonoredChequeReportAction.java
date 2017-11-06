@@ -48,7 +48,9 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 @Results({ @Result(name = BankRemittanceReportAction.INDEX, location = "dishonoredChequeReport-index.jsp"),
         @Result(name = BankRemittanceReportAction.REPORT, location = "dishonoredChequeReport-report.jsp") })
@@ -70,6 +72,8 @@ public class DishonoredChequeReportAction extends ReportFormAction {
 
     private CollectionsUtil collectionsUtil;
     private Map<String, String> paymentModes;
+    @Autowired
+    private CityService cityService;
 
     @Override
     public Object getModel() {
@@ -94,6 +98,7 @@ public class DishonoredChequeReportAction extends ReportFormAction {
 
     @Action(value = "/reports/dishonoredChequeReport-generateReport")
     public String generateReport() {
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         return report();
     }
 

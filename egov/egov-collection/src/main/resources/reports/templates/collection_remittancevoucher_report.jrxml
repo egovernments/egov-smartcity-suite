@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-08-29T18:04:54 -->
+<!-- 2017-11-02T17:01:21 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_voucher_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="b76bdff0-f9b9-4afd-886d-d310a7b060b2">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="java.lang.*"/>
@@ -99,6 +99,7 @@
 		<parameterDescription><![CDATA[Where clause for remittance number]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_REMITTANCE_NUMBER} == null || $P{EGOV_REMITTANCE_NUMBER} == "") ? "" : "AND rem.referencenumber = '" + $P{EGOV_REMITTANCE_NUMBER} + "'"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[select vh.vouchernumber AS VOUCHER_NUMBER,rem.referencenumber AS REM_NUMBER,vh.voucherdate AS REM_DATE, sd.name AS SERVICE_NAME,
 		 br.branchname||'-'|| bc.accountnumber as BANK_ACCOUNT_NUMBER,  rd.debitamount AS VOUCHER_AMOUNT, usr.name AS REMITTED_BY,
@@ -604,7 +605,7 @@ ORDER BY
 			</textField>
 			<image onErrorType="Blank">
 				<reportElement stretchType="RelativeToBandHeight" x="33" y="10" width="91" height="92" isRemoveLineWhenBlank="true" uuid="bd413854-a8d2-4a66-8117-3b8e843ce498"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 		</band>
 	</title>
@@ -870,7 +871,7 @@ ORDER BY
 			</staticText>
 			<image>
 				<reportElement x="163" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="51" y="89" width="144" height="20" uuid="2e28db94-90e7-414f-bc0b-9d5b165ce2b5">
@@ -1083,7 +1084,7 @@ ORDER BY
 			</textField>
 			<image>
 				<reportElement x="163" y="0" width="60" height="60" uuid="7656e2d9-ac25-4067-82e2-674dd7225153"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 		</band>
 	</noData>

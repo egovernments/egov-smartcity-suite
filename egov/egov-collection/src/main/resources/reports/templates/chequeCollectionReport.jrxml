@@ -1,6 +1,45 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2016-12-19T15:12:08 -->
+<!-- 2017-11-02T12:49:43 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="184"/>
@@ -58,6 +97,7 @@
 		<parameterDescription><![CDATA[Where clause for receipt header ids]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_RECEIPT_IDS} == null || $P{EGOV_RECEIPT_IDS}.size() == 0) ? "" : "AND $X{IN, CH.ID, EGOV_RECEIPT_IDS}"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT CH.ID AS COLLECTIONHEADER_ID,
 	CH.RECEIPTNUMBER AS RECEIPT_NUMBER,
@@ -242,7 +282,7 @@ WHERE
 			</textField>
 			<image>
 				<reportElement x="10" y="10" width="91" height="92" uuid="6d3e6ff9-23b4-419b-8196-79dbdcb229e4"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 		</band>
 	</title>

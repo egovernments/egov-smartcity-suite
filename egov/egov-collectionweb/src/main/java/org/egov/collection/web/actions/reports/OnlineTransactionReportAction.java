@@ -54,15 +54,17 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * Action class for Online Transaction Report
  */
 @Results({ @Result(name = OnlineTransactionReportAction.INDEX, location = "onlineTransactionReport-index.jsp"),
-    @Result(name = OnlineTransactionReportAction.REPORT, location = "onlineTransactionReport-report.jsp") })
+        @Result(name = OnlineTransactionReportAction.REPORT, location = "onlineTransactionReport-report.jsp") })
 public class OnlineTransactionReportAction extends ReportFormAction {
     private static final long serialVersionUID = 1L;
     // Report parameter names
@@ -76,6 +78,9 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     private static final String EGOV_COLLECTION_TYPE = "EGOV_COLLECTION_TYPE";
     private CollectionsUtil collectionsUtil;
     private Map<Character, String> collectionTypeMap = new TreeMap<>();
+
+    @Autowired
+    private CityService cityService;
 
     @Override
     public void prepare() {
@@ -100,7 +105,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
         addDropdownData("paymentServiceList", persistenceService.findAllByNamedQuery(
                 CollectionConstants.QUERY_SERVICES_BY_TYPE, CollectionConstants.SERVICE_TYPE_PAYMENT));
         addDropdownData(CollectionConstants.DROPDOWN_DATA_ONLINETRANSACTIONSTATUS_LIST, getOnlineReceiptStatuses());
-        addDropdownData("userList",Collections.emptyList());
+        addDropdownData("userList", Collections.emptyList());
         collectionTypeMap.put(CollectionConstants.COLLECTION_TYPE_COUNTER, "Counter");
         collectionTypeMap.put(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION, "Online");
         // default value for from/to date = today
@@ -110,6 +115,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/onlineTransactionReport-report")
     public String report() {
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         return super.report();
     }
 
@@ -124,8 +130,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            The collections util object
+     * @param collectionsUtil The collections util object
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -139,8 +144,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param deptId
-     *            the department id to set
+     * @param deptId the department id to set
      */
     public void setDepartmentId(final Integer deptId) {
         setReportParam(EGOV_DEPT_ID, deptId);
@@ -154,8 +158,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param fromDate
-     *            the from date to set
+     * @param fromDate the from date to set
      */
     public void setFromDate(final Date fromDate) {
         setReportParam(EGOV_FROM_DATE, fromDate);
@@ -169,8 +172,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param toDate
-     *            the to date to set
+     * @param toDate the to date to set
      */
     public void setToDate(final Date toDate) {
         setReportParam(EGOV_TO_DATE, toDate);
@@ -184,8 +186,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param billingServiceId
-     *            The Billing service id to set
+     * @param billingServiceId The Billing service id to set
      */
     public void setBillingServiceId(final Long billingServiceId) {
         setReportParam(EGOV_BILLING_SERVICE_ID, billingServiceId);
@@ -207,8 +208,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param paymentServiceId
-     *            The Billing service id to set
+     * @param paymentServiceId The Billing service id to set
      */
     public void setPaymentServiceId(final Long paymentServiceId) {
         setReportParam(EGOV_PAYMENT_SERVICE_ID, paymentServiceId);
@@ -222,8 +222,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param userId
-     *            the user id to set
+     * @param userId the user id to set
      */
     public void setUserId(final Long userId) {
         setReportParam(EGOV_COUNTER_OPERATOR_ID, userId);

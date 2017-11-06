@@ -39,7 +39,7 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-09-14T10:17:33 -->
+<!-- 2017-11-02T12:47:19 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="cash_collection" pageWidth="595" pageHeight="842" whenNoDataType="NoDataSection" columnWidth="575" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isSummaryNewPage="true" isFloatColumnFooter="true" uuid="83cd3eec-a13e-40e2-ab9e-a64ab5ca3d02">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="ireport.zoom" value="1.0"/>
@@ -110,6 +110,7 @@
 	<parameter name="Q_SOURCES" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA[$P{EGOV_SOURCE}.equals("ALL") ? "": " AND EGCL_COLLECTIONHEADER.SOURCE = '"+$P{EGOV_SOURCE}+"'"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
      EGCL_COLLECTIONHEADER.PAYEENAME AS PAYEE_NAME,
@@ -369,7 +370,7 @@ WHERE
 			</textField>
 			<image onErrorType="Blank">
 				<reportElement stretchType="RelativeToBandHeight" x="10" y="10" width="91" height="92" isRemoveLineWhenBlank="true" uuid="cd95adac-76d2-4e19-97d7-5fd9fbbe7867"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement x="300" y="151" width="120" height="20" uuid="88daffbf-4492-4b89-9ec4-9a4bd1e43781">

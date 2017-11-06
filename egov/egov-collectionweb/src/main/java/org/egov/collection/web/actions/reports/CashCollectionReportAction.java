@@ -54,6 +54,7 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.entity.Source;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -90,6 +91,8 @@ public class CashCollectionReportAction extends BaseFormAction {
 
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    @Autowired
+    private CityService cityService;
 
     /*
      * (non-Javadoc)
@@ -266,6 +269,7 @@ public class CashCollectionReportAction extends BaseFormAction {
      */
     @Action(value = "/reports/cashCollectionReport-report")
     public String report() {
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         final ReportRequest reportInput = new ReportRequest(CASH_COLLECTION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);

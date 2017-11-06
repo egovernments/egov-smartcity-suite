@@ -39,6 +39,13 @@
  */
 package org.egov.collection.web.actions.reports;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -46,20 +53,14 @@ import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.utils.CollectionsUtil;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = ChequeCollectionReportAction.INDEX, location = "chequeCollectionReport-index.jsp"),
@@ -84,6 +85,8 @@ public class ChequeCollectionReportAction extends BaseFormAction {
     private String receiptDate;
     @Autowired
     private ReportViewerUtil reportViewerUtil;
+    @Autowired
+    private CityService cityService;
 
     @Override
     public Object getModel() {
@@ -177,7 +180,6 @@ public class ChequeCollectionReportAction extends BaseFormAction {
         critParams.put(EGOV_FROM_DATE, rcptDate);
         critParams.put(EGOV_TO_DATE, rcptDate);
 
-
         // critParams.put(EGOV_COUNTER_OPERATOR_ID, user.getId().longValue());
         critParams.put(EGOV_COUNTER_OPERATOR_ID, Long.valueOf(-1L));
         critParams.put(EGOV_COUNTER_ID, collectionsUtil.getLocationOfUser(getSession()).getId().longValue());
@@ -194,6 +196,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
      */
     @Action(value = "/reports/chequeCollectionReport-report")
     public String report() {
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
         final ReportRequest reportInput = new ReportRequest(CHEQUE_COLLETION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);

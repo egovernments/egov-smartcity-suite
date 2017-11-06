@@ -1,5 +1,4 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
 <!--
   ~ eGov suite of products aim to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
@@ -39,7 +38,8 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- 2016-12-22T16:15:41 -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-11-02T15:14:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_dishonored_cheque_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="749560f5-966f-4c9c-9c04-ed0be706f118">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -130,6 +130,7 @@ $P{EGOV_PAYMENT_MODE} == "dd" ? "AND INSTP.TYPE = 'dd'" :
 		<parameterDescription><![CDATA[Where clause for To Date]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_TO_DATE} == null ) ? "" : " AND INS.INSTRUMENTDATE <= '" + $P{EGOV_FORMATED_TODATE} + "'"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<queryString>
 		<![CDATA[SELECT
 CH.RECEIPTNUMBER AS RECEIPT_NUMBER ,CH.TOTALAMOUNT as RECEIPT_AMOUNT,
@@ -265,7 +266,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			</staticText>
 			<image>
 				<reportElement x="16" y="8" width="91" height="92" uuid="4aeab61c-fd2d-48a0-a9bf-6e50920d8f57"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="-1" y="130" width="144" height="20" uuid="266f61fa-0668-4f83-a18f-5a9e3f23b77b"/>
@@ -807,7 +808,7 @@ ORDER BY INS.LASTMODIFIEDDATE]]>
 			</staticText>
 			<image>
 				<reportElement x="16" y="10" width="91" height="92" uuid="e42a6f0d-76f4-44df-8e1e-ffe176741964"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<textField isStretchWithOverflow="true" pattern="" isBlankWhenNull="true">
 				<reportElement stretchType="RelativeToTallestObject" x="140" y="161" width="206" height="20" uuid="aa937ede-5df9-4359-bbf5-2184895f2bf7"/>
