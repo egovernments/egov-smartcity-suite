@@ -41,7 +41,6 @@
 package org.egov.restapi.service;
 
 import java.math.BigDecimal;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -77,7 +76,6 @@ public class SewerageTaxService {
 
         if (sewerageList.isEmpty()) {
             sewerageTaxDue = new SewerageTaxDueDetails();
-            sewerageTaxDue.setConsumerCode(Collections.emptyMap());
             sewerageTaxDue.setConnectionCount(0);
             sewerageTaxDue.setIsSuccess(false);
             sewerageTaxDue.setErrorCode(SewerageTaxConstants.PROPERTYID_NOT_EXIST_ERR_CODE);
