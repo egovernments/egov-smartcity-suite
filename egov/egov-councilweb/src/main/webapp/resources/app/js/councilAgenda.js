@@ -60,7 +60,7 @@ var row = '<tr>'+
  '<td><input type="hidden" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.id" value="{{preamableId}}"/>'+
  '<a class="btn btn-xs btn-secondary" href="/council/councilpreamble/view/{{preamableId}}"  target="popup"' +
  'onclick="window.open(\'/council/councilpreamble/view/{{preamableId}}\',\'popup\',\'width=600,height=600,resizable=no\'); return false;">'+
- '<i class="fa fa-eye" aria-hidden="true"></i>View&nbsp;'+
+ '<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View'+
 	'</a>&nbsp;<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';
 
@@ -255,7 +255,7 @@ function callAjaxSearch() {
 						{
 							 "data":null,
 							 "sClass" : "text-center",
-							 'sTitle' : "S.No.", "width": "5%",
+							 'sTitle' : "S.No.", "width": "4%",
 				        	   render: function (data, type, row, meta) {
 				        	        return meta.row + meta.settings._iDisplayStart + 1;
 			                },   
@@ -283,14 +283,14 @@ function callAjaxSearch() {
 							'sTitle' : "Status"
 						},
 						{
-							"data" : null,
+							"data" : null, "width" : "11%",
 							"target" : -1,
 							"sortable" : false,
-							'sTitle' : "Action", "width": "10%",
+							'sTitle' : "Action",
 							"render" : function(data, type, full, meta) {
-								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
+								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View</button>&nbsp;<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
 										+ escape(JSON.stringify(full))
-										+ '\' onclick="addReadOnlyRow(this)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Add</button>';
+										+ '\' onclick="addReadOnlyRow(this)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</button>';
 							}
 						}, {
 							"data" : "id",

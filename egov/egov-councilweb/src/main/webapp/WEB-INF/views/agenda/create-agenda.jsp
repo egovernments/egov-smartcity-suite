@@ -66,21 +66,25 @@
 	enctype="multipart/form-data">
 
 	<div class="row display-hide agenda-section">
-		<div class="col-md-7 table-header text-left">Create Agenda</div>
-		<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.committeetype" /> <span class="mandatory"></span> </label>
-		<div class="col-sm-3 add-margin">
-			<form:select path="committeeType" id="committeeType"
-				required="required" cssClass="form-control"
-				cssErrorClass="form-control error">
-				<form:option value="">
-					<spring:message code="lbl.select" />
-				</form:option>
-				<form:options items="${committeeType}" itemValue="id"
-					itemLabel="name" />
-			</form:select>
-			<form:errors path="committeeType" cssClass="error-msg" />
+		<div class="col-md-12">
+			<div class="form-group">
+				<div class="table-header text-left col-md-8 col-sm-7">Create
+					Agenda</div>
+				<label class="col-md-2 col-sm-2 control-label text-right"><spring:message
+						code="lbl.committeetype" /> <span class="mandatory"></span> </label>
+				<div class="col-md-2 col-sm-3">
+					<form:select path="committeeType" id="committeeType"
+						required="required" cssClass="form-control"
+						cssErrorClass="form-control error">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${committeeType}" itemValue="id"
+							itemLabel="name" />
+					</form:select>
+					<form:errors path="committeeType" cssClass="error-msg" />
+				</div>
+			</div>
 		</div>
 
 		<div class="col-md-12 report-table-container dragging">
@@ -94,7 +98,7 @@
 						<th width="12%"><spring:message code="lbl.department" /></th>
 						<th><spring:message code="lbl.gist.preamble" /></th>
 						<th width="9%"><spring:message code="lbl.amount" /></th>
-						<th width="14%"><spring:message code="lbl.action" /></th>
+						<th width="11%"><spring:message code="lbl.action" /></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -107,7 +111,9 @@
 		<div class="form-group">
 			<div class="text-center">
 				<input type="submit" class='btn btn-primary validate' value='Create'
-					id="btnsave">
+					id="btnsave"> <a href='javascript:void(0)'
+					class='btn btn-default' onclick='self.close()'><spring:message
+						code='lbl.close' /></a>
 			</div>
 		</div>
 	</div>
