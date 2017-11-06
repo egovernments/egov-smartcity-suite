@@ -115,7 +115,7 @@ $('#search').on('click', function() {
 	        	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
 	        	{ "data":"applicationType", "class":"text-center", "title":"Application Type"},
 	        	{ "data":"status", "class":"text-center", "title":"Application Status"},
-	        	{ "data":"applicationDate", "class":"text-center", "title":"Date Of Application"},
+	        	{ "data":"applicationDate", "class":"text-center", "title":"Application Date"},
 	        	{ "data":"revenueWard", "class":"text-center", "title":"Ward"},
 	        	{ "data":"executionDate",
 	        		"class":"text-center", 

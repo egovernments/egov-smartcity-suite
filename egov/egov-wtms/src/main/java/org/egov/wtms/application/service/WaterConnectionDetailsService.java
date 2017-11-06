@@ -1365,7 +1365,7 @@ public class WaterConnectionDetailsService {
         final StringBuilder queryString = new StringBuilder();
         queryString.append(
                 "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  "
-                        + " conndetails.approvaldate, boundary.localname, conndetails.id from  egwtr_connection conn "
+                        + " conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn "
                         + "	INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection "
                         + " INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno"
                         + " INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id"
@@ -1414,7 +1414,7 @@ public class WaterConnectionDetailsService {
                         .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
                 if (connectionDetails.getExecutionDate() != null
                         && connectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
-                                DateUtils.getDefaultFormattedDate(connectionDetails.getApplicationDate()))) <= 0)
+                                DateUtils.getDefaultFormattedDate(connectionDetails.getApplicationDate()))) < 0)
                     status = DATE_VALIDATION_FAILED;
                 else
                     connectionDetailsList.add(connectionDetails);
@@ -1472,7 +1472,7 @@ public class WaterConnectionDetailsService {
             if (resultObject[4] != null)
                 details.setApplicationStatus(resultObject[4].toString());
             if (resultObject[5] != null)
-                details.setApprovalDate(resultObject[5].toString());
+                details.setApplicationDate(resultObject[5].toString());
             if (resultObject[6] != null)
                 details.setRevenueWard(resultObject[6].toString());
             if (resultObject[7] != null)
