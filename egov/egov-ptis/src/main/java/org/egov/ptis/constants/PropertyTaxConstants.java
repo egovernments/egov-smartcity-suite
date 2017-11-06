@@ -540,6 +540,7 @@ public interface PropertyTaxConstants {
 
         {
             put(-9,"Cellar");
+            put(-8,"Mezzanine");
             put(-3, "Basement-2");
             put(-2, "Basement-1");
             put(-1, "Stilt Floor");
