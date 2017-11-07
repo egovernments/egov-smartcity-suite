@@ -59,7 +59,7 @@ public class WaterConnExecutionDetails {
     private String applicationType;
     private String ownerName;
     private String applicationStatus;
-    private String applicationDate;
+    private String approvalDate;
     private String executionDate;
 
     public String getExecutionDate() {
@@ -118,12 +118,12 @@ public class WaterConnExecutionDetails {
         this.ownerName = ownerName;
     }
 
-    public String getApplicationDate() {
-        return applicationDate;
+    public String getApprovalDate() {
+        return approvalDate;
     }
 
-    public void setApplicationDate(final String applicationDate) {
-        this.applicationDate = applicationDate;
+    public void setApprovalDate(final String approvalDate) {
+        this.approvalDate = approvalDate;
     }
 
     public String getApplicationStatus() {

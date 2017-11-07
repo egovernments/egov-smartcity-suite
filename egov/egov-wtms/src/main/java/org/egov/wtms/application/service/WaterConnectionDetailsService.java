@@ -1472,7 +1472,7 @@ public class WaterConnectionDetailsService {
             if (resultObject[4] != null)
                 details.setApplicationStatus(resultObject[4].toString());
             if (resultObject[5] != null)
-                details.setApplicationDate(resultObject[5].toString());
+                details.setApprovalDate(resultObject[5].toString());
             if (resultObject[6] != null)
                 details.setRevenueWard(resultObject[6].toString());
             if (resultObject[7] != null)

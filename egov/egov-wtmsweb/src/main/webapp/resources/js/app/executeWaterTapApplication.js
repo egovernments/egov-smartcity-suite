@@ -115,13 +115,21 @@ $('#search').on('click', function() {
 	        	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
 	        	{ "data":"applicationType", "class":"text-center", "title":"Application Type"},
 	        	{ "data":"status", "class":"text-center", "title":"Application Status"},
-	        	{ "data":"applicationDate", "class":"text-center", "title":"Application Date"},
+	        	{ "data":"approvalDate",
+	        		"class":"text-center",
+	        		"title":"Approval Date",
+	        		"render" : function(data, type, row, meta) {
+	        			var date = data.split("-");
+	        			return date[2]+"/"+date[1]+"/"+date[0];
+	        		}
+	        			
+	        	},
 	        	{ "data":"revenueWard", "class":"text-center", "title":"Ward"},
 	        	{ "data":"executionDate",
 	        		"class":"text-center", 
 	        		"title":"Connection Execution Date",
 	        		"render" : function(data, type, full, meta) {
-	        			return '<input class="form-control datepicker execDate" data-date-end-date="0d" id="executiondate" />';
+	        			return '<input class="form-control datepicker execDate" id="executiondate" />';
 	        		}
 	        	 
 	        	}
@@ -202,7 +210,7 @@ $('#update').on('click', function(){
 					return false;
 				}
 				else if (response == "DateValidationFailed") {
-					bootbox.alert("Please check  one of selected application connection execution date is entered wrongly, connection execution date must be greater than the application date.");
+					bootbox.alert("Please check  one of selected application connection execution date is entered wrongly, connection execution date must be greater than the approval date.");
 					return false;
 				}
 				else if (response == "UpdateExecutionFailed") {
