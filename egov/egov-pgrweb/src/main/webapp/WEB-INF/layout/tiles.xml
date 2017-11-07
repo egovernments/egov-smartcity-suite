@@ -132,7 +132,7 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-list.jsp"/>
     </definition>
 
-    <definition name="complaintType/complaintType-success" extends="base_layout">
+    <definition name="complainttype-success" extends="base_layout">
         <put-attribute name="page-title" value="title.complaintType" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/masters/complaintType-success.jsp"/>
     </definition>
@@ -142,29 +142,9 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/router-create.jsp"/>
     </definition>
 
-    <definition name="router-success" extends="base_layout">
+    <definition name="router-search" extends="base_layout">
         <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-success.jsp"/>
-    </definition>
-
-    <definition name="router-update" extends="base_layout">
-        <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-update.jsp"/>
-    </definition>
-
-    <definition name="router-deleteMsg" extends="base_layout">
-        <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-deleteMsg.jsp"/>
-    </definition>
-
-    <definition name="router-searchView" extends="base_layout">
-        <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-searchView.jsp"/>
-    </definition>
-
-    <definition name="router-searchUpdate" extends="base_layout">
-        <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-searchUpdate.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/router-search.jsp"/>
     </definition>
 
     <definition name="router-view" extends="base_layout">
@@ -177,30 +157,21 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSearch.jsp"/>
     </definition>
 
-    <definition name="router-updateSuccess" extends="base_layout">
-        <put-attribute name="page-title" value="title.router" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/router-updateSuccess.jsp"/>
-    </definition>
-
-    <definition name="escalationTime-searchView" extends="base_layout">
+    <definition name="escalationtime-search" extends="base_layout">
         <put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationTime-searchView.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationtime-search.jsp"/>
     </definition>
-    <definition name="escalationTime-search" extends="base_layout">
+    <definition name="escalationtime-view" extends="base_layout">
         <put-attribute name="page-title" value="title.escalationTime" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationTime-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalationTime/escalationtime-view.jsp"/>
     </definition>
-    <definition name="escalation-searchView" extends="base_layout">
+    <definition name="escalation-search" extends="base_layout">
         <put-attribute name="page-title" value="title.escalation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-search.jsp"/>
     </definition>
     <definition name="escalation-view" extends="base_layout">
         <put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-search.jsp"/>
-    </definition>
-    <definition name="escalation-success" extends="base_layout">
-        <put-attribute name="page-title" value="title.escalationDefine" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalation-success.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/escalationview.jsp"/>
     </definition>
 
     <definition name="dashboard/*" extends="dashboard_layout">
@@ -228,14 +199,14 @@
         <put-attribute name="body" value="/WEB-INF/views/masters/complainttypecategory-update.jsp"/>
     </definition>
 
-    <definition name="bulkRouter-new" extends="base_layout">
+    <definition name="bulkrouter" extends="base_layout">
         <put-attribute name="page-title" value="lbl.bulkrouter.generation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/bulkrouter/bulkRouter-new.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/bulkrouter/bulkrouter.jsp"/>
     </definition>
 
-    <definition name="bulkEscalation-new" extends="base_layout">
+    <definition name="bulkescalation" extends="base_layout">
         <put-attribute name="page-title" value="lbl.bulkescalation.generation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/bulkEscalation-new.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/escalation/bulkescalation.jsp"/>
     </definition>
 
     <!--Report definition starts-->

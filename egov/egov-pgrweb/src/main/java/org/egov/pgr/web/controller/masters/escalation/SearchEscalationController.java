@@ -1,158 +1,157 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *    accountability and the service delivery of the government  organizations.
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
- *     The updated version of eGov suite of products as by eGovernments Foundation
- *     is available at http://www.egovernments.org
+ *  The updated version of eGov suite of products as by eGovernments Foundation
+ *  is available at http://www.egovernments.org
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     any later version.
+ *  This program is free software: you can redistribute it and/or modify
+ *  it under the terms of the GNU General Public License as published by
+ *  the Free Software Foundation, either version 3 of the License, or
+ *  any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
+ *  This program is distributed in the hope that it will be useful,
+ *  but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *  GNU General Public License for more details.
  *
- *     You should have received a copy of the GNU General Public License
- *     along with this program. If not, see http://www.gnu.org/licenses/ or
- *     http://www.gnu.org/licenses/gpl.html .
+ *  You should have received a copy of the GNU General Public License
+ *  along with this program. If not, see http://www.gnu.org/licenses/ or
+ *  http://www.gnu.org/licenses/gpl.html .
  *
- *     In addition to the terms of the GPL license to be adhered to in using this
- *     program, the following additional terms are to be complied with:
+ *  In addition to the terms of the GPL license to be adhered to in using this
+ *  program, the following additional terms are to be complied with:
  *
- *         1) All versions of this program, verbatim or modified must carry this
- *            Legal Notice.
+ *      1) All versions of this program, verbatim or modified must carry this
+ *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *         2) Any misrepresentation of the origin of the material is prohibited. It
- *            is required that all modified versions of this material be marked in
- *            reasonable ways as different from the original version.
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
- *         3) This license does not grant any rights to any user of the program
- *            with regards to rights under trademark law for use of the trade names
- *            or trademarks of eGovernments Foundation.
+ *      2) Any misrepresentation of the origin of the material is prohibited. It
+ *         is required that all modified versions of this material be marked in
+ *         reasonable ways as different from the original version.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *      3) This license does not grant any rights to any user of the program
+ *         with regards to rights under trademark law for use of the trade names
+ *         or trademarks of eGovernments Foundation.
+ *
+ *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import org.apache.commons.io.IOUtils;
 import org.egov.commons.ObjectType;
 import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.PositionHierarchyService;
+import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.contract.EscalationHelper;
-import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
+import org.egov.pgr.entity.contract.EscalationForm;
+import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.utils.constants.PGRConstants;
+import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping(value = "/escalation")
+@RequestMapping("/complaint/escalation/search")
 public class SearchEscalationController {
-    private static final String POSITIONID = "positionId";
-    private static final String COMPLAINTTYPEID = "complaintTypeId";
 
-    protected final ComplaintTypeService complaintTypeService;
+    private static final String ESCALATIONSEARCHVIEW = "escalation-search";
+    private static final String MESSAGE = "message";
 
-    private final ObjectTypeService objectTypeService;
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
+
+    @Autowired
+    private PositionMasterService positionMasterService;
+
+    @Autowired
+    private ObjectTypeService objectTypeService;
+    @Autowired
+    private DepartmentService departmentService;
 
     @Autowired
     private PositionHierarchyService positionHierarchyService;
 
     @Autowired
-    public SearchEscalationController(final ComplaintTypeService complaintTypeService,
-                                      final ObjectTypeService objectTypeService) {
-        this.complaintTypeService = complaintTypeService;
-        this.objectTypeService = objectTypeService;
-    }
+    private ComplaintEscalationService complaintEscalationService;
 
     @ModelAttribute
-    public PositionHierarchy positionHierarchy() {
-        return new PositionHierarchy();
+    public EscalationForm escalationForm() {
+        return new EscalationForm();
     }
 
-    @RequestMapping(value = "/view", method = RequestMethod.POST)
-    public String searchEscalationTimeForm(@ModelAttribute final PositionHierarchy positionHierarchy, final Model model) {
-        return "escalation-view";
+    @ModelAttribute("complaintTypes")
+    public List<ComplaintType> complaintTypes() {
+        return complaintTypeService.findActiveComplaintTypes();
     }
 
-    @RequestMapping(value = "/view", method = GET)
-    public String searchForm(@ModelAttribute final PositionHierarchy positionHierarchy, final Model model) {
-
-        return "escalation-view";
+    @ModelAttribute("positionMasterList")
+    public List<Position> positionMasterList() {
+        return positionMasterService.getAllPositions();
     }
 
-    @ExceptionHandler(Exception.class)
-    @RequestMapping(value = "resultList-update", method = RequestMethod.GET)
-    public @ResponseBody
-    void springPaginationDataTablesUpdate(final HttpServletRequest request,
-                                          final HttpServletResponse response) throws IOException {
-        Long positionId = Long.valueOf(0);
-        Long complaintTypeId;
-        ComplaintType complaintType = null;
-        String complaintTypeCode = null;
+    @GetMapping
+    public String searchEscalationForm() {
+        return ESCALATIONSEARCHVIEW;
+    }
 
-        if (request.getParameter(POSITIONID) != null && !"".equals(request.getParameter(POSITIONID)))
-            positionId = Long.valueOf(request.getParameter(POSITIONID));
-        if (request.getParameter(COMPLAINTTYPEID) != null && !"".equals(request.getParameter(COMPLAINTTYPEID))) {
-            complaintTypeId = Long.valueOf(request.getParameter(COMPLAINTTYPEID));
-            complaintType = complaintTypeService.findBy(complaintTypeId);
-            if (complaintType != null)
-                complaintTypeCode = complaintType.getCode();
+    @PostMapping
+    public String searchForm(EscalationForm escalationForm, Model model) {
+
+        if (escalationForm.getPosition() != null) {
+            ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
+            List<PositionHierarchy> positionHeirarchyList = positionHierarchyService
+                    .getPositionHeirarchyByFromPositionAndObjectType(escalationForm.getPosition().getId(), objectType.getId());
+            if (!positionHeirarchyList.isEmpty()) {
+                escalationForm.setPositionHierarchyList(positionHeirarchyList);
+                model.addAttribute("mode", "dataFound");
+            } else {
+                positionHeirarchyList = new ArrayList<>();
+                PositionHierarchy posHierarchy = new PositionHierarchy();
+                posHierarchy.setFromPosition(positionMasterService.getPositionById(escalationForm.getPosition().getId()));
+                posHierarchy.setObjectType(objectType);
+                posHierarchy.setObjectSubType("");
+                positionHeirarchyList.add(posHierarchy);
+                escalationForm.setPositionHierarchyList(positionHeirarchyList);
+                model.addAttribute("mode", "noDataFound");
+            }
         }
-
-        final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
-        if (objectType != null) {
-            final String escalationTimeRouterJSONData = commonSearchResult(positionId, complaintTypeCode,
-                    objectType.getId());
-            response.setContentType(MediaType.APPLICATION_JSON_VALUE);
-            IOUtils.write(escalationTimeRouterJSONData, response.getWriter());
-        }
+        model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
+        return ESCALATIONSEARCHVIEW;
     }
 
-    public String commonSearchResult(final Long positionId, final String complaintTypeCode, final Integer objectId) {
-
-        List<String> activeComplaintTypeCodes = complaintTypeService.getActiveComplaintTypeCode();
-        List<PositionHierarchy> pageOfEscalationTemp = positionHierarchyService
-                .getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(positionId, objectId, complaintTypeCode)
-                .stream()
-                .filter(posHir -> activeComplaintTypeCodes.contains(posHir.getObjectSubType()))
-                .collect(Collectors.toList());
-
-        List<EscalationHelper> escalationHelpers = new ArrayList<>();
-        for (final PositionHierarchy posHir : pageOfEscalationTemp) {
-            final EscalationHelper escalationHelper = new EscalationHelper();
-            if (posHir.getObjectSubType() != null)
-                escalationHelper.setComplaintType(complaintTypeService.findByCode(posHir.getObjectSubType()));
-
-            escalationHelper.setFromPosition(posHir.getFromPosition());
-            escalationHelper.setToPosition(posHir.getToPosition());
-            escalationHelpers.add(escalationHelper);
+    @PostMapping("update/{id}")
+    public String saveEscalationForm(@PathVariable Long id, EscalationForm escalationForm,
+                                     Model model, RedirectAttributes redirectAttrs) {
+        if (id == null) {
+            model.addAttribute(MESSAGE, "escalation.pos.required");
+            return ESCALATIONSEARCHVIEW;
+        } else {
+            complaintEscalationService.updateEscalation(id, escalationForm);
+            redirectAttrs.addFlashAttribute("positionName", escalationForm.getPosition().getName());
+            redirectAttrs.addFlashAttribute(MESSAGE, "msg.escaltion.success");
+            return "redirect:/complaint/escalation/search";
         }
-        return new StringBuilder("{ \"data\":").append(toJSON(escalationHelpers, EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
     }
 }

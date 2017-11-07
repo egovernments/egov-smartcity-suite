@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -48,35 +55,28 @@ import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 @Controller
-@RequestMapping("/complainttype")
+@RequestMapping("/complainttype/create")
 public class CreateComplaintTypeController {
-
-    private final DepartmentService departmentService;
-    private final ComplaintTypeService complaintTypeService;
 
     @Autowired
     private ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Autowired
-    public CreateComplaintTypeController(final DepartmentService departmentService, final ComplaintTypeService complaintTypeService) {
-        this.departmentService = departmentService;
-        this.complaintTypeService = complaintTypeService;
-    }
+    private DepartmentService departmentService;
+
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
 
     @ModelAttribute("categories")
     public List<ComplaintTypeCategory> categories() {
@@ -93,27 +93,19 @@ public class CreateComplaintTypeController {
         return new ComplaintType();
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String complaintTypeForm() {
+    @GetMapping
+    public String createComplaintTypeForm() {
         return "complaint-type";
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String createComplaintType(@Valid @ModelAttribute final ComplaintType complaintType, final BindingResult errors,
-                                      final RedirectAttributes redirectAttrs) {
+    @PostMapping
+    public String createComplaintType(@Valid ComplaintType complaintType,
+                                      BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "complaint-type";
         complaintTypeService.createComplaintType(complaintType);
         redirectAttrs.addFlashAttribute("complaintType", complaintType);
         redirectAttrs.addFlashAttribute("message", "msg.comp.type.success");
-        return "redirect:/complainttype/success/" + complaintType.getName();
+        return "redirect:/complainttype/view/" + complaintType.getCode();
     }
-
-    @RequestMapping(value = "/success/{name}", method = GET)
-    public ModelAndView successView(@PathVariable("name") final String name, @ModelAttribute final ComplaintType complaintType) {
-        return new ModelAndView("complaintType/complaintType-success", "complaintType",
-                complaintTypeService.findByName(name));
-
-    }
-
 }

@@ -52,7 +52,7 @@ $(document).ready(function () {
         },
         queryTokenizer: Bloodhound.tokenizers.whitespace,
         remote: {
-            url: '/pgr/complaint/router/complaintTypes?complaintTypeName=%QUERY',
+            url: '/pgr/complaint/complaintTypes?complaintTypeName=%QUERY',
             filter: function (data) {
                 return $.map(data, function (ct) {
                     return {
@@ -76,45 +76,14 @@ $(document).ready(function () {
     });
     typeaheadWithEventsHandling(com_type_typeahead, '#complaintTypeId');
 
-    var position = new Bloodhound({
-        datumTokenizer: function (datum) {
-            return Bloodhound.tokenizers.whitespace(datum.value);
-        },
-        queryTokenizer: Bloodhound.tokenizers.whitespace,
-        remote: {
-            url: '/pgr/complaint/router/position?positionName=%QUERY',
-            dataType: "json",
-            filter: function (data) {
-                return $.map(data, function (pos) {
-                    return {
-                        name: pos.name,
-                        value: pos.id
-                    };
-                });
-            }
-        }
-    });
-
-    position.initialize();
-
-    var com_pos_typeahead = $('#com_position').typeahead({
-        hint: false,
-        highlight: true,
-        minLength: 3
-    }, {
-        displayKey: 'name',
-        source: position.ttAdapter()
-    });
-
-    typeaheadWithEventsHandling(com_pos_typeahead, '#positionId');
-
-
     $("#boundary_type_id").change(function () {
+
         $('#com_boundry').typeahead('val', '');
         $('#com_boundry').typeahead('destroy');
         $("#boundaryId").val('');
 
         var b_id = $("#boundary_type_id").val();
+        $("#hiddenBoundaryTypeId").val(b_id);
         var boundaries = new Bloodhound(
             {
                 datumTokenizer: function (datum) {
@@ -135,7 +104,6 @@ $(document).ready(function () {
                 }
             });
         boundaries.initialize();
-
         var com_boundry_typeahead = $('#com_boundry').typeahead({
             hint: false,
             highlight: false,
@@ -147,25 +115,101 @@ $(document).ready(function () {
         typeaheadWithEventsHandling(com_boundry_typeahead, '#boundaryId');
     });
 
-    $("#createRouter").submit(function (e) {
-        $('.loader-class').modal('hide');
-        $('.all-errors').hide();
-        if ($('#positionId').val() == "") {
-            $('.positionerror').html('Position is required').show();
-            e.preventDefault();
-        } else if ($("#boundary_type_id").val() != 0 && $('#boundaryId').val() == "") {
-            $('.boundaryerror').html('Boundary is required').show();
-            e.preventDefault();
-        } else if (($('#com_type').val() != "" && $("#complaintTypeId").val() == "") && $('#com_boundry').val() == "") {
-            $('.eithererror').html('Complaint Type or Boundary should be selected').show();
-            e.preventDefault();
-        } else if (($('#com_type').val() == "" && $("#complaintTypeId").val() == "") && $('#com_boundry').val() == "") {
-            $('.eithererror').html('Complaint Type or Boundary should be selected').show();
-            e.preventDefault();
+    $('#routerSearch').click(function (e) {
+        oTable = $('#com_routing_search');
+        oTable.on('preXhr.dt', function (e, settings, data) {
+            param = data;
+        }).dataTable({
+            processing: true,
+            serverSide: true,
+            sort: true,
+            filter: true,
+            "searching": false,
+            "order": [[0, 'asc']],
+            dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+            "autoWidth": false,
+            "bDestroy": true,
+            buttons: [
+                {
+                    text: 'PDF',
+                    action: function (e, dt, node, config) {
+                        window.open("download?" + downloadParameters(param) + "&printFormat=PDF", '_self');
+                    }
+                },
+                {
+                    text: 'XLS',
+                    action: function (e, dt, node, config) {
+                        window.open("download?" + downloadParameters(param) + "&printFormat=XLS", '_self');
+                    }
+                }],
+            "ajax": {
+                url: "/pgr/complaint/router/search",
+                type: 'GET',
+                data: function (args) {
+                    return {
+                        "args": JSON.stringify(args),
+                        'boundaryTypeId': $('#boundary_type_id').val(),
+                        'boundaryId': $('#boundaryId').val(),
+                        'complaintTypeId': $('#complaintTypeId').val()
+                    }
+                }
+            },
+            "columns": [
+                {
+                    "mData": "boundaryType",
+                    "sTitle": "Boundary Type",
+                    "name": "boundary.boundaryType.name"
+                },
+                {
+                    "mData": "boundary",
+                    "sTitle": "Boundary",
+                    "name": "boundary"
+                },
+                {
+                    "mData": "complaintType",
+                    "sTitle": "Grievance Type",
+                    "name": "complaintType.name"
+                },
+                {
+                    "mData": "position",
+                    "sTitle": "Position",
+                    "name": "position"
+                },
+                {
+                    "mData": "routerId",
+                    "visible": false
+                }]
+        });
+        e.stopPropagation();
+    });
+
+    $('#com_routing_search').on('click', 'tbody tr', function () {
+        if ($(this).hasClass('apply-background')) {
+            $(this).removeClass('apply-background');
+        } else {
+            $('#com_routing_search tbody tr')
+                .removeClass('apply-background');
+            $(this).addClass('apply-background');
         }
-        else {
-            $('.loader-class').modal('show', {backdrop: 'static'});
+        oTable.$('tr.row_selected').removeClass('row_selected');
+        $(this).addClass('row_selected');
+        var fid = oTable.fnGetData(this, 4);
+        if (fid != null) {
+            if ($("#mode").val() == "view")
+                window.open('/pgr/complaint/router/view/' + fid, '', 'height=800,width=800');
+            else
+                window.open('/pgr/complaint/router/update/' + fid, '', 'height=800,width=800');
         }
     });
+
+    function downloadParameters(obj) {
+        var parts = [];
+        for (var key in obj) {
+            if (obj.hasOwnProperty(key)) {
+                parts.push(encodeURIComponent(key) + '=' + encodeURIComponent(obj[key]));
+            }
+        }
+        return "?" + parts.join('&');
+    }
 
 });

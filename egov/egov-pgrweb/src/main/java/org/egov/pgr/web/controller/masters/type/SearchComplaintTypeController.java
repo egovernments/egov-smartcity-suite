@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -44,44 +51,34 @@ import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-
-import java.util.List;
 
 
 @Controller
-@RequestMapping("/complainttype/update")
+@RequestMapping("/complainttype/search")
 public class SearchComplaintTypeController {
 
-    private ComplaintTypeService complaintTypeService;
-
     @Autowired
-    public SearchComplaintTypeController(ComplaintTypeService complaintTypeService) {
-        this.complaintTypeService = complaintTypeService;
-    }
+    private ComplaintTypeService complaintTypeService;
 
     @ModelAttribute
     public ComplaintType complaintTypeModel() {
         return new ComplaintType();
     }
 
-    @ModelAttribute(value = "complaintTypes")
-    public List<ComplaintType> listComplaintTypes() {
-        return complaintTypeService.findAll();
-    }
-
-    @RequestMapping(method = RequestMethod.GET)
-    public String showComplaintTypes() {
-
+    @GetMapping
+    public String searchComplaintTypesForm(Model model) {
+        model.addAttribute("complaintTypes", complaintTypeService.findAll());
         return "complaintType-list";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String search(@ModelAttribute ComplaintType complaintType, final BindingResult errors) {
-
+    @PostMapping
+    public String goToUpdateComplaintTypeForm(ComplaintType complaintType, BindingResult errors) {
         if (errors.hasErrors())
             return "complaint-type";
         return "redirect:/complainttype/update/" + complaintType.getName();

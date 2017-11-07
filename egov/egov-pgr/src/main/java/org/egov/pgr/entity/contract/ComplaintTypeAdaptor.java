@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -40,33 +47,40 @@
 
 package org.egov.pgr.entity.contract;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintType;
 
 import java.lang.reflect.Type;
+import java.util.List;
 
 import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
-public class ComplaintTypeAdaptor implements JsonSerializer<ComplaintType> {
+public class ComplaintTypeAdaptor implements DataTableJsonAdapter<ComplaintType> {
 
     @Override
-    public JsonElement serialize(final ComplaintType compaintType, final Type type, final JsonSerializationContext jsc) {
-        final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("name", compaintType.getName());
-        jsonObject.addProperty("category", compaintType.getCategory().getName());
-        jsonObject.addProperty("department", compaintType.getDepartment() != null ? compaintType.getDepartment()
-                .getName() : NA);
-        jsonObject.addProperty("code", compaintType.getCode());
-        jsonObject.addProperty("isActive", toYesOrNo(compaintType.getIsActive()));
-        jsonObject.addProperty("description", defaultIfBlank(compaintType.getDescription()));
-        jsonObject.addProperty("slahours", compaintType.getSlaHours() != null ? compaintType.getSlaHours().toString() : NA);
-        jsonObject.addProperty("hasfinancialImpact", toYesOrNo(compaintType.isHasFinancialImpact()));
-        return jsonObject;
+    public JsonElement serialize(DataTable<ComplaintType> compaintTypeResponse, Type type, JsonSerializationContext jsc) {
+        List<ComplaintType> complaintTypeResult = compaintTypeResponse.getData();
+        JsonArray compalintTypeResultData = new JsonArray();
+        complaintTypeResult.forEach(compaintType -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("name", compaintType.getName());
+            jsonObject.addProperty("category", compaintType.getCategory().getName());
+            jsonObject.addProperty("department", compaintType.getDepartment() != null ? compaintType.getDepartment()
+                    .getName() : NA);
+            jsonObject.addProperty("code", compaintType.getCode());
+            jsonObject.addProperty("isActive", toYesOrNo(compaintType.getIsActive()));
+            jsonObject.addProperty("description", defaultIfBlank(compaintType.getDescription()));
+            jsonObject.addProperty("slahours", defaultIfBlank(compaintType.getSlaHours().toString()));
+            jsonObject.addProperty("hasfinancialImpact", toYesOrNo(compaintType.isHasFinancialImpact()));
+            compalintTypeResultData.add(jsonObject);
+        });
+        return enhance(compalintTypeResultData, compaintTypeResponse);
     }
-
 }

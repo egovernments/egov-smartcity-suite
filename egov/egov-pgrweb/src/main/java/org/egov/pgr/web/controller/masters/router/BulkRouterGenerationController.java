@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -39,12 +46,9 @@
  */
 package org.egov.pgr.web.controller.masters.router;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.pgr.entity.ComplaintRouter;
-import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.entity.contract.BulkRouterGenerator;
 import org.egov.pgr.entity.contract.ComplaintRouterAdaptor;
@@ -55,35 +59,30 @@ import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
 import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
-@RequestMapping("/bulkRouter")
+@RequestMapping("/complaint/bulkrouter")
 public class BulkRouterGenerationController {
 
-    private final ComplaintRouterService complaintRouterService;
-    private final BoundaryTypeService boundaryTypeService;
-    private final ComplaintTypeCategoryService complaintTypeCategoryService;
+    @Autowired
+    private ComplaintRouterService complaintRouterService;
 
     @Autowired
-    public BulkRouterGenerationController(final ComplaintRouterService complaintRouterService,
-                                          final BoundaryTypeService boundaryTypeService, final ComplaintTypeCategoryService complaintTypeCategoryService) {
-        this.complaintRouterService = complaintRouterService;
-        this.boundaryTypeService = boundaryTypeService;
-        this.complaintTypeCategoryService = complaintTypeCategoryService;
-    }
+    private BoundaryTypeService boundaryTypeService;
+
+    @Autowired
+    private ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @ModelAttribute("boundaryTypes")
     public List<BoundaryType> boundaryTypes() {
@@ -100,46 +99,31 @@ public class BulkRouterGenerationController {
         return new BulkRouterGenerator();
     }
 
-    @RequestMapping(value = "/search", method = RequestMethod.GET)
-    public String newform() {
-        return "bulkRouter-new";
+    @GetMapping
+    public String complaintBulkRouterForm() {
+        return "bulkrouter";
     }
 
-    @RequestMapping(value = "/search-result", method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
-    public @ResponseBody
-    void search(@ModelAttribute final BulkRouterGenerator bulkRouterGenerator, final HttpServletResponse response)
-            throws IOException {
-        final List<ComplaintRouter> pageOfRouters = complaintRouterService
-                .getRoutersByComplaintTypeBoundary(bulkRouterGenerator.getComplaintTypes(), bulkRouterGenerator.getBoundaries());
-        final String complaintRouterJSONData = new StringBuilder("{ \"data\":").append(toJSON(pageOfRouters, ComplaintRouter.class, ComplaintRouterAdaptor.class)).append("}")
-                .toString();
-        IOUtils.write(complaintRouterJSONData, response.getWriter());
+    @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String search(BulkRouterGenerator bulkRouterGenerator) {
+        return new StringBuilder("{ \"data\":").append(toJSON(complaintRouterService.getRoutersByComplaintTypeBoundary(
+                bulkRouterGenerator.getComplaintTypes(),
+                bulkRouterGenerator.getBoundaries()),
+                ComplaintRouter.class, ComplaintRouterAdaptor.class)).append("}").toString();
     }
 
-    @RequestMapping(value = "/save", method = RequestMethod.POST)
-    public String save(@Valid @ModelAttribute final BulkRouterGenerator bulkRouterGenerator, final BindingResult errors,
-                       final RedirectAttributes redirectAttrs, final Model model) {
+    @PostMapping("create")
+    public String createComplaintBulkRouter(@Valid BulkRouterGenerator bulkRouterGenerator,
+                                            RedirectAttributes redirectAttrs,
+                                            BindingResult errors, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("message", "router.unble.to.save");
-            return "bulkRouter-new";
+            return "bulkrouter";
         } else {
-            for (final ComplaintType complaintType : bulkRouterGenerator.getComplaintTypes())
-                for (final Boundary boundary : bulkRouterGenerator.getBoundaries()) {
-                    final ComplaintRouter router = new ComplaintRouter();
-                    router.setComplaintType(complaintType);
-                    router.setBoundary(boundary);
-                    router.setPosition(bulkRouterGenerator.getPosition());
-                    final ComplaintRouter existingRouter = complaintRouterService.getExistingRouter(router);
-                    if (existingRouter != null) {
-                        existingRouter.setPosition(bulkRouterGenerator.getPosition());
-                        complaintRouterService.updateComplaintRouter(existingRouter);
-                    } else
-                        complaintRouterService.createComplaintRouter(router);
-                }
+            complaintRouterService.createBulkRouter(bulkRouterGenerator);
             redirectAttrs.addFlashAttribute("message", "msg.bulkrouter.success");
-            return "redirect:/bulkRouter/search";
+            return "redirect:/complaint/bulkrouter";
         }
-
     }
-
 }

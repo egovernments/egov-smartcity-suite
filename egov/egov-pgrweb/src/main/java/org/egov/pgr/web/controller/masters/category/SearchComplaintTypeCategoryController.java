@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -44,37 +51,36 @@ import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pgr.service.ComplaintTypeCategoryService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
 
 @Controller
-@RequestMapping("/complainttype-category")
-public class ComplaintTypeCategoryCreateController {
-
-    private final ComplaintTypeCategoryService complaintTypeCategoryService;
+@RequestMapping("/complaint/category/search")
+public class SearchComplaintTypeCategoryController {
 
     @Autowired
-    public ComplaintTypeCategoryCreateController(final ComplaintTypeCategoryService complaintTypeCategoryService) {
-        this.complaintTypeCategoryService = complaintTypeCategoryService;
+    private ComplaintTypeCategoryService complaintTypeCategoryService;
+
+    @ModelAttribute
+    public ComplaintTypeCategory complaintTypeCategory() {
+        return new ComplaintTypeCategory();
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.GET)
-    public String createComplaintTypeCategoryForm(@ModelAttribute final ComplaintTypeCategory complaintTypeCategory) {
-        return "complainttype-category-create";
+    @GetMapping
+    public String searchComplaintTypeCategoryForm(Model model) {
+        model.addAttribute("categories", complaintTypeCategoryService.findAll());
+        return "complainttype-category-search";
     }
 
-    @RequestMapping(value = "create", method = RequestMethod.POST)
-    public String createComplaintType(@Valid @ModelAttribute final ComplaintTypeCategory complaintTypeCategory,
-                                      final BindingResult errors, final RedirectAttributes redirectAttrs) {
+    @PostMapping
+    public String goToUpdateComplaintTypeCategoryForm(ComplaintTypeCategory complaintTypeCategory,
+                                                      BindingResult errors) {
         if (errors.hasErrors())
-            return "complainttype-category-create";
-        complaintTypeCategoryService.createComplaintTypeCategory(complaintTypeCategory);
-        redirectAttrs.addFlashAttribute("message", "msg.comp.type.catgory.creation.success");
-        return "redirect:/complainttype-category/create";
+            return "complainttype-category-search";
+        return "redirect:/complaint/category/update/" + complaintTypeCategory.getName();
     }
 }

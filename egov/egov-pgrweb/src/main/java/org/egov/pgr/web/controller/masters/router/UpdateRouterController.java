@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -48,34 +55,31 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
 import java.util.List;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 @Controller
-@RequestMapping(value = "/router")
+@RequestMapping(value = "/complaint/router")
 class UpdateRouterController {
 
-    private static final String UPDATE_ROUTER_VIEW = "router-update";
+    private static final String ROUTER_UPDATE = "router-updateSearch";
     private static final String COMPLAINT_ROUTER = "complaintRouter";
-    private static final String ROUTER_HEADING = "routerHeading";
     private static final String MESSAGE = "message";
-    private final BoundaryTypeService boundaryTypeService;
-    private final ComplaintRouterService complaintRouterService;
 
     @Autowired
-    public UpdateRouterController(final BoundaryTypeService boundaryTypeService,
-                                  final ComplaintRouterService complaintRouterService) {
-        this.boundaryTypeService = boundaryTypeService;
-        this.complaintRouterService = complaintRouterService;
-    }
+    private BoundaryTypeService boundaryTypeService;
+    @Autowired
+    private ComplaintRouterService complaintRouterService;
+
+    @Autowired
+    private ComplaintRouterValidator complaintRouterValidator;
 
     @ModelAttribute("boundaryTypes")
     public List<BoundaryType> boundaryTypes() {
@@ -87,67 +91,40 @@ class UpdateRouterController {
         return complaintRouterService.getRouterById(id);
     }
 
-    @RequestMapping(value = "/update/{id}", method = GET)
+    @GetMapping("update/{id}")
     public String updateRouterForm() {
-        return UPDATE_ROUTER_VIEW;
+        return ROUTER_UPDATE;
     }
 
-    @RequestMapping(value = "/search/update/{id}", method = GET)
-    public String updatefromSearchRouterForm() {
-        return "router-updateSearch";
-    }
-
-    @RequestMapping(value = "/view/{id}", method = GET)
+    @GetMapping("view/{id}")
     public String viewRouterForm() {
         return "router-view";
     }
 
-    @RequestMapping(value = "/update/{id}", method = POST)
-    public String update(@Valid @ModelAttribute final ComplaintRouter complaintRouter, final BindingResult errors,
-                         final RedirectAttributes redirectAttrs, final Model model) {
+    @PostMapping("update/{id}")
+    public String update(@Valid ComplaintRouter complaintRouter,
+                         BindingResult errors, RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
-            return UPDATE_ROUTER_VIEW;
+            return ROUTER_UPDATE;
 
         complaintRouterService.updateComplaintRouter(complaintRouter);
         redirectAttrs.addFlashAttribute(COMPLAINT_ROUTER, complaintRouter);
-        model.addAttribute(ROUTER_HEADING, "msg.router.update.heading");
-        model.addAttribute(MESSAGE, "msg.router.update.success");
-        return "router-success";
+        redirectAttrs.addFlashAttribute(MESSAGE, "msg.router.update.success");
+        return "redirect:/complaint/router/view/" + complaintRouter.getId();
     }
 
-    @RequestMapping(value = "/search/update/{id}", method = POST)
-    public String searchupdate(@Valid @ModelAttribute final ComplaintRouter complaintRouter,
-                               final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model) {
-        if (errors.hasErrors())
-            return "router-updateSearch";
-
-        complaintRouterService.updateComplaintRouter(complaintRouter);
-        redirectAttrs.addFlashAttribute(COMPLAINT_ROUTER, complaintRouter);
-        model.addAttribute(ROUTER_HEADING, "msg.router.update.heading");
-        model.addAttribute(MESSAGE, "msg.router.update.success");
-        return "router-updateSuccess";
-    }
-
-    @RequestMapping(value = "/delete/{id}", method = POST)
-    public String delete(@Valid @ModelAttribute final ComplaintRouter complaintRouter, final BindingResult errors,
-                         final RedirectAttributes redirectAttrs, final Model model) {
-        if (errors.hasErrors())
-            return UPDATE_ROUTER_VIEW;
-        if (!validateIfCityLevelRouter(complaintRouter)) {
-            complaintRouterService.deleteComplaintRouter(complaintRouter);
-            redirectAttrs.addFlashAttribute(COMPLAINT_ROUTER, complaintRouter);
-            model.addAttribute(ROUTER_HEADING, "msg.router.del.heading");
-            model.addAttribute(MESSAGE, "msg.router.del.success");
-            return "router-deleteMsg";
-        } else {
+    @PostMapping("delete/{id}")
+    public String delete(@Valid ComplaintRouter complaintRouter,
+                         BindingResult errors, Model model,
+                         RedirectAttributes redirectAttrs) {
+        complaintRouterValidator.validate(complaintRouter, errors);
+        if (errors.hasErrors()) {
             model.addAttribute(MESSAGE, "msg.router.cannot.delete");
-            return UPDATE_ROUTER_VIEW;
+            return ROUTER_UPDATE;
+        } else {
+            complaintRouterService.deleteComplaintRouter(complaintRouter);
+            redirectAttrs.addFlashAttribute(MESSAGE, "msg.router.del.success");
+            return "redirect:/complaint/router/search/update";
         }
     }
-
-    private boolean validateIfCityLevelRouter(final ComplaintRouter complaintRouter) {
-        return complaintRouter.getBoundary() != null && "City".equalsIgnoreCase(complaintRouter.getBoundary().getBoundaryType().getName())
-                && complaintRouter.getComplaintType() == null;
-    }
-
 }

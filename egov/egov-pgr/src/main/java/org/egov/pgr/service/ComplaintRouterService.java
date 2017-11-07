@@ -57,6 +57,7 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintRouter;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.contract.BulkRouterGenerator;
 import org.egov.pgr.entity.contract.ComplaintRouterSearchRequest;
 import org.egov.pgr.repository.ComplaintRouterRepository;
 import org.egov.pgr.repository.specs.ComplaintRouterSpec;
@@ -213,5 +214,21 @@ public class ComplaintRouterService {
             if (boundary.getParent() != null)
                 getParentBoundaries(boundary.getParent().getId(), boundaryList);
         }
+    }
+
+    public void createBulkRouter(BulkRouterGenerator bulkRouterGenerator) {
+        for (ComplaintType complaintType : bulkRouterGenerator.getComplaintTypes())
+            for (Boundary boundary : bulkRouterGenerator.getBoundaries()) {
+                ComplaintRouter router = new ComplaintRouter();
+                router.setComplaintType(complaintType);
+                router.setBoundary(boundary);
+                router.setPosition(bulkRouterGenerator.getPosition());
+                ComplaintRouter existingRouter = getExistingRouter(router);
+                if (existingRouter != null) {
+                    existingRouter.setPosition(bulkRouterGenerator.getPosition());
+                    updateComplaintRouter(existingRouter);
+                } else
+                    createComplaintRouter(router);
+            }
     }
 }

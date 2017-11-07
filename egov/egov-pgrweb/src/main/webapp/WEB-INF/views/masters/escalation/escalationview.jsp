@@ -53,60 +53,66 @@
 <div class="row">
     <div class="col-md-12">
         <div class="" data-collapsed="0">
-            <form:form id="searchrouter" method="post" class="form-horizontal form-groups-bordered"
-                       modelAttribute="complaintRouter">
+            <c:if test="${not empty message}">
+                <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
+            </c:if>
+            <form:form id="searchEscalationForm" method="post"
+                       class="form-horizontal form-groups-bordered"
+                       modelAttribute="positionHierarchy">
                 <div class="panel panel-primary" data-collapsed="0">
                     <div class="panel-heading ">
                         <div class="panel-title">
-                            <strong><spring:message code="lbl.router.heading.search"/></strong>
+                            <strong><spring:message code="lbl.escalation.heading.search"/></strong>
                         </div>
                     </div>
-                    <div class="panel-body">
+                    <div class="panel-body custom-form">
                         <div class="form-group">
                             <label class="col-sm-3 control-label"><spring:message code="lbl.router.complaintType"/>
                             </label>
                             <div class="col-sm-6">
-                                <input id="com_type" type="text" class="form-control typeahead is_valid_alphabet"
+                                <input id="com_subtype" type="text" class="form-control typeahead is_valid_alphabet"
                                        placeholder="" autocomplete="off"/>
-                                <form:hidden path="complaintType" id="complaintTypeId"/>
-                                <form:errors path="complaintType" cssClass="add-margin error-msg"/>
+                                <form:hidden path="objectSubType" id="objectSubType"/>
+                                <form:errors path="objectSubType" cssClass="add-margin error-msg"/>
+                                <div class="error-msg subtypeerror all-errors display-hide"></div>
                             </div>
                         </div>
+
                         <div class="form-group">
-                            <label class="col-sm-3 control-label"><spring:message
-                                    code="lbl.router.boundaryType"/></label>
-                            <div class="col-sm-6 add-margin">
-                                <select id="boundary_type_id" class="form-control">
-                                    <option value=""><spring:message code="lbl.select"/></option>
-                                    <c:forEach items="${boundaryTypes}" var="boundaryType">
-                                        <option value="${boundaryType.id}"> ${boundaryType.name}</option>
-                                    </c:forEach>
-                                </select>
-                                <input type="hidden" id="hiddenBoundaryTypeId" name="boundaryTypeId" value="">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label"><spring:message code="lbl.router.boundary"/></label>
+                            <label class="col-sm-3 control-label"><spring:message code="lbl.router.position"/></label>
                             <div class="col-sm-6">
-                                <input id="com_boundry" type="text" class="form-control typeahead" placeholder=""
-                                       autocomplete="off"/>
-                                <form:hidden path="boundary" id="boundaryId"/>
-                                <form:errors path="boundary" cssClass="error-msg"/>
+                                <input id="com_position" type="text" class="form-control typeahead" placeholder=""
+                                       autocomplete="off" required="required"/>
+                                <form:hidden path="fromPosition.id" id="positionId"/>
+                                <form:errors path="fromPosition.id" cssClass="error-msg"/>
+                                <div class="error-msg positionerror all-errors display-hide"></div>
                             </div>
                         </div>
                         <div class="form-group">
                             <div class="text-center">
-                                <button type="button" id="routerSearch" class="btn btn-primary">
-                                    <spring:message code="lbl.router.search"/>
+                                <button type="button" id="escalationSearch"
+                                        class="btn btn-primary">
+                                    <spring:message code="lbl.escalation.button.search"/>
                                 </button>
-                                <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()">
-                                    <spring:message code="lbl.close"/></a>
+                                <a href="javascript:void(0)" class="btn btn-default"
+                                   onclick="self.close()"><spring:message code="lbl.close"/></a>
                             </div>
                         </div>
                     </div>
                 </div>
             </form:form>
-            <table class="table table-bordered datatable dt-responsive" id="com_routing_search"></table>
+            <div class="row display-hide report-section">
+                <div class="col-md-6 col-xs-6 table-header"><spring:message code="lbl.escalation.details"/></div>
+                <div class="col-md-12">
+                    <table class="table table-bordered datatable nopointer" id="escalation-table">
+                        <thead>
+                        <th><spring:message code="lbl.escalation.complaintType"/></th>
+                        <th><spring:message code="lbl.escalation.heading.fromPosition"/></th>
+                        <th><spring:message code="lbl.escalation.heading.toPosition"/></th>
+                        </thead>
+                    </table>
+                </div>
+            </div>
         </div>
     </div>
 </div>
@@ -122,13 +128,17 @@
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/dataTables.buttons.min.js' context='/egi'/>"></script>
 <script
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.bootstrap.min.js' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url
-        value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.flash.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/jszip.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/pdfmake.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/vfs_fonts.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
+<script
+        src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
 <script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
-<script type="text/javascript"
-        src="<cdn:url  value='/resources/js/app/complaintrouterviewsearch.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url  value='/resources/js/app/escalationview.js?rnd=${app_release_no}'/>"></script>

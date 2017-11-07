@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -40,64 +47,47 @@
 
 package org.egov.pgr.web.controller.masters.type;
 
-import org.apache.commons.io.IOUtils;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.contract.ComplaintTypeAdaptor;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("/complainttype")
+@RequestMapping("/complainttype/view")
 public class ViewComplaintTypeController {
 
-    public static final String CONTENTTYPE_JSON = "application/json";
+    @Autowired
     private ComplaintTypeService complaintTypeService;
 
-    @Autowired
-    public ViewComplaintTypeController(ComplaintTypeService complaintTypeService) {
-        this.complaintTypeService = complaintTypeService;
-    }
 
-    @RequestMapping(value = "view", method = RequestMethod.GET)
-    public String complaintTypeViewForm(@ModelAttribute ComplaintType complaintType) {
+    @GetMapping
+    public String viewComplaintTypeForm() {
         return "view-complaintType";
-
     }
 
-    @RequestMapping(value = "ajax/result", method = RequestMethod.GET)
-    public @ResponseBody
-    void springPaginationDataTables(HttpServletRequest request, HttpServletResponse response)
-            throws IOException {
-        int pageStart = Integer.parseInt(request.getParameter("start"));
-        int pageSize = Integer.parseInt(request.getParameter("length"));
-        int pageNumber = pageStart / pageSize + 1;
-        List<ComplaintType> totalRecords = complaintTypeService.findAll();
-
-        if (pageSize == -1) {
-            pageSize = totalRecords.size();
-        }
-
-        final List<ComplaintType> complaintTypeList = complaintTypeService.getListOfComplaintTypes(pageNumber, pageSize).getContent();
-        final StringBuilder complaintTypeJSONData = new StringBuilder();
-        complaintTypeJSONData.append("{\"draw\": ").append("0");
-        complaintTypeJSONData.append(",\"recordsTotal\":").append(totalRecords.size());
-        complaintTypeJSONData.append(",\"totalDisplayRecords\":").append(complaintTypeList.size());
-        complaintTypeJSONData.append(",\"recordsFiltered\":").append(totalRecords.size());
-        complaintTypeJSONData.append(",\"data\":").append(toJSON(complaintTypeList, ComplaintType.class, ComplaintTypeAdaptor.class)).append("}");
-        response.setContentType(CONTENTTYPE_JSON);
-        IOUtils.write(complaintTypeJSONData, response.getWriter());
+    @GetMapping(value = "/", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String viewComplaintType(DataTableSearchRequest request) {
+        return new DataTable<>(complaintTypeService.getComplaintType(request), request.draw())
+                .toJson(ComplaintTypeAdaptor.class);
     }
 
+    @GetMapping("/{code}")
+    public String viewComplaintTypeDetails(@PathVariable String code,
+                                           @ModelAttribute ComplaintType complaintType,
+                                           Model model) {
+        model.addAttribute("complaintType", complaintTypeService.findByCode(code));
+        return "complainttype-success";
+    }
 }

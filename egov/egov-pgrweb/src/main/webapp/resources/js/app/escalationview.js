@@ -46,159 +46,139 @@
  */
 
 jQuery(document)
-		.ready(
-				function($) {
+    .ready(
+        function ($) {
 
-					
-					if ($('#mode').val() == 'duplicateOrError') {
-						jQuery('#escalationDiv').removeClass('hidden');
-					}
-					if ($('#mode').val() == 'dataFound') {
-						jQuery('#escalationDiv').removeClass('hidden');
-					}
-					$("#escalationnewEscalation").click(function() {
-						$("#noescalationDataFoundDiv").hide();
-						$("#escalationDiv").show();
-						jQuery('#escalationDiv').removeClass('hidden');
-					});
 
-										
-					tableContainer1 = $("#escalation-table");
+            if ($('#mode').val() == 'duplicateOrError') {
+                jQuery('#escalationDiv').removeClass('hidden');
+            }
+            if ($('#mode').val() == 'dataFound') {
+                jQuery('#escalationDiv').removeClass('hidden');
+            }
+            $("#escalationnewEscalation").click(function () {
+                $("#noescalationDataFoundDiv").hide();
+                $("#escalationDiv").show();
+                jQuery('#escalationDiv').removeClass('hidden');
+            });
 
-					$('#escalationSearch').click(function(e) {
-						callajaxdatatable(e);
-					});
 
-					function callajaxdatatable(e) {
-						var cmTypeId=0;var posId=0;
-						if($('#objectSubType').val()=="")
-							 cmTypeId=0;
-						else
-							 cmTypeId=$('#objectSubType').val();
-						
-						if($('#positionId').val()=="")
-							 posId=0;
-						else 
-							 posId=$('#positionId').val();
-						$('.report-section').removeClass('display-hide');
-						tableContainer1
-								.dataTable({
-									ajax : {
-										url : "/pgr/escalation/resultList-update",
-										data : {
-											complaintTypeId : cmTypeId,
-											positionId : posId
-										}
-									},
-									"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-											[ 10, 25, 50, "All" ] ],
-                                    dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
-                                    "autoWidth": false,
-                                    "bDestroy": true,
-									buttons: [{
-                                        extend: 'pdf',
-                                        title: 'Escalation View',
-                                        filename: 'Escalation View',
-                                        orientation: 'landscape',
-                                        footer: true,
-                                        pageSize: 'A4'
-                                    }, {
-                                        extend: 'excel',
-                                        filename: 'Escalation View',
-                                        footer: true
-                                    }],
-									columns : [ {
-										"data" : "objectSubType"
-									}, {
-										"data" : "positionFrom"
-									}, {
-										"data" : "positionTo"
-									}, {
-										"data" : "objectType",
-										"visible": false
-									},{
-										"data" : "positionFromId",
-										"visible": false
-									},{
-										"data" : "id",
-										"visible": false
-									}	
-									]
-								});
-						e.stopPropagation();
-					}
-					
-					$('#escalation-table').on('click', 'tbody tr', function(event){
-						if($(event.target).attr('class') ==  'btn btn-xs btn-secondary edit-escalation')
-					    {
-							var fid= tableContainer1.fnGetData( this, 5 );
-							 window.open('/pgr/escalation/view/'+ fid, '', 'height=800,width=800,scrollbars=yes,resizable=yes');
-						}
-							
-					});
-				
-					// Instantiate the Bloodhound suggestion engine
-					// Complaint Type auto-complere
-					var complaintType = new Bloodhound(
-							{
-								datumTokenizer : function(datum) {
-									return Bloodhound.tokenizers
-											.whitespace(datum.value);
-								},
-								queryTokenizer : Bloodhound.tokenizers.whitespace,
-								remote : {
-									url : '/pgr/complaint/complaintTypes?complaintTypeName=%QUERY',
-									filter : function(data) {
-										// Map the remote source JSON array to a
-										// JavaScript object array
-										return $.map(data, function(ct) {
-											return {
-												name : ct.name,
-												value : ct.id
-											};
-										});
-									}
-								}
-							});
+            tableContainer1 = $("#escalation-table");
 
-					complaintType.initialize();
+            $('#escalationSearch').click(function (e) {
+                callajaxdatatable(e);
+            });
 
-					var com_type_typeahead=$('#com_type').typeahead({
-						hint : false,
-						highlight : false,
-						minLength : 3
-					}, {
-						displayKey : 'name',
-						source : complaintType.ttAdapter()
-					});
-					typeaheadWithEventsHandling(com_type_typeahead, '#complaintTypeId');
-					/*.on('typeahead:selected', function(event, data) {
-						$("#complaintTypeId").val(data.value);
-					}).on('change', function(event, data) {
-						if ($('#com_type').val() == '') {
-							$("#complaintTypeId").val('');
+            function callajaxdatatable(e) {
+                var cmTypeId = 0;
+                var posId = 0;
+                if ($('#objectSubType').val() == "")
+                    cmTypeId = 0;
+                else
+                    cmTypeId = $('#objectSubType').val();
 
-						}
-					});*/
-					var com_subtype_typeahead=$('#com_subtype').typeahead({
-						hint : true,
-						highlight : true,
-						minLength : 3
-					}, {
-						displayKey : 'name',
-						source : complaintType.ttAdapter()
-					});
-					typeaheadWithEventsHandling(com_subtype_typeahead, '#objectSubType');
-					/*.on('typeahead:selected', function(event, data) {
-						$("#objectSubType").val(data.value);
-					}).on('change', function(event, data) {
-						if ($('#com_subtype').val() == '') {
-							$("#objectSubType").val('');
+                if ($('#positionId').val() == "")
+                    posId = 0;
+                else
+                    posId = $('#positionId').val();
+                $('.report-section').removeClass('display-hide');
+                tableContainer1
+                    .dataTable({
+                        ajax: {
+                            type: "GET",
+                            url: "/pgr/complaint/escalation/view/",
+							data:{
+                                positionId:posId,
+								complaintId:cmTypeId
+							}
+                        },
+                        "aLengthMenu": [[10, 25, 50, -1],
+                            [10, 25, 50, "All"]],
+                        dom: "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+                        "autoWidth": false,
+                        "bDestroy": true,
+                        buttons: [{
+                            extend: 'pdf',
+                            title: 'Escalation View',
+                            filename: 'Escalation View',
+                            orientation: 'landscape',
+                            footer: true,
+                            pageSize: 'A4'
+                        }, {
+                            extend: 'excel',
+                            filename: 'Escalation View',
+                            footer: true
+                        }],
+                        columns: [{
+                            "data": "objectSubType"
+                        }, {
+                            "data": "positionFrom"
+                        }, {
+                            "data": "positionTo"
+                        }, {
+                            "data": "objectType",
+                            "visible": false
+                        }, {
+                            "data": "positionFromId",
+                            "visible": false
+                        }, {
+                            "data": "id",
+                            "visible": false
+                        }
+                        ]
+                    });
+                e.stopPropagation();
+            }
 
-						}
-					});*/
+            $('#escalation-table').on('click', 'tbody tr', function (event) {
+                if ($(event.target).attr('class') == 'btn btn-xs btn-secondary edit-escalation') {
+                    var fid = tableContainer1.fnGetData(this, 5);
+                    window.open('/pgr/escalation/view/' + fid, '', 'height=800,width=800,scrollbars=yes,resizable=yes');
+                }
+            });
 
-	// Position auto-complete
+            var complaintType = new Bloodhound(
+                {
+                    datumTokenizer: function (datum) {
+                        return Bloodhound.tokenizers
+                            .whitespace(datum.value);
+                    },
+                    queryTokenizer: Bloodhound.tokenizers.whitespace,
+                    remote: {
+                        url: '/pgr/complaint/complaintTypes?complaintTypeName=%QUERY',
+                        filter: function (data) {
+                            return $.map(data, function (ct) {
+                                return {
+                                    name: ct.name,
+                                    value: ct.id
+                                };
+                            });
+                        }
+                    }
+                });
+
+            complaintType.initialize();
+
+            var com_type_typeahead = $('#com_type').typeahead({
+                hint: false,
+                highlight: false,
+                minLength: 3
+            }, {
+                displayKey: 'name',
+                source: complaintType.ttAdapter()
+            });
+            typeaheadWithEventsHandling(com_type_typeahead, '#complaintTypeId');
+
+            var com_subtype_typeahead = $('#com_subtype').typeahead({
+                hint: true,
+                highlight: true,
+                minLength: 3
+            }, {
+                displayKey: 'name',
+                source: complaintType.ttAdapter()
+            });
+            typeaheadWithEventsHandling(com_subtype_typeahead, '#objectSubType');
+
 	var position = new Bloodhound({
 		datumTokenizer: function (datum) {
 			return Bloodhound.tokenizers.whitespace(datum.value);
@@ -207,7 +187,6 @@ jQuery(document)
 		remote: {
 			url: '/pgr/complaint/escalation/position?positionName=%QUERY',
 			filter: function (data) {
-				// Map the remote source JSON array to a JavaScript object array
 				return $.map(data, function (pos) {
 					return {
 						name: pos.name,
@@ -228,14 +207,7 @@ jQuery(document)
 		source: position.ttAdapter()
 		});
 	typeaheadWithEventsHandling(com_position_typeahead, '#positionId');
-	/*.on('typeahead:selected', function(event, data){ 
-			$("#positionId").val(data.value);    
-	    }).on('change',function(event,data){
-			if($('#com_position').val() == ''){
-				$("#positionId").val('');
-			}
-	    }); */
-	
+
 	$("#boundary_type_id").change(function(){
 		$('#com_boundry').typeahead('destroy');
 		var b_id = $("#boundary_type_id").val();
@@ -249,8 +221,6 @@ jQuery(document)
 					remote : {
 						url : '/pgr/complaint/escalation/boundaries-by-type?boundaryName=%QUERY&boundaryTypeId='+ b_id,
 						filter : function(data) {
-							// Map the remote source JSON array to a
-							// JavaScript object array
 							return $.map(data, function(boundList) {
 								return {
 									name: boundList.name,
@@ -276,9 +246,9 @@ jQuery(document)
     		}
         });
 	});
-	
 
-	
+
+
 	$(".btn-add")
 	.click(
 			function() {
@@ -304,17 +274,13 @@ jQuery(document)
 			    	addNewRowToTable(currentIndex);
 			        calltypeahead(currentIndex - 1);
 			    }
-				//numericonstraint();
 			});
 
 	$('#escalationCreateSearch').click(function() {
-		//bootbox.alert('before submit'+$("#positionId").val());
 	 	$('#viewEscalation').attr('method', 'post');
-	 	$('#viewEscalation').attr('action', '/pgr/escalation/search-view');
-	 //	$('#viewEscalation').submit(); 
+	 	$('#viewEscalation').attr('action', '/pgr/complaint/escalation/search');
 	});
 
-	
 	 });
 
 
@@ -325,7 +291,6 @@ function calltypeahead(currentIndex) {
 		type: "GET",
 		dataType: "json",
 		data: {
-		//	approvalDepartment : $(".approvalDepartment"+ currentIndex).val()
 			approvalDepartment :   $(".approvalDepartment"+currentIndex+" option:selected").val()
 		},
 		async:"false",
@@ -337,11 +302,9 @@ function calltypeahead(currentIndex) {
 			$.each(response, function(index, value) {
 				$(".approvalDesignation"+ currentIndex).append($('<option>').text(value.name).attr('value', value.id));
 			});
-			//bootbox.alert($(".approvalDesignation"+ currentIndex).attr("data-optvalue"));
 			$(".approvalDesignation"+ currentIndex).val($(".approvalDesignation"+ currentIndex).attr("data-optvalue"));
 		}, 
 		error: function (response) {
-			console.log("failed");
 		}
 	});
 });
@@ -366,7 +329,6 @@ $(".approvalDesignation"+ currentIndex).change(function(){
 			$(".positionHierarchyToPositionid"+currentIndex).val($(".positionHierarchyToPositionid"+currentIndex).attr("data-optvalue"));
 		}, 
 		error: function (response) {
-			console.log("failed");
 		}
 	});
 });
@@ -410,7 +372,6 @@ function addNewRowToTable(currentIndex)
 function checkUniqueDesignationSelected() {
 	var u = {}, a = [];
 	var totalTableRows = $("#escalationTable tr").length;
-//bootbox.alert('inside checkUniqueDesignationSelected');
 	if (totalTableRows == 1)
 		return false;
 
@@ -436,19 +397,16 @@ function checkUniqueDesignationSelected() {
 
 	var j;
 	for (j = 0; j < (totalTableRows - 1); j++) {
-//	bootbox.alert(totalTableRows - 1);
 		if($("#positionHierarchyFromPositionId"+j).val()==$("#positionHierarchyToPositionid"+j).val()){
 			bootbox.alert('Heirarchy from position and To position are same in single line.');
 		return false;
 		}
-		
+
 	}
 	
-		var url = '/pgr/escalation/update/'+ $('#formpositionId').val();
-		//bootbox.alert(url);
+		var url = '/pgr/complaint/escalation/search/update/'+ $('#formpositionId').val();
 		$('#saveEscalationForm').attr('method', 'post');
 		$('#saveEscalationForm').attr('action', url);
-    	//$('#viewEscalation').submit(); 
 	return true;
 }
 

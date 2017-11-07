@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -40,13 +47,9 @@
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import org.egov.eis.service.DesignationService;
-import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
 import org.egov.pgr.entity.contract.EscalationForm;
 import org.egov.pgr.service.ComplaintEscalationService;
-import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pims.commons.Designation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -59,101 +62,40 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.List;
 
 @Controller
-@RequestMapping(value = "/escalationTime")
+@RequestMapping("/complaint/escalationtime")
 public class SearchEscalationTimeController {
 
-    private static final String ESCALATION_TIME_SEARCH_VIEW = "escalationTime-searchView";
-    @Autowired
-    private ComplaintTypeService complaintTypeService;
+    private static final String ESCALATION_TIME_SEARCH = "escalationtime-search";
 
     @Autowired
     private ComplaintEscalationService escalationService;
-
-    @Autowired
-    private DesignationService designationService;
 
     @ModelAttribute
     public EscalationForm escalationForm() {
         return new EscalationForm();
     }
 
-    @PostMapping("search-view")
-    public String searchEscalationTimeForm(@ModelAttribute EscalationForm escalationForm, Model model) {
-        if (escalationForm.getComplaintType() != null) {
-            List<Escalation> escalationList = escalationService
-                    .findAllBycomplaintTypeId(escalationForm.getComplaintType()
-                            .getId());
-
-            if (!escalationList.isEmpty()) {
-                escalationForm.setEscalationList((escalationList));
-                model.addAttribute("mode", "dataFound");
-            } else {
-                escalationForm.getEscalationList().clear();
-                escalationForm.addEscalationList(new Escalation());
-                model.addAttribute("mode", "noDataFound");
-            }
-        }
-        return ESCALATION_TIME_SEARCH_VIEW;
+    @GetMapping
+    public String searchForm() {
+        return ESCALATION_TIME_SEARCH;
     }
 
-    @GetMapping("search-view")
-    public String searchForm(@ModelAttribute EscalationForm escalationForm, Model model) {
-        if (escalationForm.getComplaintType() != null) {
-            List<Escalation> escalationList = escalationService
-                    .findAllBycomplaintTypeId(escalationForm.getComplaintType()
-                            .getId());
+    @PostMapping
+    public String searchEscalationTimeForm(EscalationForm escalationForm, Model model) {
 
-            if (!escalationList.isEmpty()) {
-                escalationForm.setEscalationList((escalationList));
-
-            } else {
-                escalationForm.addEscalationList(new Escalation());
-                model.addAttribute("mode", "noDataFound");
-            }
-        } else {
-            escalationForm.addEscalationList(new Escalation());
-        }
-        return ESCALATION_TIME_SEARCH_VIEW;
+        List<Escalation> escalationList = escalationService.findAllBycomplaintTypeId(escalationForm.getComplaintType().getId());
+        if (!escalationList.isEmpty() && escalationList != null) {
+            escalationForm.setEscalationList((escalationList));
+            model.addAttribute("mode", "dataFound");
+        } else
+            model.addAttribute("mode", "noDataFound");
+        return ESCALATION_TIME_SEARCH;
     }
 
-    @GetMapping("save-escalationTime")
-    public String saveEscalationTimeForm(@ModelAttribute EscalationForm escalationForm) {
-        return ESCALATION_TIME_SEARCH_VIEW;
+    @PostMapping("update")
+    public String updateEscalationTime(EscalationForm escalationForm, RedirectAttributes redirectAtt) {
+        escalationService.updateEscalationTime(escalationForm);
+        redirectAtt.addFlashAttribute("message", "msg.escalate.time.success");
+        return "redirect:/complaint/escalationtime";
     }
-
-    @PostMapping("save-escalationTime")
-    public String saveEscalationTime(@ModelAttribute EscalationForm escalationForm, RedirectAttributes redirectAttrs) {
-
-        ComplaintType compType = null;
-        if (escalationForm.getComplaintType() != null
-                && escalationForm.getComplaintType().getId() != null) {
-            compType = complaintTypeService.findBy(escalationForm
-                    .getComplaintType().getId());
-
-            List<Escalation> escalationList = escalationService
-                    .findAllBycomplaintTypeId(escalationForm.getComplaintType()
-                            .getId());
-
-            if (!escalationList.isEmpty())
-                escalationService.deleteAllInBatch(escalationList);
-        }
-        if (compType != null && escalationForm.getEscalationList() != null
-                && !escalationForm.getEscalationList().isEmpty()) {
-            for (Escalation escalation : escalationForm.getEscalationList()) {
-                if (escalation.getDesignation().getId() != null) {
-                    Designation desig = designationService
-                            .getDesignationById(escalation.getDesignation()
-                                    .getId());
-                    escalation.setComplaintType(compType);
-                    escalation.setDesignation(desig);
-                    escalation.setNoOfHrs(escalation.getNoOfHrs());
-                    escalationService.create(escalation);
-                }
-            }
-
-        }
-        redirectAttrs.addFlashAttribute("message", "msg.escalate.time.success");
-        return ESCALATION_TIME_SEARCH_VIEW;
-    }
-
 }

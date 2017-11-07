@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -50,11 +57,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.validation.Valid;
@@ -63,19 +70,15 @@ import java.util.List;
 @Controller
 @RequestMapping("/complainttype/update/{code}")
 public class UpdateComplaintTypeController {
-    private static final String COMPLAINTTYPE_UPDATE_SUCCESS = "/complaintType-success";
-
-    private final DepartmentService departmentService;
-    private final ComplaintTypeService complaintTypeService;
 
     @Autowired
     private ComplaintTypeCategoryService complaintTypeCategoryService;
 
     @Autowired
-    public UpdateComplaintTypeController(final DepartmentService departmentService, final ComplaintTypeService complaintTypeService) {
-        this.departmentService = departmentService;
-        this.complaintTypeService = complaintTypeService;
-    }
+    private DepartmentService departmentService;
+
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
 
     @ModelAttribute("categories")
     public List<ComplaintTypeCategory> categories() {
@@ -88,30 +91,25 @@ public class UpdateComplaintTypeController {
     }
 
     @ModelAttribute
-    public ComplaintType complaintTypeModel(@PathVariable final String code, final Model model) {
+    public ComplaintType complaintTypeModel(@PathVariable String code, Model model) {
         model.addAttribute("mode", "update");
         return complaintTypeService.findByCode(code);
     }
 
-    @RequestMapping(method = RequestMethod.GET)
-    public String complaintTypeFormForUpdate() {
+    @GetMapping
+    public String updateComplaintTypeForm() {
         return "complaint-type";
     }
 
-    @RequestMapping(method = RequestMethod.POST)
-    public String updateComplaintType(@Valid @ModelAttribute ComplaintType complaintType, final BindingResult errors,
-                                      final RedirectAttributes redirectAttrs) {
+    @PostMapping
+    public String updateComplaintType(@Valid ComplaintType complaintType,
+                                      BindingResult errors,
+                                      RedirectAttributes redirectAttrs) {
         if (errors.hasErrors())
             return "complaint-type";
         complaintType = complaintTypeService.updateComplaintType(complaintType);
         redirectAttrs.addFlashAttribute("complaintType", complaintType);
         redirectAttrs.addFlashAttribute("message", "msg.comp.type.update.success");
-        return "redirect:" + complaintType.getCode() + COMPLAINTTYPE_UPDATE_SUCCESS;
-    }
-
-    @RequestMapping(COMPLAINTTYPE_UPDATE_SUCCESS)
-    public ModelAndView successView(@PathVariable final String code, @ModelAttribute final ComplaintType complaintType) {
-        return new ModelAndView("complaintType/complaintType-success", "complaintType",
-                complaintTypeService.findByCode(code));
+        return "redirect:/complainttype/view/" + complaintType.getCode();
     }
 }

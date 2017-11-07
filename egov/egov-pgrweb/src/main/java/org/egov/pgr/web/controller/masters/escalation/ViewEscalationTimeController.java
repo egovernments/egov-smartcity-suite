@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2017  eGovernments Foundation
+ *  Copyright (C) <2017>  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
+ * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ * 	For any further queries on attribution, including queries on brand guidelines,
+ *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -47,17 +54,15 @@ import org.egov.pgr.entity.contract.EscalationTimeSearchRequest;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping(value = "/escalationTime")
+@RequestMapping("/complaint/escalationtime/view")
 public class ViewEscalationTimeController {
 
     @Autowired
@@ -68,23 +73,14 @@ public class ViewEscalationTimeController {
         return new Escalation();
     }
 
-    @GetMapping("/search")
-    public String searchForm(@ModelAttribute Escalation escalation,
-                             final Model model) {
-        model.addAttribute("mode", "new");
-        return "escalationTime-search";
+    @GetMapping
+    public String viewEscalationTimeForm() {
+        return "escalationtime-view";
     }
 
-    @PostMapping("/search")
-    public String searchEscalationTimeForm(
-            @ModelAttribute Escalation escalation, final Model model) {
-        model.addAttribute("mode", "new");
-        return "escalationTime-search";
-    }
-
-    @GetMapping(value = "resultList-update", produces = TEXT_PLAIN_VALUE)
+    @GetMapping(value = "/", produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(EscalationTimeSearchRequest escalationTimeSearchRequest) {
+    public String viewEscalationTime(EscalationTimeSearchRequest escalationTimeSearchRequest) {
         return new DataTable<>(escalationService.getEscalationsTime(escalationTimeSearchRequest),
                 escalationTimeSearchRequest.draw()).toJson(EscalationTimeAdaptor.class);
     }

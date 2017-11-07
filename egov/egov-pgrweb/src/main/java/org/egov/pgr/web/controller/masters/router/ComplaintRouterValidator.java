@@ -45,34 +45,28 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.service;
+package org.egov.pgr.web.controller.masters.router;
 
-import org.egov.pgr.entity.ComplaintTypeCategory;
-import org.egov.pgr.repository.ComplaintTypeCategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.egov.pgr.entity.ComplaintRouter;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-import java.util.List;
+@Component
+public class ComplaintRouterValidator implements Validator {
 
-@Service
-@Transactional(readOnly = true)
-public class ComplaintTypeCategoryService {
-
-    @Autowired
-    private ComplaintTypeCategoryRepository complaintTypeCategoryRepository;
-
-    @Transactional
-    public ComplaintTypeCategory createComplaintTypeCategory(ComplaintTypeCategory complaintTypeCategory) {
-        return complaintTypeCategoryRepository.save(complaintTypeCategory);
+    @Override
+    public boolean supports(final Class<?> clazz) {
+        return ComplaintRouter.class.equals(clazz);
     }
 
-    public List<ComplaintTypeCategory> findAll() {
-        return complaintTypeCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
+    @Override
+    public void validate(final Object target, final Errors errors) {
+
+        final ComplaintRouter complaintRouter = (ComplaintRouter) target;
+
+        if (complaintRouter.getBoundary() != null && "City".equalsIgnoreCase(complaintRouter.getBoundary().getBoundaryType().getName()))
+            errors.rejectValue("boundary", "Invalid Boundary");
     }
 
-    public ComplaintTypeCategory findByName(String categoryName) {
-        return complaintTypeCategoryRepository.findByName(categoryName);
-    }
 }
