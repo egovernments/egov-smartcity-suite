@@ -1441,13 +1441,12 @@ public class WaterConnectionDetailsService {
                             .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS__RECONNCTIONSANCTIONED,
                                     MODULETYPE));
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
-
                 if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
                         && APPLICATION_STATUS_SANCTIONED
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
                     connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null,
                             WF_STATE_TAP_EXECUTION_DATE_BUTTON);
+                waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
                 updatePortalMessage(waterConnectionDetails);
                 updateIndexes(waterConnectionDetails,
                         waterConnectionDetails.getSource() != null ? waterConnectionDetails.getSource().toString() : null);
