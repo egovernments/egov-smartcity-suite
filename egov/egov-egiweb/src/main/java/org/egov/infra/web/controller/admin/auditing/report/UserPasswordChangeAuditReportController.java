@@ -40,8 +40,8 @@
 
 package org.egov.infra.web.controller.admin.auditing.report;
 
-import org.egov.infra.admin.master.service.UserAuditService;
-import org.egov.infra.security.audit.contract.UserPasswordChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.contract.UserPasswordChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.service.UserAuditService;
 import org.egov.infra.web.contract.response.UserPasswordChangeAuditReportAdapter;
 import org.egov.infra.web.support.ui.DataTable;
 import org.springframework.beans.factory.annotation.Autowired;

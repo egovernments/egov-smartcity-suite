@@ -38,11 +38,11 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.security.audit.contract;
+package org.egov.infra.admin.auditing.contract;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public class UserRoleChangeAuditReportRequest extends DataTableSearchRequest {
+public class UserPasswordChangeAuditReportRequest extends DataTableSearchRequest {
 
     private Long userId;
 
@@ -50,7 +50,7 @@ public class UserRoleChangeAuditReportRequest extends DataTableSearchRequest {
         return userId;
     }
 
-    public void setUserId(final Long userId) {
+    public void setUserId(Long userId) {
         this.userId = userId;
     }
 }

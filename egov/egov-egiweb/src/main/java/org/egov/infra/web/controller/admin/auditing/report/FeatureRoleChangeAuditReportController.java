@@ -40,8 +40,8 @@
 
 package org.egov.infra.web.controller.admin.auditing.report;
 
-import org.egov.infra.admin.master.contracts.FeatureRoleChangeAuditReportRequest;
-import org.egov.infra.admin.master.service.FeatureAuditService;
+import org.egov.infra.admin.auditing.contract.FeatureRoleChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.service.FeatureAuditService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.web.contract.response.FeatureRoleChangeAuditReportAdapter;
 import org.egov.infra.web.support.ui.DataTable;

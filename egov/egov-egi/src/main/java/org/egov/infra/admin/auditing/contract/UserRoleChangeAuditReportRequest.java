@@ -38,39 +38,19 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.service;
+package org.egov.infra.admin.auditing.contract;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.admin.master.repository.UserRepository;
-import org.egov.infra.security.audit.contract.UserPasswordChangeAuditReportRequest;
-import org.egov.infra.security.audit.contract.UserRoleChangeAuditReportRequest;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.history.Revision;
-import org.springframework.stereotype.Service;
 
+public class UserRoleChangeAuditReportRequest extends DataTableSearchRequest {
 
-@Service
-public class UserAuditService {
+    private Long userId;
 
-    @Autowired
-    private UserRepository userRepository;
-
-    public Page<Revision<Integer, User>> getUserRoleChangeAudit(UserRoleChangeAuditReportRequest userRoleAuditReportRequest) {
-        return getPagedUserRevision(userRoleAuditReportRequest.getUserId(), userRoleAuditReportRequest);
+    public Long getUserId() {
+        return userId;
     }
 
-    public Page<Revision<Integer, User>> getUserPasswordChangeAudit(UserPasswordChangeAuditReportRequest userPasswordChangeAuditReportRequest) {
-        return getPagedUserRevision(userPasswordChangeAuditReportRequest.getUserId(), userPasswordChangeAuditReportRequest);
-    }
-
-    public Page<Revision<Integer, User>> getPagedUserRevision(Long userId, DataTableSearchRequest dataTableSearchRequest) {
-        final Pageable pageable = new PageRequest(dataTableSearchRequest.pageNumber(),
-                dataTableSearchRequest.pageSize(),
-                dataTableSearchRequest.orderDir(), dataTableSearchRequest.orderBy());
-        return userRepository.findRevisions(userId, pageable);
+    public void setUserId(Long userId) {
+        this.userId = userId;
     }
 }

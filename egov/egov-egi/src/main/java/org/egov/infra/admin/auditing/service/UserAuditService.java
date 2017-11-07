@@ -38,11 +38,13 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.service;
+package org.egov.infra.admin.auditing.service;
 
-import org.egov.infra.admin.master.contracts.FeatureRoleChangeAuditReportRequest;
-import org.egov.infra.admin.master.entity.Feature;
-import org.egov.infra.admin.master.repository.FeatureRepository;
+import org.egov.infra.admin.auditing.contract.UserPasswordChangeAuditReportRequest;
+import org.egov.infra.admin.auditing.contract.UserRoleChangeAuditReportRequest;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.repository.UserRepository;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -50,16 +52,25 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.history.Revision;
 import org.springframework.stereotype.Service;
 
+
 @Service
-public class FeatureAuditService {
+public class UserAuditService {
 
     @Autowired
-    private FeatureRepository featureRepository;
+    private UserRepository userRepository;
 
-    public Page<Revision<Integer, Feature>> getFeatureRoleChangeAudit(FeatureRoleChangeAuditReportRequest featureRoleChangeAuditReportRequest) {
-        final Pageable pageable = new PageRequest(featureRoleChangeAuditReportRequest.pageNumber(),
-                featureRoleChangeAuditReportRequest.pageSize(),
-                featureRoleChangeAuditReportRequest.orderDir(), featureRoleChangeAuditReportRequest.orderBy());
-        return featureRepository.findRevisions(featureRoleChangeAuditReportRequest.getFeatureId(), pageable);
+    public Page<Revision<Integer, User>> getUserRoleChangeAudit(UserRoleChangeAuditReportRequest userRoleAuditReportRequest) {
+        return getPagedUserRevision(userRoleAuditReportRequest.getUserId(), userRoleAuditReportRequest);
+    }
+
+    public Page<Revision<Integer, User>> getUserPasswordChangeAudit(UserPasswordChangeAuditReportRequest userPasswordChangeAuditReportRequest) {
+        return getPagedUserRevision(userPasswordChangeAuditReportRequest.getUserId(), userPasswordChangeAuditReportRequest);
+    }
+
+    public Page<Revision<Integer, User>> getPagedUserRevision(Long userId, DataTableSearchRequest dataTableSearchRequest) {
+        final Pageable pageable = new PageRequest(dataTableSearchRequest.pageNumber(),
+                dataTableSearchRequest.pageSize(),
+                dataTableSearchRequest.orderDir(), dataTableSearchRequest.orderBy());
+        return userRepository.findRevisions(userId, pageable);
     }
 }

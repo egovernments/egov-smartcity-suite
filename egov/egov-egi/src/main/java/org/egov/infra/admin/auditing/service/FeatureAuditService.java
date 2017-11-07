@@ -38,19 +38,28 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.admin.master.contracts;
+package org.egov.infra.admin.auditing.service;
 
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.infra.admin.auditing.contract.FeatureRoleChangeAuditReportRequest;
+import org.egov.infra.admin.master.entity.Feature;
+import org.egov.infra.admin.master.repository.FeatureRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.history.Revision;
+import org.springframework.stereotype.Service;
 
-public class FeatureRoleChangeAuditReportRequest extends DataTableSearchRequest {
+@Service
+public class FeatureAuditService {
 
-    private Long featureId;
+    @Autowired
+    private FeatureRepository featureRepository;
 
-    public Long getFeatureId() {
-        return featureId;
-    }
-
-    public void setFeatureId(final Long featureId) {
-        this.featureId = featureId;
+    public Page<Revision<Integer, Feature>> getFeatureRoleChangeAudit(FeatureRoleChangeAuditReportRequest featureRoleChangeAuditReportRequest) {
+        final Pageable pageable = new PageRequest(featureRoleChangeAuditReportRequest.pageNumber(),
+                featureRoleChangeAuditReportRequest.pageSize(),
+                featureRoleChangeAuditReportRequest.orderDir(), featureRoleChangeAuditReportRequest.orderBy());
+        return featureRepository.findRevisions(featureRoleChangeAuditReportRequest.getFeatureId(), pageable);
     }
 }
