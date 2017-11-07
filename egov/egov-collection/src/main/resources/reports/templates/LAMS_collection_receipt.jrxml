@@ -20,6 +20,7 @@
 		<parameterDescription><![CDATA[Current Date]]></parameterDescription>
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
+	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
 	<field name="payeeName" class="java.lang.String">
 		<fieldDescription><![CDATA[Payee Name]]></fieldDescription>
 	</field>
@@ -119,7 +120,7 @@
 			</textField>
 			<image onErrorType="Blank">
 				<reportElement x="10" y="10" width="60" height="60" uuid="0df2ed0a-84b0-402b-9f41-e7b12b27680f"/>
-				<imageExpression><![CDATA[ReportUtil.logoBasePath()]]></imageExpression>
+				<imageExpression><![CDATA[$P{CITY_LOGO_PATH}]]></imageExpression>
 			</image>
 			<textField>
 				<reportElement x="132" y="10" width="291" height="43" uuid="2e4dabdc-58c3-4512-b1e9-10f0de235034"/>
@@ -341,7 +342,7 @@
 			<subreport>
 				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" uuid="488747bf-e344-4532-8f25-d6e603f717ea"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{accountDetails}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_accounts.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("LAMS_collection_receipt_accounts.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 		<band height="61">
@@ -367,7 +368,7 @@
 					<subreportParameterExpression><![CDATA[$F{totalAmount}]]></subreportParameterExpression>
 				</subreportParameter>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($F{instrumentDetails}, false)]]></dataSourceExpression>
-				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("collection_receipt_instruments.jasper")]]></subreportExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("LAMS_collection_receipt_instruments.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
 	</detail>
