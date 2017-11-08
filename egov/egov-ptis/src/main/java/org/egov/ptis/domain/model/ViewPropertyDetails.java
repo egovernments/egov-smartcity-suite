@@ -39,6 +39,8 @@
  */
 package org.egov.ptis.domain.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -112,8 +114,8 @@ public class ViewPropertyDetails {
     
     private Boolean floorDetailsEntered = false;
     private String propertyDepartment;
-    private String parcelId;
-    private String referenceId;
+    private String parcelId = StringUtils.EMPTY;
+    private String referenceId = StringUtils.EMPTY;
     private Double latitude;
     private Double longitude;
 

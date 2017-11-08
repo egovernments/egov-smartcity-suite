@@ -64,7 +64,6 @@ import org.egov.restapi.model.DocumentTypeDetails;
 import org.egov.restapi.model.PropertyAddressDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
-import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -97,7 +96,7 @@ public class CreateAssessmentController {
 	 */
 	
 	@RequestMapping(value = "/property/createProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-	public String createProperty(@RequestBody String createPropertyDetails)
+	public NewPropertyDetails createProperty(@RequestBody String createPropertyDetails)
 			throws IOException, ParseException {
 		String responseJson;
 		ApplicationThreadLocals.setUserId(2L);
@@ -105,19 +104,19 @@ public class CreateAssessmentController {
 		NewPropertyDetails newPropertyDetails;
 		ErrorDetails errorDetails = validationUtil.validateCreateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_CREATE);
 		if (errorDetails != null && errorDetails.getErrorCode() != null) {
-			responseJson = JsonConvertor.convert(errorDetails);
+            newPropertyDetails = new NewPropertyDetails();
+            newPropertyDetails.setReferenceId(createPropDetails.getReferenceId());
+            newPropertyDetails.setApplicationNo("-1");
+            newPropertyDetails.setErrorDetails(errorDetails);
 	    } else {
 	     	ViewPropertyDetails viewPropertyDetails = setRequestParameters(createPropDetails);
 	     	
-	     	if (createPropDetails.isAppurtenantLandChecked()) {
+	     	if (createPropDetails.isAppurtenantLandChecked())
 	     		newPropertyDetails=propertyExternalService.createAppurTenantProperties(viewPropertyDetails);
-	     	}else{
+	     	else
 	     		newPropertyDetails = propertyExternalService.createNewProperty(viewPropertyDetails);
-	     	}
-	     	
-	        responseJson = JsonConvertor.convert(newPropertyDetails);
 	    }
-        return responseJson;
+        return newPropertyDetails;
 	}
 	
 	

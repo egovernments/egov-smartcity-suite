@@ -1740,7 +1740,8 @@ public interface PropertyTaxConstants {
     
     public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
     public static final List<String> SERVICE_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment","General_Revision_Petition","Revision_Petition");
-    
+
+    public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
             
     
 

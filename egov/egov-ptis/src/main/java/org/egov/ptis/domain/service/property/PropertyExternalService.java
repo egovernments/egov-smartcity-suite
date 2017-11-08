@@ -158,6 +158,7 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.poifs.property.PropertyConstants;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -1273,6 +1274,7 @@ public class PropertyExternalService {
 		saveDocumentTypeDetails(basicProperty, viewpropertyDetails);
 		if (null != basicProperty) {
 			newPropertyDetails = new NewPropertyDetails();
+			newPropertyDetails.setReferenceId(viewpropertyDetails.getReferenceId());
 			newPropertyDetails.setApplicationNo(basicProperty.getProperty().getApplicationNo());
 			final ErrorDetails errorDetails = new ErrorDetails();
 			errorDetails.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
@@ -1281,62 +1283,16 @@ public class PropertyExternalService {
 		}
 		return newPropertyDetails;
 	}
-	
+
 	private BasicProperty createBscPropty(ViewPropertyDetails viewPropertyDetails,final PropertyService propService) throws ParseException {
 
-		final BasicProperty basicProperty = new BasicPropertyImpl();
 		final PropertyImpl property;
-		basicProperty.setActive(Boolean.TRUE);
-		basicProperty.setSource(SOURCEOFDATA_MOBILE);
-		// Creating Property Address object
-		final Boundary block = getBoundaryByNumberAndType(viewPropertyDetails.getBlockName(), BLOCK, REVENUE_HIERARCHY_TYPE);
-		final PropertyAddress propAddress = createPropAddress(viewPropertyDetails, block);
-		basicProperty.setAddress(propAddress);
-
-		// Creating PropertyID object based on basic property, localityCode and boundary map direction
-		final PropertyID propertyID = createPropertID(basicProperty, viewPropertyDetails, block);
-		basicProperty.setPropertyID(propertyID);
-
-		// Get PropertyStatus object to set the status of the property
-		final PropertyStatus propertyStatus = getPropertyStatus();
-		basicProperty.setStatus(propertyStatus);
-		basicProperty.setUnderWorkflow(Boolean.TRUE);
-                basicProperty.setParcelId(viewPropertyDetails.getParcelId());
-                basicProperty.setLatitude(viewPropertyDetails.getLatitude());
-                basicProperty.setLongitude(viewPropertyDetails.getLongitude());
-
-		// Set PropertyMutationMaster object
-		final PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(viewPropertyDetails.getMutationReason());
-		basicProperty.setPropertyMutationMaster(propertyMutationMaster);
-		// need to pass parent property index, in case of bifurcation
-		if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
-			basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
-					null, null, null, viewPropertyDetails.getParentPropertyAssessmentNo()));
-		// Set isBillCreated property value as false
-		basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
-
+        final BasicProperty basicProperty = setBasicPropertyValues(viewPropertyDetails, propService);
 		final PropertyTypeMaster propertyTypeMaster = getPropertyTypeMasterByCode(viewPropertyDetails.getPropertyTypeMaster());
 		final PropertyImpl propertyImpl = createPropertyWithBasicDetails(viewPropertyDetails.getPropertyTypeMaster());
+        propertyImpl.setBasicProperty(basicProperty);
 
-		propertyImpl.getPropertyDetail().setCorrAddressDiff(viewPropertyDetails.getIsCorrAddrDiff());
-		if (!viewPropertyDetails.getFloorDetailsEntered()) {
-			// vacant Land
-			propertyImpl.getPropertyDetail().setEffectiveDate(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
-		} else {
-			// private Land without appurtenant
-			propertyImpl.getPropertyDetail()
-					.setEffectiveDate(convertStringToDate(viewPropertyDetails.getFloorDetails().get(0).getOccupancyDate()));
-		}
-		propertyImpl.setBasicProperty(basicProperty);
-		propertyImpl.getBasicProperty().setPropertyID(propertyID);
-
-		if (StringUtils.isNotBlank(viewPropertyDetails.getApartmentCmplx())) {
-			final Apartment apartment = getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
-			propertyImpl.getPropertyDetail().setApartment(apartment);
-		}
-
-		propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
-		propertyImpl.getPropertyDetail().setOccupancyCertificationDate(viewPropertyDetails.getOccupancyCertificationDate());
+        setPropertyDetails(viewPropertyDetails, propertyImpl);
 
 		if (!viewPropertyDetails.getPropertyTypeMaster().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
 			FloorType floorType = null;
@@ -1352,14 +1308,7 @@ public class PropertyExternalService {
 			if (StringUtils.isNotBlank(viewPropertyDetails.getWoodType()))
 				woodType = woodTypeService.getWoodTypeById(Long.valueOf(viewPropertyDetails.getWoodType()));
 
-			propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
-			propertyImpl.getPropertyDetail().setLift(viewPropertyDetails.getHasLift());
-			propertyImpl.getPropertyDetail().setToilets(viewPropertyDetails.getHasToilet());
-			propertyImpl.getPropertyDetail().setWaterTap(viewPropertyDetails.getHasWaterTap());
-			propertyImpl.getPropertyDetail().setElectricity(viewPropertyDetails.getHasElectricity());
-			propertyImpl.getPropertyDetail().setAttachedBathRoom(viewPropertyDetails.getHasAttachedBathroom());
-			propertyImpl.getPropertyDetail().setWaterHarvesting(viewPropertyDetails.getHasWaterHarvesting());
-			propertyImpl.getPropertyDetail().setCable(viewPropertyDetails.getHasCableConnection());
+            setAmenities(viewPropertyDetails, propertyImpl);
 
 			property = propService.createProperty(propertyImpl, viewPropertyDetails.getExtentOfSite(), viewPropertyDetails.getMutationReason(),
 					propertyTypeMaster.getId().toString(), null, null, STATUS_ISACTIVE, null, null,
@@ -1367,41 +1316,24 @@ public class PropertyExternalService {
 					wallType != null ? wallType.getId() : null, woodType != null ? woodType.getId() : null, null, null,
 					null, null, Boolean.FALSE);
 		} else {
-			propertyImpl.getPropertyDetail()
-					.setDateOfCompletion(viewPropertyDetails.getEffectiveDate() != null ? convertStringToDate(viewPropertyDetails.getEffectiveDate()) : null);
-			propertyImpl.getPropertyDetail().setCurrentCapitalValue(viewPropertyDetails.getCurrentCapitalValue());
-			propertyImpl.getPropertyDetail().setSurveyNumber(viewPropertyDetails.getSurveyNumber());
-			propertyImpl.getPropertyDetail().setPattaNumber(viewPropertyDetails.getPattaNumber());
-			propertyImpl.getPropertyDetail()
-					.setLayoutPermitNo(viewPropertyDetails.getLpNo() != null ? viewPropertyDetails.getLpNo() : null);
-			propertyImpl.getPropertyDetail().setLayoutPermitDate(viewPropertyDetails.getLpDate() != null
-					? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
-			final Area area = new Area();
-			area.setArea(viewPropertyDetails.getVacantLandArea());
-			propertyImpl.getPropertyDetail().setSitalArea(area);
-			propertyImpl.getPropertyDetail().setMarketValue(viewPropertyDetails.getMarketValue());
+            setVacantLandDetails(viewPropertyDetails, propertyImpl);
 			property = propService.createProperty(propertyImpl, viewPropertyDetails.getExtentOfSite(), viewPropertyDetails.getMutationReason(),
 					propertyTypeMaster.getId().toString(), null, null, STATUS_ISACTIVE, viewPropertyDetails.getRegdDocNo(), null, null,
 					null, null, null, null, null, new Long(viewPropertyDetails.getVlPlotArea()), new Long(viewPropertyDetails.getLaAuthority()),
 					Boolean.FALSE);
 		}
 
+		Date propCompletionDate = getCompletionDate(propService, property);
 		property.setStatus(STATUS_DEMAND_INACTIVE);
 		property.setPropertyModifyReason(PROP_CREATE_RSN);
 		property.getPropertyDetail().setCategoryType(viewPropertyDetails.getCategory());
 		basicProperty.addProperty(property);
 
-		Date propCompletionDate = null;
-		if (!property.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
-			propCompletionDate = propService
-					.getLowestDtOfCompFloorWise(property.getPropertyDetail().getFloorDetailsProxy());
-		else
-			propCompletionDate = property.getPropertyDetail().getDateOfCompletion();
 
-		basicProperty.setPropOccupationDate(propCompletionDate);
-		basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(viewPropertyDetails.getOwnerDetails()));
-		 
-		if (property != null && !property.getDocuments().isEmpty())
+        basicProperty.setPropOccupationDate(propCompletionDate);
+        setBasicPropOwnerInfo(viewPropertyDetails, basicProperty);
+
+        if (property != null && !property.getDocuments().isEmpty())
 			propService.processAndStoreDocument(property.getDocuments());
 		try {
 			propService.createDemand(propertyImpl, propCompletionDate);
@@ -1410,8 +1342,118 @@ public class PropertyExternalService {
 		}
 		return basicProperty;
 	}
-	
-	private PropertyAddress createPropAddress(ViewPropertyDetails viewPropertyDetails, final Boundary block) {
+
+	private BasicProperty setBasicPropertyValues(ViewPropertyDetails viewPropertyDetails, PropertyService propService){
+		BasicProperty basicProperty = new BasicPropertyImpl();
+		basicProperty.setActive(Boolean.TRUE);
+		basicProperty.setSource(SOURCEOFDATA_MOBILE);
+
+		// Get PropertyStatus object to set the status of the property
+		final PropertyStatus propertyStatus = getPropertyStatus();
+		basicProperty.setStatus(propertyStatus);
+		basicProperty.setUnderWorkflow(Boolean.TRUE);
+		basicProperty.setParcelId(viewPropertyDetails.getParcelId());
+		basicProperty.setLatitude(viewPropertyDetails.getLatitude());
+		basicProperty.setLongitude(viewPropertyDetails.getLongitude());
+		// Set isBillCreated property value as false
+		basicProperty.setIsBillCreated(STATUS_BILL_NOTCREATED);
+		// Set PropertyMutationMaster object
+		PropertyMutationMaster propertyMutationMaster = getPropertyMutationMaster(viewPropertyDetails.getMutationReason());
+		basicProperty.setPropertyMutationMaster(propertyMutationMaster);
+		// Creating Property Address object
+		final Boundary block = getBoundaryByNumberAndType(viewPropertyDetails.getBlockName(), BLOCK, REVENUE_HIERARCHY_TYPE);
+		final PropertyAddress propAddress = createPropAddress(viewPropertyDetails, block);
+		basicProperty.setAddress(propAddress);
+		// Creating PropertyID object based on basic property, localityCode and boundary map direction
+		final PropertyID propertyID = createPropertID(basicProperty, viewPropertyDetails, block);
+		basicProperty.setPropertyID(propertyID);
+
+		// need to pass parent property index, in case of bifurcation
+		if (propertyMutationMaster.getCode().equals(PROP_CREATE_RSN_BIFUR))
+			basicProperty.addPropertyStatusValues(propService.createPropStatVal(basicProperty, PROP_CREATE_RSN, null,
+					null, null, null, viewPropertyDetails.getParentPropertyAssessmentNo()));
+
+		return basicProperty;
+	}
+
+    private void setBasicPropOwnerInfo(ViewPropertyDetails viewPropertyDetails, BasicProperty basicProperty) {
+        if(StringUtils.isNotBlank(viewPropertyDetails.getDocType())
+                && PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(viewPropertyDetails.getDocType()))
+			basicProperty.setPropertyOwnerInfoProxy(getNotaryOwners(viewPropertyDetails));
+        else
+            basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(viewPropertyDetails.getOwnerDetails()));
+    }
+
+    private List<PropertyOwnerInfo> getNotaryOwners(ViewPropertyDetails viewPropertyDetails) {
+        List<PropertyOwnerInfo> notaryOwnersList = new ArrayList<>();
+        PropertyOwnerInfo notaryPropOwner = new PropertyOwnerInfo();
+        User notaryUser = userService.getUserByUsername(PropertyTaxConstants.NOTARY_DOCUMENT_OWNER);
+        notaryPropOwner.setOwner(notaryUser);
+        notaryOwnersList.add(notaryPropOwner);
+        return notaryOwnersList;
+    }
+
+    private void setPropertyDetails(ViewPropertyDetails viewPropertyDetails, PropertyImpl propertyImpl) throws ParseException {
+        propertyImpl.getPropertyDetail().setCorrAddressDiff(viewPropertyDetails.getIsCorrAddrDiff());
+        if (!viewPropertyDetails.getFloorDetailsEntered()) {
+            // vacant Land
+            propertyImpl.getPropertyDetail().setEffectiveDate(convertStringToDate(viewPropertyDetails.getEffectiveDate()));
+        } else {
+            // private Land without appurtenant
+            propertyImpl.getPropertyDetail()
+                    .setEffectiveDate(convertStringToDate(viewPropertyDetails.getFloorDetails().get(0).getOccupancyDate()));
+        }
+        if (StringUtils.isNotBlank(viewPropertyDetails.getApartmentCmplx())) {
+            final Apartment apartment = getApartmentByCode(viewPropertyDetails.getApartmentCmplx());
+            propertyImpl.getPropertyDetail().setApartment(apartment);
+        }
+
+        propertyImpl.getPropertyDetail().setOccupancyCertificationNo(viewPropertyDetails.getOccupancyCertificationNo());
+        propertyImpl.getPropertyDetail().setOccupancyCertificationDate(viewPropertyDetails.getOccupancyCertificationDate());
+		if(StringUtils.isNotBlank(viewPropertyDetails.getDocType())
+				&& PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(viewPropertyDetails.getDocType()))
+			propertyImpl.getPropertyDetail().setStructure(true);
+    }
+
+    private Date getCompletionDate(PropertyService propService, PropertyImpl propertyImpl) {
+        Date propCompletionDate;
+        if (!propertyImpl.getPropertyDetail().getPropertyTypeMaster().getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+            propCompletionDate = propService
+                    .getLowestDtOfCompFloorWise(propertyImpl.getPropertyDetail().getFloorDetailsProxy());
+        else
+            propCompletionDate = propertyImpl.getPropertyDetail().getDateOfCompletion();
+
+        return propCompletionDate;
+    }
+
+    private void setVacantLandDetails(ViewPropertyDetails viewPropertyDetails, PropertyImpl propertyImpl) throws ParseException {
+        propertyImpl.getPropertyDetail()
+                .setDateOfCompletion(viewPropertyDetails.getEffectiveDate() != null ? convertStringToDate(viewPropertyDetails.getEffectiveDate()) : null);
+        propertyImpl.getPropertyDetail().setCurrentCapitalValue(viewPropertyDetails.getCurrentCapitalValue());
+        propertyImpl.getPropertyDetail().setSurveyNumber(viewPropertyDetails.getSurveyNumber());
+        propertyImpl.getPropertyDetail().setPattaNumber(viewPropertyDetails.getPattaNumber());
+        propertyImpl.getPropertyDetail()
+                .setLayoutPermitNo(viewPropertyDetails.getLpNo() != null ? viewPropertyDetails.getLpNo() : null);
+        propertyImpl.getPropertyDetail().setLayoutPermitDate(viewPropertyDetails.getLpDate() != null
+                ? convertStringToDate(viewPropertyDetails.getLpDate()) : null);
+        final Area area = new Area();
+        area.setArea(viewPropertyDetails.getVacantLandArea());
+        propertyImpl.getPropertyDetail().setSitalArea(area);
+        propertyImpl.getPropertyDetail().setMarketValue(viewPropertyDetails.getMarketValue());
+    }
+
+    private void setAmenities(ViewPropertyDetails viewPropertyDetails, PropertyImpl propertyImpl) throws ParseException {
+        propertyImpl.getPropertyDetail().setFloorDetailsProxy(getFloorList(viewPropertyDetails.getFloorDetails()));
+        propertyImpl.getPropertyDetail().setLift(viewPropertyDetails.getHasLift());
+        propertyImpl.getPropertyDetail().setToilets(viewPropertyDetails.getHasToilet());
+        propertyImpl.getPropertyDetail().setWaterTap(viewPropertyDetails.getHasWaterTap());
+        propertyImpl.getPropertyDetail().setElectricity(viewPropertyDetails.getHasElectricity());
+        propertyImpl.getPropertyDetail().setAttachedBathRoom(viewPropertyDetails.getHasAttachedBathroom());
+        propertyImpl.getPropertyDetail().setWaterHarvesting(viewPropertyDetails.getHasWaterHarvesting());
+        propertyImpl.getPropertyDetail().setCable(viewPropertyDetails.getHasCableConnection());
+	}
+
+    private PropertyAddress createPropAddress(ViewPropertyDetails viewPropertyDetails, final Boundary block) {
 		final Address propAddr = new PropertyAddress();
 		propAddr.setHouseNoBldgApt(viewPropertyDetails.getDoorNo());
 		propAddr.setAreaLocalitySector(getBoundaryByNumberAndType(viewPropertyDetails.getLocalityName(),
@@ -2330,7 +2372,7 @@ public class PropertyExternalService {
 
 		transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
 		basicPropertyService.applyAuditing(property.getState());
-		propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
+		//propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
 		if (basicProperty.getWFProperty() != null && basicProperty.getWFProperty().getPtDemandSet() != null
 				&& !basicProperty.getWFProperty().getPtDemandSet().isEmpty()) {
 			for (Ptdemand ptDemand : basicProperty.getWFProperty().getPtDemandSet()) {
@@ -2791,7 +2833,7 @@ public class PropertyExternalService {
 		}
 		propertyImpl.setBasicProperty(basicProperty);
 		propertyImpl.setPropertyModifyReason(PROP_CREATE_RSN);
-                propertyImpl.setReferenceId(viewPropertyDetails.getReferenceId());
+        propertyImpl.setReferenceId(viewPropertyDetails.getReferenceId());
 
 		Date propCompletionDate = null;
 		if (!propertyImpl.getPropertyDetail().getPropertyTypeMaster().getCode()

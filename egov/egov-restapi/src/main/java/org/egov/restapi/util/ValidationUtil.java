@@ -285,9 +285,10 @@ public class ValidationUtil {
 		if (mode.equals(PropertyTaxConstants.PROPERTY_MODE_CREATE)) {
 			// Owner details validations
 			final List<OwnerInformation> ownerDetailsList = createPropDetails.getOwnerDetails();
-			errorDetails = validateOwnerDetails(errorDetails, ownerDetailsList);
-			if (errorDetails != null && errorDetails.getErrorCode() != null)
-				return errorDetails;
+			if(documentTypeDetails != null && !DOCUMENT_NAME_NOTARY_DOCUMENT.equals(documentTypeDetails.getDocumentName()))
+				errorDetails = validateOwnerDetails(errorDetails, ownerDetailsList);
+				if (errorDetails != null && errorDetails.getErrorCode() != null)
+					return errorDetails;
 		}
 		// Assessment level validations
 		final AssessmentsDetails assessmentsDetails = createPropDetails.getAssessmentDetails();
@@ -1076,7 +1077,7 @@ public class ValidationUtil {
 			errorDetails.setErrorMessage(CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_REQ_MSG);
 		}
 
-		return errorDetails;
-	}
+        return errorDetails;
+    }
 
 }

@@ -40,13 +40,24 @@
 
 package org.egov.ptis.domain.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class NewPropertyDetails implements Serializable {
 
-	private String applicationNo;
+	private String referenceId = StringUtils.EMPTY;
+	private String applicationNo = StringUtils.EMPTY;
 	private ErrorDetails errorDetails;
+
+	public String getReferenceId() {
+		return referenceId;
+	}
+
+	public void setReferenceId(String referenceId) {
+		this.referenceId = referenceId;
+	}
 
 	public String getApplicationNo() {
 		return applicationNo;

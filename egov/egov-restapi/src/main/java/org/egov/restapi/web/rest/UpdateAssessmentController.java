@@ -60,7 +60,6 @@ import org.egov.restapi.model.ConstructionTypeDetails;
 import org.egov.restapi.model.CreatePropertyDetails;
 import org.egov.restapi.model.SurroundingBoundaryDetails;
 import org.egov.restapi.model.VacantLandDetails;
-import org.egov.restapi.util.JsonConvertor;
 import org.egov.restapi.util.ValidationUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -93,21 +92,23 @@ public class UpdateAssessmentController {
      * @throws ParseException
      */
 	@RequestMapping(value = "/property/updateProperty", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-	public String updateProperty(@RequestBody String createPropertyDetails)
+	public NewPropertyDetails updateProperty(@RequestBody String createPropertyDetails)
 			throws IOException, ParseException {
-		String responseJson;
 		ApplicationThreadLocals.setUserId(2L);
+		NewPropertyDetails newPropertyDetails;
 		CreatePropertyDetails createPropDetails = (CreatePropertyDetails) getObjectFromJSONRequest(createPropertyDetails, CreatePropertyDetails.class);
 		
 		ErrorDetails errorDetails = validationUtil.validateUpdateRequest(createPropDetails, PropertyTaxConstants.PROPERTY_MODE_MODIFY);
 		if (errorDetails != null && errorDetails.getErrorCode() != null) {
-			responseJson = JsonConvertor.convert(errorDetails);
+			newPropertyDetails = new NewPropertyDetails();
+			newPropertyDetails.setReferenceId(createPropDetails.getReferenceId());
+			newPropertyDetails.setApplicationNo("-1");
+			newPropertyDetails.setErrorDetails(errorDetails);
 	    } else {
 	     	ViewPropertyDetails viewPropertyDetails = setRequestParameters(createPropDetails);
-	     	NewPropertyDetails newPropertyDetails = propertyExternalService.updateProperty(viewPropertyDetails);
-	        responseJson = JsonConvertor.convert(newPropertyDetails);
+	     	newPropertyDetails = propertyExternalService.updateProperty(viewPropertyDetails);
 	    }
-        return responseJson;
+        return newPropertyDetails;
 	}
 	
 	/**
