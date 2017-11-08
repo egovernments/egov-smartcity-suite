@@ -552,6 +552,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private void setAmalgamationsForPersist() {
         Amalgamation amalgamatedProp;
         BasicProperty amalBasicProp;
+        for(final Amalgamation previousAmalg :  basicProp.getAmalgamations())
+            previousAmalg.getAmalgamatedProperty().setUnderWorkflow(false);
+        
         basicProp.getAmalgamations().clear();
         for (final Amalgamation amlg : basicProp.getAmalgamationsProxy()) {
             amalgamatedProp = new Amalgamation();
