@@ -701,7 +701,7 @@ public class AssessmentService {
      * @return AssessmentDetails
      * @throws IOException
      */
-    @RequestMapping(value = "/property/taxDues", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/property/taxDues", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public AssessmentDetails getDCBDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request){
         AssessmentDetails assessmentDetails = null;
         ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentRequest);

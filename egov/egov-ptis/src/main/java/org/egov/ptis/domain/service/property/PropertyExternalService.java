@@ -158,7 +158,6 @@ import javax.persistence.Query;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
-import org.apache.poi.poifs.property.PropertyConstants;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAccountInfo;
 import org.egov.collection.integration.services.CollectionIntegrationService;
@@ -1379,12 +1378,12 @@ public class PropertyExternalService {
     private void setBasicPropOwnerInfo(ViewPropertyDetails viewPropertyDetails, BasicProperty basicProperty) {
         if(StringUtils.isNotBlank(viewPropertyDetails.getDocType())
                 && PropertyTaxConstants.DOCUMENT_NAME_NOTARY_DOCUMENT.equals(viewPropertyDetails.getDocType()))
-			basicProperty.setPropertyOwnerInfoProxy(getNotaryOwners(viewPropertyDetails));
+			basicProperty.setPropertyOwnerInfoProxy(getNotaryOwners());
         else
             basicProperty.setPropertyOwnerInfoProxy(getPropertyOwnerInfoList(viewPropertyDetails.getOwnerDetails()));
     }
 
-    private List<PropertyOwnerInfo> getNotaryOwners(ViewPropertyDetails viewPropertyDetails) {
+    private List<PropertyOwnerInfo> getNotaryOwners() {
         List<PropertyOwnerInfo> notaryOwnersList = new ArrayList<>();
         PropertyOwnerInfo notaryPropOwner = new PropertyOwnerInfo();
         User notaryUser = userService.getUserByUsername(PropertyTaxConstants.NOTARY_DOCUMENT_OWNER);
