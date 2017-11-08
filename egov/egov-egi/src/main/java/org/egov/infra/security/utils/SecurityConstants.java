@@ -40,17 +40,21 @@
 
 package org.egov.infra.security.utils;
 
-public interface SecurityConstants {
+public final class SecurityConstants {
 
-    String LOCATION_FIELD = "locationId";
-    String IPADDR_FIELD = "ipAddress";
-    String USERAGENT_FIELD = "userAgentInfo";
-    String SESSION_COOKIE_PATH = "/";
-    String SESSION_COOKIE_NAME = "JSESSIONID";
-    String PWD_FIELD = "j_password";
-    String USERNAME_FIELD = "j_username";
-    String LOGIN_LOG_ID = "loginLogId";
-    String LOGIN_URI = "/login";
-    String PUBLIC_URI = "/public";
-    int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
+    public static final String LOCATION_FIELD = "locationId";
+    public static final String IPADDR_FIELD = "ipAddress";
+    public static final String USERAGENT_FIELD = "userAgentInfo";
+    public static final String SESSION_COOKIE_PATH = "/";
+    public static final String SESSION_COOKIE_NAME = "JSESSIONID";
+    public static final String PWD_FIELD = "j_password";
+    public static final String USERNAME_FIELD = "j_username";
+    public static final String LOGIN_LOG_ID = "loginLogId";
+    public static final String LOGIN_URI = "/login";
+    public static final String PUBLIC_URI = "/public";
+    public static final int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
+
+    private SecurityConstants() {
+        //not be initialized
+    }
 }

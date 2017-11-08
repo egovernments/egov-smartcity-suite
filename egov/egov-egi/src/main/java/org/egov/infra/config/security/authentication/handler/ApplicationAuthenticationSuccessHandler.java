@@ -91,7 +91,7 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
     @Override
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
-        auditLoginDetails(authentication);
+        auditLoginDetails(request, authentication);
         resetFailedLoginAttempt(authentication);
         redirectToSuccessPage(request, response, authentication);
     }
@@ -118,7 +118,7 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
         getRedirectStrategy().sendRedirect(request, response, targetUrl);
     }
 
-    private void auditLoginDetails(Authentication authentication) {
+    private void auditLoginDetails(HttpServletRequest request, Authentication authentication) {
         HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
         LoginAudit loginAudit = new LoginAudit();
         loginAudit.setLoginTime(new Date());
@@ -126,7 +126,7 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
         loginAudit.setIpAddress(credentials.get(IPADDR_FIELD));
         loginAudit.setUserAgentInfo(credentials.get(USERAGENT_FIELD));
         loginAuditService.auditLogin(loginAudit);
-        credentials.put(LOGIN_LOG_ID, loginAudit.getId().toString());
+        request.getSession(false).setAttribute(LOGIN_LOG_ID, loginAudit.getId());
     }
 
     private void resetFailedLoginAttempt(Authentication authentication) {

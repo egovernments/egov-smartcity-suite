@@ -38,35 +38,40 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.infra.config.security.authentication.handler;
+package org.egov.infra.config.security.authentication.listener;
 
-import org.springframework.security.core.Authentication;
-import org.springframework.security.web.authentication.logout.LogoutHandler;
-import org.springframework.stereotype.Component;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.audit.service.LoginAuditService;
+import org.springframework.beans.factory.annotation.Autowired;
 
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.servlet.http.HttpSessionEvent;
+import javax.servlet.http.HttpSessionListener;
 
-import static org.egov.infra.security.utils.SecurityConstants.SESSION_COOKIE_PATH;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOG_ID;
+import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
 
-@Component
-public class ApplicationLogoutHandler implements LogoutHandler {
+public class UserSessionDestroyListener implements HttpSessionListener {
+
+    @Autowired
+    private LoginAuditService loginAuditService;
 
     @Override
-    public void logout(HttpServletRequest request, HttpServletResponse response, Authentication authentication) {
-        clearAllCookies(request, response);
+    public void sessionCreated(HttpSessionEvent se) {
+        //do nothing
     }
 
-    private void clearAllCookies(HttpServletRequest request, HttpServletResponse response) {
-        Cookie[] cookies = request.getCookies();
-        if (cookies == null || cookies.length < 1)
-            return;
-        for (Cookie cookie : cookies) {
-            cookie.setMaxAge(0);
-            cookie.setPath(SESSION_COOKIE_PATH);
-            cookie.setValue(null);
-            response.addCookie(cookie);
+    @Override
+    public void sessionDestroyed(HttpSessionEvent event) {
+        HttpSession session = event.getSession();
+        if (session.getAttribute(LOGIN_LOG_ID) != null) {
+            try {
+                ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
+                loginAuditService.auditLogout((Long) session.getAttribute(LOGIN_LOG_ID));
+            } finally {
+                ApplicationThreadLocals.clearValues();
+            }
         }
+
     }
 }

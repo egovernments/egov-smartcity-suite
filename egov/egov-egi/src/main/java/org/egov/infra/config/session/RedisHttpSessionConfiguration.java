@@ -40,6 +40,7 @@
 
 package org.egov.infra.config.session;
 
+import org.egov.infra.config.security.authentication.listener.UserSessionDestroyListener;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.session.FindByIndexNameSessionRepository;
@@ -58,15 +59,15 @@ public class RedisHttpSessionConfiguration {
 
     @Bean
     public CookieSerializer cookieSerializer() {
-        final DefaultCookieSerializer serializer = new DefaultCookieSerializer();
+        DefaultCookieSerializer serializer = new DefaultCookieSerializer();
         serializer.setCookieName(SESSION_COOKIE_NAME);
         serializer.setCookiePath(SESSION_COOKIE_PATH);
         return serializer;
     }
 
     @Bean
-    public CookieHttpSessionStrategy cookieHttpSessionStrategy(final CookieSerializer cookieSerializer) {
-        final CookieHttpSessionStrategy cookieHttpSession = new CookieHttpSessionStrategy();
+    public CookieHttpSessionStrategy cookieHttpSessionStrategy(CookieSerializer cookieSerializer) {
+        CookieHttpSessionStrategy cookieHttpSession = new CookieHttpSessionStrategy();
         cookieHttpSession.setCookieSerializer(cookieSerializer);
         return cookieHttpSession;
     }
@@ -74,5 +75,10 @@ public class RedisHttpSessionConfiguration {
     @Bean
     public SpringSessionBackedSessionRegistry springSessionBackedSessionRegistry(FindByIndexNameSessionRepository sessionRepository) {
         return new SpringSessionBackedSessionRegistry(sessionRepository);
+    }
+
+    @Bean
+    public UserSessionDestroyListener httpSessionEventPublisher() {
+        return new UserSessionDestroyListener();
     }
 }

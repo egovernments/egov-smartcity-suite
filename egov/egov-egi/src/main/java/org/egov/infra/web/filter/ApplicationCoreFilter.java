@@ -66,6 +66,7 @@ import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 public class ApplicationCoreFilter implements Filter {
@@ -101,31 +102,25 @@ public class ApplicationCoreFilter implements Filter {
             cityService.cityDataAsMap().forEach(session::setAttribute);
         if (session.getAttribute(APP_RELEASE_ATTRIB_NAME) == null)
             session.setAttribute(APP_RELEASE_ATTRIB_NAME, applicationRelease);
+        if (session.getAttribute(TENANTID_KEY) == null)
+            session.setAttribute(TENANTID_KEY, ApplicationThreadLocals.getTenantID());
         if (session.getServletContext().getAttribute(CDN_ATTRIB_NAME) == null)
             session.getServletContext().setAttribute(CDN_ATTRIB_NAME, cdnURL);
+        if (session.getAttribute(USERID_KEY) == null) {
+            Optional<Authentication> authentication = getCurrentAuthentication();
+            if (authentication.isPresent() && authentication.get().getPrincipal() instanceof CurrentUser) {
+                session.setAttribute(USERID_KEY, ((CurrentUser) authentication.get().getPrincipal()).getUserId());
+            } else if (!authentication.isPresent() || !(authentication.get().getPrincipal() instanceof User)) {
+                session.setAttribute(USERID_KEY, securityUtils.getCurrentUser().getId());
+            }
+        }
     }
 
     private void prepareApplicationThreadLocal(HttpSession session) {
         ApplicationThreadLocals.setCityCode((String) session.getAttribute(CITY_CODE_KEY));
         ApplicationThreadLocals.setCityName((String) session.getAttribute(CITY_NAME_KEY));
         ApplicationThreadLocals.setMunicipalityName((String) session.getAttribute(CITY_CORP_NAME_KEY));
-        ApplicationThreadLocals.setUserId(getUserIdFromAuthentication(session));
-    }
-
-    private Long getUserIdFromAuthentication(final HttpSession session) {
-        Long userId = (Long) session.getAttribute(USERID_KEY);
-        if (userId == null) {
-            Optional<Authentication> authentication = getCurrentAuthentication();
-            if (authentication.isPresent() && authentication.get().getPrincipal() instanceof CurrentUser) {
-                userId = ((CurrentUser) authentication.get().getPrincipal()).getUserId();
-                session.setAttribute(USERID_KEY, userId);
-            } else if (!authentication.isPresent() ||
-                    (authentication.isPresent() && !(authentication.get().getPrincipal() instanceof User))) {
-                userId = securityUtils.getCurrentUser().getId();
-                session.setAttribute(USERID_KEY, userId);
-            }
-        }
-        return userId;
+        ApplicationThreadLocals.setUserId((Long) session.getAttribute(USERID_KEY));
     }
 
     @Override
