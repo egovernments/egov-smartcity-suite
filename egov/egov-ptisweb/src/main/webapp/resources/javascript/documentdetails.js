@@ -131,6 +131,7 @@ function documentTypeToggle(dropdownvalue) {
 		jQuery('#Decree_Document').hide();
 		jQuery('#Photo_of_Property_With_Holder').show();
 		jQuery('#Registered_Document').hide();
+		jQuery("#mobileNumber").attr('readonly', true);
 	}
 }
 
