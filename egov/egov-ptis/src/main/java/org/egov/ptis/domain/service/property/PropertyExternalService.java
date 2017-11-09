@@ -3044,7 +3044,7 @@ public class PropertyExternalService {
                     .subtract(taxCalculatorResponse.getExistingHalfYearlyTax())).multiply(BIGDECIMAL_100))
                             .divide(taxCalculatorResponse.getExistingHalfYearlyTax());
             taxCalculatorResponse.setTaxVariance(taxVariance);
-            if (taxCalculatorResponse.getExistingARV().compareTo(BigDecimal.ZERO) > 0) {
+            if (taxCalculatorResponse.getExistingARV().compareTo(ZERO) > 0) {
                 BigDecimal arvVariance = ((taxCalculatorResponse.getCalculatedARV()
                         .subtract(taxCalculatorResponse.getExistingARV())).multiply(BIGDECIMAL_100))
                                 .divide(taxCalculatorResponse.getExistingARV());
@@ -3067,7 +3067,7 @@ public class PropertyExternalService {
                 BigDecimal halfYearlyTax = getTotalTaxExcludingUACPenalty(installment, ptDemand);
                 calculationDetailsMap.put(HALF_YEARLY_TAX, halfYearlyTax);
                 if (ptDemand.getDmdCalculations() != null)
-                    calculationDetailsMap.put(ARV, ptDemand.getDmdCalculations().getAlv() == null ? BigDecimal.ZERO
+                    calculationDetailsMap.put(ARV, ptDemand.getDmdCalculations().getAlv() == null ? ZERO
                             : ptDemand.getDmdCalculations().getAlv());
             }
 
@@ -3077,7 +3077,7 @@ public class PropertyExternalService {
     }
 
     private BigDecimal getTotalTaxExcludingUACPenalty(Installment installment, Ptdemand ptDemand) {
-        BigDecimal halfYearlyTax = BigDecimal.ZERO;
+        BigDecimal halfYearlyTax = ZERO;
         for (EgDemandDetails demandDetails : ptDemand.getEgDemandDetails()) {
             if (installment.getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
                     !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
