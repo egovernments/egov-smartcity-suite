@@ -87,6 +87,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN
 import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_MIN_CUR_CAPITALVALUE;
 import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
@@ -99,7 +101,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -154,12 +155,12 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
-import org.egov.ptis.notice.PtNotice;
 
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
@@ -1084,6 +1085,21 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
                         usageList = propertyUsageService.getNonResidentialPropertyUsages();
         addDropdownData("UsageList", usageList);
+    }
+    
+    public String multipleSubmitRedirect() {
+        setWfErrorMsg(getText("error.multiple.submit"));
+        return TARGET_WORKFLOW_ERROR;
+    }
+
+    public Boolean multipleSubmitCondition(PropertyImpl property, Long approverPositionId) {
+        if (property.getId() != null) {
+            if (null == approverPositionId && !property.getStatus().equals(PropertyTaxConstants.STATUS_WORKFLOW))
+                return Boolean.TRUE;
+            else
+                return propertyTaxCommonUtils.isOwnerOfApplication(property, securityUtils.getCurrentUser(), approverPositionId);
+        } else
+            return Boolean.FALSE;
     }
 
     public WorkflowBean getWorkflowBean() {

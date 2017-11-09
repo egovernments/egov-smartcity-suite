@@ -77,6 +77,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
 import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
+import static org.egov.ptis.constants.PropertyTaxConstants.TARGET_WORKFLOW_ERROR;
 import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
@@ -192,7 +193,8 @@ import com.google.gson.GsonBuilder;
         @Result(name = "error", location = "common/meeseva-errorPage.jsp"),
         @Result(name = CreatePropertyAction.PRINT_ACK, location = "create/createProperty-printAck.jsp"),
         @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
-        @Result(name = CreatePropertyAction.EDIT_DATA_ENTRY, location = "create/createProperty-editDataEntry.jsp") })
+        @Result(name = CreatePropertyAction.EDIT_DATA_ENTRY, location = "create/createProperty-editDataEntry.jsp"),
+        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp")})
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = -2329719786287615451L;
@@ -407,7 +409,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-
+        if (multipleSubmitCondition(property, approverPositionId)) {
+            return multipleSubmitRedirect();
+        }
         if (property.getPropertyDetail().isAppurtenantLandChecked()) {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
                     Long.valueOf(propTypeId));
@@ -817,6 +821,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             validateApproverDetails();
             if (hasErrors())
                 return RESULT_VIEW;
+        }
+        if (multipleSubmitCondition(property, approverPositionId)) {
+            return multipleSubmitRedirect();
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionWorkFlow(property);

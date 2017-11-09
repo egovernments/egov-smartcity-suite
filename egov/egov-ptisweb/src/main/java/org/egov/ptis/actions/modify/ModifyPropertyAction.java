@@ -724,6 +724,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			logger.error("forwardModify : There are no Unit rates defined for chosen combinations", e);
 			return NEW;
 		}
+		if (multipleSubmitCondition(propertyModel, approverPositionId)) {
+	            return multipleSubmitRedirect();
+	        }
 		transitionWorkFlow(propertyModel);
 		basicProp.setUnderWorkflow(Boolean.TRUE);
 		basicPropertyService.applyAuditing(propertyModel.getState());
@@ -815,6 +818,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 				Long.valueOf(getModelId()));
 		if (logger.isDebugEnabled())
 			logger.debug("forwardView: Workflow property: " + propertyModel);
+		if (multipleSubmitCondition(propertyModel, approverPositionId)) {
+                    return multipleSubmitRedirect();
+                }
 		transitionWorkFlow(propertyModel);
 		propService.updateIndexes(propertyModel, getApplicationType());
 		basicPropertyService.update(basicProp);
@@ -847,6 +853,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			logger.debug("approve: Workflow property: " + propertyModel);
 		basicProp = propertyModel.getBasicProperty();
 		oldProperty = (PropertyImpl) basicProp.getProperty();
+		if (multipleSubmitCondition(propertyModel, approverPositionId)) {
+                    return multipleSubmitRedirect();
+                }
 		transitionWorkFlow(propertyModel);
 
 		createPropertyStatusValues();
@@ -955,7 +964,9 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		setBasicProp(basicProperty);
 		if (logger.isDebugEnabled())
 			logger.debug("reject: BasicProperty: " + basicProperty);
-
+		if (multipleSubmitCondition(propertyModel, approverPositionId)) {
+                    return multipleSubmitRedirect();
+                }
 		if (wfInitiator != null) {
 			transitionWorkFlow(propertyModel);
 			propService.updateIndexes(propertyModel, getApplicationType());

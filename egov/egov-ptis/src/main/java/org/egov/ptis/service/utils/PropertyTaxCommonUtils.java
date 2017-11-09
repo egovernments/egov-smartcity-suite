@@ -795,4 +795,32 @@ public class PropertyTaxCommonUtils {
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
     
+    /**
+     * Returns whether the logged in user is the current owner of the application
+     *
+     * @return boolean
+     */
+    public Boolean isOwnerOfApplication(PropertyImpl property, User user, Long approverPositionId) {
+        return !positionMasterService.getPositionsForEmployee(user.getId())
+                .contains(property.getCurrentState().getOwnerPosition()) ? Boolean.TRUE
+                        : validateApproverPosition(approverPositionId,
+                                property.getCurrentState().getOwnerPosition().getId());
+
+    }
+
+    /**
+     * Returns whether the approver user position is same as the current owner position of the application
+     *
+     * @return boolean
+     */
+    public Boolean validateApproverPosition(Long approverPositionId, Long currentPosition) {
+
+        if (null != approverPositionId && approverPositionId != -1 && currentPosition != null) {
+            Boolean b = approverPositionId.longValue() == currentPosition.longValue();
+            return b ? Boolean.TRUE : Boolean.FALSE;
+        } else
+            return Boolean.FALSE;
+    }
+    
+    
 }
