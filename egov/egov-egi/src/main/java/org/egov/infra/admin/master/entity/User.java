@@ -62,6 +62,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -375,5 +376,13 @@ public class User extends AbstractAuditable {
     public boolean hasRole(String roleName) {
         return roles.parallelStream().map(Role::getName)
                 .anyMatch(roleName::equals);
+    }
+
+    public boolean hasAnyRole(String... roleName) {
+        List<String> roleNames = Arrays.asList(roleName);
+        return roles.parallelStream()
+                .filter(role -> roleNames.contains(role.getName()))
+                .findFirst()
+                .isPresent();
     }
 }

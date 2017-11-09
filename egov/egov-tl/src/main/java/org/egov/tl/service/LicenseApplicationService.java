@@ -82,6 +82,8 @@ public class LicenseApplicationService extends TradeLicenseService {
     private LicenseProcessWorkflowService licenseProcessWorkflowService;
     @Autowired
     private LicenseUtils licenseUtils;
+    @Autowired
+    private LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Override
     public License createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
@@ -115,6 +117,8 @@ public class LicenseApplicationService extends TradeLicenseService {
         else
             licenseProcessWorkflowService.getWfWithThirdPartyOp((TradeLicense) license, workflowBean);
         licenseRepository.save(license);
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate(license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         return license;
@@ -136,6 +140,8 @@ public class LicenseApplicationService extends TradeLicenseService {
         else
             licenseProcessWorkflowService.getWfWithThirdPartyOp((TradeLicense) license, workflowBean);
         this.licenseRepository.save(license);
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate(license);
         sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         return license;
@@ -167,6 +173,7 @@ public class LicenseApplicationService extends TradeLicenseService {
             license.setLicenseNumber(licenseNumberUtils.generateLicenseNumber());
 
         licenseRepository.save(license);
+        licenseCitizenPortalService.onUpdate(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
@@ -179,7 +186,9 @@ public class LicenseApplicationService extends TradeLicenseService {
             workflowBean.setAdditionaRule(license.isNewApplication() ? NEWLICENSE : RENEWLICENSE);
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
             licenseRepository.save(license);
+            licenseCitizenPortalService.onUpdate((TradeLicense) license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);
+            licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         }
 
     }

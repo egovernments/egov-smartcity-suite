@@ -54,7 +54,9 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -68,7 +70,8 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 @Service
 public class LicenseUtils {
     @Autowired
@@ -92,6 +95,8 @@ public class LicenseUtils {
 
     @Autowired
     private LicenseStatusService licenseStatusService;
+    @Autowired
+    private TlApplicationProperties tlApplicationProperties;
 
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
@@ -144,5 +149,14 @@ public class LicenseUtils {
     public License licenseStatusUpdate(final License licenseObj, final String code) {
         licenseObj.setStatus(licenseStatusService.getLicenseStatusByCode(code));
         return licenseObj;
+    }
+
+    public Integer getSlaForAppType(LicenseAppType licenseAppType) {
+        if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
+            return tlApplicationProperties.getValue("sla.new.apptype");
+        else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
+            return tlApplicationProperties.getValue("sla.renew.apptype");
+        else
+            return tlApplicationProperties.getValue("sla.closure.apptype");
     }
 }

@@ -47,9 +47,8 @@ import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -67,8 +66,6 @@ import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
@@ -87,7 +84,7 @@ public class LicenseApplicationIndexService {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private TlApplicationProperties tlApplicationProperties;
+    private LicenseUtils licenseUtils;
 
     public void createOrUpdateLicenseApplicationIndex(final License license) {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
@@ -103,7 +100,7 @@ public class LicenseApplicationIndexService {
         Optional<User> user = getApplicationCurrentOwner(license);
         if (license.getApplicationDate() == null)
             license.setApplicationDate(new Date());
-        Integer slaConfig = getSlaForAppType(license.getLicenseAppType());
+        Integer slaConfig = licenseUtils.getSlaForAppType(license.getLicenseAppType());
 
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
@@ -125,14 +122,6 @@ public class LicenseApplicationIndexService {
                 securityUtils.getCurrentUser().hasRole(CSCOPERATOR) ? CSC.toString() : "ONLINE";
     }
 
-    private Integer getSlaForAppType(LicenseAppType licenseAppType) {
-        if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
-            return tlApplicationProperties.getValue("sla.new.apptype");
-        else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
-            return tlApplicationProperties.getValue("sla.renew.apptype");
-        else
-            return tlApplicationProperties.getValue("sla.closure.apptype");
-    }
 
     private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
         Optional<User> user = getApplicationCurrentOwner(license);

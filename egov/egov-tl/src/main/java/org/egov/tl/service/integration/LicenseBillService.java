@@ -91,6 +91,7 @@ import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseApplicationService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
+import org.egov.tl.service.LicenseCitizenPortalService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
@@ -200,6 +201,8 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     protected LicenseApplicationService licenseApplicationService;
+    @Autowired
+    private LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Transactional
     public String createLicenseBillXML(License license) {
@@ -442,7 +445,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                         ld.getLicense().setCollectionPending(false);
                         licenseApplicationService.collectionTransition((TradeLicense) ld.getLicense());
                     }
-
+                licenseCitizenPortalService.onUpdate((TradeLicense) ld.getLicense());
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(ld.getLicense(), billReceipt.getTotalAmount());
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))

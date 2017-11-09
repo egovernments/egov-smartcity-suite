@@ -76,6 +76,8 @@ import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
 import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 import static org.egov.tl.utils.Constants.MESSAGE;
 import static org.egov.tl.utils.Constants.REPORT_PAGE;
+import static org.egov.infra.utils.ApplicationConstant.PUBLIC_ROLE_NAME;
+import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
 
 @ParentPackage("egov")
 @Results({@Result(name = REPORT_PAGE, location = "viewTradeLicense-report.jsp"),
@@ -264,8 +266,7 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     }
 
     public Boolean hasCSCPublicRole() {
-        final String currentUserRoles = securityUtils.getCurrentUser().getRoles().toString();
-        return currentUserRoles.contains(CSCOPERATOR) || currentUserRoles.contains(MEESEVAOPERATOR) || currentUserRoles.contains("PUBLIC");
+        return securityUtils.getCurrentUser().hasAnyRole(CSCOPERATOR, MEESEVAOPERATOR, PUBLIC_ROLE_NAME, CITIZEN_ROLE_NAME);
     }
 
     public String getUrl() {

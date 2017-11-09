@@ -198,6 +198,8 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     private FeeTypeService feeTypeService;
 
+    @Autowired
+    private LicenseCitizenPortalService licenseCitizenPortalService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -749,6 +751,8 @@ public abstract class AbstractLicenseService<T extends License> {
 
         }
         this.licenseRepository.save(license);
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate((TradeLicense) license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         return license;
     }
@@ -819,6 +823,7 @@ public abstract class AbstractLicenseService<T extends License> {
         }
 
         this.licenseRepository.save(license);
+        licenseCitizenPortalService.onUpdate((TradeLicense) license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
