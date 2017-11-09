@@ -129,7 +129,7 @@ $('#search').on('click', function() {
 	        		"class":"text-center", 
 	        		"title":"Connection Execution Date",
 	        		"render" : function(data, type, full, meta) {
-	        			return '<input class="form-control datepicker execDate" id="executiondate" />';
+	        			return '<input class="form-control datepicker execDate" data-date-end-date="0d" id="executiondate" />';
 	        		}
 	        	 
 	        	}
