@@ -476,7 +476,8 @@ body {
 					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
 					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
 					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.emailId']").attr('readonly', true);
-					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
+					jQuery("select[name='propertyOwnerInfo["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").val(userInfoObj.careof);
 					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.guardian']").attr('readonly', true);
 				} else {
 					jQuery("input[name='propertyOwnerInfo["+ rowidx +"].owner.aadhaarNumber']").val("");

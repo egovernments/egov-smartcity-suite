@@ -300,7 +300,8 @@ jQuery(document).on('blur', ".txtaadhar", function () {
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.emailId']").attr('readonly', true);
-				jQuery("select[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
+				jQuery("select[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").val(userInfoObj.careof);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").attr('readonly', true);
 			} else {
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.aadhaarNumber']").val("");

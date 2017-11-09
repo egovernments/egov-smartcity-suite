@@ -195,7 +195,8 @@
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val(userInfoObj.phone);
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").attr('readonly', true);
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', true);
-      					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").attr('disabled', 'disabled');
+      					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").removeAttr('disabled');
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").val(userInfoObj.careof);
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', true);
       				} else {
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.aadhaarNumber']").val("");
