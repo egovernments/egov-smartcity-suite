@@ -907,17 +907,21 @@ public class WaterConnectionDetailsService {
         final StringBuilder aadharNumber = new StringBuilder();
         if (null != ownerNameItr && ownerNameItr.hasNext()) {
             final OwnerName primaryOwner = ownerNameItr.next();
+            if(primaryOwner !=null){
             consumerName.append(primaryOwner.getOwnerName() != null ? primaryOwner.getOwnerName() : "");
+            //TODO: Using Only Primary Owner Mobile and aadharNumber as eg_application_index table  fields max length is 50
             mobileNumber.append(primaryOwner.getMobileNumber() != null ? primaryOwner.getMobileNumber() : "");
             aadharNumber.append(primaryOwner.getAadhaarNumber() != null ? primaryOwner.getAadhaarNumber() : "");
+            }
             while (ownerNameItr.hasNext()) {
                 final OwnerName secondaryOwner = ownerNameItr.next();
                 consumerName.append(',')
                         .append(secondaryOwner.getOwnerName() != null ? secondaryOwner.getOwnerName() : "");
-                mobileNumber.append(',')
-                        .append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : "");
-                aadharNumber.append(',')
-                        .append(secondaryOwner.getAadhaarNumber() != null ? secondaryOwner.getAadhaarNumber() : "");
+                //TODO: if Primary owner MobileNumber and aadharNumber is Null then considering secondary Owner details.
+                if(null == mobileNumber  || "".equals(mobileNumber.toString()))
+                mobileNumber.append(',').append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : ""); 
+                if(null == aadharNumber  || "".equals(aadharNumber.toString()))
+                aadharNumber.append(',') .append(secondaryOwner.getAadhaarNumber() != null ? secondaryOwner.getAadhaarNumber() : "");
             }
 
         }
