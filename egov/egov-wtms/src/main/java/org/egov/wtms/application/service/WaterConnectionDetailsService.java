@@ -918,9 +918,9 @@ public class WaterConnectionDetailsService {
                 consumerName.append(',')
                         .append(secondaryOwner.getOwnerName() != null ? secondaryOwner.getOwnerName() : "");
                 //TODO: if Primary owner MobileNumber and aadharNumber is Null then considering secondary Owner details.
-                if(null == mobileNumber  || "".equals(mobileNumber.toString()))
+                if( "".equals(mobileNumber.toString()))
                 mobileNumber.append(',').append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : ""); 
-                if(null == aadharNumber  || "".equals(aadharNumber.toString()))
+                if("".equals(aadharNumber.toString()))
                 aadharNumber.append(',') .append(secondaryOwner.getAadhaarNumber() != null ? secondaryOwner.getAadhaarNumber() : "");
             }
 
