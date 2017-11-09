@@ -137,6 +137,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.TOTAL_AMOUNT;
 import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
 import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_DDMMYYY;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 
 import java.io.File;
 import java.math.BigDecimal;
@@ -258,6 +261,8 @@ import org.egov.ptis.domain.model.RestAssessmentDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.ViewPropertyDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.model.TaxCalculatorResponse;
+import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.FloorTypeService;
 import org.egov.ptis.master.service.PropertyUsageService;
@@ -267,16 +272,22 @@ import org.egov.ptis.master.service.WallTypeService;
 import org.egov.ptis.master.service.WoodTypeService;
 import org.hibernate.Session;
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 
 public class PropertyExternalService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(PropertyExternalService.class);
 	private static final String ASSESSMENT = "Assessment";
 	public static final Integer FLAG_MOBILE_EMAIL = 0;
 	public static final Integer FLAG_TAX_DETAILS = 1;
 	public static final Integer FLAG_FULL_DETAILS = 2;
 	private static final String FORWARD_SUCCESS_COMMENT = "Application has been created by GIS Survey system.";
+    private static final String TAX_CALCULATIONS_EFFECTIVE_DATE = "01/10/2017";
+    private static final String HALF_YEARLY_TAX = "halfYearlyTax";
+    private static final String ARV = "ARV";
 
 	@Autowired
 	private BasicPropertyDAO basicPropertyDAO;
@@ -2999,4 +3010,94 @@ public class PropertyExternalService {
 		}
 		return assessmentDetails;
 	}
+	
+    public TaxCalculatorResponse calculateTaxes(TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
+        TaxCalculatorResponse taxCalculatorResponse = new TaxCalculatorResponse();
+        final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+        PropertyService propService = beanProvider.getBean("propService", PropertyService.class);
+        BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(taxCalculatorRequest.getAssessmentNo());
+        PropertyImpl propertyImpl = (PropertyImpl) basicProperty.getProperty();
+        taxCalculatorResponse.setAssessmentNo(basicProperty.getUpicNo());
+        taxCalculatorResponse.setZoneNo(basicProperty.getPropertyID().getZone().getBoundaryNum());
+        if (StringUtils.isNotBlank(propertyImpl.getReferenceId()))
+            taxCalculatorResponse.setReferenceId(propertyImpl.getReferenceId());
+
+        if (propertyImpl != null) {
+            Map<String, BigDecimal> calculationsMap = getARVAndTaxDetails(propertyImpl,
+                    currYearInstMap.get(CURRENTYEAR_FIRST_HALF), false);
+            taxCalculatorResponse.setExistingARV(calculationsMap.get(ARV));
+            taxCalculatorResponse.setExistingHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
+            Date effectiveDate = DateUtils.getDate(TAX_CALCULATIONS_EFFECTIVE_DATE, DATE_FORMAT_DDMMYYY);
+            propertyImpl.setReferenceId(taxCalculatorRequest.getReferenceId());
+            prepareFloorDetailsForTaxCalculation(taxCalculatorRequest, propertyImpl, effectiveDate);
+            Date completionDate = getCompletionDate(propService, propertyImpl);
+            try {
+                propService.createDemand(propertyImpl, completionDate);
+            } catch (TaxCalculatorExeption e) {
+                LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
+            }
+            calculationsMap = getARVAndTaxDetails(propertyImpl, currYearInstMap.get(CURRENTYEAR_FIRST_HALF), true);
+            taxCalculatorResponse.setCalculatedARV(calculationsMap.get(ARV));
+            taxCalculatorResponse.setNewHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
+
+            BigDecimal taxVariance = ((taxCalculatorResponse.getNewHalfYearlyTax()
+                    .subtract(taxCalculatorResponse.getExistingHalfYearlyTax())).multiply(BIGDECIMAL_100))
+                            .divide(taxCalculatorResponse.getExistingHalfYearlyTax());
+            taxCalculatorResponse.setTaxVariance(taxVariance);
+            if (taxCalculatorResponse.getExistingARV().compareTo(BigDecimal.ZERO) > 0) {
+                BigDecimal arvVariance = ((taxCalculatorResponse.getCalculatedARV()
+                        .subtract(taxCalculatorResponse.getExistingARV())).multiply(BIGDECIMAL_100))
+                                .divide(taxCalculatorResponse.getExistingARV());
+                taxCalculatorResponse.setArvVariance(arvVariance);
+            }
+        }
+        return taxCalculatorResponse;
+    }
+
+    private Map<String, BigDecimal> getARVAndTaxDetails(PropertyImpl propertyImpl, Installment installment,
+            boolean forNewCalculation) {
+        Map<String, BigDecimal> calculationDetailsMap = new HashMap<>();
+        Ptdemand ptDemand;
+        if (!propertyImpl.getPtDemandSet().isEmpty()) {
+            if (forNewCalculation)
+                ptDemand = propertyImpl.getPtDemandSet().iterator().next();
+            else
+                ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(propertyImpl);
+            if (ptDemand != null) {
+                BigDecimal halfYearlyTax = getTotalTaxExcludingUACPenalty(installment, ptDemand);
+                calculationDetailsMap.put(HALF_YEARLY_TAX, halfYearlyTax);
+                if (ptDemand.getDmdCalculations() != null)
+                    calculationDetailsMap.put(ARV, ptDemand.getDmdCalculations().getAlv() == null ? BigDecimal.ZERO
+                            : ptDemand.getDmdCalculations().getAlv());
+            }
+
+        }
+
+        return calculationDetailsMap;
+    }
+
+    private BigDecimal getTotalTaxExcludingUACPenalty(Installment installment, Ptdemand ptDemand) {
+        BigDecimal halfYearlyTax = BigDecimal.ZERO;
+        for (EgDemandDetails demandDetails : ptDemand.getEgDemandDetails()) {
+            if (installment.getFromDate().equals(demandDetails.getInstallmentStartDate()) &&
+                    !PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY
+                            .equalsIgnoreCase(demandDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()))
+                halfYearlyTax = halfYearlyTax.add(demandDetails.getAmount());
+        }
+        return halfYearlyTax;
+    }
+
+    private void prepareFloorDetailsForTaxCalculation(TaxCalculatorRequest taxCalculatorRequest, PropertyImpl propertyImpl,
+            Date effectiveDate)
+            throws ParseException {
+        if (taxCalculatorRequest.getFloorDetails() != null && !taxCalculatorRequest.getFloorDetails().isEmpty()) {
+            propertyImpl.getPropertyDetail().getFloorDetails().clear();
+            List<Floor> floorList = getFloorList(taxCalculatorRequest.getFloorDetails());
+            for (Floor floor : floorList)
+                floor.setDepreciationMaster(propertyTaxUtil.getDepreciationByDate(floor.getConstructionDate(),
+                        effectiveDate));
+            propertyImpl.getPropertyDetail().setFloorDetails(floorList);
+            propertyImpl.getPropertyDetail().setFloorDetailsProxy(propertyImpl.getPropertyDetail().getFloorDetails());
+        }
+    }
 }

@@ -72,6 +72,7 @@ import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.domain.model.FloorDetails;
 import org.egov.ptis.domain.model.OwnerInformation;
 import org.egov.ptis.domain.model.PayPropertyTaxDetails;
+import org.egov.ptis.domain.model.TaxCalculatorRequest;
 import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
 import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -1077,6 +1078,108 @@ public class ValidationUtil {
 			errorDetails.setErrorMessage(CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_REQ_MSG);
 		}
 
+        return errorDetails;
+    }
+	
+    public ErrorDetails validateTaxCalculatorRequest(TaxCalculatorRequest taxCalculatorRequest) {
+        ErrorDetails errorDetails = null;
+        BasicProperty basicProperty = basicPropertyDAO
+                .getBasicPropertyForUpicNoOrOldUpicNo(taxCalculatorRequest.getAssessmentNo(), null);
+        if (basicProperty == null) {
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_ASSESSMENT_NO_NOT_FOUND);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_ASSESSMENT_NO_NOT_FOUND);
+            return errorDetails;
+        } else {
+            Property property = basicProperty.getProperty();
+            if (property != null) {
+                if (PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND
+                        .equalsIgnoreCase(property.getPropertyDetail().getPropertyTypeMaster().getCode())) {
+                    errorDetails = new ErrorDetails();
+                    errorDetails.setErrorCode(VACANT_LAND_PROPERTY_ERROR_CODE);
+                    errorDetails.setErrorMessage(VACANT_LAND_PROPERTY_ERROR_MSG);
+                    return errorDetails;
+                }
+                errorDetails = validateFloorDetailsForTaxCalculation(taxCalculatorRequest.getFloorDetails());
+                if (errorDetails != null && StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                    return errorDetails;
+            }
+        }
+        return errorDetails;
+    }
+
+    private ErrorDetails validateFloorDetailsForTaxCalculation(List<FloorDetails> floorDetailsList) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        if (floorDetailsList.isEmpty()) {
+            errorDetails.setErrorCode(FLOOR_DETAILS_REQ_CODE);
+            errorDetails.setErrorMessage(FLOOR_DETAILS_REQ_MSG);
+        } else {
+            for (final FloorDetails floorDetails : floorDetailsList) {
+                errorDetails = validateStructureClassification(floorDetails);
+                if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                    return errorDetails;
+
+                errorDetails = validateFloorUsage(floorDetails);
+                if (StringUtils.isNotBlank(errorDetails.getErrorCode()))
+                    return errorDetails;
+
+                if (StringUtils.isBlank(floorDetails.getOccupancyCode())) {
+                    errorDetails.setErrorCode(OCCUPANCY_REQ_CODE);
+                    errorDetails.setErrorMessage(OCCUPANCY_REQ_MSG);
+                    return errorDetails;
+                }
+                if (StringUtils.isBlank(floorDetails.getConstructionDate())) {
+                    errorDetails.setErrorCode(CONSTRUCTION_DATE_REQ_CODE);
+                    errorDetails.setErrorMessage(CONSTRUCTION_DATE_REQ_MSG);
+                    return errorDetails;
+                }
+            }
+        }
+        return errorDetails;
+    }
+
+    private ErrorDetails validateStructureClassification(FloorDetails floorDetails) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        if (StringUtils.isBlank(floorDetails.getBuildClassificationCode())) {
+            errorDetails.setErrorCode(CLASSIFICATION_OF_BUILDING_REQ_CODE);
+            errorDetails.setErrorMessage(CLASSIFICATION_OF_BUILDING_REQ_MSG);
+            return errorDetails;
+        } else {
+            final Boolean classification = structureClassificationService
+                    .isActiveClassification(floorDetails.getBuildClassificationCode());
+            if (classification == null) {
+                errorDetails.setErrorCode(CLASSIFICATION_CODE_DOESNT_EXIST);
+                errorDetails.setErrorMessage(CLASSIFICATION_CODE_DOESNT_EXIST_MSG);
+                return errorDetails;
+            }
+            if (!classification) {
+                errorDetails.setErrorCode(INACTIVE_CLASSIFICATION_CODE);
+                errorDetails.setErrorMessage(INACTIVE_CLASSIFICATION_REQ_MSG);
+                return errorDetails;
+            }
+        }
+        return errorDetails;
+    }
+
+    private ErrorDetails validateFloorUsage(FloorDetails floorDetails) {
+        ErrorDetails errorDetails = new ErrorDetails();
+        if (StringUtils.isBlank(floorDetails.getNatureOfUsageCode())) {
+            errorDetails.setErrorCode(NATURE_OF_USAGES_REQ_CODE);
+            errorDetails.setErrorMessage(NATURE_OF_USAGES_REQ_MSG);
+            return errorDetails;
+        } else {
+            Boolean usage = propertyUsageService.isActiveUsage(floorDetails.getNatureOfUsageCode());
+            if (usage == null) {
+                errorDetails.setErrorCode(USAGE_CODE_DOESNT_EXIST);
+                errorDetails.setErrorMessage(USAGE_CODE_DOESNT_EXIST_MSG);
+                return errorDetails;
+            }
+            if (!usage) {
+                errorDetails.setErrorCode(INACTIVE_USAGE_CODE);
+                errorDetails.setErrorMessage(INACTIVE_USAGE_REQ_MSG);
+                return errorDetails;
+            }
+        }
         return errorDetails;
     }
 

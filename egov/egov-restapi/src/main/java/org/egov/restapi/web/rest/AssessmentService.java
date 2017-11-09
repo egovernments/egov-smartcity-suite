@@ -44,13 +44,13 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeMap;
 
 import javax.servlet.http.HttpServletRequest;
-import org.springframework.http.MediaType;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -74,6 +74,8 @@ import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.model.TaxCalculatorRequest;
+import org.egov.ptis.domain.model.TaxCalculatorResponse;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AssessmentRequest;
 import org.egov.restapi.model.LocalityCodeDetails;
@@ -703,7 +705,7 @@ public class AssessmentService {
      */
     @RequestMapping(value = "/property/taxDues", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public AssessmentDetails getDCBDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request){
-        AssessmentDetails assessmentDetails = null;
+        AssessmentDetails assessmentDetails;
         ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentRequest);
         if(errorDetails != null){
             assessmentDetails = new AssessmentDetails();
@@ -717,6 +719,29 @@ public class AssessmentService {
             assessmentDetails.setErrorDetails(errorDetails);
         }
         return assessmentDetails;
+    }
+
+    /**
+     * This method calculates the ARV and taxes for the given calculation parameters of a property 
+     * @param taxCalculatorRequest
+     * @return TaxCalculatorResponse
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/property/calculateTax", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public TaxCalculatorResponse calculateTaxes(@RequestBody TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
+        TaxCalculatorResponse taxCalculatorResponse;
+        ErrorDetails errorDetails = validationUtil.validateTaxCalculatorRequest(taxCalculatorRequest);
+        if (errorDetails != null && StringUtils.isNotBlank(errorDetails.getErrorCode())) {
+            taxCalculatorResponse = new TaxCalculatorResponse();
+            taxCalculatorResponse.setErrorDetails(errorDetails);
+        } else {
+            taxCalculatorResponse = propertyExternalService.calculateTaxes(taxCalculatorRequest);
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            taxCalculatorResponse.setErrorDetails(errorDetails);
+        }
+        return taxCalculatorResponse;
     }
 
     /**

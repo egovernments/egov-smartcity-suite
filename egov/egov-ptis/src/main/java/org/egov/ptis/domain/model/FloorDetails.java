@@ -44,6 +44,7 @@ import java.io.Serializable;
 
 @SuppressWarnings("serial")
 public class FloorDetails implements Serializable {
+        private String floorReferenceId;
         private String floorNoCode;
         private String buildClassificationCode;
         private String natureOfUsageCode;
@@ -200,4 +201,11 @@ public class FloorDetails implements Serializable {
 			this.unitRate = unitRate;
 		}
 
+    public String getFloorReferenceId() {
+        return floorReferenceId;
+    }
+
+    public void setFloorReferenceId(String floorReferenceId) {
+        this.floorReferenceId = floorReferenceId;
+    }
 }

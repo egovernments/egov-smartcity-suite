@@ -650,4 +650,8 @@ public class RestApiConstants {
     public static final String VACANT_PLOT_AREA_TYPE_DOESNT_EXIST = "121";
     public static final String VACANT_PLOT_AREA_TYPE_DOESNT_EXIST_MSG = "Vacant Plot Area type Doesn't Exists.";
 
+    public static final String VACANT_LAND_PROPERTY_ERROR_CODE = "122";
+    public static final String VACANT_LAND_PROPERTY_ERROR_MSG = "Given assessment number belongs to a vacant land";
+
+
 }
