@@ -362,7 +362,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.pattaNum"));
         if (null == propertyDetail.getSitalArea().getArea())
             addActionError(getText("mandatory.vacantLandArea"));
-        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
+        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(propertyDetail.getProperty());
         if (null == propertyDetail.getDateOfCompletion() || "".equals(propertyDetail.getDateOfCompletion()))
             addActionError(getText("mandatory.dtOfCmpln"));
         else if (propertyDetail.getDateOfCompletion().before(effDate))
@@ -514,7 +514,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getConstructionDate() == null || "".equals(floor.getConstructionDate()))
                             addActionError(getText("mandatory.floor.constrDate"));
 
-                        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
+                        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
                         if (floor.getOccupancyDate() == null || "".equals(floor.getOccupancyDate()))
                             addActionError(getText("mandatory.floor.docOcc"));
                         if (floor.getOccupancyDate() != null && !"".equals(floor.getOccupancyDate())) {
