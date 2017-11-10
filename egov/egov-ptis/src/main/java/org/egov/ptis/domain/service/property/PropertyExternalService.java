@@ -2382,7 +2382,7 @@ public class PropertyExternalService {
 
 		transitionWorkFlow(property, propService, PROPERTY_MODE_MODIFY);
 		basicPropertyService.applyAuditing(property.getState());
-		//propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
+		propService.updateIndexes(property, PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT);
 		if (basicProperty.getWFProperty() != null && basicProperty.getWFProperty().getPtDemandSet() != null
 				&& !basicProperty.getWFProperty().getPtDemandSet().isEmpty()) {
 			for (Ptdemand ptDemand : basicProperty.getWFProperty().getPtDemandSet()) {
