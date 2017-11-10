@@ -263,25 +263,14 @@
 			          url="/common/ajaxCommon-usageByPropType.action" afterSuccess="loadUsages"/>
 				<td class="blueborderfortd" style="padding: 2px 2px">
 					<div align="center">
-						<s:if test="%{#floorsstatus.index==0}">
 							<s:select headerKey=""
 								headerValue="%{getText('default.select')}"
 								name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
-								listKey="id" id="floorUsage" listValue="usageName" onchange="enableDisableFirmName(this);"
-								list="dropdownData.UsageList" cssClass="selectnew"
-								value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
-								cssStyle="width:100%" />
-						</s:if>
-						<s:else>
-							<s:select headerKey=""
-								headerValue="%{getText('default.select')}"
-								name="property.propertyDetail.floorDetailsProxy[%{#floorsstatus.index}].propertyUsage.id"
-								listKey="id" id="floorUsage%{#floorsstatus.index-1}"
+								listKey="id" id="floorUsage"
 								listValue="usageName" list="dropdownData.UsageList" onchange="enableDisableFirmName(this);"
 								cssClass="selectnew"
 								value="%{property.propertyDetail.floorDetailsProxy[#floorsstatus.index].propertyUsage.id}"
 								cssStyle="width:100%" />
-						</s:else>
 					</div>
 				</td>
 				<td class="blueborderfortd" style="padding: 2px 2px">
