@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~ accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2017  eGovernments Foundation
+  ~  Copyright (C) <2017>  eGovernments Foundation
   ~
   ~  The updated version of eGov suite of products as by eGovernments Foundation
   ~  is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~      1) All versions of this program, verbatim or modified must carry this
   ~         Legal Notice.
+  ~ 	Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~         derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~ 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~ 	For any further queries on attribution, including queries on brand guidelines,
+  ~         please contact contact@egovernments.org
   ~
   ~      2) Any misrepresentation of the origin of the material is prohibited. It
   ~         is required that all modified versions of this material be marked in
@@ -145,16 +152,16 @@
                                     <c:choose>
                                         <c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'image/gif')||
 										(file.contentType == 'image/png')}">
-                                            <a href="../downloadfile/${file.fileStoreId}"
+                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
                                                data-gallery> <img class="img-width add-margin"
-                                                                  src="../downloadfile/${file.fileStoreId}"/></a>
+                                                                  src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="../downloadfile/${file.fileStoreId}"
+                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
                                                data-gallery>
                                                 <video class="img-width add-margin" controls="controls"
-                                                       src="../downloadfile/${file.fileStoreId}">
-                                                    <source src="../downloadfile/${file.fileStoreId}"
+                                                       src="/pgr/complaint/downloadfile/${file.fileStoreId}">
+                                                    <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
                                                             type="${file.contentType}"/>
                                                 </video>
                                             </a>
@@ -257,7 +264,7 @@
     </div>
 </div>
 <c:if test="${approvalDepartmentList == null}">
-    <div class="row">
+    <div class="row" id="clsdiv">
         <div class="text-center">
             <button type="button" class="btn btn-primary" onclick="window.close();">
                 <spring:message code="lbl.close"/>

@@ -45,33 +45,49 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.web.controller.masters.feedback;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.pgr.entity.FeedbackReason;
+import org.egov.pgr.service.FeedbackReasonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.List;
+import javax.validation.Valid;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+@Controller
+@RequestMapping("/complaint/feedbackreason/create")
+public class CreateFeedbackReasonController {
 
-    ComplaintType findByName(String name);
+    private static final String FEEDBACKREASON = "feedbackreason-create";
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+    @Autowired
+    private FeedbackReasonService feedbackReasonService;
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
+    @ModelAttribute
+    public FeedbackReason feedbackReason() {
+        return new FeedbackReason();
+    }
 
-    ComplaintType findByCode(String code);
+    @GetMapping
+    public String showFeedbackReasonForm(Model model) {
+        model.addAttribute("code", feedbackReasonService.nextFeedbackReasonCode());
+        return FEEDBACKREASON;
+    }
 
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByDepartmentId(Long departmentId);
+    @PostMapping
+    public String createFeedbackReason(@Valid FeedbackReason feedbackReason,
+                                                BindingResult bindingResult, RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
+            return FEEDBACKREASON;
+        feedbackReasonService.createFeedbackReason(feedbackReason);
+        responseAttrbs.addFlashAttribute("message", "msg.feedbackreason.success");
+        return "redirect:/complaint/feedbackreason/create";
+    }
 }

@@ -234,5 +234,20 @@
         <put-attribute name="page-title" value="title.routerescaltion" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/escalationrouter-report.jsp"/>
     </definition>
+
+    <definition name="feedbackreason-create" extends="base_layout">
+        <put-attribute name="page-title" value="lbl.feedback.reason" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/feedbackreason-create.jsp"/>
+    </definition>
+
+    <definition name="qualityreview" extends="base_layout">
+        <put-attribute name="page-title" value="title.feedbackreason" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/qualityreview.jsp"/>
+    </definition>
+
+    <definition name="qualityreview-search" extends="base_layout">
+        <put-attribute name="page-title" value="title.searchrated.grievance" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/qualityreview-search.jsp"/>
+    </definition>
     <!--Report definition ends-->
 </tiles-definitions>

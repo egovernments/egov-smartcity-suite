@@ -45,33 +45,37 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.repository.specs;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.contract.QualityReviewSearchRequest;
+import org.springframework.data.jpa.domain.Specification;
 
-import java.util.List;
+import javax.persistence.criteria.Predicate;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+public final class QualityReviewSearchSpec {
 
-    ComplaintType findByName(String name);
+    private QualityReviewSearchSpec() {
+        // Due to static method
+    }
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
-
-    ComplaintType findByCode(String code);
-
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByDepartmentId(Long departmentId);
+    public static Specification<Complaint> search(
+            QualityReviewSearchRequest qualityReviewSearchRequest) {
+        return (root, query, builder) -> {
+            final Predicate predicate = builder.conjunction();
+            if (qualityReviewSearchRequest.getComplaintId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("complaintType").get("id"),
+                        qualityReviewSearchRequest.getComplaintId()));
+            if (qualityReviewSearchRequest.getDepartmentId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("department").get("id"),
+                        qualityReviewSearchRequest.getDepartmentId()));
+            if (qualityReviewSearchRequest.getToDate() != null)
+                predicate.getExpressions().add(builder.lessThanOrEqualTo(root.get("createdDate"), qualityReviewSearchRequest.getToDate()));
+            if (qualityReviewSearchRequest.getFromDate() != null)
+                predicate.getExpressions().add(builder.greaterThanOrEqualTo(root.get("createdDate"), qualityReviewSearchRequest.getFromDate()));
+            if (qualityReviewSearchRequest.getRating() != null)
+                predicate.getExpressions().add(builder.equal(root.get("citizenFeedback"), qualityReviewSearchRequest.getRating().ordinal()));
+            return predicate;
+        };
+    }
 }

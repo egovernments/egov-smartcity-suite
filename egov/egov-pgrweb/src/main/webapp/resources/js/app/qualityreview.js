@@ -45,33 +45,53 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+$(document).ready(function (e) {
 
-import java.util.List;
+    $("#feedbackReason").change(function () {
+        var feedback = $("#feedbackReason option:selected").text();
+        if (feedback == "Others") {
+            $('.feedback').removeClass('display-hide');
+            $('#detail').attr("required", true);
+        }
+        else {
+            $('.feedback').addClass('display-hide');
+            $('#detail').attr("required", false);
+        }
+    })
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+    if ($('#detail').val())
+        $('.feedback').removeClass('display-hide');
 
-    ComplaintType findByName(String name);
+    $("#clsdiv").hide();
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+});
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
 
-    ComplaintType findByCode(String code);
-
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByDepartmentId(Long departmentId);
-}
+$('#btnsubmit').click(function (e) {
+    if ($('#searchform').valid()) {
+        if ($("#checkexisting").val()) {
+            bootbox.confirm({
+                message: "Feedback already exist, do you want to override ?",
+                buttons: {
+                    'cancel': {
+                        label: 'No',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: 'Yes',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $("#isexisting").val(true);
+                        $("#searchform").submit();
+                    }
+                }
+            });
+        }
+        else
+            $("#searchform").submit();
+    }
+});

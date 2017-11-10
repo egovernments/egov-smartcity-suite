@@ -45,33 +45,69 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.web.controller.qualityreview;
 
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.pgr.entity.contract.QualityReviewSearchRequest;
+import org.egov.pgr.report.entity.contract.QualityReviewAdaptor;
+import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.service.QualityReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.List;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
-    ComplaintType findByName(String name);
+@Controller
+@RequestMapping("/qualityreview/search")
+public class QualityReviewSearchController {
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+    private static final String QUALITYREVIEWSEARCH = "qualityreview-search";
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
 
-    ComplaintType findByCode(String code);
+    @Autowired
+    private DepartmentService departmentService;
 
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
+    @Autowired
+    private QualityReviewService qualityReviewService;
 
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
+    @Autowired
+    private QualityReviewAdaptor qualityReviewAdaptor;
 
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
+    @ModelAttribute("complaintType")
+    public List<ComplaintType> categories() {
+        return complaintTypeService.findAll();
+    }
 
-    List<ComplaintType> findByDepartmentId(Long departmentId);
+    @ModelAttribute("departments")
+    public List<Department> departments() {
+        return departmentService.getAllDepartments();
+    }
+
+    @ModelAttribute
+    public QualityReviewSearchRequest qualityReviewSearchRequest() {
+        return new QualityReviewSearchRequest();
+    }
+
+    @GetMapping
+    public String showQualityReviewSearchForm() {
+        return QUALITYREVIEWSEARCH;
+    }
+
+    @GetMapping(value = "/", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchGrievanceForQualityReview(QualityReviewSearchRequest qualityReviewSearchRequest) {
+        return new DataTable<>(qualityReviewService.getGrievancesForReview(qualityReviewSearchRequest), qualityReviewSearchRequest.draw())
+                .toJson(qualityReviewAdaptor);
+    }
 }

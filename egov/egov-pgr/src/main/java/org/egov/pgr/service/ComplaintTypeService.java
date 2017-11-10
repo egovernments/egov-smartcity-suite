@@ -171,4 +171,8 @@ public class ComplaintTypeService {
                 .map(ComplaintType::getCode)
                 .collect(Collectors.toList());
     }
+
+    public List<ComplaintType> getComplaintTypeByDepartmentId(Long departmentId) {
+        return departmentId == null ? findAll() : complaintTypeRepository.findByDepartmentId(departmentId);
+    }
 }

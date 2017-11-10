@@ -47,31 +47,14 @@
 
 package org.egov.pgr.repository;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.QualityReview;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
 @Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+public interface QualityReviewRepository extends JpaRepository<QualityReview, Long> {
 
-    ComplaintType findByName(String name);
+    QualityReview findByComplaint(Complaint compalint);
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
-
-    ComplaintType findByCode(String code);
-
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByDepartmentId(Long departmentId);
 }

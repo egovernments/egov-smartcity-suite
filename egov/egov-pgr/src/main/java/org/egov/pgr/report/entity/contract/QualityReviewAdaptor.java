@@ -45,33 +45,50 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.report.entity.contract;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.service.QualityReviewService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+import java.lang.reflect.Type;
 import java.util.List;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+import static org.egov.infra.utils.DateUtils.getFormattedDate;
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
-    ComplaintType findByName(String name);
+@Component
+public class QualityReviewAdaptor implements DataTableJsonAdapter<Complaint> {
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+    @Autowired
+    private QualityReviewService qualityReviewService;
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
+    public JsonElement serialize(DataTable<Complaint> searchResponse, Type type,
+                                 JsonSerializationContext jsc) {
+        List<Complaint> searchResult = searchResponse.getData();
+        JsonArray searchFormData = new JsonArray();
+        searchResult.forEach(searchObject -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("crn", defaultIfBlank(searchObject.getCrn()));
+            jsonObject.addProperty("grievanceType", defaultIfBlank(searchObject.getComplaintType().getName()));
+            jsonObject.addProperty("owner", defaultIfBlank(searchObject.getComplainant().getName()));
+            jsonObject.addProperty("location", defaultIfBlank(searchObject.getLocation().getName()));
+            jsonObject.addProperty("status", defaultIfBlank(searchObject.getStatus().getName()));
+            jsonObject.addProperty("department", defaultIfBlank(searchObject.getDepartment().getName()));
+            jsonObject.addProperty("date", getFormattedDate(searchObject.getCreatedDate(), "dd/MM/yyyy hh:mm a").toString());
+            jsonObject.addProperty("reviewed", toYesOrNo(qualityReviewService.getExistingQualityReviewByCRN(searchObject.getCrn()).isPresent()));
+            searchFormData.add(jsonObject);
+        });
+        return enhance(searchFormData, searchResponse);
+    }
 
-    ComplaintType findByCode(String code);
 
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByDepartmentId(Long departmentId);
 }

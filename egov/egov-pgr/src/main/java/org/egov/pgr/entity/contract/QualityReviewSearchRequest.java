@@ -45,33 +45,62 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.entity.contract;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.pgr.entity.enums.CitizenFeedback;
 
-import java.util.List;
+import java.util.Date;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+public class QualityReviewSearchRequest extends DataTableSearchRequest {
 
-    ComplaintType findByName(String name);
+    private Long departmentId;
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+    private Long complaintId;
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
+    private Date fromDate;
 
-    ComplaintType findByCode(String code);
+    private Date toDate;
 
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
+    private CitizenFeedback rating;
 
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
+    public Long getDepartmentId() {
+        return departmentId;
+    }
 
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
+    public void setDepartmentId(Long departmentId) {
+        this.departmentId = departmentId;
+    }
 
-    List<ComplaintType> findByDepartmentId(Long departmentId);
+    public Long getComplaintId() {
+        return complaintId;
+    }
+
+    public void setComplaintId(Long complaintId) {
+        this.complaintId = complaintId;
+    }
+
+    public Date getFromDate() {
+        return fromDate;
+    }
+
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
+    }
+
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public CitizenFeedback getRating() {
+        return rating;
+    }
+
+    public void setRating(CitizenFeedback rating) {
+        this.rating = rating;
+    }
 }

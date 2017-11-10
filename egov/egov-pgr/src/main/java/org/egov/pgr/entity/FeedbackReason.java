@@ -45,33 +45,81 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.entity;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+import static org.egov.pgr.entity.FeedbackReason.SEQ_FEEDBACKREASON;
 
-    ComplaintType findByName(String name);
+@Entity
+@Table(name = "EGPGR_FEEDBACK_REASON")
+@SequenceGenerator(name = SEQ_FEEDBACKREASON, sequenceName = SEQ_FEEDBACKREASON, allocationSize = 1)
+@Unique(fields = {"code", "name"}, enableDfltMsg = true)
+public class FeedbackReason extends AbstractPersistable<Long> {
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+    public static final String SEQ_FEEDBACKREASON = "SEQ_EGPGR_FEEDBACK_REASON";
+    private static final long serialVersionUID = -2138876792685904697L;
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
+    @Id
+    @GeneratedValue(generator = SEQ_FEEDBACKREASON, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    ComplaintType findByCode(String code);
+    @NotBlank
+    @SafeHtml
+    @Length(max = 128)
+    private String name;
 
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
+    @NotBlank
+    @SafeHtml
+    @Length(max = 5)
+    private String code;
 
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
+    @SafeHtml
+    @Length(max = 256)
+    private String description;
 
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
+    @Override
+    public Long getId() {
+        return this.id;
+    }
 
-    List<ComplaintType> findByDepartmentId(Long departmentId);
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
 }

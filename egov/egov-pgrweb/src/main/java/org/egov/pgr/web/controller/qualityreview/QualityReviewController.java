@@ -45,52 +45,79 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.web.controller.masters.type;
+package org.egov.pgr.web.controller.qualityreview;
 
-import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.QualityReview;
+import org.egov.pgr.entity.FeedbackReason;
+import org.egov.pgr.service.FeedbackReasonService;
+import org.egov.pgr.service.QualityReviewService;
+import org.egov.pgr.service.ComplaintHistoryService;
+import org.egov.pgr.service.ComplaintService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.validation.Valid;
+import java.util.HashMap;
 import java.util.List;
 
-
 @Controller
-@RequestMapping("/complainttype/search")
-public class SearchComplaintTypeController {
+@RequestMapping("/complaint/qualityreview/{crn}")
+public class QualityReviewController {
+
+    private static final String QUALITYREVIEW = "qualityreview";
 
     @Autowired
-    private ComplaintTypeService complaintTypeService;
+    private ComplaintService complaintService;
+
+    @Autowired
+    private ComplaintHistoryService complaintHistoryService;
+
+    @Autowired
+    private QualityReviewService qualityReviewService;
+
+    @Autowired
+    private FeedbackReasonService feedbackReasonService;
 
     @ModelAttribute
-    public ComplaintType complaintTypeModel() {
-        return new ComplaintType();
+    public QualityReview qualityReview(@PathVariable String crn) {
+        return qualityReviewService.getExistingQualityReviewByCRN(crn).orElse(new QualityReview());
+    }
+
+    @ModelAttribute("feedbackReasons")
+    public List<FeedbackReason> feedbackReasons() {
+        return feedbackReasonService.getAllFeedbackReason();
     }
 
     @GetMapping
-    public String searchComplaintTypesForm(Model model) {
-        model.addAttribute("complaintTypes", complaintTypeService.findAll());
-        return "complaintType-list";
+    public String showQualityReviewForm(@PathVariable String crn,
+                                        @ModelAttribute QualityReview qualityReview, Model model) {
+        Complaint complaint = complaintService.getComplaintByCRN(crn);
+        List<HashMap<String, Object>> historyTable = complaintHistoryService.getHistory(complaint);
+        model.addAttribute("complaintHistory", historyTable);
+        model.addAttribute("complaint", complaint);
+        return QUALITYREVIEW;
     }
 
     @PostMapping
-    public String goToUpdateComplaintTypeForm(ComplaintType complaintType, BindingResult errors) {
-        if (errors.hasErrors())
-            return "complaint-type";
-        return "redirect:/complainttype/update/" + complaintType.getName();
-    }
-
-    @GetMapping("by-department")
-    @ResponseBody
-    public List<ComplaintType> getComplaitnTypesByDepartment(@RequestParam Long departmentId) {
-        return complaintTypeService.getComplaintTypeByDepartmentId(departmentId);
+    public String createQualityReview(@PathVariable String crn, @Valid @ModelAttribute QualityReview qualityReview,
+                                        BindingResult bindingResult, RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors()) {
+            return "/complaint/qualityreview/" + crn;
+        }
+        if (qualityReview.isExisting())
+            qualityReviewService.updateQualityReview(qualityReview);
+        else
+            qualityReviewService.createQualityReview(qualityReview);
+        responseAttrbs.addFlashAttribute("message", "msg.feedback.success");
+        return "redirect:/qualityreview/search";
     }
 }

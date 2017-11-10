@@ -45,33 +45,33 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.service;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.pgr.entity.FeedbackReason;
+import org.egov.pgr.repository.FeedbackReasonRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+@Service
+@Transactional(readOnly = true)
+public class FeedbackReasonService {
 
-    ComplaintType findByName(String name);
+    @Autowired
+    private FeedbackReasonRepository feedbackReasonRepository;
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+    @Transactional
+    public FeedbackReason createFeedbackReason(FeedbackReason feedbackReason) {
+        return feedbackReasonRepository.save(feedbackReason);
+    }
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
+    public List<FeedbackReason> getAllFeedbackReason() {
+        return feedbackReasonRepository.findAll();
+    }
 
-    ComplaintType findByCode(String code);
-
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
-
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByDepartmentId(Long departmentId);
+    public String nextFeedbackReasonCode() {
+        return String.format("%05d", feedbackReasonRepository.findTopByOrderByIdDesc().getId() + 1);
+    }
 }

@@ -45,33 +45,49 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.service;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.pgr.entity.ComplaintType;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.stereotype.Repository;
+import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.entity.QualityReview;
+import org.egov.pgr.entity.contract.QualityReviewSearchRequest;
+import org.egov.pgr.repository.QualityReviewRepository;
+import org.egov.pgr.repository.specs.QualityReviewSearchSpec;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import java.util.Date;
+import java.util.Optional;
 
-@Repository
-public interface ComplaintTypeRepository extends JpaRepository<ComplaintType, Long> {
+@Service
+@Transactional(readOnly = true)
+public class QualityReviewService {
 
-    ComplaintType findByName(String name);
+    @Autowired
+    private ComplaintService complaintService;
 
-    List<ComplaintType> findByIsActiveTrueAndNameContainingIgnoreCase(String name);
+    @Autowired
+    private QualityReviewRepository qualityReviewRepository;
 
-    List<ComplaintType> findByIsActiveTrueAndCategoryIdOrderByNameAsc(Long categoryId);
+    @Transactional
+    public void createQualityReview(QualityReview qualityReview) {
+        qualityReview.setFeedbackDate(new Date());
+        qualityReviewRepository.save(qualityReview);
+    }
 
-    ComplaintType findByCode(String code);
+    @Transactional
+    public void updateQualityReview(QualityReview qualityReview) {
+        qualityReview.setFeedbackDate(new Date());
+        qualityReviewRepository.save(qualityReview);
+    }
 
-    @Query("select distinct ct.department from ComplaintType ct order by ct.department.name asc")
-    List<Department> findAllComplaintTypeDepartments();
+    public Optional<QualityReview> getExistingQualityReviewByCRN(String crn) {
+        return Optional.
+                ofNullable(qualityReviewRepository.findByComplaint(complaintService.getComplaintByCRN(crn)));
+    }
 
-    List<ComplaintType> findByIsActiveTrueOrderByNameAsc();
-
-    List<ComplaintType> findByNameContainingIgnoreCase(String name);
-
-    List<ComplaintType> findByDepartmentId(Long departmentId);
+    public Page<Complaint> getGrievancesForReview(QualityReviewSearchRequest searchRequest) {
+        return complaintService.getComplaints(QualityReviewSearchSpec.search(searchRequest), searchRequest);
+    }
 }
