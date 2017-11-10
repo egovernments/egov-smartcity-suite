@@ -710,11 +710,6 @@ public class WaterConnectionDetailsService {
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                         && waterConnectionDetails.getCloseConnectionType() != null)
                     waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                            APPLICATION_STATUS_CLOSERAPRROVED, MODULETYPE));
-                else if (APPLICATION_STATUS_CLOSERAPRROVED
-                        .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                        && waterConnectionDetails.getCloseConnectionType() != null)
-                    waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                             APPLICATION_STATUS_CLOSERSANCTIONED, MODULETYPE));
                 else if (APPLICATION_STATUS_CLOSERSANCTIONED
                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
@@ -743,13 +738,6 @@ public class WaterConnectionDetailsService {
                         else if (workFlowAction.equals(SIGNWORKFLOWACTION)
                                 && APPLICATION_STATUS_RECONNDIGSIGNPENDING
                                         .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
-                                && waterConnectionDetails.getCloseConnectionType()
-                                        .equals(TEMPERARYCLOSECODE))
-                            waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
-                                    APPLICATION_STATUS__RECONNCTIONAPPROVED,
-                                    MODULETYPE));
-                        else if (APPLICATION_STATUS__RECONNCTIONAPPROVED
-                                .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode())
                                 && waterConnectionDetails.getCloseConnectionType()
                                         .equals(TEMPERARYCLOSECODE))
                             waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
@@ -1436,14 +1424,6 @@ public class WaterConnectionDetailsService {
                         CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
                     waterConnectionDetails
                             .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
-                else if (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
-                    waterConnectionDetails
-                            .setStatus(
-                                    waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_CLOSERSANCTIONED, MODULETYPE));
-                else if (RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
-                    waterConnectionDetails
-                            .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS__RECONNCTIONSANCTIONED,
-                                    MODULETYPE));
                 waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
                 if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
                         && APPLICATION_STATUS_SANCTIONED
