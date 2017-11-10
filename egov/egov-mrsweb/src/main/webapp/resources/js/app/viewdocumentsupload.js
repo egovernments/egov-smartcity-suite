@@ -44,8 +44,14 @@ $(document).ready(function() {
 		var fileName = val[0];
 		var contentType = val[1]
 		var content = val[2];
-		var value = "data:" + contentType + ";base64," + content;
-		window.open(value);
+		var value = "data:" + contentType + ";base64," + encodeURIComponent(content);
+		let link = document.createElement('a');
+	    link.style.display = "none";
+	    document.body.appendChild(link);
+	    link.href = value;
+	    link.download = fileName;
+	    link.click();
+	    document.body.removeChild(link);
 	})
 
 });
