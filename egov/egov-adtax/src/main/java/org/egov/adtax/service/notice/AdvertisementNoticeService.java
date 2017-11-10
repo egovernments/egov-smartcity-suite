@@ -37,129 +37,113 @@
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.adtax.web.controller.reports;
+
+package org.egov.adtax.service.notice;
+
+import static org.apache.commons.lang3.StringUtils.defaultIfBlank;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADVERTISEMENTDEMANDNOTICETITLE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADVERTISEMENTPERMITODERTITLE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.CITY_GRADE_CORPORATION;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.DEMANDNOTICE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.DEMANDREASON_PENALTY;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.PERMITORDER;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.WordUtils;
 import org.egov.adtax.entity.AdvertisementAdditionalTaxRate;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.service.AdvertisementAdditinalTaxRateService;
 import org.egov.adtax.service.AdvertisementDemandService;
-import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
-import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-@Controller
-@RequestMapping(value = "/advertisement")
-public class ReportController {
-
+@Service
+@Transactional(readOnly = true)
+public class AdvertisementNoticeService {
     private static final String AGENCYADDRESS = "agencyaddress";
-
     private static final String AGENCYNAME = "agencyname";
 
     @Autowired
-    private ReportService reportService;
-
-    @Autowired
-    private AdvertisementPermitDetailService advertisementPermitDetailService;
-    
-    @Autowired
     private AdvertisementDemandService advertisementDemandService;
-    
     @Autowired
     private AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
     @Autowired
     private AdvertisementAdditinalTaxRateService advertisementAdditinalTaxRateService;
     @Autowired
     private CityService cityService;
-    
     @Autowired
-    @Qualifier("messageSource")
+    @Qualifier("parentMessageSource")
     private MessageSource advertisementReportMessageSource;
+    @Autowired
+    private ReportService reportService;
 
-    @RequestMapping(value = "/permitOrder", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<byte[]> generatePermitOrder(final HttpServletRequest request,
-            final HttpSession session) {
-        final String errorMessage = "";
-        final String workFlowAction = "";
-        final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService
-                .findBy(Long.valueOf(request.getParameter("pathVar")));
-
-        if (!errorMessage.isEmpty())
-            return redirect(errorMessage);
-        return generatePermitOrder( request,advertisementPermitDetail, session, workFlowAction);
-    }
-
-    @RequestMapping(value = "/demandNotice", method = RequestMethod.GET)
-    @ResponseBody
-    public ResponseEntity<byte[]> generateDemandNotice(final HttpServletRequest request,
-            final HttpSession session) {
-        final String errorMessage = "";
-        String workFlowAction = "";
-        final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService
-                .findBy(Long.valueOf(request.getParameter("pathVar")));
-        workFlowAction = (String) session.getAttribute(AdvertisementTaxConstants.WORKFLOW_ACTION);
-
-        if (!errorMessage.isEmpty())
-            return redirect(errorMessage);
-        return generateDemandNotice(request,advertisementPermitDetail, session, workFlowAction);
-    }
-
-    private ResponseEntity<byte[]> generatePermitOrder(HttpServletRequest request, final AdvertisementPermitDetail advertisementPermitDetail,
-            final HttpSession session, final String workFlowAction) {
+    public ReportOutput generatePermitOrder(final AdvertisementPermitDetail advertisementPermitDetail,
+            final Map<String, Object> ulbDetailsReportParams) {
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
         if (null != advertisementPermitDetail) {
-            final Map<String, Object> reportParams = buildParametersForReport(request, advertisementPermitDetail);
+            final Map<String, Object> reportParams = buildParametersForReport(advertisementPermitDetail);
+            reportParams.putAll(ulbDetailsReportParams);
             reportParams.put("advertisementtitle",
-                    WordUtils.capitalize(AdvertisementTaxConstants.ADVERTISEMENTPERMITODERTITLE));
-             
-            reportInput = new ReportRequest(AdvertisementTaxConstants.PERMITORDER, advertisementPermitDetail,
+                    WordUtils.capitalize(ADVERTISEMENTPERMITODERTITLE));
+
+            reportInput = new ReportRequest(PERMITORDER, advertisementPermitDetail,
                     reportParams);
+            reportInput.setReportFormat(ReportFormat.PDF);
         }
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Permit Order.pdf");
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return reportService.createReport(reportInput);
+    }
+
+    public ReportOutput generateDemandNotice(final AdvertisementPermitDetail advertisementPermitDetail,
+            final Map<String, Object> ulbDetailsReportParams) {
+        ReportRequest reportInput = null;
+        if (null != advertisementPermitDetail) {
+            final Map<String, Object> reportParams = buildParametersForReport(advertisementPermitDetail);
+            reportParams.putAll(ulbDetailsReportParams);
+            reportParams.putAll(buildParametersForDemandDetails(advertisementPermitDetail));
+            final String cityGrade = getCityGrade();
+            if (cityGrade != null && cityGrade.equalsIgnoreCase(CITY_GRADE_CORPORATION)) {
+                reportParams.put("lawAct", advertisementReportMessageSource.getMessage("msg.ap.law.act.corporation",
+                        new String[] {}, Locale.getDefault()));
+            } else {
+                reportParams.put("lawAct", advertisementReportMessageSource.getMessage("msg.ap.law.act.municipality",
+                        new String[] {}, Locale.getDefault()));
+            }
+            reportInput = new ReportRequest(DEMANDNOTICE, advertisementPermitDetail, reportParams);
+            reportInput.setReportFormat(ReportFormat.PDF);
+        }
+        return reportService.createReport(reportInput);
     }
 
     private void buildMeasurementDetailsForJasper(final AdvertisementPermitDetail advertisementPermitDetail,
-            StringBuilder measurement, final Map<String, Object> reportParams, String NOTMENTIONED) {
+            StringBuilder measurement, final Map<String, Object> reportParams, String notMentioned) {
         measurement.append(
-                advertisementPermitDetail.getMeasurement() == null ? NOTMENTIONED : advertisementPermitDetail
-                        .getMeasurement()).append(" ");
+                advertisementPermitDetail.getMeasurement() == null ? notMentioned : advertisementPermitDetail
+                        .getMeasurement())
+                .append(" ");
 
         if (advertisementPermitDetail.getMeasurement() != null)
             measurement.append(advertisementPermitDetail.getUnitOfMeasure().getDescription());
@@ -176,31 +160,6 @@ public class ReportController {
         reportParams.put("measurement", measurement.toString());
     }
 
-    private ResponseEntity<byte[]> generateDemandNotice(HttpServletRequest request,final AdvertisementPermitDetail advertisementPermitDetail,
-            final HttpSession session, final String workFlowAction) {
-        ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
-        if (null != advertisementPermitDetail) {
-            final Map<String, Object> reportParams = buildParametersForReport(request, advertisementPermitDetail);
-            reportParams.putAll(buildParametersForDemandDetails(advertisementPermitDetail));
-            final String cityGrade = getCityGrade();
-            if (cityGrade != null && cityGrade.equalsIgnoreCase(AdvertisementTaxConstants.CITY_GRADE_CORPORATION)) {
-                reportParams.put("lawAct",advertisementReportMessageSource.getMessage("msg.ap.law.act.corporation",
-                        new String[] {}, Locale.getDefault()));
-            }else{
-                reportParams.put("lawAct", advertisementReportMessageSource.getMessage("msg.ap.law.act.municipality",
-                        new String[] {}, Locale.getDefault()));
-            }
-            reportInput = new ReportRequest(AdvertisementTaxConstants.DEMANDNOTICE, advertisementPermitDetail, reportParams);
-        }
-        
-        final HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=Demand Notice.pdf");
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
-    
     private Map<String, Object> buildParametersForDemandDetails(final AdvertisementPermitDetail advertisementPermitDetail) {
         final Map<String, Object> reportParams = new HashMap<>();
 
@@ -237,7 +196,7 @@ public class ReportController {
             String currentFinYear = currentInstallemnt.getFinYearRange();
             String[] currentFinYearValues = currentFinYear.split("-");
             Integer from = Integer.parseInt(currentFinYearValues[0]) - 1;
-            Integer to = Integer.parseInt(currentFinYearValues[1])-1;
+            Integer to = Integer.parseInt(currentFinYearValues[1]) - 1;
             previousInstallmentDesc = from.toString() + "-" + to.toString();
         }
         for (final AdvertisementAdditionalTaxRate taxRates : additionalTaxRates)
@@ -249,39 +208,39 @@ public class ReportController {
                 if (currentInstallemnt != null && currentInstallemnt.getDescription()
                         .equals(demandDtl.getEgDemandReason().getEgInstallmentMaster().getDescription())) {
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX)) {
+                            .equalsIgnoreCase(DEMANDREASON_ARREAR_ADVERTISEMENTTAX)) {
                         arrInsAdvertisement = arrInsAdvertisement.add(demandDtl.getBalance());
                         arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
                     } else if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX)) {
+                            .equalsIgnoreCase(DEMANDREASON_ADVERTISEMENTTAX)) {
                         curntInsAdvertisement = curntInsAdvertisement.add(demandDtl.getBalance());
                         reportParams.put("curntInsAdvertisement", curntInsAdvertisement.setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         curntInsTotalTaxableAmt = curntInsTotalTaxableAmt.add(demandDtl.getBalance());
                     } else if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)) {
+                            .equalsIgnoreCase(DEMANDREASON_ENCROCHMENTFEE)) {
                         curntInsEncrocFee = demandDtl.getBalance();
                         reportParams.put("curntInsEncrocFee", curntInsEncrocFee.setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         curntInsTotalTaxableAmt = curntInsTotalTaxableAmt.add(curntInsEncrocFee);
                     } else if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_PENALTY)) {
+                            .equalsIgnoreCase(DEMANDREASON_PENALTY)) {
                         curntInsPenaltyFee = demandDtl.getBalance();
                         reportParams.put("curntInsPenaltyFee", curntInsPenaltyFee.setScale(2, BigDecimal.ROUND_HALF_EVEN));
                     }
                 } else {
                     if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ARREAR_ADVERTISEMENTTAX) ||
+                            .equalsIgnoreCase(DEMANDREASON_ARREAR_ADVERTISEMENTTAX) ||
                             demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                                    .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ADVERTISEMENTTAX)) {
+                                    .equalsIgnoreCase(DEMANDREASON_ADVERTISEMENTTAX)) {
                         arrInsAdvertisement = arrInsAdvertisement.add(demandDtl.getBalance());
-                        reportParams.put("arrInsAdvertisement", arrInsAdvertisement.setScale(2,BigDecimal.ROUND_HALF_EVEN));
+                        reportParams.put("arrInsAdvertisement", arrInsAdvertisement.setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
                     } else if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_ENCROCHMENTFEE)) {
+                            .equalsIgnoreCase(DEMANDREASON_ENCROCHMENTFEE)) {
                         arrInsEncrocFee = arrInsEncrocFee.add(demandDtl.getBalance());
                         reportParams.put("arrInsEncrocFee", arrInsEncrocFee.setScale(2, BigDecimal.ROUND_HALF_EVEN));
                         arrInsTotalTaxableAmt = arrInsTotalTaxableAmt.add(demandDtl.getBalance());
                     } else if (demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()
-                            .equalsIgnoreCase(AdvertisementTaxConstants.DEMANDREASON_PENALTY)) {
+                            .equalsIgnoreCase(DEMANDREASON_PENALTY)) {
                         arrInsPenaltyFee = arrInsPenaltyFee.add(demandDtl.getBalance());
                         reportParams.put("arrInsPenaltyFee", arrInsPenaltyFee.setScale(2, BigDecimal.ROUND_HALF_EVEN));
                     }
@@ -326,7 +285,8 @@ public class ReportController {
         // sum demand details
         reportParams.put("curntInsTotalTaxableAmt", curntInsTotalTaxableAmt.setScale(2, BigDecimal.ROUND_HALF_EVEN));
         reportParams.put("arrInsTotalTaxableAmt", arrInsTotalTaxableAmt.setScale(2, BigDecimal.ROUND_HALF_EVEN));
-        curntInsGrossTotal = curntInsTotalTaxableAmt.add(curntInsServiceTax).add(curntInsSwachBharatCess).add(curntInsKrishiKalyanCess);
+        curntInsGrossTotal = curntInsTotalTaxableAmt.add(curntInsServiceTax).add(curntInsSwachBharatCess)
+                .add(curntInsKrishiKalyanCess);
         reportParams.put("curntInsGrossTotal", curntInsGrossTotal.setScale(2, BigDecimal.ROUND_HALF_EVEN));
         curntInsNetTotal = curntInsGrossTotal.add(curntInsPenaltyFee);
         reportParams.put("curntInsNetTotal", curntInsNetTotal.setScale(2, BigDecimal.ROUND_HALF_EVEN));
@@ -353,7 +313,7 @@ public class ReportController {
         return reportParams;
     }
 
-    private BigDecimal calculateAdditionalTaxes( BigDecimal curntInsTotalTaxableAmt,
+    private BigDecimal calculateAdditionalTaxes(BigDecimal curntInsTotalTaxableAmt,
             final BigDecimal entry) {
         return entry.multiply(curntInsTotalTaxableAmt).divide(BigDecimal.valueOf(100))
                 .setScale(0, BigDecimal.ROUND_HALF_UP);
@@ -363,81 +323,45 @@ public class ReportController {
         return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getGrade();
     }
 
-    private Map<String, Object> buildParametersForReport(HttpServletRequest request,
-            final AdvertisementPermitDetail advertisementPermitDetail) {
+    private Map<String, Object> buildParametersForReport(final AdvertisementPermitDetail advertisementPermitDetail) {
         StringBuilder measurement = new StringBuilder();
         final Map<String, Object> reportParams = new HashMap<>();
-        String NOTMENTIONED = "Not Mentioned ";
+        String notMentioned = "Not Mentioned ";
 
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(AdvertisementTaxConstants.IMAGE_CONTEXT_PATH).concat(
-                (String) request.getSession().getAttribute("citylogo"));
-        final String ulbName = request.getSession().getAttribute("citymunicipalityname").toString();
-        final String cityName = request.getSession().getAttribute("cityname").toString();
-        reportParams.put("cityName", cityName);
-        reportParams.put("logoPath", cityLogo);
-        reportParams.put("ulbName", ulbName);
         reportParams.put("advertisementtitle",
-                WordUtils.capitalize(AdvertisementTaxConstants.ADVERTISEMENTDEMANDNOTICETITLE));
-     
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-       //   reportParams.put("workFlowAction", workFlowAction);
+                WordUtils.capitalize(ADVERTISEMENTDEMANDNOTICETITLE));
+
         reportParams.put("advertisementnumber", advertisementPermitDetail.getAdvertisement().getAdvertisementNumber());
         reportParams.put("permitNumber", advertisementPermitDetail.getPermissionNumber());
         reportParams.put("applicationNumber", advertisementPermitDetail.getApplicationNumber());
-        
+
         if (advertisementPermitDetail.getAgency() != null
-                && org.apache.commons.lang.StringUtils.isNotBlank(advertisementPermitDetail.getOwnerDetail())) {
+                && isNotBlank(advertisementPermitDetail.getOwnerDetail())) {
             reportParams.put(AGENCYNAME, advertisementPermitDetail.getAgency().getName() + "/"
                     + advertisementPermitDetail.getOwnerDetail());
             reportParams.put(AGENCYADDRESS, advertisementPermitDetail.getAgency().getAddress());
         } else if (advertisementPermitDetail.getAgency() != null
-                && org.apache.commons.lang.StringUtils.isBlank(advertisementPermitDetail.getOwnerDetail())) {
+                && isBlank(advertisementPermitDetail.getOwnerDetail())) {
             reportParams.put(AGENCYNAME, advertisementPermitDetail.getAgency().getName());
-            reportParams.put(AGENCYADDRESS, advertisementPermitDetail.getAgency().getAddress());
+            reportParams.put(AGENCYADDRESS, defaultIfBlank(advertisementPermitDetail.getAgency().getAddress(), notMentioned));
         } else {
             reportParams.put(AGENCYNAME, advertisementPermitDetail.getOwnerDetail());
-            reportParams.put(AGENCYADDRESS, NOTMENTIONED);
+            reportParams.put(AGENCYADDRESS, notMentioned);
         }
-        
+
         reportParams.put("address", advertisementPermitDetail.getAdvertisement().getAddress());
-        reportParams.put("applicationDate", formatter.format(advertisementPermitDetail.getApplicationDate()));
+        reportParams.put("applicationDate", getDefaultFormattedDate(advertisementPermitDetail.getApplicationDate()));
         reportParams.put("category", advertisementPermitDetail.getAdvertisement().getCategory().getName());
-        reportParams.put("subjectMatter",advertisementPermitDetail.getAdvertisementParticular());
-        reportParams.put("subCategory",advertisementPermitDetail.getAdvertisement().getSubCategory().getCode());       
-        buildMeasurementDetailsForJasper(advertisementPermitDetail, measurement, reportParams, NOTMENTIONED);
-        
-        reportParams.put("permitStartDate", formatter.format( advertisementPermitDetail.getPermissionstartdate()));
-        reportParams.put("permitEndDate", formatter.format(advertisementPermitDetail.getPermissionenddate()));
-        reportParams.put("currdate", formatter.format(new Date()));
+        reportParams.put("subjectMatter", advertisementPermitDetail.getAdvertisementParticular());
+        reportParams.put("subCategory", advertisementPermitDetail.getAdvertisement().getSubCategory().getCode());
+        buildMeasurementDetailsForJasper(advertisementPermitDetail, measurement, reportParams, notMentioned);
+
+        reportParams.put("permitStartDate", getDefaultFormattedDate(advertisementPermitDetail.getPermissionstartdate()));
+        reportParams.put("permitEndDate", getDefaultFormattedDate(advertisementPermitDetail.getPermissionenddate()));
+        reportParams.put("currdate", getDefaultFormattedDate(new Date()));
+        reportParams.put("lastPaymentPaidYear",
+                advertisementDemandService.getLastPaymentPaidFinYear(advertisementPermitDetail.getAdvertisement()));
         return reportParams;
     }
 
-    private ResponseEntity<byte[]> redirect(String errorMessage) {
-        errorMessage = "<html><body><p style='color:red;border:1px solid gray;padding:15px;'>" + errorMessage
-                + "</p></body></html>";
-        final byte[] byteData = errorMessage.getBytes();
-        errorMessage = "";
-        return new ResponseEntity<byte[]>(byteData, HttpStatus.CREATED);
-    }
-
-    @RequestMapping(value = "/demandNotice/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewDemandNoticeReport(@PathVariable final String id,
-            final HttpSession session,HttpServletRequest request) {
-        final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
-                .findBy(Long.valueOf(id));
-        return generateDemandNotice(request,advertisementPermitDetails, session, null);
-    }
-
-    @RequestMapping(value = "/permitOrder/{id}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> viewPermitOrderReport(@PathVariable final String id,
-            final HttpSession session,HttpServletRequest request) {
-        final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
-                .findBy(Long.valueOf(id));
-        if (!AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED
-                .equalsIgnoreCase(advertisementPermitDetails.getStatus().getCode()))
-            advertisementPermitDetailService.updateStateTransition(advertisementPermitDetails, Long.valueOf(0), "",
-                    AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE, AdvertisementTaxConstants.WF_PERMITORDER_BUTTON);
-        return generatePermitOrder(request,advertisementPermitDetails, session, null);
-    }
 }
