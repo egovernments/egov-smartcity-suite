@@ -1307,7 +1307,8 @@ public class ComplaintIndexService {
 
     private BoolQueryBuilder getFilterQuery(final ComplaintDashBoardRequest complaintDashBoardRequest) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery().filter(termQuery("registered", 1));
-
+        if (isNotBlank(complaintDashBoardRequest.getFromDate()) && isNotBlank(complaintDashBoardRequest.getToDate()))
+            boolQuery = boolQuery.must(rangeQuery("createdDate").from(complaintDashBoardRequest.getFromDate()).to(complaintDashBoardRequest.getToDate()));
         if (complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_ULB) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_WARDS) ||
                 complaintDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_ALL_LOCALITIES) ||
@@ -1315,7 +1316,6 @@ public class ComplaintIndexService {
             boolQuery = filterBasedOnSource(complaintDashBoardRequest, boolQuery);
             return boolQuery;
         }
-
         if (isNotBlank(complaintDashBoardRequest.getRegionName()))
             boolQuery = boolQuery.filter(matchQuery(CITY_REGION_NAME, complaintDashBoardRequest.getRegionName()));
         if (isNotBlank(complaintDashBoardRequest.getUlbGrade()))
@@ -1332,11 +1332,6 @@ public class ComplaintIndexService {
         if (isNotBlank(complaintDashBoardRequest.getDepartmentCode()))
             boolQuery = boolQuery
                     .filter(matchQuery("departmentCode", complaintDashBoardRequest.getDepartmentCode()));
-        if (isNotBlank(complaintDashBoardRequest.getFromDate()) &&
-                isNotBlank(complaintDashBoardRequest.getToDate()))
-            boolQuery = boolQuery.must(rangeQuery("createdDate")
-                    .from(complaintDashBoardRequest.getFromDate())
-                    .to(complaintDashBoardRequest.getToDate()));
         if (isNotBlank(complaintDashBoardRequest.getComplaintTypeCode()))
             boolQuery = boolQuery.filter(matchQuery("complaintTypeCode",
                     complaintDashBoardRequest.getComplaintTypeCode()));
