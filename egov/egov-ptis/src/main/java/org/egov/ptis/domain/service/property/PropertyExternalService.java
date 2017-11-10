@@ -2988,7 +2988,7 @@ public class PropertyExternalService {
 
 	public AssessmentDetails getDuesForProperty(final HttpServletRequest request, String assessmentNo, String oldAssessmentNo){
 		AssessmentDetails assessmentDetails = new AssessmentDetails();
-		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyForUpicNoOrOldUpicNo(assessmentNo, oldAssessmentNo);
+		BasicProperty basicProperty = fetchBasicProperty(assessmentNo, oldAssessmentNo);
 		if(basicProperty != null){
 			assessmentDetails.setPropertyID(basicProperty.getUpicNo());
 			assessmentDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
@@ -3099,5 +3099,17 @@ public class PropertyExternalService {
             propertyImpl.getPropertyDetail().setFloorDetails(floorList);
             propertyImpl.getPropertyDetail().setFloorDetailsProxy(propertyImpl.getPropertyDetail().getFloorDetails());
         }
+    }
+
+    public BasicProperty fetchBasicProperty(String assessmentNo, String oldAssessmentNo){
+        BasicProperty basicProperty = null;
+        if (StringUtils.isNotBlank(assessmentNo))
+            basicProperty = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        if(basicProperty == null && (StringUtils.isNotBlank(oldAssessmentNo))) {
+                List<BasicProperty> basicProperties = (List<BasicProperty>) basicPropertyDAO.getBasicPropertyByOldMunipalNo(oldAssessmentNo);
+                if (!basicProperties.isEmpty() && basicProperties.size() == 1)
+                    basicProperty = basicProperties.get(0);
+            }
+        return basicProperty;
     }
 }

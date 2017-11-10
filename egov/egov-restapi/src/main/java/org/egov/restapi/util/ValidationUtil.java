@@ -936,7 +936,7 @@ public class ValidationUtil {
 	public ErrorDetails validateAssessmentDetailsRequest(final AssessmentRequest assessmentRequest) {
 		ErrorDetails errorDetails = null;
 
-		BasicProperty basicProperty = basicPropertyDAO.getBasicPropertyForUpicNoOrOldUpicNo(assessmentRequest.getAssessmentNo(),
+		BasicProperty basicProperty = propertyExternalService.fetchBasicProperty(assessmentRequest.getAssessmentNo(),
 				assessmentRequest.getOldAssessmentNo());
 		if (basicProperty == null) {
 			errorDetails = new ErrorDetails();

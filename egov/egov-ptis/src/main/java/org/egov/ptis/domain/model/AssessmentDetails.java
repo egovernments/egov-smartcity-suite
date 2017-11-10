@@ -57,12 +57,13 @@ public class AssessmentDetails implements Serializable {
 
     private static final long serialVersionUID = 355399781881256186L;
     private String propertyID;
+    private String oldAssessmentNo = StringUtils.EMPTY;
+    private String owners = StringUtils.EMPTY;
     private String houseNo = StringUtils.EMPTY;
     private Set<OwnerName> ownerNames;
     private BoundaryDetails boundaryDetails;
     private String propertyAddress;
     private PropertyDetails propertyDetails;
-    private ErrorDetails errorDetails;
     private String primaryEmail = StringUtils.EMPTY;
     private String primaryMobileNo = StringUtils.EMPTY;
     private Integer flag;
@@ -70,12 +71,11 @@ public class AssessmentDetails implements Serializable {
     private double longitude;
     private boolean status;
     private boolean exempted;
-    private String oldAssessmentNo = StringUtils.EMPTY;
-    private String owners = StringUtils.EMPTY;
     private BigDecimal propertyDue = BigDecimal.ZERO;
     private BigDecimal waterTaxDue = BigDecimal.ZERO;
     private BigDecimal sewerageDue = BigDecimal.ZERO;
     private int connectionCount;
+    private ErrorDetails errorDetails;
 
     public String getPropertyID() {
         return propertyID;
