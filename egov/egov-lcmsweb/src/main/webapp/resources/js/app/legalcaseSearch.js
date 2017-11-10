@@ -115,7 +115,7 @@ function submitForm() {
 						},
 						{
 							"data" : "standingcouncil",
-							"sTitle" : "Standing Council",
+							"sTitle" : "Standing Counsel",
 							"className" : "text-right"
 						},
 						{

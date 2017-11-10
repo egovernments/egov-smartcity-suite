@@ -359,14 +359,15 @@
 						<div class="col-md-3 col-xs-6 add-margin view-content">
 							<c:out value="${legalCase.representedby}" />
 						</div>
-						<div class="col-md-2 col-xs-6 add-margin">Standing Council
-							Name</div>
+						<div class="col-md-2 col-xs-6 add-margin"><spring:message
+			code="lbl.standingcounselname" /></div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
 							<c:out value="${legalCase.oppPartyAdvocate}" />
 						</div>
 					</div>
 					<div class="row add-border">
-						<div class="col-md-2 col-xs-6 add-margin">Remarks</div>
+						<div class="col-md-2 col-xs-6 add-margin"><spring:message
+			code="lbl.remarks" /></div>
 						<div class="col-md-3 col-xs-6 add-margin view-content">
 							<c:out value="${legalCase.remarks}" />
 						</div>
@@ -379,7 +380,7 @@
 			<c:if test="${not empty legalCase.legalCaseAdvocates }">
 				<div class="panel-heading">
 					<div class="panel-title" align="center" style="font-weight: bold">
-						Standing Council Details:</div>
+						Standing Counsel Details:</div>
 				</div>
 
 				<div class="main-content">
@@ -390,8 +391,7 @@
 									<div class="form-group">
 										<div class="row add-border">
 											<div class="form-group">
-												<label class="col-sm-3 control-label text-right">Standing
-													Council: </label>
+												<label class="col-sm-3 control-label text-right"><spring:message code="lbl.standingcons" />:</label>
 												<div class="col-sm-3 add-margin">
 													<c:out
 														value="${legalCase.legalCaseAdvocates[0].advocateMaster.name}" />
@@ -433,7 +433,7 @@
 											<c:if test="${legalCase.isSenioradvrequired}">
 												<div id="seniordov1" class="form-group">
 													<label class="col-sm-3 control-label text-right">Senior
-														Standing Council: </label>
+														Standing Counsel: </label>
 													<div class="col-sm-3 add-margin">
 														<c:out
 															value="${legalCase.legalCaseAdvocates[0].seniorAdvocate.name}" />

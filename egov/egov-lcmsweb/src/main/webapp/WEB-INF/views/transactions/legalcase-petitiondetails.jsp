@@ -318,7 +318,8 @@
 	</div>
 
 	<label class="col-sm-2 control-label text-right" id="persons">
-		Standing Council Name:</label>
+		<spring:message
+			code="lbl.standingcounselname" />:</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
 		<form:input class="form-control patternvalidation"
 			data-pattern="string" maxlength="50" id="oppPartyAdvocate"
@@ -328,7 +329,8 @@
 
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right" id="persons">Remarks:</label>
+	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
+			code="lbl.remarks" />:</label>
 	<div class="col-sm-3 add-margin">
 		<form:textarea class="form-control" path="remarks" id="remarks"
 			name="remarks" maxlength="256" />

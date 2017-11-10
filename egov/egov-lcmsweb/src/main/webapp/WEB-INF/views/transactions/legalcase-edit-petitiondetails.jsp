@@ -42,8 +42,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="lbl.bipartisanDetails.details" />
@@ -52,22 +52,23 @@
 <table class="table table-striped table-bordered" id="petitionDetails">
 	<thead>
 		<tr>
-		<!-- <th class="text-center">SI NO</th> -->
+			<!-- <th class="text-center">SI NO</th> -->
 			<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
-		<%-- 	<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
-			<th class="text-center">Delete Petitioner  <%-- <spring:message
-					code="lbl.add/delete_pet" /> --%> </th>
+			<%-- 	<th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
+			<th class="text-center">Delete Petitioner <%-- <spring:message
+					code="lbl.add/delete_pet" /> --%>
+			</th>
 		</tr>
 	</thead>
 	<tbody>
-		<c:forEach var="bipartisanPetitionerDetailsList" items="${legalCase.getPetitioners()}"
-			varStatus="status">
-				<tr class="">
-			<%-- 	<td>
+		<c:forEach var="bipartisanPetitionerDetailsList"
+			items="${legalCase.getPetitioners()}" varStatus="status">
+			<tr class="">
+				<%-- 	<td>
 								<input type="text" id="table_name${status.index}" class="form-control"
 								readonly="readonly" style="text-align: center"
 								value="${status.index+1}" /> 
@@ -77,29 +78,26 @@
 			value="${bipartisanPetitionerDetailsList.isRespondentGovernment}"
 				onblur="onChangeofPetitioncheck(this)" /></td>
 			 --%>
-			<td class="text-right">
-			<input type="text"
-				class="form-control table-input text-left"
-				id="bipartisanPetitionerDetailsList[${status.index}].name"
-				name="bipartisanPetitionerDetailsList[${status.index}].name"
-				value="${bipartisanPetitionerDetailsList.name}"
-				maxlength="50" required="required"/></td>
-				
-			<td class="text-right"><input type="text"
-				class="form-control table-input" 
-				name="bipartisanPetitionerDetailsList[${status.index}].address"
-				id="bipartisanPetitionerDetailsList[${status.index}].address"
-				value="${bipartisanPetitionerDetailsList.address}"
-				
-				 maxlength="256"/></td>
-			<td class="text-right"><input type="text"
-			class="form-control table-input text-left patternvalidation"
-				 name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
-				id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
-				data-pattern="number"
-				value="${bipartisanPetitionerDetailsList.contactNumber}"
-				 maxlength="10" onkeyup="decimalvalue(this);"/></td>
-			<%-- <td class="text-right"><form:select path=""
+				<td class="text-right"><input type="text"
+					class="form-control table-input text-left"
+					id="bipartisanPetitionerDetailsList[${status.index}].name"
+					name="bipartisanPetitionerDetailsList[${status.index}].name"
+					value="${bipartisanPetitionerDetailsList.name}" maxlength="50"
+					required="required" /></td>
+
+				<td class="text-right"><input type="text"
+					class="form-control table-input"
+					name="bipartisanPetitionerDetailsList[${status.index}].address"
+					id="bipartisanPetitionerDetailsList[${status.index}].address"
+					value="${bipartisanPetitionerDetailsList.address}" maxlength="256" /></td>
+				<td class="text-right"><input type="text"
+					class="form-control table-input text-left patternvalidation"
+					name="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+					id="bipartisanPetitionerDetailsList[${status.index}].contactNumber"
+					data-pattern="number"
+					value="${bipartisanPetitionerDetailsList.contactNumber}"
+					maxlength="10" onkeyup="decimalvalue(this);" /></td>
+				<%-- <td class="text-right"><form:select path=""
 					data-first-option="false"
 					name="bipartisanPetitionerDetailsList[${status.index}].governmentDepartment"
 					id="bipartisanPetitionerDetailsList[${status.index}].governmentDepartment"
@@ -109,14 +107,17 @@
 					<form:options items="${govtDeptList}" itemValue="id"
 						itemLabel="code" />
 				</form:select></td> --%>
-				<input type="hidden" 
-				name="bipartisanPetitionerDetailsList[${status.index}].id"
-			id="bipartisanPetitionerDetailsList[${status.index}].id" 
-			value="${bipartisanPetitionerDetailsList.id}"/>
-			<td class="text-center">
-			<a href="javascript:void(0);" class="btn-sm btn-default" onclick="addPetRow();"><span style="cursor:pointer;" ><i class="fa fa-plus"></i></span></a>
-			<a href="javascript:void(0);" class="btn-sm btn-default" id="pet_delete_row"><span style="cursor:pointer;" > <i class="fa fa-trash"></i></span></a></td>
-	</tr>
+				<input type="hidden"
+					name="bipartisanPetitionerDetailsList[${status.index}].id"
+					id="bipartisanPetitionerDetailsList[${status.index}].id"
+					value="${bipartisanPetitionerDetailsList.id}" />
+				<td class="text-center"><a href="javascript:void(0);"
+					class="btn-sm btn-default" onclick="addPetRow();"><span
+						style="cursor: pointer;"><i class="fa fa-plus"></i></span></a> <a
+					href="javascript:void(0);" class="btn-sm btn-default"
+					id="pet_delete_row"><span style="cursor: pointer;"> <i
+							class="fa fa-trash"></i></span></a></td>
+			</tr>
 		</c:forEach>
 	</tbody>
 </table>
@@ -130,23 +131,23 @@
 <table class="table table-striped table-bordered" id="respondantDetails">
 	<thead>
 		<tr>
-	<!-- 	<th class="text-center">SI NO</th> -->
+			<!-- 	<th class="text-center">SI NO</th> -->
 			<%-- <th class="text-center"><spring:message code="lbl.IsGovtDept" /></th> --%>
 			<th class="text-center"><spring:message code="lbl.name" /><span
 				class="mandatory"></span></th>
 			<th class="text-center"><spring:message code="lbl.discription" /></th>
 			<th class="text-center"><spring:message code="lbl.contactnumber" /></th>
 			<%-- <th class="text-center"><spring:message code="lbl.Govt_Dept" /></th> --%>
-			 <th class="text-center"><spring:message
-					code="lbl.add/delete_Res" /> </th>
+			<th class="text-center"><spring:message
+					code="lbl.add/delete_Res" /></th>
 		</tr>
 	</thead>
 	<tbody>
 
-		<c:forEach var="bipartisanRespondentDetailsList" items="${legalCase.getRespondents()}"
-			varStatus="status">
+		<c:forEach var="bipartisanRespondentDetailsList"
+			items="${legalCase.getRespondents()}" varStatus="status">
 			<tr>
-		<%-- 	<td>
+				<%-- 	<td>
 								<input type="text" id="table_name${status.index}" class="form-control"
 								readonly="readonly" style="text-align: center"
 								value="${status.index+1}" /> 
@@ -155,27 +156,27 @@
 				name="bipartisanRespondentDetailsList[${status.index}].isRespondentGovernment"
 			value="${bipartisanRespondentDetailsList.isRespondentGovernment}"
 				onblur="onChangeofPetitioncheck(this)" /></td> --%>
-			
-				<td class="text-right"><input type="text"
-				class="form-control table-input text-left"
-						id="bipartisanRespondentDetailsList[${status.index}].name"
-						name="bipartisanRespondentDetailsList[${status.index}].name" 
-						value="${bipartisanRespondentDetailsList.name}" /></td>
-					
 
 				<td class="text-right"><input type="text"
-				class="form-control table-input text-left"
-						id="bipartisanRespondentDetailsList[${status.index}].address"
-						name="bipartisanRespondentDetailsList[${status.index}].address" 
-						value="${bipartisanRespondentDetailsList.address}" /></td>
+					class="form-control table-input text-left"
+					id="bipartisanRespondentDetailsList[${status.index}].name"
+					name="bipartisanRespondentDetailsList[${status.index}].name"
+					value="${bipartisanRespondentDetailsList.name}" /></td>
 
-				<td class="text-right"><input type="text" 
-						id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
-						name="bipartisanRespondentDetailsList[${status.index}].contactNumber" 
-					class="form-control table-input text-left patternvalidation" 
+
+				<td class="text-right"><input type="text"
+					class="form-control table-input text-left"
+					id="bipartisanRespondentDetailsList[${status.index}].address"
+					name="bipartisanRespondentDetailsList[${status.index}].address"
+					value="${bipartisanRespondentDetailsList.address}" /></td>
+
+				<td class="text-right"><input type="text"
+					id="bipartisanRespondentDetailsList[${status.index}].contactNumber"
+					name="bipartisanRespondentDetailsList[${status.index}].contactNumber"
+					class="form-control table-input text-left patternvalidation"
 					onkeyup="decimalvalue(this);"
 					value="${bipartisanRespondentDetailsList.contactNumber}" /></td>
-<%-- 
+				<%-- 
 				<td>
 					<form:select path="" data-first-option="false"
 						name="bipartisanRespondentDetailsList[${status.index}].governmentDepartment"
@@ -188,17 +189,17 @@
 					</form:select>
 				</td> --%>
 				<input type="hidden" id="activeid"
-				name="bipartisanRespondentDetailsList[${status.index}].id"
-			id="bipartisanRespondentDetailsList[${status.index}].id" 
-			value="${bipartisanRespondentDetailsList.id}"/>
-			<input type="hidden" 
-						id="bipartisanRespondentDetailsList[${status.index}].isRepondent"
-						name="bipartisanRespondentDetailsList[${status.index}].isRepondent" 
-					class="form-control table-input text-right" style="text-align: center"
-					value="${true}" />
-			<td class="text-center"><a href="javascript:void(0);"
+					name="bipartisanRespondentDetailsList[${status.index}].id"
+					id="bipartisanRespondentDetailsList[${status.index}].id"
+					value="${bipartisanRespondentDetailsList.id}" />
+				<input type="hidden"
+					id="bipartisanRespondentDetailsList[${status.index}].isRepondent"
+					name="bipartisanRespondentDetailsList[${status.index}].isRepondent"
+					class="form-control table-input text-right"
+					style="text-align: center" value="${true}" />
+				<td class="text-center"><a href="javascript:void(0);"
 					class="btn-sm btn-default" onclick="addResRow();"><i
-						class="fa fa-plus"></i></a>  <a href="javascript:void(0);"
+						class="fa fa-plus"></i></a> <a href="javascript:void(0);"
 					class="btn-sm btn-default" id="res_delete_row"><i
 						class="fa fa-trash"></i></a></td>
 			</tr>
@@ -216,7 +217,8 @@
 	</div>
 
 	<label class="col-sm-2 control-label text-right" id="persons">
-		Standing Council Name:</label>
+		<spring:message code="lbl.standingcounselname" />:
+	</label>
 	<div class="col-sm-3 add-margin" id="personsdiv">
 		<form:input class="form-control patternvalidation"
 			data-pattern="string" maxlength="50" id="oppPartyAdvocate"
@@ -226,7 +228,8 @@
 
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right" id="persons">Remarks:</label>
+	<label class="col-sm-3 control-label text-right" id="persons"><spring:message
+			code="lbl.remarks" />:</label>
 	<div class="col-sm-3 add-margin">
 		<form:textarea class="form-control" path="remarks" id="remarks"
 			name="remarks" maxlength="256" />

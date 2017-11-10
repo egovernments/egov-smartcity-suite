@@ -49,7 +49,7 @@
 
 		<div class="form-group">
 			<label class="col-sm-3 control-label text-right">Standing
-				Council:<span class="mandatory"></span>:
+				Counsel:<span class="mandatory"></span>:
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input id="standingCouncilName" type="text"
@@ -98,7 +98,7 @@
 		</div>
 		<div id="seniordov1" class="form-group">
 			<label class="col-sm-3 control-label text-right">Senior
-				Standing Council<span class="mandatory"></span>:
+				Standing Counsel<span class="mandatory"></span>:
 			</label>
 			<div class="col-sm-3 add-margin">
 				<form:input id="seniorAdvocateName" type="text"
