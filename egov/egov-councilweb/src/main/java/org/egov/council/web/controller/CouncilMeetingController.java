@@ -246,7 +246,7 @@ public class CouncilMeetingController {
     public String edit(@PathVariable("id") final Long id, final Model model, final HttpServletResponse response)
             throws IOException {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-        sortMeetingMomByItemNumber(councilMeeting);
+        councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
 
         return COUNCILMEETING_EDIT;
@@ -267,13 +267,9 @@ public class CouncilMeetingController {
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
     public String view(@PathVariable("id") final Long id, Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
-        sortMeetingMomByItemNumber(councilMeeting);
+        councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMEETING_VIEW;
-    }
-
-    private void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
-        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> Long.valueOf(f1.getItemNumber()).compareTo(Long.valueOf(f2.getItemNumber())));
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
@@ -417,7 +413,7 @@ public class CouncilMeetingController {
         }
 
         buildAttendanceDetails(councilMeeting);
-        sortMeetingMomByItemNumber(councilMeeting);
+        councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
         return COUNCILMEETING_EDIT_ATTENDANCE;
     }

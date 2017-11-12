@@ -64,6 +64,7 @@ import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.repository.CouncilMeetingRepository;
+import org.egov.council.repository.CouncilMoMRepository;
 import org.egov.council.repository.MeetingAttendanceRepository;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.eis.service.EisCommonService;
@@ -94,6 +95,8 @@ public class CouncilMeetingService {
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
+    private CouncilMoMRepository councilMoMRepository;
+    @Autowired
     private EisCommonService eisCommonService;
     @Autowired
     private UserService userService;
@@ -120,6 +123,11 @@ public class CouncilMeetingService {
     public CouncilMeeting update(final CouncilMeeting councilMeeting) {
         return councilMeetingRepository.save(councilMeeting);
     }
+    
+    @Transactional
+    public List<MeetingMOM> createDataEntry(final List<MeetingMOM> meetingMOM) {
+        return councilMoMRepository.save(meetingMOM);
+    }
 
     public List<CouncilMeeting> findAll() {
         return councilMeetingRepository.findAll(new Sort(Sort.Direction.DESC, "meetingDate"));
@@ -135,6 +143,10 @@ public class CouncilMeetingService {
     
     public CouncilMeeting findByMeetingNumber(String meetingNumber) {
         return councilMeetingRepository.findByMeetingNumber(meetingNumber);
+    }
+    
+    public MeetingMOM findByResolutionNumber(String resolutionNumber) {
+        return councilMoMRepository.findByResolutionNumber(resolutionNumber);
     }
 
     public CouncilMeeting updateMoMStatus(CouncilMeeting councilMeeting) {
@@ -169,6 +181,10 @@ public class CouncilMeetingService {
                 .add(Restrictions.in(STATUS_DOT_CODE, new String[] { MEETINGUSEDINRMOM})).list();
     }
 
+    public void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
+        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> Long.valueOf(f1.getItemNumber()).compareTo(Long.valueOf(f2.getItemNumber())));
+    }
+    
     public Criteria buildSearchCriteria(CouncilMeeting councilMeeting) {
         final Criteria criteria = getCurrentSession().createCriteria(CouncilMeeting.class, "councilMeeting")
                 .createAlias("councilMeeting.status", "status");

@@ -186,9 +186,10 @@ public class CouncilMomController {
             }
 
         }
+        if(councilMeeting!=null){
         sortMeetingMomByItemNumber(councilMeeting);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
-
+        }
         return COUNCILMOM_NEW;
     }
 
@@ -369,8 +370,9 @@ public class CouncilMomController {
             if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())) {
                 MOMResolutionNumberGenerator momResolutionNumberGenerator = autonumberServiceBeanResolver
                         .getAutoNumberServiceFor(MOMResolutionNumberGenerator.class);
-                meetingMOM.setResolutionNumber(momResolutionNumberGenerator
-                        .getNextNumber(meetingMOM));
+                meetingMOM.setResolutionNumber(
+                        meetingMOM.getResolutionNumber() != null ? meetingMOM.getResolutionNumber() : momResolutionNumberGenerator
+                                .getNextNumber(meetingMOM));
                 meetingMOM.getPreamble().setStatus(resolutionApprovedStatus);
                 // if mom status adjourned, update preamble status to adjurned. These record will be used in next meeting.
             } else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionAdjurnedStatus.getCode())) {

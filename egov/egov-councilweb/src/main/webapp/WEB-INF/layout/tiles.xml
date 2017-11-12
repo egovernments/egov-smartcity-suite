@@ -352,4 +352,9 @@
         <put-attribute name="page-title" value="title.councilsequence.success" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilsequence/councilsequence-success.jsp"/>
     </definition>
+    <definition name="councilMom-dataentry" extends="base_layout">
+        <put-attribute name="page-title" value="title.councilmom.dataentery" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilMomDataEntry.jsp"/>
+    </definition>
+    
 </tiles-definitions>

@@ -2,7 +2,7 @@
  * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) <2017>  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -39,22 +39,12 @@
  */
 package org.egov.council.repository;
 
-import java.util.List;
-
-import org.egov.council.entity.CouncilPreamble;
+import org.egov.council.entity.MeetingMOM;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 @Repository
-public interface CouncilPreambleRepository extends JpaRepository<CouncilPreamble, Long> {
+public interface CouncilMoMRepository extends JpaRepository<MeetingMOM, Long> {
 
-    CouncilPreamble findById(Long id);
-
-    @Query("from CouncilPreamble where department.id=:department order by id desc")
-    List<CouncilPreamble> findBydepartment(@Param("department") long department);
-
-    CouncilPreamble findByPreambleNumber(String preambleNumber);
-
+    MeetingMOM findByResolutionNumber(String resolutionNumber);
 }

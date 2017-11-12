@@ -124,6 +124,10 @@ public class CouncilPreambleService {
     public CouncilPreamble findOne(Long id) {
         return councilPreambleRepository.findById(id);
     }
+    
+    public CouncilPreamble findbyPreambleNumber(String preambleNumber) {
+        return councilPreambleRepository.findByPreambleNumber(preambleNumber);
+    }
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchForPreamble(CouncilPreamble councilPreamble) {
