@@ -234,8 +234,12 @@ public class SearchNoticeController {
         if (SANCTION_ORDER.equals(noticeType)) {
             WaterConnectionDetails waterConnectionDetails = null;
             waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-                    ConnectionStatus.ACTIVE);
-            if (waterConnectionDetails != null)
+                    ConnectionStatus.INPROGRESS);
+            if (waterConnectionDetails==null)
+                waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
+                        ConnectionStatus.ACTIVE);
+            if (waterConnectionDetails != null && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) || 
+                    waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)))
                 waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
                         ? waterConnectionDetails.getFileStore().getFileStoreId() : null);
         } else {
