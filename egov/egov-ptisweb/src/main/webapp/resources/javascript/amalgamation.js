@@ -312,6 +312,7 @@ jQuery(document).on('blur', ".txtaadhar", function () {
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.emailId']").attr('readonly', false);
 				jQuery("select[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").val("");
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").attr('readonly', false);
 				if(aadharNo != "NaN") {
 					bootbox.alert("Aadhar number is not valid");

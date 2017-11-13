@@ -207,6 +207,7 @@
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.mobileNumber']").val("").attr('readonly', false);
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.emailId']").attr('readonly', false);
       					jQuery("select[name='transfereeInfosProxy["+ rowidx +"].transferee.guardianRelation']").removeAttr('disabled');
+      					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").val("");
       					jQuery("input[name='transfereeInfosProxy["+ rowidx +"].transferee.guardian']").attr('readonly', false);
       					if(aadharNo != "NaN") {
       						bootbox.alert("Aadhar number is not valid");
