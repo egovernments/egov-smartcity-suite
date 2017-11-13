@@ -689,7 +689,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             if (propertyDetail != null)
                 validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
-                        northBoundary, modifyRsn, propCompletionDate, null, null);
+                        northBoundary, modifyRsn, propCompletionDate, null, null, propertyModel);
         } else {
             validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
             validateFloor(propTypeMstr, propertyModel.getPropertyDetail().getFloorDetailsProxy(), propertyModel, areaOfPlot,

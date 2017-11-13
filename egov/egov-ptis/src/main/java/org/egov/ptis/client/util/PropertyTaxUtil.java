@@ -2420,7 +2420,7 @@ public class PropertyTaxUtil {
 
     public Date getEffectiveDateForProperty(Property property) {
         final Module module = moduleDao.getModuleByName(PTMODULENAME);
-        final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, property.getCreatedDate())
+        final Date currInstToDate = installmentDao.getInsatllmentByModuleForGivenDate(module, property.getCreatedDate() == null ? new Date() : property.getCreatedDate())
                 .getToDate();
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(currInstToDate);

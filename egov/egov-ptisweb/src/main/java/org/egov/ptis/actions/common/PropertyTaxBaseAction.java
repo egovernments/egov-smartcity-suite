@@ -334,10 +334,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                     if (null != propertyDetail)
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
-                                northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId);
+                                northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, property);
                 } else if (null == ((PropertyImpl) property).getId() && TRUE.equals(propertyDetail.isAppurtenantLandChecked())) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary,
-                            modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId);
+                            modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, property);
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
                 } else
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
@@ -352,7 +352,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void validateVacantProperty(final PropertyDetail propertyDetail, final String eastBoundary,
             final String westBoundary, final String southBoundary, final String northBoundary, final String modifyRsn,
-            final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId) {
+            final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId, final Property property) {
 
         if (logger.isDebugEnabled())
             logger.debug("Entered into validateVacantProperty");
@@ -362,7 +362,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.pattaNum"));
         if (null == propertyDetail.getSitalArea().getArea())
             addActionError(getText("mandatory.vacantLandArea"));
-        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(propertyDetail.getProperty());
+        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
         if (null == propertyDetail.getDateOfCompletion() || "".equals(propertyDetail.getDateOfCompletion()))
             addActionError(getText("mandatory.dtOfCmpln"));
         else if (propertyDetail.getDateOfCompletion().before(effDate))
