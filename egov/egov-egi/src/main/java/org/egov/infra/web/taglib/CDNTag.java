@@ -40,19 +40,20 @@
 
 package org.egov.infra.web.taglib;
 
-import org.apache.commons.lang3.StringUtils;
 import org.apache.taglibs.standard.tag.rt.core.UrlTag;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.jsp.JspException;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.utils.ApplicationConstant.CDN_ATTRIB_NAME;
 
 public class CDNTag extends UrlTag {
 
+    @Override
     public int doEndTag() throws JspException {
-        String cdnURI = (String)pageContext.getServletContext().getAttribute(CDN_ATTRIB_NAME);
-        if (StringUtils.isNotBlank(cdnURI))
+        String cdnURI = (String) pageContext.getServletContext().getAttribute(CDN_ATTRIB_NAME);
+        if (isNotBlank(cdnURI))
             this.value = new StringBuilder(cdnURI).
                     append(context == null ? ((HttpServletRequest) pageContext.getRequest()).getContextPath() : context).
                     append(value).toString();
