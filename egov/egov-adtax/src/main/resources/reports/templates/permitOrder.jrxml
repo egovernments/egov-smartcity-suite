@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-10T23:09:12 -->
+<!-- 2017-11-13T16:29:36 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="permitOrder" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="496"/>
+	<property name="ireport.y" value="483"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<import value="org.egov.infra.reporting.util.*"/>
 	<import value="org.egov.infstr.utils.*"/>
@@ -85,28 +85,28 @@
 			<textField isStretchWithOverflow="true">
 				<reportElement x="10" y="409" width="545" height="44" uuid="0cd50b5b-87c4-40b3-8e69-4099552c98b6"/>
 				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isBold="false" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["The advertiser shall abide by the statutory provisions of Act and the Rules and by-laws made there under (See conditions)."]]></textFieldExpression>
 			</textField>
 			<textField isBlankWhenNull="true">
 				<reportElement x="11" y="495" width="124" height="15" uuid="63d44e4e-3f6b-4acd-93c6-935361a77db1"/>
 				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Date : "+$P{currdate}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="357" y="477" width="157" height="15" uuid="168d7585-fe7a-43b8-80e9-1371c367ba44"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" isStrikeThrough="false" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true" isStrikeThrough="false"/>
 				</textElement>
 				<text><![CDATA[Commissioner]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="318" y="496" width="236" height="15" uuid="22ed6f7c-b693-4035-9d23-64cef967ee5a"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="10" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{ulbName}]]></textFieldExpression>
 			</textField>
@@ -209,7 +209,7 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="10" y="477" width="124" height="15" uuid="419e8a17-8d97-4839-8360-903ddc182914"/>
 				<textElement verticalAlignment="Middle">
-					<font size="10" isBold="false" pdfFontName="Helvetica-Bold"/>
+					<font size="10" isBold="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Office Seal"]]></textFieldExpression>
 			</textField>
@@ -266,28 +266,28 @@
 			<textField isBlankWhenNull="true">
 				<reportElement x="202" y="8" width="124" height="15" uuid="8e13b4f3-07ae-4329-b578-93eafa3f4baa"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font size="12" isBold="true" pdfFontName="Helvetica-Bold"/>
+					<font size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["Conditions"]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="5" y="28" width="545" height="33" uuid="c2ce9633-deae-49b9-aecc-125450fcc475"/>
 				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isBold="false" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA[" 1. An advertiser should apply in writing for renewal of permission to the commissioner 7 days before the date of expiry of the permission, or well in advance."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="5" y="61" width="545" height="33" uuid="c7691583-a738-4e58-9de4-28bfb5c4b0a1"/>
 				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isBold="false" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["2. Advertisement tax and other fees or charges as required under rules should be paid before erection, etc., of advertisement for which the grant of permission has been sought for."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
 				<reportElement x="5" y="94" width="545" height="33" uuid="8c4cda03-bd63-41e0-a008-f2e247b9ac74"/>
 				<textElement verticalAlignment="Middle" markup="styled">
-					<font size="10" isBold="false" isPdfEmbedded="true"/>
+					<font size="10" isBold="false" isPdfEmbedded="false"/>
 				</textElement>
 				<textFieldExpression><![CDATA["3. An advertiser is required to take every reasonable care not to cause any inconvenience or hindrance either to pedestrian or vehicular traffic"]]></textFieldExpression>
 			</textField>
