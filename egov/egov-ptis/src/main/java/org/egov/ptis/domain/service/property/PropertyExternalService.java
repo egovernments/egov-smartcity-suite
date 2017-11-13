@@ -3002,11 +3002,16 @@ public class PropertyExternalService {
 			}
 			String restURL = format(PropertyTaxConstants.WTMS_TAXDUE_RESTURL,
 					WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
-			Map<String, Object> waterTaxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
-			if(!waterTaxDetails.isEmpty()){
-				assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) waterTaxDetails.get("totalTaxDue")));
-				assessmentDetails.setConnectionCount(Double.valueOf(waterTaxDetails.get("connectionCount").toString()).intValue());
+			Map<String, Object> taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
+			if(!taxDetails.isEmpty()){
+				assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
+				assessmentDetails.setConnectionCount(Double.valueOf(taxDetails.get("connectionCount").toString()).intValue());
 			}
+			restURL = format(PropertyTaxConstants.STMS_TAXDUE_RESTURL,
+					WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
+			taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
+			if(!taxDetails.isEmpty())
+				assessmentDetails.setSewerageDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
 		}
 		return assessmentDetails;
 	}
