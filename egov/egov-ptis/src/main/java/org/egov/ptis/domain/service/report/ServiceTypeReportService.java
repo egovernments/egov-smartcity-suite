@@ -40,6 +40,12 @@
 
 package org.egov.ptis.domain.service.report;
 
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_URL_KEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 
@@ -51,10 +57,14 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.utils.DateUtils;
+import org.egov.ptis.domain.entity.es.WardWiseServiceTypeIndex;
 import org.egov.ptis.domain.entity.property.ServiceTypeReportResponse;
 import org.egov.ptis.domain.entity.property.WardWiseServiceReponse;
 import org.egov.ptis.domain.entity.property.WardWiseServiceTypeRequest;
+import org.egov.ptis.repository.es.WardWiseServiceTypeRepository;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -78,6 +88,12 @@ public class ServiceTypeReportService {
     private static final String PROPERTYTYPE = "propertyType";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
+    @Autowired
+    private CityService cityService;
+    @Autowired
+    private WardWiseServiceTypeRepository wardWiseServiceTypeRepository;
+    @Autowired
+    private BeanMapperConfiguration beanMapperConfiguration;
 
     public ServiceTypeReportResponse getDetails(final WardWiseServiceTypeRequest serviceRequest) {
         ServiceTypeReportResponse wardResponse = new ServiceTypeReportResponse();
@@ -92,7 +108,7 @@ public class ServiceTypeReportService {
         Map<String, Map<String, List<Long>>> map = getDocMap(fromDate, toDate, serviceRequest);
         Set<String> wardNames = map.keySet();
         List<WardWiseServiceReponse> responseList = new ArrayList<>();
-        for (String ward : wardNames) {
+        wardNames.stream().forEach( ward->{
             WardWiseServiceReponse serviceWiseResponse = new WardWiseServiceReponse();
             Map<String, List<Long>> statusMap = map.get(ward);
             if (statusMap != null) {
@@ -100,7 +116,7 @@ public class ServiceTypeReportService {
             }
             serviceWiseResponse.setRevenueWard(ward);
             responseList.add(serviceWiseResponse);
-        }
+        });
         wardResponse.setServiceWiseResponse(responseList);
         return wardResponse;
     }
@@ -131,11 +147,10 @@ public class ServiceTypeReportService {
 
         Terms aggTerms = response.getAggregations().get(WARDGROUPING);
         Map<String, Map<String, List<Long>>> statusMap = new HashMap<>();
-        for (Terms.Bucket bucket : aggTerms.getBuckets()) {
+        aggTerms.getBuckets().forEach(bucket -> {
             Map<String, List<Long>> statusMap1 = new HashMap<>();
             Terms aggregations = bucket.getAggregations().get(STATUSGROUPING);
-            for (Terms.Bucket bucket1 : aggregations.getBuckets()) {
-
+            aggregations.getBuckets().forEach(bucket1 -> {
                 List<Long> list = new ArrayList<>();
                 list.add(bucket1.getDocCount());
                 Sum agg1 = bucket1.getAggregations().get(TAX_BEFORE_AFFECTED);
@@ -145,9 +160,9 @@ public class ServiceTypeReportService {
                 long value1 = (long) agg2.getValue();
                 list.add(value1);
                 statusMap1.put(bucket1.getKeyAsString(), list);
-            }
+            });
             statusMap.put(bucket.getKeyAsString(), statusMap1);
-        }
+        });
         return statusMap;
     }
 
@@ -163,10 +178,15 @@ public class ServiceTypeReportService {
     public BoolQueryBuilder getQueryForProperties(String propertyType, BoolQueryBuilder boolQuery) {
 
         BoolQueryBuilder propertyTypeQuery = boolQuery;
-        if ("PT".equalsIgnoreCase(propertyType))
-            propertyTypeQuery = propertyTypeQuery.filter(QueryBuilders.matchQuery(PROPERTYTYPE, 1));
         if ("VLT".equalsIgnoreCase(propertyType))
+            //In property type master id for vlt is 1
+            propertyTypeQuery = propertyTypeQuery.filter(QueryBuilders.matchQuery(PROPERTYTYPE, 1));
+        if ("PT".equalsIgnoreCase(propertyType))
             propertyTypeQuery = propertyTypeQuery.mustNot(QueryBuilders.matchQuery(PROPERTYTYPE, 1));
         return propertyTypeQuery;
     }
+
+    
+    
+    
 }
