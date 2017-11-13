@@ -40,12 +40,6 @@
 
 package org.egov.ptis.domain.service.report;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_URL_KEY;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATEFORMATTER_YYYY_MM_DD;
 import static org.egov.ptis.constants.PropertyTaxConstants.DATE_FORMAT_YYYYMMDD;
 
@@ -57,14 +51,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.mapper.BeanMapperConfiguration;
 import org.egov.infra.utils.DateUtils;
-import org.egov.ptis.domain.entity.es.WardWiseServiceTypeIndex;
 import org.egov.ptis.domain.entity.property.ServiceTypeReportResponse;
 import org.egov.ptis.domain.entity.property.WardWiseServiceReponse;
 import org.egov.ptis.domain.entity.property.WardWiseServiceTypeRequest;
-import org.egov.ptis.repository.es.WardWiseServiceTypeRepository;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
@@ -88,13 +78,6 @@ public class ServiceTypeReportService {
     private static final String PROPERTYTYPE = "propertyType";
     @Autowired
     private ElasticsearchTemplate elasticsearchTemplate;
-    @Autowired
-    private CityService cityService;
-    @Autowired
-    private WardWiseServiceTypeRepository wardWiseServiceTypeRepository;
-    @Autowired
-    private BeanMapperConfiguration beanMapperConfiguration;
-
     public ServiceTypeReportResponse getDetails(final WardWiseServiceTypeRequest serviceRequest) {
         ServiceTypeReportResponse wardResponse = new ServiceTypeReportResponse();
         Date fromDate = null;
@@ -103,7 +86,6 @@ public class ServiceTypeReportService {
                 && StringUtils.isNotBlank(serviceRequest.getToDate())) {
             fromDate = DateUtils.getDate(serviceRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
             toDate = DateUtils.getDate(serviceRequest.getToDate(), DATE_FORMAT_YYYYMMDD);
-
         }
         Map<String, Map<String, List<Long>>> map = getDocMap(fromDate, toDate, serviceRequest);
         Set<String> wardNames = map.keySet();
@@ -176,17 +158,11 @@ public class ServiceTypeReportService {
     }
 
     public BoolQueryBuilder getQueryForProperties(String propertyType, BoolQueryBuilder boolQuery) {
-
         BoolQueryBuilder propertyTypeQuery = boolQuery;
         if ("VLT".equalsIgnoreCase(propertyType))
-            //In property type master id for vlt is 1
             propertyTypeQuery = propertyTypeQuery.filter(QueryBuilders.matchQuery(PROPERTYTYPE, 1));
         if ("PT".equalsIgnoreCase(propertyType))
             propertyTypeQuery = propertyTypeQuery.mustNot(QueryBuilders.matchQuery(PROPERTYTYPE, 1));
         return propertyTypeQuery;
     }
-
-    
-    
-    
 }
