@@ -40,27 +40,6 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
 <decorators defaultdir="/decorators">
-	<excludes>
-		<pattern>/40*.jsp</pattern>
-		<pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
-		<pattern>/commonyui/egov/menutree.jsp</pattern>
-		<pattern>/*Ajax.action</pattern>
-		<pattern>/*Ajax.do</pattern>
-		<pattern>/*ack.action*</pattern>
-		<pattern>/*ackNotice.action*</pattern>
-		<pattern>/*dcbForAnAssessee.action*</pattern>
-		<pattern>/*findAssesseeIdList.action*</pattern>
-		<pattern>/*duplicateLicense.action*</pattern>
-		<pattern>/*generateCertificate.action*</pattern>
-		<pattern>/*generateDuplicateNoc.action*</pattern>
-		<pattern>/*createNoc.action*</pattern>
-		<pattern>/*acknowledgement.action*</pattern>
-		<pattern>/*renewalNotice.action*</pattern>
-		<pattern>/*preliminaryNotice.action*</pattern>
-		<pattern>/*showCauseNotice.action*</pattern>
-		<pattern>/*certificateForRej.action*</pattern>
-		<pattern>/*generateSusLetter.action*</pattern>
-	</excludes>
 	<decorator name="default" page="default.jsp">
 		<pattern>/*</pattern>
 	</decorator>

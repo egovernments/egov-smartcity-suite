@@ -50,26 +50,22 @@
         "http://tiles.apache.org/dtds/tiles-config_3_0.dtd">
 <tiles-definitions>
 
-    <definition name="base_layout" template="/WEB-INF/views/template/main.jsp">
+    <definition name="base_layout" template="/WEB-INF/layout/template/main.jsp">
         <put-attribute name="title" value="eGov Urban Portal"/>
-        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="header" value="/WEB-INF/layout/template/header.jsp"/>
         <put-attribute name="body" value=""/>
-        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+        <put-attribute name="footer" value="/WEB-INF/layout/template/footer.jsp"/>
     </definition>
 
-    <definition name="ajax_base_layout" template="/WEB-INF/views/template/ajaxmain.jsp">
-        <put-attribute name="body" value=""/>
-    </definition>
-
-    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+    <definition name="error" template="/WEB-INF/layout/template/error.jsp">
         <put-attribute name="page-title" value="title.error.page" cascade="true"/>
-        <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
+        <put-attribute name="header" value="/WEB-INF/layout/template/header.jsp"/>
         <put-attribute name="body" value=""/>
-        <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
+        <put-attribute name="footer" value="/WEB-INF/layout/template/footer.jsp"/>
     </definition>
 
     <definition name="error/*" extends="error">
-        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/layout/error/{1}.jsp"/>
     </definition>
 
     <definition name="index" extends="base_layout">
@@ -78,69 +74,69 @@
 
     <definition name="feematrix-create" extends="base_layout">
         <put-attribute name="page-title" value="title.feematrix.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/feematrix/feematrix-create.jsp"/>
     </definition>
 
     <definition name="feematrix-view" extends="base_layout">
         <put-attribute name="page-title" value="title.feematrix.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/feematrix/feematrix-view.jsp"/>
     </definition>
 
     <definition name="feematrix-update" extends="base_layout">
         <put-attribute name="page-title" value="title.feematrix.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/feematrix/feematrix-update.jsp"/>
     </definition>
 
     <definition name="feematrix-search" extends="base_layout">
         <put-attribute name="page-title" value="title.feematrix.search" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/feematrix/feematrix-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/feematrix/feematrix-search.jsp"/>
     </definition>
 
     <definition name="validity-create" extends="base_layout">
         <put-attribute name="page-title" value="title.validity.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/validity/validity-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/validity/validity-create.jsp"/>
     </definition>
 
     <definition name="validity-view" extends="base_layout">
         <put-attribute name="page-title" value="title.validity.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/validity/validity-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/validity/validity-view.jsp"/>
     </definition>
 
     <definition name="validity-update" extends="base_layout">
         <put-attribute name="page-title" value="title.validity.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/validity/validity-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/validity/validity-update.jsp"/>
     </definition>
 
     <definition name="validity-search" extends="base_layout">
         <put-attribute name="page-title" value="title.validity.search" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/validity/validity-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/validity/validity-search.jsp"/>
     </definition>
 
     <definition name="dCBReport-search" extends="base_layout">
         <put-attribute name="page-title" value="title.dcbreport" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/dcb/dCBReport-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dcb-report.jsp"/>
     </definition>
 
     <definition name="penaltyRates-create" extends="base_layout">
         <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-create.jsp"/>
     </definition>
 
     <definition name="penaltyRates-view" extends="base_layout">
         <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-view.jsp"/>
     </definition>
 
-    <definition name="penaltyRates-result" template="/WEB-INF/views/penaltyRates/penaltyRates-result.jsp"/>
+    <definition name="penaltyRates-result" template="/WEB-INF/views/masters/penaltyrates/penaltyrates-result.jsp"/>
 
     <definition name="digitalSignature-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/digitalSignature/license-certificate-digisign-success.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/digisign/license-certificate-digisign-success.jsp"/>
     </definition>
 
     <definition name="license-bulk-digisign-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.digitalSignature" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/digitalSignature/license-certificate-bulk-digisign-form.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/digisign/license-certificate-bulk-digisign-form.jsp"/>
     </definition>
 
     <definition name="license-bulk-digisign-forward" extends="base_layout">
@@ -151,138 +147,138 @@
 
     <definition name="demand-generate" extends="base_layout">
         <put-attribute name="page-title" value="title.demand.generation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/demandgeneration/demand-generate.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/demand-generate.jsp"/>
     </definition>
     <definition name="demandgenerate-result" extends="base_layout">
         <put-attribute name="page-title" value="title.demand.generation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/demandgeneration/demandgenerate-result.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/demandgenerate-result.jsp"/>
     </definition>
     <definition name="document-new" extends="base_layout">
         <put-attribute name="page-title" value="title.create.document" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/documenttype/document-new.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-new.jsp"/>
     </definition>
     <definition name="document-search" extends="base_layout">
         <put-attribute name="page-title" value="title.document.search" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/documenttype/document-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-search.jsp"/>
     </definition>
     <definition name="document-edit" extends="base_layout">
         <put-attribute name="page-title" value="title.document.edit" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/documenttype/document-edit.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-edit.jsp"/>
     </definition>
     <definition name="document-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.view" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/documenttype/document-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/documenttype/document-view.jsp"/>
     </definition>
     <definition name="licensecategory-create" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/licensecategory-create.jsp"/>
     </definition>
     <definition name="licensecategory-update" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/licensecategory-update.jsp"/>
     </definition>
     <definition name="licensecategory-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/licensecategory-view.jsp"/>
     </definition>
     <definition name="licensecategory-search-update" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-search-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/licensecategory-search-update.jsp"/>
     </definition>
     <definition name="licensecategory-search-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/category/licensecategory-search-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/category/licensecategory-search-view.jsp"/>
     </definition>
     <definition name="subcategory-create" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/subcategory/subcategory-create.jsp"/>
     </definition>
     <definition name="subcategory-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/subcategory/subcategory-view.jsp"/>
     </definition>
     <definition name="subcategory-search-update" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-search-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/subcategory/subcategory-search-update.jsp"/>
     </definition>
     <definition name="subcategory-update" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/subcategory/subcategory-update.jsp"/>
     </definition>
     <definition name="subcategory-search-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/subcategory/subcategory-search-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/subcategory/subcategory-search-view.jsp"/>
     </definition>
     <definition name="uom-create" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/uom/uom-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/uom/uom-create.jsp"/>
     </definition>
     <definition name="uom-update" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/uom/uom-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/uom/uom-update.jsp"/>
     </definition>
     <definition name="uom-search-update" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/uom/uom-search-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/uom/uom-search-update.jsp"/>
     </definition>
     <definition name="uom-search-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/uom/uom-search-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/uom/uom-search-view.jsp"/>
     </definition>
     <definition name="uom-view" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/uom/uom-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/uom/uom-view.jsp"/>
     </definition>
     <definition name="searchtrade-license" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/search/searchtrade-license.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/search/search-license.jsp"/>
     </definition>
     <definition name="baseregister-report" extends="base_layout">
         <put-attribute name="page-title" value="title.baseregister" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/baseregister/baseregister-report.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/baseregister-report.jsp"/>
     </definition>
     <definition name="penaltyRates-search" extends="base_layout">
         <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-search.jsp"/>
     </definition>
     <definition name="penaltyRates-viewResult" extends="base_layout">
         <put-attribute name="page-title" value="title.searchpenaltyRate" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/penaltyRates/penaltyRates-viewResult.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/masters/penaltyrates/penaltyrates-list.jsp"/>
     </definition>
     <definition name="search-demandnotice" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/search/search-demandnotice.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/search-demandnotice.jsp"/>
     </definition>
     <definition name="searchtrade-licenseforpay" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/search/searchtrade-licenseforpay.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/search/search-license-online.jsp"/>
     </definition>
     <definition name="license-onlinepayment" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/payment/license-onlinepayment.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/view/transactions/payment/license-online-payment.jsp"/>
     </definition>
     <definition name="dcr-search" extends="base_layout">
         <put-attribute name="page-title" value="title.dailycollection" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/dailycitizenreport/dcr-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dcr-report.jsp"/>
     </definition>
     <definition name="view-license-dcb" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/jsp/payment/view-license-dcb.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/view-license-dcb.jsp"/>
     </definition>
     <definition name="create-legacylicense" extends="base_layout">
         <put-attribute name="page-title" value="title.legacylicense" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-create.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legacylicense/legacy-create.jsp"/>
     </definition>
     <definition name="license-view" extends="base_layout">
         <put-attribute name="page-title" value="title.legacylicense" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-view.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legacylicense/legacy-view.jsp"/>
     </definition>
     <definition name="updateform-legacylicense" extends="base_layout">
         <put-attribute name="page-title" value="title.legacylicense" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/legacylicense/legacy-update.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/legacylicense/legacy-update.jsp"/>
     </definition>
     <definition name="yearwiseDCBReport-search" extends="base_layout">
         <put-attribute name="page-title" value="lbl.installmentwise.dcb.report" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/dcb/installmentwisedcbreport-search.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/reports/dcb-installmentwise-report.jsp"/>
     </definition>
 </tiles-definitions>
