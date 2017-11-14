@@ -105,7 +105,7 @@ public class LegalCaseDocumentService {
                     .withPreviousCaseNumber(legalCase.getAppealNum() != null ? legalCase.getAppealNum() : "")
                     .withOfficerIncharge(
                             legalCase.getOfficerIncharge() != null ? legalCase.getOfficerIncharge().getName() : "")
-                    .withSubStatus(legalCase.getReportStatus().getName())
+                    .withSubStatus(legalCase.getReportStatus() !=null ? legalCase.getReportStatus().getName() : "")
                     .withPwrDueDate(legalCase.getPwrList().get(0).getPwrDueDate())
                     .withCaDueDate(legalCase.getPwrList().get(0).getCaDueDate())
                     .withFiledByULB(legalCase.getIsFiledByCorporation())

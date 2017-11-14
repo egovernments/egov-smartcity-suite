@@ -93,12 +93,18 @@
 							<spring:message code="lbl.costawarded" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${judgment.costAwarded}</div>
+							<fmt:formatNumber var="formattedRate" type="number"
+							minFractionDigits="2" maxFractionDigits="2"
+							value="${judgment.costAwarded}" />
+						<c:out value="${formattedRate}" /></div>
 						<div class="col-xs-3 add-margin">
 							<spring:message code="lbl.compensationawarded" />
 						</div>
 						<div class="col-sm-3 add-margin view-content">
-							${judgment.compensationAwarded}</div>
+							<fmt:formatNumber var="formattedRate" type="number"
+							minFractionDigits="2" maxFractionDigits="2"
+							value="${judgment.compensationAwarded}" />
+						<c:out value="${formattedRate}" /></div>
 					</div>
 
 					<div class="row add-border">

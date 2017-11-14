@@ -109,17 +109,18 @@
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.costawarded" /> :</label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="costAwarded"
+							<form:input path="costAwarded" id="costAwarded"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" />
+								data-pattern="decimalvalues" maxlength="10" 
+								title="Please enter a valid digits ,it will allow upto 10 digits"  data-first-option="false&true"/>
 							<form:errors path="costAwarded" cssClass="error-msg" />
 						</div>
 						<label class="col-sm-3 control-label text-right"><spring:message
 								code="lbl.compensationawarded" />: </label>
 						<div class="col-sm-3 add-margin">
-							<form:input path="compensationAwarded"
+							<form:input path="compensationAwarded" id="compensationAwarded"
 								class="form-control text-left patternvalidation"
-								data-pattern="number" />
+								data-pattern="decimalvalues" title="Please enter a valid digits,it will allow upto 10 digits" maxlength="10" data-first-option="false&true"/>
 							<form:errors path="compensationAwarded" cssClass="error-msg" />
 						</div>
 					</div>

@@ -103,8 +103,8 @@ public class EditJudgmentController {
     }
 
     @RequestMapping(value = "/edit/", method = RequestMethod.POST)
-    public String update(@Valid @ModelAttribute final Judgment judgment,
-            @RequestParam("lcNumber") final String lcNumber, final BindingResult errors,
+    public String update(@Valid @ModelAttribute final Judgment judgment,final BindingResult errors,
+            @RequestParam("lcNumber") final String lcNumber,
             @RequestParam("file") final MultipartFile[] files, final HttpServletRequest request, final Model model,
             final RedirectAttributes redirectAttrs) throws IOException, ParseException {
         if (errors.hasErrors()) {

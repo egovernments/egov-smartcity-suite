@@ -69,6 +69,39 @@ function loadDateFields(){
 
 });
 
+$("#costAwarded").on("keyup", function(){  // validate 10 digits and two decimal points
+    var valid = /^\d{0,9}?$/.test(this.value),
+        val = this.value;
+    
+    if(!valid){
+        console.log("Invalid input!");
+        this.value = val.substring(0, val.length - 1);
+    }
+});
+
+$("#compensationAwarded").on("keyup", function(){  // validate 10 digits and two decimal points
+    var valid = /^\d{0,9}?$/.test(this.value),
+        val = this.value;
+    
+    if(!valid){
+        console.log("Invalid input!");
+        this.value = val.substring(0, val.length - 1);
+    }
+});
+
+$('#buttonSubmit').click(function() {
+	
+	if($("#judgmentform").valid())
+	{
+		document.forms[0].submit();
+		return true;
+		}
+	return false;
+	
+});
+
+
+
 $('#btnclose').click(function(){
 	bootbox.confirm({
 	    message: 'Information entered in this screen will be lost if you close this page ? Please confirm if you want to close. ',
@@ -90,3 +123,23 @@ $('#btnclose').click(function(){
 	});
 	
 });
+
+/*function checkForTwoDecimals(obj,msg)
+{
+	var objt = obj;
+	var value = obj.value;
+	if ((value != null) || (value !="" ) )
+	{
+	
+	       var str=value.split(".");
+	       if(str[1]!=null && str[1]!="" && str[1]!=undefined && str[1].length>0)
+	       {
+	        bootbox.alert("Please Enter valid ");
+			objt.value="";
+			objt.focus();
+			return false;
+			}
+	}
+}
+
+*/
