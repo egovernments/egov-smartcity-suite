@@ -123,23 +123,3 @@ $('#btnclose').click(function(){
 	});
 	
 });
-
-/*function checkForTwoDecimals(obj,msg)
-{
-	var objt = obj;
-	var value = obj.value;
-	if ((value != null) || (value !="" ) )
-	{
-	
-	       var str=value.split(".");
-	       if(str[1]!=null && str[1]!="" && str[1]!=undefined && str[1].length>0)
-	       {
-	        bootbox.alert("Please Enter valid ");
-			objt.value="";
-			objt.focus();
-			return false;
-			}
-	}
-}
-
-*/
