@@ -8,7 +8,7 @@
 #   clean: Remove old EAR from Wildfly.
 #   remove: Remove all the stacks.
 
-WORK_DIR	=	${HOME}/EGOV-PHOENIX-STACK
+INSTALL_DIR		=	${HOME}/EGOV-PHOENIX-STACK
 ###############
 
 #-include: ./dev-utils/setenv.sh
@@ -20,7 +20,7 @@ all: install build deploy
 .PHONY: install
 install:
 	@echo "[ ** INSTALL ** ] - Install PHOENIX Stack"
-	@eval ./dev-utils/ansible/install.sh ${WORK_DIR}
+	@eval ./dev-utils/ansible/install.sh ${INSTALL_DIR}
 ###############
 .PHONY: build
 build:
@@ -32,6 +32,11 @@ deploy:
 	@echo "[ ** DEPLOY ** ] - Deploy the EAR artifacts to WILDFLY"
 	@eval ./dev-utils/deployment/deploy.sh
 ###############
+.PHONY: upgrade
+upgrade:
+	@eval ./dev-utils/deployment/tools-update.sh ${INSTALL_DIR} "${name}" "${version}" 
+
+###############
 .PHONY: clean
 clean:
 	@echo "[ ** CLEAN ** ] - Remove old deployments."
@@ -40,4 +45,4 @@ clean:
 .PHONY: remove
 remove:
 	@echo "[ ** Remove ** ] - Remove all the stacks."
-	@rm -rf ${WORK_DIR}
+	@rm -rf ${INSTALL_DIR}
