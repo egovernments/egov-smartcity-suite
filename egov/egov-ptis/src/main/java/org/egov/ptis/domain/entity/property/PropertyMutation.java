@@ -344,7 +344,7 @@ public class PropertyMutation extends StateAware<Position> {
 
     public User getPrimaryTransferee() {
         User user = new User();
-        if (getTransfereeInfos() != null && getTransfereeInfos().isEmpty()) {
+		if (!getTransfereeInfos().isEmpty()) {
             return getTransferorInfos().get(0);
         }
         return user;
@@ -352,7 +352,7 @@ public class PropertyMutation extends StateAware<Position> {
 
     public User getPrimaryTransferor() {
         User user = new User();
-        if (getTransferorInfos() != null && getTransferorInfos().isEmpty()) {
+		if (!getTransferorInfos().isEmpty()) {
             return getTransferorInfos().get(0);
         }
         return user;
