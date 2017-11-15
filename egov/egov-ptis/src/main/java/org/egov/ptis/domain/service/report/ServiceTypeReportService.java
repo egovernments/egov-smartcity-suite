@@ -51,6 +51,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.domain.entity.property.ServiceTypeReportResponse;
 import org.egov.ptis.domain.entity.property.WardWiseServiceReponse;
@@ -150,6 +151,7 @@ public class ServiceTypeReportService {
 
     public BoolQueryBuilder getSearchFilterQuery(WardWiseServiceTypeRequest wardWiseRequest, Date fromDate, Date toDate) {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("cityCode", ApplicationThreadLocals.getCityCode()))
                 .filter(QueryBuilders.rangeQuery(APPLICATION_DATE).gte(DATEFORMATTER_YYYY_MM_DD.format(fromDate))
                         .lte(DATEFORMATTER_YYYY_MM_DD.format(toDate)));
         if (StringUtils.isNotBlank(wardWiseRequest.getRevenueWard()))
