@@ -363,34 +363,35 @@ $(document).ready(function () {
                 var inactive = $('#inactive').is(":checked");
                 reportdatatable = drillDowntableContainer
                     .dataTable({
-                    	 processing : true,
-	       		         serverSide : true,
-	       		         sort : true,
-	       		         filter : true,
-                        scrollY:        "500px",
-                        scrollX:        true,
+                        processing: true,
+                        serverSide: true,
+                        sort: true,
+                        filter: true,
+                        scrollY: "500px",
+                        scrollX: true,
                         scrollCollapse: true,
-                        fixedColumns:   {
+                        fixedColumns: {
                             leftColumns: 1
                         },
                         ajax: {
-                            type:"POST",
-                            data:function (args) {
-                       		 return {"args": JSON.stringify(args),
-                                applicationNumber: applicationNumber,
-                                licenseNumber: licenseNumber,
-                                oldLicenseNumber: oldLicenseNumber,
-                                categoryId: category,
-                                subCategoryId: subCategory,
-                                tradeTitle: tradeTitle,
-                                tradeOwnerName: tradeOwnerName,
-                                propertyAssessmentNo: propertyAssessmentNo,
-                                mobileNo: mobileNo,
-                                ownerName: ownerName,
-                                statusId: status,
-                                expiryYear: expiryYear,
-                                inactive: inactive
-                            }
+                            type: "POST",
+                            data: function (args) {
+                                return {
+                                    "args": JSON.stringify(args),
+                                    applicationNumber: applicationNumber,
+                                    licenseNumber: licenseNumber,
+                                    oldLicenseNumber: oldLicenseNumber,
+                                    categoryId: category,
+                                    subCategoryId: subCategory,
+                                    tradeTitle: tradeTitle,
+                                    tradeOwnerName: tradeOwnerName,
+                                    propertyAssessmentNo: propertyAssessmentNo,
+                                    mobileNo: mobileNo,
+                                    ownerName: ownerName,
+                                    statusId: status,
+                                    expiryYear: expiryYear,
+                                    inactive: inactive
+                                }
                             }
                         },
                         "bDestroy": true,
@@ -407,50 +408,50 @@ $(document).ready(function () {
                                     + data.id + '">' + data.name + '</a>';
                             },
                             "sTitle": "Application Number",
-                          "name":"applicationNumber"
+                            "name": "applicationNumber"
                         }, {
                             "data": "tlNumber",
-                            "name":"licenseNumber",
+                            "name": "licenseNumber",
                             "sTitle": "TL Number"
                         }, {
                             "data": "oldTLNumber",
-                          "name":"oldLicenseNumber",
+                            "name": "oldLicenseNumber",
                             "sTitle": "Old TL Number"
                         }, {
                             "data": "category",
-                             "name":"categoryName",
+                            "name": "categoryName",
                             "sTitle": "Category"
                         }, {
                             "data": "subCategory",
-                            "name":"tradeName.name",
+                            "name": "tradeName.name",
                             "sTitle": "Sub-Category"
                         }, {
                             "data": "tradeTitle",
-                            "name":"nameOfEstablishment",
+                            "name": "nameOfEstablishment",
                             "sTitle": "Title of Trade"
                         }, {
                             "data": "tradeOwner",
-                           "name":"licensee.applicantName",
+                            "name": "licensee.applicantName",
                             "sTitle": "Trade Owner"
                         }, {
                             "data": "mobileNumber",
-                            "name":"licensee.mobilePhoneNumber",
+                            "name": "licensee.mobilePhoneNumber",
                             "sTitle": "Mobile Number"
                         }, {
                             "data": "propertyAssmntNo",
-                            "name":"assessmentNo",
+                            "name": "assessmentNo",
                             "sTitle": "Property Assessment Number"
                         }, {
                             "data": "expiryYear",
-                             "name":"dateOfExpiry",
+                            "name": "dateOfExpiry",
                             "sTitle": "Financial Year"
                         }, {
                             "data": "status",
-                             "name":"status.id",
+                            "name": "status.id",
                             "sTitle": "Application Status"
                         }, {
                             "data": "active",
-                           "name":"isActive",
+                            "name": "isActive",
                             "sTitle": "License Active"
                         }, {
                             "data": "ownerName",
@@ -477,6 +478,7 @@ $(document).ready(function () {
         }
     );
 });
+
 function goToView(id) {
     window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
@@ -498,9 +500,9 @@ function goToAction(obj, id) {
         window.open("/tl/demand-notice/generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
         window.open("/tl/viewtradelicense/showclosureform.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
-    else if(obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
-        window.open("/tl/demand/licensedemandgenerate?licenseId=" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
-    else if(obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
+        window.open("/tl/demand/generate/" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
         window.open("/tl/license/acknowledgement/" + id);
     $(obj).val('');
 }

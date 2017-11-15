@@ -46,32 +46,32 @@
 <div class="row">
     <div class="col-md-12">
         <form:form role="form" action="" id="generatelicensedemand" name="generatelicensedemand" cssClass="form-horizontal form-groups-bordered" method="post">
-                <div class="panel panel-primary" data-collapsed="0">
-                    <c:choose>
-                        <c:when test="${not empty message}">
-                            <div class="alert alert-info" role="alert" style="text-align: center"><spring:message code="${message}"/></div>
-                            <div class="row">
-                                <div class="text-center">
-                                    <a href="javascript:void(0);" onclick="self.close()" class="btn btn-default"><spring:message code="lbl.close"/></a>
-                                </div>
+            <div class="panel panel-primary" data-collapsed="0">
+                <c:choose>
+                    <c:when test="${not empty message}">
+                        <div class="alert alert-info" role="alert" style="text-align: center"><spring:message code="${message}"/></div>
+                        <div class="row">
+                            <div class="text-center">
+                                <a href="javascript:void(0);" onclick="self.close()" class="btn btn-default"><spring:message code="lbl.close"/></a>
                             </div>
-                        </c:when>
-                        <c:otherwise>
-                            <div class="panel-heading">
-                                <div class="panel-title">
-                                    <input type="hidden" name="licenseNumber" value="${licenseNumber}">
-                                    <strong>Are you sure to generate demand for the license <c:out value="${licenseNumber}" /> for the installment year <c:out value="${financialYear}"/></strong>
-                                </div>
+                        </div>
+                    </c:when>
+                    <c:otherwise>
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <input type="hidden" name="licenseNumber" value="${licenseNumber}">
+                                <strong>Are you sure to generate demand for the license <c:out value="${licenseNumber}"/> for the installment year <c:out value="${financialYear}"/></strong>
                             </div>
-                            <div class="row">
-                                <div class="text-center">
-                                    <button type="submit" id="generatedemand" class="btn btn-primary"><spring:message code="lbl.confirm"/></button>
-                                    <a href="javascript:void(0);" onclick="self.close()" class="btn btn-default"><spring:message code="lbl.close"/></a>
-                                </div>
+                        </div>
+                        <div class="row">
+                            <div class="text-center">
+                                <button type="submit" id="generatedemand" class="btn btn-primary"><spring:message code="lbl.confirm"/></button>
+                                <a href="javascript:void(0);" onclick="self.close()" class="btn btn-default"><spring:message code="lbl.close"/></a>
                             </div>
-                        </c:otherwise>
-                    </c:choose>
-                </div>
+                        </div>
+                    </c:otherwise>
+                </c:choose>
+            </div>
         </form:form>
     </div>
 </div>

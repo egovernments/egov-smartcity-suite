@@ -854,9 +854,10 @@ public abstract class AbstractLicenseService<T extends License> {
             throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
     }
 
-    public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear) {
-        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), installmentYear.getStartingDate());
-        return licenseRepository.findByNatureOfBusinessNameAndStatusName(natureOfBusiness, LICENSE_STATUS_ACTIVE, installment.getFromDate());
+    public List<Long> getLicenseIdsForDemandGeneration(CFinancialYear financialYear) {
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(),
+                financialYear.getStartingDate());
+        return licenseRepository.findLicenseIdsForDemandGeneration(installment.getFromDate());
     }
 
 

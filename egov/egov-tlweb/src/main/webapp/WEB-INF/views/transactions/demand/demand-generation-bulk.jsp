@@ -41,57 +41,71 @@
   --%>
 
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<style>
+    .progress {
+        width: 300px;
+        position: relative;
+    }
+
+    .progress-bar-title {
+        position: absolute;
+        text-align: center;
+        line-height: 20px; /* line-height should be equal to bar height */
+        overflow: hidden;
+        color: #000;
+        right: 0;
+        left: 0;
+        top: 0;
+    }
+</style>
 <div class="row">
     <div class="col-md-12">
         <div class="panel panel-primary" data-collapsed="0">
             <div class="panel-heading">
                 <div class="panel-title"><spring:message code="title.demand.generation"/></div>
             </div>
+
             <div class="panel-body">
                 <form:form role="form" id="generatedemand" name="generatedemand"
                            cssClass="form-horizontal form-groups-bordered" method="post">
                     <div class="form-group">
-                        <label class="col-sm-4 control-label text-right"><spring:message
+                        <label class="col-sm-6 control-label"><spring:message
                                 code="lbl.financialyear"/> </label>
-                        <div class="col-sm-4 add-margin">
-                            <select name="installmentYear" id="installmentYear" class="form-control"
-                                    required="required">
-                                <option value=""><spring:message code="lbl.select"/></option>
-                                <c:forEach items="${financialYearList}" var="finYear">
-                                    <option value="${finYear.finYearRange}">${finYear.finYearRange}</option>
-                                </c:forEach>
-                            </select>
+                        <div class="col-sm-4">
+                            <input type="hidden" value="${installmentYear}" id="installmentYear">
+                            <label class="col-sm-4 control-label text-left">${installmentYear}</label>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <div class="text-center">
-                            <button type="submit" class='btn btn-primary' id="submit">
+                    <div class="form-group add-margin">
+                        <div class="col-sm-12 text-center">
+                            <button type="button" class='btn btn-primary' id="genDmdBtn">
                                 <spring:message code='lbl.generate.demand'/>
-                            </button>
-                            <button type="submit" class='btn btn-primary' id="genmissingbtn" name="generatemissing">
-                                <spring:message code="lbl.generate.missing.demand"/>
-                            </button>
+                            </button>&nbsp;&nbsp;&nbsp;
                             <button type="button" class="btn btn-default" data-dismiss="modal"
                                     onclick="window.close();">
                                 <spring:message code='lbl.close'/></button>
                         </div>
                     </div>
-                    <div class="text-center add-margin hidden" id="regeneratediv">
-                        <button type="submit" class='btn btn-primary' id="regenbtn" name="regenerate"><spring:message
-                                code="lbl.retry.failed.demand"/></button>
-                    </div>
-                    <c:if test="${retry == 'true'}">
-                        <script>$('#regeneratediv').removeClass('hidden');</script>
-                    </c:if>
-                    <c:if test="${not empty demandgenerationdata}">
-                        <script>$("#installmentYear").val('${installmentYear}');</script>
-                        <div class="alert alert-info" role="alert"><spring:message code="${message}"/></div>
-                        <div class="col-md-12 form-group report-table-container">
-                            <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
-                                   id="tbldemandgenerate">
-                            </table>
+
+                    <div class="progress-div text-center form-group display-hide">
+
+                        <div class="alert alert-info" role="alert">
+                            <spring:message code="lbl.generate.demand.wait"/>
+                            <div class="progress center-block" style="width:300px">
+                                <div class="progress-bar progress-bar-striped active" role="progressbar"
+                                     aria-valuenow="0" aria-valuemin="0" aria-valuemax="${licenseIds.size()}">
+                                    <div class="progress-bar-title"></div>
+                                </div>
+                            </div>
+                            <spring:message code="lbl.generate.demand.info"/>
                         </div>
-                    </c:if>
+                    </div>
+                    <div class="col-md-12form-group report-table-container display-hide">
+
+                        <table class="table table-bordered datatable dt-responsive table-hover multiheadertbl"
+                               id="tbldemandgenerate">
+                        </table>
+                    </div>
 
                 </form:form>
             </div>
@@ -122,8 +136,8 @@
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.html5.min.js' context='/egi'/>"></script>
 <script
         src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/extensions/buttons/buttons.print.min.js' context='/egi'/>"></script>
-<script src="<cdn:url  value='/resources/js/app/trade-license-demand-generation.js?rnd=${app_release_no}'/>"></script>
 <script>
-    var reportData =${demandgenerationdata};
-    populateData(reportData);
+    var licenseIds = ${licenseIds};
+    var logDetails = '${demandGenerationLogDetails}';
 </script>
+<script src="<cdn:url  value='/resources/js/app/demand-generation-bulk.js?rnd=${app_release_no}'/>"></script>

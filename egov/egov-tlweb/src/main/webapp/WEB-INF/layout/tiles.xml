@@ -131,12 +131,14 @@
 
     <definition name="digitalSignature-success" extends="base_layout">
         <put-attribute name="page-title" value="lbl.digitalSignature.success.title" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/transactions/digisign/license-certificate-digisign-success.jsp"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/digisign/license-certificate-digisign-success.jsp"/>
     </definition>
 
     <definition name="license-bulk-digisign-form" extends="base_layout">
         <put-attribute name="page-title" value="lbl.digitalSignature" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/transactions/digisign/license-certificate-bulk-digisign-form.jsp"/>
+        <put-attribute name="body"
+                       value="/WEB-INF/views/transactions/digisign/license-certificate-bulk-digisign-form.jsp"/>
     </definition>
 
     <definition name="license-bulk-digisign-forward" extends="base_layout">
@@ -147,11 +149,11 @@
 
     <definition name="demand-generate" extends="base_layout">
         <put-attribute name="page-title" value="title.demand.generation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/demand-generate.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/demand-generation-bulk.jsp"/>
     </definition>
     <definition name="demandgenerate-result" extends="base_layout">
         <put-attribute name="page-title" value="title.demand.generation" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/demandgenerate-result.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/demand/demand-generation.jsp"/>
     </definition>
     <definition name="document-new" extends="base_layout">
         <put-attribute name="page-title" value="title.create.document" cascade="true"/>

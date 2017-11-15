@@ -48,18 +48,18 @@ import org.egov.tl.entity.DemandGenerationLogDetail;
 
 import java.lang.reflect.Type;
 
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+
 public class DemandGenerationResponseAdaptor implements JsonSerializer<DemandGenerationLogDetail> {
 
     @Override
-    public JsonElement serialize(DemandGenerationLogDetail demandGenerationLogDetail, Type type, JsonSerializationContext jsc) {
-        JsonObject demandGenerationResponse = new JsonObject();
-        if (demandGenerationLogDetail != null) {
-            demandGenerationResponse.addProperty("licensenumber", demandGenerationLogDetail.getLicense().getLicenseNumber() != null ? demandGenerationLogDetail.getLicense().getLicenseNumber() : "N/A");
-            demandGenerationResponse.addProperty("licenseid", demandGenerationLogDetail.getLicense().getId());
-            demandGenerationResponse.addProperty("status", demandGenerationLogDetail.getStatus().toString());
-            demandGenerationResponse.addProperty("detail", demandGenerationLogDetail.getDetail());
-        }
-        return demandGenerationResponse;
+    public JsonElement serialize(DemandGenerationLogDetail detail, Type type, JsonSerializationContext jsc) {
+        JsonObject demandLogDetailResponse = new JsonObject();
+        demandLogDetailResponse.addProperty("licenseNumber", defaultIfBlank(detail.getLicense().getLicenseNumber()));
+        demandLogDetailResponse.addProperty("licenseId", detail.getLicense().getId());
+        demandLogDetailResponse.addProperty("status", detail.getStatus().toString());
+        demandLogDetailResponse.addProperty("detail", detail.getDetail());
+        return demandLogDetailResponse;
     }
 
 }
