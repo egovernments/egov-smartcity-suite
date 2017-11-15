@@ -103,7 +103,8 @@ public class DemandGenerationLogService {
                 findByDemandGenerationLogIdAndLicenseId(demandGenerationLog.getId(), license.getId());
         if (logDetail == null) {
             logDetail = new DemandGenerationLogDetail();
-            logDetail.setLicense(license);
+            logDetail.setLicenseId(license.getId());
+            logDetail.setLicenseNumber(license.getLicenseNumber());
             logDetail.setDemandGenerationLog(demandGenerationLog);
             logDetail.setStatus(ProcessStatus.INPROGRESS);
             demandGenerationLog.getDetails().add(logDetail);

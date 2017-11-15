@@ -55,8 +55,8 @@ public class DemandGenerationResponseAdaptor implements JsonSerializer<DemandGen
     @Override
     public JsonElement serialize(DemandGenerationLogDetail detail, Type type, JsonSerializationContext jsc) {
         JsonObject demandLogDetailResponse = new JsonObject();
-        demandLogDetailResponse.addProperty("licenseNumber", defaultIfBlank(detail.getLicense().getLicenseNumber()));
-        demandLogDetailResponse.addProperty("licenseId", detail.getLicense().getId());
+        demandLogDetailResponse.addProperty("licenseNumber", defaultIfBlank(detail.getLicenseNumber()));
+        demandLogDetailResponse.addProperty("licenseId", detail.getLicenseId());
         demandLogDetailResponse.addProperty("status", detail.getStatus().toString());
         demandLogDetailResponse.addProperty("detail", detail.getDetail());
         return demandLogDetailResponse;

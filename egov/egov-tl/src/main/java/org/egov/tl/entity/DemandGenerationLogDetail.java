@@ -52,7 +52,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.Objects;
@@ -69,9 +68,9 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "license", nullable = false)
-    private License license;
+    private String licenseNumber;
+
+    private Long licenseId;
 
     @Enumerated(EnumType.STRING)
     private ProcessStatus status;
@@ -92,12 +91,20 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public License getLicense() {
-        return license;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicense(final License license) {
-        this.license = license;
+    public void setLicenseNumber(final String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public Long getLicenseId() {
+        return licenseId;
+    }
+
+    public void setLicenseId(final Long licenseId) {
+        this.licenseId = licenseId;
     }
 
     public ProcessStatus getStatus() {
@@ -131,12 +138,12 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
         if (!(other instanceof DemandGenerationLogDetail))
             return false;
         DemandGenerationLogDetail that = (DemandGenerationLogDetail) other;
-        return Objects.equals(license, that.license) &&
+        return Objects.equals(licenseId, that.licenseId) &&
                 Objects.equals(demandGenerationLog, that.demandGenerationLog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(license, demandGenerationLog);
+        return Objects.hash(licenseId, demandGenerationLog);
     }
 }
