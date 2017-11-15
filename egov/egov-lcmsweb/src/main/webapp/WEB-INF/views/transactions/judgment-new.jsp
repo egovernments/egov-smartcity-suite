@@ -45,8 +45,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form id="judgmentform" class="form-horizontal form-groups-bordered" 
-		modelAttribute="judgment" role="form"  method="post" enctype="multipart/form-data">
+<form:form  class="form-horizontal form-groups-bordered" 
+		modelAttribute="judgment" role="form"  method="post" id="judgmentform" enctype="multipart/form-data">
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
 	 <jsp:include page="../transactions/view-summarizedcase.jsp"/>  
 	 <%@ include file="judgment-form.jsp"%>
@@ -59,7 +59,7 @@
 	
 	<div class="form-group">
 		<div class="text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.submit"/></button>
+		<button type="submit" class='btn btn-primary' id="buttonSubmit"><spring:message code="lbl.submit"/></button>
 			<button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' />
 		</div>
 	</div>

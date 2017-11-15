@@ -70,7 +70,7 @@ function loadDateFields(){
 });
 
 $("#costAwarded").on("keyup", function(){  // validate 10 digits and two decimal points
-    var valid = /^\d{0,9}?$/.test(this.value),
+    var valid = /^\d{0,10}?$/.test(this.value),
         val = this.value;
     
     if(!valid){
@@ -80,7 +80,7 @@ $("#costAwarded").on("keyup", function(){  // validate 10 digits and two decimal
 });
 
 $("#compensationAwarded").on("keyup", function(){  // validate 10 digits and two decimal points
-    var valid = /^\d{0,9}?$/.test(this.value),
+    var valid = /^\d{0,10}?$/.test(this.value),
         val = this.value;
     
     if(!valid){
