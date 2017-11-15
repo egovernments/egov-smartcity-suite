@@ -56,7 +56,6 @@ $(document).ready(function () {
             $(this).children('ul').hide();
         });
 
-    //TODO not yet implemented at backend
     $('#feedback-form').on('submit', function (e) {
         e.preventDefault();
         $.ajax({
@@ -125,7 +124,7 @@ $(document).ready(function () {
     $("#official_inbox").on('click', 'tbody tr td i.inbox-history', function (e) {
         $('.history-inbox').modal('show');
         historyTableContainer = $("#historyTable");
-        historyTableContainer.dataTable({
+        historyTableContainer.DataTable({
             "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i>" +
             "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -137,7 +136,7 @@ $(document).ready(function () {
                 "sInfo": ""
             },
             "ajax": {
-                "url": "inbox/history?stateId=" + tableContainer1.fnGetData($(this).parent().parent(), 6),
+                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 6),
                 "dataSrc": ""
             },
             "columns": [
@@ -175,20 +174,22 @@ $(document).ready(function () {
     });
 
     $('.search-table').keyup(function () {
-        tableContainer1.fnFilter(this.value);
+        tableContainer1.dataTable().fnFilter(this.value);
     });
 
     $("#official_inbox").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.fnGetData(this, 7) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.fnGetData(this, 7), '' + tableContainer1.fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
+                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
     });
 
     $("#official_drafts").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.fnGetData(this, 6) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.fnGetData(this, 6), '' + tableContainer1.fnGetData(this, 5) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 6) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 6),
+                tableContainer1.dataTable().fnGetData(this, 5) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
@@ -220,7 +221,6 @@ $(document).ready(function () {
             taskName = unescape($(this).data('now'));
 
         now_json = [];
-        //console.log('Clicked item-->'+now);
         refreshnow(taskName, moduleName);
 
         $('#inboxsearch').trigger('keyup');
@@ -361,7 +361,6 @@ $(document).ready(function () {
         }
         else {
             for (var prop in theObject) {
-                //console.log(prop + ': ' + theObject[prop]);
                 if (prop == 'name') {
                     if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0) {
                         if (theObject.link != 'javascript:void(0);' && theObject.icon != 'fa fa-times-circle remove-favourite') {
@@ -432,7 +431,7 @@ function clearnow() {
 //common ajax functions for worklist, drafts and notifications
 function worklist() {
     tableContainer1 = $("#official_inbox");
-    tableContainer1.dataTable({
+    tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
@@ -442,6 +441,7 @@ function worklist() {
             "url": "inbox",
             "dataSrc": ""
         },
+        "deferRender": true,
         "columns": [
             {"data": "date", "width": "16%"},
             {"data": "sender", "width": "15%"},
@@ -493,8 +493,6 @@ function worklist() {
 
                 loadGroupMenusModuleWise(groupByModule);
 
-            } else {
-                //console.log('Response data is empty');
             }
         }
     });
@@ -542,7 +540,7 @@ function loadGroupMenusModuleWise(moduleArray) {
 
 function drafts() {
     tableContainer1 = $("#official_drafts");
-    tableContainer1.dataTable({
+    tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
         "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
@@ -553,6 +551,7 @@ function drafts() {
             "url": "inbox/draft",
             "dataSrc": ""
         },
+        "deferRender": true,
         "columns": [
             {"data": "date", "width": "16%"},
             {"data": "sender", "width": "15%"},
@@ -577,20 +576,21 @@ function drafts() {
 
 function notifications() {
     tableContainer1 = $("#official_notify");
-    tableContainer1.dataTable({
+    tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
         "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         /* Disable initial sort */
         "aaSorting": [],
-        "autoWidth": false
+        "autoWidth": false,
+        "deferRender": true
     });
 }
 
 function worklistwrtnow(json) {
     tableContainer1 = $("#official_inbox");
-    tableContainer1.dataTable({
+    tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
         "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
