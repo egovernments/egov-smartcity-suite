@@ -41,7 +41,7 @@ package org.egov.tl.web.controller.masters.penaltyrates;
 
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.PenaltyRates;
-import org.egov.tl.entity.dto.PenaltyForm;
+import org.egov.tl.entity.contracts.PenaltyForm;
 import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.springframework.beans.factory.annotation.Autowired;

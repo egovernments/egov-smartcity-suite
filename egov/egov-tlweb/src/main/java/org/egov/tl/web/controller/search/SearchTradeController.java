@@ -41,7 +41,7 @@
 package org.egov.tl.web.controller.search;
 
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.entity.contracts.SearchForm;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.TradeLicenseService;

@@ -44,7 +44,7 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.tl.entity.dto.BaseRegisterRequest;
+import org.egov.tl.entity.contracts.BaseRegisterRequest;
 import org.egov.tl.entity.view.BaseRegister;
 import org.egov.tl.repository.BaseRegisterReportRepository;
 import org.egov.tl.repository.specs.BaseRegisterSpec;

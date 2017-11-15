@@ -1,8 +1,8 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,13 +26,6 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
- *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -45,31 +38,63 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.entity.dto;
+package org.egov.tl.entity.contracts;
 
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import java.util.List;
+public class BaseRegisterRequest extends DataTableSearchRequest {
 
-public class DCBReportSearchRequest extends DataTableSearchRequest {
+    private Long categoryId;
 
-    private Long licenseid;
+    private Long subCategoryId;
 
-    private String licensenumber;
+    private Long statusId;
+
+    private Long wardId;
+
+    private String filterName;
 
     private ReportFormat printFormat;
 
-    private Integer activeLicense = Integer.valueOf(0);
-
-    private List<Long> wardId;
-
-    public String getLicensenumber() {
-        return licensenumber;
+    public Long getCategoryId() {
+        return categoryId;
     }
 
-    public void setLicensenumber(final String licensenumber) {
-        this.licensenumber = licensenumber;
+    public void setCategoryId(final Long categoryId) {
+        this.categoryId = categoryId;
+    }
+
+    public Long getSubCategoryId() {
+        return subCategoryId;
+    }
+
+    public void setSubCategoryId(final Long subCategoryId) {
+        this.subCategoryId = subCategoryId;
+    }
+
+    public Long getStatusId() {
+        return statusId;
+    }
+
+    public void setStatusId(final Long statusId) {
+        this.statusId = statusId;
+    }
+
+    public Long getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(final Long wardId) {
+        this.wardId = wardId;
+    }
+
+    public String getFilterName() {
+        return filterName;
+    }
+
+    public void setFilterName(final String filterName) {
+        this.filterName = filterName;
     }
 
     public ReportFormat getPrintFormat() {
@@ -80,27 +105,4 @@ public class DCBReportSearchRequest extends DataTableSearchRequest {
         this.printFormat = printFormat;
     }
 
-    public Long getLicenseid() {
-        return licenseid;
-    }
-
-    public void setLicenseid(final Long licenseid) {
-        this.licenseid = licenseid;
-    }
-
-    public Integer getActiveLicense() {
-        return activeLicense;
-    }
-
-    public void setActiveLicense(Integer activeLicense) {
-        this.activeLicense = activeLicense;
-    }
-
-    public List<Long> getWardId() {
-        return wardId;
-    }
-
-    public void setWardId(List<Long> wardId) {
-        this.wardId = wardId;
-    }
 }

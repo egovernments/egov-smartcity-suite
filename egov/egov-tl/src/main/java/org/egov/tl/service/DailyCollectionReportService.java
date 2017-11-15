@@ -47,7 +47,7 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.DateUtils;
-import org.egov.tl.entity.dto.DCRSearchRequest;
+import org.egov.tl.entity.contracts.DCRSearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;

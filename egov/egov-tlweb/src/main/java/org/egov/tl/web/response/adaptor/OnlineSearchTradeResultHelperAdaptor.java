@@ -39,16 +39,15 @@
  */
 package org.egov.tl.web.response.adaptor;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-
-import org.egov.tl.entity.dto.OnlineSearchForm;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.tl.entity.contracts.OnlineSearchForm;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
 
 public class OnlineSearchTradeResultHelperAdaptor implements JsonSerializer<OnlineSearchForm> {
 

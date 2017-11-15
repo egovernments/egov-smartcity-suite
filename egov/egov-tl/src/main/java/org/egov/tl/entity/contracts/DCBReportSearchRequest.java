@@ -38,12 +38,62 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.repository;
+package org.egov.tl.entity.contracts;
 
-import org.egov.tl.entity.contracts.BaseRegisterRequest;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public interface BaseRegisterReportRepositoryCustom {
+import java.util.List;
 
-    Object[] findByBaseRegisterRequest(BaseRegisterRequest baseRegisterRequest);
+public class DCBReportSearchRequest extends DataTableSearchRequest {
 
+    private Long licenseid;
+
+    private String licensenumber;
+
+    private ReportFormat printFormat;
+
+    private Integer activeLicense = Integer.valueOf(0);
+
+    private List<Long> wardId;
+
+    public String getLicensenumber() {
+        return licensenumber;
+    }
+
+    public void setLicensenumber(final String licensenumber) {
+        this.licensenumber = licensenumber;
+    }
+
+    public ReportFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(final ReportFormat printFormat) {
+        this.printFormat = printFormat;
+    }
+
+    public Long getLicenseid() {
+        return licenseid;
+    }
+
+    public void setLicenseid(final Long licenseid) {
+        this.licenseid = licenseid;
+    }
+
+    public Integer getActiveLicense() {
+        return activeLicense;
+    }
+
+    public void setActiveLicense(Integer activeLicense) {
+        this.activeLicense = activeLicense;
+    }
+
+    public List<Long> getWardId() {
+        return wardId;
+    }
+
+    public void setWardId(List<Long> wardId) {
+        this.wardId = wardId;
+    }
 }

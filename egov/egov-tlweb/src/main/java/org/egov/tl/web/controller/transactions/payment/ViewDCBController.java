@@ -40,7 +40,7 @@
 package org.egov.tl.web.controller.transactions.payment;
 
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
 import org.egov.tl.service.TradeLicenseService;

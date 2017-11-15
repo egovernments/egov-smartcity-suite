@@ -40,16 +40,16 @@
 
 package org.egov.tl.repository.specs;
 
-import javax.persistence.criteria.Predicate;
-
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.entity.contracts.SearchForm;
 import org.springframework.data.jpa.domain.Specification;
 
-public class SearchTradeSpec {
+import javax.persistence.criteria.Predicate;
+
+public final class SearchTradeSpec {
 
     private SearchTradeSpec() {
-
+        //static methods only
     }
 
     public static Specification<License> searchTrade(final SearchForm searchForm) {

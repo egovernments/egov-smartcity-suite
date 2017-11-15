@@ -48,7 +48,7 @@
 package org.egov.tl.repository;
 
 import org.egov.infra.persistence.utils.Page;
-import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
+import org.egov.tl.entity.contracts.InstallmentWiseDCBRequest;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.springframework.data.domain.Sort.Direction;
 
@@ -65,13 +65,13 @@ import java.util.List;
 
 public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDCBReportRepositoryCustom {
 
+    public static final String ACTIVE = "active";
+    public static final String LICENSEID = "licenseid";
     private static final String INSTALLMENT = "installment";
     private static final String CURRENTDEMAND = "currentdemand";
     private static final String LICENSENUMBER = "licensenumber";
     private static final String CURRENTCOLLECTION = "currentcollection";
     private static final String CURRENTBALANCE = "currentbalance";
-    public static final String ACTIVE = "active";
-    public static final String LICENSEID = "licenseid";
 
     @PersistenceContext
     private EntityManager entityManager;

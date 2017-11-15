@@ -43,7 +43,7 @@ import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.repository.DCBReportRepository;
 import org.egov.tl.repository.specs.DCBReportSpec;

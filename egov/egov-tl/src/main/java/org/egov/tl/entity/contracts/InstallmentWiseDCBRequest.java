@@ -38,12 +38,52 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.repository;
+package org.egov.tl.entity.contracts;
 
-import org.egov.tl.entity.contracts.BaseRegisterRequest;
+import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-public interface BaseRegisterReportRepositoryCustom {
+public class InstallmentWiseDCBRequest extends DataTableSearchRequest {
 
-    Object[] findByBaseRegisterRequest(BaseRegisterRequest baseRegisterRequest);
+    private String licensenumber;
+
+    private String installment;
+
+    private ReportFormat printFormat;
+
+    private Integer activeLicense = Integer.valueOf(0);
+
+    public String getLicensenumber() {
+        return licensenumber;
+    }
+
+    public void setLicensenumber(String licensenumber) {
+        this.licensenumber = licensenumber;
+    }
+
+    public String getInstallment() {
+        return installment;
+    }
+
+    public void setInstallment(String installment) {
+        this.installment = installment;
+    }
+
+    public ReportFormat getPrintFormat() {
+        return printFormat;
+    }
+
+    public void setPrintFormat(ReportFormat printFormat) {
+        this.printFormat = printFormat;
+    }
+
+
+    public Integer getActiveLicense() {
+        return activeLicense;
+    }
+
+    public void setActiveLicense(Integer activeLicense) {
+        this.activeLicense = activeLicense;
+    }
 
 }

@@ -51,7 +51,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.egov.tl.service.DCBReportService;
 import org.egov.tl.web.response.adaptor.DCBReportResponseAdaptor;

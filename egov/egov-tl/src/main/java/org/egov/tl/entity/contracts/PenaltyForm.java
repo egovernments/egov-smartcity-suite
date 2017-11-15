@@ -1,8 +1,8 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  * accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *  Copyright (C) 2017  eGovernments Foundation
  *
  *  The updated version of eGov suite of products as by eGovernments Foundation
  *  is available at http://www.egovernments.org
@@ -26,13 +26,6 @@
  *
  *      1) All versions of this program, verbatim or modified must carry this
  *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
- *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
  *
  *      2) Any misrepresentation of the origin of the material is prohibited. It
  *         is required that all modified versions of this material be marked in
@@ -45,52 +38,48 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.entity.dto;
+package org.egov.tl.entity.contracts;
 
-import org.egov.infra.reporting.engine.ReportFormat;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.PenaltyRates;
 
-public class InstallmentWiseDCBRequest extends DataTableSearchRequest {
+import java.util.ArrayList;
+import java.util.List;
 
-    private String licensenumber;
+public class PenaltyForm {
 
-    private String installment;
+    private LicenseAppType licenseAppType;
+    private List<PenaltyRates> penaltyRatesList = new ArrayList<>();
 
-    private ReportFormat printFormat;
-
-    private Integer activeLicense = Integer.valueOf(0);
-
-    public String getLicensenumber() {
-        return licensenumber;
+    public LicenseAppType getLicenseAppType() {
+        return licenseAppType;
     }
 
-    public void setLicensenumber(String licensenumber) {
-        this.licensenumber = licensenumber;
+    public void setLicenseAppType(final LicenseAppType licenseAppType) {
+        this.licenseAppType = licenseAppType;
     }
 
-    public String getInstallment() {
-        return installment;
+    public List<PenaltyRates> getPenaltyRatesList() {
+        return penaltyRatesList;
     }
 
-    public void setInstallment(String installment) {
-        this.installment = installment;
+    public void setPenaltyRatesList(final List<PenaltyRates> penaltyRatesList) {
+        this.penaltyRatesList = penaltyRatesList;
     }
 
-    public ReportFormat getPrintFormat() {
-        return printFormat;
+    public void addpenaltyRatesList(final PenaltyRates penaltyRates) {
+        penaltyRatesList.add(penaltyRates);
     }
 
-    public void setPrintFormat(ReportFormat printFormat) {
-        this.printFormat = printFormat;
+    public List<PenaltyRates> getPenaltyRates() {
+
+        if (licenseAppType != null && getPenaltyRatesList() != null && !getPenaltyRatesList().isEmpty())
+            for (final PenaltyRates penaltyRates : getPenaltyRatesList()) {
+                penaltyRates.setLicenseAppType(licenseAppType);
+                penaltyRates.setFromRange(penaltyRates.getFromRange());
+                penaltyRates.setToRange(penaltyRates.getToRange());
+                penaltyRates.setRate(penaltyRates.getRate());
+            }
+        return penaltyRatesList;
     }
-
-
-    public Integer getActiveLicense() {
-        return activeLicense;
-    }
-
-    public void setActiveLicense(Integer activeLicense) {
-        this.activeLicense = activeLicense;
-    }
-
 }

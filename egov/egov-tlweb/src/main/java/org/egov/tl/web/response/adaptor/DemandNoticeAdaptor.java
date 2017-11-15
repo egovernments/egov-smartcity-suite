@@ -43,7 +43,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
-import org.egov.tl.entity.dto.DemandNoticeForm;
+import org.egov.tl.entity.contracts.DemandNoticeForm;
 
 import java.lang.reflect.Type;
 

@@ -40,16 +40,16 @@
 
 package org.egov.tl.repository.specs;
 
-import javax.persistence.criteria.Predicate;
-
-import org.egov.tl.entity.dto.BaseRegisterRequest;
+import org.egov.tl.entity.contracts.BaseRegisterRequest;
 import org.egov.tl.entity.view.BaseRegister;
 import org.springframework.data.jpa.domain.Specification;
 
-public class BaseRegisterSpec {
+import javax.persistence.criteria.Predicate;
+
+public final class BaseRegisterSpec {
 
     private BaseRegisterSpec() {
-
+        //static methods only
     }
 
     public static Specification<BaseRegister> baseRegisterSpecification(final BaseRegisterRequest baseRegisterRequest) {

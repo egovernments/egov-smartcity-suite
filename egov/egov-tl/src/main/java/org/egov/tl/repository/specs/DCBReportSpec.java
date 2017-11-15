@@ -47,7 +47,7 @@
 
 package org.egov.tl.repository.specs;
 
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 import org.egov.tl.entity.view.DCBReportResult;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -55,10 +55,10 @@ import javax.persistence.criteria.Predicate;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
-public class DCBReportSpec {
+public final class DCBReportSpec {
 
     private DCBReportSpec() {
-
+        //static methods only
     }
 
     public static Specification<DCBReportResult> dCBReportSpecification(final DCBReportSearchRequest dCBReportSearchRequest) {
@@ -70,7 +70,7 @@ public class DCBReportSpec {
                 result.getExpressions().add(builder.equal(root.get("licenseid"), dCBReportSearchRequest.getLicenseid()));
             if (dCBReportSearchRequest.getActiveLicense() > 0)
                 result.getExpressions().add(builder.equal(root.get("active"), dCBReportSearchRequest.getActiveLicense() == 1));
-            if (dCBReportSearchRequest.getWardId()!=null && !dCBReportSearchRequest.getWardId().isEmpty())
+            if (dCBReportSearchRequest.getWardId() != null && !dCBReportSearchRequest.getWardId().isEmpty())
                 result.getExpressions().add(root.get("wardid").in(dCBReportSearchRequest.getWardId()));
             return result;
         };

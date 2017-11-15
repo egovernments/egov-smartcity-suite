@@ -40,7 +40,7 @@
 
 package org.egov.tl.repository;
 
-import org.egov.tl.entity.dto.DCBReportSearchRequest;
+import org.egov.tl.entity.contracts.DCBReportSearchRequest;
 
 public interface DCBReportRepositoryCustom {
 

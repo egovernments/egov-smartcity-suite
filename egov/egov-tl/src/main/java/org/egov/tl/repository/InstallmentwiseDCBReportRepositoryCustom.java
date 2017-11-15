@@ -48,7 +48,7 @@
 package org.egov.tl.repository;
 
 import org.egov.infra.persistence.utils.Page;
-import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
+import org.egov.tl.entity.contracts.InstallmentWiseDCBRequest;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
 
 import java.util.Date;

@@ -47,7 +47,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pims.commons.Position;
-import org.egov.tl.entity.dto.LicenseStateInfo;
+import org.egov.tl.entity.contracts.LicenseStateInfo;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;

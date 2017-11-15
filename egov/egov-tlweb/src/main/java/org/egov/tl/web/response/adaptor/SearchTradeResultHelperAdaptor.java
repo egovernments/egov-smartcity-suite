@@ -40,25 +40,24 @@
 
 package org.egov.tl.web.response.adaptor;
 
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.dto.SearchForm;
-
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.tl.entity.contracts.SearchForm;
+
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SearchTradeResultHelperAdaptor implements DataTableJsonAdapter<SearchForm> {
 
     @Override
     public JsonElement serialize(final DataTable<SearchForm> searchFormDate, final Type type,
-            final JsonSerializationContext jsc) {
+                                 final JsonSerializationContext jsc) {
         final List<SearchForm> searchFormResponse = searchFormDate.getData();
         final JsonArray searchTradeResult = new JsonArray();
         searchFormResponse.forEach(searchFormObj -> {

@@ -40,7 +40,7 @@
 package org.egov.tl.web.controller.transactions.payment;
 
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.dto.OnlineSearchForm;
+import org.egov.tl.entity.contracts.OnlineSearchForm;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.service.integration.LicenseBillService;
 import org.egov.tl.web.response.adaptor.OnlineSearchTradeResultHelperAdaptor;

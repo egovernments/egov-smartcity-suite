@@ -53,7 +53,7 @@ import org.egov.infra.utils.DateUtils;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
-import org.egov.tl.entity.dto.DemandNoticeForm;
+import org.egov.tl.entity.contracts.DemandNoticeForm;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.PenaltyRatesService;

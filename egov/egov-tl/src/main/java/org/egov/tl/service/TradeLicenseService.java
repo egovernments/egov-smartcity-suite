@@ -78,9 +78,9 @@ import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.entity.dto.DemandNoticeForm;
-import org.egov.tl.entity.dto.OnlineSearchForm;
-import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.entity.contracts.DemandNoticeForm;
+import org.egov.tl.entity.contracts.OnlineSearchForm;
+import org.egov.tl.entity.contracts.SearchForm;
 import org.egov.tl.repository.SearchTradeRepository;
 import org.egov.tl.repository.specs.SearchTradeSpec;
 import org.egov.tl.utils.Constants;
@@ -473,7 +473,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
 
             processHistoryDetails.add(currentStateDetail);
-           state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
+            state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
                     forEach(sh -> processHistoryDetails.add(constructHistory(sh, tradeLicense)));
         }
         return processHistoryDetails;

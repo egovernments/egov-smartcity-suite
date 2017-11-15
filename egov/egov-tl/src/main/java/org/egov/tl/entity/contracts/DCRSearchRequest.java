@@ -37,13 +37,54 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
+package org.egov.tl.entity.contracts;
 
-package org.egov.tl.repository;
+import java.util.Date;
 
-import org.egov.tl.entity.contracts.BaseRegisterRequest;
+public class DCRSearchRequest {
+    private Date fromDate;
+    private Date toDate;
+    private String collectionOperator;
+    private String revenueWard;
+    private String status;
 
-public interface BaseRegisterReportRepositoryCustom {
+    public Date getFromDate() {
+        return fromDate;
+    }
 
-    Object[] findByBaseRegisterRequest(BaseRegisterRequest baseRegisterRequest);
+    public void setFromDate(final Date fromDate) {
+        this.fromDate = fromDate;
+    }
 
+    public Date getToDate() {
+        return toDate;
+    }
+
+    public void setToDate(final Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public String getCollectionOperator() {
+        return collectionOperator;
+    }
+
+    public void setCollectionOperator(final String collectionOperator) {
+        this.collectionOperator = collectionOperator;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(final String status) {
+        this.status = status;
+    }
+
+    public String getRevenueWard() {
+        return revenueWard;
+    }
+
+    public void setRevenueWard(final String revenueWard) {
+        this.revenueWard = revenueWard;
+    }
 }

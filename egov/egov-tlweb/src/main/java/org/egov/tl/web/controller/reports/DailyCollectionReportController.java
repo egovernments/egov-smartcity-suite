@@ -43,7 +43,7 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.tl.entity.dto.DCRSearchRequest;
+import org.egov.tl.entity.contracts.DCRSearchRequest;
 import org.egov.tl.service.DailyCollectionReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;

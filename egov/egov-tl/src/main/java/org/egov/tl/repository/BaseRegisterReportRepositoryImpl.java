@@ -40,8 +40,8 @@
 
 package org.egov.tl.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.tl.entity.contracts.BaseRegisterRequest;
+import org.egov.tl.entity.view.BaseRegister;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -49,9 +49,8 @@ import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
-import org.egov.tl.entity.dto.BaseRegisterRequest;
-import org.egov.tl.entity.view.BaseRegister;
+import java.util.ArrayList;
+import java.util.List;
 
 public class BaseRegisterReportRepositoryImpl implements BaseRegisterReportRepositoryCustom {
 
@@ -84,7 +83,7 @@ public class BaseRegisterReportRepositoryImpl implements BaseRegisterReportRepos
         criteriaQuery.multiselect(criteriaBuilder.sumAsLong(root.get("arrearlicensefee")),
                 criteriaBuilder.sumAsLong(root.get("arrearpenaltyfee")),
                 criteriaBuilder.sumAsLong(root.get("curlicensefee")),
-                criteriaBuilder.sumAsLong(root.get("curpenaltyfee"))).where(predicates.toArray(new Predicate[] {}));
+                criteriaBuilder.sumAsLong(root.get("curpenaltyfee"))).where(predicates.toArray(new Predicate[]{}));
         return entityManager.createQuery(criteriaQuery).getSingleResult();
     }
 }

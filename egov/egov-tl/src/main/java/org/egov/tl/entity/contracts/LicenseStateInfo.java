@@ -38,12 +38,27 @@
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.tl.repository;
+package org.egov.tl.entity.contracts;
 
-import org.egov.tl.entity.contracts.BaseRegisterRequest;
 
-public interface BaseRegisterReportRepositoryCustom {
+public class LicenseStateInfo {
+    private Long wfMatrixRef;
+    private Long rejectionPosition;
 
-    Object[] findByBaseRegisterRequest(BaseRegisterRequest baseRegisterRequest);
+    public Long getWfMatrixRef() {
+        return wfMatrixRef;
+    }
+
+    public void setWfMatrixRef(Long wfMatrixRef) {
+        this.wfMatrixRef = wfMatrixRef;
+    }
+
+    public Long getRejectionPosition() {
+        return rejectionPosition;
+    }
+
+    public void setRejectionPosition(Long rejectionPosition) {
+        this.rejectionPosition = rejectionPosition;
+    }
 
 }

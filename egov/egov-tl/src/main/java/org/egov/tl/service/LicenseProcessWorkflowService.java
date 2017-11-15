@@ -66,7 +66,7 @@ import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.entity.dto.LicenseStateInfo;
+import org.egov.tl.entity.contracts.LicenseStateInfo;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;

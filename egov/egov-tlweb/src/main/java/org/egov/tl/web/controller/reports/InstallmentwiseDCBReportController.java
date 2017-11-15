@@ -50,7 +50,7 @@ package org.egov.tl.web.controller.reports;
 import org.egov.infra.reporting.engine.ReportDisposition;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.tl.entity.dto.InstallmentWiseDCBRequest;
+import org.egov.tl.entity.contracts.InstallmentWiseDCBRequest;
 import org.egov.tl.entity.view.InstallmentWiseDCB;
 import org.egov.tl.service.InstallmentwiseDCBReportService;
 import org.egov.tl.web.response.adaptor.InstallmentWiseDCBResponse;
