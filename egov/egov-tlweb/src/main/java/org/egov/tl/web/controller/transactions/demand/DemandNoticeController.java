@@ -46,10 +46,12 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
+import org.egov.infra.web.utils.WebUtils;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
@@ -66,9 +68,7 @@ import org.joda.time.DateTime;
 import org.joda.time.LocalDate;
 import org.joda.time.format.DateTimeFormat;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -79,10 +79,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -93,7 +89,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
@@ -171,39 +166,30 @@ public class DemandNoticeController {
 
     @GetMapping("generate/{licenseId}")
     @ResponseBody
-    public ResponseEntity<byte[]> generateDemandNotice(@PathVariable Long licenseId) {
-        TradeLicense license = tradeLicenseService.getLicenseById(licenseId);
-        return generateReport(license);
+    public ResponseEntity<InputStreamResource> generateDemandNotice(@PathVariable Long licenseId) {
+        return WebUtils.reportToResponseEntity(generateReport(tradeLicenseService.getLicenseById(licenseId)));
     }
 
     @GetMapping("generate")
     @ResponseBody
-    public String mergeAndDownload(@ModelAttribute DemandNoticeForm searchRequest, HttpServletResponse response) throws IOException {
+    public ResponseEntity<InputStreamResource> mergeAndDownload(@ModelAttribute DemandNoticeForm searchRequest) {
         List<DemandNoticeForm> demandNotices = tradeLicenseService.getLicenseDemandNotices(searchRequest);
-        List<InputStream> demandNoticePDFStreams = new ArrayList<>();
-
-        if (!demandNotices.isEmpty()) {
+        ReportOutput reportOutput = new ReportOutput();
+        reportOutput.setReportName("demand_notices");
+        reportOutput.setReportFormat(ReportFormat.PDF);
+        if (demandNotices.isEmpty()) {
+            reportOutput.setReportOutputData("No Data".getBytes());
+        } else {
+            List<InputStream> demandNoticePDFStreams = new ArrayList<>();
             for (DemandNoticeForm tlNotice : demandNotices) {
-                if (tlNotice != null) {
-                    ResponseEntity<byte[]> demandNotice = generateReport(tradeLicenseService.getLicenseById(tlNotice.getLicenseId()));
-                    byte[] bFile = demandNotice.getBody();
-                    demandNoticePDFStreams.add(new ByteArrayInputStream(bFile));
-                }
+                demandNoticePDFStreams.add(generateReport(tradeLicenseService.getLicenseById(tlNotice.getLicenseId())).asInputStream());
             }
-
-            if (!demandNoticePDFStreams.isEmpty()) {
-                ByteArrayOutputStream output = new ByteArrayOutputStream();
-                byte[] data = appendFiles(demandNoticePDFStreams, output);
-                response.setHeader("content-disposition", "inline;filename=License Demand Notice.pdf");
-                response.setContentType("application/pdf");
-                response.setContentLength(data.length);
-                response.getOutputStream().write(data);
-            }
+            reportOutput.setReportOutputData(appendFiles(demandNoticePDFStreams));
         }
-        return EMPTY;
+        return WebUtils.reportToResponseEntity(reportOutput);
     }
 
-    private ResponseEntity<byte[]> generateReport(TradeLicense license) {
+    private ReportOutput generateReport(TradeLicense license) {
         Map<String, Object> reportParams = new HashMap<>();
 
         // Get current installment by using demand.
@@ -272,13 +258,8 @@ public class DemandNoticeController {
             reportParams.put("currentYear", toYearFormat(currentInstallment.getFromDate()));
 
         }
-        ReportRequest reportInput = new ReportRequest("tl_demand_notice", license, reportParams);
 
-        HttpHeaders headers = new HttpHeaders();
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=License Demand Notice.pdf");
-        ReportOutput reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return reportService.createReport(new ReportRequest("tl_demand_notice", license, reportParams));
     }
 
     private void getActDeclarationDetailBasedOnCityGrade(Map<String, Object> reportParams) {

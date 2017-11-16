@@ -222,6 +222,7 @@
         <recaptcha.version>0.0.8</recaptcha.version>
         <jcaptcha.version>2.0-alpha-1</jcaptcha.version>
         <javaxt.core.version>1.7.8</javaxt.core.version>
+        <pdfbox.version>2.0.4</pdfbox.version>
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
         <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
@@ -887,6 +888,11 @@
                 <artifactId>javaxt-core</artifactId>
                 <version>${javaxt.core.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+            </dependency>
             <!-- MISC END -->
 
             <!-- SCRIPTING ENGINE STARTS -->
@@ -1274,6 +1280,10 @@
         <dependency>
             <groupId>javaxt</groupId>
             <artifactId>javaxt-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
         </dependency>
         <!-- MISC ENDS -->
 

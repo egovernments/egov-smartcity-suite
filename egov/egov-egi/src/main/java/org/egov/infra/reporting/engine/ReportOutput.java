@@ -40,6 +40,8 @@
 
 package org.egov.infra.reporting.engine;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.io.Serializable;
 
 public class ReportOutput implements Serializable {
@@ -80,6 +82,10 @@ public class ReportOutput implements Serializable {
 
     public void setReportDisposition(ReportDisposition reportDisposition) {
         this.reportDisposition = reportDisposition;
+    }
+
+    public InputStream asInputStream() {
+        return new ByteArrayInputStream(reportOutputData);
     }
 
     public String reportDisposition() {

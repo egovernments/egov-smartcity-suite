@@ -40,20 +40,13 @@
 
 package org.egov.infra.utils;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import org.apache.pdfbox.io.MemoryUsageSetting;
+import org.apache.pdfbox.multipdf.PDFMergerUtility;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public final class PdfUtils {
@@ -62,45 +55,15 @@ public final class PdfUtils {
         //only static api's
     }
 
-    public static byte[] appendFiles(List<InputStream> inputPdfList, OutputStream outputStream) {
-
-        try {
-            Document document = new Document();
-            List<PdfReader> readers = new ArrayList<>();
-            int totalPages = 0;
-            Iterator<InputStream> pdfIterator = inputPdfList.iterator();
-            while (pdfIterator.hasNext()) {
-                InputStream pdf = pdfIterator.next();
-                if (pdf != null) {
-                    PdfReader pdfReader = new PdfReader(pdf);
-                    readers.add(pdfReader);
-                    totalPages = totalPages + pdfReader.getNumberOfPages();
-                } else
-                    break;
-            }
-            PdfWriter writer = PdfWriter.getInstance(document, outputStream);
-            document.open();
-            PdfContentByte pageContentByte = writer.getDirectContent();
-            PdfImportedPage pdfImportedPage;
-            int currentPdfReaderPage = 1;
-            Iterator<PdfReader> iteratorPDFReader = readers.iterator();
-            while (iteratorPDFReader.hasNext()) {
-                PdfReader pdfReader = iteratorPDFReader.next();
-                while (currentPdfReaderPage <= pdfReader.getNumberOfPages()) {
-                    document.newPage();
-                    pdfImportedPage = writer.getImportedPage(pdfReader, currentPdfReaderPage);
-                    pageContentByte.addTemplate(pdfImportedPage, 0, 0);
-                    currentPdfReaderPage++;
-                }
-                currentPdfReaderPage = 1;
-            }
-            outputStream.flush();
-            document.close();
-            outputStream.close();
-            return ((ByteArrayOutputStream) outputStream).toByteArray();
-        } catch (IOException | DocumentException e) {
-            throw new ApplicationRuntimeException("Error occurred while appending pdfs", e);
+    public static byte[] appendFiles(List<InputStream> pdfStreams) {
+        try (ByteArrayOutputStream destination = new ByteArrayOutputStream()) {
+            PDFMergerUtility pdfMerger = new PDFMergerUtility();
+            pdfMerger.setDestinationStream(destination);
+            pdfStreams.forEach(pdfMerger::addSource);
+            pdfMerger.mergeDocuments(MemoryUsageSetting.setupMainMemoryOnly());
+            return destination.toByteArray();
+        } catch (IOException e) {
+            throw new ApplicationRuntimeException("Error occurred while merging pdf files", e);
         }
-
     }
 }

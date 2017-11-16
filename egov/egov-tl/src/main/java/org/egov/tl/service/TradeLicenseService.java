@@ -73,6 +73,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
@@ -429,14 +430,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final List<DemandNoticeForm> finalList = new LinkedList<>();
 
         for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
-            Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
-            List<Installment> previousInstallment = installmentDao
-                    .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                            licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
-            Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
-                    currentInstallment, previousInstallment.get(0));
-            Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
-            finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
+            LicenseDemand licenseDemand = license.getCurrentDemand();
+            if (licenseDemand != null) {
+                Installment currentInstallment = licenseDemand.getEgInstallmentMaster();
+                List<Installment> previousInstallment = installmentDao
+                        .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
+                                licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
+                Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
+                        currentInstallment, previousInstallment.get(0));
+                Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
+                finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
+            }
         }
         return finalList;
     }

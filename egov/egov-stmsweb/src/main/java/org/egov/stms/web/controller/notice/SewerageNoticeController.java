@@ -46,23 +46,6 @@
  */
 package org.egov.stms.web.controller.notice;
 
-import static org.egov.infra.utils.PdfUtils.appendFiles;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.zip.ZipOutputStream;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.City;
@@ -97,6 +80,21 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.ZipOutputStream;
+
+import static org.egov.infra.utils.PdfUtils.appendFiles;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+
 @Controller
 @RequestMapping(value = "/reports")
 public class SewerageNoticeController {
@@ -130,13 +128,15 @@ public class SewerageNoticeController {
         final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilterForNotice(searchRequest);
         return sewerageIndexService.getNoticeSearchResultByBoolQuery(boolQuery);
     }
+
     private Page<SewerageIndex> getNoticeSearchResult(final SewerageNoticeSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
         final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilterForNotice(searchRequest);
-        return sewerageIndexService.getPagedNoticeSearchResultByBoolQuery(boolQuery,searchRequest);
+        return sewerageIndexService.getPagedNoticeSearchResultByBoolQuery(boolQuery, searchRequest);
     }
+
     @RequestMapping(value = "/searchResult", method = RequestMethod.POST)
     @ResponseBody
     public DataTable<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageNoticeSearchRequest searchRequest) {
@@ -149,7 +149,6 @@ public class SewerageNoticeController {
     }
 
 
-
     @RequestMapping(value = "/search-NoticeResultSize", method = RequestMethod.GET)
     @ResponseBody
     public int getSerachResultCount(@ModelAttribute final SewerageNoticeSearchRequest searchRequest) {
@@ -158,7 +157,7 @@ public class SewerageNoticeController {
     }
 
     private List<SewerageNotice> getSearchedNotices(final SewerageNoticeSearchRequest searchRequest) {
-        String noticeType ;
+        String noticeType;
         String noticeTypeInput = null;
         String noticeNo;
         final List<SewerageNotice> noticeList = new ArrayList<>(0);
@@ -189,7 +188,7 @@ public class SewerageNoticeController {
 
     @RequestMapping(value = "/searchNotices-mergeAndDownload", method = RequestMethod.GET)
     public String mergeAndDownload(@ModelAttribute final SewerageNoticeSearchRequest searchRequest,
-            final HttpServletResponse response) throws IOException {
+                                   final HttpServletResponse response) throws IOException {
         final String noticeType = null;
         final List<SewerageNotice> noticeList = getSearchedNotices(searchRequest);
         if (LOGGER.isDebugEnabled())
@@ -221,8 +220,7 @@ public class SewerageNoticeController {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : 0));
         try {
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            final byte[] data = appendFiles(pdfs, output);
+            final byte[] data = appendFiles(pdfs);
             response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".pdf");
             response.setContentType("application/pdf");
             response.setContentLength(data.length);
@@ -243,7 +241,7 @@ public class SewerageNoticeController {
 
     @RequestMapping(value = "/searchNotices-seweragezipAndDownload")
     public String zipAndDownload(@ModelAttribute final SewerageNoticeSearchRequest searchRequest,
-            final HttpServletResponse response) {
+                                 final HttpServletResponse response) {
         final List<SewerageNotice> noticeList = getSearchedNotices(searchRequest);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into zipAndDownload method");
@@ -260,7 +258,7 @@ public class SewerageNoticeController {
                 response.setContentType("application/zip");
             }
 
-            for (final SewerageNotice sewerageNotice : noticeList){
+            for (final SewerageNotice sewerageNotice : noticeList) {
                 try {
                     if (sewerageNotice != null && sewerageNotice.getFileStore() != null) {
                         final FileStoreMapper fsm = sewerageNotice.getFileStore();
@@ -305,31 +303,30 @@ public class SewerageNoticeController {
 
     @RequestMapping(value = "/searchNotices-showSewerageNotice/{noticeNo}/{noticeType}", method = RequestMethod.GET)
     public String showNotice(@PathVariable("noticeNo") final String noticeNo,
-            @PathVariable("noticeType") final String noticeTypeInput, final Model model,
-            final HttpServletResponse response) throws IOException {
-        String noticeType = null;
+                             @PathVariable("noticeType") final String noticeTypeInput, final Model model,
+                             final HttpServletResponse response) throws IOException {
         if (noticeNo != null) {
-            noticeType = getSewerageNoticeType(noticeNo, noticeTypeInput);
+            String noticeType = getSewerageNoticeType(noticeNo, noticeTypeInput);
             final SewerageNotice sewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(noticeNo,
                     noticeType);
             if (sewerageNotice != null) {
                 final FileStoreMapper fsm = sewerageNotice.getFileStore();
                 final File file = fileStoreService.fetch(fsm, SewerageTaxConstants.FILESTORE_MODULECODE);
-                final InputStream is = new FileInputStream(file);
-                // MIME type of the file
-                response.setContentType("application/pdf");
-                // Response header
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + sewerageNotice.getNoticeNo()
-                        + ".pdf\"");
-                // Read from the file and write into the response
-                final OutputStream os = response.getOutputStream();
-                final byte[] buffer = new byte[1024];
-                int len;
-                while ((len = is.read(buffer)) != -1)
-                    os.write(buffer, 0, len);
-                os.flush();
-                os.close();
-                is.close();
+                try (InputStream is = new FileInputStream(file)) {
+                    // MIME type of the file
+                    response.setContentType("application/pdf");
+                    // Response header
+                    response.setHeader("Content-Disposition", "attachment; filename=\"" + sewerageNotice.getNoticeNo()
+                            + ".pdf\"");
+                    // Read from the file and write into the response
+                    final OutputStream os = response.getOutputStream();
+                    final byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = is.read(buffer)) != -1)
+                        os.write(buffer, 0, len);
+                    os.flush();
+                    os.close();
+                }
             } else {
                 model.addAttribute("message", "msg.notice.not.found");
                 return "common-error";
