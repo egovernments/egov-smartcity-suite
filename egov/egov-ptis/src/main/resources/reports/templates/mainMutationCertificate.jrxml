@@ -38,8 +38,7 @@
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   -->
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-20T11:52:29 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mainMutationCertificate" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isSummaryNewPage="true" whenResourceMissingType="Empty" uuid="9cf367da-f255-4a18-8dcb-ffe982b88e97">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -58,6 +57,7 @@
 	<field name="newOwnerName" class="java.lang.String"/>
 	<field name="oldOwnerName" class="java.lang.String"/>
 	<field name="newOwnerGuardianRelation" class="java.lang.String"/>
+	<field name="oldOwnerGuardianRelation" class="java.lang.String"/>
 	<field name="oldOwnerParentName" class="java.lang.String"/>
 	<field name="regDocNo" class="java.lang.String"/>
 	<field name="regDocDate" class="java.lang.String"/>
@@ -86,6 +86,9 @@
 				</subreportParameter>
 				<subreportParameter name="newOwnerGuardianRelation">
 					<subreportParameterExpression><![CDATA[$F{newOwnerGuardianRelation}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="oldOwnerGuardianRelation">
+					<subreportParameterExpression><![CDATA[$F{oldOwnerGuardianRelation}]]></subreportParameterExpression>
 				</subreportParameter>
 				<subreportParameter name="approvedDate">
 					<subreportParameterExpression><![CDATA[$F{approvedDate}]]></subreportParameterExpression>

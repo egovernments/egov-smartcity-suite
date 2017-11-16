@@ -266,17 +266,17 @@ public class PropertyMutation extends StateAware<Position> {
         return buildTransferorOwnerName(getTransferorInfos());
     }
 
-    public String getFullTransferorGuardianName() {
-        return buildTransferorGuarianName(getTransferorInfos());
+    public String getTransferorGuardianRelation() {
+        return buildOwnerGuardianRelation(getTransferorInfos());
     }
 
     public String getFullTransfereeGuardianName() {
         return buildGuarianName(getTransfereeInfos());
     }
 
-    public String getTransfereeGuardianRelation() {
-        return buildOwnerGuardianRelation(getTransfereeInfos());
-    }
+	public String getTransfereeGuardianRelation() {
+		return buildOwnerGuardianRelation(getTransferees(transfereeInfos));
+	}
 
     private String buildGuarianName(final List<PropertyMutationTransferee> userInfo) {
         final StringBuilder guardianName = new StringBuilder();
@@ -288,15 +288,13 @@ public class PropertyMutation extends StateAware<Position> {
         return guardianName.toString();
     }
 
-    private String buildTransferorGuarianName(final List<User> userInfo) {
-        final StringBuilder guardianName = new StringBuilder();
-        for (final User owner : userInfo)
-            if (StringUtils.isNotBlank(owner.getGuardian()))
-                guardianName.append(owner.getGuardian()).append(", ");
-        if (guardianName.length() > 0)
-            guardianName.deleteCharAt(guardianName.length() - 2);
-        return guardianName.toString();
-    }
+	private List<User> getTransferees(final List<PropertyMutationTransferee> transfereeInfos) {
+		final List<User> users = new ArrayList<>();
+		for (final PropertyMutationTransferee transferee : transfereeInfos) {
+			users.add(transferee.getTransferee());
+		}
+		return users;
+	}
 
     private String buildOwnerName(final List<PropertyMutationTransferee> userInfos) {
         final StringBuilder ownerName = new StringBuilder();
@@ -317,26 +315,27 @@ public class PropertyMutation extends StateAware<Position> {
         return ownerName.toString();
     }
 
-    private String buildOwnerGuardianRelation(final List<PropertyMutationTransferee> userInfo) {
-        final StringBuilder ownerGuardianRelation = new StringBuilder();
-        String relation = "";
-        for (final PropertyMutationTransferee owner : userInfo) {
-            if (StringUtils.isNotBlank(owner.getTransferee().getGuardian())) {
-                ownerGuardianRelation.append(owner.getTransferee().getName());
-                if (owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GuardianRelation.Father.toString()) || owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GuardianRelation.Mother.toString())) {
-                    if (owner.getTransferee().getGender().equals(Gender.FEMALE))
-                        relation = " D/O ";
-                    else if (owner.getTransferee().getGender().equals(Gender.MALE))
-                        relation = " S/O ";
-                } else if (owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GuardianRelation.Husband.toString()))
-                    relation = " W/O ";
-                else if (owner.getTransferee().getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_WIFE))
-                    relation = " H/O ";
-                else
-                    relation = " C/O ";
-                ownerGuardianRelation.append(relation).append(owner.getTransferee().getGuardian()).append(", ");
-            }
-        }
+	private String buildOwnerGuardianRelation(final List<User> userInfo) {
+		final StringBuilder ownerGuardianRelation = new StringBuilder();
+		String relation = "";
+		for (final User owner : userInfo) {
+			if (StringUtils.isNotBlank(owner.getGuardian())) {
+				ownerGuardianRelation.append(owner.getName());
+				if (owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Father.toString())
+						|| owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Mother.toString())) {
+					if (owner.getGender().equals(Gender.FEMALE))
+						relation = " D/O ";
+					else if (owner.getGender().equals(Gender.MALE))
+						relation = " S/O ";
+				} else if (owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Husband.toString()))
+					relation = " W/O ";
+				else if (owner.getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_WIFE))
+					relation = " H/O ";
+				else
+					relation = " C/O ";
+				ownerGuardianRelation.append(relation).append(owner.getGuardian()).append(", ");
+			}
+		}
         if (ownerGuardianRelation.length() > 0)
             ownerGuardianRelation.deleteCharAt(ownerGuardianRelation.length() - 2);
         return ownerGuardianRelation.toString();

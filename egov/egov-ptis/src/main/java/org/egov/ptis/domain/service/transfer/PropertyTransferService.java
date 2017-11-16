@@ -1,5 +1,5 @@
 /*
-l * eGov suite of products aim to improve the internal efficiency,transparency,
+ * eGov suite of products aim to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) <2015>  eGovernments Foundation
@@ -451,7 +451,7 @@ public class PropertyTransferService {
 
             noticeBean.setNoticeNumber(notice != null ? notice.getNoticeNo() : "N/A");
             noticeBean.setOldOwnerName(propertyMutation.getFullTranferorName());
-            noticeBean.setOldOwnerParentName(propertyMutation.getFullTransferorGuardianName());
+            noticeBean.setOldOwnerGuardianRelation(propertyMutation.getTransferorGuardianRelation());
             noticeBean.setNewOwnerName(propertyMutation.getFullTranfereeName());
             noticeBean.setNewOwnerGuardianRelation(propertyMutation.getTransfereeGuardianRelation());
             if (!MUTATIONRS_DECREE_BY_CIVIL_COURT.equalsIgnoreCase(propertyMutation.getMutationReason().getMutationDesc())) {
