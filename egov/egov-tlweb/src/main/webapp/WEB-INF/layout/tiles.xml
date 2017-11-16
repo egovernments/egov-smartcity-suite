@@ -257,7 +257,7 @@
     </definition>
     <definition name="license-onlinepayment" extends="base_layout">
         <put-attribute name="page-title" value="title.document.new" cascade="true"/>
-        <put-attribute name="body" value="/WEB-INF/view/transactions/payment/license-online-payment.jsp"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/payment/license-online-payment.jsp"/>
     </definition>
     <definition name="dcr-search" extends="base_layout">
         <put-attribute name="page-title" value="title.dailycollection" cascade="true"/>
