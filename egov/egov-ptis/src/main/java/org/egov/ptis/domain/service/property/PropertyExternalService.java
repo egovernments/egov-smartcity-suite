@@ -3007,11 +3007,6 @@ public class PropertyExternalService {
 				assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
 				assessmentDetails.setConnectionCount(Double.valueOf(taxDetails.get("connectionCount").toString()).intValue());
 			}
-			restURL = format(PropertyTaxConstants.STMS_TAXDUE_RESTURL,
-					WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
-			taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
-			if(!taxDetails.isEmpty())
-				assessmentDetails.setSewerageDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
 		}
 		return assessmentDetails;
 	}
