@@ -59,7 +59,7 @@ body
 					<spring:message code="lbl.validation.error" />
 				</div>
 			</div>
-			<div class="panel-body" style="text-align: center">
+			<div class="panel-body" style="text-align: center;color:red;font-size:20px">
 				<div class="mandatory">
 					<spring:message code="${errorMsg}" />
 				</div>

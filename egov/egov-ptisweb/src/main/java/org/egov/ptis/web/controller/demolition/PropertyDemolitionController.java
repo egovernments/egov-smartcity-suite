@@ -129,7 +129,7 @@ public class PropertyDemolitionController extends GenericWorkFlowController {
         boolean hasChildPropertyUnderWorkflow = propertyTaxUtil.checkForParentUsedInBifurcation(basicProperty.getUpicNo());
         User loggedInUser = securityUtils.getCurrentUser();
         if (hasChildPropertyUnderWorkflow) {
-            model.addAttribute(ERROR_MSG, "Cannot proceed as this property is used in Bifurcation, which is under workflow");
+            model.addAttribute(ERROR_MSG, "error.msg.child.underworkflow");
             return PROPERTY_VALIDATION;
         }
         if (!ANONYMOUS_USER.equalsIgnoreCase(loggedInUser.getName())
