@@ -77,7 +77,6 @@ import org.egov.wtms.masters.service.WaterSourceService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -129,7 +128,7 @@ public class RestWaterConnectionController {
 
     public static final String SUCCESS = "SUCCESS";
 
-    @RequestMapping(value = "/watercharges/newconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watercharges/newconnection", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String createNewConnection(@Valid @RequestBody final WaterConnectionInfo waterConnectionInfo)
             throws IOException {
         final ErrorDetails response = restWaterConnectionValidationService.validatePropertyID(waterConnectionInfo
@@ -140,7 +139,9 @@ public class RestWaterConnectionController {
                 .validateWaterConnectionDetails(waterConnectionInfo.getPropertyID());
         if (errorMessage != null)
             return getJSONResponse(errorMessage);
-        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(waterConnectionInfo);
+        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateServiceRequest(
+                waterConnectionInfo.getPropertyType(),
+                waterConnectionInfo.getUsageType(), waterConnectionInfo.getPipeSize(), waterConnectionInfo.getCategory());
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
         final String applicationCode = WaterTaxConstants.NEWCONNECTION;
@@ -149,7 +150,7 @@ public class RestWaterConnectionController {
         return waterConnectionDetails.getApplicationNumber();
     }
 
-    @RequestMapping(value = "/watercharges/regulariseconnection", method = RequestMethod.POST, consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watercharges/regulariseconnection", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createRegularisedConnection(@Valid @RequestBody final WaterChargesConnectionInfo waterChargesConnectionInfo)
             throws IOException {
         final ErrorDetails errorDetails = restWaterConnectionValidationService
@@ -169,7 +170,7 @@ public class RestWaterConnectionController {
         return regularisedConnection.getStateDetails();
     }
 
-    @RequestMapping(value = "/watercharges/additionalconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watercharges/additionalconnection", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String createAddtionalConnection(@Valid @RequestBody final WaterConnectionInfo waterConnectionInfo)
             throws IOException {
         final ErrorDetails response = restWaterConnectionValidationService
@@ -177,7 +178,9 @@ public class RestWaterConnectionController {
         final String applicationCode = WaterTaxConstants.ADDNLCONNECTION;
         if (response != null)
             return getJSONResponse(response);
-        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(waterConnectionInfo);
+        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateServiceRequest(
+                waterConnectionInfo.getPropertyType(),
+                waterConnectionInfo.getUsageType(), waterConnectionInfo.getPipeSize(), waterConnectionInfo.getCategory());
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
         final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(waterConnectionInfo,
@@ -186,7 +189,7 @@ public class RestWaterConnectionController {
 
     }
 
-    @RequestMapping(value = "/watercharges/changeofuse", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watercharges/changeofuse", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String createChangeOfUsageConnection(@Valid @RequestBody final WaterChargesDetailInfo waterConnectionInfo)
             throws IOException {
         WaterConnectionDetails waterConnectionDetails = null;
@@ -200,7 +203,9 @@ public class RestWaterConnectionController {
                 .validateCombinationOfChangOfUsage(waterConnectionInfo);
         if (errorMessage != null)
             return getJSONResponse(response);
-        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateRequest(waterConnectionInfo);
+        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateServiceRequest(
+                waterConnectionInfo.getPropertyType(),
+                waterConnectionInfo.getUsageType(), waterConnectionInfo.getPipeSize(), waterConnectionInfo.getCategory());
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
@@ -275,10 +280,10 @@ public class RestWaterConnectionController {
         return prepareConnectionDetailsForChangeOfUse(waterConnectionInfo, changeOfUse);
     }
 
-    private WaterConnectionDetails prepareWaterConnectionDetails(final WaterConnectionInfo WaterConnectionInfo,
+    private WaterConnectionDetails prepareWaterConnectionDetails(final WaterConnectionInfo waterConnectionInfo,
             final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
-        waterConnectionDetails.setConnectionType(WaterConnectionInfo.getConnectionType().equals(
+        waterConnectionDetails.setConnectionType(waterConnectionInfo.getConnectionType().equals(
                 ConnectionType.METERED.toString()) ? ConnectionType.METERED : ConnectionType.NON_METERED);
 
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
@@ -288,14 +293,14 @@ public class RestWaterConnectionController {
                     waterConnectionDetails, appProcessTime));
         waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                 WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
-        waterConnectionDetails.setPipeSize(pipeSizeService.findByCode(WaterConnectionInfo.getPipeSize()));
-        waterConnectionDetails.setPropertyType(propertyTypeService.findByCode(WaterConnectionInfo.getPropertyType()));
-        waterConnectionDetails.setUsageType(usageTypeService.findByCode(WaterConnectionInfo.getUsageType()));
-        waterConnectionDetails.setWaterSource(waterSourceService.findByCode(WaterConnectionInfo.getWaterSource()));
+        waterConnectionDetails.setPipeSize(pipeSizeService.findByCode(waterConnectionInfo.getPipeSize()));
+        waterConnectionDetails.setPropertyType(propertyTypeService.findByCode(waterConnectionInfo.getPropertyType()));
+        waterConnectionDetails.setUsageType(usageTypeService.findByCode(waterConnectionInfo.getUsageType()));
+        waterConnectionDetails.setWaterSource(waterSourceService.findByCode(waterConnectionInfo.getWaterSource()));
         if (waterConnectionDetails.getUsageType().getCode().equals("LODGES"))
-            waterConnectionDetails.setNumberOfRooms(WaterConnectionInfo.getNumberOfRooms());
+            waterConnectionDetails.setNumberOfRooms(waterConnectionInfo.getNumberOfRooms());
         else
-            waterConnectionDetails.setNumberOfPerson(WaterConnectionInfo.getNumberOfPersons());
+            waterConnectionDetails.setNumberOfPerson(waterConnectionInfo.getNumberOfPersons());
 
         return waterConnectionDetails;
     }
@@ -325,7 +330,7 @@ public class RestWaterConnectionController {
         return waterConnectionDetails;
     }
 
-    @RequestMapping(value = "/watertax/connectiondetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watertax/connectiondetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(final WaterTaxDetailRequest waterTaxDetailRequest) {
 
         List<WaterChargesDetails> waterChargesDetailsList;

@@ -76,10 +76,6 @@ import org.springframework.web.bind.annotation.ResponseBody;
 @RequestMapping(value = "/application/execute-update")
 public class UpdateWaterConnectionExecutionController {
 
-    private static final String EMPTY_LIST = "EmptyList";
-    private static final String UPDATE_FAILED = "UpdateExecutionFailed";
-    private static final String SUCCESS = "Success";
-
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -122,16 +118,7 @@ public class UpdateWaterConnectionExecutionController {
         final String validationStatus = waterConnectionDetailsService.validateDate(waterApplicationDetails,
                 connectionDetailsList);
         final Boolean updateStatus = waterConnectionDetailsService.updateStatus(connectionDetailsList);
-        String response;
-        if (waterApplicationDetails.getExecuteWaterApplicationDetails().length <= 0)
-            response = EMPTY_LIST;
-        else if (!validationStatus.isEmpty())
-            response = validationStatus;
-        else if (!updateStatus)
-            response = UPDATE_FAILED;
-        else
-            response = SUCCESS;
-        return response;
+        return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
     }
 
 }

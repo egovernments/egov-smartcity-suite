@@ -61,6 +61,15 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SearchNoticeService {
 
+    private static final String WARD = "ward";
+    private static final String ZONE = "zone";
+    private static final String CONSUMERCODE = "consumerCode";
+    private static final String HOUSENUMBER = "houseNumber";
+    private static final String ASSESSMENT_NUMBER = "assessmentNumber";
+    private static final String CONNECTION_TYPE = "connectionType";
+    private static final String APPLICATION_TYPE = "applicationType";
+    private static final String PROPERTY_TYPE = "propertyType";
+
     @PersistenceContext
     private EntityManager entityManager;
 
@@ -108,21 +117,21 @@ public class SearchNoticeService {
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         if (isNotBlank(ward))
-            query.setParameter("ward", ward);
+            query.setParameter(WARD, ward);
         if (isNotBlank(zone))
-            query.setParameter("zone", zone);
+            query.setParameter(ZONE, zone);
         if (isNotBlank(consumerCode))
-            query.setParameter("consumerCode", consumerCode);
+            query.setParameter(CONSUMERCODE, consumerCode);
         if (isNotBlank(assessmentNumber))
-            query.setParameter("houseNumber", houseNumber);
+            query.setParameter(HOUSENUMBER, houseNumber);
         if (isNotBlank(assessmentNumber))
-            query.setParameter("assessmentNumber", assessmentNumber);
+            query.setParameter(ASSESSMENT_NUMBER, assessmentNumber);
         if (isNotBlank(connectionType))
-            query.setParameter("connectionType", connectionType);
+            query.setParameter(CONNECTION_TYPE, connectionType);
         if (isNotBlank(applicationType))
-            query.setParameter("applicationType", applicationType);
+            query.setParameter(APPLICATION_TYPE, applicationType);
         if (isNotBlank(propertyType))
-            query.setParameter("propertyType", propertyType);
+            query.setParameter(PROPERTY_TYPE, propertyType);
 
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- Search Result " + queryStr.toString());
@@ -159,7 +168,7 @@ public class SearchNoticeService {
         queryString.append(
                 "dcbinfo.houseno as \"houseNumber\", localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
         queryString.append("dcbinfo.workorderdate as \"workOrderDate\", dcbinfo.workordernumber as \"workOrderNumber\", ");
-        queryString.append("dcbinfo.connectiontype as \"connectionType\" from egwtr_mv_dcb_view dcbinfo ");
+        queryString.append("dcbinfo.connectiontype as \"connectionType\" from egwtr_mv_conn_view dcbinfo ");
         queryString.append("INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid=zoneboundary.id ");
         queryString.append(
                 " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
@@ -187,21 +196,21 @@ public class SearchNoticeService {
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryString.toString());
         if (isNotBlank(ward))
-            query.setParameter("ward", ward);
+            query.setParameter(WARD, ward);
         if (isNotBlank(zone))
-            query.setParameter("zone", zone);
+            query.setParameter(ZONE, zone);
         if (isNotBlank(consumerCode))
-            query.setParameter("consumerCode", consumerCode);
+            query.setParameter(CONSUMERCODE, consumerCode);
         if (isNotBlank(assessmentNumber))
-            query.setParameter("assessmentNumber", assessmentNumber);
+            query.setParameter(ASSESSMENT_NUMBER, assessmentNumber);
         if (isNotBlank(houseNumber))
-            query.setParameter("houseNumber", houseNumber);
+            query.setParameter(HOUSENUMBER, houseNumber);
         if (isNotBlank(connectionType))
-            query.setParameter("connectionType", connectionType);
+            query.setParameter(CONNECTION_TYPE, connectionType);
         if (isNotBlank(applicationType))
-            query.setParameter("applicationType", applicationType);
+            query.setParameter(APPLICATION_TYPE, applicationType);
         if (isNotBlank(propertyType))
-            query.setParameter("propertyType", propertyType);
+            query.setParameter(PROPERTY_TYPE, propertyType);
         if (isNotBlank(formattedFromDate))
             query.setParameter("formattedFromDate", formattedFromDate);
         if (isNotBlank(formattedToDate))
@@ -226,9 +235,9 @@ public class SearchNoticeService {
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         if (isNotBlank(consumerCode))
-            query.setParameter("consumerCode", consumerCode);
+            query.setParameter(CONSUMERCODE, consumerCode);
         if (isNotBlank(applicationType))
-            query.setParameter("applicationType", applicationType);
+            query.setParameter(APPLICATION_TYPE, applicationType);
         final List<Long> waterChargesDocumentsList = query.list();
         return waterChargesDocumentsList;
     }
@@ -264,21 +273,21 @@ public class SearchNoticeService {
             queryStr.append(" and dcbinfo.propertytype =:propertyType");
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryStr.toString());
         if (isNotBlank(ward))
-            query.setParameter("ward", ward);
+            query.setParameter(WARD, ward);
         if (isNotBlank(zone))
-            query.setParameter("zone", zone);
+            query.setParameter(ZONE, zone);
         if (isNotBlank(consumerCode))
-            query.setParameter("consumerCode", consumerCode);
+            query.setParameter(CONSUMERCODE, consumerCode);
         if (isNotBlank(assessmentNumber))
-            query.setParameter("assessmentNumber", assessmentNumber);
+            query.setParameter(ASSESSMENT_NUMBER, assessmentNumber);
         if (isNotBlank(houseNumber))
-            query.setParameter("houseNumber", houseNumber);
+            query.setParameter(HOUSENUMBER, houseNumber);
         if (isNotBlank(connectionType))
-            query.setParameter("connectionType", connectionType);
+            query.setParameter(CONNECTION_TYPE, connectionType);
         if (isNotBlank(applicationType))
-            query.setParameter("applicationType", applicationType);
+            query.setParameter(APPLICATION_TYPE, applicationType);
         if (isNotBlank(propertyType))
-            query.setParameter("propertyType", propertyType);
+            query.setParameter(PROPERTY_TYPE, propertyType);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("GenerateConnectionBill -- count Result " + queryStr.toString());
         return ((BigInteger) query.uniqueResult()).longValue();

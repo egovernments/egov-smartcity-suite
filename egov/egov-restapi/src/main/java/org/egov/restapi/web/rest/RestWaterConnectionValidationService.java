@@ -122,41 +122,6 @@ public class RestWaterConnectionValidationService {
     @Autowired
     private RegularisedConnectionService regularisedConnectionService;
 
-    public ErrorDetails validateCreateRequest(final WaterConnectionInfo connectionInfo) {
-        ErrorDetails errorDetails = null;
-        if (connectionInfo.getPropertyType() != null) {
-            final WaterPropertyUsage usageTypesList = waterPropertyUsageService.findByPropertyTypecodeAndUsageTypecode(
-                    connectionInfo.getPropertyType(), connectionInfo.getUsageType());
-
-            if (usageTypesList == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID);
-                return errorDetails;
-            }
-            final PropertyPipeSize pipeSizeList = propertyPipeSizeService.findByPropertyTypecodeAndPipeSizecode(
-                    connectionInfo.getPropertyType(), connectionInfo.getPipeSize());
-            if (pipeSizeList == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID);
-                return errorDetails;
-            }
-
-            final PropertyCategory categoryTypes = propertyCategoryService
-                    .getAllCategoryTypesByPropertyTypeAndCategory(connectionInfo.getPropertyType(),
-                            connectionInfo.getCategory());
-
-            if (categoryTypes == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID);
-                return errorDetails;
-            }
-        }
-        return errorDetails;
-    }
-
     public ErrorDetails validatePropertyID(final String propertyid) {
         ErrorDetails errorDetails = null;
         final String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(propertyid);
@@ -250,41 +215,6 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateRequest(final WaterChargesDetailInfo connectionInfo) {
-        ErrorDetails errorDetails = null;
-        if (connectionInfo.getPropertyType() != null) {
-            final WaterPropertyUsage usageTypesList = waterPropertyUsageService.findByPropertyTypecodeAndUsageTypecode(
-                    connectionInfo.getPropertyType(), connectionInfo.getUsageType());
-
-            if (usageTypesList == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID);
-                return errorDetails;
-            }
-            final PropertyPipeSize pipeSizeList = propertyPipeSizeService.findByPropertyTypecodeAndPipeSizecode(
-                    connectionInfo.getPropertyType(), connectionInfo.getPipeSize());
-            if (pipeSizeList == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID);
-                return errorDetails;
-            }
-
-            final PropertyCategory categoryTypes = propertyCategoryService
-                    .getAllCategoryTypesByPropertyTypeAndCategory(connectionInfo.getPropertyType(),
-                            connectionInfo.getCategory());
-
-            if (categoryTypes == null) {
-                errorDetails = new ErrorDetails();
-                errorDetails.setErrorCode(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID_CODE);
-                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID);
-                return errorDetails;
-            }
-        }
-        return errorDetails;
-    }
-
     public RegularisedConnection populateAndPersistRegularisedWaterConnection(
             final WaterChargesConnectionInfo waterChargesConnectionInfo) {
         return prepareNewRegularizationConnectionDetails(waterChargesConnectionInfo);
@@ -318,6 +248,42 @@ public class RestWaterConnectionValidationService {
             errorDetails = new ErrorDetails();
             errorDetails.setErrorCode(REGULARISEDCONNECTION_EXISTS_ERROR_CODE);
             errorDetails.setErrorMessage(REGULARISEDCONNECTION_EXISTS_ERROR_MSG);
+        }
+        return errorDetails;
+    }
+
+    public ErrorDetails validateServiceRequest(final String propertyType, final String usageType, final String pipeSize,
+            final String category) {
+        ErrorDetails errorDetails = null;
+        if (propertyType != null) {
+            final WaterPropertyUsage usageTypesList = waterPropertyUsageService.findByPropertyTypecodeAndUsageTypecode(
+                    propertyType, usageType);
+
+            if (usageTypesList == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_USAGETYPE_COMBINATION_VALID);
+                return errorDetails;
+            }
+            final PropertyPipeSize pipeSizeList = propertyPipeSizeService.findByPropertyTypecodeAndPipeSizecode(
+                    propertyType, pipeSize);
+            if (pipeSizeList == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_PIPESIZE_COMBINATION_VALID);
+                return errorDetails;
+            }
+
+            final PropertyCategory categoryTypes = propertyCategoryService
+                    .getAllCategoryTypesByPropertyTypeAndCategory(propertyType,
+                            category);
+
+            if (categoryTypes == null) {
+                errorDetails = new ErrorDetails();
+                errorDetails.setErrorCode(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID_CODE);
+                errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID);
+                return errorDetails;
+            }
         }
         return errorDetails;
     }

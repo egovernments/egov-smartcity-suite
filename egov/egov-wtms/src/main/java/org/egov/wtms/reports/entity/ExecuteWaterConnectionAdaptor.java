@@ -45,24 +45,22 @@ import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 import java.lang.reflect.Type;
 
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
-import org.springframework.stereotype.Component;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
 
-@Component
 public class ExecuteWaterConnectionAdaptor implements JsonSerializer<WaterConnExecutionDetails> {
 
     @Override
     public JsonElement serialize(final WaterConnExecutionDetails applicationDetails, final Type type,
             final JsonSerializationContext jsonSerializationContext) {
         final JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("applicationNumber", defaultIfBlank(applicationDetails.getApplicationNumber()));
+        jsonObject.addProperty("applicationNumber", applicationDetails.getApplicationNumber());
         jsonObject.addProperty("consumerNumber", defaultIfBlank(applicationDetails.getConsumerNumber()));
         jsonObject.addProperty("ownerName", defaultIfBlank(applicationDetails.getOwnerName()));
-        jsonObject.addProperty("applicationType", defaultIfBlank(applicationDetails.getApplicationType()));
+        jsonObject.addProperty("applicationType", applicationDetails.getApplicationType());
         jsonObject.addProperty("status", defaultIfBlank(applicationDetails.getApplicationStatus()));
         jsonObject.addProperty("approvalDate", defaultIfBlank(applicationDetails.getApprovalDate()));
         jsonObject.addProperty("revenueWard", defaultIfBlank(applicationDetails.getRevenueWard()));

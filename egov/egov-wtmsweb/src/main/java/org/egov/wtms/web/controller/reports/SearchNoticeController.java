@@ -235,11 +235,12 @@ public class SearchNoticeController {
             WaterConnectionDetails waterConnectionDetails = null;
             waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
                     ConnectionStatus.INPROGRESS);
-            if (waterConnectionDetails==null)
+            if (waterConnectionDetails == null)
                 waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
                         ConnectionStatus.ACTIVE);
-            if (waterConnectionDetails != null && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) || 
-                    waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)))
+            if (waterConnectionDetails != null
+                    && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) ||
+                            waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)))
                 waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
                         ? waterConnectionDetails.getFileStore().getFileStoreId() : null);
         } else {
@@ -248,27 +249,12 @@ public class SearchNoticeController {
                             .getName());
             waterChargesFileStoreId.add(waterChargesDocumentslist.get(0) + "");
         }
-
-        if (!waterChargesFileStoreId.isEmpty() && waterChargesFileStoreId.get(0) != null)
-            try {
-                final FileStoreMapper fsm = fileStoreMapperRepository
-                        .findByFileStoreId(waterChargesFileStoreId.get(0) + "");
-                final List<InputStream> pdfs = new ArrayList<>();
-                final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                final byte[] bFile = FileUtils.readFileToByteArray(file);
-                pdfs.add(new ByteArrayInputStream(bFile));
-                getServletResponse(response, pdfs, consumerCode);
-            } catch (final Exception e) {
-                throw new ValidationException(e.getMessage());
-            }
-        else
-            throw new ValidationException("err.demand.notice");
+        getDemandBillByFileStoreId(waterChargesFileStoreId, consumerCode, response);
     }
 
     @RequestMapping(value = "/mergeAndDownload", method = GET)
     public String mergeAndDownload(final SearchNoticeDetails searchNoticeDetails, final HttpServletRequest request,
-            final HttpServletResponse response)
-            throws IOException {
+            final HttpServletResponse response) {
         final long startTime = System.currentTimeMillis();
         final String noticeType = request.getParameter(NOTICE_TYPE);
         List<SearchNoticeDetails> searchResultList;
@@ -286,36 +272,12 @@ public class SearchNoticeController {
                             request.getParameter(CONNECTION_TYPE), request.getParameter(WATERCHARGES_CONSUMERCODE),
                             request.getParameter(HOUSE_NUMBER), request.getParameter(ASSESSMENT_NUMBER),
                             request.getParameter(FROMDATE), request.getParameter(TODATE));
-        final List<InputStream> pdfs = new ArrayList<>();
 
+        mergeAndDownloadNotice(searchResultList, response);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of Bills : "
                     + (searchResultList != null ? searchResultList.size() : ZERO));
 
-        for (final SearchNoticeDetails connectionbill : searchResultList)
-            if (connectionbill != null)
-                try {
-                    final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.ACTIVE);
-
-                    if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
-                        final FileStoreMapper fsm = fileStoreMapperRepository
-                                .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
-                        final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                        final byte[] bFile = FileUtils.readFileToByteArray(file);
-                        pdfs.add(new ByteArrayInputStream(bFile));
-                    }
-                } catch (final Exception e) {
-                    LOGGER.debug("Entered into executeJob" + e);
-                    continue;
-                }
-        if (LOGGER.isDebugEnabled())
-            LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
-
-        if (!pdfs.isEmpty())
-            getServletResponse(response, pdfs, "search_bill");
-        else
-            throw new ValidationException("err.demand.notice");
         final long endTime = System.currentTimeMillis();
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("GenerateBill | mergeAndDownload | Time taken(ms) " + (endTime - startTime));
@@ -427,35 +389,7 @@ public class SearchNoticeController {
             LOGGER.debug("Number of Bills : "
                     + (noticeList != null ? noticeList.size() : ZERO));
         try {
-            ZipOutputStream zipOutputStream = null;
-            if (null != noticeList && noticeList.size() >= 0) {
-
-                zipOutputStream = new ZipOutputStream(response.getOutputStream());
-                response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + "searchbill" + ".zip");
-                response.setContentType("application/zip");
-            }
-
-            for (final SearchNoticeDetails connectionbill : noticeList)
-                try {
-                    final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.ACTIVE);
-                    if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
-                        final FileStoreMapper fsm = fileStoreMapperRepository
-                                .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
-                        final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
-                        final byte[] bFile = FileUtils.readFileToByteArray(file);
-                        zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),
-                                zipOutputStream);
-                    }
-                } catch (final Exception e) {
-                    LOGGER.error("zipAndDownload : Getting demand notice failed ", e);
-                    continue;
-                }
-            if (zipOutputStream != null) {
-                zipOutputStream.closeEntry();
-                zipOutputStream.close();
-            }
-
+            zipAndDownloadNotice(noticeList, response);
         } catch (final IOException e) {
             LOGGER.error("Exception in Zip and Download : ", e);
         }
@@ -466,6 +400,68 @@ public class SearchNoticeController {
         }
 
         return null;
+    }
+
+    public void zipAndDownloadNotice(final List<SearchNoticeDetails> noticeList, final HttpServletResponse response)
+            throws IOException {
+
+        ZipOutputStream zipOutputStream = null;
+        if (null != noticeList && noticeList.size() >= 0) {
+
+            zipOutputStream = new ZipOutputStream(response.getOutputStream());
+            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + "searchbill" + ".zip");
+            response.setContentType("application/zip");
+        }
+
+        for (final SearchNoticeDetails connectionbill : noticeList)
+            try {
+                final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                        .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.ACTIVE);
+                if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
+                    final FileStoreMapper fsm = fileStoreMapperRepository
+                            .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
+                    final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                    final byte[] bFile = FileUtils.readFileToByteArray(file);
+                    zipOutputStream = addFilesToZip(new ByteArrayInputStream(bFile), file.getName(),
+                            zipOutputStream);
+                }
+            } catch (final Exception e) {
+                LOGGER.error("zipAndDownload : Getting demand notice failed ", e);
+                continue;
+            }
+        if (zipOutputStream != null) {
+            zipOutputStream.closeEntry();
+            zipOutputStream.close();
+        }
+
+    }
+
+    public void mergeAndDownloadNotice(final List<SearchNoticeDetails> searchResultList, final HttpServletResponse response) {
+        final List<InputStream> pdfs = new ArrayList<>();
+        for (final SearchNoticeDetails connectionbill : searchResultList)
+            if (connectionbill != null)
+                try {
+                    final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.ACTIVE);
+
+                    if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
+                        final FileStoreMapper fsm = fileStoreMapperRepository
+                                .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
+                        final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                        final byte[] bFile = FileUtils.readFileToByteArray(file);
+                        pdfs.add(new ByteArrayInputStream(bFile));
+                    }
+                } catch (final Exception e) {
+                    LOGGER.debug("Entered into executeJob" + e);
+                    continue;
+                }
+        if (LOGGER.isDebugEnabled())
+            LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : ZERO));
+
+        if (!pdfs.isEmpty())
+            getServletResponse(response, pdfs, "search_bill");
+        else
+            throw new ValidationException("err.demand.notice");
     }
 
     private ZipOutputStream addFilesToZip(final InputStream inputStream, final String noticeNo,
@@ -487,5 +483,23 @@ public class SearchNoticeController {
             LOGGER.error(EXCEPTION_IN_ADDFILESTOZIP, ioe);
         }
         return out;
+    }
+
+    public void getDemandBillByFileStoreId(final List<String> waterChargesFileStoreId, final String consumerCode,
+            final HttpServletResponse response) {
+        if (!waterChargesFileStoreId.isEmpty() && waterChargesFileStoreId.get(0) != null)
+            try {
+                final FileStoreMapper fsm = fileStoreMapperRepository
+                        .findByFileStoreId(waterChargesFileStoreId.get(0) + "");
+                final List<InputStream> pdfs = new ArrayList<>();
+                final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                final byte[] bFile = FileUtils.readFileToByteArray(file);
+                pdfs.add(new ByteArrayInputStream(bFile));
+                getServletResponse(response, pdfs, consumerCode);
+            } catch (final Exception e) {
+                throw new ValidationException(e.getMessage());
+            }
+        else
+            throw new ValidationException("err.demand.notice");
     }
 }

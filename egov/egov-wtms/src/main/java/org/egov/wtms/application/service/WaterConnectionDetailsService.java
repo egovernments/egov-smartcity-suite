@@ -213,6 +213,9 @@ public class WaterConnectionDetailsService {
     private static final String EXECUTION_DATE = "executionDate";
     private static final String DATE_VALIDATION_FAILED = "DateValidationFailed";
     private static final String DEPARTMENT = "department";
+    private static final String EMPTY_LIST = "EmptyList";
+    private static final String UPDATE_FAILED = "UpdateExecutionFailed";
+    private static final String SUCCESS = "Success";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -895,21 +898,23 @@ public class WaterConnectionDetailsService {
         final StringBuilder aadharNumber = new StringBuilder();
         if (null != ownerNameItr && ownerNameItr.hasNext()) {
             final OwnerName primaryOwner = ownerNameItr.next();
-            if(primaryOwner !=null){
-            consumerName.append(primaryOwner.getOwnerName() != null ? primaryOwner.getOwnerName() : "");
-            //TODO: Using Only Primary Owner Mobile and aadharNumber as eg_application_index table  fields max length is 50
-            mobileNumber.append(primaryOwner.getMobileNumber() != null ? primaryOwner.getMobileNumber() : "");
-            aadharNumber.append(primaryOwner.getAadhaarNumber() != null ? primaryOwner.getAadhaarNumber() : "");
+            if (primaryOwner != null) {
+                consumerName.append(primaryOwner.getOwnerName() != null ? primaryOwner.getOwnerName() : "");
+                // TODO: Using Only Primary Owner Mobile and aadharNumber as eg_application_index table fields max length is 50
+                mobileNumber.append(primaryOwner.getMobileNumber() != null ? primaryOwner.getMobileNumber() : "");
+                aadharNumber.append(primaryOwner.getAadhaarNumber() != null ? primaryOwner.getAadhaarNumber() : "");
             }
             while (ownerNameItr.hasNext()) {
                 final OwnerName secondaryOwner = ownerNameItr.next();
                 consumerName.append(',')
                         .append(secondaryOwner.getOwnerName() != null ? secondaryOwner.getOwnerName() : "");
-                //TODO: if Primary owner MobileNumber and aadharNumber is Null then considering secondary Owner details.
-                if( "".equals(mobileNumber.toString()))
-                mobileNumber.append(',').append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : ""); 
-                if("".equals(aadharNumber.toString()))
-                aadharNumber.append(',') .append(secondaryOwner.getAadhaarNumber() != null ? secondaryOwner.getAadhaarNumber() : "");
+                // TODO: if Primary owner MobileNumber and aadharNumber is Null then considering secondary Owner details.
+                if ("".equals(mobileNumber.toString()))
+                    mobileNumber.append(',')
+                            .append(secondaryOwner.getMobileNumber() != null ? secondaryOwner.getMobileNumber() : "");
+                if ("".equals(aadharNumber.toString()))
+                    aadharNumber.append(',')
+                            .append(secondaryOwner.getAadhaarNumber() != null ? secondaryOwner.getAadhaarNumber() : "");
             }
 
         }
@@ -1377,7 +1382,10 @@ public class WaterConnectionDetailsService {
             queryString.append(" and boundary.name=:revenueWard");
 
         final Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        return setParameterDetails(executionDetails, query);
+    }
 
+    public List<Object[]> setParameterDetails(final WaterConnExecutionDetails executionDetails, final Query query) {
         query.setParameter("applicationtype", executionDetails.getApplicationType());
         if (isNotBlank(executionDetails.getApplicationNumber()))
             query.setParameter("applicationnumber", executionDetails.getApplicationNumber());
@@ -1465,4 +1473,17 @@ public class WaterConnectionDetailsService {
         return resultList;
     }
 
+    public String getResultStatus(final WaterConnectionExecutionResponse waterApplicationDetails, final String validationStatus,
+            final Boolean updateStatus) {
+        String response;
+        if (waterApplicationDetails.getExecuteWaterApplicationDetails().length <= 0)
+            response = EMPTY_LIST;
+        else if (!validationStatus.isEmpty())
+            response = validationStatus;
+        else if (!updateStatus)
+            response = UPDATE_FAILED;
+        else
+            response = SUCCESS;
+        return response;
+    }
 }
