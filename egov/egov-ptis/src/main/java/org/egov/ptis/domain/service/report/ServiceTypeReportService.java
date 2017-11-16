@@ -125,7 +125,7 @@ public class ServiceTypeReportService {
         SearchResponse response = elasticsearchTemplate.getClient()
                 .prepareSearch("ptservicetype")
                 .setQuery(getBoolQuery(fromDate, toDate, serviceRequest))
-                .addAggregation(aggregationBuilder)
+                .addAggregation(aggregationBuilder).setSize(120)
                 .execute().actionGet();
 
         Terms aggTerms = response.getAggregations().get(WARDGROUPING);
