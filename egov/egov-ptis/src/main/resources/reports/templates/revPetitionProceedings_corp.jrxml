@@ -1,43 +1,43 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
- ~ eGov suite of products aim to improve the internal efficiency,transparency,
- ~    accountability and the service delivery of the government  organizations.
- ~
- ~     Copyright (C) <2017>  eGovernments Foundation
- ~
- ~     The updated version of eGov suite of products as by eGovernments Foundation
- ~     is available at http://www.egovernments.org
- ~
- ~     This program is free software: you can redistribute it and/or modify
- ~     it under the terms of the GNU General Public License as published by
- ~     the Free Software Foundation, either version 3 of the License, or
- ~     any later version.
- ~
- ~     This program is distributed in the hope that it will be useful,
- ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
- ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- ~     GNU General Public License for more details.
- ~
- ~     You should have received a copy of the GNU General Public License
- ~     along with this program. If not, see http://www.gnu.org/licenses/ or
- ~     http://www.gnu.org/licenses/gpl.html .
- ~
- ~     In addition to the terms of the GPL license to be adhered to in using this
- ~     program, the following additional terms are to be complied with:
- ~
- ~         1) All versions of this program, verbatim or modified must carry this
- ~            Legal Notice.
- ~
- ~         2) Any misrepresentation of the origin of the material is prohibited. It
- ~            is required that all modified versions of this material be marked in
- ~            reasonable ways as different from the original version.
- ~
- ~         3) This license does not grant any rights to any user of the program
- ~            with regards to rights under trademark law for use of the trade names
- ~            or trademarks of eGovernments Foundation.
- ~
- ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
- -->
+  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  -->
 <!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="revPetitionProceedings_corp" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="595" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="47bc74eb-1422-43ff-8219-94fd47b0fe31">
 	<property name="ireport.zoom" value="1.0"/>
@@ -113,7 +113,7 @@
 				<textElement textAlignment="Justified" markup="styled">
 					<font size="8" isPdfEmbedded="false"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tIn the reference 1st read above a "+$P{natureOfWork}+" has been filled by the owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getDoorNo()+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> for reduction of Property Tax. \n\n\t On the receipt of the same, in the reference 2nd read above, a hearing notice is issued to the owner of the premises requesting him/her to appear in person or by authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+"</style> to represent the case. Sri <style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getOwnerName()+"</style> has attended on the date of hearing. A statement is recorded from him/her regarding the submissions made by him/her for reduction of Property Tax. \n\n\tAfter  careful examination of the above statement, the information available in the Municipal Office records, and also after due consideration of the location, actual plinth area, usage of the Building, nature of construction, age of the Building and the annual rental value fixed per sq.mtr. of plinth area and other parameters into consideration, the Annual Rental Value/Half Yearly Property Tax fixed earlier on the building in question, is reduced/confirmed as detailed below, in terms of Sec. 222 of A.P. Municipal Corporations Act, 1994 (formerly known as GHMC Act, 1955). \n\n\t The petitioner is therefore directed to pay the Property Tax now fixed, within(15) days from the date of receipt of these orders.\n\n\tIf the petitioner is not satisfied on these orders, he may prefer an appeal to the concerned Civil Judge within (15) days from the date of receipt of this order duly paying the Property Tax as specified above."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tIn the reference 1st read above a "+$P{natureOfWork}+" has been filled by the owner of the premises bearing Door No:<style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{ownerInfo}.getDoorNo())+"</style>, Assessment Number <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getAssessmentNo()+"</style> , Locality<style forecolor=\"#000000\" isBold=\"true\"> "+$P{ownerInfo}.getLocalityName()+"</style> for reduction of Property Tax. \n\n\t On the receipt of the same, in the reference 2nd read above, a hearing notice is issued to the owner of the premises requesting him/her to appear in person or by authorized agent on <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+"</style> to represent the case. Sri <style forecolor=\"#000000\" isBold=\"true\"> "+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"</style> has attended on the date of hearing. A statement is recorded from him/her regarding the submissions made by him/her for reduction of Property Tax. \n\n\tAfter  careful examination of the above statement, the information available in the Municipal Office records, and also after due consideration of the location, actual plinth area, usage of the Building, nature of construction, age of the Building and the annual rental value fixed per sq.mtr. of plinth area and other parameters into consideration, the Annual Rental Value/Half Yearly Property Tax fixed earlier on the building in question, is reduced/confirmed as detailed below, in terms of Sec. 222 of A.P. Municipal Corporations Act, 1994 (formerly known as GHMC Act, 1955). \n\n\t The petitioner is therefore directed to pay the Property Tax now fixed, within(15) days from the date of receipt of these orders.\n\n\tIf the petitioner is not satisfied on these orders, he may prefer an appeal to the concerned Civil Judge within (15) days from the date of receipt of this order duly paying the Property Tax as specified above."]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
 				<reportElement x="380" y="43" width="114" height="11" isPrintWhenDetailOverflows="true" uuid="18f6f9d1-387a-4abc-a31c-46ff862d5bb0"/>
@@ -128,7 +128,7 @@
 					<font size="8"/>
 					<paragraph lineSpacingSize="1.8"/>
 				</textElement>
-				<textFieldExpression><![CDATA["\tRead: 1) <style forecolor=\"#000000\" isBold=\"true\">"+$P{natureOfWork} +" dt :"+$P{ownerInfo}.getApplicationDate()+" </style>from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getOwnerName()+"R/O  "+$P{cityName}+"</style>\n\t           2) The office hearing notice dt :<style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+"</style>"]]></textFieldExpression>
+				<textFieldExpression><![CDATA["\tRead: 1) <style forecolor=\"#000000\" isBold=\"true\">"+$P{natureOfWork} +" dt :"+$P{ownerInfo}.getApplicationDate()+" </style>from Sri/Smt. <style forecolor=\"#000000\" isBold=\"true\">"+JRStringUtil.xmlEncode($P{ownerInfo}.getOwnerName())+"R/O  "+$P{cityName}+"</style>\n\t           2) The office hearing notice dt :<style forecolor=\"#000000\" isBold=\"true\">"+$P{ownerInfo}.getHearingDate()+"</style>"]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="213" y="104" width="103" height="21" uuid="37b269fc-ec10-44d8-8ee7-52ed1946d0e5"/>
