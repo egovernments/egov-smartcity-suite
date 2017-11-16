@@ -57,6 +57,7 @@ public class WaterTaxConstants {
     public static final String CREATEWORKFLOWSTATE = "CREATED";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
+    public static final String REGULARIZE_CONNECTION = "REGLZNCONNECTION";
     public static final String METERED = "Metered";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
@@ -358,7 +359,6 @@ public class WaterTaxConstants {
     public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
     public static final String CITYCODEAGGREGATIONFIELD = "cityCode";
     public static final String DASHBOARD_GROUPING_ALLWARDS = "allwards";
-    
 
     public static final String RESIDENTIALCONNECTIONTYPEFORDASHBOARD = "RESIDENTIAL";
 

@@ -63,7 +63,15 @@
 		<constructor-arg index="0"
 			ref="WaterConnectionDetailsPersistenceService" />
 	</bean>
-
+	
+	<bean id="RegularisedConnectionPersistenceService" parent="abstractPersistenceService">
+		<constructor-arg name="type" value="org.egov.wtms.application.entity.RegularisedConnection"/>
+	</bean>
+	
+	<bean id="RegularisedConnectionInboxRenderService" class="org.egov.infra.workflow.inbox.DefaultInboxRenderServiceImpl">
+		<constructor-arg index="0" ref="RegularisedConnectionPersistenceService"/>
+	</bean>
+	
 	<bean id="waterChargesIntegrationServiceImpl"
 		class="org.egov.wtms.integration.WaterChargesIntegrationServiceImpl">
 	</bean>

@@ -145,7 +145,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final Boolean recordCreatedBySuperUser;
         final Boolean recordCreatedByRoleAdmin;
 
-        if (user != null && user.getId() == waterConnectionDetails.getCreatedBy().getId()
+        if (user != null && user.getId() != waterConnectionDetails.getCreatedBy().getId()
                 && (CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
                         RECONNECTIONCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))) {
             recordCreatedBYNonEmployee = waterTaxUtils.getCurrentUserRole(user);
