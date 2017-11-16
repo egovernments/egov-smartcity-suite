@@ -51,6 +51,7 @@ package org.egov.stms.transactions.workflow;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -241,7 +242,18 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     sewerageApplicationDetails.transition().end()
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                             .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            } // TODO : Need to check this usecase. 
+            }
+            //  End workflow on executive engineer approval when application directly fwd from DEE to EE
+            else if (WF_STATE_DEPUTY_EXE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+                    && CHANGEINCLOSETS_NOCOLLECTION.equalsIgnoreCase(additionalRule)) {
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED, SewerageTaxConstants.MODULETYPE));
+                sewerageApplicationDetails.transition().end()
+                        .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+
+            }
+            // TODO : Need to check this usecase. 
             else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {  
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED, null);
