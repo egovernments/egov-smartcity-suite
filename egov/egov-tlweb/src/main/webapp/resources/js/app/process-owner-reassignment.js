@@ -83,27 +83,6 @@ $(document).ready(function () {
         window.parent.close();
     });
 
-    $("#reassign").click(function () {
-        $('#approvalPosition').find('option:gt(0)').remove();
-        var result = [];
-        $.ajax({
-            url: "/tl/license/reassign",
-            type: "GET",
-            dataType: "json",
-            cache: false,
-            success: function (data) {
-                $.each(data, function (i) {
-                    var obj = {};
-                    obj['id'] = i;
-                    obj['text'] = data[i];
-                    result.push(obj);
-                });
-                $.each(result, function (i) {
-                    $('#approvalPosition').append($('<option>').text(result[i].text).attr('value', result[i].id));
-                })
-                $('.reassign-screen').modal('show', {backdrop: 'static'});
-            },
-        });
-    });
+
 
 });

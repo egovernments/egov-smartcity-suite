@@ -193,20 +193,13 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String create(final T license) {
         addNewDocuments();
         populateWorkflowBean();
-        if (!license().isNewWorkflow()) {
-            licenseService().create(license, workflowBean);
+        if (tradeLicenseService.currentUserIsMeeseva()) {
+            license.setApplicationNumber(getApplicationNo());
+            licenseApplicationService.createWithMeseva((TradeLicense) license, workflowBean);
+        } else {
+            licenseApplicationService.create((TradeLicense) license, workflowBean);
             addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
             setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
-        } else {
-            if (tradeLicenseService.currentUserIsMeeseva()) {
-                license.setApplicationNumber(getApplicationNo());
-                licenseApplicationService.createWithMeseva((TradeLicense) license, workflowBean);
-            } else {
-                licenseApplicationService.create((TradeLicense) license, workflowBean);
-                addActionMessage(this.getText("license.submission.succesful") + license().getApplicationNumber());
-                setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
-            }
-
         }
         return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
@@ -296,19 +289,13 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public String renew() {
         addNewDocuments();
         populateWorkflowBean();
-        if (!license().isNewWorkflow()) {
-            licenseService().renew(license(), workflowBean);
+        if (tradeLicenseService.currentUserIsMeeseva()) {
+            license().setApplicationNumber(getApplicationNo());
+            licenseApplicationService.renewWithMeeseva((TradeLicense) license(), workflowBean);
+        } else {
+            licenseApplicationService.renew((TradeLicense) license(), workflowBean);
             addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
             setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
-        } else {
-            if (tradeLicenseService.currentUserIsMeeseva()) {
-                license().setApplicationNumber(getApplicationNo());
-                licenseApplicationService.renewWithMeeseva((TradeLicense) license(), workflowBean);
-            } else {
-                licenseApplicationService.renew((TradeLicense) license(), workflowBean);
-                addActionMessage(this.getText("license.renew.submission.succesful") + " " + license().getApplicationNumber());
-                setHasCscOperatorRole(securityUtils.getCurrentUser().getRoles().toString().contains(CSCOPERATOR));
-            }
         }
         return tradeLicenseService.currentUserIsMeeseva() ? MEESEVA_RESULT_ACK : ACKNOWLEDGEMENT;
     }
@@ -603,18 +590,19 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
 
     @Override
     public List<String> getValidActions() {
-        List<String> validActions = Collections.emptyList();
+        List<String> validActions = new ArrayList<>();
         if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null || getModel().getCurrentState().getValue().endsWith("NEW")
                 || (getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false))
             validActions = Arrays.asList("Save");
         else if (getModel().hasState())
             if (getModel().isNewWorkflow())
-                validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
+                validActions.addAll(this.customizedWorkFlowService.getNextValidActions(getModel()
                                 .getStateType(), getWorkFlowDepartment(), getAmountRule(),
                         getAdditionalRule(), getModel().getCurrentState().getValue(),
-                        getPendingActions(), getModel().getCreatedDate(), "%" + license().getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
-            else return super.getValidActions();
-
+                        getPendingActions(), getModel().getCreatedDate(), "%" + license().getCurrentState().getOwnerPosition().getDeptDesig().getDesignation().getName() + "%"));
+            else
+                validActions.addAll(super.getValidActions());
+        validActions.removeIf(validAction -> "Reassign".equals(validAction) && getModel().getState().getCreatedBy().getId().equals(ApplicationThreadLocals.getUserId()));
         return validActions;
     }
 

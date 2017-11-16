@@ -268,7 +268,7 @@
                 if (document.getElementById("mode").value == 'ACK') {
 
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
+                        'Forward', 'Reject','Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
                     //remove onclick event for propertyno search button
                     $("#searchImg").removeAttr("onclick");
                     // remove onclick event for add and delete button having class = add-padding
@@ -290,7 +290,7 @@
                 if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
 
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
+                        'Forward', 'Reject','Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
                     //remove onclick event for propertyno search button
                     $("#searchImg").removeAttr("onclick");
                     // remove onclick event for add and delete button having class = add-padding
@@ -311,7 +311,7 @@
             try {
                 if (document.getElementById("mode").value == 'editForApproval') {
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve']);
+                        'Forward', 'Reject','Reassign', 'button2', 'Approve']);
                     //remove onclick event for propertyno search button
                     document.getElementById("tradeArea_weight").disabled = false;
                     $("#searchImg").removeAttr("onclick");
@@ -547,21 +547,13 @@
             </s:push>
         </s:form>
         <div style="text-align: center;" id="btndiv">
-            <s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() &&  mode!=('editForReject') && state.value!='License Created'">
-                <button type="button" class="btn btn-primary" id="reassign">
-                    Reassign
-                </button>
-            </s:if>
-            <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
-                   style="display: none;"
-                   onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=
-                   <s:property
-                           value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+            <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate" style="display: none;"
+                   onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
         </div>
 
     </div>
 </div>
-<s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && mode!=('editForReject') && state.value!='License Created'">
+<s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && mode!=('editForReject')">
     <jsp:include page="../common/process-owner-reassignment.jsp"/>
 </s:if>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>

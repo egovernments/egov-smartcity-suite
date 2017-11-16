@@ -63,66 +63,90 @@
     $(document).ready(function () {
         $(".buttonsubmit").click(function () {
             var name = $(this).val();
-            if (!onSubmitValidations()) {
-                return false;
-            }
-            $("#workFlowAction").val(name);
-            var approverDeptId = $("#approverDepartment");
-            var approverDesgId = $("#approverDesignation");
-            var approverPosId = $("#approverPositionId");
-            var approverComments = $("#approverComments").val();
-            if (approverPosId && approverPosId.val() != -1) {
-                var approver = $("#approverPositionId option:selected").text();
-                $("approverName").val(approver.split('~')[0]);
-            }
-            <s:if test="%{getNextAction()!='END'}">
-            if (name == "Forward" || name == "forward") {
-                if (approverDeptId && approverDeptId.val() == -1) {
-                    bootbox.alert("Please Select the Approver Department ");
-                    return false;
-                } else if (approverDesgId && approverDesgId.val() == -1) {
-                    bootbox.alert("Please Select the Approver Designation ");
-                    return false;
-                } else if (approverPosId && approverPosId.val() == -1) {
-                    bootbox.alert("Please Select the Approver ");
-                    return false;
-                }
-            }
-            </s:if>
-            if (name == "Forward" || name == "forward" || name == "approve" || name == "Approve") {
-                if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
-                    bootbox.alert("Please Enter Approver Remarks ");
-                    return false;
-                }
-            }
-            if ((name == "Reject" || name == "reject" || name == "Cancel")) {
-                if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
-                    bootbox.alert("Please Enter Rejection Remarks ");
-                    return false;
-                }
-            }
-            var button = $(this);
-            bootbox.confirm({
-                message: 'Please confirm, if you wish to ' + name + ' this application.',
-                buttons: {
-                    'cancel': {
-                        label: 'No',
-                        className: 'btn-default'
+            if (name == 'Reassign') {
+                $('#approvalPosition').find('option:gt(0)').remove();
+                var result = [];
+                $.ajax({
+                    url: "/tl/license/reassign",
+                    type: "GET",
+                    dataType: "json",
+                    cache: false,
+                    success: function (data) {
+                        $.each(data, function (i) {
+                            var obj = {};
+                            obj['id'] = i;
+                            obj['text'] = data[i];
+                            result.push(obj);
+                        });
+                        $.each(result, function (i) {
+                            $('#approvalPosition').append($('<option>').text(result[i].text).attr('value', result[i].id));
+                        })
+                        $('.reassign-screen').modal('show', {backdrop: 'static'});
                     },
-                    'confirm': {
-                        label: 'Yes',
-                        className: 'btn-danger'
+                });
+            } else {
+                if (!onSubmitValidations()) {
+                    return false;
+                }
+                $("#workFlowAction").val(name);
+                var approverDeptId = $("#approverDepartment");
+                var approverDesgId = $("#approverDesignation");
+                var approverPosId = $("#approverPositionId");
+                var approverComments = $("#approverComments").val();
+                if (approverPosId && approverPosId.val() != -1) {
+                    var approver = $("#approverPositionId option:selected").text();
+                    $("approverName").val(approver.split('~')[0]);
+                }
+                <s:if test="%{getNextAction()!='END'}">
+                if (name == "Forward" || name == "forward") {
+                    if (approverDeptId && approverDeptId.val() == -1) {
+                        bootbox.alert("Please Select the Approver Department ");
+                        return false;
+                    } else if (approverDesgId && approverDesgId.val() == -1) {
+                        bootbox.alert("Please Select the Approver Designation ");
+                        return false;
+                    } else if (approverPosId && approverPosId.val() == -1) {
+                        bootbox.alert("Please Select the Approver ");
+                        return false;
                     }
-                },
-                callback: function (result) {
-                    if (result) {
-                        var formOk = onSubmit();
-                        if (formOk) {
-                            button.closest('form').submit();
+                }
+                </s:if>
+                if (name == "Forward" || name == "forward" || name == "approve" || name == "Approve") {
+                    if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
+                        bootbox.alert("Please Enter Approver Remarks ");
+                        return false;
+                    }
+                }
+                if ((name == "Reject" || name == "reject" || name == "Cancel")) {
+                    if (approverComments == null || approverComments == "" || approverComments.trim().length == 0) {
+                        bootbox.alert("Please Enter Rejection Remarks ");
+                        return false;
+                    }
+                }
+                var button = $(this);
+                bootbox.confirm({
+                    message: 'Please confirm, if you wish to ' + name + ' this application.',
+                    buttons: {
+                        'cancel': {
+                            label: 'No',
+                            className: 'btn-default'
+                        },
+                        'confirm': {
+                            label: 'Yes',
+                            className: 'btn-danger'
+                        }
+                    },
+                    callback: function (result) {
+                        if (result) {
+                            var formOk = onSubmit();
+                            if (formOk) {
+                                button.closest('form').submit();
+                            }
                         }
                     }
-                }
-            });
+
+                });
+            }
         });
     });
 </script>

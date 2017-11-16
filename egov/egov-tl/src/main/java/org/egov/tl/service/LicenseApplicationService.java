@@ -85,18 +85,15 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
-    @Override
     public License createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
         return create(license, wfBean);
     }
 
-    @Override
     public License renewWithMeeseva(TradeLicense license, WorkflowBean wfBean) {
         return renew(license, wfBean);
     }
 
     @Transactional
-    @Override
     public License create(final TradeLicense license, final WorkflowBean workflowBean) {
         final Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate())
                 .getFromDate();
@@ -125,7 +122,6 @@ public class LicenseApplicationService extends TradeLicenseService {
     }
 
     @Transactional
-    @Override
     public License renew(final TradeLicense license, final WorkflowBean workflowBean) {
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());

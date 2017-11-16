@@ -107,7 +107,6 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.tl.utils.Constants.*;
 
@@ -221,53 +220,6 @@ public abstract class AbstractLicenseService<T extends License> {
         return (T) this.licenseRepository.findOne(id);
     }
 
-    @Transactional
-    public License create(final T license, final WorkflowBean workflowBean) {
-        final Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate())
-                .getFromDate();
-        final Date toRange = installmentDao
-                .getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().plusYears(1).toDate()).getToDate();
-        if (license.getCommencementDate().before(fromRange) || license.getCommencementDate().after(toRange))
-            throw new ValidationException("TL-009", "TL-009");
-        license.setLicenseAppType(getLicenseApplicationType());
-        raiseNewDemand(license);
-        license.getLicensee().setLicense(license);
-        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        if (isBlank(license.getApplicationNumber()))
-            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        processAndStoreDocument(license);
-        if (securityUtils.currentUserIsEmployee())
-            transitionWorkFlow(license, workflowBean);
-        else
-            wfWithCscOperator(license, workflowBean);
-        licenseRepository.save(license);
-        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        return license;
-    }
-
-    private void wfWithCscOperator(final T license, final WorkflowBean workflowBean) {
-        List<Assignment> assignmentList = getAssignments();
-        if (!assignmentList.isEmpty()) {
-            final Assignment wfAssignment = assignmentList.get(0);
-            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), PUBLIC_HEALTH_DEPT,
-                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            if (!license.hasState())
-                license.transition().start();
-            else
-                license.transition().startNext();
-            license.transition().withSenderName(
-                    wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
-                    .withNextAction(wfmatrix.getNextAction()).withInitiator(wfAssignment.getPosition());
-            license.setEgwStatus(
-                    egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-        } else
-            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
-    }
-
     private List<Assignment> getAssignments() {
         Department nextAssigneeDept = departmentService.getDepartmentByCode(PUBLIC_HEALTH_DEPT_CODE);
         Designation nextAssigneeDesig = designationService.getDesignationByName(JA_DESIGNATION);
@@ -375,46 +327,6 @@ public abstract class AbstractLicenseService<T extends License> {
         licenseDemand.recalculateBaseDemand();
     }
 
-    @Transactional
-    public License renew(final T license, final WorkflowBean workflowBean) {
-        final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
-        if (!currentUserIsMeeseva())
-            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
-                license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
-        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-        license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
-        processAndStoreDocument(license);
-        final User currentUser = this.securityUtils.getCurrentUser();
-        if (securityUtils.currentUserIsEmployee()) {
-            Position wfInitiator = null;
-            if (license.getState() == null || license.transitionCompleted()) {
-                if (!assignments.isEmpty())
-                    wfInitiator = assignments.get(0).getPosition();
-                else
-                    throw new ValidationException(ERROR_KEY_WF_NEXT_OWNER_NOT_FOUND, "No employee assigned to process Renewal application", "Renewal");
-            }
-            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            if (!license.hasState())
-                license.transition().start();
-            else if (license.transitionCompleted())
-                license.transition().startNext();
-            else
-                throw new ValidationException("error.appl.under.workflow", "Cannot initiate Renewal process, application under processing");
-            license.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(RENEWAL_NATUREOFWORK)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
-                    .withOwner(wfInitiator)
-                    .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator);
-        } else
-            wfWithCscOperator(license, workflowBean);
-        this.licenseRepository.save(license);
-        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        return license;
-    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void raiseDemand(final T licenze, final Module module, final Installment installment) {
@@ -680,10 +592,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
 
-    public List<License> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
-        return licenseRepository.findByNatureOfBusinessName(natureOfBusiness);
-    }
-
     @Transactional
     public void save(final License license) {
         licenseRepository.save(license);
@@ -860,14 +768,6 @@ public abstract class AbstractLicenseService<T extends License> {
         return licenseRepository.findLicenseIdsForDemandGeneration(installment.getFromDate());
     }
 
-
-    public License createWithMeseva(T license, WorkflowBean wfBean) {
-        return create(license, wfBean);
-    }
-
-    public License renewWithMeeseva(T license, WorkflowBean wfBean) {
-        return renew(license, wfBean);
-    }
 
     public License closureWithMeeseva(T license, WorkflowBean wfBean) {
         return saveClosure(license, wfBean);
