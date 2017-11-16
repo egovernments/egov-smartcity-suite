@@ -41,7 +41,6 @@
 package org.egov.infra.web.utils;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.CacheControl;
@@ -56,6 +55,7 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.utils.ApplicationConstant.COLON;
 import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
@@ -117,11 +117,9 @@ public class WebUtils {
     }
 
     public static ResponseEntity<InputStreamResource> reportToResponseEntity(ReportOutput reportOutput) {
-        MediaType mediaType = MediaType.TEXT_PLAIN;
-        if (reportOutput.getReportFormat().equals(ReportFormat.PDF))
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (PDF.equals(reportOutput.getReportFormat()))
             mediaType = MediaType.APPLICATION_PDF;
-        else if (reportOutput.getReportFormat().equals(ReportFormat.XLS))
-            mediaType = MediaType.APPLICATION_OCTET_STREAM;
         return ResponseEntity.
                 ok().
                 contentType(mediaType).
