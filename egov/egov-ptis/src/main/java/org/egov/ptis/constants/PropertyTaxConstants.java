@@ -1736,7 +1736,7 @@ public interface PropertyTaxConstants {
     
     public static final String SUPER_STRUCTURE = "Super Structure";
 
-    public static final ImmutableList DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
+    public static final List<String> DEMAND_REASONS_FOR_REBATE_CALCULATION = ImmutableList.of(DEMANDRSN_CODE_GENERAL_TAX,
             DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_EDUCATIONAL_CESS);
     
     public static final List<String> PROPERTY_TYPE_SERVICE_CODES = ImmutableList.of("PT","VLT");
@@ -1744,6 +1744,7 @@ public interface PropertyTaxConstants {
 
     public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
             
-    
+	public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
+			OWNERSHIP_TYPE_CENTRAL_GOVT_335, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
 
 }

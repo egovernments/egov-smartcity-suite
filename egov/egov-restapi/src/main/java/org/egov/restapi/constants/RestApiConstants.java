@@ -654,4 +654,6 @@ public class RestApiConstants {
     public static final String REGULARISEDCONNECTION_EXISTS_ERROR_CODE = "WCMS-REST-17";
     public static final String REGULARISEDCONNECTION_EXISTS_ERROR_MSG = "Regularised Connection has already been applied with this property assessment number";
 
+    public static final String CATEGORY_CANT_BE_VACANT = "123";
+    public static final String CATEGORY_CANT_BE_VACANT_MSG = "Ownership type is State/Central Govt, Hence Property Category can't be Vacant Land";
 }

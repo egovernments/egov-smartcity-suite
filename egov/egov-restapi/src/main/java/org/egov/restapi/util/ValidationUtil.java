@@ -250,10 +250,7 @@ public class ValidationUtil {
 		} else if (propertyTypeMasterCode != null
 				&& !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)
 				&& !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE)
-				&& !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT)
-				&& !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_335)
-				&& !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50)
-				&& !propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_75)) {
+				&& !PropertyTaxConstants.PROPERTY_TYPE_GOVT_LIST.contains(propertyTypeMasterCode)) {
 			errorDetails.setErrorCode(OWNERSHIP_CATEGORY_TYPE_INVALID_CODE);
 			errorDetails.setErrorMessage(OWNERSHIP_CATEGORY_TYPE_INVALID_MSG);
 			return errorDetails;
@@ -282,6 +279,13 @@ public class ValidationUtil {
 			errorDetails.setErrorMessage(CATEGORY_CANT_BE_RESIDENTIAL_MSG);
 			return errorDetails;
 		}
+		if (PropertyTaxConstants.PROPERTY_TYPE_GOVT_LIST.contains(propertyTypeMasterCode)
+				&& PropertyTaxConstants.CATEGORY_VACANT_LAND.equalsIgnoreCase(propertyCategoryCode)) {
+			errorDetails.setErrorCode(CATEGORY_CANT_BE_VACANT);
+			errorDetails.setErrorMessage(CATEGORY_CANT_BE_VACANT_MSG);
+			return errorDetails;
+		}
+		
 		Double areaOfPlot = 0.0;
 		if (mode.equals(PropertyTaxConstants.PROPERTY_MODE_CREATE)) {
 			// Owner details validations
