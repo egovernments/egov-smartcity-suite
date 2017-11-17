@@ -99,8 +99,10 @@
 					    <div id="checklist-info" class="tab-pane fade">
 					    	<div class="panel panel-primary" data-collapsed="0">
 					    		<jsp:include page="../../common/generalinfo.jsp" />
-					    	</div>
+					    	</div>					    	
 					    </div>
+					   	<jsp:include page="../../common/reg-reissue-wfhistory.jsp"></jsp:include>
+					    
 					  </div>
 			<div class="buttonbottom" align="center"><a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a></div>
 		</form:form>

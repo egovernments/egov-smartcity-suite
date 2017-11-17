@@ -118,6 +118,8 @@ public class ViewReIssueController extends GenericWorkFlowController {
         model.addAttribute("documents", marriageDocumentService.getReIssueApplicantDocs());
         model.addAttribute("reIssue", reIssue);
         model.addAttribute("mode", mode1);
+        model.addAttribute("applicationHistory", marriageRegistrationService.getHistory(registration));
+
         marriageRegistrationService.prepareDocumentsForView(registration);
         marriageApplicantService.prepareDocumentsForView(registration.getHusband());
         marriageApplicantService.prepareDocumentsForView(registration.getWife());
