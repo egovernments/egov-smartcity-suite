@@ -38,12 +38,12 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
 
-package org.egov.restapi.web.rest;
+package org.egov.stms.web.controller;
 
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
-import org.egov.restapi.model.SewerageTaxDueDetails;
-import org.egov.restapi.service.SewerageTaxService;
+import org.egov.stms.entity.SewerageTaxDueDetails;
+import org.egov.stms.service.SewerageTaxService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

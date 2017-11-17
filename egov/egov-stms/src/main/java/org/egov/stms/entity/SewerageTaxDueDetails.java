@@ -44,7 +44,7 @@
  *
  *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  */
-package org.egov.restapi.model;
+package org.egov.stms.entity;
 
 import java.math.BigDecimal;
 import java.util.HashMap;
