@@ -202,9 +202,10 @@ public class ViewPropertyAction extends BaseFormAction {
             checkIsDemandActive(property);
             viewMap.put("doorNo", getBasicProperty().getAddress().getHouseNoBldgApt() == null ? NOT_AVAILABLE
                     : getBasicProperty().getAddress().getHouseNoBldgApt());
-			viewMap.put("ownerAddress", getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress() == null
-					? NOT_AVAILABLE
-					: getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress().get(0).toString());
+			viewMap.put("ownerAddress",
+					getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress().isEmpty() ? NOT_AVAILABLE
+							: getBasicProperty().getPropertyOwnerInfo().get(0).getOwner().getAddress().get(0)
+									.toString());
 			viewMap.put("ownershipType", basicProperty.getProperty() != null
                     ? basicProperty.getProperty().getPropertyDetail().getPropertyTypeMaster().getType()
                     : property.getPropertyDetail().getPropertyTypeMaster()
