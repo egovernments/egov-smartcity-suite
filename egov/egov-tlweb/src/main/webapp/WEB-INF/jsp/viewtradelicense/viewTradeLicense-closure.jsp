@@ -108,13 +108,6 @@
                 <div class="panel panel-primary" id="workflowDiv">
                     <%@ include file='../common/license-workflow-dropdown.jsp' %>
                     <%@ include file='../common/license-workflow-button.jsp' %>
-                    <s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && state.value=='NEW' ">
-                        <div class="text-center">
-                            <button type="button" class="btn btn-primary" id="reassign">
-                                Reassign
-                            </button>
-                        </div>
-                    </s:if>
                 </div>
             </s:if>
             <s:else>

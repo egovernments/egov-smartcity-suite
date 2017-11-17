@@ -553,9 +553,7 @@
 
     </div>
 </div>
-<s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && mode!=('editForReject')">
-    <jsp:include page="../common/process-owner-reassignment.jsp"/>
-</s:if>
+<jsp:include page="../common/process-owner-reassignment.jsp"/>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>

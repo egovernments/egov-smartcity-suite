@@ -455,14 +455,6 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
         workflowBean.setAppoverUserList(Collections.emptyList());
     }
 
-    public Boolean hasJuniorOrSeniorAssistantRole() {
-        List<Position> userPositions = positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId());
-        return userPositions
-                .stream()
-                .anyMatch(position -> position.getDeptDesig().getDesignation().getName().equalsIgnoreCase(JA_DESIGNATION)
-                        || position.getDeptDesig().getDesignation().getName().equalsIgnoreCase(SA_DESIGNATION));
-    }
-
     public Boolean reassignEnabled() {
         return processOwnerReassignmentService.reassignmentEnabled();
     }

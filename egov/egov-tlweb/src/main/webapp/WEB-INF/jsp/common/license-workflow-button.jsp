@@ -64,6 +64,7 @@
         $(".buttonsubmit").click(function () {
             var name = $(this).val();
             if (name == 'Reassign') {
+                $(".reassign-screen").show();
                 $('#approvalPosition').find('option:gt(0)').remove();
                 var result = [];
                 $.ajax({

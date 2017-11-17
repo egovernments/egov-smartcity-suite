@@ -53,6 +53,7 @@ import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
 import org.apache.struts2.convention.annotation.Results;
 import org.egov.eis.entity.Assignment;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.struts.annotation.ValidationErrorPageExt;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -65,8 +66,8 @@ import org.egov.tl.web.actions.BaseLicenseAction;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import static org.egov.tl.utils.Constants.BUTTONFORWARD;
@@ -85,7 +86,8 @@ import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
         @Result(name = "closure", location = "viewTradeLicense-closure.jsp"),
         @Result(name = "digisigncertificate", type = "redirect", location = "/tradelicense/download/digisign-certificate", params = {"file", "${digiSignedFile}", "applnum", "${applNum}"})
 })
-public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
+public class
+ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
     private static final long serialVersionUID = 1L;
     protected TradeLicense tradeLicense = new TradeLicense();
     private Long licenseid;
@@ -303,19 +305,18 @@ public class ViewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
 
     @Override
     public List<String> getValidActions() {
-        List<String> validActions = Collections.emptyList();
-        if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null || getModel().getCurrentState().getValue().endsWith("NEW")
+        List<String> validActions = new ArrayList<>();
+        if (null == getModel() || null == getModel().getId() || getModel().getCurrentState() == null
                 || (getModel() != null && getModel().getCurrentState() != null ? getModel().getCurrentState().isEnded() : false)) {
-
             validActions = Arrays.asList(FORWARD);
-        } else {
-            if (getModel().getCurrentState() != null) {
-                validActions = this.customizedWorkFlowService.getNextValidActions(getModel()
-                                .getStateType(), getWorkFlowDepartment(), getAmountRule(),
-                        getAdditionalRule(), getModel().getCurrentState().getValue(),
-                        getPendingActions(), getModel().getCreatedDate());
-            }
+        } else if (getModel().getCurrentState() != null) {
+            validActions.addAll(this.customizedWorkFlowService.getNextValidActions(getModel()
+                            .getStateType(), getWorkFlowDepartment(), getAmountRule(),
+                    getAdditionalRule(), getModel().getCurrentState().getValue(),
+                    getPendingActions(), getModel().getCreatedDate()));
+            validActions.removeIf(validAction -> "Reassign".equals(validAction) && getModel().getState().getCreatedBy().getId().equals(ApplicationThreadLocals.getUserId()));
         }
+
         return validActions;
     }
 }

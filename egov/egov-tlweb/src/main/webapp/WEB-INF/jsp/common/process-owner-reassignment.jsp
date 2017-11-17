@@ -51,7 +51,7 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <%@ include file="/includes/taglibs.jsp" %>
 
-<div class="modal fade reassign-screen" data-backdrop="static">
+<div class="modal fade reassign-screen display-hide" data-backdrop="static">
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header  alert-info">
