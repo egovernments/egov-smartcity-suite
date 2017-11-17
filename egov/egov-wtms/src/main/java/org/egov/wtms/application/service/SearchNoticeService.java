@@ -168,7 +168,7 @@ public class SearchNoticeService {
         queryString.append(
                 "dcbinfo.houseno as \"houseNumber\", localboundary.localname as \"locality\", dcbinfo.applicationtype as \"applicationType\" , ");
         queryString.append("dcbinfo.workorderdate as \"workOrderDate\", dcbinfo.workordernumber as \"workOrderNumber\", ");
-        queryString.append("dcbinfo.connectiontype as \"connectionType\" from egwtr_mv_dcb_view dcbinfo ");
+        queryString.append("dcbinfo.connectiontype as \"connectionType\" from egwtr_mv_conn_view dcbinfo ");
         queryString.append("INNER JOIN eg_boundary zoneboundary on dcbinfo.zoneid=zoneboundary.id ");
         queryString.append(
                 " INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
