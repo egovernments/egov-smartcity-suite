@@ -127,7 +127,7 @@
 												</c:forEach>
 											</tr>
 											<tr>
-												<td></td>
+												<td><spring:message code="lbl.taxrates.msg" /></td>
 												<td><spring:message code="lbl.total.resd" /></td>
 												<td><input name="genTaxResd" id="sum"
 													value="${genTaxResd}" readonly="true"></td>

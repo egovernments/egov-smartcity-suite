@@ -159,8 +159,6 @@ public class TaxRatesController {
     public String saveTaxRates(@ModelAttribute final DemandReasonDetailsBean taxRatesForm, final Model model,
             final HttpServletRequest request, final RedirectAttributes redirectAttributes) {
         EgDemandReasonDetails existingDemandReasonDetails;
-        if (!validate(taxRatesForm, model, request))
-            return "taxrates-editview";
         for (EgDemandReasonDetails egDemandReasonDetail : taxRatesForm.getDemandReasonDetails()) {
             existingDemandReasonDetails = taxRatesService.getDemandReasonDetailsById(egDemandReasonDetail.getId());
             existingDemandReasonDetails.setPercentage(egDemandReasonDetail.getPercentage());
@@ -187,6 +185,7 @@ public class TaxRatesController {
         return isValid;
     }
 
+    @SuppressWarnings("unused")
     private Boolean validate(final DemandReasonDetailsBean taxRatesForm, final Model model,
             final HttpServletRequest request) {
         EgDemandReasonDetails existingDemandReasonDetails;
