@@ -232,15 +232,8 @@ public class SearchNoticeController {
         List<Long> waterChargesDocumentslist;
         final List<String> waterChargesFileStoreId = new ArrayList<>();
         if (SANCTION_ORDER.equals(noticeType)) {
-            WaterConnectionDetails waterConnectionDetails = null;
-            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-                    ConnectionStatus.INPROGRESS);
-            if (waterConnectionDetails == null)
-                waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-                        ConnectionStatus.ACTIVE);
-            if (waterConnectionDetails != null
-                    && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) ||
-                            waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)))
+            final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(consumerCode);
+            if (waterConnectionDetails != null)
                 waterChargesFileStoreId.add(waterConnectionDetails.getFileStore() != null
                         ? waterConnectionDetails.getFileStore().getFileStoreId() : null);
         } else {
@@ -415,13 +408,8 @@ public class SearchNoticeController {
 
         for (final SearchNoticeDetails connectionbill : noticeList)
             try {
-                WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(),
-                        ConnectionStatus.INPROGRESS);
-                if (waterConnectionDetails == null)
-                    waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(),
-                            ConnectionStatus.ACTIVE);
-                if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null  && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) ||
-                        waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED))) {
+                final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(connectionbill.getHscNo());
+                if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
                     final FileStoreMapper fsm = fileStoreMapperRepository
                             .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
                     final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
@@ -445,13 +433,8 @@ public class SearchNoticeController {
         for (final SearchNoticeDetails connectionbill : searchResultList)
             if (connectionbill != null)
                 try {
-                    WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.INPROGRESS);
-                    if (waterConnectionDetails == null)
-                        waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(),
-                                ConnectionStatus.ACTIVE);
-                    if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null  && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) ||
-                            waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)))  {
+                    final WaterConnectionDetails waterConnectionDetails = getWaterConnectionDetails(connectionbill.getHscNo());
+                    if (waterConnectionDetails != null && waterConnectionDetails.getFileStore() != null) {
                         final FileStoreMapper fsm = fileStoreMapperRepository
                                 .findByFileStoreId(waterConnectionDetails.getFileStore().getFileStoreId());
                         final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
@@ -508,5 +491,21 @@ public class SearchNoticeController {
             }
         else
             throw new ValidationException("err.demand.notice");
+    }
+
+    public WaterConnectionDetails getWaterConnectionDetails(final String consumerCode) {
+        WaterConnectionDetails waterConnectionDetails = null;
+        waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
+                ConnectionStatus.INPROGRESS);
+        if (waterConnectionDetails == null)
+            waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
+                    ConnectionStatus.ACTIVE);
+        if (waterConnectionDetails != null
+                && (waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPROVED) ||
+                        waterConnectionDetails.getStatus().getCode().equals(WaterTaxConstants.APPLICATION_STATUS_SANCTIONED)))
+            return waterConnectionDetails;
+        else
+            return null;
+
     }
 }
