@@ -446,7 +446,7 @@ public class SearchNoticeController {
             if (connectionbill != null)
                 try {
                     WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
-                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.ACTIVE);
+                            .findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(), ConnectionStatus.INPROGRESS);
                     if (waterConnectionDetails == null)
                         waterConnectionDetails = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(connectionbill.getHscNo(),
                                 ConnectionStatus.ACTIVE);
