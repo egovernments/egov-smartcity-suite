@@ -56,8 +56,11 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.entity.es.ConnectionSearchRequest;
 import org.egov.wtms.entity.es.WaterChargeDocument;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -94,6 +97,9 @@ public class WaterTaxSearchController {
 
     @Autowired
     private WaterChargeDocumentRepository waterChargeDocumentRepository;
+
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
     public WaterTaxSearchController(final CityService cityService) {
@@ -287,19 +293,28 @@ public class WaterTaxSearchController {
         final List<ConnectionSearchRequest> finalResult = new ArrayList<>();
         temList = findAllWaterChargeIndexByFilter(searchRequest);
         for (final WaterChargeDocument waterChargeIndex : temList) {
+            final WaterConnectionDetails closureapplication = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                    waterChargeIndex.getConsumerCode(), ConnectionStatus.CLOSED);
+            final WaterConnectionDetails reconnApplication = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                    waterChargeIndex.getConsumerCode(), ConnectionStatus.ACTIVE);
             final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
+            if (closureapplication != null)
+                customerObj.setApplicationcode(closureapplication.getApplicationNumber());
+            else if (reconnApplication != null)
+                customerObj.setApplicationcode(reconnApplication.getApplicationNumber());
             customerObj.setApplicantName(waterChargeIndex.getConsumerName());
             customerObj.setConsumerCode(waterChargeIndex.getConsumerCode());
             customerObj.setOldConsumerNumber(waterChargeIndex.getOldConsumerCode());
             customerObj.setPropertyid(waterChargeIndex.getPropertyId());
             customerObj.setAddress(waterChargeIndex.getLocality());
-            customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
+            customerObj.setApplicationType(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
             customerObj.setIslegacy(waterChargeIndex.getLegacy());
             customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
             customerObj.setStatus(waterChargeIndex.getStatus());
             customerObj.setConnectiontype(waterChargeIndex.getConnectionType());
             customerObj.setWaterTaxDue(waterChargeIndex.getWaterTaxDue());
+            customerObj.setClosureType(waterChargeIndex.getClosureType());
             finalResult.add(customerObj);
         }
         return finalResult;

@@ -948,6 +948,7 @@ public class WaterConnectionDetailsService {
                             .equals(APPLICATION_STATUS__RECONNCTIONSANCTIONED)
                     && !waterConnectionDetails.getStatus().getCode()
                             .equals(APPLICATION_STATUS_SANCTIONED)) {
+                applicationIndex.setApplicationType(waterConnectionDetails.getApplicationType().getCode());
                 applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
                 applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
@@ -1061,8 +1062,10 @@ public class WaterConnectionDetailsService {
                         .withMobileNumber(mobileNumber.toString()).withClosed(ClosureStatus.NO)
                         .withAadharNumber(aadharNumber.toString()).withApproved(ApprovalStatus.INPROGRESS)
                         .withSla(appProcessTime != null ? appProcessTime : 0).build();
-                if (!waterConnectionDetails.getLegacy() && !waterConnectionDetails.getStatus().getCode()
-                        .equals(APPLICATION_STATUS_SANCTIONED))
+                if ((!waterConnectionDetails.getLegacy() ||
+                        CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
+                        && !waterConnectionDetails.getStatus().getCode()
+                                .equals(APPLICATION_STATUS_SANCTIONED))
                     applicationIndexService.createApplicationIndex(applicationIndex);
             }
             if (LOG.isDebugEnabled())
