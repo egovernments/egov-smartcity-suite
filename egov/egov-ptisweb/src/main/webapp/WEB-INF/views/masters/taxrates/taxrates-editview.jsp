@@ -123,7 +123,7 @@
 														name="percentage" id="percentage"
 														class="patternvalidation" data-pattern="decimalvalue"
 														autocomplete="off" maxlength="5"
-														value="${taxRate.percentage}" /></td>
+														value="${formattedRate}" /></td>
 												</c:forEach>
 											</tr>
 											<tr>
