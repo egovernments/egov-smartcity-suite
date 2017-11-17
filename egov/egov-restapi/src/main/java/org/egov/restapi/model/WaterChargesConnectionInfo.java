@@ -57,6 +57,8 @@ public class WaterChargesConnectionInfo {
     @NotNull
     private String ulbCode;
 
+    private String referenceId;
+
     public String getPropertyId() {
         return propertyId;
     }
@@ -71,6 +73,14 @@ public class WaterChargesConnectionInfo {
 
     public void setUlbCode(final String ulbCode) {
         this.ulbCode = ulbCode;
+    }
+
+    public String getReferenceId() {
+        return referenceId;
+    }
+
+    public void setReferenceId(final String referenceId) {
+        this.referenceId = referenceId;
     }
 
 }

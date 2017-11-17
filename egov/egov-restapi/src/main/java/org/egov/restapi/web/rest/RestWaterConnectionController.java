@@ -55,10 +55,10 @@ import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.restapi.model.WaterChargesConnectionInfo;
 import org.egov.restapi.model.WaterConnectionInfo;
-import org.egov.wtms.application.entity.RegularisedConnection;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.rest.WaterChargesDetails;
+import org.egov.wtms.application.rest.WaterChargesRestApiResponse;
 import org.egov.wtms.application.service.ChangeOfUseService;
 import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
@@ -131,11 +131,11 @@ public class RestWaterConnectionController {
     @RequestMapping(value = "/watercharges/newconnection", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String createNewConnection(@Valid @RequestBody final WaterConnectionInfo waterConnectionInfo)
             throws IOException {
-        final ErrorDetails response = restWaterConnectionValidationService.validatePropertyID(waterConnectionInfo
+        final WaterChargesRestApiResponse response = restWaterConnectionValidationService.validatePropertyID(waterConnectionInfo
                 .getPropertyID());
         if (response != null)
             return getJSONResponse(response);
-        final ErrorDetails errorMessage = restWaterConnectionValidationService
+        final WaterChargesRestApiResponse errorMessage = restWaterConnectionValidationService
                 .validateWaterConnectionDetails(waterConnectionInfo.getPropertyID());
         if (errorMessage != null)
             return getJSONResponse(errorMessage);
@@ -153,21 +153,18 @@ public class RestWaterConnectionController {
     @RequestMapping(value = "/watercharges/regulariseconnection", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
     public String createRegularisedConnection(@Valid @RequestBody final WaterChargesConnectionInfo waterChargesConnectionInfo)
             throws IOException {
-        final ErrorDetails errorDetails = restWaterConnectionValidationService
-                .validatePropertyID(waterChargesConnectionInfo.getPropertyId());
-        if (errorDetails != null)
+        final WaterChargesRestApiResponse errorDetails = restWaterConnectionValidationService
+                .validatePropertyAssessmentNumber(waterChargesConnectionInfo.getPropertyId());
+        if (errorDetails != null) {
+            errorDetails.setReferenceId(waterChargesConnectionInfo.getReferenceId());
             return getJSONResponse(errorDetails);
-        final ErrorDetails errorMessage = restWaterConnectionValidationService
-                .validateWaterConnectionDetails(waterChargesConnectionInfo.getPropertyId());
-        if (errorMessage != null)
-            return getJSONResponse(errorMessage);
-        final ErrorDetails errorObject = restWaterConnectionValidationService
-                .validateRegularizationConnection(waterChargesConnectionInfo);
-        if (errorObject != null)
-            return getJSONResponse(errorObject);
-        final RegularisedConnection regularisedConnection = restWaterConnectionValidationService
+        }
+        final WaterChargesRestApiResponse response = restWaterConnectionValidationService
                 .populateAndPersistRegularisedWaterConnection(waterChargesConnectionInfo);
-        return regularisedConnection.getStateDetails();
+        if (response != null)
+            response.setReferenceId(waterChargesConnectionInfo.getReferenceId());
+
+        return getJSONResponse(response);
     }
 
     @RequestMapping(value = "/watercharges/additionalconnection", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
@@ -219,7 +216,8 @@ public class RestWaterConnectionController {
                 approvalPosition = userPosition.getId();
         }
         waterConnectionDetails = changeOfUseService.createChangeOfUseApplication(waterConnectionDetails,
-                approvalPosition, WaterTaxConstants.APPLICATION_GIS_SYSTEM, waterConnectionDetails.getApplicationType().getCode(), null,
+                approvalPosition, WaterTaxConstants.APPLICATION_GIS_SYSTEM, waterConnectionDetails.getApplicationType().getCode(),
+                null,
                 WaterTaxConstants.SURVEY);
         return waterConnectionDetails.getApplicationNumber();
 

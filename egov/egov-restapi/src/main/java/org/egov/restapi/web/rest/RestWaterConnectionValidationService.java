@@ -41,16 +41,13 @@ package org.egov.restapi.web.rest;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.restapi.constants.RestApiConstants.REGULARISEDCONNECTION_EXISTS_ERROR_CODE;
-import static org.egov.restapi.constants.RestApiConstants.REGULARISEDCONNECTION_EXISTS_ERROR_MSG;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
@@ -61,6 +58,7 @@ import org.egov.restapi.model.WaterConnectionInfo;
 import org.egov.wtms.application.entity.RegularisedConnection;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.rest.WaterChargesRestApiResponse;
 import org.egov.wtms.application.service.AdditionalConnectionService;
 import org.egov.wtms.application.service.ChangeOfUseService;
 import org.egov.wtms.application.service.NewConnectionService;
@@ -116,17 +114,20 @@ public class RestWaterConnectionValidationService {
     private SecurityUtils securityUtils;
 
     @Autowired
+    private ApplicationNumberGenerator applicationNumberGenerator;
+
+    @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<RegularisedConnection> waterConnectionWorkflowService;
 
     @Autowired
     private RegularisedConnectionService regularisedConnectionService;
 
-    public ErrorDetails validatePropertyID(final String propertyid) {
-        ErrorDetails errorDetails = null;
+    public WaterChargesRestApiResponse validatePropertyID(final String propertyid) {
+        WaterChargesRestApiResponse errorDetails = null;
         final String errorMessage = newConnectionService.checkValidPropertyAssessmentNumber(propertyid);
         if (errorMessage != null && !errorMessage.equals("")) {
-            errorDetails = new ErrorDetails();
+            errorDetails = new WaterChargesRestApiResponse();
             errorDetails.setErrorCode(RestApiConstants.PROPERTYID_IS_VALID_CODE);
             errorDetails.setErrorMessage(errorMessage);
 
@@ -134,14 +135,14 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public ErrorDetails validateWaterConnectionDetails(final String propertyId) {
+    public WaterChargesRestApiResponse validateWaterConnectionDetails(final String propertyId) {
         String responseMessage = "";
-        ErrorDetails errorDetails = null;
+        WaterChargesRestApiResponse errorDetails = null;
         responseMessage = newConnectionService.checkValidPropertyAssessmentNumber(propertyId);
         if (responseMessage.isEmpty()) {
             final String responseMessagedet = newConnectionService.checkConnectionPresentForProperty(propertyId);
             if (isNotBlank(responseMessagedet)) {
-                errorDetails = new ErrorDetails();
+                errorDetails = new WaterChargesRestApiResponse();
                 errorDetails.setErrorMessage(RestApiConstants.PROPERTYID_IS_VALID_CONNECTION);
                 errorDetails.setErrorCode(RestApiConstants.PROPERTYID_IS_VALID_CONNECTION_CODE);
             }
@@ -215,15 +216,16 @@ public class RestWaterConnectionValidationService {
         return errorDetails;
     }
 
-    public RegularisedConnection populateAndPersistRegularisedWaterConnection(
+    public WaterChargesRestApiResponse populateAndPersistRegularisedWaterConnection(
             final WaterChargesConnectionInfo waterChargesConnectionInfo) {
         return prepareNewRegularizationConnectionDetails(waterChargesConnectionInfo);
     }
 
-    public RegularisedConnection prepareNewRegularizationConnectionDetails(
+    public WaterChargesRestApiResponse prepareNewRegularizationConnectionDetails(
             final WaterChargesConnectionInfo waterChargesConnectionInfo) {
-
+        final WaterChargesRestApiResponse response = new WaterChargesRestApiResponse();
         final RegularisedConnection regularisedConnection = new RegularisedConnection();
+        regularisedConnection.setApplicationNumber(applicationNumberGenerator.generate());
         final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(regularisedConnection.getStateType(), null,
                 null, REGULARIZE_CONNECTION, "Created", null);
         final User user = securityUtils.getCurrentUser();
@@ -234,22 +236,8 @@ public class RestWaterConnectionValidationService {
                 .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date())
                 .withOwner(userPosition).withNextAction(wfmatrix.getNextAction()).withNatureOfTask(REGULARISED_CONN_NATUREOFTASK);
         regularisedConnectionService.save(regularisedConnection);
-        return regularisedConnection;
-    }
-
-    public ErrorDetails validateRegularizationConnection(final WaterChargesConnectionInfo waterChargesConnectionInfo) {
-        ErrorDetails errorDetails = null;
-        List<RegularisedConnection> connectionDtlList = new ArrayList<>();
-        if (isNotBlank(waterChargesConnectionInfo.getUlbCode()) && isNotBlank(waterChargesConnectionInfo.getPropertyId()))
-            connectionDtlList = regularisedConnectionService.findByUlbCodeAndPropertyIdentifier(
-                    waterChargesConnectionInfo.getUlbCode(),
-                    waterChargesConnectionInfo.getPropertyId());
-        if (!connectionDtlList.isEmpty()) {
-            errorDetails = new ErrorDetails();
-            errorDetails.setErrorCode(REGULARISEDCONNECTION_EXISTS_ERROR_CODE);
-            errorDetails.setErrorMessage(REGULARISEDCONNECTION_EXISTS_ERROR_MSG);
-        }
-        return errorDetails;
+        response.setApplicationNumber(regularisedConnection.getApplicationNumber());
+        return response;
     }
 
     public ErrorDetails validateServiceRequest(final String propertyType, final String usageType, final String pipeSize,
@@ -284,6 +272,18 @@ public class RestWaterConnectionValidationService {
                 errorDetails.setErrorMessage(RestApiConstants.PROPERTY_CATEGORY_COMBINATION_VALID);
                 return errorDetails;
             }
+        }
+        return errorDetails;
+    }
+
+    public WaterChargesRestApiResponse validatePropertyAssessmentNumber(final String propertyid) {
+        WaterChargesRestApiResponse errorDetails = null;
+        final String errorMessage = newConnectionService.checkValidPropertyForDataEntry(propertyid);
+        if (errorMessage != null && !errorMessage.equals("")) {
+            errorDetails = new WaterChargesRestApiResponse();
+            errorDetails.setApplicationNumber("-1");
+            errorDetails.setErrorCode(RestApiConstants.PROPERTYID_IS_VALID_CODE);
+            errorDetails.setErrorMessage(errorMessage);
         }
         return errorDetails;
     }
