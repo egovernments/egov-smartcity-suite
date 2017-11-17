@@ -283,8 +283,8 @@ Browser:-
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
 [GHPAGE]:https://egovernments.org/solutions.php
-[versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
-[versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
+[versioneye]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2
+[versioneye img]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2/badge.svg?style=flat-square
 [codacy]:https://www.codacy.com/app/egovernments/eGov
 [codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987
 
