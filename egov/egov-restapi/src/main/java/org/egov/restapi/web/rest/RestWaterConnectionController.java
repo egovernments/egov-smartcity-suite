@@ -219,7 +219,7 @@ public class RestWaterConnectionController {
                 approvalPosition = userPosition.getId();
         }
         waterConnectionDetails = changeOfUseService.createChangeOfUseApplication(waterConnectionDetails,
-                approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null,
+                approvalPosition, WaterTaxConstants.APPLICATION_GIS_SYSTEM, waterConnectionDetails.getApplicationType().getCode(), null,
                 WaterTaxConstants.SURVEY);
         return waterConnectionDetails.getApplicationNumber();
 
