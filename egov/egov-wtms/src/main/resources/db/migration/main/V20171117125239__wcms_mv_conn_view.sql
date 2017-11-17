@@ -112,4 +112,4 @@ GROUP BY propertyid,
   approvalnumber,
   workorderdate,
   workordernumber;
-                                                                                                                       113,4         47%
+                                                                                                                       
