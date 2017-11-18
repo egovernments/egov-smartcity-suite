@@ -39,32 +39,8 @@
  */
 package org.egov.council.web.controller;
 
-import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.COUNCIL_RESOLUTION;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
-import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
-import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
-import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_ADJURNED;
-import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.council.utils.constants.CouncilConstants.WARD;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
@@ -84,10 +60,8 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
-import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -102,8 +76,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import javax.validation.Valid;
+import java.io.ByteArrayInputStream;
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.council.utils.constants.CouncilConstants.*;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping("/councilmom")
@@ -186,9 +167,9 @@ public class CouncilMomController {
             }
 
         }
-        if(councilMeeting!=null){
-        sortMeetingMomByItemNumber(councilMeeting);
-        model.addAttribute(COUNCIL_MEETING, councilMeeting);
+        if (councilMeeting != null) {
+            sortMeetingMomByItemNumber(councilMeeting);
+            model.addAttribute(COUNCIL_MEETING, councilMeeting);
         }
         return COUNCILMOM_NEW;
     }
@@ -249,7 +230,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/meetingsearch/{mode}", method = RequestMethod.GET)
     public String searchMeeting(@PathVariable("mode") final String mode,
-            Model model) {
+                                Model model) {
         model.addAttribute(COUNCIL_MEETING, new CouncilMeeting());
         return COUNCIL_MOM_MEETING_SEARCH;
 
@@ -274,9 +255,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/searchcreated-mom/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchCreatedMOM(
-            @PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String searchCreatedMOM(@PathVariable("mode") final String mode, @ModelAttribute final CouncilMeeting councilMeeting) {
 
         if (null != mode && !"".equals(mode)) {
             List<CouncilMeeting> searchResultList;
@@ -298,8 +277,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/departmentlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearch(final String mode, Model model,
-            @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String ajaxsearch(@ModelAttribute final CouncilMeeting councilMeeting) {
         List<Department> departmentList = departmentService.getAllDepartments();
         return new StringBuilder("{ \"departmentLists\":")
                 .append(toJSON(departmentList, Department.class,
@@ -310,8 +288,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/resolutionlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearchResolutionlist(final String mode,
-            Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String ajaxsearchResolutionlist(@ModelAttribute final CouncilMeeting councilMeeting) {
         List<EgwStatus> resolutionList = egwStatusHibernateDAO
                 .getStatusByModule(COUNCIL_RESOLUTION);
         Gson gson = new Gson();
@@ -324,8 +301,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/wardlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearchWardlist(final String mode,
-            Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String ajaxsearchWardlist(@ModelAttribute final CouncilMeeting councilMeeting) {
         List<Boundary> wardList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
                         REVENUE_HIERARCHY_TYPE);
@@ -336,9 +312,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/generateresolution", method = RequestMethod.POST)
     public String generateResolutionnumber(
-            @Valid @ModelAttribute final CouncilMeeting councilMeeting,
-            final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws ParseException {
+            @Valid @ModelAttribute final CouncilMeeting councilMeeting) throws ParseException {
         byte[] reportOutput;
 
         EgwStatus resoulutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
@@ -381,7 +355,7 @@ public class CouncilMomController {
             }
         }
 
-        reportOutput = generateMomPdfByPassingMeeting(councilMeeting, request);
+        reportOutput = generateMomPdfByPassingMeeting(councilMeeting);
         if (reportOutput != null) {
             councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput), MEETINGRESOLUTIONFILENAME,
                     APPLICATION_RTF, MODULE_NAME));
@@ -394,13 +368,9 @@ public class CouncilMomController {
         return "forward:/councilmeeting/generateresolution/" + councilMeeting.getId();
     }
 
-    private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting,
-            final HttpServletRequest request) {
+    private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting) {
         byte[] reportOutput;
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo"));
-        reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
+        reportOutput = councilReportService.generatePDFForMom(councilMeeting);
         return reportOutput;
     }
 }

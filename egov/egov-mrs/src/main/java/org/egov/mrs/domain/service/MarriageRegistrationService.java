@@ -95,7 +95,6 @@ import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -445,7 +444,7 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration approveRegistration(final MarriageRegistration marriageRegistration,
-                                                    final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                                    final WorkflowContainer workflowContainer) throws IOException {
         marriageRegistration.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(MarriageRegistration.RegistrationStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
@@ -466,7 +465,7 @@ public class MarriageRegistrationService {
                     && getPortalInbox(marriageRegistration.getApplicationNo()) != null)
                 updatePortalMessage(marriageRegistration);
         } else
-            printCertificate(marriageRegistration, workflowContainer, request);
+            printCertificate(marriageRegistration, workflowContainer);
 
         marriageSmsAndEmailService.sendSMS(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
         marriageSmsAndEmailService.sendEmail(marriageRegistration, MarriageRegistration.RegistrationStatus.APPROVED.toString());
@@ -474,17 +473,16 @@ public class MarriageRegistrationService {
     }
 
     @Transactional
-    public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration,
-                                                           final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+    public MarriageCertificate generateMarriageCertificate(final MarriageRegistration marriageRegistration) throws IOException {
         final MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(
-                marriageRegistration, request);
+                marriageRegistration);
         marriageRegistration.addCertificate(marriageCertificate);
         return marriageCertificate;
     }
 
     @Transactional
     public MarriageRegistration digiSignCertificate(final MarriageRegistration marriageRegistration,
-                                                    final WorkflowContainer workflowContainer, final HttpServletRequest request) {
+                                                    final WorkflowContainer workflowContainer) {
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(marriageRegistration, workflowContainer, workflowContainer.getApproverComments());
@@ -503,10 +501,10 @@ public class MarriageRegistrationService {
 
     @Transactional
     public MarriageRegistration printCertificate(final MarriageRegistration marriageRegistration,
-                                                 final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                                 final WorkflowContainer workflowContainer) throws IOException {
         if (marriageRegistration.getMarriageCertificate().isEmpty()) {
             final MarriageCertificate marriageCertificate = marriageCertificateService.generateMarriageCertificate(
-                    marriageRegistration, request);
+                    marriageRegistration);
             marriageRegistration.addCertificate(marriageCertificate);
         }
         marriageRegistration.setStatus(marriageUtils.getStatusByCodeAndModuleType(

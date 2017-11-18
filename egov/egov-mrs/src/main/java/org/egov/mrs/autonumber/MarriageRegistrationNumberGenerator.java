@@ -43,6 +43,5 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface MarriageRegistrationNumberGenerator {
-    public String generateMarriageRegistrationNumber(MarriageRegistration registration) ;
-
+    String generateMarriageRegistrationNumber(MarriageRegistration registration);
 }

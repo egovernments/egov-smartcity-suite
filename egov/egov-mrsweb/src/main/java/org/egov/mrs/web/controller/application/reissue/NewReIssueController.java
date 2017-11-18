@@ -263,7 +263,7 @@ public class NewReIssueController extends GenericWorkFlowController {
             message = messageSource.getMessage("msg.reissue.forward",
                     new String[] { approverName.concat("~").concat(nextDesignation), reIssueResult.getApplicationNo() }, null);
         } else if ("Cancel ReIssue".equals(workflowContainer.getWorkFlowAction())) {
-            reIssueResult = reIssueService.rejectReIssue(reIssue, workflowContainer, request);
+            reIssueResult = reIssueService.rejectReIssue(reIssue, workflowContainer);
             message = messageSource.getMessage("msg.cancelled.reissue", null, null);
         }
 

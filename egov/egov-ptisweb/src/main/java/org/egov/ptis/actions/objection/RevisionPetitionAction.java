@@ -105,12 +105,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
-import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Actions;
 import org.apache.struts2.convention.annotation.Namespace;
@@ -127,6 +124,7 @@ import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.EisCommonService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -142,7 +140,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
@@ -338,6 +335,9 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 
 	@Autowired
 	private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
+
+	@Autowired
+	private transient CityService cityService;
 
 	public RevisionPetitionAction() {
 
@@ -826,14 +826,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 						.generateNoticeNumber(NATURE_OF_WORK_RP.equalsIgnoreCase(objection.getType())
 								? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS);
 			propertyNotice = new PropertyNoticeInfo(property, noticeNo);
-
-			final HttpServletRequest request = ServletActionContext.getRequest();
-			final String url = WebUtils.extractRequestDomainURL(request, false);
-			final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-					.concat((String) request.getSession().getAttribute("citylogo"));
-			final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-			final String cityGrade = request.getSession().getAttribute("cityGrade") != null
-					? request.getSession().getAttribute("cityGrade").toString() : null;
+			final String cityGrade = cityService.getCityGrade();
 			Boolean isCorporation;
 			if (cityGrade != null && cityGrade != ""
 					&& cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
@@ -841,8 +834,8 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			else
 				isCorporation = false;
 			reportParams.put("isCorporation", isCorporation);
-			reportParams.put("cityName", cityName);
-			reportParams.put("logoPath", imagePath);
+			reportParams.put("cityName", cityService.getMunicipalityName());
+			reportParams.put("logoPath", cityService.getCityLogoURL());
 			reportParams.put("mode", "create");
 			final User user = securityUtils.getCurrentUser();
                         loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(
@@ -1168,7 +1161,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		getPropertyView(objection.getBasicProperty().getUpicNo());
 		isReassignEnabled = reassignmentservice.isReassignEnabled();
                 stateAwareId = objection.getId();
-		if (objection != null && objection.getBasicProperty() != null
+		if (objection.getBasicProperty() != null
 				&& objection.getBasicProperty().getPropertyID() != null) {
 			final PropertyID propertyID = objection.getBasicProperty().getPropertyID();
 			northBoundary = propertyID.getNorthBoundary();
@@ -1196,7 +1189,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		propStatVal = propertyStatusValuesDAO.getLatestPropertyStatusValuesByPropertyIdAndreferenceNo(
 				objection.getBasicProperty().getUpicNo(), objection.getObjectionNumber());
 
-		if (objection != null && objection.getState() != null) {
+		if (objection.getState() != null) {
 			if (!objection.getState().getHistory().isEmpty())
 				setUpWorkFlowHistory(objection.getState().getId());
 			historyMap = propService.populateHistory(objection);
@@ -1731,7 +1724,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		else if (objection != null && objection.getProperty() != null
 				&& objection.getProperty().getPropertyDetail() != null
 				&& objection.getProperty().getPropertyDetail().getPropertyTypeMaster() != null
-				&& !objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId().equals(-1))
+				&& objection.getProperty().getPropertyDetail().getPropertyTypeMaster().getId() != -1)
 			propTypeMstr = objection.getProperty().getPropertyDetail().getPropertyTypeMaster();
 		else if (objection.getBasicProperty() != null)
 			propTypeMstr = objection.getBasicProperty().getProperty().getPropertyDetail().getPropertyTypeMaster();

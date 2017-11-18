@@ -110,18 +110,14 @@ public class NewRegistrationController extends MarriageRegistrationController {
 
     @RequestMapping(value = "/register", method = RequestMethod.GET)
     public String showRegistration(final Model model, HttpServletRequest request) {
-        /*
-         * Assignment currentuser; final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue(); currentuser =
-         * assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue()); if (null == currentuser) {
-         * model.addAttribute(MESSAGE, "msg.superuser"); return "marriagecommon-error"; }
-         */
+
         final MarriageRegistration marriageRegistration = new MarriageRegistration();
 
         User logedinUser = securityUtils.getCurrentUser();
         boolean loggedUserIsMeesevaUser = registrationWorkFlowService.isMeesevaUser(logedinUser);
         String meesevaApplicationNumber = null;
         if (request.getParameter("applicationNo") != null)
-            meesevaApplicationNumber = request.getParameter("applicationNo").toString();
+            meesevaApplicationNumber = request.getParameter("applicationNo");
 
         if (loggedUserIsMeesevaUser) {
 
@@ -186,11 +182,6 @@ public class NewRegistrationController extends MarriageRegistrationController {
             obtainWorkflowParameters(workflowContainer, request);
         }
 
-        /*
-         * final Integer loggedInUser = ApplicationThreadLocals.getUserId().intValue(); currentuser =
-         * assignmentService.getPrimaryAssignmentForUser(loggedInUser.longValue()); if (null == currentuser) {
-         * model.addAttribute(MESSAGE, "msg.superuser"); return "marriagecommon-error"; }
-         */
         final String appNo;
         if (loggedUserIsMeesevaUser) {
             marriageRegistration.setSource(MarriageConstants.SOURCE_MEESEVA);
@@ -222,10 +213,10 @@ public class NewRegistrationController extends MarriageRegistrationController {
             final Boolean isEmployee, final Model model, final Boolean isAssignmentPresent) {
         model.addAttribute(IS_EMPLOYEE, isEmployee);
         if(!isAssignmentPresent)        
-            model.addAttribute("message", messageSource.getMessage("notexists.position",
+            model.addAttribute(MESSAGE, messageSource.getMessage("notexists.position",
                 new String[] {}, null));
         else
-            model.addAttribute("message", "Validation failed");
+            model.addAttribute(MESSAGE, "Validation failed");
         model.addAttribute(MARRIAGE_REGISTRATION, marriageRegistration);
         registrationWorkFlowService.validateAssignmentForCscUser(marriageRegistration, null, isEmployee);
         prepareWorkFlowForNewMarriageRegistration(marriageRegistration, model);
@@ -262,7 +253,7 @@ public class NewRegistrationController extends MarriageRegistrationController {
             result = marriageRegistrationService.forwardRegistration(marriageRegistration, workflowContainer);
             break;
         case "Approve":
-            result = marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer, request);
+            result = marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
             break;
         case "Reject":
             result = marriageRegistrationService.rejectRegistration(marriageRegistration, workflowContainer);

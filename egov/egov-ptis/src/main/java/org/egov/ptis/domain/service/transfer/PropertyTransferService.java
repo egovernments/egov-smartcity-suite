@@ -320,7 +320,7 @@ public class PropertyTransferService {
                         "transferedInMonths", transferedInMonths, "transferReason", transferReason));
     }
 
-    public BigDecimal getWaterTaxDues(final String wtmsTaxDueChecking_REST_url, final String upicNo) {
+    public BigDecimal getWaterTaxDues(final String wtmsTaxDueChecking_REST_url) {
         final HashMap<String, Object> waterTaxInfo = simpleRestClient.getRESTResponseAsMap(wtmsTaxDueChecking_REST_url);
         return waterTaxInfo.get("totalTaxDue") == null ? BigDecimal.ZERO : new BigDecimal(
                 Double.valueOf((Double) waterTaxInfo.get("totalTaxDue")));
@@ -365,11 +365,11 @@ public class PropertyTransferService {
     }
 
     public ReportOutput generateAcknowledgement(final BasicProperty basicProperty,
-                                                final PropertyMutation propertyMutation, final String cityName, final String cityLogo) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+                                                final PropertyMutation propertyMutation) {
+        final Map<String, Object> reportParams = new HashMap<>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
-        ackBean.setUlbLogo(cityLogo);
-        ackBean.setMunicipalityName(cityName);
+        ackBean.setUlbLogo(cityService.getCityLogoURL());
+        ackBean.setMunicipalityName(cityService.getMunicipalityName());
         ackBean.setReceivedDate(DateUtils.getDefaultFormattedDate(propertyMutation.getMutationDate()));
         if (propertyMutation.getType().equalsIgnoreCase(PropertyTaxConstants.ADDTIONAL_RULE_REGISTERED_TRANSFER)) {
             ackBean.setApplicationType(PropertyTaxConstants.ALL_READY_REGISTER);
@@ -393,7 +393,7 @@ public class PropertyTransferService {
         ackBean.setApplicationNo(propertyMutation.getApplicationNo());
         ackBean.setApplicationDate(DateUtils.getDefaultFormattedDate(propertyMutation.getMutationDate()));
         ackBean.setApplicationName(propertyMutation.getFullTranfereeName());
-        if (propertyMutation.getTransfereeInfos() != null && propertyMutation.getTransfereeInfos().size() > 0) {
+        if (propertyMutation.getTransfereeInfos() != null && !propertyMutation.getTransfereeInfos().isEmpty()) {
             String newOwnerName = "";
             for (final PropertyMutationTransferee usr : propertyMutation.getTransfereeInfos())
                 newOwnerName = newOwnerName + usr.getTransferee().getName() + ",";
@@ -407,7 +407,7 @@ public class PropertyTransferService {
 
     @Transactional
     public ReportOutput generateTransferNotice(final BasicProperty basicProperty,
-                                               final PropertyMutation propertyMutation, final String cityName, final String cityLogo, final String actionType,
+                                               final PropertyMutation propertyMutation,final String actionType,
                                                final boolean isCorporation) {
         final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(NOTICE_TYPE_MUTATION_CERTIFICATE,
                 propertyMutation.getApplicationNo());
@@ -431,9 +431,9 @@ public class PropertyTransferService {
             propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         } else {
             final PropertyAckNoticeInfo noticeBean = new PropertyAckNoticeInfo();
-            noticeBean.setMunicipalityName(cityName);
+            noticeBean.setMunicipalityName(cityService.getMunicipalityName());
             final BasicProperty basicProp = propertyMutation.getBasicProperty();
-            final Map<String, Object> reportParams = new HashMap<String, Object>();
+            final Map<String, Object> reportParams = new HashMap<>();
             final List<User> users = eisCommonService.getAllActiveUsersByGivenDesig(designationService
                     .getDesignationByName(COMMISSIONER_DESGN).getId());
             noticeBean.setApproverName(users.get(0).getName());
@@ -513,8 +513,7 @@ public class PropertyTransferService {
                 User user = null;
                 if (null != transferee.getTransferee().getAadhaarNumber()
                         && !transferee.getTransferee().getAadhaarNumber().isEmpty()) {
-                    List<User> userList = new ArrayList<User>();
-                    userList = userService.getUserByAadhaarNumberAndType(transferee.getTransferee().getAadhaarNumber(),
+                    List<User> userList = userService.getUserByAadhaarNumberAndType(transferee.getTransferee().getAadhaarNumber(),
                             transferee.getTransferee().getType());
                     if (userList != null && !userList.isEmpty())
                         for (int i = 0; i < userList.size(); i++)
@@ -613,8 +612,7 @@ public class PropertyTransferService {
     }
 
     public Designation getUserDesigantion() {
-        final Designation designation = propertyTaxUtil.getDesignationForUser(ApplicationThreadLocals.getUserId());
-        return designation;
+        return propertyTaxUtil.getDesignationForUser(ApplicationThreadLocals.getUserId());
     }
 
     public PropertyMutation initiatePropertyTransfer(final BasicProperty basicproperty, final PropertyMutation propertyMutation,
@@ -708,7 +706,7 @@ public class PropertyTransferService {
      */
     private List<PropertyMutationTransferee> getTransfereesInfoList(final PropertyMutation propertyMutation,
                                                                     final List<OwnerDetails> ownerDetailsList) {
-        final List<PropertyMutationTransferee> transfereeInfoList = new ArrayList<PropertyMutationTransferee>(0);
+        final List<PropertyMutationTransferee> transfereeInfoList = new ArrayList<>();
         for (final OwnerDetails ownerDetais : ownerDetailsList) {
             final PropertyMutationTransferee transfereeInfo = new PropertyMutationTransferee();
             final User owner = new User();
@@ -736,14 +734,11 @@ public class PropertyTransferService {
      * @return MutationFee
      */
     public BigDecimal calculateMutationFee(final BigDecimal partyValue, final BigDecimal departmentValue) {
-        BigDecimal documentValue = BigDecimal.ZERO;
         BigDecimal mutationFee = BigDecimal.ZERO;
         // Maximum among partyValue and departmentValue will be considered as the documentValue
-        documentValue = partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue;
+        BigDecimal documentValue = partyValue.compareTo(departmentValue) > 0 ? partyValue : departmentValue;
 
         if (documentValue.compareTo(BigDecimal.ZERO) > 0) {
-            BigDecimal excessDocValue = BigDecimal.ZERO;
-            BigDecimal multiplicationFactor = BigDecimal.ZERO;
             final MutationFeeDetails mutationFeeDetails = (MutationFeeDetails) basicPropertyService.find(
                     "from MutationFeeDetails where lowLimit <= ? and (highLimit is null OR highLimit >= ?)", documentValue,
                     documentValue);
@@ -753,8 +748,8 @@ public class PropertyTransferService {
                     if (mutationFeeDetails.getIsRecursive().toString().equalsIgnoreCase("N"))
                         mutationFee = mutationFeeDetails.getFlatAmount();
                     else {
-                        excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
-                        multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(),
+                        BigDecimal excessDocValue = documentValue.subtract(mutationFeeDetails.getLowLimit()).add(BigDecimal.ONE);
+                        BigDecimal multiplicationFactor = excessDocValue.divide(mutationFeeDetails.getRecursiveFactor(),
                                 BigDecimal.ROUND_CEILING);
                         mutationFee = mutationFeeDetails.getFlatAmount()
                                 .add(multiplicationFactor.multiply(mutationFeeDetails.getRecursiveAmount()));

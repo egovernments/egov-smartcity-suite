@@ -46,6 +46,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 public interface MarriageCertificateNumberGenerator {
-    public String generateCertificateNumber(MarriageRegistration marriageRegistration, String cityCode);
-    public String generateCertificateNumber(ReIssue reIssue, String cityCode);
+    String generateCertificateNumber(MarriageRegistration marriageRegistration);
+
+    String generateCertificateNumber(ReIssue reIssue);
 }

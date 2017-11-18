@@ -75,7 +75,6 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -203,8 +202,7 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
-                                  final HttpServletRequest request) throws IOException {
+    public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer) throws IOException {
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
@@ -213,7 +211,7 @@ public class ReIssueService {
             workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments());
             reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue1);
         } else
-            printCertificate(reissue1, workflowContainer, request);
+            printCertificate(reissue1, workflowContainer);
         if (reissue.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
                 && getPortalInbox(reissue.getApplicationNo()) != null)
@@ -224,8 +222,7 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue rejectReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
-                                 final HttpServletRequest request)
+    public ReIssue rejectReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer)
             throws IOException {
         reissue.setStatus(
                 workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ? marriageUtils
@@ -240,7 +237,7 @@ public class ReIssueService {
             if (appConfigValues != null && !appConfigValues.isEmpty()
                     && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue())) {
 
-                final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue, request,
+                final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue,
                         MarriageCertificateType.REJECTION);
                 reissue.addCertificate(marriageCertificate);
             }
@@ -283,17 +280,16 @@ public class ReIssueService {
     }
 
     @Transactional
-    public MarriageCertificate generateReIssueCertificate(final ReIssue reIssue,
-                                                          final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+    public MarriageCertificate generateReIssueCertificate(final ReIssue reIssue) throws IOException {
         final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
-                reIssue, request, MarriageCertificateType.REISSUE);
+                reIssue, MarriageCertificateType.REISSUE);
         reIssue.addCertificate(marriageCertificate);
         return marriageCertificate;
     }
 
     @Transactional
     public ReIssue digiSignCertificate(final ReIssue reIssue,
-                                       final WorkflowContainer workflowContainer, final HttpServletRequest request) {
+                                       final WorkflowContainer workflowContainer) {
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(
                 ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
@@ -308,12 +304,11 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue printCertificate(final ReIssue reIssue, final WorkflowContainer workflowContainer,
-                                    final HttpServletRequest request)
+    public ReIssue printCertificate(final ReIssue reIssue, final WorkflowContainer workflowContainer)
             throws IOException {
         if (reIssue.getMarriageCertificate().isEmpty()) {
             final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
-                    reIssue, request, MarriageCertificateType.REISSUE);
+                    reIssue, MarriageCertificateType.REISSUE);
             reIssue.addCertificate(marriageCertificate);
         }
         reIssue.setStatus(

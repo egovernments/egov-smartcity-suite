@@ -157,8 +157,7 @@ public final class ReportUtil {
     public static String logoBasePath() {
         HttpServletRequest request = ServletActionContext.getRequest();
         String url = WebUtils.extractRequestDomainURL(request, false);
-        return url.concat(IMAGE_CONTEXT_PATH).concat(
-                (String) request.getSession().getAttribute("citylogo"));
+        return url.concat(IMAGE_CONTEXT_PATH).concat("/downloadfile/logo");
     }
 
     public static String cancelledWatermarkAbsolutePath() {

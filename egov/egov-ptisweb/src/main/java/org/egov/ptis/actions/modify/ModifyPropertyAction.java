@@ -117,8 +117,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -137,6 +135,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -147,7 +146,6 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.portal.entity.PortalInbox;
@@ -239,13 +237,13 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	public static final String PRINT_ACK = "printAck";
 	public static final String MEESEVA_ERROR = "meesevaError";
 
-	private PersistenceService<Property, Long> propertyImplService;
-	private PersistenceService<Floor, Long> floorService;
-	private BasicProperty basicProp;
-	private PropertyImpl oldProperty = new PropertyImpl();
-	private PropertyImpl propertyModel = new PropertyImpl();
+	private transient PersistenceService<Property, Long> propertyImplService;
+	private transient PersistenceService<Floor, Long> floorService;
+	private transient BasicProperty basicProp;
+	private transient PropertyImpl oldProperty = new PropertyImpl();
+	private transient PropertyImpl propertyModel = new PropertyImpl();
 	private String areaOfPlot;
-	private Map<String, String> waterMeterMap;
+	private transient Map<String, String> waterMeterMap;
 	private boolean generalTax;
 	private boolean sewerageTax;
 	private boolean lightingTax;
@@ -253,15 +251,15 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private boolean bigResdBldgTax;
 	private boolean educationCess;
 	private boolean empGuaCess;
-	private SortedMap<Integer, String> floorNoMap;
+	private transient SortedMap<Integer, String> floorNoMap;
 	private String dateOfCompletion;
 	private String modifyRsn;
-	private Map<String, String> modifyReasonMap;
+	private transient Map<String, String> modifyReasonMap;
 	private String ownerName;
 	private String propAddress;
 	private String corrsAddress;
 	private String[] amalgPropIds;
-	private PropertyService propService;
+	private transient PropertyService propService;
 	private String courtOrdNum;
 	private String orderDate;
 	private String judgmtDetails;
@@ -272,7 +270,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private String oldOwnerName;
 	private String oldPropAddress;
 	private String ackMessage;
-	private Map<String, String> amenitiesMap;
+	private transient Map<String, String> amenitiesMap;
 	private String propTypeId;
 	private String propertyCategory;
 	private String propUsageId;
@@ -280,18 +278,18 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private String amenities;
 	private String[] floorNoStr = new String[100];
 	private final SimpleDateFormat dateFormatter = new SimpleDateFormat(DATE_FORMAT_DDMMYYY);
-	private PropertyImpl propWF;// would be current property workflow obj
-	private Map<String, String> propTypeCategoryMap;
+	private transient PropertyImpl propWF;// would be current property workflow obj
+	private transient Map<String, String> propTypeCategoryMap;
 	FinancialUtil financialUtil = new FinancialUtil();
 	private String docNumber;
 	private boolean isfloorDetailsRequired;
 	private boolean updateData;
 	private PropertyAddress propertyAddr;
 	private String parcelId;
-	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+	private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private String errorMessage;
 	private String partNo;
-	private List<PropertyOwnerInfo> propertyOwners = new ArrayList<>();
+	private transient List<PropertyOwnerInfo> propertyOwners = new ArrayList<>();
 	private String modificationType;
 	private boolean isTenantFloorPresent;
 	private String mode;
@@ -301,11 +299,11 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private Long roofTypeId;
 	private Long wallTypeId;
 	private Long woodTypeId;
-	private List<DocumentType> documentTypes = new ArrayList<>();
-	private ReportService reportService;
+	private transient List<DocumentType> documentTypes = new ArrayList<>();
+	private transient ReportService reportService;
 	private String reportId;
-	private PropertyTypeMaster propTypeMstr;
-	private Map<String, String> deviationPercentageMap;
+	private transient PropertyTypeMaster propTypeMstr;
+	private transient Map<String, String> deviationPercentageMap;
 	private String certificationNumber;
 	private String northBoundary;
 	private String southBoundary;
@@ -326,8 +324,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	private Long propertyDepartmentId;
 	private Long vacantLandPlotAreaId;
 	private Long layoutApprovalAuthorityId;
-	private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
-	private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
+	private transient List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
+	private transient List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
 	private boolean allowEditDocument = Boolean.FALSE;
 	private Boolean showAckBtn = Boolean.FALSE;
 	private String applicationSource;
@@ -362,15 +360,18 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	@Autowired
 	transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
 	
-	 @Autowired
-	 private ReassignService reassignmentservice;
+    @Autowired
+    private transient ReassignService reassignmentservice;
 
 	@Autowired
 	@Qualifier("ptaxApplicationTypeService")
-	private PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
+	private transient PersistenceService<PtApplicationType, Long> ptaxApplicationTypeService;
 	
 	@Autowired
-	private BoundaryService boundaryService;
+	private transient BoundaryService boundaryService;
+
+	@Autowired
+	private transient CityService cityService;
 
 	public ModifyPropertyAction() {
 		super();
@@ -1705,11 +1706,6 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 	@SkipValidation
 	@Action(value = "/modifyProperty-printAck")
 	public String printAck() {
-		final HttpServletRequest request = ServletActionContext.getRequest();
-		final String url = WebUtils.extractRequestDomainURL(request, false);
-		final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-				.concat((String) request.getSession().getAttribute("citylogo"));
-		final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
 		if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
 				&& ApplicationThreadLocals.getUserId() == null) {
 			ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
@@ -1724,8 +1720,8 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 		final Date noticeDueDate = DateUtils.add(propWF.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
 		reportParams.put("noticeDueDate", dateFormatter.format(noticeDueDate));
 		reportParams.put("creationReason", modifyRsn);
-		reportParams.put("logoPath", imagePath);
-		reportParams.put("cityName", cityName);
+		reportParams.put("logoPath", cityService.getCityLogoURL());
+		reportParams.put("cityName", cityService.getMunicipalityName());
 		reportParams.put("loggedInUsername", securityUtils.getCurrentUser().getName());
 		ReportRequest reportInput;
 		if (modifyRsn.equals(PROPERTY_MODIFY_REASON_GENERAL_REVISION_PETITION)) {

@@ -39,26 +39,12 @@
  */
 package org.egov.ptis.web.controller.common;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ENDORSEMENT;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -73,14 +59,25 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ENDORSEMENT;
+
 @Controller
 @RequestMapping(value = "/endorsementnotice")
 public class EndorsementController {
+
+    public static final String ENDORSEMENT_NOTICE = "EndorsementNotice";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -97,13 +94,13 @@ public class EndorsementController {
     @Autowired
     private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 
-    public static final String ENDORSEMENT_NOTICE = "EndorsementNotice";
+    @Autowired
+    private CityService cityService;
 
     @RequestMapping(method = RequestMethod.GET)
-    public ResponseEntity<byte[]> getEndorsementNotice(final Model model,
-            @RequestParam final String applicantName, @RequestParam final String serviceName, @RequestParam final String remarks,
-            @RequestParam final String assessmentNo, @RequestParam final String applicationNo,
-            final HttpServletRequest request) throws UnsupportedEncodingException {
+    public ResponseEntity<byte[]> getEndorsementNotice(@RequestParam final String applicantName, @RequestParam final String serviceName,
+                                                       @RequestParam final String remarks, @RequestParam final String assessmentNo,
+                                                       @RequestParam final String applicationNo) {
         final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput = null;
         ReportOutput reportOutput;
@@ -122,12 +119,8 @@ public class EndorsementController {
         if (remarks != null) {
             final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
             PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
-            final String url = WebUtils.extractRequestDomainURL(request, false);
-            final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
-                    (String) request.getSession().getAttribute("citylogo"));
-            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-            reportParams.put("logoPath", cityLogo);
-            reportParams.put("cityName", cityName);
+            reportParams.put("logoPath", cityService.getCityLogoURL());
+            reportParams.put("cityName", cityService.getMunicipalityName());
             reportParams.put("noticeDate", new DateTime().toString(formatter));
             reportParams.put("serviceName", serviceName.replace('_', ' '));
             reportParams.put("applicantName", applicantName.replace("&amp;", "&"));
@@ -142,16 +135,15 @@ public class EndorsementController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition",
                 "inline;filename=" + NOTICE_TYPE_ENDORSEMENT + "_" + basicProperty.getUpicNo() + ".pdf");
-        if(reportInput != null){
-        reportInput.setPrintDialogOnOpenReport(true);
-        reportInput.setReportFormat(ReportFormat.PDF);
+        if (reportInput != null) {
+            reportInput.setPrintDialogOnOpenReport(true);
+            reportInput.setReportFormat(ReportFormat.PDF);
         }
         reportOutput = reportService.createReport(reportInput);
-        if (reportOutput != null && reportOutput.getReportOutputData() != null)
-            noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
+        noticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
         noticeService.saveNotice(applicationNo, noticeNo, NOTICE_TYPE_ENDORSEMENT,
                 basicProperty, noticePDF);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
 }

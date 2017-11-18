@@ -129,7 +129,6 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
@@ -269,10 +268,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private Long mutationId;
 
-    private Map<String, String> propTypeCategoryMap;
-    private SortedMap<Integer, String> floorNoMap;
-    private Map<String, String> deviationPercentageMap;
-    private List<DocumentType> documentTypes = new ArrayList<>();
+    private transient Map<String, String> propTypeCategoryMap;
+    private transient SortedMap<Integer, String> floorNoMap;
+    private transient Map<String, String> deviationPercentageMap;
+    private transient List<DocumentType> documentTypes = new ArrayList<>();
 
     private String reportId;
     private boolean approved;
@@ -281,11 +280,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient BasicProperty basicProp;
     @Autowired
     private transient PropertyService propService;
-    private PropertyTypeMaster propTypeMstr;
+    private transient PropertyTypeMaster propTypeMstr;
     @Autowired
     private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-    private PropertyImpl newProperty = new PropertyImpl();
-    private Address ownerAddress = new CorrespondenceAddress();
+    private transient PropertyImpl newProperty = new PropertyImpl();
+    private transient Address ownerAddress = new CorrespondenceAddress();
     Date propCompletionDate = null;
     @Autowired
     private transient BoundaryService boundaryService;
@@ -301,19 +300,19 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private String modifyRsn;
     private Boolean showTaxCalcBtn = Boolean.FALSE;
     private Long propertyDepartmentId;
-    private List<PropertyDepartment> propertyDepartmentList = new ArrayList<>();
-    private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
-    private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
+    private transient List<PropertyDepartment> propertyDepartmentList = new ArrayList<>();
+    private transient List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
+    private transient List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
     private boolean allowEditDocument = Boolean.FALSE;
-    private List<DocumentType> assessmentDocumentTypes = new ArrayList<>();
-    private List<String> assessmentDocumentNames;
+    private transient List<DocumentType> assessmentDocumentTypes = new ArrayList<>();
+    private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
-    private List<String> guardianRelations;
+    private transient List<String> guardianRelations;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -325,7 +324,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
     
     @Autowired
-    private ReassignService reassignmentservice;
+    private transient ReassignService reassignmentservice;
 
     @PersistenceContext
     private transient EntityManager entityManager;
@@ -1451,8 +1450,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (owner != null)
                 for (int j = i + 1; j <= count - 1; j++) {
                     final PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
-                    if (owner1 != null)
-                        if (owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
+                    if (owner1 != null && owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
                                 && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName()))
                             addActionError(getText("error.owner.duplicateMobileNo", "",
                                     owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
@@ -1532,16 +1530,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-printAck")
     public String printAck() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo"));
-        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
                 && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         reportId = reportViewerUtil
-                .addReportToTempCache(basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
+                .addReportToTempCache(basicPropertyService.propertyAcknowledgement(property));
         return PRINT_ACK;
     }
 
@@ -1639,7 +1632,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             logger.debug("create: BasicProperty after creatation: " + basicProperty);
         basicProperty.setAssessmentdate(propCompletionDate);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        // basicPropertyService.applyAuditing(property);
         basicPropertyService.persist(basicProperty);
         // TODO update index by assesment no
         // propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -1697,7 +1689,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 basicProp.setPropOccupationDate(propCompletionDate);
                 property.setBasicProperty(basicProp);
             }
-            if (propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+            if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
                 property.setPropertyDetail(propService.changePropertyDetail(property, property.getPropertyDetail(), 0)
                         .getPropertyDetail());
             try {

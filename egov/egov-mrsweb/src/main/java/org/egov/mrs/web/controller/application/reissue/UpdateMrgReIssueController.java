@@ -195,11 +195,11 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             workflowContainer.setApproverComments(request.getParameter("approvalComent"));
             if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT)) {
 
-                reIssueService.rejectReIssue(reIssue, workflowContainer, request);
+                reIssueService.rejectReIssue(reIssue, workflowContainer);
                 message = messageSource.getMessage("msg.rejected.reissue", new String[] { reIssue.getApplicationNo(),
                         approverName.concat("~").concat(nextDesignation) }, null);
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
-                reIssueService.rejectReIssue(reIssue, workflowContainer, request);
+                reIssueService.rejectReIssue(reIssue, workflowContainer);
                 message = messageSource.getMessage("msg.cancelled.reissue", new String[] { reIssue.getApplicationNo(), null },
                         null);
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_APPROVE)) {
@@ -208,13 +208,13 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 if (marriageUtils.isDigitalSignEnabled()) {
                     model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
                     workflowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
-                    reIssueService.approveReIssue(reIssue, workflowContainer,request);
+                    reIssueService.approveReIssue(reIssue, workflowContainer);
                     message = messageSource.getMessage("msg.approved.reissue",
                             new String[] { reIssue.getApplicationNo() }, null);
                 } else {
                     model.addAttribute("pendingActions", MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
                     workflowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
-                    reIssueService.approveReIssue(reIssue, workflowContainer, request);
+                    reIssueService.approveReIssue(reIssue, workflowContainer);
                     message = messageSource.getMessage(
                             "msg.approved.reissue",
                             new String[] { reIssue.getApplicationNo()
@@ -231,7 +231,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                         marriageCertificate = certificateobj;
                 else
                     marriageCertificate = reIssueService
-                            .generateReIssueCertificate(reIssue, workflowContainer, request);
+                            .generateReIssueCertificate(reIssue);
 
                 model.addAttribute("fileStoreIds", marriageCertificate.getFileStore().getFileStoreId());
                 model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
@@ -247,7 +247,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 model.addAttribute("isDigitalSignatureEnabled", marriageUtils.isDigitalSignEnabled());
                 return "reissue-digitalsignature";
             } else if (workFlowAction.equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
-                reIssueService.printCertificate(reIssue, workflowContainer, request);
+                reIssueService.printCertificate(reIssue, workflowContainer);
                 message = messageSource.getMessage("msg.printcerificate.reissue", null, null);
             } else {
                 approverName = request.getParameter("approverName");
@@ -293,7 +293,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 workflowContainer.setWorkFlowAction(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN);
                 workflowContainer.setPendingActions(MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING);
                 reIssueObj = reIssueService.findByApplicationNo(applicationNumber);
-                reIssueService.digiSignCertificate(reIssueObj, workflowContainer, request);
+                reIssueService.digiSignCertificate(reIssueObj, workflowContainer);
             }
         }
         LOGGER.debug("........outside for loop......");

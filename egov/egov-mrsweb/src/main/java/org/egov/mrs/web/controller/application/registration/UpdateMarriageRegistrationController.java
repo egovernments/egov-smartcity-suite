@@ -275,13 +275,13 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 if (marriageUtils.isDigitalSignEnabled()) {
                     model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
                     workflowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
-                    marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer, request);
+                    marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
                     message = messageSource.getMessage("msg.approved.registration",
                             new String[] { marriageRegistration.getRegistrationNo() }, null);
                 } else {
                     model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
                     workflowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
-                    marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer, request);
+                    marriageRegistrationService.approveRegistration(marriageRegistration, workflowContainer);
                     message = messageSource.getMessage(
                             "msg.approved.registration",
                             new String[] { marriageRegistration.getRegistrationNo()
@@ -299,7 +299,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                     }
                 } else {
                     marriageCertificate = marriageRegistrationService
-                            .generateMarriageCertificate(marriageRegistration, workflowContainer, request);
+                            .generateMarriageCertificate(marriageRegistration);
                 }
                 model.addAttribute("fileStoreIds", marriageCertificate.getFileStore().getFileStoreId());
                 model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
@@ -315,7 +315,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 model.addAttribute("isDigitalSignatureEnabled", marriageUtils.isDigitalSignEnabled());
                 return "marriagereg-digitalsignature";
             } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_PRINTCERTIFICATE)) {
-                marriageRegistrationService.printCertificate(marriageRegistration, workflowContainer, request);
+                marriageRegistrationService.printCertificate(marriageRegistration, workflowContainer);
                 message = messageSource.getMessage("msg.printcertificate.registration", null, null);
             } else {
                 approverName = request.getParameter("approverName");
@@ -373,7 +373,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 workflowContainer.setWorkFlowAction(WFLOW_ACTION_STEP_DIGISIGN);
                 workflowContainer.setPendingActions(WFLOW_PENDINGACTION_DIGISIGNPENDING);
                 marriageRegistrationObj = marriageRegistrationService.findByApplicationNo(applicationNumber);
-                marriageRegistrationService.digiSignCertificate(marriageRegistrationObj, workflowContainer, request);
+                marriageRegistrationService.digiSignCertificate(marriageRegistrationObj, workflowContainer);
             }
         }
         if (LOGGER.isDebugEnabled())

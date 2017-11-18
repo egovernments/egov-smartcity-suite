@@ -51,6 +51,7 @@ import java.util.Map;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
@@ -81,6 +82,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    private CityService cityService;
 
     public PropertyPersistenceService() {
         super(BasicProperty.class);
@@ -194,7 +198,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         return persist(basicProperty);
     }
 
-    public ReportOutput propertyAcknowledgement(final PropertyImpl property, final String cityLogo, final String cityName) {
+    public ReportOutput propertyAcknowledgement(final PropertyImpl property) {
         final Map<String, Object> reportParams = new HashMap<>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setOwnerName(property.getBasicProperty().getFullOwnerName());
@@ -205,8 +209,8 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getState().getCreatedDate()));
         final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(tempNoticeDate);
-        reportParams.put("logoPath", cityLogo);
-        reportParams.put("cityName", cityName);
+        reportParams.put("logoPath", cityService.getCityLogoURL());
+        reportParams.put("cityName", cityService.getMunicipalityName());
         reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
         final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(ReportFormat.PDF);

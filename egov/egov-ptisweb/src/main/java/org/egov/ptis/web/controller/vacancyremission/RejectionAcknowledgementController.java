@@ -39,13 +39,12 @@
  */
 package org.egov.ptis.web.controller.vacancyremission;
 
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.web.utils.WebUtils;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
@@ -63,8 +62,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -72,54 +69,48 @@ import java.util.Map;
 @RequestMapping(value = "/vacancyremission")
 public class RejectionAcknowledgementController {
 
+    public static final String REJECTION_ACK_TEMPLATE = "vacancyRemission_rejectionAck";
     @Autowired
     private ReportService reportService;
-
-    public static final String REJECTION_ACK_TEMPLATE = "vacancyRemission_rejectionAck";
-
     @Autowired
     private VacancyRemissionService vacancyRemissionService;
-    
+
     @Autowired
     private UserService userService;
 
+    @Autowired
+    private CityService cityService;
+
     @RequestMapping(value = "/rejectionacknowledgement", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> generateRejectionAckNotice(final HttpServletRequest request,
-            final HttpSession session) {
-    	String pathvars[] = request.getParameter("pathVar").split(",");
-    	final VacancyRemission vacancyRemission = vacancyRemissionService.getLatestRejectAckGeneratedVacancyRemissionForProperty(pathvars[0]);
-        return generateReport(vacancyRemission, request, session,pathvars[1]);
+    public ResponseEntity<byte[]> generateRejectionAckNotice(final HttpServletRequest request) {
+        String[] pathvars = request.getParameter("pathVar").split(",");
+        final VacancyRemission vacancyRemission = vacancyRemissionService.getLatestRejectAckGeneratedVacancyRemissionForProperty(pathvars[0]);
+        return generateReport(vacancyRemission, pathvars[1]);
     }
 
-    private ResponseEntity<byte[]> generateReport(final VacancyRemission vacancyRemission,final HttpServletRequest request,
-            final HttpSession session,String rejectingUser) {
-            final Map<String, Object> reportParams = new HashMap<String, Object>();
-            ReportRequest reportInput = null;
-            ReportOutput reportOutput = null;
-    	if(vacancyRemission!=null){
+    private ResponseEntity<byte[]> generateReport(final VacancyRemission vacancyRemission, String rejectingUser) {
+        final Map<String, Object> reportParams = new HashMap<>();
+        ReportRequest reportInput = null;
+        if (vacancyRemission != null) {
             final DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
-    		PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
-            final String url = WebUtils.extractRequestDomainURL(request, false);
-            final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH).concat(
-                    (String) request.getSession().getAttribute("citylogo"));
-            final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
+            PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
             DateTime dt = new DateTime(vacancyRemission.getState().getCreatedDate());
-            reportParams.put("logoPath", cityLogo);
-            reportParams.put("cityName", cityName);
+            reportParams.put("logoPath", cityService.getCityLogoURL());
+            reportParams.put("cityName", cityService.getMunicipalityName());
             reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
             reportParams.put("rejectionDate", dt.toString(formatter));
             reportParams.put("rejectingUser", rejectingUser);
             ackBean.setAssessmentNo(vacancyRemission.getBasicProperty().getUpicNo());
             ackBean.setOwnerAddress(vacancyRemission.getBasicProperty().getAddress().toString());
-            
+
             reportInput = new ReportRequest(REJECTION_ACK_TEMPLATE, ackBean, reportParams);
-    	}
-        
+        }
+
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=RejectionNotice.pdf");
-        reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        ReportOutput reportOutput = reportService.createReport(reportInput);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 }
