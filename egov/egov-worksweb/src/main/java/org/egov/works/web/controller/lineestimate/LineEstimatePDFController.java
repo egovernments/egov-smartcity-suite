@@ -40,23 +40,13 @@
 
 package org.egov.works.web.controller.lineestimate;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.egov.works.lineestimate.entity.LineEstimateAppropriation;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -73,9 +63,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Controller
 @RequestMapping(value = "/lineestimate")
 public class LineEstimatePDFController {
+
+    public static final String LINEESTIMATEPDF = "lineEstimatePDF";
+    public static final String LINEESTIMATE_SUBJECT = "Request for Administrative Sanction";
 
     @Autowired
     private ReportService reportService;
@@ -83,28 +82,24 @@ public class LineEstimatePDFController {
     @Autowired
     private LineEstimateService lineEstimateService;
 
-    public static final String LINEESTIMATEPDF = "lineEstimatePDF";
-    public static final String LINEESTIMATE_SUBJECT = "Request for Administrative Sanction";
+    @Autowired
+    private CityService cityService;
 
     @RequestMapping(value = "/lineEstimatePDF/{lineEstimateId}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
-            @PathVariable("lineEstimateId") final Long id,
-            final HttpSession session) throws IOException {
+    @ResponseBody
+    public ResponseEntity<byte[]> generateLineEstimatePDF(@PathVariable("lineEstimateId") final Long id) {
         final LineEstimate lineEstimate = lineEstimateService.getLineEstimateById(id);
-        return generateReport(lineEstimate, request, session);
+        return generateReport(lineEstimate);
     }
 
-    private ResponseEntity<byte[]> generateReport(final LineEstimate lineEstimate, final HttpServletRequest request,
-            final HttpSession session) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private ResponseEntity<byte[]> generateReport(final LineEstimate lineEstimate) {
+        final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
 
         if (lineEstimate != null) {
 
-            final String url = WebUtils.extractRequestDomainURL(request, false);
-            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                    .concat((String) request.getSession().getAttribute("citylogo")));
+            reportParams.put("cityLogo", cityService.getCityLogoURL());
 
             reportParams.put("cityName", ApplicationThreadLocals.getMunicipalityName());
             reportParams.put("proNo", lineEstimate.getAdminSanctionNumber() != null ? lineEstimate.getAdminSanctionNumber() : "");
@@ -150,7 +145,7 @@ public class LineEstimatePDFController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=LineEstimate.pdf");
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
     }
 

@@ -39,29 +39,16 @@
  */
 package org.egov.works.web.controller.letterofacceptance;
 
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.works.letterofacceptance.service.LetterOfAcceptanceService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.egov.works.lineestimate.service.LineEstimateService;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.utils.WorksUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -72,40 +59,41 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
 @Controller
 @RequestMapping(value = "/letterofacceptance")
 public class LetterOfAcceptancePDFController {
 
+    public static final String LETTEROFACCEPTANCEPDF = "letterOfAcceptancePDF";
     @Autowired
     private ReportService reportService;
-
     @Autowired
     private WorksUtils worksUtils;
-
     @Autowired
     private LineEstimateService lineEstimateService;
-
     @Autowired
     private LetterOfAcceptanceService letterOfAcceptanceService;
-
-    public static final String LETTEROFACCEPTANCEPDF = "letterOfAcceptancePDF";
-
     @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+    private CityService cityService;
 
     @RequestMapping(value = "/letterOfAcceptancePDF/{letterOfAcceptanceId}", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
-            @PathVariable("letterOfAcceptanceId") final Long id, final HttpSession session) throws IOException {
+    public @ResponseBody
+    ResponseEntity<byte[]> generateLineEstimatePDF(final HttpServletRequest request,
+                                                   @PathVariable("letterOfAcceptanceId") final Long id) {
         final WorkOrder workOrder = letterOfAcceptanceService.getWorkOrderById(id);
-        return generateReport(workOrder, request, session);
+        return generateReport(workOrder, request);
     }
 
-    private ResponseEntity<byte[]> generateReport(final WorkOrder workOrder, final HttpServletRequest request,
-            final HttpSession session) {
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+    private ResponseEntity<byte[]> generateReport(final WorkOrder workOrder, final HttpServletRequest request) {
+        final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput = null;
-        ReportOutput reportOutput = null;
+        ReportOutput reportOutput;
         if (workOrder != null) {
 
             final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
@@ -113,9 +101,7 @@ public class LetterOfAcceptancePDFController {
             final LineEstimateDetails lineEstimateDetails = lineEstimateService
                     .findByEstimateNumber(workOrder.getEstimateNumber());
 
-            final String url = WebUtils.extractRequestDomainURL(request, false);
-            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                    .concat((String) request.getSession().getAttribute("citylogo")));
+            reportParams.put("cityLogo", cityService.getCityLogoURL());
 
             final String cityName = (String) request.getSession().getAttribute("citymunicipalityname");
             reportParams.put("cityName", cityName);
@@ -160,7 +146,7 @@ public class LetterOfAcceptancePDFController {
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=LetterOfAcceptance.pdf");
         reportOutput = reportService.createReport(reportInput);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
 
     }
 

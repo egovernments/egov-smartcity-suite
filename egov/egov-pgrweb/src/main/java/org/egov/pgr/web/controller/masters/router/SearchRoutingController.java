@@ -69,7 +69,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -119,6 +119,6 @@ public class SearchRoutingController {
         ReportOutput reportOutput = complaintRouterService.generateRouterReport(reportCriteria);
         reportOutput.setReportName(appendTimestamp("pgr_routerView"));
         reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 }

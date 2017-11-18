@@ -196,7 +196,7 @@ public class ChequeCollectionReportAction extends BaseFormAction {
      */
     @Action(value = "/reports/chequeCollectionReport-report")
     public String report() {
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         final ReportRequest reportInput = new ReportRequest(CHEQUE_COLLETION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);

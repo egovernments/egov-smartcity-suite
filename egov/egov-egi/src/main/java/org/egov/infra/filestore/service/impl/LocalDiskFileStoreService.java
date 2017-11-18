@@ -135,11 +135,16 @@ public class LocalDiskFileStoreService implements FileStoreService {
 
     @Override
     public File fetch(String fileStoreId, String moduleName) {
+        return fetchAsPath(fileStoreId, moduleName).toFile();
+    }
+
+    @Override
+    public Path fetchAsPath(String fileStoreId, String moduleName) {
         Path fileDirPath = this.getFileDirectoryPath(moduleName);
         if (!fileDirPath.toFile().exists())
             throw new ApplicationRuntimeException(String.format("File Store does not exist at Path : %s/%s/%s",
                     this.fileStoreBaseDir, getCityCode(), moduleName));
-        return this.getFilePath(fileDirPath, fileStoreId).toFile();
+        return this.getFilePath(fileDirPath, fileStoreId);
     }
 
     @Override

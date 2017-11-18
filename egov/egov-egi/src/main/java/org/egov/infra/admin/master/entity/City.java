@@ -40,6 +40,7 @@
 
 package org.egov.infra.admin.master.entity;
 
+import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;
@@ -238,12 +239,17 @@ public class City extends AbstractAuditable {
         final Map<String, Object> cityPrefs = new HashMap<>();
         cityPrefs.put(CITY_URL_KEY, domainURL);
         cityPrefs.put(CITY_NAME_KEY, name);
-        if (preferences == null) {
-            cityPrefs.put(CITY_LOGO_KEY, "/resources/global/images/logo@2x.png");
-            cityPrefs.put(CITY_CORP_NAME_KEY, name);
-        } else {
-            cityPrefs.put(CITY_LOGO_KEY,
-                    preferences.logoExist() ? String.format(CITY_LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : EMPTY);
+        cityPrefs.put(CITY_CORP_NAME_KEY, name);
+        cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
+        cityPrefs.put(CITY_CODE_KEY, code);
+        cityPrefs.put(CITY_LAT_KEY, latitude);
+        cityPrefs.put(CITY_LNG_KEY, longitude);
+        cityPrefs.put(CITY_DIST_NAME_KEY, districtName);
+        cityPrefs.put(CITY_DIST_CODE_KEY, districtCode);
+        cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
+        cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
+        if (preferences != null) {
+            cityPrefs.put(CITY_LOGO_KEY, preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
             cityPrefs.put(CITY_CORP_NAME_KEY, preferences.getMunicipalityName());
             cityPrefs.put(CITY_CORP_ADDRESS_KEY, preferences.getMunicipalityAddress());
             cityPrefs.put(CITY_CORP_CALLCENTER_NO_KEY, preferences.getMunicipalityCallCenterNo());
@@ -256,15 +262,6 @@ public class City extends AbstractAuditable {
             cityPrefs.put(CITY_CAPTCHA_PUB_KEY, preferences.getRecaptchaPub());
             cityPrefs.put(CITY_GOOGLE_API_KEY, preferences.getGoogleApiKey());
         }
-
-        cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
-        cityPrefs.put(CITY_CODE_KEY, code);
-        cityPrefs.put(CITY_LAT_KEY, latitude);
-        cityPrefs.put(CITY_LNG_KEY, longitude);
-        cityPrefs.put(CITY_DIST_NAME_KEY, districtName);
-        cityPrefs.put(CITY_DIST_CODE_KEY, districtCode);
-        cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
-        cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
         return cityPrefs;
     }
 

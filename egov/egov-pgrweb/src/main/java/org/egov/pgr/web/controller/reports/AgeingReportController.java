@@ -65,7 +65,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -115,6 +115,6 @@ public class AgeingReportController {
     public ResponseEntity<InputStreamResource> downloadAgeingReport(AgeingReportRequest reportCriteria) {
         ReportOutput reportOutput = ageingReportService.generateAgeingReport(reportCriteria);
         reportOutput.setReportName("ageing_report");
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 }

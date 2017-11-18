@@ -217,8 +217,8 @@
 
     <servlet>
         <servlet-name>reportViewer</servlet-name>
-        <servlet-class>org.egov.infra.reporting.viewer.ReportViewer</servlet-class>
-        <load-on-startup>5</load-on-startup>
+        <servlet-class>org.springframework.web.context.support.HttpRequestHandlerServlet</servlet-class>
+        <load-on-startup>0</load-on-startup>
     </servlet>
     <servlet-mapping>
         <servlet-name>reportViewer</servlet-name>

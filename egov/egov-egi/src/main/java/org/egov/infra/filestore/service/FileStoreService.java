@@ -44,6 +44,7 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 
 import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 import java.util.Set;
 
 public interface FileStoreService {
@@ -59,6 +60,8 @@ public interface FileStoreService {
     File fetch(FileStoreMapper fileMappers, String moduleName);
 
     File fetch(String fileStoreId, String moduleName);
+
+    Path fetchAsPath(String fileStoreId, String moduleName);
 
     Set<File> fetchAll(Set<FileStoreMapper> fileMappers, String moduleName);
 

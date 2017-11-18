@@ -59,25 +59,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.commons.service.FinancialYearService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.autonumber.SewerageDemandBillNumberGenerator;
@@ -95,6 +90,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class SewerageDCBReporService {
+    public static final String SEWERAGEDEMANDBILL = "sewerageDemandBill";
 
     @Autowired
     private BoundaryService boundaryService;
@@ -118,15 +114,13 @@ public class SewerageDCBReporService {
     private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
-    private FinancialYearService financialYearService;
-
-    @Autowired
     private SewerageNoticeService sewerageNoticeService;
 
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
-    public static final String SEWERAGEDEMANDBILL = "sewerageDemandBill";
+    @Autowired
+    private CityService cityService;
 
     public List<SewerageRateDCBResult> getSewerageRateDCBReport(final SewerageApplicationDetails sewerageApplicationDetails) {
         final List<SewerageRateDCBResult> rateResultList = new ArrayList<>();
@@ -383,7 +377,7 @@ public class SewerageDCBReporService {
 
     @Transactional
     public ReportOutput generateAndSaveDemandBillNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-            final AssessmentDetails propertyOwnerDetails, final HttpServletRequest request, final HttpSession session) {
+            final AssessmentDetails propertyOwnerDetails) {
         ReportOutput reportOutput;
         SewerageNotice sewerageNotice = null;
         String demandBillNumber;
@@ -392,9 +386,7 @@ public class SewerageDCBReporService {
                 .getAutoNumberServiceFor(SewerageDemandBillNumberGenerator.class);
         demandBillNumber = demandBillNumberGenerator.generateSewerageDemandBillNumber(sewerageApplicationDetails);
 
-        reportOutput = generateSewerageDemandBillNotice(sewerageApplicationDetails, demandBillNumber, propertyOwnerDetails,
-                session,
-                request);
+        reportOutput = generateSewerageDemandBillNotice(sewerageApplicationDetails, demandBillNumber, propertyOwnerDetails);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             sewerageNotice = sewerageNoticeService.buildDemandBillNotice(sewerageApplicationDetails, generateNoticePDF,
@@ -408,8 +400,7 @@ public class SewerageDCBReporService {
     }
 
     public ReportOutput generateSewerageDemandBillNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-            final String demandBillNumber, final AssessmentDetails propertyOwnerDetails,
-            final HttpSession session, final HttpServletRequest request) {
+            final String demandBillNumber, final AssessmentDetails propertyOwnerDetails) {
         final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput;
         BigDecimal sewerageTax = BigDecimal.ZERO;
@@ -421,16 +412,13 @@ public class SewerageDCBReporService {
         reportParams.put("demandBillNumber", demandBillNumber);
         final SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
         final String fromDate = date.format(currentInstallment.getFromDate());
-
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo")));
+        reportParams.put("cityLogo", cityService.getCityLogoURL());
         reportParams.put("currInstallmentFromDate", fromDate);
         reportParams.put("financialYear", currentInstallment.getFinYearRange());
         reportParams.put("shscnumber", sewerageApplicationDetails.getConnection().getShscNumber());
         reportParams.put("houseno", propertyOwnerDetails.getHouseNo());
-        reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
-        reportParams.put("district", session.getAttribute("districtName"));
+        reportParams.put("municipality", cityService.getMunicipalityName());
+        reportParams.put("district", cityService.getDistrictName());
         if (propertyOwnerDetails.getOwnerNames() != null && !propertyOwnerDetails.getOwnerNames().isEmpty())
             for (final OwnerName propertyOwner : propertyOwnerDetails.getOwnerNames())
                 reportParams.put("ownername", propertyOwner.getOwnerName());

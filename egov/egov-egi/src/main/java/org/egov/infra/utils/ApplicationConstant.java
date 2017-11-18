@@ -53,6 +53,7 @@ public final class ApplicationConstant {
     public static final String CITY_NAME_KEY = "cityname";
     public static final String CITY_URL_KEY = "cityurl";
     public static final String CITY_LOGO_KEY = "citylogo";
+    public static final String CITY_LOGO_BYTE_KEY = "citylogbytes";
     public static final String CITY_LOCAL_NAME_KEY = "citynamelocal";
     public static final String CITY_CAPTCHA_PRIV_KEY = "siteSecret";
     public static final String CITY_CAPTCHA_PUB_KEY = "siteKey";
@@ -72,29 +73,30 @@ public final class ApplicationConstant {
     public static final String CITY_REGION_NAME_KEY = "cityRegion";
     public static final String CITY_GOOGLE_API_KEY = "googleApiKey";
 
-    public static final String CITY_LOGO_URL = "/downloadfile/logo?fileStoreId=%s&moduleName=%s";
-    public static final String CITY_LOGO_PATH_KEY = "logopath";
+    public static final String CITY_LOGO_URL = "%s/egi/downloadfile/logo";
     public static final String CITY_LOGIN_URL = "%s/egi/login/secure";
-    public static final String CITY_LOGO_STATIC_URL = "%s/egi%s";
 
     public static final String CDN_ATTRIB_NAME = "cdn";
     public static final String APP_RELEASE_ATTRIB_NAME = "app_release_no";
 
-    public static final Character Y = 'Y';
-    public static final Character N = 'N';
-
     public static final String ES_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'";
     public static final String DEFAULT_TIMEZONE = "IST";
     public static final String ES_DATE_FORMAT_WITHOUT_TS = "yyyy-MM-dd";
-
     public static final String DEFAULT_CHARACTER_ENCODING = "UTF-8";
 
     public static final String USERID_KEY = "userid";
     public static final String USERNAME_KEY = "username";
     public static final String CITIZEN_ROLE_NAME = "CITIZEN";
+    public static final String PUBLIC_ROLE_NAME = "PUBLIC";
     public static final String ANONYMOUS_USERNAME = "anonymous";
     public static final String TENANTID_KEY = "tenant_id";
 
+    public static final String CONTENT_DISPOSITION_ATTACH = "attachment;filename=\"%s\"";
+    public static final String CONTENT_DISPOSITION_INLINE = "inline;filename=\"%s\"";
+    public static final String CONTENT_DISPOSITION = "content-disposition";
+
+    public static final Character Y = 'Y';
+    public static final Character N = 'N';
     public static final String NA = "N/A";
     public static final String YES = "Yes";
     public static final String NO = "No";
@@ -103,7 +105,8 @@ public final class ApplicationConstant {
     public static final String WHITESPACE = " ";
     public static final String SLASH = "/";
     public static final String COLON = ":";
-    public static final String PUBLIC_ROLE_NAME = "PUBLIC";
+    public static final String DOT = ".";
+
 
     private ApplicationConstant() {
     }

@@ -62,7 +62,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
@@ -118,7 +118,7 @@ public class SewerageBaseRegisterReportController {
         reportRequest.setReportFormat(sewerageBaseRegisterResult.getPrintFormat());
         ReportOutput reportOutput = reportService.createReport(reportRequest);
         reportOutput.setReportName(BASE_REGISTER_REPORT);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 
 }

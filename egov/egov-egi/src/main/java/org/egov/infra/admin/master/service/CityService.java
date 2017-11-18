@@ -44,6 +44,7 @@ import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.notification.service.NotificationService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.HashOperations;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -54,12 +55,16 @@ import javax.annotation.Resource;
 import java.util.List;
 import java.util.Map;
 
+import static java.lang.String.format;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_PATH_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_BYTE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 
 @Service
 @Transactional(readOnly = true)
@@ -79,6 +84,9 @@ public class CityService {
     private RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
+    private FileStoreUtils fileStoreUtils;
+
+    @Autowired
     public CityService(final CityRepository cityRepository) {
         this.cityRepository = cityRepository;
     }
@@ -86,6 +94,7 @@ public class CityService {
     @Transactional
     public City updateCity(City city) {
         redisTemplate.delete(cityPrefCacheKey());
+        cityDataAsMap();
         return cityRepository.save(city);
     }
 
@@ -138,19 +147,32 @@ public class CityService {
         return (String) cityDataForKey(CITY_DIST_NAME_KEY);
     }
 
-    public String getCityLogoPath() {
-        return (String) cityDataForKey(CITY_LOGO_PATH_KEY);
+    public String getCityLogoURL() {
+        return format(CITY_LOGO_URL, getDomainURL());
+    }
+
+    public byte[] getCityLogoAsBytes() {
+        byte[] fileBytes = (byte[]) cityDataForKey(CITY_LOGO_BYTE_KEY);
+        if (fileBytes == null || fileBytes.length == 0) {
+            fileBytes = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), getCityCode());
+            addToCityCache(CITY_LOGO_BYTE_KEY, fileBytes);
+        }
+        return fileBytes;
+    }
+
+    public String getCityLogoFileStoreId() {
+        return (String) cityDataForKey(CITY_LOGO_KEY);
     }
 
     public String cityPrefCacheKey() {
-        return String.format(CITY_PREFS_CK, ApplicationThreadLocals.getDomainName());
+        return format(CITY_PREFS_CK, ApplicationThreadLocals.getDomainName());
     }
 
     public Object cityDataForKey(String key) {
         return cityPrefCache.entries(cityPrefCacheKey()).get(key);
     }
 
-    public void addToCityCache(String key, String value) {
+    public void addToCityCache(String key, Object value) {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs != null)
             cityPrefCache.put(cityPrefCacheKey(), key, value);

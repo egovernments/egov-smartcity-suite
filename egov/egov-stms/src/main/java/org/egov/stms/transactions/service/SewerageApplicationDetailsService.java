@@ -736,8 +736,7 @@ public class SewerageApplicationDetailsService {
 
         if (sewerageApplicationDetails.getStatus().getCode()
                 .equalsIgnoreCase(APPLICATION_STATUS_ESTIMATENOTICEGEN)) {
-            final SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForEstimation(
-                    sewerageApplicationDetails, session, request);
+            final SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForEstimation(sewerageApplicationDetails);
             if (sewerageNotice != null)
                 sewerageApplicationDetails.addNotice(sewerageNotice);
         } else if (APPLICATION_STATUS_WOGENERATED
@@ -746,8 +745,7 @@ public class SewerageApplicationDetailsService {
             final SewerageNotice existingSewerageNotice = sewerageNoticeService
                     .findByNoticeNoAndNoticeType(sewerageApplicationDetails.getWorkOrderNumber(), NOTICE_TYPE_WORK_ORDER_NOTICE);
             if (existingSewerageNotice == null) {
-                final SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForWorkOrder(sewerageApplicationDetails,
-                        session, request);
+                final SewerageNotice sewerageNotice = sewerageNoticeService.generateReportForWorkOrder(sewerageApplicationDetails);
                 if (sewerageNotice != null)
                     sewerageApplicationDetails.addNotice(sewerageNotice);
             }

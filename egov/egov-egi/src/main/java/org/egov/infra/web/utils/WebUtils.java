@@ -57,6 +57,7 @@ import java.io.ByteArrayInputStream;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.utils.ApplicationConstant.COLON;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
 public class WebUtils {
@@ -116,7 +117,7 @@ public class WebUtils {
         return request.getServletContext().getContextPath().toUpperCase().replace(SLASH, EMPTY);
     }
 
-    public static ResponseEntity<InputStreamResource> reportToResponseEntity(ReportOutput reportOutput) {
+    public static ResponseEntity<InputStreamResource> reportAsResponseEntity(ReportOutput reportOutput) {
         MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
         if (PDF.equals(reportOutput.getReportFormat()))
             mediaType = MediaType.APPLICATION_PDF;
@@ -125,7 +126,7 @@ public class WebUtils {
                 contentType(mediaType).
                 cacheControl(CacheControl.noCache()).
                 contentLength(reportOutput.getReportOutputData().length).
-                header("content-disposition", reportOutput.reportDisposition()).
+                header(CONTENT_DISPOSITION, reportOutput.reportDisposition()).
                 body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
     }
 

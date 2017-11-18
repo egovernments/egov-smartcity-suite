@@ -55,7 +55,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
@@ -76,6 +76,6 @@ public class LicenseController {
     public ResponseEntity<InputStreamResource> acknowledgment(@PathVariable Long licenseId) {
         ReportOutput reportOutput = tradeLicenseService.generateAcknowledgment(licenseId);
         reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 }

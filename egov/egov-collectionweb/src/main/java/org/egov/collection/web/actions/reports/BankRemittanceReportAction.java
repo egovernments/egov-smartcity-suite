@@ -114,7 +114,7 @@ public class BankRemittanceReportAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/bankRemittanceReport-report")
     public String report() {
-        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         return super.report();
     }
 

@@ -44,68 +44,55 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.utils.ApplicationConstant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.context.support.SpringBeanAutowiringSupport;
+import org.springframework.stereotype.Component;
+import org.springframework.web.HttpRequestHandler;
 
-import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
-import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.BufferedOutputStream;
 import java.io.IOException;
 
-public class ReportViewer extends HttpServlet {
-    private static final long serialVersionUID = -8123054583553229608L;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
+
+@Component("reportViewer")
+public class ReportViewer implements HttpRequestHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportViewer.class);
     private static final String REPORT_ERROR_CONTENT = "<html><body><b>ERROR: %s!</b></body></html>";
 
     @Autowired
-    private transient ReportViewerUtil reportViewerUtil;
+    private ReportViewerUtil reportViewerUtil;
 
     @Override
-    public void init(ServletConfig config) throws ServletException {
-        super.init(config);
-        SpringBeanAutowiringSupport.processInjectionBasedOnServletContext(this, config.getServletContext());
-    }
-
-    @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        renderReport(resp, req);
-    }
-
-    @Override
-    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        renderReport(resp, req);
-    }
-
-    private void renderReport(HttpServletResponse resp, HttpServletRequest request) {
+    public void handleRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String reportId = request.getParameter(ReportConstants.REQ_PARAM_REPORT_ID);
         try {
             ReportOutput reportOutput = reportViewerUtil.getReportOutputFormCache(reportId);
             if (reportOutput == null) {
-                renderHtml(resp, "Report output not available");
+                renderHtml(response, "Report output not available");
                 return;
             }
 
             ReportFormat reportFormat = reportOutput.getReportFormat();
             if (reportFormat == null) {
-                renderHtml(resp, "Report format not available");
+                renderHtml(response, "Report format not available");
                 return;
             }
 
             byte[] reportData = reportOutput.getReportOutputData();
             if (reportData == null) {
-                renderHtml(resp, "Report data not available");
+                renderHtml(response, "Report data not available");
                 return;
             }
 
-            renderReport(resp, reportData, reportFormat);
+            renderReport(response, reportData, reportFormat);
         } catch (Exception e) {
             LOGGER.error("Invalid report id [{}]", reportId, e);
-            renderHtml(resp, "Report can not be rendered");
+            renderHtml(response, "Report can not be rendered");
         } finally {
             reportViewerUtil.removeReportOutputFromCache(reportId);
         }
@@ -117,7 +104,7 @@ public class ReportViewer extends HttpServlet {
 
     private void renderReport(HttpServletResponse resp, byte[] reportData, ReportFormat reportFormat) {
         try (BufferedOutputStream outputStream = new BufferedOutputStream(resp.getOutputStream())) {
-            resp.setHeader(ReportConstants.HTTP_HEADER_CONTENT_DISPOSITION, ReportViewerUtil.getContentDisposition(reportFormat));
+            resp.setHeader(CONTENT_DISPOSITION, ReportViewerUtil.getContentDisposition(reportFormat));
             resp.setContentType(ReportViewerUtil.getContentType(reportFormat));
             resp.setContentLength(reportData.length);
             outputStream.write(reportData);

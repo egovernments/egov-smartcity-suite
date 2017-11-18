@@ -82,7 +82,7 @@
 				<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
 					<div class="container-fluid">
 						<div class="navbar-header col-md-10 col-xs-10">
-							<a class="navbar-brand" href="javascript:void(0);"> <img src="<c:url value='${sessionScope.citylogo}'/>" height="60">
+							<a class="navbar-brand" href="javascript:void(0);"> <img src="/egi/downloadfile/logo" height="60">
 								<div>
 									<span class="title2">${sessionScope.citymunicipalityname}</span>
 								</div>

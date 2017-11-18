@@ -94,6 +94,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -704,11 +705,10 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID)
-    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
+    @ResponseBody
+    public ResponseEntity download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, PGRConstants.MODULE_NAME, false);
     }
-
-    // ---------------------------------------------------------------------//
 
     /**
      * This will update the status of the complaint.

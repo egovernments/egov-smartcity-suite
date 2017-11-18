@@ -68,16 +68,15 @@ import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -105,9 +104,11 @@ public class SewerageNoticeService {
     public static final String WORKORDERNOTICE = "sewerageWorkOrderNotice";
     public static final String CLOSECONNECTIONNOTICE = "sewerageCloseConnectionNotice";
     private static final Logger LOGGER = Logger.getLogger(SewerageNoticeService.class);
+    private static final String APPLICATION_PDF = "application/pdf";
     @Autowired
     @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
+    private FileStoreService fileStoreService;
+
     @Autowired
     private ModuleService moduleDao;
     @Autowired
@@ -124,6 +125,9 @@ public class SewerageNoticeService {
     private AssignmentService assignmentService;
     @Autowired
     private DesignationService designationService;
+
+    @Autowired
+    private CityService cityService;
 
     private BigDecimal donationCharges = BigDecimal.ZERO;
     private BigDecimal sewerageCharges = BigDecimal.ZERO;
@@ -152,7 +156,7 @@ public class SewerageNoticeService {
             buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, estNoticeNo,
                     sewerageApplicationDetails.getEstimationDate(), SewerageTaxConstants.NOTICE_TYPE_ESTIMATION_NOTICE);
             final String fileName = estNoticeNo + ".pdf";
-            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATION_PDF,
                     SewerageTaxConstants.FILESTORE_MODULECODE);
             sewerageNotice.setFileStore(fileStore);
         }
@@ -170,7 +174,7 @@ public class SewerageNoticeService {
             buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, rejectionNoticeNo,
                     sewerageApplicationDetails.getEstimationDate(), SewerageTaxConstants.NOTICE_TYPE_REJECTION_NOTICE);
             final String fileName = rejectionNoticeNo + ".pdf";
-            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATION_PDF,
                     SewerageTaxConstants.FILESTORE_MODULECODE);
             sewerageNotice.setFileStore(fileStore);
         }
@@ -200,18 +204,17 @@ public class SewerageNoticeService {
                     sewerageApplicationDetails.getWorkOrderDate(), SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE);
 
             final String fileName = workOrederNo + ".pdf";
-            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATION_PDF,
                     SewerageTaxConstants.FILESTORE_MODULECODE);
             sewerageNotice.setFileStore(fileStore);
         }
         return sewerageNotice;
     }
 
-    public SewerageNotice generateReportForEstimation(final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session, final HttpServletRequest request) {
+    public SewerageNotice generateReportForEstimation(final SewerageApplicationDetails sewerageApplicationDetails) {
         ReportOutput reportOutput = null;
         SewerageNotice sewerageNotice = null;
-        reportOutput = generateReportOutputDataForEstimation(sewerageApplicationDetails, session, request);
+        reportOutput = generateReportOutputDataForEstimation(sewerageApplicationDetails);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             sewerageNotice = saveEstimationNotice(sewerageApplicationDetails, generateNoticePDF);
@@ -221,9 +224,8 @@ public class SewerageNoticeService {
 
     public SewerageNotice generateReportForRejection(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session, final HttpServletRequest request) {
-        ReportOutput reportOutput = null;
         SewerageNotice sewerageNotice = null;
-        reportOutput = generateReportOutputDataForRejection(sewerageApplicationDetails, session, request);
+        ReportOutput reportOutput = generateReportOutputDataForRejection(sewerageApplicationDetails, session, request);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             sewerageNotice = saveRejectionNotice(sewerageApplicationDetails, generateNoticePDF);
@@ -231,11 +233,9 @@ public class SewerageNoticeService {
         return sewerageNotice;
     }
 
-    public SewerageNotice generateReportForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session, final HttpServletRequest request) {
-        ReportOutput reportOutput = null;
+    public SewerageNotice generateReportForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails) {
         SewerageNotice sewerageNotice = null;
-        reportOutput = generateReportOutputForWorkOrder(sewerageApplicationDetails, session, request);
+        ReportOutput reportOutput = generateReportOutputForWorkOrder(sewerageApplicationDetails);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             sewerageNotice = saveWorkOrderNotice(sewerageApplicationDetails, generateNoticePDF);
@@ -244,15 +244,14 @@ public class SewerageNoticeService {
     }
 
     public ReportOutput generateReportOutputDataForEstimation(
-            final SewerageApplicationDetails sewerageApplicationDetails, final HttpSession session,
-            final HttpServletRequest request) {
+            final SewerageApplicationDetails sewerageApplicationDetails) {
         ReportRequest reportInput = null;
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         if (sewerageApplicationDetails != null) {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
-            String doorNo[] = null;
+            String[] doorNo = null;
             if (null != assessmentDetails.getPropertyAddress())
                 doorNo = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
@@ -265,16 +264,14 @@ public class SewerageNoticeService {
             if (SewerageTaxConstants.NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
                     .getApplicationType().getCode()))
                 reportParams.put("applicationType",
-                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
+                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             else
                 reportParams.put("applicationType",
-                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
-            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
-            reportParams.put("district", session.getAttribute("districtName"));
+                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
+            reportParams.put("cityName", cityService.getMunicipalityName());
+            reportParams.put("district", cityService.getDistrictName());
             reportParams.put("estimationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
-            final String url = WebUtils.extractRequestDomainURL(request, false);
-            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                    .concat((String) request.getSession().getAttribute("citylogo")));
+            reportParams.put("cityLogo", cityService.getCityLogoURL());
             if (sewerageApplicationDetails.getCurrentDemand() != null)
                 for (final EgDemandDetails egDmdDetails : sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails())
                     if (egDmdDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -305,7 +302,7 @@ public class SewerageNoticeService {
             final HttpServletRequest request) {
 
         ReportRequest reportInput = null;
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
 
         if (sewerageApplicationDetails != null) {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
@@ -318,7 +315,7 @@ public class SewerageNoticeService {
                     break;
                 }
             reportParams.put("applicationType",
-                    WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
+                    WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
 
             reportParams.put("applicantName", ownerName);
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
@@ -340,15 +337,14 @@ public class SewerageNoticeService {
         return reportService.createReport(reportInput);
     }
 
-    public ReportOutput generateReportOutputForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session, final HttpServletRequest request) {
+    public ReportOutput generateReportOutputForWorkOrder(final SewerageApplicationDetails sewerageApplicationDetails) {
         ReportRequest reportInput = null;
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         if (null != sewerageApplicationDetails) {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
-            final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
+            final String[] doorno = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
                 ownerName = names.getOwnerName();
@@ -358,13 +354,13 @@ public class SewerageNoticeService {
             if (SewerageTaxConstants.NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
                     .getApplicationType().getCode()))
                 reportParams.put("conntitle",
-                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
+                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             else
                 reportParams.put("conntitle",
-                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
+                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             reportParams.put("applicationtype", stmsMessageSource.getMessage("msg.new.sewerage.conn", null, null));
-            reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
-            reportParams.put("district", session.getAttribute("districtName"));
+            reportParams.put("municipality", cityService.getMunicipalityName());
+            reportParams.put("district", cityService.getDistrictName());
             reportParams.put("purpose", null);
 
             reportParams.put(
@@ -392,9 +388,7 @@ public class SewerageNoticeService {
                 donationCharges = donationSewerageFeesDtls.get("donationCharges");
                 sewerageCharges = donationSewerageFeesDtls.get("sewerageTax");
             }
-            final String url = WebUtils.extractRequestDomainURL(request, false);
-            reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                    .concat((String) request.getSession().getAttribute("citylogo")));
+            reportParams.put("cityLogo", cityService.getCityLogoURL());
             reportParams.put("estimationCharges", estimationCharges);
             reportParams.put("donationCharges", donationCharges);
             reportParams.put("sewerageTax", sewerageCharges);
@@ -428,7 +422,7 @@ public class SewerageNoticeService {
         BigDecimal totalDontationCharge = BigDecimal.ZERO;
         BigDecimal totalSewerageTax = BigDecimal.ZERO;
 
-        final Map<String, BigDecimal> donationSewerageFees = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> donationSewerageFees = new HashMap<>();
 
         for (final EgDemandDetails dmdDtl : demand.getEgDemandDetails())
             for (final EgdmCollectedReceipt collectedReceipt : dmdDtl.getEgdmCollectedReceipts())
@@ -497,19 +491,19 @@ public class SewerageNoticeService {
             final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session) {
         ReportRequest reportInput = null;
-        final Map<String, Object> reportParams = new HashMap<String, Object>();
+        final Map<String, Object> reportParams = new HashMap<>();
         if (null != sewerageApplicationDetails) {
             final AssessmentDetails assessmentDetails = sewerageTaxUtils.getAssessmentDetailsForFlag(
                     sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS);
-            final String doorno[] = assessmentDetails.getPropertyAddress().split(",");
+            final String[] doorno = assessmentDetails.getPropertyAddress().split(",");
             String ownerName = "";
             for (final OwnerName names : assessmentDetails.getOwnerNames()) {
                 ownerName = names.getOwnerName();
                 break;
             }
             reportParams.put("conntitle",
-                    WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()).toString());
+                    WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
             reportParams.put("district", session.getAttribute("districtName"));
 
@@ -550,7 +544,7 @@ public class SewerageNoticeService {
             buildSewerageNotice(sewerageApplicationDetails, sewerageNotice, sewerageApplicationDetails.getClosureNoticeNumber(),
                     new Date(), SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE);
             final String fileName = sewerageApplicationDetails.getClosureNoticeNumber() + ".pdf";
-            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, "application/pdf",
+            final FileStoreMapper fileStore = fileStoreService.store(fileStream, fileName, APPLICATION_PDF,
                     SewerageTaxConstants.FILESTORE_MODULECODE);
             sewerageNotice.setFileStore(fileStore);
         }
@@ -568,7 +562,7 @@ public class SewerageNoticeService {
                     NOTICE_TYPE_DEMAND_BILL_NOTICE);
         }
         final String fileName = demandBillNumber + ".pdf";
-        final FileStoreMapper fileStoreMapper = fileStoreService.store(fileStream, fileName, "application/pdf",
+        final FileStoreMapper fileStoreMapper = fileStoreService.store(fileStream, fileName, APPLICATION_PDF,
                 FILESTORE_MODULECODE);
         sewerageNotice.setFileStore(fileStoreMapper);
         return sewerageNotice;

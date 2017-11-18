@@ -44,6 +44,11 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import static java.lang.String.format;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_ATTACH;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_INLINE;
+import static org.egov.infra.utils.ApplicationConstant.DOT;
+
 public class ReportOutput implements Serializable {
     private static final long serialVersionUID = -2559611205589631905L;
     private byte[] reportOutputData;
@@ -90,7 +95,9 @@ public class ReportOutput implements Serializable {
 
     public String reportDisposition() {
         return new StringBuilder()
-                .append(this.reportDisposition.toString()).append(";filename=\"")
-                .append(reportName).append(".").append(reportFormat).append("\"").toString();
+                .append(format(this.reportDisposition == ReportDisposition.INLINE ?
+                        CONTENT_DISPOSITION_INLINE : CONTENT_DISPOSITION_ATTACH, reportName))
+                .append(DOT).append(reportFormat)
+                .toString();
     }
 }

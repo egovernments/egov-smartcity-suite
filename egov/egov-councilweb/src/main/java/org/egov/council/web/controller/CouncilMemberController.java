@@ -1,13 +1,5 @@
 package org.egov.council.web.controller;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.service.EducationalQualificationService;
 import org.egov.council.entity.CouncilMember;
@@ -26,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,6 +31,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 @Controller
 @RequestMapping("/councilmember")
 public class CouncilMemberController {
@@ -48,6 +48,12 @@ public class CouncilMemberController {
     private static final String COUNCILMEMBER_VIEW = "councilmember-view";
     private static final String COUNCILMEMBER_SEARCH = "councilmember-search";
     private static final String MODULE_NAME = "COUNCIL";
+    private static final Logger LOGGER = Logger.getLogger(CouncilMemberController.class);
+    @Qualifier("fileStoreService")
+    @Autowired
+    protected FileStoreService fileStoreService;
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
     @Autowired
     private CouncilMemberService councilMemberService;
     @Autowired
@@ -62,21 +68,15 @@ public class CouncilMemberController {
     private CouncilCasteService councilCasteService;
     @Autowired
     private CouncilPartyService councilPartyService;
-    @Qualifier("fileStoreService")
-    @Autowired
-    protected FileStoreService fileStoreService;
-    @Autowired
-    protected FileStoreUtils fileStoreUtils;
     @Autowired
     private CouncilMemberIndexService councilMemberIndexService;
     @Autowired
     private CouncilMemberValidator councilMemberValidator;
-    private static final Logger LOGGER = Logger.getLogger(CouncilMemberController.class);
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("boundarys",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "ADMINISTRATION"));// GET
-                                                                                                                  // ELECTION
+        // ELECTION
         model.addAttribute("councilDesignations", councilDesignationService.getActiveDesignations());                                                                                                      // WARD.
         model.addAttribute("councilQualifications", educationalQualificationService.getActiveQualifications());
         model.addAttribute("councilCastes", councilCasteService.getActiveCastes());
@@ -94,8 +94,8 @@ public class CouncilMemberController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilMember councilMember, final BindingResult errors,
-            @RequestParam final MultipartFile attachments, final Model model,
-            final RedirectAttributes redirectAttrs) {
+                         @RequestParam final MultipartFile attachments, final Model model,
+                         final RedirectAttributes redirectAttrs) {
         councilMemberValidator.validate(councilMember, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
@@ -130,8 +130,8 @@ public class CouncilMemberController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilMember councilMember, @RequestParam final MultipartFile attachments,
-            final BindingResult errors,
-            final Model model, final RedirectAttributes redirectAttrs) {
+                         final BindingResult errors,
+                         final Model model, final RedirectAttributes redirectAttrs) {
         councilMemberValidator.validate(councilMember, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
@@ -179,7 +179,7 @@ public class CouncilMemberController {
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final CouncilMember councilMember) {
+                             @ModelAttribute final CouncilMember councilMember) {
         List<CouncilMember> searchResultList = councilMemberService.search(councilMember);
         return new StringBuilder("{ \"data\":")
                 .append(toJSON(searchResultList, CouncilMember.class, CouncilMemberJsonAdaptor.class)).append("}")
@@ -187,8 +187,9 @@ public class CouncilMemberController {
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
-    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, MODULE_NAME, false, response);
+    @ResponseBody
+    public ResponseEntity download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, MODULE_NAME, false);
     }
 
 }

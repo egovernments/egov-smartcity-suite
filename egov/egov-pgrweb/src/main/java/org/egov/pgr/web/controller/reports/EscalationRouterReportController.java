@@ -69,7 +69,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collections;
 
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 
 @Controller
 @RequestMapping("/report/escalationrouter")
@@ -111,6 +111,6 @@ public class EscalationRouterReportController {
     public ResponseEntity<InputStreamResource> downloadEscalationRouterReport(EscalationRouterRequest reportCriteria) {
         ReportOutput reportOutput = escalationRouterReportService.generateEscalationRouterReport(reportCriteria);
         reportOutput.setReportName("escalation_router_report");
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 }

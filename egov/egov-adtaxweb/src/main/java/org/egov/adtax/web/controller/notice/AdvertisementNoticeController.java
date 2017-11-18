@@ -39,19 +39,6 @@
  */
 package org.egov.adtax.web.controller.notice;
 
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.WF_PERMITORDER_BUTTON;
-import static org.egov.infra.reporting.engine.ReportDisposition.INLINE;
-import static org.egov.infra.utils.StringUtils.append;
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
-
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.notice.AdvertisementNoticeService;
@@ -65,6 +52,17 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.CREATE_ADDITIONAL_RULE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.WF_PERMITORDER_BUTTON;
+import static org.egov.infra.reporting.engine.ReportDisposition.INLINE;
+import static org.egov.infra.utils.StringUtils.append;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 
 @Controller
 @RequestMapping(value = "/advertisement")
@@ -80,46 +78,46 @@ public class AdvertisementNoticeController {
     private CityService cityService;
 
     @GetMapping("/permitOrder")
-    public @ResponseBody ResponseEntity<InputStreamResource> generatePermitOrder(final HttpServletRequest request,
-            final HttpSession session) {
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generatePermitOrder(final HttpServletRequest request) {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService
                 .findBy(Long.valueOf(request.getParameter("pathVar")));
         ReportOutput reportOutput = advertisementNoticeService.generatePermitOrder(advertisementPermitDetail,
                 getUlbDetails(request));
         reportOutput.setReportName(append(PERMIT_ORDER, advertisementPermitDetail.getAdvertisement().getAdvertisementNumber()));
         reportOutput.setReportDisposition(INLINE);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 
     @GetMapping("/demandNotice")
-    public @ResponseBody ResponseEntity<InputStreamResource> generateDemandNotice(final HttpServletRequest request,
-            final HttpSession session) {
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> generateDemandNotice(final HttpServletRequest request) {
         final AdvertisementPermitDetail advertisementPermitDetail = advertisementPermitDetailService
                 .findBy(Long.valueOf(request.getParameter("pathVar")));
         ReportOutput reportOutput = advertisementNoticeService.generateDemandNotice(advertisementPermitDetail,
                 getUlbDetails(request));
         reportOutput.setReportName(append(DEMAND_NOTICE, advertisementPermitDetail.getAdvertisement().getAdvertisementNumber()));
         reportOutput.setReportDisposition(INLINE);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 
     @GetMapping("/demandNotice/{id}")
-    public @ResponseBody ResponseEntity<InputStreamResource> viewDemandNoticeReport(@PathVariable final String id,
-            final HttpSession session, HttpServletRequest request) {
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> viewDemandNoticeReport(@PathVariable final Long id, HttpServletRequest request) {
         final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
-                .findBy(Long.valueOf(id));
+                .findBy(id);
         ReportOutput reportOutput = advertisementNoticeService.generateDemandNotice(advertisementPermitDetails,
                 getUlbDetails(request));
         reportOutput.setReportName(append(DEMAND_NOTICE, advertisementPermitDetails.getAdvertisement().getAdvertisementNumber()));
         reportOutput.setReportDisposition(INLINE);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 
     @GetMapping("/permitOrder/{id}")
-    public @ResponseBody ResponseEntity<InputStreamResource> viewPermitOrderReport(@PathVariable final String id,
-            final HttpSession session, HttpServletRequest request) {
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> viewPermitOrderReport(@PathVariable final Long id, HttpServletRequest request) {
         final AdvertisementPermitDetail advertisementPermitDetails = advertisementPermitDetailService
-                .findBy(Long.valueOf(id));
+                .findBy(id);
         if (!APPLICATION_STATUS_ADTAXPERMITGENERATED
                 .equalsIgnoreCase(advertisementPermitDetails.getStatus().getCode()))
             advertisementPermitDetailService.updateStateTransition(advertisementPermitDetails, Long.valueOf(0), "",
@@ -128,13 +126,13 @@ public class AdvertisementNoticeController {
                 getUlbDetails(request));
         reportOutput.setReportName(append(PERMIT_ORDER, advertisementPermitDetails.getAdvertisement().getAdvertisementNumber()));
         reportOutput.setReportDisposition(INLINE);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 
     private Map<String, Object> getUlbDetails(HttpServletRequest request) {
         Map<String, Object> ulbDetailsReportParams = new HashMap<>();
         ulbDetailsReportParams.put("cityName", request.getSession().getAttribute("cityname").toString());
-        ulbDetailsReportParams.put("logoPath", cityService.getCityLogoPath());
+        ulbDetailsReportParams.put("logoPath", cityService.getCityLogoURL());
         ulbDetailsReportParams.put("ulbName", cityService.getMunicipalityName());
         return ulbDetailsReportParams;
     }

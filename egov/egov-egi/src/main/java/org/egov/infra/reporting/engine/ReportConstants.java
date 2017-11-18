@@ -46,7 +46,6 @@ public final class ReportConstants {
     public static final String DEFAULT_REPORT_FILE_PATH = "/reports/templates/%s";
     public static final String REPORT_CONFIG_FILE = "/config/reports.properties";
     public static final String REQ_PARAM_REPORT_ID = "reportId";
-    public static final String HTTP_HEADER_CONTENT_DISPOSITION = "Content-disposition";
     public static final String IMAGE_CONTEXT_PATH = "/egi";
 
     private ReportConstants() {

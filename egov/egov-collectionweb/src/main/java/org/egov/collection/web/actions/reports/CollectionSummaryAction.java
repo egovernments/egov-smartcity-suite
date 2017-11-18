@@ -168,7 +168,7 @@ public class CollectionSummaryAction extends ReportFormAction {
         setClassification(getServiceType());
         setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(), getSource(),
                 getServiceId(), getStatusId(), getServiceType()));
-        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         return super.report();
     }
 

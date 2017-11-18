@@ -40,6 +40,7 @@
 
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>Acknowledgement Slip for Renewal of Trade License</title>
@@ -62,9 +63,7 @@
             <table width="100%" border="0" style="margin-left: 25px">
                 <tr class="add-margin">
                     <td colspan="4" align="center">
-                        <c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-                            <img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
-                        </c:if>
+                        <img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="60">
                     </td>
                 </tr>
 
@@ -152,10 +151,10 @@
     <s:if test="%{hasCscOperatorRole == true}">
         <input type="button" value="Print" name="PrintAck" id="PrintAck" class="button"
                onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>',
-                       '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
+                       '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
     </s:if>
     <s:else>
-        <input type="button" id="print" class="button printbtn" value="Print"/>  </s:else>
+        <input type="button" id="print" class="button printbtn" value="Print"/> </s:else>
     &nbsp;&nbsp;
     <input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();"/>
 </div>

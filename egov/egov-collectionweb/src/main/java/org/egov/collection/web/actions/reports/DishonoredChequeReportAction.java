@@ -98,7 +98,7 @@ public class DishonoredChequeReportAction extends ReportFormAction {
 
     @Action(value = "/reports/dishonoredChequeReport-generateReport")
     public String generateReport() {
-        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         return report();
     }
 

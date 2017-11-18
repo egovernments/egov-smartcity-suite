@@ -162,7 +162,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final User user = collectionsUtil.getLoggedInUser();
 
         critParams.put(SELECTED_DEPT_ID, getDeptId());
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
 
         final Integer bounaryId = getDeptId();
 
@@ -204,13 +204,13 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         critParams.put(EGOV_BANK, bank);
         critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
         critParams.put(EGOV_REMITTANCE_DATE, remittanceDate == null ? new Date() : remittanceDate);
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
         critParams.put(EGOV_REMITTANCE_VOUCHER,
                 bankRemittanceList.isEmpty() ? "" : bankRemittanceList.get(0).getVoucherNumber());
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
@@ -243,7 +243,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
                 ? remittanceObj.getBankAccount().getBankbranch().getBank().getName() : "");
         critParams.put(EGOV_BANK_ACCOUNT,
                 remittanceObj.getBankAccount() != null ? remittanceObj.getBankAccount().getAccountnumber() : "");
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);

@@ -47,7 +47,6 @@ import java.io.File;
 import java.io.IOException;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -102,8 +101,7 @@ public class SewerageGenerateDemandBillController {
 
     @RequestMapping(value = "/generate-sewerage-demand-bill/{consumernumber}/{assessmentnumber}", method = RequestMethod.GET)
     public ResponseEntity<byte[]> generateSewerageDemandBill(@PathVariable final String consumernumber,
-            @PathVariable final String assessmentnumber, final HttpServletRequest request,
-            final HttpSession session) {
+            @PathVariable final String assessmentnumber, final HttpServletRequest request) {
         ReportOutput reportOutput = new ReportOutput();
         final HttpHeaders headers = new HttpHeaders();
         SewerageNotice sewerageNotice = null;
@@ -132,7 +130,7 @@ public class SewerageGenerateDemandBillController {
             } else if (sewerageDemandService
                     .checkAnyTaxIsPendingToCollectExcludingAdvance(sewerageApplicationDetails.getCurrentDemand()))
                 reportOutput = sewerageDCBReportService.generateAndSaveDemandBillNotice(sewerageApplicationDetails,
-                        sewerageThirdPartyServices.getPropertyDetails(assessmentnumber, request), request, session);
+                        sewerageThirdPartyServices.getPropertyDetails(assessmentnumber, request));
             else {
                 errorMessage = messageSource.getMessage("err.demandbill.demandpaid", new String[] { "" }, null);
                 return redirect(errorMessage);
@@ -142,7 +140,7 @@ public class SewerageGenerateDemandBillController {
                 headers.add("content-disposition", "inline;filename=DemandBill.pdf");
             }
         }
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     private ResponseEntity<byte[]> redirect(String errorMessage) {

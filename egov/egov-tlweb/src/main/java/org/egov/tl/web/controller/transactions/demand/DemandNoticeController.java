@@ -167,7 +167,7 @@ public class DemandNoticeController {
     @GetMapping("generate/{licenseId}")
     @ResponseBody
     public ResponseEntity<InputStreamResource> generateDemandNotice(@PathVariable Long licenseId) {
-        return WebUtils.reportToResponseEntity(generateReport(tradeLicenseService.getLicenseById(licenseId)));
+        return WebUtils.reportAsResponseEntity(generateReport(tradeLicenseService.getLicenseById(licenseId)));
     }
 
     @GetMapping("generate")
@@ -186,7 +186,7 @@ public class DemandNoticeController {
             }
             reportOutput.setReportOutputData(appendFiles(demandNoticePDFStreams));
         }
-        return WebUtils.reportToResponseEntity(reportOutput);
+        return WebUtils.reportAsResponseEntity(reportOutput);
     }
 
     private ReportOutput generateReport(TradeLicense license) {

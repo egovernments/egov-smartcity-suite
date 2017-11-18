@@ -67,7 +67,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 
 @Controller
 @RequestMapping("/report/dcb/yearwise")
@@ -106,7 +106,7 @@ public class InstallmentwiseDCBReportController {
         ReportOutput reportOutput = installmentWiseDCBService.generateInstallmentwiseDCBReport(reportCriteria);
         reportOutput.setReportName(appendTimestamp("tl_installment_yearwise_dcb_report"));
         reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
 
     }
 }

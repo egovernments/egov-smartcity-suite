@@ -49,20 +49,18 @@
 		<div class="container-fluid">
 			<div class="navbar-header col-md-10 col-xs-10">
 				<a class="navbar-brand" href="javascript:void(0);">
-					<c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-						<img src="<cdn:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
-					</c:if>
+					<img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="60">
 					<div>
 						<span class="title2">
 						<c:set var="titleKey">
-                			<tiles:getAsString name="page-title"/>
-            			</c:set>
+							<tiles:getAsString name="page-title"/>
+						</c:set>
 						<spring:message code="${titleKey}"/>
 						</span>
 					</div>
 				</a>
 			</div>
-			
+
 			<div class="nav-right-menu col-md-2 col-xs-2">
 				<ul class="hr-menu text-right">
 					<li class="ico-menu">
@@ -70,10 +68,10 @@
 							<img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
 						</a>
 					</li>
-					
+
 				</ul>
 			</div>
-			
+
 		</div>
 	</nav>
 </header>

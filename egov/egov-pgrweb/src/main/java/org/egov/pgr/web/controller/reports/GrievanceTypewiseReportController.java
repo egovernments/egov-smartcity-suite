@@ -64,7 +64,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
@@ -108,6 +108,6 @@ public class GrievanceTypewiseReportController {
         else
             reportOutput = grievanceTypewiseReportService.generateGrievanceTypewiseReport(reportCriteria);
         reportOutput.setReportName("grievancetypewise_report");
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 }

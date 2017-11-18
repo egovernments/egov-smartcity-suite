@@ -182,7 +182,7 @@ public class CollectionSummaryHeadWiseAction extends ReportFormAction {
         } else {
             setBranchName("All Bank Branch");
         }
-        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(),
                 getSource(), getGlCode(), getStatusId(), getBranchId()));
         return super.report();

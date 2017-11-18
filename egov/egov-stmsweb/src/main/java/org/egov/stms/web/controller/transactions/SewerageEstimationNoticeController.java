@@ -81,22 +81,18 @@ public class SewerageEstimationNoticeController {
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
     @RequestMapping(value = "/estimationnotice", method = RequestMethod.GET)
-    public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
-            final HttpSession session) {
+    public @ResponseBody ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request) {
         final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
-        return generateReport(sewerageApplicationDetails, session, request);
+        return generateReport(sewerageApplicationDetails);
     }
 
-    private ResponseEntity<byte[]> generateReport(final SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpSession session, final HttpServletRequest request) {
-        ReportOutput reportOutput = null;
-
+    private ResponseEntity<byte[]> generateReport(final SewerageApplicationDetails sewerageApplicationDetails) {
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-        reportOutput = sewerageNoticeService.generateReportOutputDataForEstimation(sewerageApplicationDetails, session, request);
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
+        ReportOutput reportOutput = sewerageNoticeService.generateReportOutputDataForEstimation(sewerageApplicationDetails);
+        return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
     @RequestMapping(value = "/downloadFile", method = RequestMethod.GET)

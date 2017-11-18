@@ -40,33 +40,42 @@
 
 package org.egov.infra.utils;
 
-import org.apache.commons.io.FileUtils;
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.repository.FileStoreMapperRepository;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static java.lang.String.format;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_ATTACH;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_INLINE;
 import static org.egov.infra.utils.ImageUtils.compressImage;
 
 @Service
 public class FileStoreUtils {
+    private static final Logger LOGGER = LoggerFactory.getLogger(FileStoreUtils.class);
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -75,19 +84,33 @@ public class FileStoreUtils {
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
 
-    public void fetchFileAndWriteToStream(String fileStoreId, String moduleName, boolean toSave,
-                                          HttpServletResponse response) throws IOException {
-        FileStoreMapper fileStoreMapper = this.fileStoreMapperRepository.findByFileStoreId(fileStoreId);
-        if (fileStoreMapper != null) {
-            File file = this.fileStoreService.fetch(fileStoreMapper, moduleName);
-            if (toSave)
-                response.setHeader("Content-Disposition", "attachment;filename=" + fileStoreMapper.getFileName());
-            else
-                response.setHeader("Content-Disposition", "inline;filename=" + fileStoreMapper.getFileName());
-            response.setContentType(fileStoreMapper.getContentType());
-            OutputStream out = response.getOutputStream();
-            IOUtils.write(FileUtils.readFileToByteArray(file), out);
-            IOUtils.closeQuietly(out);
+    public Path getFileAsPath(String fileStoreId, String moduleName) {
+        return fileStoreService.fetchAsPath(fileStoreId, moduleName);
+    }
+
+    public Optional<FileStoreMapper> getFileStoreMapper(String fileStoreId) {
+        return Optional.ofNullable(this.fileStoreMapperRepository.findByFileStoreId(fileStoreId));
+    }
+
+    public ResponseEntity<InputStreamResource> fileAsResponseEntity(String fileStoreId, String moduleName, boolean toSave) {
+        try {
+            Optional<FileStoreMapper> fileStoreMapper = getFileStoreMapper(fileStoreId);
+            if (fileStoreMapper.isPresent()) {
+                Path file = getFileAsPath(fileStoreId, moduleName);
+                byte[] fileBytes = Files.readAllBytes(file);
+                return ResponseEntity
+                        .ok()
+                        .contentType(MediaType.parseMediaType(fileStoreMapper.get().getContentType()))
+                        .cacheControl(CacheControl.noCache())
+                        .contentLength(fileBytes.length)
+                        .header(CONTENT_DISPOSITION, format(toSave ? CONTENT_DISPOSITION_ATTACH : CONTENT_DISPOSITION_INLINE,
+                                fileStoreMapper.get().getFileName())).
+                                body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
+            }
+            return ResponseEntity.notFound().build();
+        } catch (IOException e) {
+            LOGGER.error("Error occurred while creating response entity from file mapper", e);
+            return ResponseEntity.badRequest().build();
         }
     }
 
@@ -116,10 +139,25 @@ public class FileStoreUtils {
     }
 
     public void copyFileToPath(Path newFilePath, String fileStoreId, String moduleName) throws IOException {
-        FileStoreMapper fileStoreMapper = fileStoreMapperRepository.findByFileStoreId(fileStoreId);
-        if (fileStoreMapper != null) {
-            File file = fileStoreService.fetch(fileStoreMapper, moduleName);
+        Optional<FileStoreMapper> fileStoreMapper = getFileStoreMapper(fileStoreId);
+        if (fileStoreMapper.isPresent()) {
+            File file = fileStoreService.fetch(fileStoreMapper.get(), moduleName);
             Files.copy(file.toPath(), newFilePath);
+        }
+    }
+
+    public byte[] fileAsByteArray(String fileStoreId, String moduleName) {
+        try {
+            Optional<FileStoreMapper> fileStoreMapper = getFileStoreMapper(fileStoreId);
+            if (fileStoreMapper.isPresent()) {
+                Path file = getFileAsPath(fileStoreId, moduleName);
+                return Files.readAllBytes(file);
+            } else {
+                return new byte[0];
+            }
+        } catch (IOException ioe) {
+            LOGGER.error("Error occurred while converting file to byte array", ioe);
+            return new byte[0];
         }
     }
 }

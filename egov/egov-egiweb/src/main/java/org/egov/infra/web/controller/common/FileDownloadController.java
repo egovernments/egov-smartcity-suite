@@ -44,32 +44,29 @@ import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.utils.ImageUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.File;
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 
 import static java.lang.String.format;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_PATH_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_STATIC_URL;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_INLINE;
 
 @Controller
 @RequestMapping("/downloadfile")
 public class FileDownloadController {
-
-    private static final String LOGO_IMAGE_PATH = "/resources/global/images/";
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
@@ -77,32 +74,29 @@ public class FileDownloadController {
     @Autowired
     private CityService cityService;
 
-    @RequestMapping
-    public void download(@RequestParam String fileStoreId, @RequestParam String moduleName,
-                         @RequestParam(defaultValue = "false") boolean toSave,
-                         HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, moduleName, toSave, response);
+    @GetMapping
+    @ResponseBody
+    public ResponseEntity download(@RequestParam String fileStoreId, @RequestParam String moduleName,
+                                   @RequestParam(defaultValue = "false") boolean toSave) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, moduleName, toSave);
     }
 
-    @RequestMapping("/logo")
-    public String download(@RequestParam String fileStoreId, @RequestParam String moduleName,
-                           HttpSession session) throws IOException {
-        String logoPath = new StringBuilder().append(LOGO_IMAGE_PATH).append(fileStoreId).append(ImageUtils.JPG_EXTN).toString();
-        Path logoRealPath = Paths.get(new StringBuilder().append(session.getServletContext().getRealPath(LOGO_IMAGE_PATH))
-                .append(File.separator).append(fileStoreId).append(ImageUtils.JPG_EXTN).toString());
-        if (!logoRealPath.toFile().exists()) {
-            String cityLogoKey = (String) session.getAttribute(CITY_LOGO_KEY);
-            if (cityLogoKey != null && cityLogoKey.contains(fileStoreId)) {
-                this.fileStoreUtils.copyFileToPath(logoRealPath, fileStoreId, moduleName);
-            }
-        }
-        session.setAttribute(CITY_LOGO_PATH_KEY, logoPath);
-        cityService.addToCityCache(CITY_LOGO_PATH_KEY, format(CITY_LOGO_STATIC_URL, getDomainURL(), logoPath));
-        return "forward:" + logoPath;
+    @GetMapping("/logo")
+    @ResponseBody
+    public ResponseEntity getLogo() throws IOException {
+        byte[] fileBytes = cityService.getCityLogoAsBytes();
+        return fileBytes.length == 0 ?
+                ResponseEntity.notFound().build() :
+                ResponseEntity
+                        .ok()
+                        .contentType(MediaType.parseMediaType(MediaType.IMAGE_JPEG_VALUE))
+                        .contentLength(fileBytes.length)
+                        .header(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, cityService.getCityCode()))
+                        .body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
     }
 
-    @RequestMapping("/gis")
-    public void download(HttpServletResponse response) throws IOException {
+    @GetMapping("/gis")
+    public void getKML(HttpServletResponse response) throws IOException {
         try (final InputStream in = Thread.currentThread().getContextClassLoader()
                 .getResourceAsStream("gis/" + ApplicationThreadLocals.getTenantID() + "/wards.kml");
              final OutputStream out = response.getOutputStream()) {

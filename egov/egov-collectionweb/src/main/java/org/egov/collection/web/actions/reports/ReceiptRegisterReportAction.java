@@ -254,7 +254,7 @@ public class ReceiptRegisterReportAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/receiptRegisterReport-report")
     public String report() {
-        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoPath());
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         return super.report();
     }
 

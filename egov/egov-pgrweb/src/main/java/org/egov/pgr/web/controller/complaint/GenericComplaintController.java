@@ -53,14 +53,14 @@ import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -116,8 +116,9 @@ public class GenericComplaintController {
     }
 
     @GetMapping("/complaint/downloadfile/{fileStoreId}")
-    public void download(@PathVariable String fileStoreId, HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
+    @ResponseBody
+    public ResponseEntity download(@PathVariable String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, PGRConstants.MODULE_NAME, false);
     }
 
     protected void setReceivingMode(Complaint complaint, String receivingModeCode) {

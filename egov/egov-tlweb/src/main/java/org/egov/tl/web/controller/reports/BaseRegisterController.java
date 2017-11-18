@@ -71,7 +71,7 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
 import static org.egov.tl.utils.Constants.LOCALITY;
 import static org.egov.tl.utils.Constants.LOCATION_HIERARCHY_TYPE;
 import static org.egov.tl.utils.Constants.REVENUE_HIERARCHY_TYPE;
@@ -127,6 +127,6 @@ public class BaseRegisterController {
         ReportOutput reportOutput = baseRegisterService.generateBaseRegisterReport(baseRegisterRequest);
         reportOutput.setReportName(appendTimestamp("base_register_report"));
         reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
-        return reportToResponseEntity(reportOutput);
+        return reportAsResponseEntity(reportOutput);
     }
 }

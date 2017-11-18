@@ -59,6 +59,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.admin.master.entity.CityPreferences.SEQ_CITY_PREF;
 
 @Entity
@@ -232,6 +233,6 @@ public class CityPreferences extends AbstractAuditable {
     }
 
     public boolean logoExist() {
-        return municipalityLogo != null;
+        return municipalityLogo != null && isNotBlank(municipalityLogo.getFileStoreId());
     }
 }
