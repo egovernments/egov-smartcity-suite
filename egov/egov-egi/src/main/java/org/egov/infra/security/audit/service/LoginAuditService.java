@@ -68,8 +68,11 @@ public class LoginAuditService {
     @Transactional
     public LoginAudit auditLogout(Long loginAuditId) {
         LoginAudit loginAudit = getLoginAuditById(loginAuditId);
-        loginAudit.setLogoutTime(new Date());
-        return loginAuditRepository.saveAndFlush(loginAudit);
+        if (loginAudit.getLogoutTime() == null) {
+            loginAudit.setLogoutTime(new Date());
+            loginAudit = loginAuditRepository.saveAndFlush(loginAudit);
+        }
+        return loginAudit;
     }
 
     public LoginAudit getLoginAuditById(Long id) {

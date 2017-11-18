@@ -42,7 +42,6 @@ package org.egov.infra.security.audit.entity;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractPersistable;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -55,6 +54,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import java.io.Serializable;
 import java.util.Date;
 
 import static org.egov.infra.config.core.LocalizationSettings.DEFAULT_DATE_TIME_PATTERN;
@@ -64,7 +64,7 @@ import static org.egov.infra.security.audit.entity.LoginAudit.SEQ_LOGINAUDIT;
 @Entity
 @Table(name = "eg_loginaudit")
 @SequenceGenerator(name = SEQ_LOGINAUDIT, sequenceName = SEQ_LOGINAUDIT, allocationSize = 1)
-public class LoginAudit extends AbstractPersistable<Long> {
+public class LoginAudit implements Serializable {
     protected static final String SEQ_LOGINAUDIT = "SEQ_EG_LOGINAUDIT";
     private static final long serialVersionUID = 3860739186574812587L;
 
@@ -88,12 +88,10 @@ public class LoginAudit extends AbstractPersistable<Long> {
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = DEFAULT_DATE_TIME_PATTERN, timezone = DEFAULT_TIME_ZONE)
     private Date logoutTime;
 
-    @Override
     public Long getId() {
         return id;
     }
 
-    @Override
     protected void setId(Long id) {
         this.id = id;
     }
