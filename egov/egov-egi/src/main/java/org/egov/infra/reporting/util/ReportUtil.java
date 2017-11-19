@@ -40,9 +40,7 @@
 
 package org.egov.infra.reporting.util;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.slf4j.Logger;
@@ -60,6 +58,8 @@ import java.util.Properties;
 
 import static java.lang.String.format;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
 import static org.egov.infra.reporting.engine.ReportConstants.CANCELLED_WATERMARK_IMAGE_PATH;
 import static org.egov.infra.reporting.engine.ReportConstants.DEFAULT_REPORT_FILE_PATH;
 import static org.egov.infra.reporting.engine.ReportConstants.IMAGES_BASE_PATH;
@@ -81,12 +81,12 @@ public final class ReportUtil {
     }
 
     public static String getCityName() {
-        return ApplicationThreadLocals.getMunicipalityName();
+        return getMunicipalityName();
     }
 
     public static InputStream getTemplateAsStream(String templateName) {
         InputStream fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
-                format(TENANT_REPORT_FILE_PATH, ApplicationThreadLocals.getTenantID(), templateName));
+                format(TENANT_REPORT_FILE_PATH, getTenantID(), templateName));
         if (fileInputStream == null)
             fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
                     format(TENANT_REPORT_FILE_PATH, TENANT_COMMON_REPORT_FILE_LOCATION, templateName));
