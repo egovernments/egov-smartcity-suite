@@ -40,16 +40,14 @@
 
 package org.egov.infra.reporting.util;
 
-import org.apache.struts2.ServletActionContext;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
-import org.egov.infra.web.utils.WebUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -60,16 +58,19 @@ import java.sql.SQLException;
 import java.util.Date;
 import java.util.Properties;
 
+import static java.lang.String.format;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
+import static org.egov.infra.reporting.engine.ReportConstants.CANCELLED_WATERMARK_IMAGE_PATH;
 import static org.egov.infra.reporting.engine.ReportConstants.DEFAULT_REPORT_FILE_PATH;
 import static org.egov.infra.reporting.engine.ReportConstants.IMAGES_BASE_PATH;
-import static org.egov.infra.reporting.engine.ReportConstants.IMAGE_CONTEXT_PATH;
 import static org.egov.infra.reporting.engine.ReportConstants.REPORT_CONFIG_FILE;
+import static org.egov.infra.reporting.engine.ReportConstants.TENANT_COMMON_REPORT_FILE_LOCATION;
+import static org.egov.infra.reporting.engine.ReportConstants.TENANT_REPORT_FILE_PATH;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 
 public final class ReportUtil {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(ReportUtil.class);
-    private static final String TENANT_REPORT_FILE_PATH = DEFAULT_REPORT_FILE_PATH + "/%s";
-    private static final String TENANT_COMMON_REPORT_FILE_LOCATION = "common";
 
     private ReportUtil() {
         //static api's
@@ -85,13 +86,13 @@ public final class ReportUtil {
 
     public static InputStream getTemplateAsStream(String templateName) {
         InputStream fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
-                String.format(TENANT_REPORT_FILE_PATH, ApplicationThreadLocals.getTenantID(), templateName));
+                format(TENANT_REPORT_FILE_PATH, ApplicationThreadLocals.getTenantID(), templateName));
         if (fileInputStream == null)
             fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
-                    String.format(TENANT_REPORT_FILE_PATH, TENANT_COMMON_REPORT_FILE_LOCATION, templateName));
+                    format(TENANT_REPORT_FILE_PATH, TENANT_COMMON_REPORT_FILE_LOCATION, templateName));
         if (fileInputStream == null)
             fileInputStream = Thread.currentThread().getContextClassLoader().getResourceAsStream(
-                    String.format(DEFAULT_REPORT_FILE_PATH, templateName));
+                    format(DEFAULT_REPORT_FILE_PATH, templateName));
         if (fileInputStream == null) {
             String errMsg = "File [" + templateName + "] could not be loaded from CLASSPATH!";
             LOGGER.error(errMsg);
@@ -155,15 +156,10 @@ public final class ReportUtil {
     }
 
     public static String logoBasePath() {
-        HttpServletRequest request = ServletActionContext.getRequest();
-        String url = WebUtils.extractRequestDomainURL(request, false);
-        return url.concat(IMAGE_CONTEXT_PATH).concat("/downloadfile/logo");
+        return format(CITY_LOGO_URL, getDomainURL());
     }
 
     public static String cancelledWatermarkAbsolutePath() {
-        HttpServletRequest request = ServletActionContext.getRequest();
-        String url = WebUtils.extractRequestDomainURL(request, false);
-        return url.concat(IMAGE_CONTEXT_PATH).concat(
-                "/resources/global/images/cancelled_watermark.png");
+        return format(CANCELLED_WATERMARK_IMAGE_PATH, getDomainURL());
     }
 }

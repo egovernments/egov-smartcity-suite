@@ -49,12 +49,11 @@ import java.util.Collection;
 
 import static org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter.FACTORY;
 
-public class JsonUtils {
+public final class JsonUtils {
 
     private JsonUtils() {
-        //Since utils are with static methods
+        //only static methods
     }
-
 
     public static <T> String toJSON(Collection<T> objects, Class<? extends T> objectClazz, JsonSerializer<T> adapter) {
         return new GsonBuilder().

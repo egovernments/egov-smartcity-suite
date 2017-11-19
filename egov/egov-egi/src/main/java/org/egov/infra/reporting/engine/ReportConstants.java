@@ -44,9 +44,11 @@ public final class ReportConstants {
 
     public static final String IMAGES_BASE_PATH = "/egi/resources/global/images/";
     public static final String DEFAULT_REPORT_FILE_PATH = "/reports/templates/%s";
+    public static final String TENANT_REPORT_FILE_PATH = DEFAULT_REPORT_FILE_PATH + "/%s";
     public static final String REPORT_CONFIG_FILE = "/config/reports.properties";
     public static final String REQ_PARAM_REPORT_ID = "reportId";
-    public static final String IMAGE_CONTEXT_PATH = "/egi";
+    public static final String TENANT_COMMON_REPORT_FILE_LOCATION = "common";
+    public static final String CANCELLED_WATERMARK_IMAGE_PATH = "%s/egi/resources/global/images/cancelled_watermark.png";
 
     private ReportConstants() {
         // only static final fields
