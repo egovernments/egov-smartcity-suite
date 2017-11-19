@@ -47,14 +47,6 @@
  */
 package org.egov.mrs.web.controller.masters;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
-
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
@@ -75,6 +67,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
 
 @Controller
 @RequestMapping(value = "/masters")

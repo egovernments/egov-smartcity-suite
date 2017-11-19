@@ -48,23 +48,6 @@
 
 package org.egov.council.service;
 
-import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CouncilAgendaDetails;
@@ -90,6 +73,22 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
 
 @Service
 @Transactional(readOnly = true)

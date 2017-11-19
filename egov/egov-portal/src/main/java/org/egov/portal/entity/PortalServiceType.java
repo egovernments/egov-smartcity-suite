@@ -47,7 +47,9 @@
  */
 package org.egov.portal.entity;
 
-import static org.egov.portal.entity.PortalServiceType.SEQ_EGP_PORTALSERVICE;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,9 +63,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.portal.entity.PortalServiceType.SEQ_EGP_PORTALSERVICE;
 
 @Entity
 @Table(name = "EGP_PORTALSERVICE")

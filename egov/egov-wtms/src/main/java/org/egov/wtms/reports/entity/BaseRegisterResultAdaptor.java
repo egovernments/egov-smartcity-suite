@@ -47,14 +47,13 @@
  */
 package org.egov.wtms.reports.entity;
 
-import java.lang.reflect.Type;
-
-import org.egov.wtms.application.entity.BaseRegisterResult;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.wtms.application.entity.BaseRegisterResult;
+
+import java.lang.reflect.Type;
 
 public class BaseRegisterResultAdaptor implements JsonSerializer<BaseRegisterResult> {
 

@@ -47,8 +47,15 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.commons.Scheme;
+import org.egov.commons.SubScheme;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.model.budget.BudgetGroup;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -66,16 +73,8 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.commons.Scheme;
-import org.egov.commons.SubScheme;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.model.budget.BudgetGroup;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_FINANCIALDETAIL")

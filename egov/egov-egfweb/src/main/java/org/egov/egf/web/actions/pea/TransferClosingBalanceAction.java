@@ -47,9 +47,6 @@
  */
 package org.egov.egf.web.actions.pea;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -66,6 +63,9 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.services.pea.TransferClosingBalanceService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = TransferClosingBalanceAction.NEW, location = "transferClosingBalance-new.jsp") })

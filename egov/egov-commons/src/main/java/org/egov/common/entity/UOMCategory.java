@@ -48,8 +48,10 @@
 
 package org.egov.common.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.envers.NotAudited;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -62,11 +64,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.envers.NotAudited;
-import org.hibernate.validator.constraints.Length;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "eg_uomcategory")

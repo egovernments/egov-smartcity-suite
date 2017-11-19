@@ -47,9 +47,7 @@
  */
 package org.egov.wtms.application.entity;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.demand.model.EgDemand;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -60,8 +58,9 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.egov.demand.model.EgDemand;
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "egwtr_mv_dcb_view")

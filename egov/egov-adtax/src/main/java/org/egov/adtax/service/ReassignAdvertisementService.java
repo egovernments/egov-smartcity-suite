@@ -49,11 +49,6 @@
 
 package org.egov.adtax.service;
 
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.APPCONFIG_REASSIGN;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
-
-import java.util.List;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.AdvertisementReassignDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -64,6 +59,11 @@ import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.APPCONFIG_REASSIGN;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
 
 @Service
 @Transactional

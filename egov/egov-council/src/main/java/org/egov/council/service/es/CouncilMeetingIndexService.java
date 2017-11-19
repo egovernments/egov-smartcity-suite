@@ -48,15 +48,6 @@
 
 package org.egov.council.service.es;
 
-import static java.lang.Math.toIntExact;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingAttendence;
@@ -82,6 +73,15 @@ import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilde
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.List;
+
+import static java.lang.Math.toIntExact;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
 
 @Service
 @Transactional(readOnly = true)

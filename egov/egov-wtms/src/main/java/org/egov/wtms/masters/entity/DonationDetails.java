@@ -47,7 +47,9 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.hibernate.envers.Audited;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
 import javax.persistence.Entity;
 import javax.persistence.EntityListeners;
@@ -62,10 +64,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.hibernate.envers.Audited;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
+import java.util.Date;
 
 @Entity
 @Table(name = "egwtr_donation_details")

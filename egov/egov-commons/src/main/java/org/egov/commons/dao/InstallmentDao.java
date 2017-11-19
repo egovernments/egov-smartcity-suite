@@ -47,11 +47,11 @@
  */
 package org.egov.commons.dao;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.Installment;
 import org.egov.infra.admin.master.entity.Module;
+
+import java.util.Date;
+import java.util.List;
 
 public interface InstallmentDao {
     public List<Installment> getInsatllmentByModule(Module module);

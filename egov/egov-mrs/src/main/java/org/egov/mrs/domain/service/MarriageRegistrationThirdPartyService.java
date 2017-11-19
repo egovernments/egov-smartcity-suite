@@ -48,13 +48,13 @@
 
 package org.egov.mrs.domain.service;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Component
 public class MarriageRegistrationThirdPartyService {

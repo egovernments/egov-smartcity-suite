@@ -47,10 +47,10 @@
  */
 package org.egov.wtms.masters.entity;
 
-import java.io.Serializable;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.egov.ptis.domain.model.ErrorDetails;
+
+import java.io.Serializable;
 
 /**
  * The WaterTaxDetails class is used to contain water tax details, arrears

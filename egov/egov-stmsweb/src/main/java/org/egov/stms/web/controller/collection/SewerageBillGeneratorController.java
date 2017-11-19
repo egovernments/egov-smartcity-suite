@@ -48,10 +48,6 @@
 
 package org.egov.stms.web.controller.collection;
 
-import java.io.Serializable;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -69,6 +65,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
 
 @Controller
 @RequestMapping(value = "/collection")

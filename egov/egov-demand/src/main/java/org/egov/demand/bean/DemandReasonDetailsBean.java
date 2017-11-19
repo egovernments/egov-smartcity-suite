@@ -47,9 +47,9 @@
  */
 package org.egov.demand.bean;
 
-import java.util.List;
-
 import org.egov.demand.model.EgDemandReasonDetails;
+
+import java.util.List;
 
 public class DemandReasonDetailsBean {
 

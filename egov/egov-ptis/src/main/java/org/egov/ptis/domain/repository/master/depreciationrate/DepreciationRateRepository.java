@@ -48,10 +48,10 @@
 
 package org.egov.ptis.domain.repository.master.depreciationrate;
 
-import java.util.List;
-
 import org.egov.demand.model.DepreciationMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface DepreciationRateRepository extends JpaRepository<DepreciationMaster, Long> {
     @Override

@@ -47,7 +47,6 @@
  */
 package org.egov.restapi.model;
 
-import java.util.Date;
 import java.util.List;
 
 public class CouncilMeetingDetails {

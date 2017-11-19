@@ -47,12 +47,11 @@
  */
 package org.egov.egf.contract.model;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
 import org.egov.infra.microservice.contract.ResponseInfo;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
+import java.util.ArrayList;
+import java.util.List;
 
 public class VoucherContractResponse {
 

@@ -47,8 +47,10 @@
  */
 package org.egov.stms.masters.entity;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.wtms.masters.entity.ApplicationType;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -63,11 +65,8 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.wtms.masters.entity.ApplicationType;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "egswtax_fees_master")

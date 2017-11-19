@@ -47,8 +47,6 @@
  */
 package org.egov.portal.web.controller.firm;
 
-import javax.validation.Valid;
-
 import org.egov.portal.entity.Firm;
 import org.egov.portal.firm.service.FirmService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,6 +61,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.validation.Valid;
 
 @Controller
 @RequestMapping(value = "/firm")

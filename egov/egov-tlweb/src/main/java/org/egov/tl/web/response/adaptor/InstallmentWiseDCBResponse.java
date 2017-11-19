@@ -59,8 +59,8 @@ import org.egov.tl.entity.view.InstallmentWiseDCB;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.egov.infra.utils.StringUtils.toYesOrNo;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
 public class InstallmentWiseDCBResponse implements DataTableJsonAdapter<InstallmentWiseDCB> {
 

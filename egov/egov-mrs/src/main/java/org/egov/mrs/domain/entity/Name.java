@@ -48,12 +48,12 @@
 
 package org.egov.mrs.domain.entity;
 
-import javax.persistence.Embeddable;
-import javax.validation.constraints.NotNull;
-
 import org.hibernate.annotations.Formula;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
+
+import javax.persistence.Embeddable;
+import javax.validation.constraints.NotNull;
 
 @Embeddable
 public class Name {

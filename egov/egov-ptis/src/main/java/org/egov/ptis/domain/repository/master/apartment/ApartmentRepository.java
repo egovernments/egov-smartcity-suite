@@ -47,10 +47,10 @@
  */
 package org.egov.ptis.domain.repository.master.apartment;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.Apartment;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface ApartmentRepository extends JpaRepository<Apartment, Long> {
 

@@ -47,7 +47,7 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -59,8 +59,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.Date;
 
 @Entity
 @Table(name = "EGLC_PROCESSREGISTER")

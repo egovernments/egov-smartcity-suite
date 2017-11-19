@@ -47,8 +47,8 @@
  */
 package org.egov.works.web.controller.milestone;
 
-import java.util.List;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.works.contractorbill.entity.enums.BillTypes;
 import org.egov.works.master.service.MilestoneTemplateService;
 import org.egov.works.milestone.entity.Milestone;
@@ -74,8 +74,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/milestone")

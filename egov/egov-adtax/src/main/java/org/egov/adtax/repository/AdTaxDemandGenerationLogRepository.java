@@ -56,8 +56,8 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AdTaxDemandGenerationLogRepository extends JpaRepository<AdvertisementDemandGenerationLog, Long> {
 
-    public List<AdvertisementDemandGenerationLog> findByInstallmentYearOrderByIdDesc(String installmentYear);
+    List<AdvertisementDemandGenerationLog> findByInstallmentYearOrderByIdDesc(String installmentYear);
 
-    public AdvertisementDemandGenerationLog findById(Long id);
+    AdvertisementDemandGenerationLog findById(Long id);
 
 }

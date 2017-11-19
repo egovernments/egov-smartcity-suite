@@ -50,9 +50,7 @@ package org.egov.egf.web.actions.report;
 
 import com.opensymphony.xwork2.ActionContext;
 import com.opensymphony.xwork2.util.ValueStack;
-
 import net.sf.jasperreports.engine.JasperPrint;
-
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;

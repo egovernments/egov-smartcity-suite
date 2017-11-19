@@ -47,10 +47,10 @@
  */
 package org.egov.restapi.model;
 
+import org.egov.ptis.domain.model.OwnerInformation;
+
 import java.io.Serializable;
 import java.util.List;
-
-import org.egov.ptis.domain.model.OwnerInformation;
 
 
 /**

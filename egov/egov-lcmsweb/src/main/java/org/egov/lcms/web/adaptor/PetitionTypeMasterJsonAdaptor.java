@@ -47,14 +47,13 @@
  */
 package org.egov.lcms.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.lcms.masters.entity.PetitionTypeMaster;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.lcms.masters.entity.PetitionTypeMaster;
+
+import java.lang.reflect.Type;
 
 public class PetitionTypeMasterJsonAdaptor implements JsonSerializer<PetitionTypeMaster> {
     @Override

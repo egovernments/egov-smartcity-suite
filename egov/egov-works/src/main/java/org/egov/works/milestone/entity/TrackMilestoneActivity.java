@@ -47,7 +47,8 @@
  */
 package org.egov.works.milestone.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -58,9 +59,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
+import java.util.Date;
 
 @Entity
 @Table(name = "EGW_TRACK_MILESTONE_ACTIVITY")

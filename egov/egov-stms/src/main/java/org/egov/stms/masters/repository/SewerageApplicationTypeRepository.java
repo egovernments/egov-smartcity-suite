@@ -47,11 +47,11 @@
  */
 package org.egov.stms.masters.repository;
 
-import java.util.List;
-
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface SewerageApplicationTypeRepository extends JpaRepository<SewerageApplicationType, Long> {

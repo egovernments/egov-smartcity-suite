@@ -47,9 +47,8 @@
  */
 package org.egov.wtms.application.entity;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
+import org.egov.commons.Installment;
+import org.egov.infra.persistence.validator.annotation.CompositeUnique;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -60,9 +59,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.Installment;
-import org.egov.infra.persistence.validator.annotation.CompositeUnique;
+import java.io.Serializable;
+import java.util.Date;
 
 @Entity
 @Table(name = "egwtr_mv_inst_dem_coll")

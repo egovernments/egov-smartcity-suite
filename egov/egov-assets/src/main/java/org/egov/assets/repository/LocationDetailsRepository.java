@@ -49,8 +49,8 @@
 package org.egov.assets.repository;
 
 import org.egov.assets.model.LocationDetails;
-import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface LocationDetailsRepository extends JpaRepository<LocationDetails,java.lang.Long>{

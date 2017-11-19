@@ -48,9 +48,9 @@
 
 package org.egov.ptis.domain.entity.document;
 
-import java.util.Date;
-
 import org.egov.infstr.models.BaseModel;
+
+import java.util.Date;
 
 public class DocumentTypeDetails extends BaseModel {
 

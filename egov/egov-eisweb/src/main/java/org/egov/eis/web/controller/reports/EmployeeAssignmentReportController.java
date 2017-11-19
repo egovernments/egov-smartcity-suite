@@ -47,8 +47,6 @@
  */
 package org.egov.eis.web.controller.reports;
 
-import java.util.Date;
-
 import org.egov.eis.reports.entity.EmployeeAssignmentSearch;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationException;
@@ -58,6 +56,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.Date;
 
 @Controller
 @RequestMapping("/reports/employeeassignments")

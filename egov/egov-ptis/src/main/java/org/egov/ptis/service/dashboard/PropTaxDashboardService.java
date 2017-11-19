@@ -48,26 +48,6 @@
 
 package org.egov.ptis.service.dashboard;
 
-import static java.lang.String.format;
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
-import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ALLWARDS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.service.CFinancialYearService;
@@ -76,24 +56,7 @@ import org.egov.infra.admin.master.service.es.CityIndexService;
 import org.egov.infra.rest.client.SimpleRestClient;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.utils.WebUtils;
-import org.egov.ptis.bean.dashboard.CollReceiptDetails;
-import org.egov.ptis.bean.dashboard.CollTableData;
-import org.egov.ptis.bean.dashboard.CollectionAnalysis;
-import org.egov.ptis.bean.dashboard.CollectionDetails;
-import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
-import org.egov.ptis.bean.dashboard.CollectionStats;
-import org.egov.ptis.bean.dashboard.CollectionTrend;
-import org.egov.ptis.bean.dashboard.DCBDetails;
-import org.egov.ptis.bean.dashboard.MonthlyDCB;
-import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
-import org.egov.ptis.bean.dashboard.ReceiptTableData;
-import org.egov.ptis.bean.dashboard.ReceiptsTrend;
-import org.egov.ptis.bean.dashboard.StateCityInfo;
-import org.egov.ptis.bean.dashboard.TaxDefaulters;
-import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
-import org.egov.ptis.bean.dashboard.TotalCollectionStats;
-import org.egov.ptis.bean.dashboard.DemandVariance;
-import org.egov.ptis.bean.dashboard.WeeklyDCB;
+import org.egov.ptis.bean.dashboard.*;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.model.ErrorDetails;
 import org.egov.ptis.service.es.CollectionIndexElasticSearchService;
@@ -102,6 +65,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.String.format;
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_PT;
+import static org.egov.ptis.constants.PropertyTaxConstants.COLLECION_BILLING_SERVICE_WTMS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_ALLWARDS;
+import static org.egov.ptis.constants.PropertyTaxConstants.DASHBOARD_GROUPING_BILLCOLLECTORWISE;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
+import static org.egov.ptis.constants.PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 
 /**
  * Service to provide APIs for CM Dashboard

@@ -47,8 +47,6 @@
  */
 package org.egov.ptis.client.integration.impl;
 
-import static org.egov.demand.utils.DemandConstants.COLLECTIONTYPE_FIELD;
-
 import org.egov.dcb.bean.DCBDisplayInfo;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.EgBill;
@@ -62,6 +60,8 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.bill.PropertyTaxBillable;
 import org.egov.ptis.service.collection.PropertyTaxCollection;
+
+import static org.egov.demand.utils.DemandConstants.COLLECTIONTYPE_FIELD;
 
 public class PropertyImpl extends Property {
 

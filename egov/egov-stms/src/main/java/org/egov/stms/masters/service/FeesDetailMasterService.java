@@ -47,13 +47,13 @@
  */
 package org.egov.stms.masters.service;
 
-import java.util.List;
-
 import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.egov.stms.masters.repository.FeesDetailMasterRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

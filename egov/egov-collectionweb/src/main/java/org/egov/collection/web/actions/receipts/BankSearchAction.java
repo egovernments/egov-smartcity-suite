@@ -47,10 +47,7 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
+import com.opensymphony.xwork2.Action;
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.apache.struts2.convention.annotation.Result;
@@ -58,7 +55,9 @@ import org.egov.commons.Bank;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infstr.services.PersistenceService;
 
-import com.opensymphony.xwork2.Action;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 
 @Result(name = Action.SUCCESS, type = "redirect", location = "bankSearch-searchResults")
 @ParentPackage("egov")

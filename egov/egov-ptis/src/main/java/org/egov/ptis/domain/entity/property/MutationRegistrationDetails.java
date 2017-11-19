@@ -47,10 +47,10 @@
  */
 package org.egov.ptis.domain.entity.property;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
 
 /**
  * 

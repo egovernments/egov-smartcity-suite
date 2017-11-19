@@ -48,10 +48,10 @@
 
 package org.egov.api.model;
 
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pgr.entity.ComplaintStatus;
+
+import java.util.List;
 
 public class ComplaintAction {
 

@@ -48,9 +48,9 @@
 
 package org.egov.ptis.bean.dashboard;
 
-import java.util.List;
-
 import org.egov.ptis.domain.model.ErrorDetails;
+
+import java.util.List;
 
 public class CollReceiptDetails {
 

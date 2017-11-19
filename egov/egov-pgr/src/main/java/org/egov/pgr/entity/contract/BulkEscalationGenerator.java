@@ -47,10 +47,10 @@
  */
 package org.egov.pgr.entity.contract;
 
-import java.util.List;
-
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pims.commons.Position;
+
+import java.util.List;
 
 public class BulkEscalationGenerator {
 

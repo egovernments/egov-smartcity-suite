@@ -47,8 +47,6 @@
  */
 package org.egov.works.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
@@ -57,6 +55,8 @@ import org.egov.works.lineestimate.entity.LineEstimateDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
 
 @Service
 public class BudgetAppropriationNumberGeneratorImpl implements BudgetAppropriationNumberGenerator {

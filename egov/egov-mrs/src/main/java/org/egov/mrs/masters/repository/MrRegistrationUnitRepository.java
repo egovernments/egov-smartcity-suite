@@ -48,10 +48,10 @@
 
 package org.egov.mrs.masters.repository;
 
-import java.util.List;
-
 import org.egov.mrs.masters.entity.MarriageRegistrationUnit;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface MrRegistrationUnitRepository extends JpaRepository<MarriageRegistrationUnit, Long> {
     MarriageRegistrationUnit findById(Long id);

@@ -47,17 +47,17 @@
  */
 package org.egov.ptis.domain.service.property;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
-
-import java.math.BigDecimal;
-import java.util.Date;
-
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.RebatePeriod;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.BIGDECIMAL_100;
 
 /**
  * Service class to perform services related to Rebate Amount

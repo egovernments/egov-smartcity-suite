@@ -47,14 +47,13 @@
  */
 package org.egov.egf.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.egf.model.ClosedPeriod;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.egf.model.ClosedPeriod;
+
+import java.lang.reflect.Type;
 
 public class ClosedPeriodJsonAdaptor implements JsonSerializer<ClosedPeriod> {
 	@Override

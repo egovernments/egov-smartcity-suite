@@ -48,6 +48,8 @@
 
 package org.egov.ptis.domain.entity.notice;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -56,8 +58,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
 
 /**
  *

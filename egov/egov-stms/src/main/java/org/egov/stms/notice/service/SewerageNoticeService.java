@@ -47,27 +47,6 @@
  */
 package org.egov.stms.notice.service;
 
-import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_DEMAND_BILL_NOTICE;
-
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.Deflater;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.WordUtils;
 import org.apache.log4j.Logger;
 import org.egov.demand.model.EgDemand;
@@ -101,6 +80,26 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.Deflater;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_DEMAND_BILL_NOTICE;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

@@ -48,19 +48,18 @@
 
 package org.egov.works.web.adaptor;
 
-import java.lang.reflect.Type;
-import java.math.BigDecimal;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.egov.infra.utils.DateUtils;
 import org.egov.works.elasticsearch.model.WorksMilestoneIndexResponse;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.math.BigDecimal;
 
 @Component
 public class WorksSectorReportJsonAdaptor implements JsonSerializer<WorksMilestoneIndexResponse> {

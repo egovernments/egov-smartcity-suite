@@ -48,14 +48,13 @@
 
 package org.egov.assets.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.assets.model.AssetCategory;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.assets.model.AssetCategory;
+
+import java.lang.reflect.Type;
 
 public class AssetCategoryJsonAdaptor implements JsonSerializer<AssetCategory> {
 	@Override

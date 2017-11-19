@@ -48,13 +48,6 @@
 
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_RECTIFICATION;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.ValidationException;
-
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -73,6 +66,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.ValidationException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_RECTIFICATION;
 
 @Controller
 @RequestMapping(value = "/application")

@@ -90,9 +90,9 @@ import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.service.LicenseApplicationService;
+import org.egov.tl.service.LicenseCitizenPortalService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
-import org.egov.tl.service.LicenseCitizenPortalService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
@@ -120,32 +120,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_APPROVED_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_DIGUPDATE_CODE;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_CREATED_CODE;
-import static org.egov.tl.utils.Constants.BILL_TYPE_AUTO;
-import static org.egov.tl.utils.Constants.CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DEMANDRSN_REBATE;
-import static org.egov.tl.utils.Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DMD_STATUS_CHEQUE_BOUNCED;
-import static org.egov.tl.utils.Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED;
-import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.NEW_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.PENALTY_DMD_REASON_CODE;
-import static org.egov.tl.utils.Constants.NEW_ADDITIONAL_RULE;
-import static org.egov.tl.utils.Constants.RENEW_ADDITIONAL_RULE;
-import static org.egov.tl.utils.Constants.RENEWAL_NATUREOFWORK;
-import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
-import static org.egov.tl.utils.Constants.TRADELICENSE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-import static org.egov.tl.utils.Constants.TL_SERVICE_CODE;
-import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
-import static org.egov.tl.utils.Constants.WF_ACTION_DIGI_PENDING;
-import static org.egov.tl.utils.Constants.WF_LICENSE_CREATED;
-import static org.egov.tl.utils.Constants.WF_SECOND_LVL_FEECOLLECTED;
+import static org.egov.tl.utils.Constants.*;
 
 @Service
 @Transactional(readOnly = true)

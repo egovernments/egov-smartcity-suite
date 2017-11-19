@@ -48,9 +48,9 @@
 package org.egov.pims.commons.dao;
 
 import org.apache.log4j.Logger;
+import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.infra.exception.ApplicationException;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.commons.exception.NoSuchObjectException;
 import org.egov.pims.commons.Designation;
 import org.hibernate.Query;
 import org.hibernate.Session;

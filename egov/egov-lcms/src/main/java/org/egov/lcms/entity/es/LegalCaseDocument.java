@@ -47,11 +47,7 @@
  */
 package org.egov.lcms.entity.es;
 
-import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT_WITHOUT_TS;
-
-import java.util.Date;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -60,7 +56,10 @@ import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldIndex;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
+
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT_WITHOUT_TS;
 
 @Document(indexName = "legalcasedocument", type = "legalcasedocument")
 public class LegalCaseDocument {

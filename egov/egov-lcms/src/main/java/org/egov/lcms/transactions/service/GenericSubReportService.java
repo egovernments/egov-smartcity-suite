@@ -47,10 +47,6 @@
  */
 package org.egov.lcms.transactions.service;
 
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.lcms.reports.entity.LegalCommonReportResult;
@@ -65,6 +61,10 @@ import org.elasticsearch.search.aggregations.metrics.valuecount.ValueCount;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.stereotype.Service;
+
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 public class GenericSubReportService {

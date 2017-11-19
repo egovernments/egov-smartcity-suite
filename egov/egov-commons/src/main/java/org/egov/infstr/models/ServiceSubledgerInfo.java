@@ -51,9 +51,9 @@
  */
 package org.egov.infstr.models;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.Accountdetailtype;
+
+import java.math.BigDecimal;
 
 /**
  * @author manoranjan

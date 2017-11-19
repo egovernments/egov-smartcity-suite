@@ -51,7 +51,6 @@ import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ActionService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.exception.AuthorizationException;
 import org.egov.infra.script.entity.Script;

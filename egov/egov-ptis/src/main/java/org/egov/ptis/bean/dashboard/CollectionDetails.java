@@ -47,10 +47,10 @@
  */
 package org.egov.ptis.bean.dashboard;
 
+import org.egov.ptis.domain.model.ErrorDetails;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.egov.ptis.domain.model.ErrorDetails;
 
 public class CollectionDetails {
     private BigDecimal todayColl = BigDecimal.ZERO;

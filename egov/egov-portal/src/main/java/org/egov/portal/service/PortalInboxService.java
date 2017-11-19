@@ -47,9 +47,6 @@
  */
 package org.egov.portal.service;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -61,6 +58,9 @@ import org.egov.portal.service.es.PortalInboxIndexService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

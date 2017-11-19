@@ -48,12 +48,6 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
-import static org.egov.mrs.application.MarriageConstants.MOM;
-
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -64,6 +58,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
 import org.springframework.validation.Validator;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static org.egov.mrs.application.MarriageConstants.CF_STAMP;
+import static org.egov.mrs.application.MarriageConstants.MOM;
 
 /**
  * @author vinoth

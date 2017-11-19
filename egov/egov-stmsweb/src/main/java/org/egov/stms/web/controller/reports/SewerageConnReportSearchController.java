@@ -48,19 +48,6 @@
 
 package org.egov.stms.web.controller.reports;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_LOCALITY;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_LOCATION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
-
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.io.IOUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -77,6 +64,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_LOCALITY;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_LOCATION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
 
 @Controller
 @RequestMapping(value = "/reports")

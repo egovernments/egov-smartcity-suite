@@ -47,9 +47,6 @@
  */
 package org.egov.wtms.application.repository;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -63,6 +60,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface WaterConnectionDetailsRepository extends JpaRepository<WaterConnectionDetails, Long> {

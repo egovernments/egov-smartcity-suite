@@ -48,16 +48,15 @@
 
 package org.egov.works.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.infra.utils.DateUtils;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.springframework.stereotype.Component;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.infra.utils.DateUtils;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Type;
 
 @Component
 public class LineEstimateForEstimatePhotographJsonAdaptor implements JsonSerializer<LineEstimateDetails> {

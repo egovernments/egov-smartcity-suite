@@ -47,9 +47,6 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.LinkedList;
-import java.util.List;
-
 import org.egov.commons.Bank;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.utils.EntityType;
@@ -61,6 +58,9 @@ import org.egov.infra.validation.regex.Constants;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
+
+import java.util.LinkedList;
+import java.util.List;
 
 @Unique(fields = { "code" }, id = "id", tableName = "EGW_CONTRACTOR", columnName = {
         "CODE" }, message = "contractor.code.isunique")

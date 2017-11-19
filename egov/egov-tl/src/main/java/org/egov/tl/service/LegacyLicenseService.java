@@ -47,20 +47,6 @@
  */
 package org.egov.tl.service;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.DemandGenericHibDao;
@@ -79,6 +65,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 
 @Service
 public class LegacyLicenseService {

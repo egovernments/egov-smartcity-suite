@@ -47,9 +47,9 @@
  */
 package org.egov.ptis.bean.dashboard;
 
-import java.math.BigDecimal;
-
 import org.apache.commons.lang3.StringUtils;
+
+import java.math.BigDecimal;
 
 public class TaxPayerDetails implements Comparable<TaxPayerDetails> {
 

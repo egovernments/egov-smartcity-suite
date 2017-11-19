@@ -47,16 +47,16 @@
  */
 package org.egov.wtms.service.es;
 
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
 import org.egov.wtms.repository.es.ApplicationSearchRepository;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)

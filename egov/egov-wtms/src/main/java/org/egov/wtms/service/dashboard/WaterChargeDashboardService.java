@@ -48,15 +48,6 @@
 
 package org.egov.wtms.service.dashboard;
 
-import static java.lang.String.format;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.admin.master.entity.es.CityIndex;
 import org.egov.infra.admin.master.service.es.CityIndexService;
@@ -73,6 +64,15 @@ import org.egov.wtms.service.es.WaterChargeCollectionDocService;
 import org.egov.wtms.service.es.WaterChargeElasticSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.String.format;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.DASHBOARD_GROUPING_ALLWARDS;
 
 /**

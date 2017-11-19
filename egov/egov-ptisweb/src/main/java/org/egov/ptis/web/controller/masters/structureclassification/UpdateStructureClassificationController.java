@@ -47,10 +47,6 @@
  */
 package org.egov.ptis.web.controller.masters.structureclassification;
 
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.egov.ptis.master.service.StructureClassificationService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +58,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/structureclassification")

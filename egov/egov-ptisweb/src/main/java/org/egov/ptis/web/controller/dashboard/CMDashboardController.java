@@ -47,17 +47,6 @@
  */
 
 package org.egov.ptis.web.controller.dashboard;
-import static org.egov.ptis.constants.PropertyTaxConstants. DAY;
-import static org.egov.ptis.constants.PropertyTaxConstants. MONTH;
-import static org.egov.ptis.constants.PropertyTaxConstants. WEEK;
-
-import java.io.IOException;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.codehaus.jackson.JsonGenerationException;
@@ -67,6 +56,7 @@ import org.egov.ptis.bean.dashboard.CollReceiptDetails;
 import org.egov.ptis.bean.dashboard.CollectionAnalysis;
 import org.egov.ptis.bean.dashboard.CollectionDetails;
 import org.egov.ptis.bean.dashboard.CollectionDetailsRequest;
+import org.egov.ptis.bean.dashboard.DemandVariance;
 import org.egov.ptis.bean.dashboard.MISDCBDetails;
 import org.egov.ptis.bean.dashboard.MonthlyDCB;
 import org.egov.ptis.bean.dashboard.PropertyTaxDefaultersRequest;
@@ -74,7 +64,6 @@ import org.egov.ptis.bean.dashboard.StateCityInfo;
 import org.egov.ptis.bean.dashboard.TaxDefaulters;
 import org.egov.ptis.bean.dashboard.TaxPayerResponseDetails;
 import org.egov.ptis.bean.dashboard.TotalCollectionStats;
-import org.egov.ptis.bean.dashboard.DemandVariance;
 import org.egov.ptis.bean.dashboard.WeeklyDCB;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.service.dashboard.PropTaxDashboardService;
@@ -87,9 +76,19 @@ import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.DAY;
+import static org.egov.ptis.constants.PropertyTaxConstants.MONTH;
+import static org.egov.ptis.constants.PropertyTaxConstants.WEEK;
 
 /**
  * Controller used to provide services for CM Dashboard

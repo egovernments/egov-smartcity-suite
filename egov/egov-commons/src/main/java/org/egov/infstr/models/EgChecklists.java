@@ -47,7 +47,8 @@
  */
 package org.egov.infstr.models;
 
-import java.io.Serializable;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,9 +62,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.infra.admin.master.entity.AppConfigValues;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.io.Serializable;
 
 @Entity
 @Table(name = "EG_CHECKLISTS")

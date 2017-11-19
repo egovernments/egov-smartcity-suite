@@ -48,10 +48,10 @@
 
 package org.egov.tl.repository;
 
-import java.util.List;
-
 import org.egov.tl.entity.LicenseStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface LicenseStatusRepository extends JpaRepository<LicenseStatus, Long> {
 

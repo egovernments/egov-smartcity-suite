@@ -47,9 +47,15 @@
  */
 package org.egov.assets.model;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
+import org.egov.assets.util.AssetConstants;
+import org.egov.common.entity.UOM;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import org.egov.infra.persistence.validator.annotation.Required;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.validation.exception.ValidationError;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,18 +71,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-import javax.validation.Valid;
-
-import org.egov.assets.util.AssetConstants;
-import org.egov.common.entity.UOM;
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CGeneralLedger;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.Required;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.validation.exception.ValidationError;
-import org.hibernate.validator.constraints.Length;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
 
 @Entity

@@ -47,11 +47,11 @@
  */
 package org.egov.works.reports.entity;
 
+import org.egov.infra.admin.master.entity.Department;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.infra.admin.master.entity.Department;
 
 public class EstimateAbstractReport {
     private Long financialYear;

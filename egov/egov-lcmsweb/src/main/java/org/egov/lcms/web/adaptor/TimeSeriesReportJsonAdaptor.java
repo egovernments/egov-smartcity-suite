@@ -47,14 +47,13 @@
  */
 package org.egov.lcms.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.lcms.reports.entity.TimeSeriesReportResult;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.lcms.reports.entity.TimeSeriesReportResult;
+
+import java.lang.reflect.Type;
 
 public class TimeSeriesReportJsonAdaptor implements JsonSerializer<TimeSeriesReportResult> {
 

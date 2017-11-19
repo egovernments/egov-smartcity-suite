@@ -48,9 +48,9 @@
 
 package org.egov.infra.elasticsearch.entity.bean;
 
-import java.util.List;
-
 import org.egov.infra.utils.StringUtils;
+
+import java.util.List;
 
 public class ApplicationIndexResponse {
 

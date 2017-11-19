@@ -47,8 +47,6 @@
  */
 package org.egov.wtms.masters.service;
 
-import java.util.List;
-
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.DonationHeader;
 import org.egov.wtms.masters.entity.PropertyType;
@@ -57,6 +55,8 @@ import org.egov.wtms.masters.repository.DonationHeaderRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

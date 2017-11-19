@@ -48,8 +48,8 @@
 package org.egov.services.deduction;
 
 import org.apache.log4j.Logger;
-import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.scheduler.quartz.AbstractQuartzJob;
 import org.egov.model.recoveries.RemittanceSchedulerLog;
 import org.egov.utils.FinancialConstants;
 import org.quartz.StatefulJob;

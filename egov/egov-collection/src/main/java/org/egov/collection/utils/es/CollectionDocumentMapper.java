@@ -50,7 +50,6 @@ package org.egov.collection.utils.es;
 
 import ma.glasnost.orika.CustomMapper;
 import ma.glasnost.orika.MappingContext;
-
 import org.egov.collection.entity.CollectionIndex;
 import org.egov.collection.entity.es.CollectionDocument;
 import org.springframework.stereotype.Component;

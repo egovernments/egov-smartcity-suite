@@ -76,10 +76,10 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
+import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 @Service
 public class LicenseUtils {
     @Autowired

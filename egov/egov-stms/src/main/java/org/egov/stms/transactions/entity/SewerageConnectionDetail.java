@@ -47,6 +47,11 @@
  */
 package org.egov.stms.transactions.entity;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.stms.masters.entity.enums.PropertyType;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -57,11 +62,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.stms.masters.entity.enums.PropertyType;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egswtax_connectiondetail")

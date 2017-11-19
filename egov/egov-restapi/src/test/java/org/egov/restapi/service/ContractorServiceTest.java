@@ -47,13 +47,6 @@
  */
 package org.egov.restapi.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.restapi.model.ContractorHelper;
 import org.egov.restapi.model.RestErrors;
 import org.egov.restapi.web.rest.AbstractContextControllerTest;
@@ -67,6 +60,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class ContractorServiceTest extends AbstractContextControllerTest<ExternalContractorService> {
 

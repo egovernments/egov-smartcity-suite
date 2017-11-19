@@ -47,13 +47,13 @@
  */
 package org.egov.assets.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.assets.autonumber.AssetCodeGenerator;
 import org.egov.assets.model.Asset;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class AssetCodeGeneratorImpl implements AssetCodeGenerator {

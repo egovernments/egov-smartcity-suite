@@ -47,8 +47,13 @@
  */
 package org.egov.lcms.masters.service;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.lcms.masters.entity.CourtTypeMaster;
+import org.egov.lcms.masters.entity.PetitionTypeMaster;
+import org.egov.lcms.masters.repository.PetitionTypeMasterRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -58,14 +63,8 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Metamodel;
-
-import org.egov.lcms.masters.entity.CourtTypeMaster;
-import org.egov.lcms.masters.entity.PetitionTypeMaster;
-import org.egov.lcms.masters.repository.PetitionTypeMasterRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

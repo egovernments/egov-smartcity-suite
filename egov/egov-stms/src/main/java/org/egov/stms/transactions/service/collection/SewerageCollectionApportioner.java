@@ -47,15 +47,14 @@
  */
 package org.egov.stms.transactions.service.collection;
 
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.List;
 
 public class SewerageCollectionApportioner {
 

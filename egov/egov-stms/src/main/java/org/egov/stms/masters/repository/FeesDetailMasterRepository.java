@@ -47,13 +47,13 @@
  */
 package org.egov.stms.masters.repository;
 
-import java.util.List;
-
 import org.egov.stms.masters.entity.FeesDetailMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface FeesDetailMasterRepository extends JpaRepository<FeesDetailMaster, Long> {

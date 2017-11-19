@@ -47,11 +47,10 @@
  */
 package org.egov.ptis.client.model.calculator;
 
-import java.math.BigDecimal;
-
+import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.egov.ptis.domain.model.calculator.UnitTaxCalculationInfo;
 
-import com.thoughtworks.xstream.annotations.XStreamAlias;
+import java.math.BigDecimal;
 
 @XStreamAlias("unitinfo")
 public class APUnitTaxCalculationInfo extends UnitTaxCalculationInfo {

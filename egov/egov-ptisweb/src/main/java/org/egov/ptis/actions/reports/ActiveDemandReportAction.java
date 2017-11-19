@@ -55,7 +55,6 @@ import org.egov.ptis.bean.ActiveDemandInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.hibernate.SQLQuery;
 import org.hibernate.transform.AliasToBeanResultTransformer;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.util.Collection;

@@ -47,13 +47,6 @@
  */
 package org.egov.ptis.web.controller.masters.mutationfee;
 
-import java.math.BigDecimal;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.ptis.domain.model.MutationFeeDetails;
 import org.egov.ptis.master.service.MutationFeeService;
 import org.joda.time.DateTimeComparator;
@@ -67,6 +60,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/mutationfee")

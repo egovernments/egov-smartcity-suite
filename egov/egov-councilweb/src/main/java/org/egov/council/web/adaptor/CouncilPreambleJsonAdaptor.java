@@ -47,21 +47,20 @@
  */
 package org.egov.council.web.adaptor;
 
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
-
-import java.lang.reflect.Type;
-import java.util.stream.Collectors;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.utils.StringUtils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.util.stream.Collectors;
+
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
 
 public class CouncilPreambleJsonAdaptor implements JsonSerializer<CouncilPreamble> {
 	@Override

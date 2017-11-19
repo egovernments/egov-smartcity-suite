@@ -47,12 +47,12 @@
  */
 package org.egov.lcms.masters.repository;
 
-import java.util.List;
-
 import org.egov.lcms.masters.entity.CourtTypeMaster;
 import org.egov.lcms.masters.entity.PetitionTypeMaster;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PetitionTypeMasterRepository extends JpaRepository<PetitionTypeMaster, java.lang.Long> {

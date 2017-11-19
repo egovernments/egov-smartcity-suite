@@ -47,10 +47,10 @@
  */
 package org.egov.model.instrument;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.CVoucherHeader;
 import org.egov.infstr.models.BaseModel;
+
+import java.math.BigDecimal;
 
 /**
  *

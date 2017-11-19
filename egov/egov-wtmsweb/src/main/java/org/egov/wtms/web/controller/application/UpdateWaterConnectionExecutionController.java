@@ -48,13 +48,6 @@
 
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -72,6 +65,13 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
 
 @Controller
 @RequestMapping(value = "/application/execute-update")

@@ -47,25 +47,6 @@
  */
 package org.egov.wtms.application.service.collection;
 
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
-import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPTCODEGENBILL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTSERVICECODEGENBILL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNCTIONARYCODEGENBILL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDCODEGENBILL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDSOURCEGENBILL;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SERVEICECODEGENBILL;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.interfaces.Billable;
 import org.egov.demand.model.AbstractBillable;
@@ -91,6 +72,25 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.ACTIVE;
+import static org.egov.wtms.masters.entity.enums.ConnectionStatus.INPROGRESS;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_AUTO;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEPTCODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ESTSERVICECODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNCTIONARYCODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDCODEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FUNDSOURCEGENBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SERVEICECODEGENBILL;
 
 @Service
 @Transactional(readOnly = true)

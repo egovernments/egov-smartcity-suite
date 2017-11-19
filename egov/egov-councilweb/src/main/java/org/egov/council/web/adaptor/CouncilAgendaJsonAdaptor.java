@@ -47,14 +47,13 @@
  */
 package org.egov.council.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.council.entity.CouncilAgenda;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.council.entity.CouncilAgenda;
+
+import java.lang.reflect.Type;
 
 public class CouncilAgendaJsonAdaptor implements JsonSerializer<CouncilAgenda> {
 

@@ -48,13 +48,6 @@
 
 package org.egov.wtms.web.controller.application;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
-
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.RegularisedConnection;
@@ -73,6 +66,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REGULARIZE_CONNECTION;
 
 @Controller
 @RequestMapping(value = "/application")

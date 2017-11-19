@@ -47,9 +47,9 @@
  */
 package org.egov.assets.model;
 
-import java.util.List;
-
 import org.egov.assets.model.bean.AssetCustomPropertyBean;
+
+import java.util.List;
 
 public class AssetCustomProperty {
 	private List<AssetCustomPropertyBean> categoryProperties;

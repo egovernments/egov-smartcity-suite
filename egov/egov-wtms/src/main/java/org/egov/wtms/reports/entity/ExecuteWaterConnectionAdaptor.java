@@ -48,16 +48,15 @@
 
 package org.egov.wtms.reports.entity;
 
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
-
-import java.lang.reflect.Type;
-
-import org.egov.wtms.application.entity.WaterConnExecutionDetails;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.wtms.application.entity.WaterConnExecutionDetails;
+
+import java.lang.reflect.Type;
+
+import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
 public class ExecuteWaterConnectionAdaptor implements JsonSerializer<WaterConnExecutionDetails> {
 

@@ -48,15 +48,15 @@
 
 package org.egov.wtms.application.service;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.wtms.application.entity.MeterReadingConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.repository.MeterReadingConnectionDetailsRepository;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class MeterReadingConnectionDetailsService {

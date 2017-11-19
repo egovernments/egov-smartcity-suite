@@ -47,9 +47,6 @@
  */
 package org.egov.stms.transactions.repository;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.entity.enums.SewerageConnectionStatus;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -58,6 +55,9 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface SewerageApplicationDetailsRepository extends JpaRepository<SewerageApplicationDetails, Long> {

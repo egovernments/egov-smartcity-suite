@@ -48,10 +48,10 @@
 
 package org.egov.infra.microservice.contract;
 
+import org.egov.infra.microservice.models.RequestInfo;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egov.infra.microservice.models.RequestInfo;
 
 public class TaskRequest {
     private RequestInfo requestInfo = new RequestInfo();

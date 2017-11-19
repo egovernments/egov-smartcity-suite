@@ -48,14 +48,6 @@
 
 package org.egov.council.service;
 
-import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.repository.CouncilAgendaDetailsRepository;
@@ -69,6 +61,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
+
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
 
 @Service
 @Transactional(readOnly = true)

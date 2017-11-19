@@ -48,7 +48,8 @@
 
 package org.egov.ptis.domain.entity.transactions;
 
-import java.math.BigDecimal;
+import org.egov.commons.Installment;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,9 +61,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.commons.Installment;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.math.BigDecimal;
 
 @Entity
 @Table(name = "egpt_installment_demand_info")

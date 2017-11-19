@@ -47,10 +47,6 @@
  */
 package org.egov.lcms.web.controller.reports;
 
-import java.text.ParseException;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.lcms.reports.entity.LegalCommonReportResult;
 import org.egov.lcms.transactions.service.LegalCommonReportService;
 import org.egov.lcms.web.controller.transactions.GenericLegalCaseController;
@@ -62,6 +58,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.text.ParseException;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/reports")

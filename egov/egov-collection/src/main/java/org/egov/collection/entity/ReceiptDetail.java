@@ -47,13 +47,13 @@
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
-
 import org.egov.commons.CChartOfAccounts;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.CFunction;
+
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 public class ReceiptDetail implements java.io.Serializable {
     private static final long serialVersionUID = 1L;

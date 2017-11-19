@@ -47,11 +47,11 @@
  */
 package org.egov.commons.service;
 
-import java.util.List;
-
 import org.egov.commons.CChartOfAccountDetail;
 import org.egov.infstr.services.PersistenceService;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ChartOfAccountDetailService extends PersistenceService<CChartOfAccountDetail, Long>

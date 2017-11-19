@@ -48,9 +48,8 @@
 
 package org.egov.infra.microservice.contract;
 
-import org.egov.infra.microservice.models.RequestInfo;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.egov.infra.microservice.models.RequestInfo;
 
 public class RequestInfoWrapper {
 

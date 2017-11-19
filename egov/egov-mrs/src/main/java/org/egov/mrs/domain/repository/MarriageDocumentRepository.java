@@ -48,12 +48,12 @@
 
 package org.egov.mrs.domain.repository;
 
-import java.util.List;
-
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.enums.MarriageDocumentType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface MarriageDocumentRepository extends JpaRepository<MarriageDocument, Long> {

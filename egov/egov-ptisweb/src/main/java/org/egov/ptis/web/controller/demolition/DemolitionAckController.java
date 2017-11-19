@@ -48,10 +48,6 @@
 
 package org.egov.ptis.web.controller.demolition;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -66,6 +62,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
 
 @Controller
 @RequestMapping(value = { "/demolition/ack" })

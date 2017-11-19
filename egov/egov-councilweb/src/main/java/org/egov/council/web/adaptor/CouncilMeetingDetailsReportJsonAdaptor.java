@@ -48,15 +48,14 @@
 
 package org.egov.council.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.council.entity.es.CouncilMeetingDetailsSearchResult;
-import org.egov.infra.utils.StringUtils;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.council.entity.es.CouncilMeetingDetailsSearchResult;
+import org.egov.infra.utils.StringUtils;
+
+import java.lang.reflect.Type;
 
 public class CouncilMeetingDetailsReportJsonAdaptor implements JsonSerializer<CouncilMeetingDetailsSearchResult> {
     @Override

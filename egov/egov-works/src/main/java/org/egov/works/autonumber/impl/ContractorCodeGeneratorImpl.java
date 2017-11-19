@@ -47,8 +47,6 @@
  */
 package org.egov.works.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.utils.StringUtils;
 import org.egov.works.autonumber.ContractorCodeGenerator;
@@ -58,6 +56,8 @@ import org.egov.works.models.masters.ContractorDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.io.Serializable;
 
 @Service
 public class ContractorCodeGeneratorImpl implements ContractorCodeGenerator {

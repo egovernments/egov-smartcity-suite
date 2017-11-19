@@ -47,13 +47,6 @@
  */
 package org.egov.stms.transactions.service;
 
-import static  org.egov.stms.masters.entity.enums.SewerageProcessStatus.COMPLETED;
-import static  org.egov.stms.masters.entity.enums.SewerageProcessStatus.INCOMPLETE;
-import static org.springframework.util.StringUtils.isEmpty;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.stms.entity.SewerageDemandGenerationLog;
 import org.egov.stms.entity.SewerageDemandGenerationLogDetail;
 import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
@@ -64,6 +57,13 @@ import org.egov.stms.transactions.repository.SewerageDemandGenerationLogReposito
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.stms.masters.entity.enums.SewerageProcessStatus.COMPLETED;
+import static org.egov.stms.masters.entity.enums.SewerageProcessStatus.INCOMPLETE;
+import static org.springframework.util.StringUtils.isEmpty;
 
 @Service
 @Transactional(readOnly = true)

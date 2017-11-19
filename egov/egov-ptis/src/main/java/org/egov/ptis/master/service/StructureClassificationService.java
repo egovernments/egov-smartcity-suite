@@ -47,10 +47,6 @@
  */
 package org.egov.ptis.master.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.infra.admin.master.entity.Module;
@@ -61,6 +57,10 @@ import org.egov.ptis.domain.repository.master.structureclassification.StructureC
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional

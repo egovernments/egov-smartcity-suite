@@ -47,12 +47,12 @@
  */
 package org.egov.ptis.client.bill;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE_REBATE;
+import org.egov.commons.Installment;
 
 import java.math.BigDecimal;
 
-import org.egov.commons.Installment;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_REBATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE_REBATE;
 
 public class BillDetailBean {
 

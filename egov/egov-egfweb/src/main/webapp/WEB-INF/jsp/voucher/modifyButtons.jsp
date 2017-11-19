@@ -48,12 +48,11 @@
 
 
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ page import="org.egov.utils.Constants"%>
 <div class="buttonbottom">
-	<table border="0" width="30%" align="center">
-		<tr></tr>
-		<tr>
-			<td><s:hidden name="button" id="button" /> <s:submit
+    <table border="0" width="30%" align="center">
+        <tr></tr>
+        <tr>
+            <td><s:hidden name="button" id="button" /> <s:submit
 					type="submit" cssClass="buttonsubmit" name="Save & View"
 					value="Save & View"
 					onclick="document.getElementById('button').value='Save_View';return validate()"

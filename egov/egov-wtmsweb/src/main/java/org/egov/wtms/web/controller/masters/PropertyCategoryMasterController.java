@@ -48,10 +48,6 @@
 
 package org.egov.wtms.web.controller.masters;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.wtms.masters.entity.PropertyCategory;
 import org.egov.wtms.masters.service.ConnectionCategoryService;
 import org.egov.wtms.masters.service.PropertyCategoryService;
@@ -65,6 +61,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/masters")

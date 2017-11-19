@@ -47,12 +47,11 @@
  */
 package org.egov.commons;
 
+import javax.persistence.Transient;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import javax.persistence.Transient;
 
 public class CGeneralLedger implements Serializable {
 

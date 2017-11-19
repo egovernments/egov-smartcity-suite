@@ -47,9 +47,6 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.demand.model.EgBill;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
@@ -65,6 +62,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 @Controller
 @RequestMapping("/ownershipcertificate")

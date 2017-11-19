@@ -48,7 +48,10 @@
 
 package org.egov.wtms.masters.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -61,11 +64,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
+import java.util.Date;
 
 @Entity
 @Table(name = "egwtr_metered_rates_detail")

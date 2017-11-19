@@ -47,17 +47,16 @@
  */
 package org.egov.stms.web.adapter;
 
-import java.lang.reflect.Type;
-import java.util.List;
-
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.stms.entity.es.SewerageIndex;
-
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
+import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.stms.entity.es.SewerageIndex;
+
+import java.lang.reflect.Type;
+import java.util.List;
 
 public class SewerageBaseRegisterAdaptor implements DataTableJsonAdapter<SewerageIndex> {
 

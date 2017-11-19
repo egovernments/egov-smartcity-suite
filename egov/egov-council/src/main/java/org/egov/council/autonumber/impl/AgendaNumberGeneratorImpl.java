@@ -47,13 +47,13 @@
  */
 package org.egov.council.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.council.autonumber.AgendaNumberGenerator;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class AgendaNumberGeneratorImpl implements AgendaNumberGenerator {

@@ -48,7 +48,7 @@
 
 package org.egov.wtms.application.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -59,8 +59,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.Date;
 
 @Entity
 @Table(name = "egwtr_meter_connection_details")

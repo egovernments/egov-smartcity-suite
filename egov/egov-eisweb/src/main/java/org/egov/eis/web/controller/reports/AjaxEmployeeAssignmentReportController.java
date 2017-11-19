@@ -47,9 +47,6 @@
  */
 package org.egov.eis.web.controller.reports;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.eis.entity.Employee;
 import org.egov.eis.reports.entity.EmployeeAssignmentSearch;
 import org.egov.eis.service.AssignmentService;
@@ -67,6 +64,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping("/reports")

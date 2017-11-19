@@ -47,45 +47,6 @@
  */
 package org.egov.utils;
 
-import java.awt.Color;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JRExporterParameter;
-import net.sf.jasperreports.engine.JasperExportManager;
-import net.sf.jasperreports.engine.JasperFillManager;
-import net.sf.jasperreports.engine.JasperPrint;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
-import net.sf.jasperreports.engine.export.JRHtmlExporter;
-import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
-import net.sf.jasperreports.engine.export.JRXlsExporter;
-import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
-
-import org.apache.log4j.Logger;
-import org.egov.commons.Fund;
-import org.egov.egf.model.BudgetReAppReportBean;
-import org.egov.egf.model.CommonReportBean;
-import org.egov.egf.model.DepartmentwiseExpenditureReport;
-import org.egov.egf.model.FunctionwiseIE;
-import org.egov.egf.model.ReportSearch;
-import org.egov.egf.model.Statement;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.model.budget.BudgetProposalBean;
-import org.egov.model.report.ReportBean;
-
 import ar.com.fdvs.dj.core.DJConstants;
 import ar.com.fdvs.dj.core.DynamicJasperHelper;
 import ar.com.fdvs.dj.core.layout.ClassicLayoutManager;
@@ -102,8 +63,44 @@ import ar.com.fdvs.dj.domain.constants.Page;
 import ar.com.fdvs.dj.domain.constants.Transparency;
 import ar.com.fdvs.dj.domain.constants.VerticalAlign;
 import ar.com.fdvs.dj.domain.entities.Subreport;
-
 import com.exilant.eGov.src.reports.TrialBalanceBean;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JRExporterParameter;
+import net.sf.jasperreports.engine.JasperExportManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.JRHtmlExporter;
+import net.sf.jasperreports.engine.export.JRHtmlExporterParameter;
+import net.sf.jasperreports.engine.export.JRXlsExporter;
+import net.sf.jasperreports.engine.export.JRXlsExporterParameter;
+import org.apache.log4j.Logger;
+import org.egov.commons.Fund;
+import org.egov.egf.model.BudgetReAppReportBean;
+import org.egov.egf.model.CommonReportBean;
+import org.egov.egf.model.DepartmentwiseExpenditureReport;
+import org.egov.egf.model.FunctionwiseIE;
+import org.egov.egf.model.ReportSearch;
+import org.egov.egf.model.Statement;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.model.budget.BudgetProposalBean;
+import org.egov.model.report.ReportBean;
+
+import java.awt.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
 public class ReportHelper {
     private static final int MB = 1024 * 1024;

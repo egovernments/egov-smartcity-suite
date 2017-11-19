@@ -47,10 +47,10 @@
  */
 package org.egov.demand.model;
 
+import org.egov.commons.Installment;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.commons.Installment;
 
 /**
  * EgBillDetails entity.

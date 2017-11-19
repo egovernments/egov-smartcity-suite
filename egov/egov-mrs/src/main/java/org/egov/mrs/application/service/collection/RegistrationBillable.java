@@ -47,18 +47,6 @@
  */
 package org.egov.mrs.application.service.collection;
 
-import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUNCTIONARY_CODE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_CODE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_SRC_CODE;
-import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEPARTMENT_CODE;
-import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.demand.dao.EgDemandDao;
 import org.egov.demand.interfaces.Billable;
@@ -77,6 +65,18 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUNCTIONARY_CODE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_CODE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEFAULT_FUND_SRC_CODE;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGE_DEPARTMENT_CODE;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
 
 /**
  * Extension service of <code> AbstractBillable </code>, which implements billing features

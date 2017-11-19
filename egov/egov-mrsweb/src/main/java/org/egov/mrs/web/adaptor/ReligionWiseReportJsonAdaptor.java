@@ -48,15 +48,14 @@
 
 package org.egov.mrs.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.infra.utils.StringUtils;
-import org.egov.mrs.domain.entity.SearchResult;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.infra.utils.StringUtils;
+import org.egov.mrs.domain.entity.SearchResult;
+
+import java.lang.reflect.Type;
 
 public class ReligionWiseReportJsonAdaptor implements JsonSerializer<SearchResult> {
     @Override

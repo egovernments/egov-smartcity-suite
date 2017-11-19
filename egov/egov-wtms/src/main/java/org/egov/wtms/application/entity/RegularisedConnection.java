@@ -48,6 +48,9 @@
 
 package org.egov.wtms.application.entity;
 
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -55,9 +58,6 @@ import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
 
 @Entity
 @Table(name = "egwtr_regularise_connection_detail")

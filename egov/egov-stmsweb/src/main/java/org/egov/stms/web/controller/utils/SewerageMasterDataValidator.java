@@ -48,13 +48,6 @@
 
 package org.egov.stms.web.controller.utils;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.stms.masters.entity.DonationMaster;
 import org.egov.stms.masters.entity.SewerageRatesMaster;
 import org.egov.stms.masters.service.DonationMasterService;
@@ -66,6 +59,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.ValidationUtils;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Component
 public class SewerageMasterDataValidator extends SewerageApplicationCommonValidator {

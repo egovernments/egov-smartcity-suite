@@ -47,10 +47,10 @@
  */
 package org.egov.ptis.service.DemandBill;
 
-import java.util.Map;
-
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.ptis.domain.entity.property.BasicProperty;
+
+import java.util.Map;
 
 /**
  * 

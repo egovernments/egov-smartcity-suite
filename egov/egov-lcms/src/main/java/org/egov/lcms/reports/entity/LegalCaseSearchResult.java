@@ -47,9 +47,9 @@
  */
 package org.egov.lcms.reports.entity;
 
-import java.util.Date;
-
 import org.egov.lcms.transactions.entity.LegalCase;
+
+import java.util.Date;
 
 public class LegalCaseSearchResult {
     private String caseNumber;

@@ -47,13 +47,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.math.BigInteger;
-import java.text.ParseException;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.wtms.application.entity.DefaultersReport;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -62,6 +55,12 @@ import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigInteger;
+import java.text.ParseException;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

@@ -48,6 +48,11 @@
 
 package org.egov.mrs.domain.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.mrs.masters.entity.MarriageReligion;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+
 import javax.persistence.Embedded;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -59,11 +64,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.mrs.masters.entity.MarriageReligion;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
 
 @Entity
 @Table(name = "egmrs_priest")

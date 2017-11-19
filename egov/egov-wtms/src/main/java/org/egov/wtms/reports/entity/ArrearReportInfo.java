@@ -52,8 +52,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.egov.wtms.application.entity.WaterDemandConnection;
-
 /**
  *
  * @author subhash

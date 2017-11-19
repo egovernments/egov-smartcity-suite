@@ -47,10 +47,10 @@
  */
 package org.egov.stms.entity;
 
+import org.egov.stms.masters.pojo.SewerageRateDCBResult;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egov.stms.masters.pojo.SewerageRateDCBResult;
 
 public class SewerageDCBReportResult {
     private List<SewerageRateDCBResult> dcbReportList = new ArrayList<>();

@@ -48,13 +48,6 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
-
-import java.util.Arrays;
-import java.util.Date;
-
 import org.egov.commons.service.EducationalQualificationService;
 import org.egov.commons.service.NationalityService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -80,6 +73,13 @@ import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
+
+import java.util.Arrays;
+import java.util.Date;
+
+import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.REGISTER_NO_OF_DAYS;
 
 public class MarriageRegistrationController extends GenericWorkFlowController {
 

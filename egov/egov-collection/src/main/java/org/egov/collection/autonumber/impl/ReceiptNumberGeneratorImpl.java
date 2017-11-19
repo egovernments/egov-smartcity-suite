@@ -47,9 +47,6 @@
  */
 package org.egov.collection.autonumber.impl;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.egov.collection.autonumber.ReceiptNumberGenerator;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
@@ -57,6 +54,9 @@ import org.egov.commons.CFinancialYear;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class ReceiptNumberGeneratorImpl implements ReceiptNumberGenerator {

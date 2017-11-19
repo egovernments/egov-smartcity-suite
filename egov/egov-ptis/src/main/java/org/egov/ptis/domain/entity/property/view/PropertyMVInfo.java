@@ -48,10 +48,8 @@
 
 package org.egov.ptis.domain.entity.property.view;
 
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -61,9 +59,10 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
-
-import org.egov.infra.admin.master.entity.Boundary;
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Immutable

@@ -48,13 +48,6 @@
 
 package org.egov.council.web.controller;
 
-import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.council.utils.constants.CouncilConstants.WARD;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilPreamble;
@@ -86,6 +79,13 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.council.utils.constants.CouncilConstants.WARD;
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping("/councilreports")

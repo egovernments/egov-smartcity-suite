@@ -48,9 +48,6 @@
 
 package org.egov.ptis.web.controller.reports;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
@@ -69,6 +66,9 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "report/baseRegisterVlt")

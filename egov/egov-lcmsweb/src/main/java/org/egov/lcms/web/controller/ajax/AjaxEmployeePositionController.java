@@ -47,12 +47,6 @@
  */
 package org.egov.lcms.web.controller.ajax;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,6 +56,12 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class AjaxEmployeePositionController {

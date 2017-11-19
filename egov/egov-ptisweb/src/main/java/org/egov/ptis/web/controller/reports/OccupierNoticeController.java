@@ -47,12 +47,7 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OCCUPIER;
-
-import java.util.List;
-
 import org.egov.demand.model.EgBill;
-import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.service.notice.RecoveryNoticeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -64,6 +59,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OCCUPIER;
 
 @Controller
 @RequestMapping("/occupiernotice")

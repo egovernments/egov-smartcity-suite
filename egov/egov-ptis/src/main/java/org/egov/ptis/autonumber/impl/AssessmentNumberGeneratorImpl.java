@@ -47,13 +47,13 @@
  */
 package org.egov.ptis.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.ptis.autonumber.AssessmentNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class AssessmentNumberGeneratorImpl implements AssessmentNumberGenerator{

@@ -48,13 +48,12 @@
 
 package org.egov.wtms.bean.dashboard;
 
-import java.math.BigDecimal;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import org.apache.commons.lang3.StringUtils;
 import org.egov.ptis.domain.model.ErrorDetails;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
+import java.math.BigDecimal;
 
 @JsonInclude(value = Include.NON_EMPTY)
 public class WaterChargeDashBoardResponse {

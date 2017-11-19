@@ -48,9 +48,9 @@
 
 package org.egov.stms.transactions.repository;
 
-import org.springframework.stereotype.Repository;
 import org.egov.stms.transactions.entity.SewerageFieldInspectionDetails;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
 @Repository
 public interface SewerageFieldInspectionDetailsRepository extends JpaRepository <SewerageFieldInspectionDetails, Long>{

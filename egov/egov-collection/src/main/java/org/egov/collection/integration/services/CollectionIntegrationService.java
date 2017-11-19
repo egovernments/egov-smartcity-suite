@@ -47,10 +47,6 @@
  */
 package org.egov.collection.integration.services;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillInfo;
 import org.egov.collection.integration.models.BillInfoImpl;
@@ -61,6 +57,10 @@ import org.egov.collection.integration.models.PaymentInfoSearchRequest;
 import org.egov.collection.integration.models.RestAggregatePaymentInfo;
 import org.egov.collection.integration.models.RestReceiptInfo;
 import org.egov.collection.integration.pgi.PaymentRequest;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Interface exposed by collections system to other systems (typically billing systems)

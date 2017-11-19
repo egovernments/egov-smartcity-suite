@@ -47,9 +47,9 @@
  */
 package org.egov.stms.masters.pojo;
 
-import java.util.Comparator;
-
 import org.egov.stms.masters.entity.DonationDetailMaster;
+
+import java.util.Comparator;
 
 public class DonationRateComparatorOrderById implements Comparator<DonationDetailMaster>{
     

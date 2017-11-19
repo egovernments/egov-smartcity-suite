@@ -47,10 +47,10 @@
  */
 package org.egov.collection.integration.services;
 
-import java.math.BigDecimal;
-
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
+
+import java.math.BigDecimal;
 
 public interface DebitAccountHeadDetailsService {
 

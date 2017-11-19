@@ -48,7 +48,11 @@
 
 package org.egov.ptis.domain.entity.transactions;
 
-import java.util.Date;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -57,12 +61,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import java.util.Date;
 
 @Entity
 @Table(name = "egpt_assessment_transactions")

@@ -50,8 +50,6 @@ package org.egov.works.milestone.entity;
 import java.math.BigDecimal;
 import java.util.List;
 
-import org.egov.works.milestone.entity.TrackMilestoneActivity;
-
 public class WorkProgressRegister {
     String dept;
     String ward;

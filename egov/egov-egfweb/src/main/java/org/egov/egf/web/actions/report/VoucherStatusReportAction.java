@@ -49,7 +49,6 @@ package org.egov.egf.web.actions.report;
 
 
 import com.opensymphony.xwork2.validator.annotations.Validation;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -74,11 +73,11 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationException;
+import org.egov.infra.persistence.utils.Page;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
 import org.egov.infra.workflow.entity.State;
-import org.egov.infra.persistence.utils.Page;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.contra.ContraJournalVoucher;
 import org.egov.model.payment.Paymentheader;

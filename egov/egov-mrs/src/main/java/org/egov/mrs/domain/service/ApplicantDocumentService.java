@@ -47,12 +47,12 @@
  */
 package org.egov.mrs.domain.service;
 
-import java.util.List;
-
 import org.egov.mrs.domain.entity.MrApplicantDocument;
 import org.egov.mrs.domain.repository.ApplicantDocumentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class ApplicantDocumentService {

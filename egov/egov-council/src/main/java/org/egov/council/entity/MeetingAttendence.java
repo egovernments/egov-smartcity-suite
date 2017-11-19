@@ -48,6 +48,8 @@
 
 package org.egov.council.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -60,8 +62,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "egcncl_meeting_attendence")

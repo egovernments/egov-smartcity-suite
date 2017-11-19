@@ -47,11 +47,11 @@
  */
 package org.egov.lcms.masters.repository;
 
-import java.util.List;
-
 import org.egov.lcms.masters.entity.InterimOrder;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface InterimOrderRepository extends JpaRepository<InterimOrder, java.lang.Long> {

@@ -47,11 +47,6 @@
  */
 package org.egov.restapi.web.rest;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
-import java.util.List;
-import java.util.stream.Collectors;
-
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.restapi.model.AdvertisementDetails;
 import org.egov.restapi.model.AdvertisementRequest;
@@ -61,6 +56,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @RestController
 @RequestMapping("/adtax")

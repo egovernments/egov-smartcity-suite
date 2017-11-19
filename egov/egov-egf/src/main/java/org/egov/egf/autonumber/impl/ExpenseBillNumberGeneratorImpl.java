@@ -48,8 +48,6 @@
 
 package org.egov.egf.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.autonumber.ExpenseBillNumberGenerator;
@@ -58,6 +56,8 @@ import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.model.bills.EgBillregister;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class ExpenseBillNumberGeneratorImpl implements ExpenseBillNumberGenerator {

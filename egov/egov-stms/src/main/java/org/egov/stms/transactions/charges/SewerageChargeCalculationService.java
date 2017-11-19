@@ -48,9 +48,9 @@
 
 package org.egov.stms.transactions.charges;
 
-import java.math.BigDecimal;
-
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+
+import java.math.BigDecimal;
 
 public interface SewerageChargeCalculationService {
     public BigDecimal calculateDonationCharges(final SewerageApplicationDetails sewerageApplicationDetails);

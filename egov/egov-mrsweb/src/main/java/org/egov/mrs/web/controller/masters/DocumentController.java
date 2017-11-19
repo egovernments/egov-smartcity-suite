@@ -48,12 +48,6 @@
 
 package org.egov.mrs.web.controller.masters;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.mrs.domain.entity.DocumentProofType;
 import org.egov.mrs.domain.entity.MarriageDocument;
 import org.egov.mrs.domain.enums.MarriageDocumentType;
@@ -72,6 +66,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/masters")

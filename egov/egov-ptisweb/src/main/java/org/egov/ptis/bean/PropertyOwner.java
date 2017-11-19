@@ -47,11 +47,11 @@
  */
 package org.egov.ptis.bean;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.OwnerAudit;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
+
+import java.util.List;
 
 public class PropertyOwner {
 

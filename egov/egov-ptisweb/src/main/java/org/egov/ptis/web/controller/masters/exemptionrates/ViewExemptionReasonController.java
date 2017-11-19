@@ -47,8 +47,6 @@
  */
 package org.egov.ptis.web.controller.masters.exemptionrates;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.TaxExemptionReason;
 import org.egov.ptis.master.service.TaxExemptionReasonService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,6 +55,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/exemption/view")

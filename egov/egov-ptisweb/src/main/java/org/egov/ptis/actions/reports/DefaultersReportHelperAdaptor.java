@@ -47,14 +47,13 @@
  */
 package org.egov.ptis.actions.reports;
 
-import java.lang.reflect.Type;
-
-import org.egov.ptis.domain.entity.property.DefaultersInfo;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.ptis.domain.entity.property.DefaultersInfo;
+
+import java.lang.reflect.Type;
 
 public class DefaultersReportHelperAdaptor implements JsonSerializer<DefaultersInfo> {
 

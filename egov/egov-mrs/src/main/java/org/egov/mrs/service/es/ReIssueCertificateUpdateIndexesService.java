@@ -48,8 +48,6 @@
 
 package org.egov.mrs.service.es;
 
-import static org.egov.mrs.application.MarriageConstants.APPL_INDEX_MODULE_NAME;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.entity.Source;
@@ -66,6 +64,8 @@ import org.egov.mrs.domain.service.MarriageRegistrationService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.egov.mrs.application.MarriageConstants.APPL_INDEX_MODULE_NAME;
 
 @Service
 @Transactional(readOnly = true)

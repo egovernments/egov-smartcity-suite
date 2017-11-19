@@ -48,6 +48,10 @@
 
 package org.egov.stms.entity;
 
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
@@ -60,10 +64,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.stms.masters.entity.enums.SewerageProcessStatus;
-import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 
 @Entity
 @Table(name = "egswtax_demandgenerationlogdetail")

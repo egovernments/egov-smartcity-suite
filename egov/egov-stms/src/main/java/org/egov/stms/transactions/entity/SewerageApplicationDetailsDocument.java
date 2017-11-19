@@ -47,8 +47,12 @@
  */
 package org.egov.stms.transactions.entity;
 
-import java.util.Date;
-import java.util.Set;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.stms.masters.entity.DocumentTypeMaster;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -65,13 +69,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.stms.masters.entity.DocumentTypeMaster;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.web.multipart.MultipartFile;
+import java.util.Date;
+import java.util.Set;
 
 @Entity
 @Table(name = "egswtax_applicationdetails_documents")

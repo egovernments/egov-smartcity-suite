@@ -47,13 +47,7 @@
  */
 package org.egov.egf.web.actions.masters;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.gson.GsonBuilder;
 import org.apache.struts2.ServletActionContext;
 import org.apache.struts2.convention.annotation.ParentPackage;
 import org.egov.commons.Bank;
@@ -65,7 +59,11 @@ import org.egov.infstr.services.PersistenceService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @ParentPackage("egov")
 public class BankBranchAction extends JQueryGridActionSupport {

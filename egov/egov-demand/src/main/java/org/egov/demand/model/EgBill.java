@@ -47,12 +47,12 @@
  */
 package org.egov.demand.model;
 
+import org.egov.infra.admin.master.entity.Module;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
-import org.egov.infra.admin.master.entity.Module;
 
 /**
  * EgBill entity.

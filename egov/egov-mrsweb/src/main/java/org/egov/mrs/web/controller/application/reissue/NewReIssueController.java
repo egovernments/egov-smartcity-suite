@@ -48,14 +48,6 @@
 
 package org.egov.mrs.web.controller.application.reissue;
 
-import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -91,6 +83,13 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.util.List;
+
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 /**
  * Handles Marriage Registration ReIssue transaction

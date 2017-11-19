@@ -59,8 +59,8 @@ import org.egov.tl.entity.view.DCBReportResult;
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.egov.infra.utils.StringUtils.toYesOrNo;
 import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import static org.egov.infra.utils.StringUtils.toYesOrNo;
 
 public class DCBReportResponseAdaptor implements DataTableJsonAdapter<DCBReportResult> {
 

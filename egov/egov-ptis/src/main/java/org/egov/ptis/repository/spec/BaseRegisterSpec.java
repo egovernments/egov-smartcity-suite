@@ -48,11 +48,11 @@
 
 package org.egov.ptis.repository.spec;
 
-import javax.persistence.criteria.Predicate;
-
 import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.Predicate;
 
 public class BaseRegisterSpec {
 

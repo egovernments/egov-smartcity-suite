@@ -48,7 +48,6 @@
 package org.egov.egf.web.actions.report;
 
 import net.sf.jasperreports.engine.JRException;
-
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;

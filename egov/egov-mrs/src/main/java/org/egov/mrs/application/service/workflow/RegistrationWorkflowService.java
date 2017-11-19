@@ -48,17 +48,6 @@
 
 package org.egov.mrs.application.service.workflow;
 
-import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
-import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
-import static org.egov.mrs.application.MarriageConstants.MRG_ROLEFORNONEMPLOYEE;
-import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -83,6 +72,17 @@ import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.MRG_ROLEFORNONEMPLOYEE;
+import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
 
 @Service
 public class RegistrationWorkflowService {

@@ -48,11 +48,6 @@
 
 package org.egov.wtms.masters.service;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.infra.persistence.utils.Page;
 import org.egov.wtms.application.entity.UsageSlabSearchRequest;
 import org.egov.wtms.masters.entity.UsageSlab;
@@ -62,6 +57,10 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

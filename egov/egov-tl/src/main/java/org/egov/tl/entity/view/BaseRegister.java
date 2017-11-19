@@ -48,18 +48,17 @@
 
 package org.egov.tl.entity.view;
 
-import java.io.Serializable;
-import java.math.BigInteger;
-import java.util.Date;
+import org.egov.infra.utils.DateUtils;
+import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.infra.utils.DateUtils;
-import org.hibernate.annotations.Immutable;
+import java.io.Serializable;
+import java.math.BigInteger;
+import java.util.Date;
 
 @Entity
 @Immutable

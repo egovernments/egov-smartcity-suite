@@ -47,8 +47,8 @@
  */
 package org.egov.works.web.controller.estimatephotograph;
 
-import java.util.List;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.works.abstractestimate.entity.EstimatePhotographSearchRequest;
 import org.egov.works.abstractestimate.service.EstimatePhotographService;
 import org.egov.works.lineestimate.entity.LineEstimateDetails;
@@ -63,8 +63,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/estimatephotograph")

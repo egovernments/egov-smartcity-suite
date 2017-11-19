@@ -47,10 +47,6 @@
  */
 package org.egov.portal.web.controller.firm;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.exception.ApplicationException;
 import org.egov.portal.entity.Firm;
 import org.egov.portal.entity.SearchRequestFirm;
@@ -66,6 +62,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/firm")

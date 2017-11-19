@@ -47,16 +47,6 @@
  */
 package org.egov.wtms.web.controller.application;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
-
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.apache.commons.lang.WordUtils;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -79,6 +69,15 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
 
 @Controller
 @RequestMapping(value = "/application")

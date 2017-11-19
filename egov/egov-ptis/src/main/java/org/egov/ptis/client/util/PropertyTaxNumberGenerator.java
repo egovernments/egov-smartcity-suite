@@ -47,15 +47,12 @@
  */
 package org.egov.ptis.client.util;
 
-import java.util.Date;
-
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
-import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.autonumber.AssessmentNumberGenerator;
 import org.egov.ptis.autonumber.NoticeNumberGenerator;
@@ -64,6 +61,8 @@ import org.egov.ptis.domain.entity.property.PropertyID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)

@@ -48,10 +48,10 @@
 
 package org.egov.ptis.client.util;
 
-import static org.junit.Assert.assertEquals;
-
 import org.joda.time.DateTime;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class PropertyTaxutilTest {
 

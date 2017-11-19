@@ -47,10 +47,16 @@
  */
 package org.egov.works.contractorbill.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.model.bills.EgBilldetails;
+import org.egov.model.bills.EgBillregister;
+import org.egov.works.lineestimate.entity.DocumentDetails;
+import org.egov.works.models.contractorBill.AssetForBill;
+import org.egov.works.models.contractorBill.DeductionTypeForBill;
+import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
+import org.egov.works.models.measurementbook.MBHeader;
+import org.egov.works.models.workorder.WorkOrder;
+import org.egov.works.models.workorder.WorkOrderEstimate;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -62,17 +68,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.persistence.Transient;
-
-import org.egov.infra.admin.master.entity.User;
-import org.egov.model.bills.EgBilldetails;
-import org.egov.model.bills.EgBillregister;
-import org.egov.works.lineestimate.entity.DocumentDetails;
-import org.egov.works.models.contractorBill.AssetForBill;
-import org.egov.works.models.contractorBill.DeductionTypeForBill;
-import org.egov.works.models.contractorBill.StatutoryDeductionsForBill;
-import org.egov.works.models.measurementbook.MBHeader;
-import org.egov.works.models.workorder.WorkOrder;
-import org.egov.works.models.workorder.WorkOrderEstimate;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 
 @Entity
 @Table(name = "EGW_CONTRACTORBILL")

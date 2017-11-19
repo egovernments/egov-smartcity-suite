@@ -47,13 +47,13 @@
  */
 package org.egov.ptis.bean;
 
+import org.egov.ptis.domain.entity.property.PropertyImpl;
+import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 
 public class PropertyNoticeInfo {
     private final PropertyImpl property;

@@ -48,14 +48,6 @@
 
 package org.egov.lcms.service.es;
 
-import static org.apache.commons.lang3.StringUtils.defaultString;
-import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
-
-import java.text.ParseException;
-import java.util.Map;
-
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.lcms.entity.es.LegalCaseDocument;
@@ -70,6 +62,14 @@ import org.egov.lcms.utils.constants.LcmsConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.text.ParseException;
+import java.util.Map;
+
+import static org.apache.commons.lang3.StringUtils.defaultString;
+import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_REGION_NAME_KEY;
 
 @Service
 @Transactional(readOnly = true)

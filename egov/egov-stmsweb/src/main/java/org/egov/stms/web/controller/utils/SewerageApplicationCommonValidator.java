@@ -47,14 +47,14 @@
  */
 package org.egov.stms.web.controller.utils;
 
-import java.math.BigDecimal;
-
 import org.egov.stms.masters.entity.enums.PropertyType;
 import org.egov.stms.masters.service.DonationMasterService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
+
+import java.math.BigDecimal;
 
 @Component
 public class SewerageApplicationCommonValidator implements Validator {

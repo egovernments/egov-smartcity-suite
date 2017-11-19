@@ -48,14 +48,13 @@
 
 package org.egov.works.master.service;
 
-import java.util.List;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.works.models.masters.ScheduleCategory;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
-
-import org.egov.infstr.services.PersistenceService;
-import org.egov.works.models.masters.ScheduleCategory;
+import java.util.List;
 
 public class ScheduleCategoryService extends PersistenceService<ScheduleCategory, Long> {
 

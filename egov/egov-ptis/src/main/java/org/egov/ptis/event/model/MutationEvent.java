@@ -48,10 +48,10 @@
 
 package org.egov.ptis.event.model;
 
-import java.math.BigInteger;
-
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.springframework.context.ApplicationEvent;
+
+import java.math.BigInteger;
 
 /**
  *

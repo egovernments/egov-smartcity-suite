@@ -48,8 +48,6 @@
  */
 package org.egov.lcms.transactions.service;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Employee;
 import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
@@ -71,6 +69,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

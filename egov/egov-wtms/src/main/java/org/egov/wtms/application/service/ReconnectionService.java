@@ -47,8 +47,6 @@
  */
 package org.egov.wtms.application.service;
 
-import java.util.HashMap;
-
 import org.egov.commons.entity.Source;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -59,6 +57,8 @@ import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
 
 @Service
 @Transactional(readOnly = true)

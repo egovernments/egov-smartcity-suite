@@ -47,7 +47,10 @@
  */
 package org.egov.mrs.domain.entity;
 
-import java.util.Date;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.mrs.domain.enums.MarriageCertificateType;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -62,11 +65,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.mrs.domain.enums.MarriageCertificateType;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Date;
 
 @Entity
 @Table(name = "egmrs_certificate")

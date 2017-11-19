@@ -48,10 +48,6 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.Base64;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.mrs.application.MarriageConstants;
@@ -64,6 +60,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
 
 /**
  * Shows a Marriage Registration with read only fields

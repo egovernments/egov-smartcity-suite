@@ -47,9 +47,6 @@
  */
 package org.egov.stms.web.controller.notice;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
@@ -63,6 +60,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
 
 @Controller
 @RequestMapping(value = "/transactions")

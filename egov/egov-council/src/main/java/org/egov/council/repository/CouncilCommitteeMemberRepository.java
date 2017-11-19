@@ -47,12 +47,12 @@
  */
 package org.egov.council.repository;
 
-import java.util.List;
-
 import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CommitteeType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface CouncilCommitteeMemberRepository extends JpaRepository<CommitteeMembers, java.lang.Long> {

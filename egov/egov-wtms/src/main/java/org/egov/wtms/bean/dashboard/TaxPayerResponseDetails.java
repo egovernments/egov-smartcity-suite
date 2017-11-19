@@ -47,10 +47,10 @@
  */
 package org.egov.wtms.bean.dashboard;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
+
+import java.util.List;
 
 @JsonInclude(value = Include.NON_EMPTY)
 public class TaxPayerResponseDetails {

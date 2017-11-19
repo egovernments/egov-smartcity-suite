@@ -47,17 +47,16 @@
  */
 package org.egov.wtms.reports.entity;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-
-import org.egov.wtms.application.entity.DailyWTCollectionReport;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.wtms.application.entity.DailyWTCollectionReport;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
 
 public class DailyWTCollectionAdaptor implements JsonSerializer<DailyWTCollectionReport> {
 

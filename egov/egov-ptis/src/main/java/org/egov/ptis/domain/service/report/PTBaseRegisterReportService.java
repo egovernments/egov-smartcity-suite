@@ -47,8 +47,6 @@
  */
 package org.egov.ptis.domain.service.report;
 
-import java.util.List;
-
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.ptis.domain.entity.property.BaseRegisterReportRequest;
 import org.egov.ptis.domain.entity.property.view.PropertyMVInfo;
@@ -59,6 +57,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

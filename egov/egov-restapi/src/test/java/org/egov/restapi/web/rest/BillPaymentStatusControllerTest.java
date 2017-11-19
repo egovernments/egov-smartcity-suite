@@ -47,13 +47,6 @@
  */
 package org.egov.restapi.web.rest;
 
-import static org.junit.Assert.assertEquals;
-import static org.mockito.Mockito.when;
-
-import java.math.BigDecimal;
-
-import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.egf.commons.EgovCommon;
 import org.egov.egf.expensebill.service.ExpenseBillService;
@@ -69,6 +62,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
+
+import javax.servlet.http.HttpServletResponse;
+import java.math.BigDecimal;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class BillPaymentStatusControllerTest extends AbstractContextControllerTest<BillPaymentStatusController> {
 

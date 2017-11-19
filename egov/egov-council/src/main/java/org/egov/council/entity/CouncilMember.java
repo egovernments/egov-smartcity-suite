@@ -48,9 +48,14 @@
 
 package org.egov.council.entity;
 
-import static org.egov.council.entity.CouncilMember.SEQ_COUNCILMEMBER;
-
-import java.util.Date;
+import org.egov.common.entity.EducationalQualification;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.entity.enums.Gender;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.springframework.web.multipart.MultipartFile;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -65,15 +70,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.util.Date;
 
-import org.egov.common.entity.EducationalQualification;
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.entity.enums.Gender;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.springframework.web.multipart.MultipartFile;
+import static org.egov.council.entity.CouncilMember.SEQ_COUNCILMEMBER;
 
 @Entity
 @Unique(fields = {"name"}, enableDfltMsg = true)

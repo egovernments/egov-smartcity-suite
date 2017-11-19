@@ -47,8 +47,9 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.commons.EgwTypeOfWork;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -62,10 +63,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.commons.EgwTypeOfWork;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "EGW_MILESTONE_TEMPLATE")

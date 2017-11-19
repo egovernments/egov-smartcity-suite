@@ -48,15 +48,14 @@
 
 package org.egov.wtms.reports.entity;
 
-import java.lang.reflect.Type;
-
-import org.egov.wtms.application.entity.DonationChargesDCBReportSearch;
-import org.springframework.stereotype.Component;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.wtms.application.entity.DonationChargesDCBReportSearch;
+import org.springframework.stereotype.Component;
+
+import java.lang.reflect.Type;
 
 @Component
 public class DonationChargeDCBReportAdaptor implements JsonSerializer<DonationChargesDCBReportSearch> {

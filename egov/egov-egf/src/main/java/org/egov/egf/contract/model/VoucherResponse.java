@@ -47,10 +47,10 @@
  */
 package org.egov.egf.contract.model;
 
+import org.egov.commons.Fund;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import org.egov.commons.Fund;
 
 public class VoucherResponse {
 

@@ -47,15 +47,14 @@
  */
 package org.egov.lcms.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.lcms.reports.entity.LegalCommonReportResult;
-import org.egov.lcms.utils.constants.LcmsConstants;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.lcms.reports.entity.LegalCommonReportResult;
+import org.egov.lcms.utils.constants.LcmsConstants;
+
+import java.lang.reflect.Type;
 
 public class GenericSubReportJsonAdaptor implements JsonSerializer<LegalCommonReportResult> {
 

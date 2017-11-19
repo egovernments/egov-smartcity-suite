@@ -48,15 +48,15 @@
 
 package org.egov.assets.model;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.math.BigDecimal;
-
 import org.apache.commons.lang.RandomStringUtils;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.math.BigDecimal;
 
 public class AssetCategoryType {
 	

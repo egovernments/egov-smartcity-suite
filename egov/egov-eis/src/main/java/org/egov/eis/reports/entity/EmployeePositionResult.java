@@ -47,11 +47,11 @@
  */
 package org.egov.eis.reports.entity;
 
-import java.util.Date;
-
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+
+import java.util.Date;
 
 public class EmployeePositionResult {
 

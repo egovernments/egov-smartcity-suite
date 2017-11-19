@@ -47,10 +47,10 @@
  */
 package org.egov.portal.repository.specs;
 
-import javax.persistence.criteria.Predicate;
-
 import org.egov.portal.entity.PortalServiceType;
 import org.springframework.data.jpa.domain.Specification;
+
+import javax.persistence.criteria.Predicate;
 
 public class SearchPortalServiceTypeSpec {
 

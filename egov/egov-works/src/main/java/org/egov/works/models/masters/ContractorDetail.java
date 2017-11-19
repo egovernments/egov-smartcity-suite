@@ -47,11 +47,6 @@
  */
 package org.egov.works.models.masters;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.egov.commons.ContractorGrade;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
@@ -61,6 +56,10 @@ import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infstr.models.BaseModel;
 import org.egov.works.utils.WorksConstants;
 import org.hibernate.validator.constraints.Length;
+
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 public class ContractorDetail extends BaseModel {
 

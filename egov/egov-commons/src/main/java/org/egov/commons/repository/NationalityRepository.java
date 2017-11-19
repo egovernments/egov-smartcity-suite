@@ -47,12 +47,12 @@
  */
 package org.egov.commons.repository;
 
-import java.util.List;
-
 import org.egov.common.entity.Nationality;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface NationalityRepository extends JpaRepository<Nationality, Long> {

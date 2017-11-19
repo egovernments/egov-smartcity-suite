@@ -48,26 +48,6 @@
 
 package org.egov.collection.service.elasticsearch;
 
-import static org.egov.collection.constants.CollectionConstants.COLLECTION_INDEX_NAME;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_DISTRICTWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_GRADEWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_REGIONWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_ULBWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_WARDWISE;
-import static org.egov.collection.constants.CollectionConstants.DATEFORMATTER_YYYY_MM_DD;
-import static org.egov.collection.constants.CollectionConstants.DATE_FORMAT_YYYYMMDD;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.bean.dashboard.CollectionDashBoardRequest;
 import org.egov.collection.bean.dashboard.CollectionDashBoardTrend;
@@ -101,6 +81,26 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.egov.collection.constants.CollectionConstants.COLLECTION_INDEX_NAME;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_GRADEWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_REGIONWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.collection.constants.CollectionConstants.DATEFORMATTER_YYYY_MM_DD;
+import static org.egov.collection.constants.CollectionConstants.DATE_FORMAT_YYYYMMDD;
 
 @Service
 public class CollectionDocumentElasticSearchService {

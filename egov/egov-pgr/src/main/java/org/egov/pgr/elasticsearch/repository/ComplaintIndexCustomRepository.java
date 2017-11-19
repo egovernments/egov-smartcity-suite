@@ -48,13 +48,13 @@
 
 package org.egov.pgr.elasticsearch.repository;
 
-import java.util.List;
-import java.util.Map;
-
-import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintDashBoardRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
+
+import java.util.List;
+import java.util.Map;
 
 public interface ComplaintIndexCustomRepository {
 

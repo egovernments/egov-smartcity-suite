@@ -48,12 +48,6 @@
 
 package org.egov.commons.web.controller;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.util.List;
-
-import javax.validation.Valid;
-
 import org.apache.commons.lang3.RandomStringUtils;
 import org.egov.common.entity.EducationalQualification;
 import org.egov.commons.service.EducationalQualificationService;
@@ -70,6 +64,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.validation.Valid;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping("/qualification")

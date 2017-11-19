@@ -47,19 +47,7 @@
  */
 package org.egov.ptis.master.service;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES;
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES_TEMP;
-
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-
+import com.google.common.collect.ImmutableMap;
 import org.egov.demand.model.EgDemandReasonDetails;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.repository.AppConfigValueRepository;
@@ -72,7 +60,17 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.collect.ImmutableMap;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES;
+import static org.egov.ptis.constants.PropertyTaxConstants.TAX_RATES_TEMP;
 
 @Service
 @Transactional(readOnly = true)

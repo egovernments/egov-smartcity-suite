@@ -48,9 +48,7 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,8 +63,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "egpt_deactivation_details")

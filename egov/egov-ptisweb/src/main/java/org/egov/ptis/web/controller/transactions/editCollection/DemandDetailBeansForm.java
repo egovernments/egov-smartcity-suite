@@ -48,12 +48,12 @@
 
 package org.egov.ptis.web.controller.transactions.editCollection;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.ptis.bean.DemandDetail;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyReceipt;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 

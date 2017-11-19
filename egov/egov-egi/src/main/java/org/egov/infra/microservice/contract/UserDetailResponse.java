@@ -47,9 +47,9 @@
  */
 package org.egov.infra.microservice.contract;
 
-import java.util.List;
-
 import com.fasterxml.jackson.annotation.JsonProperty;
+
+import java.util.List;
 
 public class UserDetailResponse {
 

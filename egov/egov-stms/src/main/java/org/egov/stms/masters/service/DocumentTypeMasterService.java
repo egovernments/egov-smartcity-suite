@@ -47,8 +47,6 @@
  */
 package org.egov.stms.masters.service;
 
-import java.util.List;
-
 import org.egov.stms.masters.entity.DocumentTypeMaster;
 import org.egov.stms.masters.entity.SewerageApplicationType;
 import org.egov.stms.masters.repository.DocumentTypeMasterRepository;
@@ -59,6 +57,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

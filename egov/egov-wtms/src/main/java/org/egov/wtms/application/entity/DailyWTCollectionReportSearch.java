@@ -47,13 +47,12 @@
  */
 package org.egov.wtms.application.entity;
 
+import org.jboss.logging.Logger;
+
+import javax.validation.ValidationException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-
-import javax.validation.ValidationException;
-
-import org.jboss.logging.Logger;
 
 public class DailyWTCollectionReportSearch {
     private static final Logger logger = Logger.getLogger(DailyWTCollectionReportSearch.class);

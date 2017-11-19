@@ -47,9 +47,9 @@
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-
 import org.egov.commons.CChartOfAccounts;
+
+import java.math.BigDecimal;
 
 public class RemittanceDetail implements java.io.Serializable {
     private static final long serialVersionUID = 1L;

@@ -47,13 +47,13 @@
  */
 package org.egov.wtms.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.wtms.autonumber.WorkOrderNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class WorkOrderNumberGeneratorImpl implements WorkOrderNumberGenerator {

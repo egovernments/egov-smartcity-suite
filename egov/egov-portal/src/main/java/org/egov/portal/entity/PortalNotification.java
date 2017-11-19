@@ -47,7 +47,9 @@
  */
 package org.egov.portal.entity;
 
-import static org.egov.portal.entity.PortalNotification.SEQ_EGP_NOTIFICATIONS;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,9 +63,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.portal.entity.PortalNotification.SEQ_EGP_NOTIFICATIONS;
 
 @Entity
 @Table(name = "EGP_NOTIFICATIONS")

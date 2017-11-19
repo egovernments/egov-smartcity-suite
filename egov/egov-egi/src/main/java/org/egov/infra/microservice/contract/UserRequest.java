@@ -47,15 +47,14 @@
  */
 package org.egov.infra.microservice.contract;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import org.egov.infra.persistence.entity.enums.UserType;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
-
-import org.egov.infra.persistence.entity.enums.UserType;
-
-import com.fasterxml.jackson.annotation.JsonFormat;
 
 public class UserRequest {
 

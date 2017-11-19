@@ -47,49 +47,6 @@
  */
 package org.egov.stms.transactions.service;
 
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.INSPECTIONCHARGE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NEWSEWERAGECONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SENDEMAILFORSEWERAGETAX;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SENDSMSFORSEWERAGETAX;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNAPPROVE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPECLOSINGCONNSANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNCREATEFORNOINSFEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNDEEAPPROVE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNFEEPAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNFINALAPPROVE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPENEWCONNREJECT;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_DEEAPPROVE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FEEPAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_FINALAPPROVE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_NOINSFEE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_REJECT;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CHANGEINCLOSETS_CONN_SANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CLOSESEWERAGE_CONN_CREATE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CLOSESEWERAGE_CONN_EEAPPROVE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.SMSEMAILTYPE_CLOSESEWERAGE_CONN_REJECT;
-
-import java.math.BigDecimal;
-import java.util.Locale;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -106,6 +63,14 @@ import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.Locale;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

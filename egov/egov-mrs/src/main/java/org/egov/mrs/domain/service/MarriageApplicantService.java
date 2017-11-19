@@ -48,24 +48,6 @@
 
 package org.egov.mrs.domain.service;
 
-import static org.egov.mrs.application.MarriageConstants.AADHAR;
-import static org.egov.mrs.application.MarriageConstants.BIRTH_CERTIFICATE;
-import static org.egov.mrs.application.MarriageConstants.DEATH_CERTIFICATE;
-import static org.egov.mrs.application.MarriageConstants.DIVORCE_CERTIFICATE;
-import static org.egov.mrs.application.MarriageConstants.PASSPORT;
-import static org.egov.mrs.application.MarriageConstants.RATION_CRAD;
-import static org.egov.mrs.application.MarriageConstants.SCHOOL_LEAVING_CERT;
-import static org.egov.mrs.application.MarriageConstants.TELEPHONE_BILL;
-
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
-
 import org.apache.log4j.Logger;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -81,6 +63,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
+import static org.egov.mrs.application.MarriageConstants.AADHAR;
+import static org.egov.mrs.application.MarriageConstants.BIRTH_CERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.DEATH_CERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.DIVORCE_CERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.PASSPORT;
+import static org.egov.mrs.application.MarriageConstants.RATION_CRAD;
+import static org.egov.mrs.application.MarriageConstants.SCHOOL_LEAVING_CERT;
+import static org.egov.mrs.application.MarriageConstants.TELEPHONE_BILL;
 
 @Service
 @Transactional(readOnly = true)

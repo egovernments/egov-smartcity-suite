@@ -49,6 +49,7 @@ package org.egov.ptis.actions.common;
 
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.ptis.constants.PropertyTaxConstants;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
@@ -61,15 +62,15 @@ import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_NIL;
 import static org.egov.ptis.constants.PropertyTaxConstants.AMENITY_TYPE_PARTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.INTEGRATED_BILL;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_DEMAND_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OC;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
 import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTIONPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OC;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
+import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
 
 
 public class CommonServices {

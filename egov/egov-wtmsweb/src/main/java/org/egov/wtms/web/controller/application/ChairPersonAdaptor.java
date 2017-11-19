@@ -48,16 +48,15 @@
 
 package org.egov.wtms.web.controller.application;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-
-import org.egov.commons.entity.ChairPerson;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.commons.entity.ChairPerson;
+import org.egov.wtms.utils.constants.WaterTaxConstants;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 public class ChairPersonAdaptor implements JsonSerializer<ChairPerson> {
 

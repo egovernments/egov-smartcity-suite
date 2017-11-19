@@ -47,10 +47,10 @@
  */
 package org.egov.ptis.bean;
 
-import java.util.List;
-
-import org.egov.ptis.domain.model.OwnerInformation;
 import org.apache.commons.lang3.StringUtils;
+import org.egov.ptis.domain.model.OwnerInformation;
+
+import java.util.List;
 public class AssessmentInfo {
 
     private String ulbCode=StringUtils.EMPTY;

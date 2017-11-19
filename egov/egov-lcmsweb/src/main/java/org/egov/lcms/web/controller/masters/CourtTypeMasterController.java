@@ -47,10 +47,8 @@
  */
 package org.egov.lcms.web.controller.masters;
 
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.lcms.masters.entity.CourtTypeMaster;
 import org.egov.lcms.masters.service.CourtTypeMasterService;
 import org.egov.lcms.web.adaptor.CourtTypeMasterJsonAdaptor;
@@ -67,8 +65,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.validation.Valid;
+import java.util.List;
 
 @Controller
 @RequestMapping("/courttypemaster")

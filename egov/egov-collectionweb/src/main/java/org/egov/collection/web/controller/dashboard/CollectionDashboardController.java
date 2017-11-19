@@ -48,9 +48,6 @@
 
 package org.egov.collection.web.controller.dashboard;
 
-import java.io.IOException;
-import java.util.List;
-
 import org.egov.collection.bean.dashboard.CollectionDashBoardRequest;
 import org.egov.collection.bean.dashboard.TaxPayerDashBoardResponseDetails;
 import org.egov.collection.bean.dashboard.TotalCollectionDashBoardStats;
@@ -64,6 +61,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.io.IOException;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = { "/public/dashboard", "/dashboard" })

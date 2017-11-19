@@ -48,20 +48,19 @@
 
 package org.egov.tl.entity;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.Entity;
-import javax.persistence.Table;
-import javax.persistence.Transient;
-
 import org.egov.tl.utils.Constants;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.springframework.web.multipart.MultipartFile;
+
+import javax.persistence.Entity;
+import javax.persistence.Table;
+import javax.persistence.Transient;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 
 @Entity
 @Table(name = "egtl_trade_license")

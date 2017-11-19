@@ -48,24 +48,23 @@
 
 package org.egov.council.web.adaptor;
 
-import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
-import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilMemberStatus;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.infra.utils.StringUtils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 
 public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting> {
     @Override

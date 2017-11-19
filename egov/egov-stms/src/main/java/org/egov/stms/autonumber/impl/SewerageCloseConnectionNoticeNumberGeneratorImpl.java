@@ -48,13 +48,13 @@
 
 package org.egov.stms.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.stms.autonumber.SewerageCloseConnectionNoticeNumberGenerator;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class SewerageCloseConnectionNoticeNumberGeneratorImpl implements SewerageCloseConnectionNoticeNumberGenerator {

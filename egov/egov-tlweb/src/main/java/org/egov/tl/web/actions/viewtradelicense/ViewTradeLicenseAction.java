@@ -71,6 +71,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
+import static org.egov.infra.utils.ApplicationConstant.PUBLIC_ROLE_NAME;
 import static org.egov.tl.utils.Constants.BUTTONFORWARD;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
@@ -78,8 +80,6 @@ import static org.egov.tl.utils.Constants.MEESEVAOPERATOR;
 import static org.egov.tl.utils.Constants.MEESEVA_RESULT_ACK;
 import static org.egov.tl.utils.Constants.MESSAGE;
 import static org.egov.tl.utils.Constants.REPORT_PAGE;
-import static org.egov.infra.utils.ApplicationConstant.PUBLIC_ROLE_NAME;
-import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
 
 @ParentPackage("egov")
 @Results({@Result(name = REPORT_PAGE, location = "viewTradeLicense-report.jsp"),

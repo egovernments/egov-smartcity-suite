@@ -48,6 +48,11 @@
 
 package org.egov.mrs.domain.entity;
 
+import org.apache.commons.lang.WordUtils;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.mrs.application.MarriageConstants;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -60,11 +65,6 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Base64;
-
-import org.apache.commons.lang.WordUtils;
-import org.egov.infra.admin.master.entity.Role;
-import org.egov.infra.admin.master.entity.User;
-import org.egov.mrs.application.MarriageConstants;
 
 /**
  * A Bean class which is being used as input the certificate jrxml

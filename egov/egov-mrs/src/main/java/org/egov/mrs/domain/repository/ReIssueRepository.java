@@ -48,8 +48,8 @@
 
 package org.egov.mrs.domain.repository;
 
-import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.domain.entity.MarriageRegistration;
+import org.egov.mrs.domain.entity.ReIssue;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;

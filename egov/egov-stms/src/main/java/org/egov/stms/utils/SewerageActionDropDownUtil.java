@@ -48,33 +48,9 @@
 
 package org.egov.stms.utils;
 
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED_WITH_DEMAND_NOT_PAID;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGENOOFCLOSET;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGENOOFCLOSETURL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSECONNECTION_ACTIONDROPDOWN;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTIONURL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGES;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.COLLECTDONATIONCHARHGESURL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.GENERATEBEMANDBILL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.GENERATEBEMANDBILLURL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTION;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTIONACTIONDROPDOWN;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODIFYLEGACYCONNECTIONURL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_CITIZEN;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_COLLECTIONOPERATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_CSCOPERTAOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_ADMINISTRATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_APPROVER;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_CREATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SEWERAGETAX_REPORTVIEWER;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_STMS_VIEW_ACCESS_ROLE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_SUPERUSER;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ROLE_ULBOPERATOR;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEW;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCB;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWDCBURL;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.VIEWURL;
+import org.apache.log4j.Logger;
+import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
+import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -86,9 +62,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.log4j.Logger;
-import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
-import org.egov.stms.transactions.entity.SewerageApplicationDetails;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
 
 public class SewerageActionDropDownUtil {
 

@@ -48,7 +48,7 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import java.math.BigDecimal;
+import org.egov.infra.persistence.validator.annotation.Unique;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -62,8 +62,7 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Version;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.validator.annotation.Unique;
+import java.math.BigDecimal;
 
 @SuppressWarnings("serial")
 @Entity

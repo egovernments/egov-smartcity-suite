@@ -47,16 +47,15 @@
  */
 package org.egov.works.revisionestimate.entity;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import org.egov.works.abstractestimate.entity.AbstractEstimate;
+import org.egov.works.abstractestimate.entity.Activity;
 
 import javax.persistence.Entity;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.works.abstractestimate.entity.AbstractEstimate;
-import org.egov.works.abstractestimate.entity.Activity;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "EGW_REVISION_ESTIMATE")

@@ -47,14 +47,14 @@
  */
 package org.egov.ptis.domain.repository.master.usage;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PropertyUsageRepository extends JpaRepository<PropertyUsage, Long> {

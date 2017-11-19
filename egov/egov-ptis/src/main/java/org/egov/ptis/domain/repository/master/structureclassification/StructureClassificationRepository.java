@@ -47,13 +47,13 @@
  */
 package org.egov.ptis.domain.repository.master.structureclassification;
 
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.StructureClassification;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.util.List;
 
 public interface StructureClassificationRepository extends JpaRepository<StructureClassification, Long> {
 

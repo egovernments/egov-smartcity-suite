@@ -48,10 +48,10 @@
 
 package org.egov.stms.masters.pojo;
 
-import java.util.Comparator;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Comparator;
 
 @Service
 @Transactional(readOnly=true)

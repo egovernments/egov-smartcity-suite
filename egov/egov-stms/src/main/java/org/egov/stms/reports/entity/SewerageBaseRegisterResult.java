@@ -48,12 +48,12 @@
 
 package org.egov.stms.reports.entity;
 
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
+
+import java.math.BigDecimal;
+import java.util.List;
 
 public class SewerageBaseRegisterResult extends DataTableSearchRequest {
 

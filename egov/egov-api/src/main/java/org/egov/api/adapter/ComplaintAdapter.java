@@ -57,8 +57,6 @@ import org.egov.infra.utils.StringUtils;
 import org.egov.pgr.entity.Complaint;
 
 import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Set;
 
 public class ComplaintAdapter extends DataAdapter<Complaint> {

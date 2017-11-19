@@ -48,14 +48,14 @@
 
 package org.egov.egf.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.autonumber.BudgetReAppropriationSequenceNumberGenerator;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.model.budget.BudgetDetail;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class BudgetReAppropriationSequenceNumberGeneratorImpl implements BudgetReAppropriationSequenceNumberGenerator {

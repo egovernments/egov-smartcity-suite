@@ -48,10 +48,10 @@
 
 package org.egov.adtax.search.contract;
 
+import org.egov.adtax.entity.enums.AdvertisementStatus;
+
 import java.math.BigDecimal;
 import java.util.Date;
-
-import org.egov.adtax.entity.enums.AdvertisementStatus;
 
 public class HoardingSearch {
     private String advertisementNumber;

@@ -47,9 +47,9 @@
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+import org.egov.infstr.models.BaseModel;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -63,10 +63,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-import org.egov.infstr.models.BaseModel;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 @Table(name = "EGCL_DISHONORCHEQUEDETAIL")

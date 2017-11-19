@@ -47,14 +47,14 @@
  */
 package org.egov.restapi.web.rest;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
 import org.egov.restapi.service.ExternalDepartmentService;
 import org.egov.restapi.util.JsonConvertor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @RestController
 public class DepartmentController {

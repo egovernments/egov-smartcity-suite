@@ -53,7 +53,11 @@ import org.egov.commons.Functionary;
 import org.egov.commons.Fund;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
-import org.egov.eis.entity.*;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
+import org.egov.eis.entity.EmployeeSearchDTO;
+import org.egov.eis.entity.HeadOfDepartments;
+import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.repository.AssignmentRepository;
 import org.egov.eis.repository.EmployeeRepository;
@@ -82,7 +86,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service

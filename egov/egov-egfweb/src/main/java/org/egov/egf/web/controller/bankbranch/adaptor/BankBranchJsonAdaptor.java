@@ -48,14 +48,13 @@
 
 package org.egov.egf.web.controller.bankbranch.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.commons.Bankbranch;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.commons.Bankbranch;
+
+import java.lang.reflect.Type;
 
 public class BankBranchJsonAdaptor implements JsonSerializer<Bankbranch> {
     @Override

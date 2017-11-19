@@ -48,17 +48,17 @@
 
 package org.egov.collection.service;
 
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.collection.entity.CollectionBankRemittanceReport;
+import org.egov.collection.entity.ReceiptHeader;
+import org.egov.model.instrument.InstrumentHeader;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.collection.entity.CollectionBankRemittanceReport;
-import org.egov.collection.entity.ReceiptHeader;
-import org.egov.model.instrument.InstrumentHeader;
 
 public abstract class RemittanceService implements Serializable {
     private static final long serialVersionUID = 1849734164810403255L;

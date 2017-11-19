@@ -48,21 +48,6 @@
 
 package org.egov.adtax.workflow;
 
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_ROLEFORNONEMPLOYEE;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
@@ -77,6 +62,20 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
 
 @Service
 @Transactional(readOnly = true)

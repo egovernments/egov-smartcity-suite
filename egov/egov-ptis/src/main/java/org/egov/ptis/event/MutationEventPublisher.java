@@ -48,17 +48,17 @@
 
 package org.egov.ptis.event;
 
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-
-import java.math.BigInteger;
-import java.util.Random;
-
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.event.model.MutationEvent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
+
+import java.math.BigInteger;
+import java.util.Random;
+
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 
 /**
  * 

@@ -48,11 +48,6 @@
 
 package org.egov.council.service;
 
-import java.sql.SQLException;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.council.entity.CouncilSequenceNumber;
 import org.egov.council.repository.CouncilSequenceNumberRepository;
@@ -62,6 +57,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.Errors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.sql.SQLException;
 
 @Service
 @Transactional(readOnly = true)

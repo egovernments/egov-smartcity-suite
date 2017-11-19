@@ -48,10 +48,6 @@
 
 package org.egov.mrs.web.controller.masters.act;
 
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.util.List;
-
 import org.egov.mrs.masters.entity.MarriageAct;
 import org.egov.mrs.masters.service.MarriageActService;
 import org.egov.mrs.web.adaptor.ActJsonAdaptor;
@@ -64,6 +60,10 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping(value = "/masters")

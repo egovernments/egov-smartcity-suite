@@ -48,9 +48,6 @@
 
 package org.egov.ptis.web.controller.transactions.bulkboundaryupdation;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -67,6 +64,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/bulkboundaryupdate")

@@ -48,13 +48,7 @@
 
 package org.egov.infra.elasticsearch.entity.es;
 
-import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
-import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
-import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
-import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
-
-import java.util.Date;
-
+import com.fasterxml.jackson.annotation.JsonFormat;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.elasticsearch.annotations.DateFormat;
@@ -62,7 +56,12 @@ import org.springframework.data.elasticsearch.annotations.Document;
 import org.springframework.data.elasticsearch.annotations.Field;
 import org.springframework.data.elasticsearch.annotations.FieldType;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import java.util.Date;
+
+import static org.egov.infra.utils.ApplicationConstant.DEFAULT_TIMEZONE;
+import static org.egov.infra.utils.ApplicationConstant.ES_DATE_FORMAT;
+import static org.springframework.data.elasticsearch.annotations.DateFormat.date_optional_time;
+import static org.springframework.data.elasticsearch.annotations.FieldIndex.not_analyzed;
 
 @Document(indexName = "applications", type = "applications")
 public class ApplicationDocument {

@@ -48,11 +48,11 @@
 
 package org.egov.infra.workflow.repository;
 
-import java.util.Date;
-
 import org.egov.infra.workflow.entity.StateHistory;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.Date;
 
 @Repository
 public interface StateHistoryRepository extends JpaRepository<StateHistory, Long> {

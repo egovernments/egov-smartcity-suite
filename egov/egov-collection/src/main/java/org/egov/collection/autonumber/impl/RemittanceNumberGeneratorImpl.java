@@ -47,10 +47,6 @@
  */
 package org.egov.collection.autonumber.impl;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.egov.collection.autonumber.RemittanceNumberGenerator;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.CFinancialYear;
@@ -58,6 +54,10 @@ import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class RemittanceNumberGeneratorImpl implements RemittanceNumberGenerator {

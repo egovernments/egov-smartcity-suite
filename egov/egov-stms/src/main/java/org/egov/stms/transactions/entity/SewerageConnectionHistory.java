@@ -47,7 +47,7 @@
  */
 package org.egov.stms.transactions.entity;
 
-import java.util.Date;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -61,8 +61,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.Date;
 
 @Entity
 @Table(name = "egswtax_connection_history")

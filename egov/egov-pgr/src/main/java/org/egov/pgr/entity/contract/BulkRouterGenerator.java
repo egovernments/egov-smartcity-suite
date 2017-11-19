@@ -47,13 +47,13 @@
  */
 package org.egov.pgr.entity.contract;
 
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.ComplaintTypeCategory;
 import org.egov.pims.commons.Position;
+
+import java.util.List;
 
 public class BulkRouterGenerator {
 

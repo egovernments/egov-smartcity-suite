@@ -47,9 +47,6 @@
  */
 package org.egov.lcms.autonumber.impl;
 
-import java.io.Serializable;
-import java.util.Date;
-
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -57,6 +54,9 @@ import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.util.Date;
 
 @Service
 public class LegalCaseNumberGeneratorImpl implements LegalCaseNumberGenerator {

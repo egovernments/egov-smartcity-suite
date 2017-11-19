@@ -77,7 +77,6 @@ import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.hibernate.Query;
 import org.hibernate.criterion.CriteriaSpecification;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.text.DateFormat;

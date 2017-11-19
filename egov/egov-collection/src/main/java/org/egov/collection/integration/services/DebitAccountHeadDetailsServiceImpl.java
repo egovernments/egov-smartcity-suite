@@ -47,14 +47,14 @@
  */
 package org.egov.collection.integration.services;
 
-import java.math.BigDecimal;
-
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.CChartOfAccounts;
 import org.egov.infstr.services.PersistenceService;
+
+import java.math.BigDecimal;
 
 public class DebitAccountHeadDetailsServiceImpl implements DebitAccountHeadDetailsService {
 

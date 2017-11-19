@@ -48,8 +48,6 @@
 
 package org.egov.egf.web.controller;
 
-import org.springframework.beans.factory.annotation.Qualifier;
-
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import org.egov.commons.Relation;
@@ -58,6 +56,7 @@ import org.egov.egf.web.adaptor.RelationJsonAdaptor;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.services.masters.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;

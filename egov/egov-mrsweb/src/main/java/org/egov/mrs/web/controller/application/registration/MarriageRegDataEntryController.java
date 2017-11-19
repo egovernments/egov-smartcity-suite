@@ -48,14 +48,6 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.util.Date;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.mrs.application.service.MarriageFeeCalculator;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +59,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/registration")

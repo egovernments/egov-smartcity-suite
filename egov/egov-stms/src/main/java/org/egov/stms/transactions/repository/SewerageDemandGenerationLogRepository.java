@@ -47,10 +47,10 @@
  */
 package org.egov.stms.transactions.repository;
 
-import java.util.List;
-
 import org.egov.stms.entity.SewerageDemandGenerationLog;
 import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.List;
 
 public interface SewerageDemandGenerationLogRepository extends JpaRepository<SewerageDemandGenerationLog, Long> {
 

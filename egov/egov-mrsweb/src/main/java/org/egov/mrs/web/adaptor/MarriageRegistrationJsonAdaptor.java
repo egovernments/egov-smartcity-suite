@@ -48,15 +48,14 @@
 
 package org.egov.mrs.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.infra.utils.DateUtils;
-import org.egov.mrs.domain.entity.MarriageRegistration;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.infra.utils.DateUtils;
+import org.egov.mrs.domain.entity.MarriageRegistration;
+
+import java.lang.reflect.Type;
 
 public class MarriageRegistrationJsonAdaptor implements JsonSerializer<MarriageRegistration> {
     @Override

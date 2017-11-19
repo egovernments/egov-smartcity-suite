@@ -48,8 +48,6 @@
 
 package org.egov.egf.autonumber.impl;
 
-import java.io.Serializable;
-
 import org.egov.commons.CFiscalPeriod;
 import org.egov.commons.CVoucherHeader;
 import org.egov.commons.dao.FiscalPeriodHibernateDAO;
@@ -58,6 +56,8 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
 
 @Service
 public class VouchernumberGeneratorImpl implements VouchernumberGenerator {

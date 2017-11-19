@@ -48,13 +48,13 @@
 
 package org.egov.wtms.application.service;
 
-import java.util.List;
-
 import org.egov.wtms.application.entity.RegularisedConnection;
 import org.egov.wtms.application.repository.RegularisedConnectionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Service
 public class RegularisedConnectionService {

@@ -47,17 +47,17 @@
  */
 package org.egov.ptis.domain.entity.property;
 
-import static java.lang.Boolean.FALSE;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Area;
 import org.egov.exceptions.InvalidPropertyException;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static java.lang.Boolean.FALSE;
 
 /**
  * The Implementation Class for the BuildUpProperty

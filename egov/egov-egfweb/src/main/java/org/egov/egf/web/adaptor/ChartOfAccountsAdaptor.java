@@ -47,14 +47,13 @@
  */
 package org.egov.egf.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.commons.CChartOfAccounts;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.commons.CChartOfAccounts;
+
+import java.lang.reflect.Type;
 
 public class ChartOfAccountsAdaptor implements JsonSerializer<CChartOfAccounts> {
 

@@ -48,10 +48,10 @@
 
 package org.egov.pgr.report.entity.contract;
 
-import java.util.Date;
-
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.support.search.DataTableSearchRequest;
+
+import java.util.Date;
 
 public class AgeingReportRequest extends DataTableSearchRequest {
 

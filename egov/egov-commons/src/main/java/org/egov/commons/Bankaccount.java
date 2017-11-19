@@ -47,10 +47,8 @@
  */
 package org.egov.commons;
 
-import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
-
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.commons.utils.BankAccountType;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -67,9 +65,10 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.egov.commons.utils.BankAccountType;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import static org.egov.commons.Bankaccount.SEQ_BANKACCOUNT;
 
 @Entity
 @Table(name = "BANKACCOUNT")

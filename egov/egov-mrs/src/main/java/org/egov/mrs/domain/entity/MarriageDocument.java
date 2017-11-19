@@ -48,6 +48,12 @@
 
 package org.egov.mrs.domain.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.mrs.domain.enums.MarriageDocumentType;
+import org.hibernate.validator.constraints.SafeHtml;
+import org.springframework.web.multipart.MultipartFile;
+
 import javax.persistence.Entity;
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
@@ -58,12 +64,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.mrs.domain.enums.MarriageDocumentType;
-import org.hibernate.validator.constraints.SafeHtml;
-import org.springframework.web.multipart.MultipartFile;
 
 /**
  * Represents the document to be uploaded

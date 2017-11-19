@@ -47,11 +47,8 @@
  */
 package org.egov.collection.integration.services;
 
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-
+import com.thoughtworks.xstream.XStream;
+import com.thoughtworks.xstream.io.xml.DomDriver;
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -62,8 +59,10 @@ import org.egov.collection.xml.converter.ReceiptAccountInfoConverter;
 import org.egov.collection.xml.converter.ReceiptInstrumentInfoConverter;
 import org.egov.infra.exception.ApplicationRuntimeException;
 
-import com.thoughtworks.xstream.XStream;
-import com.thoughtworks.xstream.io.xml.DomDriver;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 /**
  * This interface needs to be implemented by any billing application that

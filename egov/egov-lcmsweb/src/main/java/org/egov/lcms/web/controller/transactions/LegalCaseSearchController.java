@@ -47,11 +47,6 @@
  */
 package org.egov.lcms.web.controller.transactions;
 
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-
 import org.egov.commons.EgwStatus;
 import org.egov.infra.utils.JsonUtils;
 import org.egov.lcms.reports.entity.LegalCaseSearchResult;
@@ -67,6 +62,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/search")

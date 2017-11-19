@@ -48,10 +48,10 @@
 
 package org.egov.ptis.bean;
 
+import org.egov.ptis.domain.model.OwnerInformation;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.egov.ptis.domain.model.OwnerInformation;
 
 public class SurveyAssessmentDetails {
 

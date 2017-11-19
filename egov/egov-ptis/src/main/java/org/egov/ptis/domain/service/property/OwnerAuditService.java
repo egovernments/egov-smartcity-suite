@@ -47,9 +47,6 @@
  */
 package org.egov.ptis.domain.service.property;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.OwnerAudit;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
@@ -57,6 +54,9 @@ import org.egov.ptis.domain.repository.OwnerAuditRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

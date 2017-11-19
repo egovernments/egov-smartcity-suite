@@ -47,8 +47,6 @@
  */
 package org.egov.stms.transactions.service;
 
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.demand.dao.EgDemandDao;
@@ -63,6 +61,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

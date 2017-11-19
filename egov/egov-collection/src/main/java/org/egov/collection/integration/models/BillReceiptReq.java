@@ -48,11 +48,11 @@
 
 package org.egov.collection.integration.models;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
-
-import com.fasterxml.jackson.annotation.JsonProperty;
 
 public class BillReceiptReq {
 

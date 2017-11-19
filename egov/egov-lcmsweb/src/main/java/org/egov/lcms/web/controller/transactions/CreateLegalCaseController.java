@@ -48,12 +48,6 @@
 
 package org.egov.lcms.web.controller.transactions;
 
-import java.io.IOException;
-import java.text.ParseException;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-
 import org.egov.lcms.autonumber.LegalCaseNumberGenerator;
 import org.egov.lcms.transactions.entity.LegalCase;
 import org.egov.lcms.transactions.service.LegalCaseService;
@@ -67,6 +61,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.text.ParseException;
 
 @Controller
 @RequestMapping(value = "/application/")

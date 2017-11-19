@@ -47,11 +47,11 @@
  */
 package org.egov.egf.billsubtype.repository;
 
-import java.util.List;
-
 import org.egov.model.bills.EgBillSubType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * @author venki

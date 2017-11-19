@@ -47,13 +47,13 @@
  */
 package org.egov.collection.integration.models;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
-
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Location;
 import org.egov.infra.admin.master.entity.User;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Set;
 
 public interface BillReceiptInfo {
 

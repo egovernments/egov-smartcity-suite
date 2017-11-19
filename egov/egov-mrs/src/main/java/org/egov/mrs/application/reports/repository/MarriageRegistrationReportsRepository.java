@@ -48,13 +48,13 @@
 
 package org.egov.mrs.application.reports.repository;
 
-import static org.egov.mrs.application.MarriageConstants.YEAR;
-
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
+
+import static org.egov.mrs.application.MarriageConstants.YEAR;
 
 @Repository
 public interface MarriageRegistrationReportsRepository extends JpaRepository<MarriageRegistration, Long> {

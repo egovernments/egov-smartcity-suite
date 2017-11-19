@@ -48,8 +48,6 @@
 
 package org.egov.stms.transactions.charges;
 
-import java.math.BigDecimal;
-
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.stms.masters.entity.enums.PropertyType;
@@ -60,6 +58,8 @@ import org.egov.stms.transactions.entity.SewerageConnectionDetail;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
 
 @Service
 public class SewerageChargeCalculationServiceImpl implements SewerageChargeCalculationService {

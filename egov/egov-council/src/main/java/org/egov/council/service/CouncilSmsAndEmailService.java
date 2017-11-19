@@ -47,15 +47,6 @@
  */
 package org.egov.council.service;
 
-import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
-import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
-import static org.egov.council.utils.constants.CouncilConstants.SENDEMAILFORCOUNCIL;
-import static org.egov.council.utils.constants.CouncilConstants.SENDSMSFORCOUNCIL;
-
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.List;
-
 import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilSmsDetails;
@@ -68,6 +59,15 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.stereotype.Service;
+
+import java.text.SimpleDateFormat;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
+import static org.egov.council.utils.constants.CouncilConstants.SENDEMAILFORCOUNCIL;
+import static org.egov.council.utils.constants.CouncilConstants.SENDSMSFORCOUNCIL;
 
 @Service
 public class CouncilSmsAndEmailService {

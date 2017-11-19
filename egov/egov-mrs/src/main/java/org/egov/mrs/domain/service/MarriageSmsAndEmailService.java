@@ -47,12 +47,6 @@
  */
 package org.egov.mrs.domain.service;
 
-import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
-import static org.egov.mrs.application.MarriageConstants.SENDEMAILFROOMMARRIAGEMODULE;
-import static org.egov.mrs.application.MarriageConstants.SENDSMSFROOMMARRIAGEMODULE;
-
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -65,6 +59,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.SENDEMAILFROOMMARRIAGEMODULE;
+import static org.egov.mrs.application.MarriageConstants.SENDSMSFROOMMARRIAGEMODULE;
 
 @Service
 public class MarriageSmsAndEmailService {

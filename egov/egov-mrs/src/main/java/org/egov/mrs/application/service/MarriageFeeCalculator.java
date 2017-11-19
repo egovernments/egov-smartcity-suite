@@ -48,12 +48,12 @@
 
 package org.egov.mrs.application.service;
 
-import java.util.Date;
-
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.masters.entity.MarriageFee;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 @Service
 public interface MarriageFeeCalculator {

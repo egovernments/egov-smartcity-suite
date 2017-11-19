@@ -47,15 +47,14 @@
  */
 package org.egov.eis.web.adaptor;
 
-import java.lang.reflect.Type;
-import java.text.SimpleDateFormat;
-
-import org.egov.eis.reports.entity.EmployeePositionResult;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.eis.reports.entity.EmployeePositionResult;
+
+import java.lang.reflect.Type;
+import java.text.SimpleDateFormat;
 
 public class EmployeePositionReportAdaptor implements JsonSerializer<EmployeePositionResult> {
 

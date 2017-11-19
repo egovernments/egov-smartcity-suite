@@ -48,10 +48,6 @@
 
 package org.egov.mrs.application.service;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.Set;
-
 import org.egov.commons.dao.InstallmentDao;
 import org.egov.demand.dao.DemandGenericDao;
 import org.egov.demand.dao.EgDemandDao;
@@ -61,6 +57,10 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.mrs.application.MarriageConstants;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.Set;
 
 /**
  * Provides abstraction for creating its Marriage Fee

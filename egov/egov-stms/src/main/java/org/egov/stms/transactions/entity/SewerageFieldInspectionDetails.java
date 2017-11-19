@@ -47,6 +47,8 @@
  */
 package org.egov.stms.transactions.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -58,8 +60,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
 
 @Entity
 @Table(name = "egswtax_fieldinspection_details")

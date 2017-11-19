@@ -47,9 +47,13 @@
  */
 package org.egov.assets.service;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import org.egov.assets.model.AssetCategory;
+import org.egov.assets.model.CategoryPropertyType;
+import org.egov.assets.repository.AssetCategoryRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -60,14 +64,9 @@ import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.EntityType;
 import javax.persistence.metamodel.Metamodel;
-
-import org.egov.assets.model.AssetCategory;
-import org.egov.assets.model.CategoryPropertyType;
-import org.egov.assets.repository.AssetCategoryRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

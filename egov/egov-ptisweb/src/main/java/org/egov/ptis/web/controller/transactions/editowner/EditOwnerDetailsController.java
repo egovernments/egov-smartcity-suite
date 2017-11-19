@@ -48,8 +48,6 @@
 
 package org.egov.ptis.web.controller.transactions.editowner;
 
-import java.util.List;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.Address;
 import org.egov.infra.persistence.entity.enums.Gender;
@@ -75,6 +73,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.List;
 
 @Controller
 @RequestMapping(value = "/editowner/{assessmentNo}")

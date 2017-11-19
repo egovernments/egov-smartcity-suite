@@ -47,8 +47,6 @@
  */
 package org.egov.dashboard.web.controller;
 
-import java.util.List;
-
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexRequest;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationIndexResponse;
 import org.egov.infra.elasticsearch.entity.bean.ApplicationInfo;
@@ -59,6 +57,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @RestController
 @RequestMapping(value = { "/public/portal", "/portal" })

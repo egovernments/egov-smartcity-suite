@@ -47,13 +47,8 @@
  */
 package org.egov.egf.web.controller.common;
 
-import static org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter.FACTORY;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
-import org.apache.struts2.ServletActionContext;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonSerializer;
 import org.egov.commons.Accountdetailtype;
 import org.egov.commons.Bankaccount;
 import org.egov.commons.Bankbranch;
@@ -89,11 +84,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.context.WebApplicationContext;
-import org.springframework.web.context.support.WebApplicationContextUtils;
 
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonSerializer;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static org.egov.infra.web.support.json.adapter.HibernateProxyTypeAdapter.FACTORY;
 
 /**
  * @author venki

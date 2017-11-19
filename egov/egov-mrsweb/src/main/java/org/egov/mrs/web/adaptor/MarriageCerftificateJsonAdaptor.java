@@ -48,16 +48,15 @@
 
 package org.egov.mrs.web.adaptor;
 
-import java.lang.reflect.Type;
-import java.util.Date;
-
-import org.egov.mrs.domain.entity.MarriageCertificate;
-import org.joda.time.DateTime;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.mrs.domain.entity.MarriageCertificate;
+import org.joda.time.DateTime;
+
+import java.lang.reflect.Type;
+import java.util.Date;
 
 public class MarriageCerftificateJsonAdaptor implements JsonSerializer<MarriageCertificate> {
     private static final String REGISTRATION_NO = "registrationNo";

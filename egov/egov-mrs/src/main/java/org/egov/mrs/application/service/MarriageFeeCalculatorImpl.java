@@ -48,9 +48,6 @@
 
 package org.egov.mrs.application.service;
 
-import java.util.Date;
-import java.util.List;
-
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -62,6 +59,9 @@ import org.joda.time.DateTime;
 import org.joda.time.Days;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
+import java.util.List;
 
 @Service
 public class MarriageFeeCalculatorImpl implements MarriageFeeCalculator {

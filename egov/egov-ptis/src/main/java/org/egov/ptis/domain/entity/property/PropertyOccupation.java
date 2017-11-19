@@ -48,7 +48,8 @@
 
 package org.egov.ptis.domain.entity.property;
 
-import java.util.Date;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.persistence.entity.AbstractAuditable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -59,9 +60,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.entity.AbstractAuditable;
+import java.util.Date;
 
 /**
  * <p>

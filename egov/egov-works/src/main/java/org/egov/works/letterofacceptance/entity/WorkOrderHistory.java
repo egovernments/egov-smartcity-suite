@@ -47,6 +47,9 @@
  */
 package org.egov.works.letterofacceptance.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.models.workorder.WorkOrder;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -58,9 +61,6 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.works.models.workorder.WorkOrder;
 
 @Entity
 @Table(name = "EGW_WORKORDER_HISTORY")

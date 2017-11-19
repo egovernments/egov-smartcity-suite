@@ -47,16 +47,15 @@
  */
 package org.egov.eis.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.eis.entity.Assignment;
-import org.egov.eis.entity.Employee;
-import org.egov.infra.utils.DateUtils;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.Employee;
+import org.egov.infra.utils.DateUtils;
+
+import java.lang.reflect.Type;
 
 public class EmployeeAssignmentSearchJson implements JsonSerializer<Employee> {
 

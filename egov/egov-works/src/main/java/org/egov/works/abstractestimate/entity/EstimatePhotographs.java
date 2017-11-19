@@ -47,7 +47,12 @@
  */
 package org.egov.works.abstractestimate.entity;
 
-import java.util.Date;
+import org.apache.commons.lang.StringUtils;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.works.lineestimate.entity.LineEstimateDetails;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -64,13 +69,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
-
-import org.apache.commons.lang.StringUtils;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.works.lineestimate.entity.LineEstimateDetails;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.SafeHtml;
+import java.util.Date;
 
 @Entity
 @Table(name = "EGW_ESTIMATE_PHOTOGRAPHS")

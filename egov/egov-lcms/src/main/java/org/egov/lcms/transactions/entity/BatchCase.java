@@ -47,9 +47,12 @@
  */
 package org.egov.lcms.transactions.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.infra.persistence.validator.annotation.DateFormat;
+import org.egov.infra.persistence.validator.annotation.OptionalPattern;
+import org.egov.infra.persistence.validator.annotation.ValidateDate;
+import org.egov.infra.validation.exception.ValidationError;
+import org.egov.lcms.utils.constants.LcmsConstants;
+import org.springframework.data.jpa.domain.AbstractPersistable;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,13 +64,9 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.validator.annotation.DateFormat;
-import org.egov.infra.persistence.validator.annotation.OptionalPattern;
-import org.egov.infra.persistence.validator.annotation.ValidateDate;
-import org.egov.infra.validation.exception.ValidationError;
-import org.egov.lcms.utils.constants.LcmsConstants;
-import org.springframework.data.jpa.domain.AbstractPersistable;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "EGLC_LEGALCASE_BATCHCASE")

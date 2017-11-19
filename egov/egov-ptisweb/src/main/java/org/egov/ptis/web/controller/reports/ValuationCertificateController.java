@@ -47,11 +47,6 @@
  */
 package org.egov.ptis.web.controller.reports;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE;
-
-import java.math.BigDecimal;
-import java.util.List;
-
 import org.egov.demand.model.EgBill;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -66,6 +61,11 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.math.BigDecimal;
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE;
 
 @Controller
 @RequestMapping("/valuation")

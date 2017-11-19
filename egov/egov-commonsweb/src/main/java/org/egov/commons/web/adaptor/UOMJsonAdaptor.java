@@ -48,14 +48,13 @@
 
 package org.egov.commons.web.adaptor;
 
-import java.lang.reflect.Type;
-
-import org.egov.common.entity.UOM;
-
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import com.google.gson.JsonSerializer;
+import org.egov.common.entity.UOM;
+
+import java.lang.reflect.Type;
 
 public class UOMJsonAdaptor implements JsonSerializer<UOM> {
     @Override

@@ -48,13 +48,13 @@
 
 package org.egov.wtms.masters.service;
 
-import java.util.Date;
-
 import org.egov.wtms.masters.entity.MeteredRatesDetail;
 import org.egov.wtms.masters.repository.MeteredRatesDetailRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.Date;
 
 @Service
 @Transactional(readOnly = true)

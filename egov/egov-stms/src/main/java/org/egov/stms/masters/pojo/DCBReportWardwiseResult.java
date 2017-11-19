@@ -48,10 +48,10 @@
 
 package org.egov.stms.masters.pojo;
 
+import org.egov.infra.admin.master.entity.Boundary;
+
 import java.math.BigDecimal;
 import java.util.List;
-
-import org.egov.infra.admin.master.entity.Boundary;
 
 public class DCBReportWardwiseResult {
     private String searchText;

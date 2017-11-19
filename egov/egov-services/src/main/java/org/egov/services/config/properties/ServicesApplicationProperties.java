@@ -47,13 +47,13 @@
  */
 package org.egov.services.config.properties;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.core.env.Environment;
+
+import java.util.HashMap;
+import java.util.Map;
 
 @Configuration
 @PropertySource(name = "servicesApplicationProperties", value = { "classpath:config/application-config-services.properties",

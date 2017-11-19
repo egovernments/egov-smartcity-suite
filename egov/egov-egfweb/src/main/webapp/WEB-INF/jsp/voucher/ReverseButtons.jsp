@@ -48,12 +48,11 @@
 
 
 <%@ taglib prefix="s" uri="/WEB-INF/tags/struts-tags.tld"%>
-<%@ page import="org.egov.utils.Constants"%>
 
 <table border="0" width="30%" align="center">
-	<tr></tr>
-	<tr>
-		<td><s:hidden name="button" id="button" /> <s:submit
+    <tr></tr>
+    <tr>
+        <td><s:hidden name="button" id="button" /> <s:submit
 				type="submit" cssClass="buttonsubmit" id="Save_View"
 				name="Save_View" value="Reverse & View"
 				onclick="enableAll();document.getElementById('button').value='Reverse_View'; return validateReverse()"

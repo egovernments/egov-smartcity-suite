@@ -47,20 +47,6 @@
  */
 package org.egov.wtms.application.service;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPCONFIGVALUEOFENABLED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ENABLEDIGITALSIGNATURE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPEADDITONALCONNDIGISIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECONNDIGISIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPENEWCONNDIGISIGN;
-
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.SimpleDateFormat;
-import java.util.Iterator;
-
 import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.service.AppConfigService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -78,6 +64,20 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Iterator;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPCONFIGVALUEOFENABLED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ENABLEDIGITALSIGNATURE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPEADDITONALCONNDIGISIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPECHANGEOFUSECONNDIGISIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SMSEMAILTYPENEWCONNDIGISIGN;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)

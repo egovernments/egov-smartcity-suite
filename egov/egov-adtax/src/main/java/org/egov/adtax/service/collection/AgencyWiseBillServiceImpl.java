@@ -48,16 +48,6 @@
 
 package org.egov.adtax.service.collection;
 
-import java.math.BigDecimal;
-import java.net.URLEncoder;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.adtax.entity.AdvertisementAdditionalTaxRate;
 import org.egov.adtax.service.AdvertisementAdditinalTaxRateService;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
@@ -72,6 +62,15 @@ import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.net.URLEncoder;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)

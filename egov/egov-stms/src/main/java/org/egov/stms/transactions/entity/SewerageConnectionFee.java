@@ -47,6 +47,9 @@
  */
 package org.egov.stms.transactions.entity;
 
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.stms.masters.entity.FeesDetailMaster;
+
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
@@ -57,9 +60,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
-
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.stms.masters.entity.FeesDetailMaster;
 
 @Entity
 @Table(name = "egswtax_connectionfee")

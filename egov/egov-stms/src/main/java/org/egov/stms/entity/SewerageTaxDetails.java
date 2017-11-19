@@ -47,11 +47,11 @@
  */
 package org.egov.stms.entity;
 
-import java.io.Serializable;
-import java.util.List;
-
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.egov.ptis.domain.model.ErrorDetails;
+
+import java.io.Serializable;
+import java.util.List;
 
 public class SewerageTaxDetails implements Serializable {
 

@@ -47,11 +47,11 @@
  */
 package org.egov.stms.transactions.repository;
 
-import java.util.List;
-
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface SewerageNoticeRepository extends JpaRepository<SewerageNotice, Long> {

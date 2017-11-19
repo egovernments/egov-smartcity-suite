@@ -48,7 +48,6 @@
 
 package org.egov.infra.admin.master.entity;
 
-import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.hibernate.annotations.Fetch;

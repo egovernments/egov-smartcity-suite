@@ -47,10 +47,6 @@
  */
 package org.egov.collection.web.actions.receipts;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -79,6 +75,10 @@ import org.egov.infstr.models.ServiceSubledgerInfo;
 import org.hibernate.HibernateException;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @ParentPackage("egov")
 @Results({ @Result(name = "schemeList", location = "ajaxReceiptCreate-schemeList.jsp"),

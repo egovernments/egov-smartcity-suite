@@ -48,11 +48,11 @@
 
 package org.egov.mrs.domain.repository;
 
-import java.util.List;
-
 import org.egov.mrs.domain.entity.MrApplicant;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface MarriageApplicantRepository extends JpaRepository<MrApplicant, Long> {

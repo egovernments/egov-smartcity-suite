@@ -47,6 +47,8 @@
  */
 package org.egov.council.entity;
 
+import org.egov.infra.persistence.validator.annotation.Unique;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -54,8 +56,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
-import org.egov.infra.persistence.validator.annotation.Unique;
 
 @Entity
 @Table(name = "egcncl_councilsequence")

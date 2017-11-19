@@ -47,9 +47,9 @@
  */
 package org.egov.stms.masters.pojo;
 
-import java.util.Comparator;
-
 import org.egov.stms.masters.entity.SewerageRatesMasterDetails;
+
+import java.util.Comparator;
 
 public class SewerageRateComparatorOrderById implements Comparator<SewerageRatesMasterDetails> {
 

@@ -47,18 +47,17 @@
  */
 package org.egov.commons.service;
 
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-
 import org.egov.commons.Bankbranch;
 import org.egov.infstr.services.PersistenceService;
 import org.hibernate.Query;
 import org.hibernate.Session;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Set;
 
 public class BankBranchService extends PersistenceService<Bankbranch, Integer> {
 

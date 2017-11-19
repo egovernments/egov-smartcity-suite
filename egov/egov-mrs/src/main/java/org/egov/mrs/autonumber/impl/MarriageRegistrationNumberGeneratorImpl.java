@@ -48,15 +48,15 @@
 
 package org.egov.mrs.autonumber.impl;
 
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.mrs.autonumber.MarriageRegistrationNumberGenerator;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 @Service
 public class MarriageRegistrationNumberGeneratorImpl implements MarriageRegistrationNumberGenerator{

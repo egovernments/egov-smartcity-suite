@@ -48,16 +48,6 @@
 
 package org.egov.wtms.web.controller.es;
 
-import static java.lang.Math.toIntExact;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSOPEN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_TAX_INDEX_NAME;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.elasticsearch.entity.ApplicationIndex;
@@ -84,6 +74,16 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.Math.toIntExact;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSCLOSED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATIONSTATUSOPEN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_TAX_INDEX_NAME;
 
 @Controller
 @RequestMapping(value = "/elastic/appSearch/")

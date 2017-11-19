@@ -47,10 +47,10 @@
  */
 package org.egov.portal.entity;
 
+import org.egov.infra.exception.ApplicationRuntimeException;
+
 import java.util.ArrayList;
 import java.util.Arrays;
-
-import org.egov.infra.exception.ApplicationRuntimeException;
 
 public class FirmBuilder {
 
