@@ -58,8 +58,8 @@ import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.egov.infra.utils.DateUtils;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.tl.entity.LicenseStatus;
 import org.egov.tl.entity.PenaltyRates;
 import org.egov.tl.entity.TradeLicense;
@@ -175,7 +175,7 @@ public class DemandNoticeController {
     @GetMapping("generate/{licenseId}")
     @ResponseBody
     public ResponseEntity<InputStreamResource> generateDemandNotice(@PathVariable Long licenseId) {
-        return WebUtils.reportAsResponseEntity(generateReport(tradeLicenseService.getLicenseById(licenseId)));
+        return ReportUtil.reportAsResponseEntity(generateReport(tradeLicenseService.getLicenseById(licenseId)));
     }
 
     @GetMapping("generate")
@@ -194,7 +194,7 @@ public class DemandNoticeController {
             }
             reportOutput.setReportOutputData(appendFiles(demandNoticePDFStreams));
         }
-        return WebUtils.reportAsResponseEntity(reportOutput);
+        return ReportUtil.reportAsResponseEntity(reportOutput);
     }
 
     private ReportOutput generateReport(TradeLicense license) {

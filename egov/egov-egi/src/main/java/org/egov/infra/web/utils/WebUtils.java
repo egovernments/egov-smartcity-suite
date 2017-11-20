@@ -49,26 +49,18 @@
 package org.egov.infra.web.utils;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.infra.reporting.engine.ReportOutput;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.servlet.LocaleResolver;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 import javax.servlet.ServletRequest;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.utils.ApplicationConstant.COLON;
-import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
-public class WebUtils {
+public final class WebUtils {
 
     private static final char QUESTION_MARK = '?';
     private static final char FORWARD_SLASH = '/';
@@ -123,19 +115,6 @@ public class WebUtils {
 
     public static String currentContextPath(ServletRequest request) {
         return request.getServletContext().getContextPath().toUpperCase().replace(SLASH, EMPTY);
-    }
-
-    public static ResponseEntity<InputStreamResource> reportAsResponseEntity(ReportOutput reportOutput) {
-        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
-        if (PDF.equals(reportOutput.getReportFormat()))
-            mediaType = MediaType.APPLICATION_PDF;
-        return ResponseEntity.
-                ok().
-                contentType(mediaType).
-                cacheControl(CacheControl.noCache()).
-                contentLength(reportOutput.getReportOutputData().length).
-                header(CONTENT_DISPOSITION, reportOutput.reportDisposition()).
-                body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
     }
 
     public static void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {

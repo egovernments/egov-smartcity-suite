@@ -49,11 +49,17 @@
 package org.egov.infra.reporting.util;
 
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
@@ -74,7 +80,9 @@ import static org.egov.infra.reporting.engine.ReportConstants.IMAGES_BASE_PATH;
 import static org.egov.infra.reporting.engine.ReportConstants.REPORT_CONFIG_FILE;
 import static org.egov.infra.reporting.engine.ReportConstants.TENANT_COMMON_REPORT_FILE_LOCATION;
 import static org.egov.infra.reporting.engine.ReportConstants.TENANT_REPORT_FILE_PATH;
+import static org.egov.infra.reporting.engine.ReportFormat.PDF;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 
 public final class ReportUtil {
 
@@ -169,5 +177,18 @@ public final class ReportUtil {
 
     public static String cancelledWatermarkAbsolutePath() {
         return format(CANCELLED_WATERMARK_IMAGE_PATH, getDomainURL());
+    }
+
+    public static ResponseEntity<InputStreamResource> reportAsResponseEntity(ReportOutput reportOutput) {
+        MediaType mediaType = MediaType.APPLICATION_OCTET_STREAM;
+        if (PDF.equals(reportOutput.getReportFormat()))
+            mediaType = MediaType.APPLICATION_PDF;
+        return ResponseEntity
+                .ok()
+                .contentType(mediaType)
+                .cacheControl(CacheControl.noCache())
+                .contentLength(reportOutput.getReportOutputData().length)
+                .header(CONTENT_DISPOSITION, reportOutput.reportDisposition())
+                .body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
     }
 }

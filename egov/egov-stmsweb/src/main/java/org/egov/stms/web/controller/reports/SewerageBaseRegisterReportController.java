@@ -70,7 +70,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.math.BigDecimal;
 import java.util.List;
 
-import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;

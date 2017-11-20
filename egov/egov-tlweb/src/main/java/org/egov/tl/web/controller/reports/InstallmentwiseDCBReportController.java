@@ -68,7 +68,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import static org.egov.infra.utils.StringUtils.appendTimestamp;
-import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 
 @Controller
 @RequestMapping("/report/dcb/yearwise")

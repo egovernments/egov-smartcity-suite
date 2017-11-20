@@ -70,7 +70,7 @@ import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.CREATE_AD
 import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.WF_PERMITORDER_BUTTON;
 import static org.egov.infra.reporting.engine.ReportDisposition.INLINE;
 import static org.egov.infra.utils.StringUtils.append;
-import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 
 @Controller
 @RequestMapping(value = "/advertisement")

@@ -70,7 +70,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 import java.util.Collections;
 
-import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 
 @Controller
 @RequestMapping("/report/escalationrouter")

@@ -63,7 +63,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import java.util.List;
 import java.util.Map;
 
-import static org.egov.infra.web.utils.WebUtils.reportAsResponseEntity;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
