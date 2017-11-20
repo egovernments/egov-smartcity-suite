@@ -1,4 +1,4 @@
-# [eGov Opensource][GHPAGE] 
+# eGov SmartCity eGovernance Suite [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
 [![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Develop)](http://ci.egovernments.org/job/eGov-Github-Develop/) [![][codacy img]][codacy] [![][versioneye img]][versioneye]
