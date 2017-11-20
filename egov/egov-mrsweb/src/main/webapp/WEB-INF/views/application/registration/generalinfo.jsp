@@ -277,7 +277,7 @@
 				<img id="marriage-photo" class="add-margin marriage-img"
 					height="150" width="130" />
 				<input type="file" id="marriage-photo" name="marriagePhotoFile"
-					class="file-ellipsis upload-file validate-file"
+					class="file-ellipsis validate-file"
 					data-fileto="marriage-photo" accept="image/*">
 				<form:errors path="marriagePhotoFile"
 					cssClass="add-margin error-msg" />
@@ -286,7 +286,7 @@
 				<img id="marriage-photo" class="add-margin marriage-img"
 					height="150" width="130" />
 				<input type="file" id="marriage-photo" name="marriagePhotoFile"
-					class="file-ellipsis upload-file validate-file" required="required"
+					class="file-ellipsis validate-file" required="required"
 					data-fileto="marriage-photo" accept="image/*">
 				<form:errors path="marriagePhotoFile"
 					cssClass="add-margin error-msg" />

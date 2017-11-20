@@ -47,7 +47,7 @@
  */
 $(document).ready(function(){
 	
-	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','jpg','png','txt','zip','rar']; 
+	var fileformatsinclude = ['doc','docx','xls','xlsx','rtf','pdf','jpeg','gif','jpg','png','txt','zip','rar']; 
 	
 	$('.file-ellipsis.upload-file').change( function(e) {		
 		/*validation for file upload*/

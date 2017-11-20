@@ -248,7 +248,7 @@
 						name="${applicant}.photo">
 					<input type="file" id="${applicant}-photo"
 						data-fileto="${applicant}-photo" name="${applicant}.photoFile"
-						class="file-ellipsis upload-file validate-file" required="required" accept="image/*">
+						class="file-ellipsis validate-file" required="required" accept="image/*">
 				</c:otherwise>
 			</c:choose>
 

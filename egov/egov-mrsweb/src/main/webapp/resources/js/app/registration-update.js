@@ -167,10 +167,10 @@ function validateForm(validator) {
 function validateSerialNumber(validator) {
 	var serialNo = $('#txt-serialNo').val();
 	if (serialNo != '') {
-		$
-				.ajax({
-					url : "/mrs/registration/checkunique-serialno",
+		var isDuplicate = false;
+		$.ajax({url : "/mrs/registration/checkunique-serialno",
 					type : "GET",
+					async:false,
 					data : {
 						"serialNo" : serialNo
 					},
@@ -178,17 +178,26 @@ function validateSerialNumber(validator) {
 					success : function(response) {
 						if (response) {
 							$('#txt-serialNo').val('');
-							bootbox
-									.alert("Entered serial number is already exists, please check and enter valid value and serial number must be unique.");
-							return false;
+							setTimeout(function() {
+							  bootbox.alert("Entered serial number is already exists, please check and enter valid value and serial number must be unique.");
+							}, 10);
+							isDuplicate=true;
+						} else {
+							isDuplicate=false;
 						}
-						return validateForm(validator);
 					},
 					error : function(response) {
 						$('#txt-serialNo').val('');
-						return false;
+						isDuplicate = true;
 					}
 				});
+		
+		if(!isDuplicate) {
+			return validateForm(validator);
+		} else {
+			validateForm(validator);
+			return false;	
+		}
 	} else {
 		return validateForm(validator);
 	}
