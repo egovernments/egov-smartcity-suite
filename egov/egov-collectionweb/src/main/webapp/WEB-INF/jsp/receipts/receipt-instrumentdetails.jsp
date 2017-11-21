@@ -326,8 +326,8 @@ function validateTransactionNumber()
 			name="billreceipt.payment.mode" />:<span class="mandatory1">*</span></td>
 	<td class="bluebox" colspan="2"><span style="float: left;"
 		id="cashradiobuttonspan"> <input
-			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
-			id="cashradiobutton" name="paytradiobutton" /> Cash &nbsp; <s:hidden
+			onClick="showInstrumentDetails(this);setinstrumenttypevalue(this);" type="radio" align="absmiddle"
+			value="cash" id="cashradiobutton" name="paytradiobutton" /> Cash &nbsp; <s:hidden
 				name="instrumentTypeCashOrCard" id="instrumentTypeCashOrCard"
 				value="cash" />
 	</span> <span style="float: left;" id="chequeradiobuttonspan"> <input
@@ -339,15 +339,15 @@ function validateTransactionNumber()
 			type="radio" align="absmiddle" id="ddradiobutton"
 			name="paytradiobutton" value="dd" /> DD &nbsp;
 	</span> <span style="float: left;" id="cardradiobuttonspan"> <input
-			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
-			id="cardradiobutton" name="paytradiobutton" /> Credit/Debit card
+			onClick="showInstrumentDetails(this);setinstrumenttypevalue(this);" type="radio" align="absmiddle"
+			value="card" id="cardradiobutton" name="paytradiobutton" /> Credit/Debit card
 			&nbsp;
 	</span> <span style="float: left;" id="bankradiobuttonspan"> <input
-			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
-			id="bankradiobutton" name="paytradiobutton" /> Direct Bank &nbsp;
+			onClick="showInstrumentDetails(this);setinstrumenttypevalue(this);" type="radio" align="absmiddle"
+			value="bankchallan" id="bankradiobutton" name="paytradiobutton" /> Direct Bank &nbsp;
 	</span> </span> <span style="float: left;" id="onlineradiobuttonspan"> <input
-			onClick="showInstrumentDetails(this)" type="radio" align="absmiddle"
-			id="onlineradiobutton" name="paytradiobutton" /> SBI MOPS Bank
+			onClick="showInstrumentDetails(this);setinstrumenttypevalue(this);" type="radio" align="absmiddle"
+			value="online" id="onlineradiobutton" name="paytradiobutton" /> SBI MOPS Bank
 			challan &nbsp;
 	</span></td>
 </tr>
