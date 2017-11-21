@@ -52,7 +52,7 @@
 
 <hibernate-mapping>
 	<class name="org.egov.ptis.domain.entity.property.CurrFloorDmdCalcMaterializeView"
-		table="EGPT_MV_CURR_FLOOR_DMDCALC" polymorphism="explicit">
+		table="EGPT_MV_CURR_FLOOR_DMDCALC" polymorphism="explicit" mutable="false">
 
 		<composite-id>
 			<key-property name="floorId" column="ID_FLOOR_DETAIL"/>

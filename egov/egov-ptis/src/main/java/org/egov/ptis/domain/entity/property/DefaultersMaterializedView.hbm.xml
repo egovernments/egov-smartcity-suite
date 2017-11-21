@@ -53,7 +53,7 @@
 <hibernate-mapping>
 	<class
 	name="org.egov.ptis.domain.entity.property.DefaultersMaterializedView"
-	table="EGPT_MV_DEFAULTERS" polymorphism="explicit">
+	table="EGPT_MV_DEFAULTERS" polymorphism="explicit" mutable="false">
 		<composite-id>
 			<key-property name="basicPropertyId" column="ID_BASIC_PROPERTY" />
 		</composite-id>
