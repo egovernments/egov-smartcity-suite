@@ -47,6 +47,16 @@
  */
 $bankBranchId=0;
 $(document).ready(function(){
+	
+var username=$('#username').val();
+	
+	var modeval=$('#mode').val();
+	if(modeval=='edit')
+	{
+		if(username !='')
+			$("#username").prop("disabled", true);
+			 
+	}
 	$("#buttonid").click(function() {
 		document.forms[0].submit();
 	});

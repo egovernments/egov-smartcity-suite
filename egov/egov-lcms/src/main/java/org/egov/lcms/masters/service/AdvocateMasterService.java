@@ -47,19 +47,8 @@
  */
 package org.egov.lcms.masters.service;
 
-import org.egov.commons.Accountdetailkey;
-import org.egov.commons.Accountdetailtype;
-import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
-import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
-import org.egov.commons.service.EntityTypeService;
-import org.egov.commons.utils.EntityType;
-import org.egov.infra.validation.exception.ValidationException;
-import org.egov.lcms.masters.entity.AdvocateMaster;
-import org.egov.lcms.masters.repository.AdvocateMasterRepository;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -69,8 +58,28 @@ import javax.persistence.criteria.CriteriaQuery;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
 import javax.persistence.metamodel.Metamodel;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.egov.commons.Accountdetailkey;
+import org.egov.commons.Accountdetailtype;
+import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
+import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
+import org.egov.commons.service.EntityTypeService;
+import org.egov.commons.utils.EntityType;
+import org.egov.infra.admin.master.entity.BusinessUser;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
+import org.egov.infra.validation.exception.ValidationException;
+import org.egov.lcms.autonumber.AdvocateUserNameGenerator;
+import org.egov.lcms.masters.entity.AdvocateMaster;
+import org.egov.lcms.masters.repository.AdvocateMasterRepository;
+import org.egov.lcms.utils.constants.LcmsConstants;
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional(readOnly = true)
@@ -84,7 +93,19 @@ public class AdvocateMasterService implements EntityTypeService {
 
     @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
-
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private RoleService roleService;
+    
+    @Autowired
+    private AdvocateUserNameGenerator advocateUserNameGenerator;
+    
     @Autowired
     public AdvocateMasterService(final AdvocateMasterRepository advocateMasterRepository) {
         this.advocateMasterRepository = advocateMasterRepository;
@@ -127,6 +148,42 @@ public class AdvocateMasterService implements EntityTypeService {
         accountdetailkeyHibernateDAO.create(accountdetailkey);
     }
 
+    @Transactional
+    public void createAdvocateUser(final AdvocateMaster advocateMaster) {
+        User user = null;
+        if (advocateMaster.getAdvocateUser() != null && advocateMaster.getAdvocateUser().getId() != null)
+            user = userService.getUserById(advocateMaster.getAdvocateUser().getId());
+        if (user == null) {
+            final BusinessUser businessUser = new BusinessUser();
+            user = createNewAdvocateUser(advocateMaster, businessUser);
+            advocateMaster.setAdvocateUser(user);
+        } else {
+            user.setMobileNumber(advocateMaster.getMobileNumber());
+            user.setEmailId(advocateMaster.getEmail() != null ? advocateMaster.getEmail() : "");
+            user.setName(advocateMaster.getName());
+            user.setSalutation(advocateMaster.getSalutation());
+            user.setPan(advocateMaster.getPanNumber());
+            advocateMaster.setAdvocateUser(user);
+        }
+
+    }
+
+    private User createNewAdvocateUser(final AdvocateMaster advocateMaster, final BusinessUser businessUser) {
+        businessUser.setMobileNumber(advocateMaster.getMobileNumber());
+        businessUser.setEmailId(advocateMaster.getEmail() != null ? advocateMaster.getEmail() : "");
+        businessUser.setName(advocateMaster.getName());
+        businessUser.setSalutation(advocateMaster.getSalutation());
+        businessUser.setPassword(passwordEncoder.encode("demo"));
+        businessUser.setPwdExpiryDate(DateTime.now().plusMonths(12).toDate());
+        businessUser.setPan(advocateMaster.getPanNumber());
+        businessUser.setActive(true);
+        businessUser.setUsername(advocateUserNameGenerator.generateAdvocateUserName(advocateMaster));
+        businessUser.addRole(roleService.getRoleByName(LcmsConstants.ROLE_EMP_PORTAL_ACCESS));
+        businessUser.addRole(roleService.getRoleByName(LcmsConstants.ROLE_BUSINESS));
+        businessUser.addRole(roleService.getRoleByName(LcmsConstants.ROLE_TPSTANDINGCOUNSEL));
+        return userService.createUser(businessUser);
+    }
+    
     public List<AdvocateMaster> search(final AdvocateMaster advocateMaster) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();

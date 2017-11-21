@@ -51,6 +51,7 @@
 	modelAttribute="advocateMaster" id="advocateMasterform"
 	cssClass="form-horizontal form-groups-bordered"
 	enctype="multipart/form-data">
+<input type="hidden" value="${mode}" id="mode" />
 	<%@ include file="advocatemaster-form.jsp"%>
 	<input type="hidden" id="bankBranchId"
 		value="${advocateMaster.bankBranch.id }" />

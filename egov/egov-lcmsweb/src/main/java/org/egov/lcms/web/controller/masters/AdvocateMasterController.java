@@ -93,6 +93,7 @@ public class AdvocateMasterController {
     @Autowired
     @Qualifier("bankBranchService")
     private BankBranchService bankBranchService;
+   
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("banks", bankService.findAll());
@@ -123,9 +124,10 @@ public class AdvocateMasterController {
         else
             advocateMaster.setBankBranch(null);
         advocateMasterService.persist(advocateMaster);
+        model.addAttribute("mode", "create");
         advocateMasterService.createAccountDetailKey(advocateMaster);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.advocateMaster.success", null, null));
-        return "redirect:/advocatemaster/result/" + advocateMaster.getId();
+        advocateMasterService.createAdvocateUser(advocateMaster);
+        return "redirect:/advocatemaster/result/" + advocateMaster.getId() + ",create";
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -163,8 +165,10 @@ public class AdvocateMasterController {
             advocateMaster.setBankBranch(null);
 
         advocateMasterService.persist(advocateMaster);
+        model.addAttribute("mode", "edit");
+        advocateMasterService.createAdvocateUser(advocateMaster);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.advocateMaster.update", null, null));
-        return "redirect:/advocatemaster/result/" + advocateMaster.getId();
+        return "redirect:/advocatemaster/result/" + advocateMaster.getId() + ",edit";
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
@@ -175,9 +179,10 @@ public class AdvocateMasterController {
         return ADVOCATEMASTER_VIEW;
     }
 
-    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-    public String result(@PathVariable("id") final Long id, final Model model) {
+    @RequestMapping(value = "/result/{id},{mode}", method = RequestMethod.GET)
+    public String result(@PathVariable("id") final Long id, final Model model,@PathVariable("mode") final String mode) {
         final AdvocateMaster advocateMaster = advocateMasterService.findOne(id);
+        model.addAttribute("mode", mode);
         model.addAttribute("advocateMaster", advocateMaster);
         return ADVOCATEMASTER_RESULT;
     }

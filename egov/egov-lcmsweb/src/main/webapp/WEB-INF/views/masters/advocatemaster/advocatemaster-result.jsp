@@ -49,6 +49,10 @@
 <%@ include file="/includes/taglibs.jsp"%>
 <div role="alert">
 	<strong>${message}</strong>
+	<input type="hidden" value="${mode}" id="mode" />
+	<c:if test="${mode == 'create'}">
+		<spring:message code="msg.advocateMaster.success" arguments="${advocateMaster.getAdvocateUser().getUsername()}"/>
+	</c:if>
 </div><%@ include file="advocatemaster-view.jsp"%>
 
 </script>

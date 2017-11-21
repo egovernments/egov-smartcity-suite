@@ -51,6 +51,7 @@
 			<div class="panel-heading">
 				<div class="panel-title">Standing Counsel</div>
 			</div>
+			<form:hidden id="mode" path="" value="${mode}" />
 			<div class="panel-body">
 				<div class="form-group">
 					<label for="field-1" class="col-sm-2 control-label"><spring:message
@@ -179,9 +180,11 @@
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="monthlyRenumeration" maxlength="10"
-							id="monthlyRenumeration"
-							class="form-control patternvalidation" 
-							data-pattern="decimalvalues" required="required"  pattern="\d{0,6}(\.\d{1,2})?" title="It will allow upto 7 digits and 2 decimal points"  data-first-option="false&true"/>
+							id="monthlyRenumeration" class="form-control patternvalidation"
+							data-pattern="decimalvalues" required="required"
+							pattern="\d{0,6}(\.\d{1,2})?"
+							title="It will allow upto 7 digits and 2 decimal points"
+							data-first-option="false&true" />
 						<form:errors path="monthlyRenumeration" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
@@ -190,6 +193,18 @@
 						<form:checkbox path="isRetaineradvocate" />
 						<form:errors path="isRetaineradvocate" cssClass="error-msg" />
 					</div>
+				</div>
+				<div class="form-group">
+					<c:if test="${mode == 'edit'}">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.advocateusername" />:</label>
+					<div class="col-sm-3 add-margin text-center">
+						<form:input class="form-control patternvalidation"
+						  id="username"
+							readonly="readonly" path="advocateUser.username" />
+					</div>
+					<form:errors path="advocateUser.username" cssClass="add-margin error-msg" />
+				</c:if>
 				</div>
 				<div class="form-group" id="b1details">
 					<label class="col-sm-2 control-label text-right"><spring:message

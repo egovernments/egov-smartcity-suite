@@ -242,4 +242,8 @@ public class LcmsConstants {
         public static final String LEGALCASE_STATUS_HEARING_DESC = "Hearing In Progress";
         public static final String LEGALCASE_INTERIMSTAY_STATUS_DESC = "Interim Stay";
         public static final String LEGALCASE_STATUS_CREATED_DESC = "Created";
+        
+        public static final String ROLE_EMP_PORTAL_ACCESS = "EMP_PORTAL_ACCESS";
+        public static final String ROLE_BUSINESS = "BUSINESS";
+        public static final String ROLE_TPSTANDINGCOUNSEL = "TP Standing Counsel";
 }
