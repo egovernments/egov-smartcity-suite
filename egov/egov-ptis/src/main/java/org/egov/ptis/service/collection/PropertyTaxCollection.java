@@ -97,6 +97,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import static java.math.BigDecimal.ZERO;
 import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
@@ -271,17 +272,17 @@ public class PropertyTaxCollection extends TaxCollection {
         final BigDecimal totalCollChqBounced = getTotalChequeAmt(billRcptInfo);
         final BigDecimal chqBouncePenalty = getChqBouncePenaltyAmt(totalCollChqBounced);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-        EgDemandDetails dmdDet = null;
+        EgDemandDetails dmdDet;
 
         final EgDemandDetails penaltyDmdDet = ptBillServiceImpl.getDemandDetail(demand, currInstallment,
-                DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
+                DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
         if (penaltyDmdDet == null)
             dmdDet = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty,
                     currInstallment);
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
-            existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.equals(BigDecimal.ZERO) ? existDmdDetAmt = BigDecimal.ZERO
-                    : existDmdDetAmt;
+            if (existDmdDetAmt == null)
+                existDmdDetAmt = ZERO;
             penaltyDmdDet.setAmount(existDmdDetAmt.add(chqBouncePenalty));
             dmdDet = penaltyDmdDet;
         }
@@ -290,7 +291,10 @@ public class PropertyTaxCollection extends TaxCollection {
         // min of this amount with mode of payment cash or DD
         demand.setMinAmtPayable(totalCollChqBounced.add(chqBouncePenalty));
         demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.getTotalAmount()));
-        demand.setBaseDemand(demand.getBaseDemand().add(chqBouncePenalty));
+        BigDecimal baseDemand = demand.getBaseDemand();
+        if (baseDemand == null)
+            baseDemand = demand.getEgDemandDetails().stream().map(EgDemandDetails::getAmount).reduce(ZERO, BigDecimal::add);
+        demand.setBaseDemand(baseDemand.add(chqBouncePenalty));
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
         demand.addEgDemandDetails(dmdDet);
         updateDmdDetForRcptCancel(demand, billRcptInfo);
