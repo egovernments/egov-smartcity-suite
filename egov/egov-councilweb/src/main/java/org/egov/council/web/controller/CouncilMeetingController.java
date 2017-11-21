@@ -47,6 +47,26 @@
  */
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
+import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.CouncilMeetingNumberGenerator;
 import org.egov.council.entity.CommitteeMembers;
@@ -69,10 +89,12 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.utils.FileStoreUtils;
+import org.egov.infra.utils.FileUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -88,26 +110,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
-import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
-import static org.egov.council.utils.constants.CouncilConstants.COUNCILMEETING;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
-import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
-import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
-import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
 @RequestMapping("/councilmeeting")
@@ -484,7 +486,7 @@ public class CouncilMeetingController {
 
     @RequestMapping(value = "/downloadfile/{id}")
     @ResponseBody
-    public ResponseEntity download(@PathVariable("id") final Long id) {
+    public ResponseEntity<InputStreamResource> download(@PathVariable("id") final Long id) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         if (councilMeeting != null) {
             if (councilMeeting.getFilestore() != null) {
@@ -494,7 +496,7 @@ public class CouncilMeetingController {
                     byte[] reportOutput = councilReportService.generatePDFForMom(councilMeeting);
 
                     if (reportOutput != null) {
-                        councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput),
+                        councilMeeting.setFilestore(fileStoreService.store(FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME,"rtf" ).toFile(),
                                 MEETINGRESOLUTIONFILENAME, APPLICATION_RTF, MODULE_NAME));
                         councilMeetingService.update(councilMeeting);
                     }
@@ -508,9 +510,9 @@ public class CouncilMeetingController {
         return ResponseEntity.notFound().build();
     }
 
-    private ResponseEntity fetchMeetingResolutionByFileStoreId(CouncilMeeting councilMeeting) {
+    private ResponseEntity<InputStreamResource> fetchMeetingResolutionByFileStoreId(CouncilMeeting councilMeeting) {
         return fileStoreUtils.fileAsResponseEntity(councilMeeting.getFilestore().getFileStoreId(),
-                CouncilConstants.MODULE_NAME, false);
+                CouncilConstants.MODULE_NAME, true);
     }
 
     @RequestMapping(value = "/attendance/ajaxsearch/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)

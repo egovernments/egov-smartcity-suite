@@ -52,42 +52,37 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
-	
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
-							<c:if test="${not empty message}">
-                    			<strong><spring:message code="${message}"/></strong>
-                			</c:if>
-                			<input type="hidden" id="id" name="id" value="${id}">
+					<c:if test="${not empty message}">
+						<strong><spring:message code="${message}" /></strong>
+					</c:if>
+					<input type="hidden" id="id" name="id" value="${id}">
 				</div>
 			</div>
-			
-				<div class="row text-center">
-						<div class="row">
-							<div class="text-center">
-								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
-							</div>
-						</div>
+
+			<div class="row text-center">
+				<div class="row">
+					<div class="text-center">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							onclick="self.close()">
+							<spring:message code="lbl.close" />
+						</button>
 					</div>
-	
+				</div>
+			</div>
+
 		</div>
 	</div>
-</div> 
+</div>
 
 <script>
 $( document ).ready(function() {
-	
-	$.ajax({
-	    type: 'GET',
-	    url: '/council/councilmeeting/downloadfile/'+$('#id').val(),
-	    success: function() {
-	    	window.location.href = '/council/councilmeeting/downloadfile/'+$('#id').val();
-	    }
-	});
-	
+	window.location.href = '/council/councilmeeting/downloadfile/'+$('#id').val();
 });
 
 </script>

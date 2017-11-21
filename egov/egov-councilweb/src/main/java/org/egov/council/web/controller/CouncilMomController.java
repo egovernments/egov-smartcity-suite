@@ -47,8 +47,30 @@
  */
 package org.egov.council.web.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.COUNCIL_RESOLUTION;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIONFILENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_ADJURNED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.council.utils.constants.CouncilConstants.WARD;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.lang.reflect.Type;
+import java.text.ParseException;
+import java.util.List;
+import java.util.Map;
+
+import javax.validation.Valid;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
@@ -68,6 +90,7 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.FileUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,15 +107,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.validation.Valid;
-import java.io.ByteArrayInputStream;
-import java.lang.reflect.Type;
-import java.text.ParseException;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.council.utils.constants.CouncilConstants.*;
-import static org.egov.infra.utils.JsonUtils.toJSON;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 @Controller
 @RequestMapping("/councilmom")
@@ -365,7 +381,7 @@ public class CouncilMomController {
 
         reportOutput = generateMomPdfByPassingMeeting(councilMeeting);
         if (reportOutput != null) {
-            councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput), MEETINGRESOLUTIONFILENAME,
+            councilMeeting.setFilestore(fileStoreService.store(FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME,"rtf" ).toFile(), MEETINGRESOLUTIONFILENAME,
                     APPLICATION_RTF, MODULE_NAME));
         }
         councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
@@ -377,8 +393,6 @@ public class CouncilMomController {
     }
 
     private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting) {
-        byte[] reportOutput;
-        reportOutput = councilReportService.generatePDFForMom(councilMeeting);
-        return reportOutput;
+        return councilReportService.generatePDFForMom(councilMeeting);
     }
 }
