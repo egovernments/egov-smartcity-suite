@@ -105,6 +105,7 @@ public class Task {
      * lastupdatedSince is the date on which the process is updated last time. This is set internally by the system . For clients
      * it is read only data
      */
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "dd/MM/yyyy hh:mm:ss a",timezone="IST")
     private Date lastupdatedSince;
 
     /**
@@ -173,7 +174,7 @@ public class Task {
 
     private String tenantId;
 
-    private Map<String, Attribute> attributes = new HashMap<String, Attribute>();
+    private Map<String, Attribute> attributes = new HashMap<>();
 
     // To be used to fetch single value attributes
     public String getValueForKey(String key) {
