@@ -47,6 +47,16 @@
  */
 package org.egov.restapi.web.rest;
 
+import static org.egov.restapi.constants.RestApiConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
+import static org.egov.restapi.constants.RestApiConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+
+import java.io.IOException;
+import java.util.Date;
+import java.util.List;
+
+import javax.validation.Valid;
+
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -81,13 +91,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.Date;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * Controller provides RESTful services to create new/additional/change of use water connection
@@ -168,8 +171,12 @@ public class RestWaterConnectionController {
         }
         final WaterChargesRestApiResponse response = restWaterConnectionValidationService
                 .populateAndPersistRegularisedWaterConnection(waterChargesConnectionInfo);
-        if (response != null)
+        if (response != null) {
             response.setReferenceId(waterChargesConnectionInfo.getReferenceId());
+            response.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+            response.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
+
+        }
 
         return getJSONResponse(response);
     }
