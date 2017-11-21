@@ -96,6 +96,8 @@
 									<tbody>
 										<tr>
 											<c:set var="count" value="1" />
+											<c:set var="countResd" value="0" />
+											<c:set var="countNresd" value="0" />
 											<c:forEach var="taxRate"
 												items="${taxRatesForm.demandReasonDetails}"
 												varStatus="status">
@@ -110,29 +112,38 @@
 													test="${fn:endsWith(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non Residential')}">
 													<td><c:out
 															value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non')}" /></td>
+													<c:set var="countNresd"
+														value="${taxRate.percentage + countNresd}" />
 												</c:when>
 												<c:otherwise>
 													<td><c:out
 															value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Residential')}" /></td>
+													<c:set var="countResd"
+														value="${taxRate.percentage + countResd}" />
 												</c:otherwise>
 											</c:choose>
 											<td class="text-right"><fmt:formatNumber
 													var="formattedRate" type="number" minFractionDigits="2"
 													maxFractionDigits="2" value="${taxRate.percentage}" /> <c:out
 													value="${formattedRate}" /></td>
-											<%-- <td><fmt:formatDate value="${taxRate.fromDate}"
-																pattern="dd-MM-yyyy" /></td>
-														<td><fmt:formatDate value="${taxRate.toDate}"
-																pattern="dd-MM-yyyy" /></td> --%>
-
 											</c:forEach>
 										</tr>
 										<tr>
 											<td></td>
 											<td><spring:message code="lbl.total.resd" /></td>
-											<td class="text-right"><c:out value="${genTaxResd}" /></td>
+											<td class="text-right"><fmt:formatNumber
+													var="countResdRate" type="number" minFractionDigits="2"
+													maxFractionDigits="2" value="${countResd}" /> <input
+												name="genTaxResd" id="sum" class="patternvalidation"
+												data-pattern="decimalvalue" autocomplete="off" maxlength="5"
+												value="${countResdRate}" readonly="true" /></td>
 											<td><spring:message code="lbl.total.nresd" /></td>
-											<td class="text-right"><c:out value="${genTaxNonResd}" /></td>
+											<td class="text-right"><fmt:formatNumber
+													var="countNresdRate" type="number" minFractionDigits="2"
+													maxFractionDigits="2" value="${countNresd}" /> <input
+												name="genTaxNonResd" id="sum" class="patternvalidation"
+												data-pattern="decimalvalue" autocomplete="off" maxlength="5"
+												value="${countNresdRate}" readonly="true" /></td>
 
 										</tr>
 									</tbody>
