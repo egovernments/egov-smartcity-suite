@@ -129,10 +129,11 @@ public class LicenseProcessWorkflowService {
                 workflowBean.setAdditionaRule(RENEWLICENSECOLLECTION);
         WorkFlowMatrix workFlowMatrix = getWorkFlowMatrix(tradeLicense, workflowBean);
 
-        if (!tradeLicense.hasState()) {
+        if (!tradeLicense.hasState() || tradeLicense.transitionCompleted()) {
             wfInitiator = getWfInitiatorByUser(workFlowMatrix.getCurrentDesignation());
-            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, wfInitiator, workFlowMatrix, new LicenseStateInfo());
-            tradeLicense.transition().start().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
+            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, wfInitiator, workFlowMatrix, new LicenseStateInfo(), wfInitiator);
+            initiateWfTransition(tradeLicense);
+            tradeLicense.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withNatureOfTask(tradeLicense.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
                     .withStateValue(workFlowMatrix.getNextState()).withDateInfo(currentDate.toDate()).withOwner(wfInitiator)
@@ -152,14 +153,21 @@ public class LicenseProcessWorkflowService {
             updateActiveStatus(tradeLicense);
         } else {
             Position owner = getCurrentPositionByWorkFlowBean(workflowBean, currentState);
-            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, owner, workFlowMatrix, tradeLicense.extraInfo());
+            LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, owner, workFlowMatrix, tradeLicense.extraInfo(), (Position) currentState.getOwnerPosition());
             commonWorkflowTransition(tradeLicense, workflowBean, workFlowMatrix, licenseStateInfo);
         }
     }
 
-    private LicenseStateInfo getLicenseStateInfo(WorkflowBean workflowBean, Position position, WorkFlowMatrix workFlowMatrix, LicenseStateInfo licenseStateInfo) {
+    private void initiateWfTransition(TradeLicense tradeLicense) {
+        if (!tradeLicense.hasState())
+            tradeLicense.transition().start();
+        else
+            tradeLicense.transition().startNext();
+    }
+
+    private LicenseStateInfo getLicenseStateInfo(WorkflowBean workflowBean, Position position, WorkFlowMatrix workFlowMatrix, LicenseStateInfo licenseStateInfo, Position currentPosition) {
         if (workFlowMatrix.isRejectEnabled() != null && workFlowMatrix.isRejectEnabled()) {
-            licenseStateInfo.setRejectionPosition(position.getId());
+            licenseStateInfo.setRejectionPosition(currentPosition.getId());
         }
         if (workFlowMatrix.getNextref() != null)
             licenseStateInfo.setWfMatrixRef(workFlowMatrix.getNextref());
@@ -274,10 +282,7 @@ public class LicenseProcessWorkflowService {
             LicenseStateInfo licenseStateInfo = new LicenseStateInfo();
             if (nextWorkFlowMatrix != null)
                 licenseStateInfo.setWfMatrixRef(nextWorkFlowMatrix.getId());
-            if (!license.hasState())
-                license.transition().start();
-            else
-                license.transition().startNext();
+            initiateWfTransition(license);
             license.transition().withSenderName(
                     wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
                     .withComments(workflowBean.getApproverComments())
@@ -295,7 +300,7 @@ public class LicenseProcessWorkflowService {
         Position ownerPosition;
         if (!tradeLicense.getCurrentState().getExtraInfo().isEmpty()) {
             LicenseStateInfo licenseStateInfo = tradeLicense.extraInfoAs(LicenseStateInfo.class);
-            if (licenseStateInfo.getRejectionPosition() != null && workFlowMatrix.isRejectEnabled() != null && workFlowMatrix.isRejectEnabled())
+            if (licenseStateInfo.getRejectionPosition() != null && !licenseStateInfo.getRejectionPosition().equals(tradeLicense.getCurrentState().getOwnerPosition().getId()))
                 ownerPosition = positionMasterService.getPositionById(licenseStateInfo.getRejectionPosition());
             else
                 ownerPosition = tradeLicense.getCurrentState().getInitiatorPosition();
