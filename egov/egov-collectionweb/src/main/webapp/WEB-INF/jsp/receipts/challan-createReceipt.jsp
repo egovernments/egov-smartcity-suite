@@ -289,6 +289,7 @@ function verifyChequeDetails(table,len1)
 	   //validate if cheque/DD number has been entered
 	    if(getControlInBranch(table.rows[j],'instrumentChequeNumber')!=null){
 	    	var instrNo=getControlInBranch(table.rows[j],'instrumentChequeNumber').value;
+	    	instrNo = trimAll(instrNo);
 	    	if(instrNo==null || instrNo=="" || isNaN(instrNo) || instrNo.length!=6){
 	    		if(instrNoErrMsg==""){
 	    		    instrNoErrMsg='<s:text name="billreceipt.invalidchequenumber.errormessage" />' + '<br>';
