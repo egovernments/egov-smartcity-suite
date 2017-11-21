@@ -992,7 +992,7 @@ public class ModifyPropertyAction extends PropertyTaxBaseAction {
 			setPropAddress(getBasicProp().getAddress().toString());
 		if (propWF != null)
 			prepareOwnerDetails();
-		populateUsages(StringUtils.isNoneBlank(propertyCategory) ? propertyCategory : basicProp.getProperty().getPropertyDetail().getCategoryType());
+		populateUsages(StringUtils.isNoneBlank(propertyCategory) ? propertyCategory : propertyModel.getPropertyDetail().getCategoryType());
 		setBoundaryDetailsFlag(basicProp);
 		if (logger.isDebugEnabled())
 			logger.debug("Exiting from preapre, ModelId: " + getModelId());

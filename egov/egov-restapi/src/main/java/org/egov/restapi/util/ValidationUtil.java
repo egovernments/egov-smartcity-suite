@@ -525,14 +525,14 @@ public class ValidationUtil {
 							return errorDetails;
 						}
 					}
-					if (StringUtils.isNotBlank(documentTypeDetails.getDocumentDate()) &&
-							!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)
+					if (!mode.equals(PropertyTaxConstants.PROPERTY_MODE_MODIFY)
+							&& StringUtils.isNotBlank(documentTypeDetails.getDocumentDate())
 							&& propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate()).after(
 									propertyExternalService.convertStringToDate(floorDetails.getOccupancyDate()))) {
-						errorDetails.setErrorCode(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE);
-						errorDetails.setErrorMessage(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG);
-						return errorDetails;
-					}
+							errorDetails.setErrorCode(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE);
+							errorDetails.setErrorMessage(DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG);
+							return errorDetails;
+						}
 					if (StringUtils.isNotBlank(floorDetails.getBuildingPermissionNo())) {
 						if (StringUtils.isBlank(floorDetails.getBuildingPermissionDate())) {
 							errorDetails.setErrorCode(BLD_PERMISSION_DATE_REQ);
@@ -579,7 +579,7 @@ public class ValidationUtil {
 					}
 					if (propertyTypeMasterCode.equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND)
 							&& propertyExternalService.convertStringToDate(documentTypeDetails.getDocumentDate())
-									.before(propertyExternalService.convertStringToDate(vlt.getEffectiveDate()))) {
+									.after(propertyExternalService.convertStringToDate(vlt.getEffectiveDate()))) {
 						errorDetails.setErrorCode(DOCUMENT_DATE_LESS_EFFECTIVE_DATE_CODE);
 						errorDetails.setErrorMessage(DOCUMENT_DATE_LESS_EFFECTIVE_DATE_REQ_MSG);
 						return errorDetails;
