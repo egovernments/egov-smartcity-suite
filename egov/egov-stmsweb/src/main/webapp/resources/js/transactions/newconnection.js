@@ -169,10 +169,10 @@ function loadPropertyDetails() {
 					if(allowIfPTDueExists=='false' &&response.propertyDetails.taxDue > 0) {
 						errorMessage = "For entered Property tax Assessment number "+propertyID+" demand is due Rs."+ response.propertyDetails.taxDue+"/-. Please clear demand and"+subErrorMessage;
 					}
-					if(waterTaxDue['WATERTAXDUE'] > 0) {
+					if(typeof waterTaxDue != 'undefined'  && waterTaxDue['WATERTAXDUE'] > 0 ) {
 						errorMessage += "For entered Property tax Assessment number "+propertyID+" linked water tap connection demand with Consumer code:"+waterTaxDue['CONSUMERCODE'][0]+" is due Rs."+ waterTaxDue['WATERTAXDUE']+"/- . Please clear demand and"+subErrorMessage;
 					}
-					if((allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) || waterTaxDue['WATERTAXDUE'] > 0) {
+					if((allowIfPTDueExists=='false' && response.propertyDetails.taxDue > 0) || typeof waterTaxDue != 'undefined' && waterTaxDue['WATERTAXDUE'] > 0) {
 						resetPropertyDetails();	
 						bootbox.alert(errorMessage);
 					}
@@ -211,7 +211,7 @@ function loadPropertyDetails() {
 						$("#locality").val(response.boundaryDetails.localityName);
 						$("#zonewardblock").val(boundaryData);
 						$("#propertytax").val(response.propertyDetails.currentTax);
-						if(waterTaxDue['PROPERTYID']!="")
+						if(typeof waterTaxDue != 'undefined' && waterTaxDue['PROPERTYID']!="")
 							$('#watercharges').val(waterTaxDue['CURRENTWATERCHARGE']);
 						else
 							$('#watercharges').val('N/A');
