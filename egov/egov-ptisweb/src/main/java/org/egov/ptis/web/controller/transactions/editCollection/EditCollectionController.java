@@ -51,8 +51,9 @@ import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
 import org.egov.demand.dao.EgDemandDetailsDao;
 import org.egov.demand.model.EgDemandDetails;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.StringUtils;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.bean.DemandDetail;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
@@ -76,9 +77,14 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
 import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.EDIT_COLL_FOR_CURRYEAR;
 
 /**
  * 
@@ -89,28 +95,33 @@ import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTR
 @RequestMapping("/editCollection")
 public class EditCollectionController {
 
-    private static final String EDIT_COLLECTION_FORM = "editCollection-form";
+    private static final String REVISED_COLLECTION = "].revisedCollection";
+	private static final String DEMAND_DETAIL_BEANS = "demandDetailBeans[";
+	private static final String EDIT_COLLECTION_FORM = "editCollection-form";
     private static final String EDIT_COLLECTION_ACK = "editCollection-ack";
     private static final String EDIT_COLLECTION_ERROR = "editCollection-error";
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private BasicPropertyDAO basicPropertyDAO;
     @Autowired
     private EgDemandDetailsDao demandDetailsDao;
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    @SuppressWarnings("rawtypes")
-    @Autowired
-    @Qualifier("persistenceService")
-    protected PersistenceService persistenceService;
     @Autowired
     @Qualifier("propertyReceiptService")
     private PropertyReceiptService propertyReceiptService;
     @Autowired
     private InstallmentHibDao installmentDao;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     private static final String QUERY_DEMAND_DETAILS = "select dd from Ptdemand ptd "
             + "left join ptd.egDemandDetails dd left join dd.egDemandReason dr left join ptd.egptProperty p left join p.basicProperty bp "
             + "where bp = ? and bp.active = true and p.status = 'A' and dd.amount > 0 and ptd.egInstallmentMaster = ? "
             + " and dr.egInstallmentMaster.finYearRange <> ?";
+    private static final String QUERY_DEMAND_DETAILS_FOR_CURR = "select dd from Ptdemand ptd "
+            + "left join ptd.egDemandDetails dd left join dd.egDemandReason dr left join ptd.egptProperty p left join p.basicProperty bp "
+            + "where bp = ? and bp.active = true and p.status = 'A' and dd.amount > 0 and ptd.egInstallmentMaster = ? ";
 
     @SuppressWarnings("unchecked")
     @RequestMapping(value = "/editForm/{assessmentNo}", method = RequestMethod.GET)
@@ -121,8 +132,25 @@ public class EditCollectionController {
         if (!basicProperty.isEligible()) {
             return EDIT_COLLECTION_ERROR;
         }
-        List<EgDemandDetails> demandDetails = persistenceService.findAllBy(QUERY_DEMAND_DETAILS, basicProperty,
-                propertyTaxCommonUtils.getCurrentInstallment(), propertyTaxCommonUtils.getCurrentInstallment().getFinYearRange());
+        
+		List<EgDemandDetails> demandDetails = null;
+		Boolean isEligible = Boolean.FALSE;
+		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+				EDIT_COLL_FOR_CURRYEAR);
+		if (appConfigValue != null && !appConfigValue.isEmpty())
+			isEligible = Boolean.valueOf(appConfigValue.get(0).getValue());
+		if (isEligible) {
+			final javax.persistence.Query qry = entityManager.createQuery(QUERY_DEMAND_DETAILS_FOR_CURR);
+			qry.setParameter(1, basicProperty);
+			qry.setParameter(2, propertyTaxCommonUtils.getCurrentInstallment());
+			demandDetails = (List<EgDemandDetails>) qry.getResultList();
+		} else {
+			final javax.persistence.Query qry = entityManager.createQuery(QUERY_DEMAND_DETAILS);
+			qry.setParameter(1, basicProperty);
+			qry.setParameter(2, propertyTaxCommonUtils.getCurrentInstallment());
+			qry.setParameter(3, propertyTaxCommonUtils.getCurrentInstallment().getFinYearRange());
+			demandDetails = (List<EgDemandDetails>) qry.getResultList();
+		}
         if (!demandDetails.isEmpty()) {
             Collections.sort(demandDetails, new Comparator<EgDemandDetails>() {
                 @Override
@@ -161,9 +189,11 @@ public class EditCollectionController {
             model.addAttribute("basicProperty", basicProperty);
             return EDIT_COLLECTION_FORM;
         }
-        Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
-        List<EgDemandDetails> demandDetails = persistenceService.findAllBy(QUERY_DEMAND_DETAILS, basicProperty,
-                currentInstallment, propertyTaxCommonUtils.getCurrentInstallment().getFinYearRange());
+		Installment currentInstallment = propertyTaxCommonUtils.getCurrentInstallment();
+		final javax.persistence.Query qry = entityManager.createQuery(QUERY_DEMAND_DETAILS_FOR_CURR);
+		qry.setParameter(1, basicProperty);
+		qry.setParameter(2, propertyTaxCommonUtils.getCurrentInstallment());
+		List<EgDemandDetails> demandDetails = (List<EgDemandDetails>) qry.getResultList();
         Boolean persistReceipt = Boolean.FALSE;
         for (EgDemandDetails dmdDetails : demandDetails) {
             for (DemandDetail dmdDetailBean : demandDetailBeansForm.getDemandDetailBeans()) {
@@ -236,12 +266,12 @@ public class EditCollectionController {
             if (dd.getReasonMaster().equals(DEMANDRSN_STR_PENALTY_FINES)) {
                 if (dd.getRevisedAmount() != null && dd.getRevisedCollection() != null) {
                     if (dd.getRevisedCollection().compareTo(dd.getRevisedAmount()) > 0) {
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedAmount",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + "].revisedAmount",
                                 "revised.collection.greater.than.reviseddemand");
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + REVISED_COLLECTION,
                                 "revised.demand.less.than.revisedcollection");
                     } else if (dd.getRevisedCollection().compareTo(dd.getRevisedAmount()) < 0) {
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + REVISED_COLLECTION,
                                 "error.penalty.not.collected");
                     }
                     editingCollection = Boolean.TRUE;
@@ -249,20 +279,20 @@ public class EditCollectionController {
                     totalActualCollection = totalActualCollection.add(dd.getActualCollection());
                 } else if (dd.getRevisedAmount() != null) {
                     if (dd.getActualCollection().compareTo(dd.getRevisedAmount()) > 0) {
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedAmount",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + "].revisedAmount",
                                 "actual.collection.greater.than.reviseddemand");
                     } else if (dd.getRevisedCollection().compareTo(dd.getRevisedAmount()) < 0
                             || dd.getActualCollection().compareTo(dd.getRevisedAmount()) < 0) {
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + REVISED_COLLECTION,
                                 "error.penalty.not.collected");
                     }
                     editingCollection = Boolean.TRUE;
                 } else if (dd.getRevisedCollection() != null) {
                     if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) > 0) {
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + REVISED_COLLECTION,
                                 "revised.collection.greater.than.actualdemand");
                     } else if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) < 0) {
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + REVISED_COLLECTION,
                                 "error.penalty.not.collected");
                     }
                     editingCollection = Boolean.TRUE;
@@ -272,7 +302,7 @@ public class EditCollectionController {
             } else {
                 if (null != dd.getRevisedCollection() && !isZero(dd.getRevisedCollection())) {
                     if (dd.getRevisedCollection().compareTo(dd.getActualAmount()) > 0) {
-                        errors.rejectValue("demandDetailBeans[" + i + "].revisedCollection",
+                        errors.rejectValue(DEMAND_DETAIL_BEANS + i + REVISED_COLLECTION,
                                 "revised.collection.greater.than.actualdemand");
                     }
                     editingCollection = Boolean.TRUE;
