@@ -51,32 +51,21 @@ package org.egov.infra.reporting.viewer;
 import org.egov.infra.cache.impl.ApplicationCacheManager;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.infra.reporting.util.ReportUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.EnumMap;
 import java.util.UUID;
 
 @Service
 public class ReportViewerUtil {
-    private static final EnumMap<ReportFormat, String> contentTypes = getContentTypes();
 
     @Autowired
     private ApplicationCacheManager applicationCacheManager;
 
-    private static EnumMap<ReportFormat, String> getContentTypes() {
-        EnumMap<ReportFormat, String> contentTypes = new EnumMap<>(ReportFormat.class);
-        contentTypes.put(ReportFormat.PDF, "application/pdf");
-        contentTypes.put(ReportFormat.XLS, "application/vnd.ms-excel");
-        contentTypes.put(ReportFormat.RTF, "application/rtf");
-        contentTypes.put(ReportFormat.HTM, "text/html");
-        contentTypes.put(ReportFormat.TXT, "text/plain");
-        contentTypes.put(ReportFormat.CSV, "text/plain");
-        return contentTypes;
-    }
 
     public static String getContentType(ReportFormat fileFormat) {
-        return contentTypes.get(fileFormat);
+        return ReportUtil.contentType(fileFormat);
     }
 
     public static String getContentDisposition(ReportFormat fileFormat) {
