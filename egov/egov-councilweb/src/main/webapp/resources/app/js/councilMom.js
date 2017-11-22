@@ -150,6 +150,7 @@ jQuery('#add-sumoto').click(function(){
 	       'idx': idx
 	   };
 	addRowFromObject(row);
+	patternvalidation();
 	loadDepartmentlist("meetingMOMs["+idx+"].preamble.department");
 	loadResolutionlist("meetingMOMs["+idx+"].resolutionStatus");
 	loadWardnumberlist("meetingMOMs["+idx+"].preamble.wardNumber");
