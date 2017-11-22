@@ -275,19 +275,18 @@ public class MarriageRegistrationIndexService {
         return registrationSearch;
     }
 
-    public BoolQueryBuilder getQueryFilterForHandicap(final String applicantType, final String ulbName) {
-        BoolQueryBuilder boolQuery = null;
-        if (StringUtils.isNotBlank(ulbName) && null != ulbName)
-            boolQuery = QueryBuilders.boolQuery().filter(QueryBuilders.matchQuery("ulbName", ulbName));
-        if (null != boolQuery)
-            if (StringUtils.isNotBlank(applicantType) && null != applicantType)
-                if ("Husband".equalsIgnoreCase(applicantType))
-                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
-                else if ("Wife".equalsIgnoreCase(applicantType))
-                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wifeHandicapped", true));
-                else
-                    boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true))
-                            .filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+    public BoolQueryBuilder getQueryFilterForHandicap(final String applicantType) {
+        BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
+                .filter(QueryBuilders.matchQuery("ulbName", ApplicationThreadLocals.getCityName()));
+        if (StringUtils.isNotBlank(applicantType) && boolQuery != null) {
+            if ("Husband".equalsIgnoreCase(applicantType))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true));
+            else if ("Wife".equalsIgnoreCase(applicantType))
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+            else
+                boolQuery = boolQuery.filter(QueryBuilders.matchQuery("husbandHandicapped", true))
+                        .filter(QueryBuilders.matchQuery("wifeHandicapped", true));
+        }
         return boolQuery;
     }
 

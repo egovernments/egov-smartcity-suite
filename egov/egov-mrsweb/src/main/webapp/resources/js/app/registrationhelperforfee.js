@@ -76,8 +76,19 @@ $(document)
 											ajax : {
 												url : callURL,
 												type : "POST",
-
-												"data" : getFormData($('form'))
+												beforeSend : function() {
+													$('.loader-class')
+															.modal(
+																	'show',
+																	{
+																		backdrop : 'static'
+																	});
+												},
+												"data" : getFormData($('form')),
+												complete : function() {
+													$('.loader-class').modal(
+															'hide');
+												}
 											},
 											"bDestroy" : true,
 											"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-xs-3'i><'col-xs-3 col-right'l><'col-xs-3 col-right'<'export-data'T>><'col-xs-3 text-right'p>>",

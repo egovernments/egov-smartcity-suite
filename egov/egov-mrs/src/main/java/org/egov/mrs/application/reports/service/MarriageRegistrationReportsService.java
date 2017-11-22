@@ -48,13 +48,28 @@
 
 package org.egov.mrs.application.reports.service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
+import org.apache.commons.lang3.StringUtils;
+import org.egov.infra.admin.master.service.CityService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.web.utils.WebUtils;
-import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
@@ -81,25 +96,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
-import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -145,6 +143,8 @@ public class MarriageRegistrationReportsService {
     
     @Autowired
     private ReligionService religionService;
+    @Autowired
+    private CityService cityService;
 
     private Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -209,8 +209,7 @@ public class MarriageRegistrationReportsService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<Object[]> searchMarriageRegistrationsForCertificateReport(final MarriageCertificate certificate)
-            throws ParseException {
+    public List<Object[]> searchMarriageRegistrationsForCertificateReport(final MarriageCertificate certificate) {
 
         final Map<String, String> params = new HashMap<>();
 
@@ -225,10 +224,11 @@ public class MarriageRegistrationReportsService {
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
         }
 
-        if (certificate.getCertificateType() != null && !ALL.equals(MarriageCertificateType.values())) {
+        if (certificate.getCertificateType() != null && Arrays.stream(MarriageCertificateType.values())
+                .anyMatch(mrgCertiType -> mrgCertiType.name().equals(certificate.getCertificateType().name()))) {
             queryStrForRegistration.append(" and cert.certificatetype=:certificatetype");
             params.put("certificatetype", certificate.getCertificateType().name());
-        } else if (certificate.getCertificateType() != null && ALL.equals(MarriageCertificateType.values()))
+        } else
             queryStrForRegistration.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
         if (certificate.getFromDate() != null) {
@@ -261,10 +261,11 @@ public class MarriageRegistrationReportsService {
             params.put(ZONE, String.valueOf(certificate.getRegistration().getZone().getId()));
         }
 
-        if (certificate.getCertificateType() != null && !ALL.equals(MarriageCertificateType.values())) {
+        if (certificate.getCertificateType() != null && Arrays.stream(MarriageCertificateType.values())
+                .anyMatch(mrgCertiType -> mrgCertiType.name().equals(certificate.getCertificateType().name()))) {
             queryStrForReissue.append(" and cert.certificatetype=:certificatetype");
             params.put("certificatetype", certificate.getCertificateType().name());
-        } else if (certificate.getCertificateType() != null && ALL.equals(certificate.getCertificateType()))
+        } else
             queryStrForReissue.append(" and cert.certificatetype in('REGISTRATION','REISSUE','REJECTION')");
 
         if (certificate.getFromDate() != null) {
@@ -299,8 +300,7 @@ public class MarriageRegistrationReportsService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<String[]> searchRegistrationOfHusbandAgeWise(final int year, final MarriageRegistration registration)
-            throws ParseException {
+    public List<String[]> searchRegistrationOfHusbandAgeWise(final int year, final MarriageRegistration registration) {
 
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryForHusband = new StringBuilder(1000);
@@ -332,8 +332,7 @@ public class MarriageRegistrationReportsService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<String[]> searchRegistrationOfWifeAgeWise(final int year, final MarriageRegistration registration)
-            throws ParseException {
+    public List<String[]> searchRegistrationOfWifeAgeWise(final int year, final MarriageRegistration registration) {
 
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryForWife = new StringBuilder(1000);
@@ -366,8 +365,7 @@ public class MarriageRegistrationReportsService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<String[]> searchRegistrationActWise(final MarriageRegistration registration, final int year)
-            throws ParseException {
+    public List<String[]> searchRegistrationActWise(final MarriageRegistration registration, final int year){
 
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryForAct = new StringBuilder(700);
@@ -420,8 +418,8 @@ public class MarriageRegistrationReportsService {
             buildAgeWiseSearchCriteria(registration, regunit, criteria, fromDate, toDate);
         }
 
-        criteria.createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS).add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
+        criteria.createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS)
+                .add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.REGISTERED.name()));
         return criteria.list();
     }
 
@@ -443,8 +441,7 @@ public class MarriageRegistrationReportsService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<MarriageRegistration> searchStatusAtTimeOfMarriage(final MarriageRegistration registration)
-            throws ParseException {
+    public List<MarriageRegistration> searchStatusAtTimeOfMarriage(final MarriageRegistration registration) {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION)
                 .createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS);
         if (registration.getHusband().getMaritalStatus() != null)
@@ -453,15 +450,14 @@ public class MarriageRegistrationReportsService {
         criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, WIFE)
                 .add(Restrictions.eq("wife.maritalStatus", registration.getHusband().getMaritalStatus()));
 
-        criteria.add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.REGISTERED.name()));
         return criteria.list();
     }
 
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<String[]> getHusbandCountByMaritalStatus(final Date fromDate, final Date toDate, final String maritalStatus,
-            final MarriageRegistration registration) throws ParseException {
+            final MarriageRegistration registration) {
         final Map<String, String> params = new HashMap<>();
         final StringBuilder queryStrForHusbandCount = new StringBuilder(600);
         queryStrForHusbandCount
@@ -505,7 +501,7 @@ public class MarriageRegistrationReportsService {
 
     @SuppressWarnings("unchecked")
     public List<String[]> getWifeCountByMaritalStatus(final Date fromDate, final Date toDate, final String maritalStatus,
-            final MarriageRegistration registration) throws ParseException {
+            final MarriageRegistration registration) {
 
         final Map<String, String> params = new HashMap<>();
         final StringBuilder queryStrForWifeCount = new StringBuilder(600);
@@ -552,7 +548,7 @@ public class MarriageRegistrationReportsService {
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getByMaritalStatusDetails(final MarriageRegistration registration, final String regunit,
             final String applicant,
-            final String maritalStatus, final Date fromDate, final Date toDate) throws ParseException {
+            final String maritalStatus, final Date fromDate, final Date toDate) {
         Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class,
                 MARRIAGE_REGISTRATION);
 
@@ -597,7 +593,7 @@ public class MarriageRegistrationReportsService {
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationBydate(
-            final MarriageRegistration registration) throws ParseException {
+            final MarriageRegistration registration) {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, MARRIAGE_REGISTRATION);
 
@@ -759,7 +755,7 @@ public class MarriageRegistrationReportsService {
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationBymonth(
-            final MarriageRegistration registration, final String month, final String registrationUnit) throws ParseException {
+            final MarriageRegistration registration, final String month, final String registrationUnit) {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, MARRIAGE_REGISTRATION).createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS);
         if (month != null)
@@ -775,15 +771,14 @@ public class MarriageRegistrationReportsService {
             criteria.createAlias(MARRIAGE_REGISTRATION + DOT_MARRIAGE_REGISTRATION_UNIT, REGUNIT)
                     .add(Restrictions.eq("regunit.name",
                             registrationUnit));
-        criteria.add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.REGISTERED.name()));
         return criteria.list();
     }
 
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<ReIssue> searchReissueBymonth(
-            final MarriageRegistration registration, final String month, final String registrationUnit) throws ParseException {
+            final MarriageRegistration registration, final String month, final String registrationUnit) {
         final Criteria criteria = getCurrentSession().createCriteria(
                 ReIssue.class, "reissue").createAlias("reissue.status", STATUS);
 
@@ -798,8 +793,7 @@ public class MarriageRegistrationReportsService {
         if (registrationUnit != null)
             criteria.createAlias("reissue.marriageRegistrationUnit", REGUNIT).add(Restrictions.eq("regunit.name",
                     registrationUnit));
-        criteria.add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { "CERTIFICATEREISSUED" }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, "CERTIFICATEREISSUED"));
         return criteria.list();
     }
 
@@ -823,7 +817,7 @@ public class MarriageRegistrationReportsService {
         } else {
             List<String> mrgReligionNames = getReligionNames();
             criteria.createAlias(MARRIAGE_REGISTRATION_DOT_HUSBAND, HUSBAND).createAlias("husband.religion", "husreligion")
-                    .add(Restrictions.in("husreligion.name", mrgReligionNames.toArray(new String[mrgReligionNames.size()])));
+                    .add(Restrictions.in("husreligion.name", mrgReligionNames));
         }
         if (null != registration.getWife().getReligion()
                 && registration.getWife().getReligion().getId() != null && registration.getWife().getReligion().getId() != 0) {
@@ -833,7 +827,7 @@ public class MarriageRegistrationReportsService {
         } else {
             List<String> mrgReligionNames = getReligionNames();
             criteria.createAlias(MARRIAGE_REGISTRATION_DOT_WIFE, WIFE).createAlias("wife.religion", "wifereligion")
-                    .add(Restrictions.in("wifereligion.name", mrgReligionNames.toArray(new String[mrgReligionNames.size()])));
+                    .add(Restrictions.in("wifereligion.name", mrgReligionNames));
         }
         if (null != fromDate)
             criteria.add(Restrictions.ge(
@@ -853,9 +847,8 @@ public class MarriageRegistrationReportsService {
                 && registration.getMarriageRegistrationUnit().getId() != null)
             criteria.add(Restrictions.eq(MARRIAGE_REGISTRATION_UNIT_DOT_ID,
                     registration.getMarriageRegistrationUnit().getId()));
-        criteria.add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString(),
-                        MarriageRegistration.RegistrationStatus.REGISTERED.toString() }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.APPROVED.name(),
+                MarriageRegistration.RegistrationStatus.REGISTERED.name()));
         return criteria.list();
     }
 
@@ -920,8 +913,7 @@ public class MarriageRegistrationReportsService {
             criteria.add(Restrictions.le(
                     MARRIAGE_REGISTRATION_APPLICATION_DATE, resetToDateTimeStamp(toDate)));
 
-        criteria.add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.APPROVED.toString()));
         return criteria.list();
 
     }
@@ -929,7 +921,7 @@ public class MarriageRegistrationReportsService {
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> getmonthWiseActDetails(final int year,
-            final int month, final Long actid) throws ParseException {
+            final int month, final Long actid) {
         final Criteria criteria = getCurrentSession().createCriteria(
                 MarriageRegistration.class, MARRIAGE_REGISTRATION).createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS);
         final String monthYear = month + "/" + year;
@@ -937,19 +929,17 @@ public class MarriageRegistrationReportsService {
             criteria.createAlias("marriageRegistration.marriageAct",
                     "marriageAct")
                     .add(Restrictions.eq("marriageAct.id", actid));
-        if (monthYear != null)
+        if (StringUtils.isNotBlank(monthYear))
             criteria.add(Restrictions.between(MARRIAGE_REGISTRATION_APPLICATION_DATE, getMonthStartday(monthYear),
                     getMonthEndday(monthYear)));
 
-        criteria.add(Restrictions.in(STATUS_DOT_CODE,
-                new String[] { MarriageRegistration.RegistrationStatus.APPROVED.toString() }));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.APPROVED.name()));
         return criteria.list();
     }
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<Object[]> getAgeingRegDetails(final String day, final int year)
-            throws ParseException {
+    public List<Object[]> getAgeingRegDetails(final String day, final int year) {
         final String[] values = day.split("-");
         final StringBuilder queryStrForRegistration = new StringBuilder(1000);
         final Map<String, Double> params = new HashMap<>();
@@ -984,8 +974,7 @@ public class MarriageRegistrationReportsService {
 
     @ReadOnly
     @SuppressWarnings("unchecked")
-    public List<String[]> searchRegistrationbyDays(final int year, final MarriageRegistration registration)
-            throws ParseException {
+    public List<String[]> searchRegistrationbyDays(final int year, final MarriageRegistration registration) {
 
         final Map<String, Integer> params = new HashMap<>();
         final StringBuilder queryStrForRegAgeingDetails = new StringBuilder(1000);
@@ -1096,8 +1085,7 @@ public class MarriageRegistrationReportsService {
     @ReadOnly
     @SuppressWarnings("unchecked")
     public List<MarriageRegistration> searchRegistrationByStatusForReport(final String registrationUnit, final String status,
-            final Date fromDate, final Date toDate)
-            throws ParseException {
+            final Date fromDate, final Date toDate) {
 
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, "marriageRegistration")
                 .createAlias(MARRIAGE_REGISTRATION_STATUS, STATUS);
@@ -1110,10 +1098,9 @@ public class MarriageRegistrationReportsService {
                     .add(Restrictions.eq("marriageRegistrationUnit.name", registrationUnit.replaceAll("[^a-zA-Z0-9]", " ")));
 
         if (status != null && !ALL.equalsIgnoreCase(status))
-            criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[] { status }));
+            criteria.add(Restrictions.in(STATUS_DOT_CODE, status));
         else
-            criteria.add(Restrictions.in(STATUS_DOT_CODE,
-                    new String[] { "CREATED", "APPROVED", "REGISTERED", "REJECTED", "CANCELLED" }));
+            criteria.add(Restrictions.in(STATUS_DOT_CODE, "CREATED", "APPROVED", "REGISTERED", "REJECTED", "CANCELLED"));
         return criteria.list();
 
     }
@@ -1160,7 +1147,7 @@ public class MarriageRegistrationReportsService {
 
     public BoolQueryBuilder getQueryFilter(final SearchModel searchRequest) throws ParseException {
         BoolQueryBuilder boolQuery = QueryBuilders.boolQuery()
-                .filter(QueryBuilders.matchQuery("ulbName", searchRequest.getUlbName()));
+                .filter(QueryBuilders.matchQuery("ulbName", ApplicationThreadLocals.getCityName()));
         final SimpleDateFormat formatter = new SimpleDateFormat(YYYY_MM_DD);
         final Date fromDate = formatter.parse(searchRequest.getYear() + "/" + 1 + "/" + 1);
         final Date toDate = formatter.parse(searchRequest.getYear() + "/" + 12 + "/" + 31);
@@ -1194,30 +1181,15 @@ public class MarriageRegistrationReportsService {
         return AggregationBuilders.terms(aggregationName).field(fieldName).size(size);
     }
 
-    public ResponseEntity<byte[]> generateReligionWiseReport(final int year, final List<SearchResult> searchResponse,
-            final HttpSession session, final HttpServletRequest request) {
-        final HttpHeaders headers = new HttpHeaders();
-        ReportOutput reportOutput = new ReportOutput();
-        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(MarriageConstants.IMAGE_CONTEXT_PATH);
-        reportOutput = generateReportOutputForReligionWiseReport(year, searchResponse, cityName, cityLogo);
-
-        headers.setContentType(MediaType.parseMediaType("application/pdf"));
-        headers.add("content-disposition", "inline;filename=WorkOrderNotice.pdf");
-        return new ResponseEntity<byte[]>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
-    }
-
-    public ReportOutput generateReportOutputForReligionWiseReport(final int year, final List<SearchResult> searchResponse,
-            final String cityName,
-            final String logoPath) {
+    public ReportOutput generateReportOutputForReligionWiseReport(final int year, final List<SearchResult> searchResponse) {
         final Map<String, Object> reportParams = new HashMap<>();
-        reportParams.put("cityName", cityName);
-        reportParams.put("logoPath", logoPath);
+        reportParams.put("cityName", cityService.getMunicipalityName());
+        reportParams.put("logoPath", cityService.getCityLogoURL());
         reportParams.put(INPUTYEAR, year);
         reportParams.put("remarks", "");
         reportParams.put("searchResponse", searchResponse);
         final ReportRequest reportInput = new ReportRequest("printreligionwisereport", searchResponse, reportParams);
+        reportInput.setReportFormat(ReportFormat.PDF);
         return reportService.createReport(reportInput);
     }
 

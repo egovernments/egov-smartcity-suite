@@ -51,79 +51,73 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<div>
-	<div class="panel" data-collapsed="0">
-		<div class="panel-body">
-			<form:form method="post" action=""
-				class="form-horizontal form-groups-bordered"
-				id="form-registrationstatus" modelAttribute="searchRequest">
-				<div class="panel panel-primary" data-collapsed="0">
-					<div class="panel-heading">
-						<div class="panel-title">
-							<strong><spring:message code="lbl.hdr.religion.search" /></strong>
+
+<form:form method="post" action=""
+	class="form-horizontal form-groups-bordered"
+	id="form-registrationstatus" modelAttribute="searchRequest">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title"></div>
+				</div>
+
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<div class="col-sm-2 control-label">
+							<label>Year</label><span class="mandatory"></span>
 						</div>
-					</div>
+						<div class="col-sm-3">
+							<form:select path="year" id="year" cssClass="form-control">
 
-					<div class="panel-body custom-form">
-						<div class="form-group">
-							<div class="col-sm-2 control-label">
-								<label>Year</label><span class="mandatory"></span>
-							</div>
-							<div class="col-sm-3">
-								<form:select path="year" id="year" cssClass="form-control">
-
-									<form:options items="${yearlist}" />
-								</form:select>
-							</div>
+								<form:options items="${yearlist}" />
+							</form:select>
 						</div>
 					</div>
 				</div>
-				<div class="row">
-					<div class="text-center">
-						<button type="button" class="btn btn-primary"
-							id="btn_religionwise_search">
-							<spring:message code="lbl.search" />
-						</button>
-						<button type="reset" class="btn btn-default">
-							<spring:message code="lbl.reset" />
-						</button>
-						<a href="javascript:void(0)" class="btn btn-default"
-							onclick="self.close()"><spring:message code="lbl.close" /></a>
-					</div>
+			</div>
+			<div class="row">
+				<div class="text-center">
+					<button type="button" class="btn btn-primary"
+						id="btn_religionwise_search">
+						<spring:message code="lbl.search" />
+					</button>
+					<button type="reset" class="btn btn-danger">
+						<spring:message code="lbl.reset" />
+					</button>
+					<a href="javascript:void(0)" class="btn btn-default"
+						onclick="self.close()"><spring:message code="lbl.close" /></a>
 				</div>
-
-			</form:form>
-
+			</div>
 		</div>
-
 	</div>
-</div>
-<br />
-<br />
+</form:form>
+
 <div class="row display-hide report-section"
 	id="regstatustable_container">
-	<div class="col-md-12 table-header text-left">The Registration
+	<div class="col-md-12 table-header text-left">The Marriage Registration
 		Religion Wise Statutory result is</div>
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="religionwise_table">
 			<thead>
-				<th>Serial No.</th>
-				<th>City Name</th>
-				<th>Christian</th>
-				<th>Hindu</th>
-				<th>Muslim</th>
-				<th>Other Types</th>
-				<th>Total</th>
-				<th>Remarks</th>
+				<tr>
+					<th><spring:message code="lbl.serial.no" /></th>
+					<th>City Name</th>
+					<th>Christian</th>
+					<th>Hindu</th>
+					<th>Muslim</th>
+					<th>Other Types</th>
+					<th>Total</th>
+					<th><spring:message code="lbl.remarks" /></th>
+				</tr>
 			</thead>
 			<tbody>
 			</tbody>
 		</table>
 		<div class="text-center">
-			<button type="button" class="btn btn-primary"
-							id="btn_print">
-							Print
+			<button type="button" class="btn btn-primary" id="btn_print">
+				<spring:message code="lbl.print" />
 			</button>
 		</div>
 	</div>

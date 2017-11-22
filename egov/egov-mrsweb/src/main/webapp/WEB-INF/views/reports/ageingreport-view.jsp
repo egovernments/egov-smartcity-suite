@@ -58,15 +58,15 @@
 
 <br /><br />
 <div class="row display-hide report-section" id="regageingtable_container">   
-	<div class="col-md-12 table-header text-left">The Registration Status Search result is</div>             
+	<div class="col-md-12 table-header text-left">The Marriage Registration Ageing Application Details :-</div>             
 	<div class="col-md-12 form-group report-table-container">
 	    <table class="table table-bordered table-hover multiheadertbl" id="registrationageing_table">
 	    	<thead>
 	    		<tr>
-							<th>S.No</th>
+							<th><spring:message code="lbl.serial.no" /></th>
 							<th><spring:message code="lbl.application.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
-							<th>Application Type</th>
+							<th><spring:message code="lbl.appln.type" /></th>
 							<th><spring:message code="lbl.husband.name" /></th>
 							<th><spring:message code="lbl.wife.name" /></th>
 							<th><spring:message code="lbl.application.date" /></th>
@@ -74,8 +74,8 @@
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.Boundary" /></th>
 							<th><spring:message code="lbl.status" /></th>
-							<th>User Name</th>
-							<th>Pending Action</th>
+							<th><spring:message code="lbl.user.name" /></th>
+							<th><spring:message code="lbl.pending.action" /></th>
 							
 						</tr>
 	    	</thead>

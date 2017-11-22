@@ -52,64 +52,62 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<div class="row" id="page-content">
-	<form:form method="post" action=""
-					class="form-horizontal form-groups-bordered"
-					id="form-statustimeogmrg" modelAttribute="registration">
-					
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="lbl.search" /></strong>
-							</div>
-						</div>
+<form:form method="post" action=""
+	class="form-horizontal form-groups-bordered" id="form-statustimeogmrg"
+	modelAttribute="registration">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title"></div>
+				</div>
 
-			<div class="panel-body custom-form">
-				<div class="form-group">
-					<div class="col-sm-2 control-label">
-						<label><spring:message code="lbl.applicant.type" /></label>
-					</div>
-					<div class="col-sm-3">
-						<select name="applicantType" class="form-control">
-							<option>Both</option>
-							<option>Husband</option>
-							<option>Wife</option>
-						</select>
-					</div>
-					<label class="col-sm-2 control-label"> <spring:message
-							code="lbl.applicant.status" />
-					</label>
-					<div class="col-sm-3 control-label">
-						<select name="maritalStatus" id="maritalStatus"
-							class="form-control">
-							<option value="">Select</option>
-							<c:forEach items="${maritalStatusList}" var="marital">
-								<option value="${marital}">${marital}</option>
-							</c:forEach>
-						</select>
-					</div>
-				</div>
-				<div class="form-group">
-					<div class="col-sm-2 control-label">
-						<label><spring:message code="lbl.from.date" /></label>
-					</div>
-					<div class="col-sm-3">
-						<input name="fromDate" class="form-control datepicker"
-							id="fromDate">
-					</div>
-					<div class="col-sm-2 control-label">
-						<label><spring:message code="lbl.to.date" /></label>
-					</div>
-					<div class="col-sm-3">
-						<input name="toDate" class="form-control datepicker" id="toDate">
-					</div>
-				</div>
-				
+				<div class="panel-body custom-form">
 					<div class="form-group">
-					<div class="col-sm-2 control-label">
-						<label for="field-1"><spring:message
-								code="lbl.registrationunit" /> </label>
-								</div>
+						<div class="col-sm-2 control-label">
+							<label><spring:message code="lbl.applicant.type" /></label>
+						</div>
+						<div class="col-sm-3">
+							<select name="applicantType" class="form-control">
+								<option>Both</option>
+								<option>Husband</option>
+								<option>Wife</option>
+							</select>
+						</div>
+						<label class="col-sm-2 control-label"> <spring:message
+								code="lbl.applicant.status" />
+						</label>
+						<div class="col-sm-3 control-label">
+							<select name="maritalStatus" id="maritalStatus"
+								class="form-control">
+								<option value="">Select</option>
+								<c:forEach items="${maritalStatusList}" var="marital">
+									<option value="${marital}">${marital}</option>
+								</c:forEach>
+							</select>
+						</div>
+					</div>
+					<div class="form-group">
+						<div class="col-sm-2 control-label">
+							<label><spring:message code="lbl.from.date" /></label>
+						</div>
+						<div class="col-sm-3">
+							<input name="fromDate" class="form-control datepicker"
+								id="fromDate">
+						</div>
+						<div class="col-sm-2 control-label">
+							<label><spring:message code="lbl.to.date" /></label>
+						</div>
+						<div class="col-sm-3">
+							<input name="toDate" class="form-control datepicker" id="toDate">
+						</div>
+					</div>
+
+					<div class="form-group">
+						<div class="col-sm-2 control-label">
+							<label for="field-1"><spring:message
+									code="lbl.registrationunit" /> </label>
+						</div>
 						<div class="col-sm-3">
 							<form:select path="marriageRegistrationUnit.id"
 								name="registrationunit" id="registrationunit"
@@ -137,47 +135,47 @@
 						</div>
 					</div>
 				</div>
-		
-			<div class="form-group">
-					<div class="text-center">
-						<button type="button" class="btn btn-primary"
-							id="btn_registrationmrgstatus_search">
-							<spring:message code="lbl.search" />
-						</button>
-						<button type="reset" class="btn btn-default">
-							<spring:message code="lbl.reset" />
-						</button>
-						<a href="javascript:void(0)" class="btn btn-default"
-							onclick="self.close()"><spring:message code="lbl.close" /></a>
-					</div>
-				</div>
-	</form:form>
-</div>
-	<div class="row display-hide report-section">
-		<div class="col-md-12 table-header text-left">The applicant
-			Status at the time of marriage result is</div>
-		<div class="col-md-12 form-group">
-			<table class="table table-bordered table-hover multiheadertbl"
-				id="marriage_table">
-				
-				<tfoot id="report-footer">
-				<tr>
-						<td></td>
-						<td></td>
-					
-						<td>Total</td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-						<td></td>
-					</tr>
-				</tfoot>
-			</table>
+			</div>
 		</div>
 	</div>
+	<div class="form-group">
+		<div class="text-center">
+			<button type="button" class="btn btn-primary"
+				id="btn_registrationmrgstatus_search">
+				<spring:message code="lbl.search" />
+			</button>
+			<button type="reset" class="btn btn-danger">
+				<spring:message code="lbl.reset" />
+			</button>
+			<a href="javascript:void(0)" class="btn btn-default"
+				onclick="self.close()"><spring:message code="lbl.close" /></a>
+		</div>
 	</div>
+</form:form>
 
+<div class="row display-hide report-section">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="lbl.search.result" />
+	</div>
+	<div class="col-md-12 form-group">
+		<table class="table table-bordered table-hover multiheadertbl"
+			id="marriage_table">
+
+			<tfoot id="report-footer">
+				<tr>
+					<td></td>
+					<td></td>
+					<td>Total</td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+					<td></td>
+				</tr>
+			</tfoot>
+		</table>
+	</div>
+</div>
 
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
@@ -193,6 +191,5 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js' context='/egi'/>"></script>
 <script type="text/javascript"
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js' context='/egi'/>"></script>
-
 <script
 	src="<cdn:url value='/resources/js/app/statusattime-ofmarriage.js?rnd=${app_release_no}'/> "></script>

@@ -95,23 +95,24 @@
 <form:form role="form" method="post" cssClass="form-horizontal form-groups-bordered" id="usageform" modelAttribute="registration">
  	<jsp:include page="registration-searchform.jsp"></jsp:include>
 </form:form>
-<br /><br />
-<div class="row display-hide report-section" id="table_container">   
-	<div class="col-md-12 table-header text-left">The Search result is</div>             
+<div class="row display-hide report-section" id="table_container">
+	<div class="col-md-12 table-header text-left">
+		<spring:message code="lbl.search.result" />
+	</div>
 	<div class="col-md-12 form-group report-table-container">
 	    <table class="table table-bordered table-hover multiheadertbl" id="registration_table">
 	    	<thead>
 	    		<tr>
-	    			<th>Registration No</th>
-	    			<th>Application No</th>
-	    			<th>Application Date</th>
-	    			<th>Marriage Date</th>
-	    			<th>Bridegroom Name</th>
-	    			<th>Bride Name</th>
-	    			<th>Marriage Fee</th>
-	    			<th>Status</th>
-	    			<th>Registration Unit</th>
-	    			<th>Action</th>
+	    			<th><spring:message code="lbl.registration.no"/></th>
+					<th><spring:message code="lbl.application.no"/></th>
+					<th><spring:message code="lbl.application.date"/></th>
+					<th><spring:message code="lbl.date.of.marriage"/></th>
+					<th><spring:message code="lbl.husband.name"/></th>
+					<th><spring:message code="lbl.wife.name"/></th>
+					<th><spring:message code="lbl.marriage.fee"/></th>
+					<th><spring:message code="lbl.status"/></th>
+					<th><spring:message code="lbl.registrationunit"/></th>
+					<th><spring:message code="lbl.action"/></th>
 	    		</tr>
 	    	</thead>
 		</table>

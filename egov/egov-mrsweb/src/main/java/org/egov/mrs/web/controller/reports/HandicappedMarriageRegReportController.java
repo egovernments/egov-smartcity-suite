@@ -48,9 +48,12 @@
 
 package org.egov.mrs.web.controller.reports;
 
-import org.egov.infra.admin.master.entity.City;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.entity.es.MarriageRegIndexSearchResult;
 import org.egov.mrs.entity.es.MarriageRegistrationIndex;
@@ -67,13 +70,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 /**
  * Controller to show report of Registration status
  *
@@ -86,22 +82,15 @@ public class HandicappedMarriageRegReportController {
 
     private static final String HANDICAPPED_MARRIAGE_REPORT = "handicapped-marriage-report";
     @Autowired
-    private CityService cityService;
-    @Autowired
     private MarriageRegistrationIndexService marriageRegistrationIndexService;
 
     @RequestMapping(value = "/handicapped-report", method = RequestMethod.GET)
-    public String searchHandicappedApplications(final Model model)
-            throws ParseException {
+    public String searchHandicappedApplications(final Model model) {
         return HANDICAPPED_MARRIAGE_REPORT;
     }
 
     private List<MarriageRegistrationIndex> getSearchResult(final String applicantType) {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        String ulbName = "";
-        if (cityWebsite != null)
-            ulbName = cityWebsite.getName();
-        final BoolQueryBuilder boolQuery = marriageRegistrationIndexService.getQueryFilterForHandicap(applicantType, ulbName);
+        final BoolQueryBuilder boolQuery = marriageRegistrationIndexService.getQueryFilterForHandicap(applicantType);
         return marriageRegistrationIndexService.getHandicapSearchResultByBoolQuery(boolQuery);
     }
 
@@ -109,22 +98,20 @@ public class HandicappedMarriageRegReportController {
     @ResponseBody
     public String showHandicappedApplicationDetails(@RequestParam("applicantType") final String applicantType, final Model model,
             @ModelAttribute final MarriageRegistration registration) {
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd-MM-YYYY");
         final List<MarriageRegIndexSearchResult> searchResultFomatted = new ArrayList<>();
         MarriageRegIndexSearchResult mrisr;
         for (final MarriageRegistrationIndex mrsIndexObj : getSearchResult(applicantType)) {
             mrisr = new MarriageRegIndexSearchResult();
             mrisr.setApplicationNumber(mrsIndexObj.getApplicationNo());
             mrisr.setRegistrationNumber(mrsIndexObj.getRegistrationNo());
-            mrisr.setRegistrationDate(formatter.format(mrsIndexObj.getApplicationCreatedDate()));
+            mrisr.setRegistrationDate(getDefaultFormattedDate(mrsIndexObj.getApplicationCreatedDate()));
             mrisr.setZone(mrsIndexObj.getZone());
             mrisr.setStatus(mrsIndexObj.getApplicationStatus());
-            mrisr.setMarriageDate(formatter.format(mrsIndexObj.getRegistrationDate()));
+            mrisr.setMarriageDate(getDefaultFormattedDate(mrsIndexObj.getRegistrationDate()));
             mrisr.setHusbandName(mrsIndexObj.getHusbandName());
             mrisr.setWifeName(mrsIndexObj.getWifeName());
             searchResultFomatted.add(mrisr);
         }
-
         return new StringBuilder("{\"data\":")
                 .append(toJSON(searchResultFomatted, MarriageRegIndexSearchResult.class, HandicappedReportJsonAdaptor.class))
                 .append("}")

@@ -67,13 +67,13 @@
 	    			<th><spring:message code="lbl.registration.no"/></th>
 	    			<th><spring:message code="lbl.husband.name"/></th>
 	    			<th><spring:message code="lbl.wife.name"/></th>
-	    			<th>Registration Date</th>
-	    			<th>Marriage Date</th>
-	    			<th>Application Type</th>
+	    			<th><spring:message code="lbl.application.date"/></th>
+					<th><spring:message code="lbl.date.of.marriage"/></th>
+	    			<th><spring:message code="lbl.appln.type"/></th>
 	    			<th><spring:message code="lbl.registrationunit"/></th>
 	    			<th><spring:message code="lbl.Boundary"/></th>
 	    			<th><spring:message code="lbl.status"/></th>
-	    			<th>Remarks</th>
+	    			<th><spring:message code="lbl.remarks" /></th>
 	    		</tr>
 	    	</thead>
 	    	<tbody>
@@ -82,12 +82,19 @@
 	</div>
 </div>
 
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css?rnd=${app_release_no}' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css?rnd=${app_release_no}' context='/egi'/>">
-<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js?rnd=${app_release_no}' context='/egi'/>"></script>
-<script type="text/javascript" src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
-
-<script src="<cdn:url value='/resources/js/app/viewregistration-status-details.js?rnd=${app_release_no}'/> "></script>
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css?rnd=${app_release_no}' context='/egi'/>" />
+<link rel="stylesheet"
+	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css?rnd=${app_release_no}' context='/egi'/>">
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/jquery.dataTables.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.tableTools.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script type="text/javascript"
+	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/TableTools.min.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script
+	src="<cdn:url value='/resources/js/app/viewregistration-status-details.js?rnd=${app_release_no}'/> "></script>

@@ -105,7 +105,7 @@
     </definition>
 
     <definition name="registration-search" extends="base_layout">
-        <put-attribute name="page-title" value="title.registration"
+        <put-attribute name="page-title" value="title.registration.search"
                        cascade="true"/>
         <put-attribute name="body"
                        value="/WEB-INF/views/application/registration/registration-search.jsp"/>
@@ -267,7 +267,7 @@
     </definition>
     <definition name="registration-search-certificateissue"
                 extends="base_layout">
-        <put-attribute name="page-title" value="title.registration.search"
+        <put-attribute name="page-title" value="title.reissue.search"
                        cascade="true"/>
         <put-attribute name="body"
                        value="/WEB-INF/views/application/registration/registration-search-certificateissue.jsp"/>
@@ -316,7 +316,7 @@
     </definition>
 
     <definition name="mrgreg-dataentryform" extends="base_layout">
-        <put-attribute name="page-title" value="title.mrgRegistration.dataEntry"
+        <put-attribute name="page-title" value="title.registration"
                        cascade="true"/>
         <put-attribute name="body"
                        value="/WEB-INF/views/application/registration/mrgreg-dataentryform.jsp"/>

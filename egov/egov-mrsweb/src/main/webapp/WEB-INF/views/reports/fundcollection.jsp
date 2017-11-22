@@ -50,66 +50,79 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
-<div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-				 <c:if test="${not empty message}">
-                    <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-                </c:if>
-		<form:form  method="post" action="/mrs/masters/religion/create" class="form-horizontal form-groups-bordered" commandName="religion" id="form-religion" >
+
+<form:form method="post" action="/mrs/masters/religion/create"
+	class="form-horizontal form-groups-bordered" commandName="religion"
+	id="form-religion">
+	<div class="row">
+		<div class="col-md-12">
+			<c:if test="${not empty message}">
+				<div class="alert alert-success" role="alert">
+					<spring:message code="${message}" />
+				</div>
+			</c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading">
 					<div class="panel-title">
-							<strong><spring:message code="lbl.hdr.funccollection"/></strong>
 					</div>
-				</div> 
-				
-				<div class="panel-body custom-form">				
+				</div>
+
+				<div class="panel-body custom-form">
 					<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.fromDate"/><span class="mandatory"></span>
+						<label class="col-sm-3 control-label"> <spring:message
+								code="lbl.fromDate" /><span class="mandatory"></span>
 						</label>
 						<div class="col-sm-6">
-							<form:input path="fromDate" id="txt-fromdate" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
-            				<form:errors path="fromDate" cssClass="add-margin error-msg"/>
+							<form:input path="fromDate" id="txt-fromdate" type="text"
+								class="form-control low-width datepicker today"
+								data-date-today-highlight="true" placeholder=""
+								autocomplete="off" required="required" />
+							<form:errors path="fromDate" cssClass="add-margin error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label class="col-sm-3 control-label">
-							<spring:message code="lbl.toDate"/>
+						<label class="col-sm-3 control-label"> <spring:message
+								code="lbl.toDate" />
 						</label>
 						<div class="col-sm-6">
-							<form:input path="toDate" id="txt-todate" type="text" class="form-control low-width datepicker today" data-date-today-highlight="true" placeholder="" autocomplete="off" required="required"/>
-            				<form:errors path="toDate" cssClass="add-margin error-msg"/>
+							<form:input path="toDate" id="txt-todate" type="text"
+								class="form-control low-width datepicker today"
+								data-date-today-highlight="true" placeholder=""
+								autocomplete="off" required="required" />
+							<form:errors path="toDate" cssClass="add-margin error-msg" />
 						</div>
 					</div>
 					<div class="form-group">
-						<label for="field-1" class="col-sm-3 control-label"><spring:message code="lbl.fee.type" /><span class="mandatory"></span>
-						</label>
-						<div class="col-sm-6 add-margin">							
+						<label for="field-1" class="col-sm-3 control-label"><spring:message
+								code="lbl.fee.type" /><span class="mandatory"></span> </label>
+						<div class="col-sm-6 add-margin">
 							<div class="checkbox-inline">
-							  <label><input type="checkbox" id="checkbox_registration" name="checkbox_registration" checked="checked" value="registration">
-							  	<spring:message code="lbl.registration" />
-							  </label>
+								<label><input type="checkbox" id="checkbox_registration"
+									name="checkbox_registration" checked="checked"
+									value="registration"> <spring:message
+										code="lbl.registration" /> </label>
 							</div>
 							<div class="checkbox-inline">
-							  <label><input type="checkbox" id="checkbox_reissue" name="checkbox_registration" value="reissue">
-							  	<spring:message code="lbl.reissue" />
-							  </label>
+								<label><input type="checkbox" id="checkbox_reissue"
+									name="checkbox_registration" value="reissue"> <spring:message
+										code="lbl.reissue" /> </label>
 							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-			<div class="row">
-				<div class="text-center">					
-					<button type="submit" class="btn btn-primary"><spring:message code="lbl.search"/></button>
-			        <a href="javascript:void(0)" class="btn btn-default" onclick="self.close()"><spring:message code="lbl.close"/></a>
-				</div>
-			</div>
-		</form:form>
-			</div>
-        </div>
-    </div>
+		</div>
+	</div>
+</form:form>
+<div class="row">
+	<div class="text-center">
+		<button type="submit" class="btn btn-primary">
+			<spring:message code="lbl.search" />
+		</button>
+		<button type="reset" class="btn btn-danger">
+			<spring:message code="lbl.reset" />
+		</button>
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()"><spring:message code="lbl.close" /></a>
+	</div>
 </div>

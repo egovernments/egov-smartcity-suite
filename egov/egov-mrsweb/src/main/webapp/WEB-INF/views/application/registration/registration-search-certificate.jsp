@@ -52,117 +52,111 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-				<form:form method="post" action=""
-					class="form-horizontal form-groups-bordered"
-					id="form-registrationstatus" modelAttribute="certificate">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message code="title.search.certificate" /></strong>
-							</div>
+<form:form method="post" action=""
+	class="form-horizontal form-groups-bordered"
+	id="form-registrationstatus" modelAttribute="certificate">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title">
+					</div>
+				</div>
+
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label for="certificateNo" class="col-sm-2 control-label"><spring:message
+								code="lbl.certificate.no" /></label>
+
+						<div class="col-sm-3 add-margin">
+							<form:input id="certificateNo" path="certificateNo" type="text"
+								cssClass="form-control low-width is_valid_alphnumeric" />
+							<form:errors path="certificateNo" cssClass="error-msg" />
 						</div>
+						<label for="certificateNo" class="col-sm-2 control-label"><spring:message
+								code="lbl.certificate.type" /></label>
 
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label for="certificateNo" class="col-sm-2 control-label"><spring:message
-										code="lbl.certificate.no" /></label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="certificateType" id="certificateType"
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
 
-								<div class="col-sm-3 add-margin">
-									<form:input id="certificateNo" path="certificateNo" type="text"
-										cssClass="form-control low-width is_valid_alphnumeric" />
-									<form:errors path="certificateNo" cssClass="error-msg" />
-								</div>
-								<label for="certificateNo" class="col-sm-2 control-label"><spring:message
-										code="lbl.certificate.type" /></label>
-
-								<div class="col-sm-3 add-margin">
-									<form:select path="certificateType" id="certificateType"
-										cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value="">
-											<spring:message code="lbl.select" />
-										</form:option>
-
-										<%--<form:option value="REJECTED">Rejected</form:option>
+								<%--<form:option value="REJECTED">Rejected</form:option>
 									<form:option value="REISSUE">Reissue</form:option>--%>
-										<form:options items="${certificateType}" />
+								<form:options items="${certificateType}" />
 
-									</form:select>
-									<form:errors path="certificateType" cssClass="error-msg" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label for="registrationNo" class="col-sm-2 control-label"><spring:message
-										code="lbl.registration.no" /></label>
-
-								<div class="col-sm-3 add-margin">
-									<form:input id="registrationNo"
-										path="registration.registrationNo" type="text"
-										cssClass="form-control low-width is_valid_alphnumeric" />
-									<form:errors path="registration.registrationNo"
-										cssClass="error-msg" />
-								</div>
-								<label class="col-sm-2 control-label"> Frequency </label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="frequency" id="frequency"
-										cssClass="form-control" cssErrorClass="form-control error">
-										<form:option value="">
-											<spring:message code="lbl.select" />
-										</form:option>
-										<form:option value="ALL">All</form:option>
-										<form:option value="LATEST">Latest</form:option>
-									</form:select>
-									<form:errors path="frequency" cssClass="error-msg" />
-								</div>
-							</div>
-							<div class="form-group">
-								<label class="col-sm-2 control-label"> <spring:message
-										code="lbl.fromDate" />
-								</label>
-								<div class="col-sm-3">
-									<form:input path="fromDate" id="txt-fromdate" type="text"
-										class="form-control low-width datepicker"
-										data-date-end-date="0d" data-date-today-highlight="true"
-										placeholder="" autocomplete="off" />
-									<form:errors path="fromDate" cssClass="add-margin error-msg" />
-								</div>
-								<label class="col-sm-2 control-label"> <spring:message
-										code="lbl.toDate" />
-								</label>
-								<div class="col-sm-3">
-									<form:input path="toDate" id="txt-todate" type="text"
-										class="form-control low-width datepicker"
-										data-date-end-date="0d" data-date-today-highlight="true"
-										placeholder="" autocomplete="off" />
-									<form:errors path="toDate" cssClass="add-margin error-msg" />
-								</div>
-							</div>
+							</form:select>
+							<form:errors path="certificateType" cssClass="error-msg" />
 						</div>
 					</div>
-			</div>
-			<div>
-				<div class="text-center">
-					<button type="button" class="btn btn-primary"
-						id="btn_marriagecertificate_search">
-						<spring:message code="lbl.search" />
-					</button>
-					<button type="reset" class="btn btn-danger">
-						<spring:message code="lbl.reset" />
-					</button>
-					<a href="javascript:void(0)" class="btn btn-default"
-						onclick="self.close()"><spring:message code="lbl.close" /></a>
+					<div class="form-group">
+						<label for="registrationNo" class="col-sm-2 control-label"><spring:message
+								code="lbl.registration.no" /></label>
+
+						<div class="col-sm-3 add-margin">
+							<form:input id="registrationNo"
+								path="registration.registrationNo" type="text"
+								cssClass="form-control low-width is_valid_alphnumeric" />
+							<form:errors path="registration.registrationNo"
+								cssClass="error-msg" />
+						</div>
+						<label class="col-sm-2 control-label"> Frequency </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="frequency" id="frequency"
+								cssClass="form-control" cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:option value="ALL">All</form:option>
+								<form:option value="LATEST">Latest</form:option>
+							</form:select>
+							<form:errors path="frequency" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> <spring:message
+								code="lbl.fromDate" />
+						</label>
+						<div class="col-sm-3">
+							<form:input path="fromDate" id="txt-fromdate" type="text"
+								class="form-control low-width datepicker"
+								data-date-end-date="0d" data-date-today-highlight="true"
+								placeholder="" autocomplete="off" />
+							<form:errors path="fromDate" cssClass="add-margin error-msg" />
+						</div>
+						<label class="col-sm-2 control-label"> <spring:message
+								code="lbl.toDate" />
+						</label>
+						<div class="col-sm-3">
+							<form:input path="toDate" id="txt-todate" type="text"
+								class="form-control low-width datepicker"
+								data-date-end-date="0d" data-date-today-highlight="true"
+								placeholder="" autocomplete="off" />
+							<form:errors path="toDate" cssClass="add-margin error-msg" />
+						</div>
+					</div>
 				</div>
 			</div>
-			</form:form>
+
 		</div>
+	</div>
+</form:form>
+<div>
+	<div class="text-center">
+		<button type="button" class="btn btn-primary"
+			id="btn_marriagecertificate_search">
+			<spring:message code="lbl.search" />
+		</button>
+		<button type="reset" class="btn btn-danger">
+			<spring:message code="lbl.reset" />
+		</button>
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()"><spring:message code="lbl.close" /></a>
 	</div>
 </div>
 
-<br />
-<br />
 <div class="row display-hide report-section" id="table_container">
 	<div class="col-md-12 table-header text-left">The Certificate
 		Search result is</div>
@@ -185,6 +179,7 @@
 		</table>
 	</div>
 </div>
+
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>" />
 <link rel="stylesheet"
@@ -195,13 +190,9 @@
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/js/datatables.responsive.js' context='/egi'/>"></script>
 <script
 	src="<cdn:url value='/resources/global/js/jquery/plugins/datatables/dataTables.bootstrap.js' context='/egi'/>"></script>
-
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/css/bootstrap/bootstrap-datepicker.css' context='/egi'/>" />
 <script
 	src="<cdn:url value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
-<%-- <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
-<link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/dataTables.bootstrap.min.css' context='/egi'/>"> --%>
-
 <script
 	src="<cdn:url value='/resources/js/app/registration-certificate.js?rnd=${app_release_no}'/> "></script>

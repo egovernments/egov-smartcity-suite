@@ -52,85 +52,79 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
-<div class="row" id="page-content">
-	<div class="col-md-12">
-		<div class="panel" data-collapsed="0">
-			<div class="panel-body">
-				<form:form method="post" action=""
-					class="form-horizontal form-groups-bordered"
-					id="form-collectionreport" modelAttribute="registration">
-					<div class="panel panel-primary" data-collapsed="0">
-						<div class="panel-heading">
-							<div class="panel-title">
-								<strong><spring:message
-										code="lbl.hdr.monthlycollection" /></strong>
-							</div>
+
+<form:form method="post" action=""
+	class="form-horizontal form-groups-bordered" id="form-collectionreport"
+	modelAttribute="registration">
+	<div class="row">
+		<div class="col-md-12">
+			<div class="panel panel-primary" data-collapsed="0">
+				<div class="panel-heading">
+					<div class="panel-title"></div>
+				</div>
+				<div class="panel-body custom-form">
+					<div class="form-group">
+						<label class="col-sm-2 control-label"> <spring:message
+								code="lbl.month" />
+						</label>
+						<div class="col-sm-3 add-margin">
+							<form:input path="monthYear" id="datepicker" type="text"
+								class="form-control low-width datepicker"
+								data-date-end-date="0d" data-date-today-highlight="true"
+								placeholder="" autocomplete="off" />
+							<form:errors path="monthYear" cssClass="add-margin error-msg" />
 						</div>
+						<div class="col-sm-2 control-label">
+							<label>Year</label>
+						</div>
+						<div class="col-sm-3">
+							<form:select path="year" cssClass="form-control">
 
-						<div class="panel-body custom-form">
-							<div class="form-group">
-								<label class="col-sm-2 control-label"> <spring:message
-										code="lbl.month" />
-								</label>
-								<div class="col-sm-3 add-margin">
-									<form:input path="monthYear" id="datepicker" type="text"
-										class="form-control low-width datepicker"
-										data-date-end-date="0d" data-date-today-highlight="true"
-										placeholder="" autocomplete="off" />
-									<form:errors path="monthYear" cssClass="add-margin error-msg" />
-								</div>
-								<div class="col-sm-2 control-label">
-								<label>Year</label>
-							</div>
-							<div class="col-sm-3">
-								<form:select path="year" cssClass="form-control">
-										
-									<form:options items="${yearlist}" />
-								</form:select>
-							</div>
-							</div>
-							<div class="form-group">
-
-							<label for="field-1" class="col-sm-2 control-label"><spring:message
-										code="lbl.registrationunit" /> </label>
-								<div class="col-sm-3 add-margin">
-									<form:select path="marriageRegistrationUnit.id"
-										id="registrationunit" cssClass="form-control"
-										cssErrorClass="form-control error">
-										<form:option value="">
-											<spring:message code="lbl.default.option" />
-										</form:option>
-										<form:options items="${marriageRegistrationUnit}"
-											itemValue="id" itemLabel="name" />
-									</form:select>
-									<form:errors path="marriageRegistrationUnit.id"
-										cssClass="add-margin error-msg" />
-								</div>
-							</div>
-							<div class="row">
-								<div class="text-center">
-									<button type="button" class="btn btn-primary"
-										id="btn_monthyregistration_search">
-										<spring:message code="lbl.search" />
-									</button>
-									<button type="reset" class="btn btn-default">
-										<spring:message code="lbl.reset" />
-									</button>
-									<a href="javascript:void(0)" class="btn btn-default"
-										onclick="self.close()"><spring:message code="lbl.close" /></a>
-								</div>
-							</div>
+								<form:options items="${yearlist}" />
+							</form:select>
 						</div>
 					</div>
-				</form:form>
+					<div class="form-group">
+
+						<label for="field-1" class="col-sm-2 control-label"><spring:message
+								code="lbl.registrationunit" /> </label>
+						<div class="col-sm-3 add-margin">
+							<form:select path="marriageRegistrationUnit.id"
+								id="registrationunit" cssClass="form-control"
+								cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.default.option" />
+								</form:option>
+								<form:options items="${marriageRegistrationUnit}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="marriageRegistrationUnit.id"
+								cssClass="add-margin error-msg" />
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 	</div>
-</div>
-<br />
-<br />
+	<div class="row">
+		<div class="text-center">
+			<button type="button" class="btn btn-primary"
+				id="btn_monthyregistration_search">
+				<spring:message code="lbl.search" />
+			</button>
+			<button type="reset" class="btn btn-danger">
+				<spring:message code="lbl.reset" />
+			</button>
+			<a href="javascript:void(0)" class="btn btn-default"
+				onclick="self.close()"><spring:message code="lbl.close" /></a>
+		</div>
+	</div>
+</form:form>
+
+
 <div class="row display-hide report-section" id="regs_container">
-	<div class="col-md-12 table-header text-left">The Fund Collection Result is</div>
+	<div class="col-md-12 table-header text-left">The Fund Collection
+		Result is</div>
 	<br />
 	<div class="panel-heading">
 		<div class="displayCount panel-title"></div>
@@ -138,23 +132,22 @@
 	<div class="col-md-12 form-group report-table-container">
 		<table class="table table-bordered table-hover multiheadertbl"
 			id="registration_table">
-			<div class="col-md-12 table-header text-left">
-				<thead>
-					<tr>
-						<th>S.No</th>
-						<th>Month</th>
-						<th>Total Collection</th>
-					</tr>
-				</thead>
-				<tbody>
-				</tbody>
-				<tfoot id="report-footer">
+			<thead>
 				<tr>
-						<td></td>
-						<td>Total</td>
-						<td></td>			
-					</tr>
-				</tfoot>
+					<th>S.No</th>
+					<th>Month</th>
+					<th>Total Collection</th>
+				</tr>
+			</thead>
+			<tbody>
+			</tbody>
+			<tfoot id="report-footer">
+				<tr>
+					<td></td>
+					<td>Total</td>
+					<td></td>
+				</tr>
+			</tfoot>
 		</table>
 	</div>
 </div>

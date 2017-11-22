@@ -48,17 +48,29 @@
 
 package org.egov.mrs.web.controller.reports;
 
-import com.google.common.reflect.TypeToken;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
+import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.reporting.engine.ReportDisposition;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.DateUtils;
 import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.MarriageUtils;
@@ -88,6 +100,7 @@ import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationReportsJsonAdaptor;
 import org.egov.mrs.web.adaptor.ReligionWiseReportJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -99,23 +112,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.mrs.application.MarriageConstants.ADMINISTRATION_HIERARCHY_TYPE;
-import static org.egov.mrs.application.MarriageConstants.BOUNDARY_TYPE;
+import com.google.common.reflect.TypeToken;
+import com.google.gson.Gson;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
 
 /**
  * Controller to show report of Registration status
@@ -172,9 +172,6 @@ public class MarriageRegistrationReportsController {
     @Autowired
     private MarriageUtils marriageUtils;
 
-    @Autowired
-    private CityService cityService;
-
     private final Map<Integer, String> monthMap = DateUtils
             .getAllMonthsWithFullNames();
 
@@ -197,11 +194,8 @@ public class MarriageRegistrationReportsController {
             return boundaryService
                     .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
                             BOUNDARY_TYPE, ADMINISTRATION_HIERARCHY_TYPE);
-
     }
     
-    
-
     @ModelAttribute("marriageRegistrationUnit")
     public List<MarriageRegistrationUnit> getMarriageRegistrationUnitList() {
         return marriageRegistrationUnitService.getActiveRegistrationunit();
@@ -217,8 +211,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/applicantionsstatus-count", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getByApplicationsStatusCount(final Model model,
-            @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            @ModelAttribute final MarriageRegistration registration) {
         final ArrayList<ApplicationStatusResultForReport> result = new ArrayList<>();
 
         final List<String[]> applnsStatusCount = marriageRegistrationReportsService
@@ -307,8 +300,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String search(final Model model,
             @RequestParam(STATUS) final String status, @RequestParam("registrationUnit") final String registrationUnit,
-            @RequestParam(FROM_DATE) final Date fromDate, @RequestParam(TO_DATE) final Date toDate)
-            throws ParseException {
+            @RequestParam(FROM_DATE) final Date fromDate, @RequestParam(TO_DATE) final Date toDate) {
         final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
                 .searchRegistrationByStatusForReport(registrationUnit, status, fromDate, toDate);
         return new StringBuilder(DATA)
@@ -326,8 +318,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/age-wise", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchAgeWise(@RequestParam(YEAR) final int year,
-            final Model model, @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            final Model model, @ModelAttribute final MarriageRegistration registration) {
 
         final Map<String, Integer> husbandAgeRangesCount = getCountByRange(marriageRegistrationReportsService
                 .searchRegistrationOfHusbandAgeWise(year, registration));
@@ -406,8 +397,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/certificatedetails", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchApprovedMarriageRecords(final Model model,
-            @ModelAttribute final MarriageCertificate certificate)
-            throws ParseException {
+            @ModelAttribute final MarriageCertificate certificate) {
         final List<RegistrationCertificatesResultForReport> regCertificateResult = new ArrayList<>();
         final List<Object[]> searchResultList = marriageRegistrationReportsService
                 .searchMarriageRegistrationsForCertificateReport(certificate);
@@ -454,9 +444,7 @@ public class MarriageRegistrationReportsController {
     public String searchStatusAtTimeOfMarriage(
             @RequestParam(FROM_DATE) final Date fromDate, @RequestParam(TO_DATE) final Date toDate,
             @RequestParam("maritalStatus") final String maritalStatus, @RequestParam(APPLICANT_TYPE) final String applicantType,
-            final Model model,
-            @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            final Model model, @ModelAttribute final MarriageRegistration registration) {
         final List<MaritalStatusReport> maritalStatusReports = new ArrayList<>();
         if ("Husband".equals(applicantType))
             maritalStatusReports.addAll(putRecordsIntoHashMapByMonth(
@@ -531,19 +519,19 @@ public class MarriageRegistrationReportsController {
                     || "wife".equalsIgnoreCase(valuesMap.getValue()))
                 report.setApplicantType(applicantType);
 
-            if (MaritalStatus.Married.toString().equalsIgnoreCase(valuesMap.getKey())) {
+            if (MaritalStatus.Married.name().equalsIgnoreCase(valuesMap.getKey())) {
                 count = count + Integer.parseInt(valuesMap.getValue());
                 report.setMarried(valuesMap.getValue() != null ? valuesMap
                         .getValue() : "0");
-            } else if (MaritalStatus.Unmarried.toString().equalsIgnoreCase(valuesMap.getKey())) {
+            } else if (MaritalStatus.Unmarried.name().equalsIgnoreCase(valuesMap.getKey())) {
                 count = count + Integer.parseInt(valuesMap.getValue());
                 report.setUnmarried(valuesMap.getValue() != null ? valuesMap
                         .getValue() : "0");
-            } else if (MaritalStatus.Widower.toString().equalsIgnoreCase(valuesMap.getKey())) {
+            } else if (MaritalStatus.Widower.name().equalsIgnoreCase(valuesMap.getKey())) {
                 count = count + Integer.parseInt(valuesMap.getValue());
                 report.setWidower(valuesMap.getValue() != null ? valuesMap
                         .getValue() : "0");
-            } else if (MaritalStatus.Divorced.toString().equalsIgnoreCase(valuesMap.getKey())) {
+            } else if (MaritalStatus.Divorced.name().equalsIgnoreCase(valuesMap.getKey())) {
                 count = count + Integer.parseInt(valuesMap.getValue());
                 report.setDivorced(valuesMap.getValue() != null ? valuesMap
                         .getValue() : "0");
@@ -557,8 +545,7 @@ public class MarriageRegistrationReportsController {
             @RequestParam(value = REGUNIT, required = false) final String regunit,
             @RequestParam(APPLICANT_TYPE) final String applicantType,
             @RequestParam("maritalStatus") final String maritalStatus, @RequestParam(FROM_DATE) final Date fromDate,
-            @RequestParam(TO_DATE) final Date toDate, final Model model)
-            throws ParseException {
+            @RequestParam(TO_DATE) final Date toDate, final Model model) {
         final List<MarriageRegistration> marriageRegistrations = marriageRegistrationReportsService
                 .getByMaritalStatusDetails(registration, regunit, applicantType,
                         maritalStatus, fromDate, toDate);
@@ -577,8 +564,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/datewiseregistration", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String showDatewiseReportresult(final Model model,
-            @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            @ModelAttribute final MarriageRegistration registration) {
         final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
                 .searchRegistrationBydate(registration);
         return new StringBuilder(DATA)
@@ -598,8 +584,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/monthly-applications-count", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getMonthlyApplicationsCount(final Model model,
-            @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            @ModelAttribute final MarriageRegistration registration) {
         final ArrayList<HashMap<String, Object>> result = new ArrayList<>();
         final List<String[]> applnsCount = marriageRegistrationReportsService
                 .getCountOfApplications(registration);
@@ -682,8 +667,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/monthly-fund-collection", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getMonthlyFundCollection(@RequestParam(YEAR) final String year, final Model model,
-            @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            @ModelAttribute final MarriageRegistration registration) {
         final ArrayList<HashMap<String, String>> result = new ArrayList<>();
         final List<String[]> totalCollection = marriageRegistrationReportsService
                 .getMonthwiseFundCollected(registration, year);
@@ -737,8 +721,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/show-applications-details", method = RequestMethod.GET)
     public String showMonthlyApplicationDetails(final Model model,
             @RequestParam(KEY_MONTH) final String month, @RequestParam(REGUNIT) final String registrationUnit,
-            @RequestParam("applicationType") final String applicationType)
-            throws ParseException {
+            @RequestParam("applicationType") final String applicationType) {
         model.addAttribute(REGISTRATION, new MarriageRegistration());
         model.addAttribute(KEY_MONTH, month);
         model.addAttribute("registrationUnit", registrationUnit.replaceAll("[^a-zA-Z0-9]", " "));
@@ -751,8 +734,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String getMonthlyApplicationDetailsResult(final Model model, @ModelAttribute final MarriageRegistration registration,
             @RequestParam(KEY_MONTH) final String month, @RequestParam(REGUNIT) final String registrationUnit,
-            @RequestParam("applicationType") final String applicationType)
-            throws ParseException {
+            @RequestParam("applicationType") final String applicationType) {
         if ("registration".equalsIgnoreCase(applicationType)) {
             final List<MarriageRegistration> searchResultList = marriageRegistrationReportsService
                     .searchRegistrationBymonth(registration, month, registrationUnit);
@@ -780,8 +762,7 @@ public class MarriageRegistrationReportsController {
     @ResponseBody
     public String showActwiseReportresult(
             @RequestParam(YEAR) final int year,
-            @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            @ModelAttribute final MarriageRegistration registration) {
         final JsonObject response = new JsonObject();
         List<String[]> regcount;
         HashMap<String, Integer> registrationCount;
@@ -943,8 +924,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/ageing-report", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String agiengReport(@RequestParam(YEAR) final int year,
-            final Model model, @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            final Model model, @ModelAttribute final MarriageRegistration registration) {
 
         final Map<String, Integer> registrationcount = getCountByDays(marriageRegistrationReportsService
                 .searchRegistrationbyDays(year, registration));
@@ -988,8 +968,7 @@ public class MarriageRegistrationReportsController {
 
     @RequestMapping(value = "/ageing-report/view/{year}/{dayRange}", method = RequestMethod.GET)
     public String viewAgeingRegDetails(@PathVariable final int year,
-            @PathVariable final String dayRange, final Model model)
-            throws ParseException {
+            @PathVariable final String dayRange, final Model model) {
         model.addAttribute(YEAR, year);
         model.addAttribute("dayRange", dayRange);
         return "ageingreport-view";
@@ -998,8 +977,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/ageing-report/view/", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getAgeingRegDetails(@RequestParam(YEAR) final int year,
-            @RequestParam("dayRange") final String dayRange, final Model model)
-            throws ParseException {
+            @RequestParam("dayRange") final String dayRange, final Model model) {
         final List<RegistrationReportsSearchResult> reportsSearchResults = new ArrayList<>();
         final List<Object[]> marriageRegistrations = marriageRegistrationReportsService
                 .getAgeingRegDetails(dayRange, year);
@@ -1036,10 +1014,7 @@ public class MarriageRegistrationReportsController {
     @RequestMapping(value = "/religion-wise-registrations-report", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getAgeWiseStatutoryReportDetails(@ModelAttribute final SearchModel searchRequest,
-            final Model model) throws ParseException {
-        final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-        if (cityWebsite != null)
-            searchRequest.setUlbName(cityWebsite.getName());
+            final Model model) {
         final List<SearchResult> religionsSearchResults = marriageRegistrationReportsService
                 .getUlbWiseReligionDetails(searchRequest);
         return new StringBuilder(DATA)
@@ -1051,13 +1026,15 @@ public class MarriageRegistrationReportsController {
 
     @RequestMapping(value = "/print-religion-wise-details", method = RequestMethod.GET)
     @ResponseBody
-    public ResponseEntity<byte[]> printReligionWiseReport(final HttpServletRequest request,
-            @RequestParam(YEAR) final int year, final Model model, final HttpSession session) {
+    public ResponseEntity<InputStreamResource> printReligionWiseReport(@RequestParam(YEAR) final int year, final Model model) {
         final SearchModel searchRequest = new SearchModel();
         searchRequest.setYear(year);
         final List<SearchResult> religionsSearchResults = marriageRegistrationReportsService
                 .getUlbWiseReligionDetails(searchRequest);
-        return marriageRegistrationReportsService.generateReligionWiseReport(year, religionsSearchResults, session, request);
-
+        ReportOutput reportOutput = marriageRegistrationReportsService.generateReportOutputForReligionWiseReport(year,
+                religionsSearchResults);
+        reportOutput.setReportName("religion_report");
+        reportOutput.setReportDisposition(ReportDisposition.INLINE);
+        return reportAsResponseEntity(reportOutput);
     }
 }

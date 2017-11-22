@@ -51,7 +51,6 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
-
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
@@ -61,10 +60,10 @@
 
 			<div class="panel-body custom">
 				<table class="table table-bordered  multiheadertbl"
-					name="marriageregistrationagewise" id=marriageregistrationagewise>
+					id=marriageregistrationagewise>
 					<thead>
 						<tr>
-							<th>S.No</th>
+							<th><spring:message code="lbl.serial.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
 							<th><spring:message code="lbl.husband.name" /></th>
 							<th><spring:message code="lbl.marital.status" /></th>
@@ -73,7 +72,6 @@
 							<th><spring:message code="lbl.marital.status" /></th>
 							<th><spring:message code="lbl.age" /></th>
 							<th><spring:message code="lbl.date.of.marriage" /></th>
-							<%-- <th><spring:message code="lbl.act" /></th> --%>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.residence.address" /></th>
 							<th><spring:message code="lbl.Boundary" /></th>
@@ -85,7 +83,8 @@
 							<tr>
 								<td>${counter.index+1}<input type="hidden" name="applicant"
 									id="applicant" value="" /></td>
-								<td><c:out value="${reg.registrationNo!=null?reg.registrationNo:'N/A'}"></c:out></td>
+								<td><c:out
+										value="${reg.registrationNo!=null?reg.registrationNo:'N/A'}"></c:out></td>
 								<td><c:out value="${reg.husband.name.firstName}" /></td>
 								<td><c:out value="${reg.husband.maritalStatus}" /></td>
 								<td><c:out value="${reg.husband.ageInYearsAsOnMarriage}" /></td>
@@ -93,7 +92,6 @@
 								<td><c:out value="${reg.wife.maritalStatus}" /></td>
 								<td><c:out value="${reg.wife.ageInYearsAsOnMarriage}" /></td>
 								<td><c:out value="${reg.dateOfMarriage}" /></td>
-								<%-- <td><c:out value="${reg.marriageAct.name}" /></td> --%>
 								<td><c:out value="${reg.placeOfMarriage}" /></td>
 								<td><c:choose>
 										<c:when test="${applicantType == 'husband'}">
@@ -103,7 +101,7 @@
 											<c:out value="${reg.wife.contactInfo.residenceAddress}" />
 										</c:otherwise>
 									</c:choose></td>
-									<td><c:out value="${reg.zone.name}" /></td>
+								<td><c:out value="${reg.zone.name}" /></td>
 							</tr>
 						</c:forEach>
 					</tbody>

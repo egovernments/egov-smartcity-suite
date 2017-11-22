@@ -56,15 +56,14 @@
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title">Marriage Registration Results</div>
+				<div class="panel-title">Marriage Registration Application Details :-</div>
 			</div>
 
 			<div class="panel-body custom">
-				<table class="table table-bordered  multiheadertbl"
-					name="marriageregistrationactwise" id=marriageregistrationactwise>
+				<table class="table table-bordered  multiheadertbl" id=marriageregistrationactwise>
 					<thead>
 						<tr>
-							<th>S.No</th>
+							<th><spring:message code="lbl.serial.no" /></th>
 							<th><spring:message code="lbl.application.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
 							<th><spring:message code="lbl.husband.name" /></th>
