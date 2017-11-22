@@ -47,6 +47,20 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
@@ -55,6 +69,7 @@ import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ChangeOfUseService;
+import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -71,19 +86,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.commons.entity.Source.ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -102,6 +104,9 @@ public class ChangeOfUseController extends GenericConnectionController {
 
     @Autowired
     private ChangeOfUseService changeOfUseService;
+
+    @Autowired
+    private ConnectionDetailService connectionDetailService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails changeOfUse) {
@@ -182,7 +187,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
                     final String fieldError = "applicationDocs[" + i + "].documentDate";
                     resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (validApplicationDocument(applicationDocument))
+                } else if (connectionDetailService.validApplicationDocument(applicationDocument))
                     applicationDocs.add(applicationDocument);
                 i++;
             }

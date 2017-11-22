@@ -70,6 +70,7 @@ import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.AdditionalConnectionService;
+import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
 import org.egov.wtms.masters.entity.DocumentNames;
@@ -110,6 +111,9 @@ public class AdditionalConnectionController extends GenericConnectionController 
     private WaterTaxUtils waterTaxUtils;
     @Autowired
     private SecurityUtils securityUtils;
+
+    @Autowired
+    private ConnectionDetailService connectionDetailService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails addConnection) {
@@ -203,7 +207,7 @@ public class AdditionalConnectionController extends GenericConnectionController 
                 if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
                     final String fieldError = "applicationDocs[" + i + "].documentDate";
                     resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (validApplicationDocument(applicationDocument))
+                } else if (connectionDetailService.validApplicationDocument(applicationDocument))
                     applicationDocs.add(applicationDocument);
                 i++;
             }

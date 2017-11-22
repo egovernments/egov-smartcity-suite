@@ -47,6 +47,13 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
@@ -71,12 +78,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.stream.Collectors;
 
 public abstract class GenericConnectionController extends GenericWorkFlowController {
 
@@ -107,13 +108,9 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     @Autowired
     protected AssignmentService assignmentService;
-    
+
     @Autowired
     protected WaterSupplyService waterSupplyService;
-    
-    /*public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
-        return meterCostService.findAll();
-    }*/
 
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
@@ -123,27 +120,15 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
-    /*public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
-        return connectionCategoryService.getAllActiveConnectionCategory();
-    }
-
-    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
-        return usageTypeService.getActiveUsageTypes();
-    }
-
-    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
-        return pipeSizeService.getAllActivePipeSize();
-    }*/
-
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();
     }
 
-    @ModelAttribute("waterSupplyTypes") 
-    public List<WaterSupply> supplyTypes(){
+    @ModelAttribute("waterSupplyTypes")
+    public List<WaterSupply> supplyTypes() {
         return waterSupplyService.findAllWaterSupplyType();
     }
-    
+
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays
@@ -159,7 +144,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                         }
                     }).collect(Collectors.toSet());
         else
-            return null;
+            return Collections.emptySet();
     }
 
     protected void processAndStoreApplicationDocuments(final WaterConnectionDetails waterConnectionDetails) {
@@ -171,12 +156,4 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
     }
-
-    protected boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {
-        if (!applicationDocument.getDocumentNames().isRequired() && applicationDocument.getDocumentNumber() == null
-                && applicationDocument.getDocumentDate() == null)
-            return false;
-        return true;
-    }
-
 }
