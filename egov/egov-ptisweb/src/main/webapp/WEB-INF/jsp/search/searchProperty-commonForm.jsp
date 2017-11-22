@@ -63,7 +63,7 @@
 	<body>
 		<div class="formmainbox">
 			<s:if test="%{hasErrors()}">
-				<div align="left">
+				<div align="left" style="color:red;font-size:16px">
 					<s:actionerror />
 					<s:fielderror/>
 				</div>			

@@ -172,6 +172,7 @@ public class SearchPropertyAction extends SearchFormAction {
     protected static final String USER_DETAILS = "ownerDetails";
     protected static final String UPDATEMOBILE_FORM = "updateMobileNo";
     public static final String TARGET = "result";
+    private static final String INACTIVE_DEMAND_ERROR="error.msg.demandInactive";
     private Long zoneId;
     private Long wardId;
     private Long propertyTypeMasterId;
@@ -303,7 +304,7 @@ public class SearchPropertyAction extends SearchFormAction {
                 && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_DEMAND_BILL)
                 && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION))
             if (!isDemandActive) {
-                addActionError(getText("error.msg.demandInactive"));
+               addActionError(getText(INACTIVE_DEMAND_ERROR,propertyTaxCommonUtils.validationForInactiveProperty(basicProperty)));
                 return COMMON_FORM;
             } else if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)
@@ -383,8 +384,8 @@ public class SearchPropertyAction extends SearchFormAction {
                 || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)
                 || APPLICATION_TYPE_GRP.equals(applicationType) || APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
             if (!isDemandActive) {
-                addActionError(getText("error.msg.demandInactive"));
-                return COMMON_FORM;
+               addActionError(getText(INACTIVE_DEMAND_ERROR,propertyTaxCommonUtils.validationForInactiveProperty(basicProperty)));
+               return COMMON_FORM;
             }
 
         } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType)) {
@@ -443,7 +444,7 @@ public class SearchPropertyAction extends SearchFormAction {
         if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION))
             if (!isDemandActive) {
-                addActionError(getText("error.msg.demandInactive"));
+                addActionError(getText(INACTIVE_DEMAND_ERROR,propertyTaxCommonUtils.validationForInactiveProperty(basicProperty)));
                 return COMMON_FORM;
             } else
                 mode = "commonSearch";
