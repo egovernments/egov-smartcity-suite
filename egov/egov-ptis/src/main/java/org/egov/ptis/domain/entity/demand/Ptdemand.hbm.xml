@@ -60,5 +60,11 @@
 			class="org.egov.ptis.domain.entity.demand.PTDemandCalculations" 
 			property-ref="ptDemand"
 			cascade="all"/>
-   </joined-subclass>   
+   </joined-subclass> 
+   <query name="QUERY_DEMAND_DETAILS">
+    	<![CDATA[select dd from Ptdemand ptd left join ptd.egDemandDetails dd left join dd.egDemandReason dr left join ptd.egptProperty p left join p.basicProperty bp where bp = :basicProperty and bp.active = true and p.status = 'A' and dd.amount > 0 and ptd.egInstallmentMaster = :installment and dr.egInstallmentMaster.finYearRange <> :finYear]]>
+	</query>  
+	<query name="QUERY_DEMAND_DETAILS_FOR_CURR">
+    	<![CDATA[select dd from Ptdemand ptd left join ptd.egDemandDetails dd left join dd.egDemandReason dr left join ptd.egptProperty p left join p.basicProperty bp where bp = :basicProperty and bp.active = true and p.status = 'A' and dd.amount > 0 and ptd.egInstallmentMaster = :installment]]>
+	</query> 
   </hibernate-mapping>
