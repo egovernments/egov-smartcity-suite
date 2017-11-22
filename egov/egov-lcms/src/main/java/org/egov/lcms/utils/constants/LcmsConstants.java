@@ -51,7 +51,7 @@ import java.text.SimpleDateFormat;
 
 public class LcmsConstants {
 	public static final String MODULE_TYPE_LEGALCASE = "Legal Case";
-	public static final String FILESTORE_MODULECODE = "LCMS";
+	public static final String MODULE_NAME = "LCMS";
 	public static final String APPROVED_STATUS = "Approved";
 	public static final String CIVIL_COURT_KEY = "Civil Court";
 	public static final String EX_PARTE_KEY = "Ex-parte";
@@ -243,7 +243,6 @@ public class LcmsConstants {
         public static final String LEGALCASE_INTERIMSTAY_STATUS_DESC = "Interim Stay";
         public static final String LEGALCASE_STATUS_CREATED_DESC = "Created";
         
-        public static final String ROLE_EMP_PORTAL_ACCESS = "EMP_PORTAL_ACCESS";
-        public static final String ROLE_BUSINESS = "BUSINESS";
-        public static final String ROLE_TPSTANDINGCOUNSEL = "TP Standing Counsel";
+        public static final String STANDINGCOUNSEL_ROLES="STANDINGCOUNSEL_ROLES";
+      
 }

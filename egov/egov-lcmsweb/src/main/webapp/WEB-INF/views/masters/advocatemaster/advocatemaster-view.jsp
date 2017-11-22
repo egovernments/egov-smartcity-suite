@@ -147,19 +147,12 @@
 				</div>
 				<div class="row add-border">
 					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.advocateusername" />
+						<spring:message code="lbl.userName" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
 						${advocateMaster.advocateUser.username}
 					</div>
-					<div class="row add-border">
-					<div class="col-xs-3 add-margin">
-						<spring:message code="lbl.advocateusername" />
 					</div>
-					<div class="col-sm-3 add-margin view-content">
-						${advocateMaster.advocateUser.username}
-					</div>
-					</div></div>
 				<c:choose>
 					<c:when test="${advocateMaster.paymentMode == 'RTGS'}">
 						<div class="row add-border">

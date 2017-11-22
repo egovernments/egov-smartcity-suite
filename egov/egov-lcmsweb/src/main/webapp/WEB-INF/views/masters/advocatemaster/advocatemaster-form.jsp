@@ -197,7 +197,7 @@
 				<div class="form-group">
 					<c:if test="${mode == 'edit'}">
 					<label class="col-sm-2 control-label text-right"><spring:message
-							code="lbl.advocateusername" />:</label>
+							code="lbl.userName" />:</label>
 					<div class="col-sm-3 add-margin text-center">
 						<form:input class="form-control patternvalidation"
 						  id="username"

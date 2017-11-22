@@ -177,7 +177,7 @@ public class JudgmentImplService {
                     applicationDocument.setDocumentName(LcmsConstants.APPEAL_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
                             fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
-                                    files[i].getContentType(), LcmsConstants.FILESTORE_MODULECODE));
+                                    files[i].getContentType(), LcmsConstants.MODULE_NAME));
                     documentDetailsList.add(applicationDocument);
 
                 }

@@ -332,7 +332,7 @@ public class LegalCaseService {
                     applicationDocument.setDocumentName(LcmsConstants.PWR_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
                             fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
-                                    files[i].getContentType(), LcmsConstants.FILESTORE_MODULECODE));
+                                    files[i].getContentType(), LcmsConstants.MODULE_NAME));
                     documentDetailsList.add(applicationDocument);
 
                 }
@@ -357,7 +357,7 @@ public class LegalCaseService {
                     applicationDocument.setDocumentName(LcmsConstants.LEGALCASE_DOCUMENTNAME);
                     applicationDocument.setSupportDocs(
                             fileStoreService.store(files[i].getInputStream(), files[i].getOriginalFilename(),
-                                    files[i].getContentType(), LcmsConstants.FILESTORE_MODULECODE));
+                                    files[i].getContentType(), LcmsConstants.MODULE_NAME));
                     documentDetailsList.add(applicationDocument);
 
                 }

@@ -48,7 +48,9 @@
 package org.egov.lcms.masters.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -65,8 +67,11 @@ import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.BusinessUser;
+import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.RoleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.validation.exception.ValidationException;
@@ -105,6 +110,9 @@ public class AdvocateMasterService implements EntityTypeService {
     
     @Autowired
     private AdvocateUserNameGenerator advocateUserNameGenerator;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
     
     @Autowired
     public AdvocateMasterService(final AdvocateMasterRepository advocateMasterRepository) {
@@ -173,17 +181,24 @@ public class AdvocateMasterService implements EntityTypeService {
         businessUser.setEmailId(advocateMaster.getEmail() != null ? advocateMaster.getEmail() : "");
         businessUser.setName(advocateMaster.getName());
         businessUser.setSalutation(advocateMaster.getSalutation());
-        businessUser.setPassword(passwordEncoder.encode("demo"));
+        businessUser.setPassword(passwordEncoder.encode(advocateMaster.getMobileNumber()));
         businessUser.setPwdExpiryDate(DateTime.now().plusMonths(12).toDate());
         businessUser.setPan(advocateMaster.getPanNumber());
         businessUser.setActive(true);
         businessUser.setUsername(advocateUserNameGenerator.generateAdvocateUserName(advocateMaster));
-        businessUser.addRole(roleService.getRoleByName(LcmsConstants.ROLE_EMP_PORTAL_ACCESS));
-        businessUser.addRole(roleService.getRoleByName(LcmsConstants.ROLE_BUSINESS));
-        businessUser.addRole(roleService.getRoleByName(LcmsConstants.ROLE_TPSTANDINGCOUNSEL));
+        businessUser.setRoles(getRolesForStandingCounsel());
         return userService.createUser(businessUser);
     }
     
+    public Set<Role> getRolesForStandingCounsel() {
+        final Set<Role> roles = new HashSet<>();
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                LcmsConstants.MODULE_NAME, LcmsConstants.STANDINGCOUNSEL_ROLES);
+        for (final AppConfigValues appConfig : appConfigValueList)
+            roles.add(roleService.getRoleByName(appConfig.getValue()));
+        return roles;
+    }
+
     public List<AdvocateMaster> search(final AdvocateMaster advocateMaster) {
 
         final CriteriaBuilder cb = entityManager.getCriteriaBuilder();
