@@ -235,7 +235,7 @@ public class LicenseProcessWorkflowService {
                     null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState() != null ? workflowBean.getCurrentState() : state.getValue(), null, new Date(), workflowBean.getCurrentDesignation() != null ? workflowBean.getCurrentDesignation() : "%" + state.getOwnerPosition().getDeptDesig().getDesignation().getName() + "%");
         } else
             wfmatrix = this.licenseWorkflowService.getWfMatrix(tradeLicense.getStateType(), "ANY",
-                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null, new Date(), null);
+                    null, workflowBean.getAdditionaRule(), "Start", null, new Date(), null);
         return wfmatrix;
     }
 

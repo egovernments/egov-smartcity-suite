@@ -53,7 +53,6 @@ import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -81,14 +80,14 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Autowired
     private LicenseProcessWorkflowService licenseProcessWorkflowService;
     @Autowired
-    private LicenseUtils licenseUtils;
-    @Autowired
     private LicenseCitizenPortalService licenseCitizenPortalService;
 
+    @Transactional
     public License createWithMeseva(TradeLicense license, WorkflowBean wfBean) {
         return create(license, wfBean);
     }
 
+    @Transactional
     public License renewWithMeeseva(TradeLicense license, WorkflowBean wfBean) {
         return renew(license, wfBean);
     }
