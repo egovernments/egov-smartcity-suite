@@ -77,6 +77,10 @@ public class CouncilMeeting extends StateAware<Position> {
     @ManyToOne
     @JoinColumn(name = "committeeType")
     private CommitteeType committeeType;
+    
+    @ManyToOne
+    @JoinColumn(name = "meetingType")
+    private CouncilMeetingType meetingType;
 
     @Column(name = "meetingNumber")
     private String meetingNumber;
@@ -260,6 +264,14 @@ public class CouncilMeeting extends StateAware<Position> {
 
     public void setFiles(MultipartFile[] files) {
         this.files = files;
+    }
+
+    public CouncilMeetingType getMeetingType() {
+        return meetingType;
+    }
+
+    public void setMeetingType(CouncilMeetingType meetingType) {
+        this.meetingType = meetingType;
     }
 
 }

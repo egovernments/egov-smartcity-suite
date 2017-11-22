@@ -156,7 +156,7 @@ function callAjaxSearch() {
 				aaSorting: [],				
 				columns : [ { 
 					"data" : "meetingDate", "sClass" : "text-left"},{ 
-					"data" : "committeeType", "sClass" : "text-left",
+					"data" : "meetingType", "sClass" : "text-left",
 					"render": function ( data, type, row, meta ) {
 						return '<a target="_new" onclick="openPopup(\'/council/councilmeeting/attendance/search/view/'+ row.id +'\')">'+data+'</a>' 
 					  }

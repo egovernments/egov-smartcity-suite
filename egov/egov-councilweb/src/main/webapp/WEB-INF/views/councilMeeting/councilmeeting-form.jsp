@@ -55,14 +55,23 @@
 			<spring:message code="title.councilmeeting.create" />
 		</div>
 	</div>
+	<input type="hidden" name="committeeType" id="committypeid" value="${councilMeeting.committeeType.id}"/>
 	<div class="panel-body">
 		<div class="form-group">
 			<div class="col-sm-3 control-label text-right">
 				<spring:message code="lbl.meeting.type" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
-				${councilMeeting.committeeType.name}
-				<form:hidden path="committeeType" id="committypeid" />
+			<div class="col-sm-3 add-margin">
+				<form:select path="meetingType" id="meetingType"
+					cssClass="form-control" required="required"
+					cssErrorClass="form-control error">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${meetingType}" itemValue="id"
+				itemLabel="name"/>
+				</form:select>
+				<form:errors path="meetingType" cssClass="error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message
 					code="lbl.meeting.date" /> <span class="mandatory"></span> </label>

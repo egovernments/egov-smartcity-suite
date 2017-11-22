@@ -76,9 +76,11 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.CouncilMeetingType;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilMeetingService;
+import org.egov.council.service.CouncilMeetingTypeService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilReportService;
 import org.egov.council.service.CouncilSmsAndEmailService;
@@ -160,6 +162,8 @@ public class CouncilMomController {
     @Qualifier("fileStoreService")
     @Autowired
     private FileStoreService fileStoreService;
+    @Autowired
+    private CouncilMeetingTypeService councilMeetingTypeService;
 
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
@@ -170,7 +174,12 @@ public class CouncilMomController {
     public Map<String, String> getMeetingTimingList() {
         return MEETING_TIMINGS;
     }
-
+    
+    @ModelAttribute("meetingType")
+    public List<CouncilMeetingType> getmeetingTypeList() {
+        return councilMeetingTypeService.findAllActiveMeetingType();
+    }
+    
     @ModelAttribute("resolutionStatus")
     public List<EgwStatus> getResolutionStatusList() {
         return egwStatusHibernateDAO.getStatusByModule(COUNCIL_RESOLUTION);

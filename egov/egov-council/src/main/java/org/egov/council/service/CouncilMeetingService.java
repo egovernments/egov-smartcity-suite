@@ -78,6 +78,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -169,7 +170,7 @@ public class CouncilMeetingService {
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingToCreateMOM(CouncilMeeting councilMeeting) {
         return buildSearchCriteria(councilMeeting)
-                .add(Restrictions.in(STATUS_DOT_CODE, new String[] { MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED})).list();
+                .add(Restrictions.in(STATUS_DOT_CODE, MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED)).list();
     }
 
     @SuppressWarnings("unchecked")
@@ -179,13 +180,13 @@ public class CouncilMeetingService {
     
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingForEdit(CouncilMeeting councilMeeting) {
-        return buildSearchCriteria(councilMeeting).add(Restrictions.in(STATUS_DOT_CODE, new String[] { MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED})).list();
+        return buildSearchCriteria(councilMeeting).add(Restrictions.in(STATUS_DOT_CODE, MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED)).list();
     }
     
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingWithMomCreatedStatus(CouncilMeeting councilMeeting) {
         return buildSearchCriteria(councilMeeting)
-                .add(Restrictions.in(STATUS_DOT_CODE, new String[] { MEETINGUSEDINRMOM})).list();
+                .add(Restrictions.in(STATUS_DOT_CODE, MEETINGUSEDINRMOM)).list();
     }
 
     public void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
@@ -205,6 +206,8 @@ public class CouncilMeetingService {
             criteria.add(Restrictions.between("meetingDate", councilMeeting.getFromDate(),
                     DateUtils.addDays(councilMeeting.getToDate(), 1)));
         }
+        if(councilMeeting.getMeetingType()!=null)
+            criteria.add(Restrictions.eq("meetingType", councilMeeting.getMeetingType()));
         return criteria;
     }
     @Transactional
@@ -252,7 +255,7 @@ public class CouncilMeetingService {
                 }
             }).collect(Collectors.toSet());
         else
-            return null;
+            return Collections.emptySet();
 }
     
 }

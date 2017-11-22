@@ -66,7 +66,7 @@
 						<spring:message code="lbl.meeting.type" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilMeeting.committeeType.name}</div>
+						${councilMeeting.meetingType.name}</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.meeting.number" />
 					</div>

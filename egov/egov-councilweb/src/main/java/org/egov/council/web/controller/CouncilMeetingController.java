@@ -74,15 +74,16 @@ import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.CouncilMeetingType;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilCommitteeMemberService;
 import org.egov.council.service.CouncilMeetingService;
+import org.egov.council.service.CouncilMeetingTypeService;
 import org.egov.council.service.CouncilReportService;
 import org.egov.council.service.CouncilSmsAndEmailService;
-import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
 import org.egov.council.web.adaptor.MeetingAttendanceJsonAdaptor;
 import org.egov.infra.admin.master.entity.Department;
@@ -158,6 +159,8 @@ public class CouncilMeetingController {
     private FileStoreService fileStoreService;
     @Autowired
     private CouncilCommitteeMemberService committeeMemberService;
+    @Autowired
+    private CouncilMeetingTypeService councilMeetingTypeService;
 
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
@@ -174,6 +177,11 @@ public class CouncilMeetingController {
         return departmentService.getAllDepartments();
     }
 
+    @ModelAttribute("meetingType")
+    public List<CouncilMeetingType> getmeetingTypeList() {
+        return councilMeetingTypeService.findAllActiveMeetingType();
+    }
+    
     @RequestMapping(value = "/new/{id}", method = RequestMethod.GET)
     public String newForm(@ModelAttribute final CouncilMeeting councilMeeting, @PathVariable("id") final Long id,
                           final Model model) {
@@ -512,7 +520,7 @@ public class CouncilMeetingController {
 
     private ResponseEntity<InputStreamResource> fetchMeetingResolutionByFileStoreId(CouncilMeeting councilMeeting) {
         return fileStoreUtils.fileAsResponseEntity(councilMeeting.getFilestore().getFileStoreId(),
-                CouncilConstants.MODULE_NAME, true);
+                MODULE_NAME, true);
     }
 
     @RequestMapping(value = "/attendance/ajaxsearch/{id}", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)

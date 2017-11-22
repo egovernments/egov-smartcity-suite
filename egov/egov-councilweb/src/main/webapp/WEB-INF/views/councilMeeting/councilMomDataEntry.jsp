@@ -63,13 +63,28 @@
 		</div>
 		<div class="panel-body">
 			<div class="form-group">
-				<label class="col-md-2 col-sm-2 control-label text-right"><spring:message
+				<label class="col-md-2 col-sm-3 control-label text-right"><spring:message
 						code="lbl.agendaNumber" /></label>
-				<div class="col-md-2 col-sm-2">
-					<form:input path="agenda.agendaNumber" id="meetingDate" type="text"
+				<div class="col-md-2 col-sm-3">
+					<form:input path="agenda.agendaNumber" id="agendaNumber" type="text"
 						class="form-control text-left patternvalidation" maxlength="5"
 						placeholder="" autocomplete="off" />
 					<form:errors path="agenda.agendaNumber" cssClass="error-msg" />
+				</div>
+				
+				<label class="col-sm-2 control-label text-right"><spring:message
+						code="lbl.committeetype" /></label>
+				<div class="col-sm-3 add-margin">
+					<form:select path="agenda.committeeType" id="committeeType"
+						required="required" cssClass="form-control"
+						cssErrorClass="form-control error">
+						<form:option value="">
+							<spring:message code="lbl.select" />
+						</form:option>
+						<form:options items="${committeeType}" itemValue="id"
+							itemLabel="name" />
+					</form:select>
+					<form:errors path="agenda.committeeType" cssClass="error-msg" />
 				</div>
 			</div>
 			<div>

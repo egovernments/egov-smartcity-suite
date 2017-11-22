@@ -65,6 +65,7 @@ import java.util.List;
 import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
+import static org.egov.infra.utils.StringUtils.emptyIfNull;
 
 public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting> {
     @Override
@@ -75,35 +76,14 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
             int noOfMembersAbsent = 0;
             int totCommitteMemCount = 0;
             if (councilMeeting != null) {
-            if (councilMeeting.getMeetingNumber() != null)
-                jsonObject.addProperty("meetingNumber", councilMeeting.getMeetingNumber());
-            else
-                jsonObject.addProperty("meetingNumber", StringUtils.EMPTY);
-            if (councilMeeting.getCommitteeType() != null)
-                jsonObject.addProperty("committeeType", councilMeeting.getCommitteeType().getName());
-            else
-                jsonObject.addProperty("committeeType", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingDate() != null)
-                jsonObject.addProperty("meetingDate", councilMeeting.getMeetingDate().toString());
-            else
-                jsonObject.addProperty("meetingDate", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingDate() != null)
-                jsonObject.addProperty("meetingLocation", councilMeeting.getMeetingLocation());
-            else
-                jsonObject.addProperty("meetingLocation", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingTime() != null)
-                jsonObject.addProperty("meetingTime", councilMeeting.getMeetingTime());
-            else
-                jsonObject.addProperty("meetingTime", StringUtils.EMPTY);
-            
-            if (councilMeeting.getStatus() != null)
-                jsonObject.addProperty("meetingStatus", councilMeeting.getStatus().getCode());
-            else
-                jsonObject.addProperty("meetingStatus", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingDate() != null)
-                jsonObject.addProperty("meetingCreatedDate", councilMeeting.getCreatedDate().toString());
-            else
-                jsonObject.addProperty("meetingCreatedDate", StringUtils.EMPTY);
+                jsonObject.addProperty("meetingNumber", emptyIfNull(councilMeeting.getMeetingNumber()));
+                jsonObject.addProperty("meetingType", emptyIfNull(councilMeeting.getMeetingType().getName()));
+                jsonObject.addProperty("meetingDate", emptyIfNull(councilMeeting.getMeetingDate().toString()));
+                jsonObject.addProperty("meetingLocation", emptyIfNull(councilMeeting.getMeetingLocation()));
+                jsonObject.addProperty("meetingTime", emptyIfNull(councilMeeting.getMeetingTime()));
+                jsonObject.addProperty("meetingStatus", emptyIfNull(councilMeeting.getStatus().getCode()));
+                jsonObject.addProperty("meetingCreatedDate", emptyIfNull(councilMeeting.getCreatedDate().toString()));
+       
             List<Long> committeeMembersId=new ArrayList<>();
             if (ATTENDANCEFINALIZED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
                     || MOM_FINALISED.equalsIgnoreCase(councilMeeting.getStatus().getCode())

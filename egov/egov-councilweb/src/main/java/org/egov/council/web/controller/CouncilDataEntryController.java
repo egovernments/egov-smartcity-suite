@@ -51,11 +51,13 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.CouncilMeetingType;
 import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilMeetingService;
+import org.egov.council.service.CouncilMeetingTypeService;
 import org.egov.council.service.CouncilPreambleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -99,6 +101,8 @@ public class CouncilDataEntryController {
 
     @Autowired
     private CouncilMeetingService councilMeetingService;
+    @Autowired
+    private CouncilMeetingTypeService councilMeetingTypeService;
 
     @Autowired
     private CouncilPreambleService councilPreambleService;
@@ -111,6 +115,11 @@ public class CouncilDataEntryController {
     @ModelAttribute("meetingTimingMap")
     public Map<String, String> getMeetingTimingList() {
         return MEETING_TIMINGS;
+    }
+    
+    @ModelAttribute("meetingType")
+    public List<CouncilMeetingType> getMeetingTypeList() {
+        return councilMeetingTypeService.findAllActiveMeetingType();
     }
 
     @RequestMapping(value = "/createdataentry", method = RequestMethod.GET)
@@ -136,8 +145,8 @@ public class CouncilDataEntryController {
             meetingMoMs.getPreamble().setType(PreambleType.GENERAL);
             meetingMoMs.setMeeting(meetingMOM.getMeeting());
             meetingMoMs.getMeeting().setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
+            meetingMoMs.getMeeting().setCommitteeType(meetingMOM.getAgenda().getCommitteeType());
             meetingMoMs.setAgenda(meetingMOM.getAgenda());
-            meetingMoMs.getAgenda().setCommitteeType(meetingMOM.getMeeting().getCommitteeType());
             meetingMoMs.getAgenda()
                     .setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(AGENDA_MODULENAME, AGENDAUSEDINMEETING));
             meetingMoMs.setLegacy(true);

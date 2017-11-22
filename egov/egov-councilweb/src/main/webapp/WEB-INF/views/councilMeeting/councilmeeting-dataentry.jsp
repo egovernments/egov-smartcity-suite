@@ -60,16 +60,16 @@
 			<label class="col-sm-3 control-label text-right"><spring:message
 				code="lbl.meeting.type" /> <span class="mandatory"></span> </label>
 		<div class="col-sm-3 add-margin">
-			<form:select path="meeting.committeeType" id="committeeType"
+			<form:select path="meeting.meetingType" id="meetingType"
 				required="required" cssClass="form-control"
 				cssErrorClass="form-control error">
 				<form:option value="">
 					<spring:message code="lbl.select" />
 				</form:option>
-				<form:options items="${committeeType}" itemValue="id"
+				<form:options items="${meetingType}" itemValue="id"
 					itemLabel="name" />
 			</form:select>
-			<form:errors path="meeting.committeeType" cssClass="error-msg" />
+			<form:errors path="meeting.meetingType" cssClass="error-msg" />
 		</div>
 			<label class="col-sm-2 control-label text-right"><spring:message
 					code="lbl.meeting.date" /> <span class="mandatory"></span> </label>
