@@ -72,6 +72,7 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
 import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
@@ -100,7 +101,6 @@ import javax.persistence.PersistenceContext;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -774,7 +774,6 @@ public class PropertyTaxCommonUtils {
     public List<String> validationForInactiveProperty(BasicProperty basicProperty) {
         String noOfDays;
         String reason = null;
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         List<String> list = new ArrayList<>();
         if (isCorporation())
             noOfDays = "30";
@@ -782,13 +781,12 @@ public class PropertyTaxCommonUtils {
             noOfDays = "15";
         list.add(noOfDays);
         if (basicProperty.getProperty().getStatus() == 'I') {
-            basicProperty.getProperty().getPropertyModifyReason();
             if ("CREATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
                 reason = "New Assessment";
             else if ("ADD_OR_ALTER".equals(basicProperty.getProperty().getPropertyModifyReason()))
                 reason = "Addition/Alteration";
             list.add(reason);
-            list.add(formatter.format(basicProperty.getModifiedDate()));
+            list.add(DateUtils.getFormattedDate(basicProperty.getModifiedDate(), "dd/MM/yyyy"));
         }
         return list;
     }
