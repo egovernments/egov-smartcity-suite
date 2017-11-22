@@ -57,7 +57,7 @@
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<spring:message code="title.councilmeeting" />
+					<spring:message code="title.councilmeeting.details" />
 				</div>
 			</div>
 			<div class="panel-body custom">

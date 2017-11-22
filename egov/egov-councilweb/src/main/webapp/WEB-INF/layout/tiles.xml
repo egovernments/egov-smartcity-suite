@@ -246,7 +246,7 @@
     </definition>
 
     <definition name="councilmeetingAgenda-search" extends="base_layout">
-        <put-attribute name="page-title" value="title.agenda.search" cascade="true"/>
+        <put-attribute name="page-title" value="title.meeting.agenda.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-agendaSearch.jsp"/>
     </definition>
 
@@ -256,7 +256,7 @@
     </definition>
 
     <definition name="councilmeeting-new" extends="base_layout">
-        <put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+        <put-attribute name="page-title" value="title.councilmeeting.create" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-new.jsp"/>
     </definition>
     <definition name="councilmeeting-result" extends="base_layout">
@@ -269,7 +269,7 @@
     </definition>
 
     <definition name="councilmeeting-search" extends="base_layout">
-        <put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+        <put-attribute name="page-title" value="title.councilmeeting.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilMeeting/councilmeeting-search.jsp"/>
     </definition>
 
@@ -279,7 +279,7 @@
     </definition>
 
     <definition name="councilmomMeeting-search" extends="base_layout">
-        <put-attribute name="page-title" value="title.agenda.result" cascade="true"/>
+        <put-attribute name="page-title" value="title.meeting.mom.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilmom/councilmom-meetingSearch.jsp"/>
     </definition>
 
@@ -302,7 +302,7 @@
         <put-attribute name="body" value="/WEB-INF/views/councilmom/councilmom-view.jsp"/>
     </definition>
     <definition name="councilmom-search" extends="base_layout">
-        <put-attribute name="page-title" value="title.councilmeeting" cascade="true"/>
+        <put-attribute name="page-title" value="title.mom.update.search" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/councilmom/councilmom-search.jsp"/>
     </definition>
     <definition name="councilmeeting-attendsearch" extends="base_layout">

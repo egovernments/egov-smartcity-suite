@@ -203,11 +203,11 @@
 
 <div class="row text-center">
 	<div class="add-margin">
-		<a href="javascript:void(0)" class="btn btn-default"
-			onclick="self.close()">Close</a>
 		<button type="button" id="printAgenda" value="Print Agenda"
 			onclick="location.href='/council/councilmeeting/generateagenda/'+${councilMeeting.id};"
 			class='btn btn-primary'>Print</button>
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()">Close</a>
 	</div>
 </div>
 

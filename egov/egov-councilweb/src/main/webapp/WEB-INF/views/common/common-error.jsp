@@ -63,15 +63,17 @@
                 			</c:if>
 				</div>
 			</div>
-			
-				<div class="row text-center">
-						<div class="row">
-							<div class="text-center">
-								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
-							</div>
-						</div>
-					</div>
-	
 		</div>
 	</div>
-</div> 
+</div>
+
+<div class="row text-center">
+	<div class="row">
+		<div class="text-center">
+			<button type="button" class="btn btn-default" data-dismiss="modal"
+				onclick="self.close()">
+				<spring:message code="lbl.close" />
+			</button>
+		</div>
+	</div>
+</div>

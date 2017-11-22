@@ -54,7 +54,7 @@
 			<div class="col-md-12">
 				<div class="panel panel-primary" data-collapsed="0">
 					<div class="panel-heading">
-						<div class="panel-title">Search Agenda</div>
+						<div class="panel-title"></div>
 					</div>
 					<div class="panel-body">
 						<div class="form-group">

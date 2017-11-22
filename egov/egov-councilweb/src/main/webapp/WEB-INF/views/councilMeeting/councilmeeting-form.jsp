@@ -52,7 +52,7 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="title.councilmeeting.create" />
+			<spring:message code="title.councilmeeting.details" />
 		</div>
 	</div>
 	<input type="hidden" name="committeeType" id="committypeid" value="${councilMeeting.committeeType.id}"/>
@@ -111,7 +111,6 @@
 		<form:hidden path="id" id="id" value="${councilMeeting.id}" />
 		<form:hidden path="meetingNumber" id="meetingNumber"
 			value="${councilMeeting.meetingNumber}" />
-
 	</div>
 </div>
 

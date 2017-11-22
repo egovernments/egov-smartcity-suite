@@ -48,57 +48,49 @@
 
 $(document).ready(function() {
 	
-	
-	$(".councilcommitmem").change(function(){  
+	$(".councilcommitmem").change(function() {  
     	var $hiddenName=$(this).data('change-to');
-    	if($(this).is(':checked')){
+    	if($(this).is(':checked')) {
     		$('input[name="'+$hiddenName+'"]').val(true);
-    	}else{
+    	} else {
     		$('input[name="'+$hiddenName+'"]').val(false);
     	}
     });
 
-	$("#committeechk").change(function(){  
-		if($(this).is(':checked')){
+	$("#committeechk").change(function() {  
+		if($(this).is(':checked')) {
 			$('#councilcommittee')
 	        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
 	        .prop('checked', true);
 			setHiddenValue(true);
-		}else{
+		} else {
 			$('#councilcommittee')
 	        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
 	        .prop('checked', false);
 			setHiddenValue(false);
 		}
 	});
-	
 
-	$("#btnsubmit").click(function(e){ 
-		
-			var chkbxLength = $('.councilcommitmem:checked').length;
-			if(chkbxLength <= 0){
-				bootbox.alert('Please enter attendance details atleast for one member');
-				return false;
-			}
-			return true;
+	$("#btnsubmit").click(function(e) { 
+		var chkbxLength = $('.councilcommitmem:checked').length;
+		if(chkbxLength <= 0) {
+			bootbox.alert('Please enter attendance details atleast for one member');
+			return false;
+		}
+		return true;
 	});  
-	
 
-	jQuery('#btnsearch').click(function(e) {
-			
-			callAjaxSearch();
-		});
-
+	$('#btnsearch').click(function(e) {
+		callAjaxSearch();
+	});
 });
 
 function setHiddenValue(flag)
 {
-	
 	$('.councilcommitmem').each(function(){
 		var $hiddenName=$(this).data('change-to');
 		$('input[name="'+$hiddenName+'"]').val(flag);
 	});
-	
 }
 
 function getFormData($form){
@@ -199,30 +191,28 @@ var isSubmit=false;
 $('#finalizeAttendanceBtn').click(
        function(e) {
 
-                   if(isSubmit)
-                   {
+                   if(isSubmit) {
                      return true;
                    }
 
                    if ($('form').valid()) {
                        var chkbxLength = $('.councilcommitmem:checked').length;
-                       if(chkbxLength <= 0){
+                       if(chkbxLength <= 0) {
                            bootbox.alert('Please enter attendance details');
-                       }else{
-                           bootbox
-                           .confirm({
-                               message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
-                               buttons : {
-                                   'cancel' : {
-                                       label : 'No',
-                                       className : 'btn-danger pull-right'
-                                   },
-                                   'confirm' : {
-                                       label : 'Yes',
-                                       className : 'btn-danger pull-right'
-                                   }
-                               },
-                               callback : function(result) {
+                       } else {
+                           bootbox.confirm({
+                        	    message: "Information entered in this screen will not be modified once submitted,Please confirm yes to save",
+                        	    buttons: {
+                        	        confirm: {
+                        	            label: 'Yes',
+                        	            className: 'btn-primary'
+                        	        },
+                        	        cancel: {
+                        	            label: 'No',
+                        	            className: 'btn-danger'
+                        	        }
+                        	    },
+                        	    callback: function(result) {
                                    if (result) {
                                         var action = '/council/councilmeeting/attendance/finalizeattendance';
                                             $('#councilMeetingform').attr('method', 'post');
@@ -233,11 +223,9 @@ $('#finalizeAttendanceBtn').click(
                                        e.preventDefault();
                                    }
                                }
-                           });
+                        	});
                        }
            }
-
            return false;
-
 });
 

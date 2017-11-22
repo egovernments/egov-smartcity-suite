@@ -262,20 +262,19 @@ $('#buttonFinalSubmit')
 					// generating final resolution pdf all fields are mandatory
 					$('.addorremoverequired').attr("required", "required");
 					if ($('form').valid()) {
-							bootbox
-							.confirm({
-								message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
-								buttons : {
-									'cancel' : {
-										label : 'No',
-										className : 'btn-danger pull-right'
-									},
-									'confirm' : {
-										label : 'Yes',
-										className : 'btn-danger pull-right'
-									}
-								},
-								callback : function(result) {
+							bootbox.confirm({
+							    message: "Information entered in this screen will not be modified once submitted,Please confirm yes to save",
+							    buttons: {
+							        confirm: {
+							            label: 'Yes',
+							            className: 'btn-primary'
+							        },
+							        cancel: {
+							            label: 'No',
+							            className: 'btn-danger'
+							        }
+							    },
+							    callback: function(result) {
 									if (result) {
 										$('.loader-class').modal('show', {
 											backdrop : 'static'
