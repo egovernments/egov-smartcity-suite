@@ -2850,30 +2850,37 @@ public class PropertyExternalService {
 		return isMappingExists;
 	}
 
-	public AssessmentDetails getDuesForProperty(final HttpServletRequest request, String assessmentNo, String oldAssessmentNo){
-		AssessmentDetails assessmentDetails = new AssessmentDetails();
-		BasicProperty basicProperty = fetchBasicProperty(assessmentNo, oldAssessmentNo);
-		if(basicProperty != null){
-			assessmentDetails.setPropertyID(basicProperty.getUpicNo());
-			assessmentDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
-			assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
-			assessmentDetails.setOwners(basicProperty.getFullOwnerName());
-			Map<String, BigDecimal> dmdCollMap = ptDemandDAO.getDemandIncludingPenaltyCollMap(basicProperty.getProperty());
-			if(!dmdCollMap.isEmpty()){
-				BigDecimal totalDemand = dmdCollMap.get(ARR_DMD_STR).add(dmdCollMap.get(CURR_FIRSTHALF_DMD_STR)).add(dmdCollMap.get(CURR_SECONDHALF_DMD_STR));
-				BigDecimal totalColl = dmdCollMap.get(ARR_COLL_STR).add(dmdCollMap.get(CURR_FIRSTHALF_COLL_STR)).add(dmdCollMap.get(CURR_SECONDHALF_COLL_STR));
-				assessmentDetails.setPropertyDue(totalDemand.subtract(totalColl));
-			}
-			String restURL = format(PropertyTaxConstants.WTMS_TAXDUE_RESTURL,
-					WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
-			Map<String, Object> taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
-			if(!taxDetails.isEmpty()){
-				assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
-				assessmentDetails.setConnectionCount(Double.valueOf(taxDetails.get("connectionCount").toString()).intValue());
-			}
-		}
-		return assessmentDetails;
-	}
+    public AssessmentDetails getDuesForProperty(final HttpServletRequest request, String assessmentNo, String oldAssessmentNo) {
+        AssessmentDetails assessmentDetails = new AssessmentDetails();
+        BasicProperty basicProperty = fetchBasicProperty(assessmentNo, oldAssessmentNo);
+        if (basicProperty != null) {
+            assessmentDetails.setPropertyID(basicProperty.getUpicNo());
+            assessmentDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
+            assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
+            assessmentDetails.setOwners(basicProperty.getFullOwnerName());
+            Map<String, BigDecimal> dmdCollMap = ptDemandDAO.getDemandIncludingPenaltyCollMap(basicProperty.getProperty());
+            if (!dmdCollMap.isEmpty()) {
+                BigDecimal totalDemand = dmdCollMap.get(ARR_DMD_STR).add(dmdCollMap.get(CURR_FIRSTHALF_DMD_STR))
+                        .add(dmdCollMap.get(CURR_SECONDHALF_DMD_STR));
+                BigDecimal totalColl = dmdCollMap.get(ARR_COLL_STR).add(dmdCollMap.get(CURR_FIRSTHALF_COLL_STR))
+                        .add(dmdCollMap.get(CURR_SECONDHALF_COLL_STR));
+                assessmentDetails.setPropertyDue(totalDemand.subtract(totalColl));
+            }
+            String restURL = format(PropertyTaxConstants.WTMS_TAXDUE_RESTURL,
+                    WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
+            Map<String, Object> taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
+            if (!taxDetails.isEmpty()) {
+                assessmentDetails.setWaterTaxDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
+                assessmentDetails.setConnectionCount(Double.valueOf(taxDetails.get("connectionCount").toString()).intValue());
+            }
+            restURL = format(PropertyTaxConstants.STMS_TAXDUE_RESTURL,
+                    WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
+            taxDetails = simpleRestClient.getRESTResponseAsMap(restURL);
+            if (!taxDetails.isEmpty())
+                assessmentDetails.setSewerageDue(BigDecimal.valueOf((double) taxDetails.get("totalTaxDue")));
+        }
+        return assessmentDetails;
+    }
 	
     public TaxCalculatorResponse calculateTaxes(TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
         TaxCalculatorResponse taxCalculatorResponse = new TaxCalculatorResponse();
