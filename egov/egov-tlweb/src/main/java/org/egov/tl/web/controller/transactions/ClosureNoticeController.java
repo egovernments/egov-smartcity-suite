@@ -45,26 +45,56 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
+package org.egov.tl.web.controller.transactions;
 
-package org.egov.tl.repository;
+import org.egov.infra.reporting.engine.ReportOutput;
+import org.egov.tl.service.TradeLicenseService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
+import org.springframework.http.CacheControl;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import org.egov.tl.entity.License;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
-import org.springframework.stereotype.Repository;
+import java.io.ByteArrayInputStream;
 
-import java.util.Date;
-import java.util.List;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
+import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_ATTACH;
+import static org.egov.infra.utils.DateUtils.currentDateToFileNameFormat;
+import static org.egov.infra.utils.StringUtils.append;
 
-@Repository
-public interface SearchTradeRepository extends JpaRepository<License, Long>, JpaSpecificationExecutor<License> {
 
-    @Query("select license from License license where license.licenseDemand in (select deatils.egDemand  from " +
-            "EgDemandDetails deatils where deatils.egDemandReason in (select reason.id from EgDemandReason reason where " +
-            "reason.egInstallmentMaster<= (select installment.id from Installment installment where installment.fromDate < :currentDate " +
-            "and installment.toDate >= :currentDate and  installment.module=(select egmod.id from Module egmod where egmod.name='Trade License')))" +
-            "and (deatils.amount - deatils.amtCollected) >0) and license.isActive=true")
-    List<License> findLicenseClosureByCurrentInstallmentYear(@Param("currentDate") Date currentDate);
+@Controller
+@RequestMapping(value = "/license/generate/closure-notice")
+public class ClosureNoticeController {
+
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
+
+    @GetMapping
+    public String searchClosureNotice() {
+        return "search-closure-notice";
+    }
+
+    @GetMapping("/")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> closureNotice(@RequestParam String reportFormat) {
+
+        ReportOutput reportOutput = tradeLicenseService.generateClosureNotice(reportFormat);
+        if (reportFormat.equalsIgnoreCase("print"))
+            return reportAsResponseEntity(reportOutput);
+        return ResponseEntity
+                .ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .cacheControl(CacheControl.noCache())
+                .contentLength(reportOutput.getReportOutputData().length)
+                .header(CONTENT_DISPOSITION, String.format(CONTENT_DISPOSITION_ATTACH,
+                        append("tl_closure_notice_", currentDateToFileNameFormat()) + ".zip"))
+                .body(new InputStreamResource(new ByteArrayInputStream(reportOutput.getReportOutputData())));
+    }
 }

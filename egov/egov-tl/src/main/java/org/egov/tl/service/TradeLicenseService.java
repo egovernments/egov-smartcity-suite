@@ -113,12 +113,16 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.infra.utils.FileUtils.addFilesToZip;
+import static org.egov.infra.utils.FileUtils.byteArrayToFile;
+import static org.egov.infra.utils.FileUtils.toByteArray;
 import static org.egov.infra.utils.StringUtils.append;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
@@ -545,6 +549,28 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportRequest.setReportFormat(ReportFormat.PDF);
         ReportOutput reportOutput = reportService.createReport(reportRequest);
         reportOutput.setReportName(append("license_ack_", license.getApplicationNumber()));
+        return reportOutput;
+    }
+
+    @ReadOnly
+    public ReportOutput generateClosureNotice(String reportFormat) {
+        ReportOutput reportOutput = new ReportOutput();
+        Map<String, Object> reportParams = new HashMap<>();
+        List<License> licenses = searchTradeRepository.findLicenseClosureByCurrentInstallmentYear(new Date());
+        if (licenses.isEmpty())
+            reportOutput.setReportOutputData("No Data".getBytes());
+        else {
+            reportParams.put("License", licenses);
+            reportParams.put("corp", cityService.getCityGrade());
+            reportParams.put("currentDate", currentDateToDefaultDateFormat());
+            reportParams.put("ulb", getCityName());
+            reportParams.put("municipality", cityService.getMunicipalityName());
+            reportOutput = reportService.createReport(
+                    new ReportRequest("tl_closure_notice", licenses, reportParams));
+        }
+        if (reportFormat.equalsIgnoreCase("zip") && !licenses.isEmpty())
+            reportOutput.setReportOutputData(toByteArray(addFilesToZip(byteArrayToFile(reportOutput.getReportOutputData(),
+                    "tl_closure_notice_", ".pdf").toFile())));
         return reportOutput;
     }
 }

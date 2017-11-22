@@ -284,4 +284,8 @@
         <put-attribute name="page-title" value="lbl.installmentwise.dcb.report" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/reports/dcb-installmentwise-report.jsp"/>
     </definition>
+    <definition name="search-closure-notice" extends="base_layout">
+        <put-attribute name="page-title" value="title.search.closure" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/closurenotice/search-closure-notice.jsp"/>
+    </definition>
 </tiles-definitions>
