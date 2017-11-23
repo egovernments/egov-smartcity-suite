@@ -116,7 +116,7 @@ public class GenericComplaintController {
 
     @GetMapping("/complaint/reg-success/{crn}")
     public ModelAndView successView(@ModelAttribute Complaint complaint, @PathVariable String crn) {
-        Complaint registeredComplaint = null;
+        Complaint registeredComplaint = complaint;
         if (isNotBlank(crn) && complaint.isNew())
             registeredComplaint = complaintService.getComplaintByCRN(crn);
         return new ModelAndView("complaint/reg-success", "complaint", registeredComplaint);
