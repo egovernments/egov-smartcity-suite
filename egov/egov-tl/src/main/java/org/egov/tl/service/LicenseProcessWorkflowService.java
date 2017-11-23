@@ -143,6 +143,7 @@ public class LicenseProcessWorkflowService {
                     .withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
             tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
+            tradeLicense.setCollectionPending(false);
             if (tradeLicense.isNewApplication())
                 tradeLicense.setActive(false);
             tradeLicense.setNewWorkflow(false);
