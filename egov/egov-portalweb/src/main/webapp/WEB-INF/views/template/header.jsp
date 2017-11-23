@@ -55,7 +55,7 @@
         <div class="container-fluid">
             <div class="navbar-header col-lg-4 col-md-6 col-sm-2 col-xs-3">
                 <a class="navbar-brand" href="javascript:void(0);">
-                    <img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="60">
+                    <img src="<c:url value='/downloadfile/logo.jpg' context='/egi'/>" height="60">
                     <div>
                         <span class="title2 hidden-sm hidden-xs citizen-title">Citizen Portal<br>${cityName}</span>
                     </div>

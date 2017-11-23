@@ -71,7 +71,7 @@
             <table width="100%" border="0" style="margin-left: 25px">
                 <tr class="add-margin">
                     <td colspan="4" align="center">
-                        <img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="60">
+                        <img src="<c:url value='/downloadfile/logo.jpg' context='/egi'/>" height="60">
                     </td>
                 </tr>
 

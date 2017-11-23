@@ -69,6 +69,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import static java.lang.String.format;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_INLINE;
 
@@ -89,7 +90,7 @@ public class FileDownloadController {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, moduleName, toSave);
     }
 
-    @GetMapping("/logo")
+    @GetMapping("/logo.jpg")
     @ResponseBody
     public ResponseEntity getLogo() throws IOException {
         byte[] fileBytes = cityService.getCityLogoAsBytes();
@@ -97,9 +98,9 @@ public class FileDownloadController {
                 ResponseEntity.notFound().build() :
                 ResponseEntity
                         .ok()
-                        .contentType(MediaType.parseMediaType(MediaType.IMAGE_JPEG_VALUE))
+                        .contentType(MediaType.IMAGE_JPEG)
                         .contentLength(fileBytes.length)
-                        .header(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, cityService.getCityCode()))
+                        .header(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, getCityCode()))
                         .body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
     }
 

@@ -74,7 +74,7 @@ public final class ApplicationConstant {
     public static final String CITY_REGION_NAME_KEY = "cityRegion";
     public static final String CITY_GOOGLE_API_KEY = "googleApiKey";
 
-    public static final String CITY_LOGO_URL = "%s/egi/downloadfile/logo";
+    public static final String CITY_LOGO_URL = "%s/egi/downloadfile/logo.jpg";
     public static final String CITY_LOGIN_URL = "%s/egi/login/secure";
 
     public static final String CDN_ATTRIB_NAME = "cdn";
