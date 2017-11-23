@@ -706,8 +706,9 @@ public class PropertyTaxCollection extends TaxCollection {
 
         final EgBill egBill = egBillDAO.findById(billId, false);
 
-        final String query = "SELECT ptd FROM Ptdemand ptd " + "WHERE ptd.egInstallmentMaster = ? "
+        final String query = "SELECT ptd FROM Ptdemand ptd WHERE ptd.egInstallmentMaster = ? "
                 + "AND ptd.egptProperty.basicProperty.upicNo = ? "
+                + "AND ptd.isHistory = 'N' "
                 + "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
                 + "AND ptd.egptProperty.basicProperty.active = true";
 
