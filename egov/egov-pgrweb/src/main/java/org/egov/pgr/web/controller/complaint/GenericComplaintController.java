@@ -61,14 +61,13 @@ import org.egov.pgr.service.ReceivingCenterService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletResponse;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
@@ -117,16 +116,16 @@ public class GenericComplaintController {
 
     @GetMapping("/complaint/reg-success/{crn}")
     public ModelAndView successView(@ModelAttribute Complaint complaint, @PathVariable String crn) {
+        Complaint registeredComplaint = null;
         if (isNotBlank(crn) && complaint.isNew())
-            complaint = complaintService.getComplaintByCRN(crn);
-        return new ModelAndView("complaint/reg-success", "complaint", complaint);
+            registeredComplaint = complaintService.getComplaintByCRN(crn);
+        return new ModelAndView("complaint/reg-success", "complaint", registeredComplaint);
 
     }
 
-    @GetMapping("/complaint/downloadfile/{fileStoreId}")
-    @ResponseBody
-    public ResponseEntity download(@PathVariable String fileStoreId) {
-        return fileStoreUtils.fileAsResponseEntity(fileStoreId, PGRConstants.MODULE_NAME, false);
+    @GetMapping(value = "/complaint/downloadfile/{fileStoreId}")
+    public void download(@PathVariable String fileStoreId, HttpServletResponse response) {
+        fileStoreUtils.writeToHttpResponseStream(fileStoreId, PGRConstants.MODULE_NAME, response);
     }
 
     protected void setReceivingMode(Complaint complaint, String receivingModeCode) {

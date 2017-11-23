@@ -151,21 +151,17 @@
                             <c:forEach items="${complaint.supportDocsOrderById()}" var="file">
                                 <div class="col-md-4 col-sm-6 col-xs-12 add-margin down-file view-content" id="links">
                                     <c:choose>
-                                        <c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'image/gif')||
-										(file.contentType == 'image/png')}">
+                                        <c:when test="${file.contentType.contains('image')}">
                                             <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
                                                data-gallery> <img class="img-width add-margin"
                                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
-                                               data-gallery>
-                                                <video class="img-width add-margin" controls="controls"
-                                                       src="/pgr/complaint/downloadfile/${file.fileStoreId}">
-                                                    <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
-                                                            type="${file.contentType}"/>
-                                                </video>
-                                            </a>
+                                            <video class="img-width add-margin" controls="controls"
+                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}">
+                                                <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                        type="${file.contentType}"/>
+                                            </video>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>

@@ -48,6 +48,8 @@
 
 package org.egov.infra.utils;
 
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
@@ -64,9 +66,11 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.servlet.http.HttpServletResponse;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -119,6 +123,21 @@ public class FileStoreUtils {
         } catch (IOException e) {
             LOGGER.error("Error occurred while creating response entity from file mapper", e);
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    public void writeToHttpResponseStream(String fileStoreId, String moduleName, HttpServletResponse response) {
+        try {
+            FileStoreMapper fileStoreMapper = this.fileStoreMapperRepository.findByFileStoreId(fileStoreId);
+            if (fileStoreMapper != null) {
+                File file = this.fileStoreService.fetch(fileStoreMapper, moduleName);
+                response.setHeader(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, fileStoreMapper.getFileName()));
+                response.setContentType(fileStoreMapper.getContentType());
+                OutputStream out = response.getOutputStream();
+                IOUtils.write(FileUtils.readFileToByteArray(file), out);
+            }
+        } catch (IOException e) {
+            LOGGER.error("Error occurred while writing file to response stream", e);
         }
     }
 
