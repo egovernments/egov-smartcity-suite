@@ -110,6 +110,7 @@ public class ViewAndEditLegalCaseInterimOrderController {
             final BindingResult errors, final RedirectAttributes redirectAttrs,
             @PathVariable("lcInterimOrderId") final String lcInterimOrderId,
             @RequestParam("file") final MultipartFile[] files, final Model model) throws IOException, ParseException {
+        model.addAttribute("legalCase", legalCaseInterimOrder.getLegalCase());
         if (errors.hasErrors()) {
             model.addAttribute("interimOrders", interimOrderService.findAll());
             return "lcinterimorder-edit";

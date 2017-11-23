@@ -59,7 +59,7 @@
  	<%-- <input type="hidden" id="legalCaseInterimOrder" name="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" /> --%>
 	<%-- <input type="hidden"  id="lcInterimOrderId" name="lcInterimOrderId" value="${lcInterimOrder.id}" />  --%>
 	<%-- <form:hidden path ="" name="legalCaseInterimOrder" id="legalCaseInterimOrder" value="${legalCaseInterimOrder.id}" class="form-control table-input hidden-input"/> --%>
-	<input type="hidden" name="legalCase" value="${legalCase.id}" />
+	<input type="hidden" id="legalCase" name="legalCase" value="${legalCase.id}" />
 	<input type="hidden" id="lcNumber" name="lcNumber"
 		value="${legalCaseInterimOrder.legalCase.lcNumber}" />  
 		<input type="hidden" id="employeeName" name="employeeName"
