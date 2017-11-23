@@ -126,14 +126,14 @@ public class ServiceTypeReportService {
     private Map<String, Map<String, List<Long>>> getDocMap(Date fromDate, Date toDate,
             WardWiseServiceTypeRequest serviceRequest) {
         @SuppressWarnings("rawtypes")
-        AggregationBuilder aggregationBuilder = AggregationBuilders.terms(WARDGROUPING).field(REVENUE_WARD)
+        AggregationBuilder aggregationBuilder = AggregationBuilders.terms(WARDGROUPING).field(REVENUE_WARD).size(120)
                 .subAggregation(AggregationBuilders.terms(STATUSGROUPING).field("appStatus")
                         .subAggregation(AggregationBuilders.sum(TAX_BEFORE_AFFECTED).field(TAX_BEFORE_AFFECTED))
                         .subAggregation(AggregationBuilders.sum(TAX_AFTER_AFFECTED).field(TAX_AFTER_AFFECTED)));
         SearchResponse response = elasticsearchTemplate.getClient()
                 .prepareSearch("ptservicetype")
                 .setQuery(getBoolQuery(fromDate, toDate, serviceRequest))
-                .addAggregation(aggregationBuilder).setSize(120)
+                .addAggregation(aggregationBuilder)
                 .execute().actionGet();
 
         Terms aggTerms = response.getAggregations().get(WARDGROUPING);
