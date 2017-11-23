@@ -50,6 +50,8 @@ package org.egov.lcms.transactions.service;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Employee;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
 import org.egov.lcms.transactions.entity.EmployeeHearing;
@@ -676,6 +678,52 @@ public class LegalCaseSmsService {
                                 counterAffidavit.get(0).getLegalCase().getCaseNumber() },
                         null);
         return smsMsg;
+    }
+
+    // Send SMS and Email Notification to StandingCounsel
+    public void sendSmsAndEmailForAdvocate(final AdvocateMaster advocateMaster) {
+        final User user = advocateMaster.getAdvocateUser();
+        String advocateName = advocateMaster.getName();
+        String userName = user.getUsername();
+        String mobileNumber = advocateMaster.getMobileNumber();
+        String emailId = advocateMaster.getEmail() != null ? advocateMaster.getEmail() : "";
+        String smsMsg = "";
+        String body = "";
+        String subject = "";
+        if (advocateMaster.getAdvocateUser() != null && advocateMaster.getAdvocateUser().getUsername() != null) {
+
+            if (StringUtils.isNotBlank(mobileNumber)) {
+                final StringBuilder smsBody = new StringBuilder().append("Dear ").append(advocateName)
+                        .append(",Your details are registered in Municipal ERP application.")
+                        .append("You can access and update Legal Case details of ").append(legalCaseUtil.getMunicipalityName())
+                        .append(" Municipality.  Login to the application with User name: Advocate ").append(userName)
+                        .append(" and Password is your mobile number.");
+
+                smsMsg = smsBody.toString();
+                if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
+                    legalCaseUtil.sendSMSOnLegalCase(mobileNumber, smsMsg);
+            }
+
+            if (StringUtils.isNotBlank(emailId)) {
+
+                final StringBuilder bodyMsg = new StringBuilder().append("Dear ").append(advocateName)
+                        .append(",\n\nYour details are registered in Municipal ERP application.")
+                        .append("You can access and update Legal Case details of ").append(legalCaseUtil.getMunicipalityName())
+                        .append(" Municipality.  Login to the application with User name: Advocate ").append(userName)
+                        .append(" and Password is your mobile number.")
+                        .append("\n\nRegards ,").append("\nCommissioner ,\n").append(legalCaseUtil.getMunicipalityName())
+                        .append("\n\nNote: This is computer generated email. Please don't reply.");
+
+                final StringBuilder subjectMsg = new StringBuilder().append(legalCaseUtil.getMunicipalityName())
+                        .append("  Municipality Legal application user details");
+
+                body = bodyMsg.toString();
+
+                subject = subjectMsg.toString();
+                if (StringUtils.isNotBlank(emailId) && subjectMsg != null && bodyMsg != null)
+                    legalCaseUtil.sendEmailOnLegalCase(emailId, body, subject);
+            }
+        }
     }
 
 }

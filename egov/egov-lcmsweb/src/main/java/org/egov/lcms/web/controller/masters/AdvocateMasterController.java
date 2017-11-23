@@ -53,6 +53,7 @@ import org.egov.commons.Bankbranch;
 import org.egov.commons.service.BankBranchService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.lcms.transactions.service.LegalCaseSmsService;
 import org.egov.lcms.web.adaptor.AdvocateMasterJsonAdaptor;
 import org.egov.services.masters.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -93,7 +94,9 @@ public class AdvocateMasterController {
     @Autowired
     @Qualifier("bankBranchService")
     private BankBranchService bankBranchService;
-   
+
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("banks", bankService.findAll());
@@ -127,6 +130,7 @@ public class AdvocateMasterController {
         model.addAttribute("mode", "create");
         advocateMasterService.createAccountDetailKey(advocateMaster);
         advocateMasterService.createAdvocateUser(advocateMaster);
+        legalCaseSmsService.sendSmsAndEmailForAdvocate(advocateMaster);
         return "redirect:/advocatemaster/result/" + advocateMaster.getId() + ",create";
     }
 

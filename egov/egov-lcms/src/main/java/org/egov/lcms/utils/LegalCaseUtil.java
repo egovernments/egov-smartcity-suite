@@ -47,6 +47,12 @@
  */
 package org.egov.lcms.utils;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.egov.commons.EgwStatus;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.eis.entity.Assignment;
@@ -56,6 +62,7 @@ import org.egov.eis.service.EmployeeService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.FileStoreUtils;
@@ -80,12 +87,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 @Service
 public class LegalCaseUtil {
@@ -203,7 +204,8 @@ public class LegalCaseUtil {
                     .getPrimaryAssignmentForPositionAndDate(legalcase.getOfficerIncharge().getId(), new Date());
         return assignment != null ? assignment.getEmployee().getMobileNumber() : "";
     }
-
+    
+   
     public void sendSMSOnLegalCase(final String mobileNumber, final String smsBody) {
         notificationService.sendSMS(mobileNumber, smsBody);
     }
@@ -231,5 +233,13 @@ public class LegalCaseUtil {
         monthMap.put("Nov", 11);
         monthMap.put("Dec", 12);
         return monthMap;
+    }
+    
+    public String getMunicipalityName() {
+        return ApplicationThreadLocals.getMunicipalityName();
+    }
+
+    public void sendEmailOnLegalCase(final String email, final String emailBody, final String emailSubject) {
+        notificationService.sendEmail(email, emailSubject, emailBody);
     }
 }
