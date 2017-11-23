@@ -118,7 +118,7 @@ function submitForm() {
 						},
 						{
 							"data" : "courtname",
-							"sTitle" : "Court",
+							"sTitle" : "Court Name",
 							"className" : "text-right"
 						},
 						{

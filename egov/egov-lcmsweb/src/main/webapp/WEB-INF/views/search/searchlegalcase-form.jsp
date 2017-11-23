@@ -120,7 +120,7 @@
 					<label class="col-sm-2 control-label text-right"><spring:message
 							code="lbl.court" />:</label>
 					<div class="col-sm-3 add-margin">
-						<form:select name="courtName" path="" data-first-option="false"
+						<form:select name="courtId" path="" data-first-option="false"
 							id="courtName" cssClass="form-control">
 							<form:option value="">
 								<spring:message code="lbls.select" />
