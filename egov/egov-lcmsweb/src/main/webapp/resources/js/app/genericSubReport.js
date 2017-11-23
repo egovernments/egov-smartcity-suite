@@ -372,6 +372,14 @@ function submitSubReportStatusForm() {
 		var caseNumber = $("#caseNumber").val();
 		var lcNumber = $("#lcNumber").val();
 		var isMonthColVisibile = false;
+		
+		oDataTable.clear().draw();
+		oDataTable.destroy();
+		oTable.remove();
+		
+		$('#tabledata').append('<table class="table table-bordered table-hover multiheadertbl" id="genericSubReport-table"> </table>')
+		oTable = $('#genericSubReport-table');
+		
 		$('#genericSubReport-header').show();
 		$('#reportgeneration-header').show();
 		oDataTable=oTable.DataTable({
