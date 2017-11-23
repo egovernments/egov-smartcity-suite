@@ -48,7 +48,13 @@
 
 package org.egov.wtms.web.controller.search;
 
-import org.apache.commons.lang3.StringUtils;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
@@ -70,6 +76,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
@@ -78,12 +85,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
 
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
@@ -108,6 +109,9 @@ public class WaterTaxSearchController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
     public WaterTaxSearchController(final CityService cityService) {
@@ -356,8 +360,10 @@ public class WaterTaxSearchController {
     public List<WaterChargeDocument> findAllWaterChargeIndexByFilter(final ConnectionSearchRequest searchRequest) {
 
         final BoolQueryBuilder query = getFilterQuery(searchRequest);
+        final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME).withQuery(query).build();
+        final long count = elasticsearchTemplate.queryForPage(countQuery, WaterChargeDocument.class).getTotalElements();
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
-                .withQuery(query).withPageable(new PageRequest(0, 250)).build();
+                .withQuery(query).withPageable(new PageRequest(0, (int) count)).build();
 
         final Iterable<WaterChargeDocument> sampleEntities = waterChargeDocumentRepository.search(searchQuery);
         final List<WaterChargeDocument> sampleEntitiesTemp = new ArrayList<>();
