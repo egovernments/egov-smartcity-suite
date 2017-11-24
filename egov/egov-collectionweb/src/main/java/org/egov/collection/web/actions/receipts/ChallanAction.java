@@ -987,8 +987,7 @@ public class ChallanAction extends BaseFormAction {
         if (receiptHeader.getChallan() != null && receiptHeader.getChallan().getVoucherHeader() != null)
             setVoucherNumber(receiptHeader.getChallan().getVoucherHeader().getVoucherNumber());
         if (receiptHeader.getTotalAmount() != null)
-            receiptHeader.setTotalAmount(receiptHeader.getTotalAmount().setScale(
-                    CollectionConstants.AMOUNT_PRECISION_DEFAULT, BigDecimal.ROUND_UP));
+            receiptHeader.setTotalAmount(receiptHeader.getTotalAmount());
     }
 
     /**

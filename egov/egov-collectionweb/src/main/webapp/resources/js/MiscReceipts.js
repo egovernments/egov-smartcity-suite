@@ -235,7 +235,7 @@ function createAmountFieldFormatterRebate(prefix,suffix,onblurfunction,table){
 	}
 
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='13'  onblur='"+onblurfunction+";updatetotalAmount()'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='13' class='form-control patternvalidation text-right' data-pattern='number' onblur='"+onblurfunction+";updatetotalAmount()'/>";
 	}
 }
 
@@ -259,7 +259,7 @@ function createSLLongTextFieldFormatter(prefix,suffix){
 function createSLAmountFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='13' style='text-align:right;width:90px;'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='13' style='text-align:right;width:90px;' class='form-control patternvalidation text-right' data-pattern='number'/>";
 	}
 }
 function createTextFieldReadOnly(prefix,suffix){
@@ -1049,6 +1049,7 @@ success: function(o) {
 				}
 			}
 		}
+		patternvalidation();
     },
     failure: function(o) {
     	bootbox.alert('unable to load subledger details');
@@ -1072,7 +1073,7 @@ function updateDebitAmount()
 			}
 		}
 	}
-	document.getElementById('totaldbamount').value = amt.toFixed(2);
+	document.getElementById('totaldbamount').value = amt;
 }
 
 function updateCreditAmount()
@@ -1089,7 +1090,7 @@ function updateCreditAmount()
 			}
 		}
 	}
-	document.getElementById('totalcramount').value = amt.toFixed(2);
+	document.getElementById('totalcramount').value = amt;
 }
 
 function updatetotalAmount(){
@@ -1101,7 +1102,7 @@ function updatetotalAmount(){
 		totalamount=parseFloat(document.getElementById('totalcramount').value);
 	}
 	
-	var totalAmountStr=(totalamount>0?totalamount.toFixed(2):totalamount);
+	var totalAmountStr=(totalamount>0?totalamount:totalamount);
 	
 	document.getElementById('misctotalAmount').value=totalAmountStr;
 	document.getElementById('totalamountdisplay').value=document.getElementById('misctotalAmount').value;
@@ -1458,6 +1459,7 @@ function checkLength(obj)
 function updateAccountTableIndex(){
 	
 	billDetailTableIndex = billDetailTableIndex +1 ;
+	patternvalidation();
 }
 function updateSLTableIndex(){
 	

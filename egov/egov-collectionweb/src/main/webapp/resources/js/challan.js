@@ -473,7 +473,7 @@ function createAmountFieldFormatter(prefix,suffix,onblurfunction,table){
     return function(el, oRecord, oColumn, oData) {
     var rec=billDetailTableIndex;
 	var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='13'  onblur='"+onblurfunction+";updatetotalAmount()'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='13' class='form-control patternvalidation text-right' data-pattern='number' onblur='"+onblurfunction+";updatetotalAmount()'/>";
 	}
 }
 
@@ -498,7 +498,7 @@ function createSLLongTextFieldFormatter(prefix,suffix){
 function createSLAmountFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' maxlength='13' style='text-align:right;width:90px;'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' maxlength='13' style='text-align:right;width:90px;' class='form-control patternvalidation text-right' data-pattern='number'/>";
 	}
 }
 
@@ -840,6 +840,7 @@ success: function(o) {
 function updateAccountTableIndex(){
 	
 	billDetailTableIndex = billDetailTableIndex +1 ;
+    patternvalidation();
 }
 
 function updateSLTableIndex(){
@@ -861,7 +862,7 @@ function updateCreditAmount()
 			}
 		}
 	}
-	document.getElementById('totalcramount').value = amt.toFixed(2);
+	document.getElementById('totalcramount').value = amt;
 	populatesubledgeramount1();
 }
 
@@ -1505,7 +1506,6 @@ function loadFinDetails(service){
 	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
 	makeJSONCall(["subledgerCode","glcodeId","detailTypeId","detailTypeName","detailCode","detailKeyId",
 	"detailKey","amount"],url3,{serviceId:service,deptId:dept},loadFinSubledgerSuccessHandler,loadFinSubledgerFailureHandler);
-	
 }
 
 var miscArray;
@@ -1631,8 +1631,8 @@ billDetailsTable.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1,
      "accounthead":"",
      "creditamount":""
  });      
-updateGrid(VOUCHERDETAILLIST,'creditAmountDetail',0,"0.00");
-totalcramt = "0.00";          
+updateGrid(VOUCHERDETAILLIST,'creditAmountDetail',0,0);
+totalcramt = 0;          
 billDetailTableIndex = 1;
 for(i=0;i<res.results.length-1;i++){
 	 billDetailsTable.addRow({SlNo:billDetailsTable.getRecordSet().getLength()+1,
@@ -1651,7 +1651,7 @@ for(i=0;i<res.results.length;i++){
         updateGrid(VOUCHERDETAILLIST,'creditAmountDetail',i,res.results[i].creditAmountDetail);
         totalcramt = parseFloat(totalcramt)+parseFloat(res.results[i].creditAmountDetail);
         if(totalcramt>0){
-    		totalcramt=parseInt(totalcramt).toFixed(2);
+    		totalcramt=parseInt(totalcramt);
 		 }
 }
 if(totalcramt>0){
@@ -1661,6 +1661,7 @@ if(document.getElementById('billDetailslist[0].accounthead').value!="")
 {
 	document.getElementById('billDetailslist[0].accounthead').disabled=true;
 }
+patternvalidation();
 }
 loadFinAccFailureHandler=function(){
 alert('failure');
@@ -1683,7 +1684,7 @@ subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
  "amount":""
 
 });
-updateSLGrid('amount',0,"0.00");
+updateSLGrid('amount',0,0);
 slDetailTableIndex = 1;
 for(i=0;i<res.results.length-1;i++){
 			 subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
@@ -1707,9 +1708,8 @@ for(i=0;i<res.results.length;i++){
         updateSLGrid('detailKeyId',i,res.results[i].detailKeyId);
         updateSLGrid('detailKey',i,res.results[i].detailKey);
         updateSLGrid('amount',i,res.results[i].amount);
-       
-        
 }
+patternvalidation();
 }
 
 loadFinSubledgerFailureHandler=function(){

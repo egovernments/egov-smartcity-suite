@@ -69,7 +69,6 @@
         	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
         	makeJSONCall(["subledgerCode","glcodeId","detailTypeId","detailTypeName","detailCode","detailKeyId",
         	"detailKey","amount"],url3,{serviceId:service,deptId:dept},loadFinSubledgerSuccessHandler,loadFinSubledgerFailureHandler);
-        	
         }
 
 var miscArray;
@@ -194,8 +193,8 @@ loadFinAccSuccessHandler=function(req,res){
              "accounthead":"",
              "creditamount":""
          });      
-	  updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',0,"0.00");
-	  totalcramt = "0.00";          
+	  updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',0,"0");
+	  totalcramt = "0";          
 	  billDetailTableIndex = 1;
 	for(i=0;i<res.results.length-1;i++){
 	  	 billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
@@ -214,12 +213,13 @@ loadFinAccSuccessHandler=function(req,res){
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',i,res.results[i].creditAmountDetail);
                 totalcramt = parseFloat(totalcramt)+parseFloat(res.results[i].creditAmountDetail);
                 if(totalcramt>0){
-            		totalcramt=parseInt(totalcramt).toFixed(2);
+            		totalcramt=parseInt(totalcramt);
        		 	}
               
         }
 		 document.getElementById('totalcramount').value=totalcramt;
 		 updatetotalAmount();
+		patternvalidation();
     }
  loadFinAccFailureHandler=function(){
   bootbox.alert('unable to load Function');
@@ -242,7 +242,7 @@ loadFinSubledgerSuccessHandler=function(req,res){
          "amount":""
        
      });
-	 updateSLGrid('amount',0,"0.00");
+	 updateSLGrid('amount',0,"0");
 	 slDetailTableIndex = 1;
 	 for(i=0;i<res.results.length-1;i++){
 	  			 subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
@@ -269,6 +269,7 @@ loadFinSubledgerSuccessHandler=function(req,res){
                
                 
         }
+        patternvalidation();
 }
 
  loadFinSubledgerFailureHandler=function(){

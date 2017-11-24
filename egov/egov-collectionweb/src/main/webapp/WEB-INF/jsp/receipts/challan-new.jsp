@@ -432,16 +432,16 @@ var makeBillDetailTable = function() {
 					"glcodeid":'<s:property value="glcodeIdDetail"/>',
 					"glcode":'<s:property value="glcodeDetail"/>',
 					"accounthead":'<s:property value="accounthead"/>',
-					"creditamount":'<s:property value="%{creditAmountDetail}"/>',
+					"creditamount":'<s:property value="getText(\'format.amount\',{creditAmountDetail})"/>',
 					"financialYearId":'<s:property value="%{fYear}"/>'
 				});
 				var index = '<s:property value="#stat.index"/>';
 				updateGrid(VOUCHERDETAILLIST,'glcodeIdDetail',index,'<s:property value="glcodeIdDetail"/>');
 				updateGrid(VOUCHERDETAILLIST,'glcodeDetail',index,'<s:property value="glcodeDetail"/>');
 				updateGrid(VOUCHERDETAILLIST,'accounthead',index,'<s:property value="accounthead"/>');
-				updateGrid(VOUCHERDETAILLIST,'creditAmountDetail',index,'<s:property value="creditAmountDetail"/>');
+				updateGrid(VOUCHERDETAILLIST,'creditAmountDetail',index,'<s:property value="getText(\'format.amount\',{creditAmountDetail})"/>');
 				updateGridDropdown('financialYearId',index,'<s:property value="finYearRange"/>','<s:property value="id"/>');
-				totalcramt = totalcramt+parseFloat('<s:property value="creditAmountDetail"/>');
+				totalcramt = totalcramt+parseInt('<s:property value="getText(\'format.amount\',{creditAmountDetail})"/>');
 				// totaldbamt = totaldbamt+parseFloat('<s:property value="debitAmountDetail"/>');
 				updateAccountTableIndex();	
 			</s:iterator>
@@ -467,7 +467,7 @@ var makeBillDetailTable = function() {
 		td2.style.padding='4px 10px';
 		td2.innerHTML="<input type='text' style='text-align:right;width:80px;align:center;height:20px;'  id='totalcramount' name='totalcramount' readonly='true' tabindex='-1'/>";
 		if(totalcramt>0){
-			totalcramt=totalcramt.toFixed(2);
+			totalcramt=totalcramt;
 		}
 		document.getElementById('totalcramount').value=totalcramt;
 		// var td3 = tr.insertCell(-1);
