@@ -981,6 +981,8 @@ public class WaterConnectionDetailsService {
             if (waterConnectionDetails.getStatus().getCode()
                     .equals(APPLICATION_STATUS__RECONNCTIONSANCTIONED)
                     || waterConnectionDetails.getStatus().getCode()
+                            .equals(APPLICATION_STATUS_APPROVED)
+                    || waterConnectionDetails.getStatus().getCode()
                             .equals(APPLICATION_STATUS_SANCTIONED)
                     || waterConnectionDetails.getStatus().getCode()
                             .equals(APPLICATION_STATUS_CLOSERSANCTIONED)) {
