@@ -163,7 +163,7 @@ public class CityService {
         byte[] fileBytes = (byte[]) cityDataForKey(CITY_LOGO_BYTE_KEY);
         if (fileBytes == null || fileBytes.length == 0) {
             fileBytes = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), getCityCode());
-            addToCityCache(CITY_LOGO_BYTE_KEY, fileBytes);
+            cityPrefCache.put(cityPrefCacheKey(), CITY_LOGO_BYTE_KEY, fileBytes);
         }
         return fileBytes;
     }
@@ -177,12 +177,6 @@ public class CityService {
     }
 
     public Object cityDataForKey(String key) {
-        return cityPrefCache.entries(cityPrefCacheKey()).get(key);
-    }
-
-    public void addToCityCache(String key, Object value) {
-        Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
-        if (cityPrefs != null)
-            cityPrefCache.put(cityPrefCacheKey(), key, value);
+        return cityPrefCache.get(cityPrefCacheKey(), key);
     }
 }
