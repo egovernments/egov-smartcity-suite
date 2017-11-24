@@ -956,7 +956,7 @@ public class WaterConnectionDetailsService {
                             .equals(APPLICATION_STATUS__RECONNCTIONSANCTIONED)
                     && !waterConnectionDetails.getStatus().getCode()
                             .equals(APPLICATION_STATUS_SANCTIONED)) {
-                applicationIndex.setApplicationType(waterConnectionDetails.getApplicationType().getCode());
+                applicationIndex.setApplicationType(waterConnectionDetails.getApplicationType().getName());
                 applicationIndex.setApplicantAddress(assessmentDetails.getPropertyAddress());
                 applicationIndex.setApproved(ApprovalStatus.INPROGRESS);
                 applicationIndex.setClosed(ClosureStatus.NO);
