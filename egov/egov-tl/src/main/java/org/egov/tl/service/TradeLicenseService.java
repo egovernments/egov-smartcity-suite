@@ -557,9 +557,11 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         ReportOutput reportOutput = new ReportOutput();
         Map<String, Object> reportParams = new HashMap<>();
         List<License> licenses = searchTradeRepository.findLicenseClosureByCurrentInstallmentYear(new Date());
-        if (licenses.isEmpty())
+        if (licenses.isEmpty()) {
+            reportOutput.setReportName("tl_closure_notice");
+            reportOutput.setReportFormat(ReportFormat.PDF);
             reportOutput.setReportOutputData("No Data".getBytes());
-        else {
+        } else {
             reportParams.put("License", licenses);
             reportParams.put("corp", cityService.getCityGrade());
             reportParams.put("currentDate", currentDateToDefaultDateFormat());
@@ -568,7 +570,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             reportOutput = reportService.createReport(
                     new ReportRequest("tl_closure_notice", licenses, reportParams));
         }
-        if (reportFormat.equalsIgnoreCase("zip") && !licenses.isEmpty())
+        if (reportFormat.equalsIgnoreCase("zip"))
             reportOutput.setReportOutputData(toByteArray(addFilesToZip(byteArrayToFile(reportOutput.getReportOutputData(),
                     "tl_closure_notice_", ".pdf").toFile())));
         return reportOutput;
