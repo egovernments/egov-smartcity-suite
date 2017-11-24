@@ -206,13 +206,12 @@ public class AjaxReceiptCreateAction extends BaseFormAction {
         final WebApplicationContext wac = WebApplicationContextUtils.getWebApplicationContext(ServletActionContext
                 .getServletContext());
         final EntityTypeService entityService = (EntityTypeService) wac.getBean(simpleName);
-        entityList = (List<EntityType>) entityService.filterActiveEntities(code, -1, adt.getId());
+        entityList = (List<EntityType>) entityService.filterActiveEntities(code, 10, adt.getId());
 
         if (entityList == null || entityList.isEmpty())
             value = index + "~" + ERROR + "#";
         else {
-            if (entityList.size() > 1) {// To Check with same code/name if more
-                // than one entity is returned
+            if (entityList.size() > 1) {// To Check with same code/name if more than one entity is returned
                 value = index + "~" + ERROR + "#";
                 return RESULT;
             }
