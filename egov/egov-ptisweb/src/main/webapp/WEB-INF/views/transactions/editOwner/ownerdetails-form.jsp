@@ -317,13 +317,13 @@ body {
 												path="propertyOwnerInfo[${status.index}].owner.password" />
 												<c:choose>
 											<c:when test="${propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber!=null ||  not empty propertyOwner.property.basicProperty.propertyOwnerInfo[status.index].owner.aadhaarNumber}" >
-											<td class="blueborderfortd" align="center"><form:input
-													path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
-													id="aadharNumber" maxlength="12" cssClass="form-control" readonly="false"/>
-													<form:hidden path="ownerAudit[${status.index}].aadhaarNo" />
-													</td>
-											
-											<td class="blueborderfortd" align="center"><form:input
+													<td class="blueborderfortd" align="center"><form:input
+															path="propertyOwnerInfo[${status.index}].owner.aadhaarNumber"
+															onblur="getOwnerByAadharDetails(this);" id="aadharNumber"
+															maxlength="12" cssClass="form-control" readonly="false" />
+														<form:hidden path="ownerAudit[${status.index}].aadhaarNo" />
+													</td>	
+													<td class="blueborderfortd" align="center"><form:input
 													path="propertyOwnerInfo[${status.index}].owner.mobileNumber"
 													id="mobileNumber" maxlength="10" cssClass="form-control" readonly="true"/>
 													<form:hidden path="ownerAudit[${status.index}].mobileNo" /> 
