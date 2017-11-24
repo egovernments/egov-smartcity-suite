@@ -148,21 +148,15 @@ function validateRecordHearing() {
 }
 
 function validateRecordInspection() {
-
-	/*
-	 if (dom.get('generateSpecialNotice').checked == false) {
-			bootbox.alert('Please choose whether special Notice to be generate after final approval');
-			return false;
-		}
-	*/	
+	
 	if (dom.get('inspectionRemarks').value == "") {
 		bootbox.alert('Please enter Inspection Remark');
 		return false;
 	}
-	 /*if (dom.get('generateSpecialNotice').checked == false) {
-		bootbox.alert('Please choose whether special Notice to be generate after final approval');
+	 if (dom.get('actualHearingDtId').value == "") {
+		bootbox.alert('Please enter Actual Hearing Date');
 		return false;
-	}*/
+	}
 	return true;
 }
 

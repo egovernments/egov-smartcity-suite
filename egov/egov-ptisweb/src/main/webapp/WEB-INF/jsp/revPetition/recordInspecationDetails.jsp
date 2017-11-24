@@ -69,17 +69,28 @@
 						<s:textarea name="objection.inspections[%{inspectionIdx}].inspectionRemarks"
 							id="inspectionRemarks" cols="40" rows="2" onblur="checkLength(this)"></s:textarea>
 					</td>
-					<td class="bluebox" width="25%">
+					<td class="bluebox" width="25%"><s:text
+							name="objection.actualhearingdate" /><span class="mandatory1">*</span>
+						&nbsp;</td>
+					<td class="bluebox" width="25%"><s:hidden name="objection.hearings[0].id"
+							id="objection.hearings[0].id" /> <s:textfield
+							name="objection.hearings[0].actualHearingDt"
+							cssClass="datepicker" value="%{#actualHearingDtId}"
+							autocomplete="off" id="actualHearingDtId" size="12"
+							maxlength="12"></s:textfield></td>
+				</tr>
+				<tr>
+				<td class="bluebox" width="25%">
 						<s:text name="revisionPetition.generateProceedings" />
 					</td>
 					<td class="bluebox" width="25%">
 						<s:radio name="generateSpecialNotice"
 							list="#{'true':'Yes','false':'No'}" id="generateSpecialNotice" value="%{generateSpecialNotice}" />
-					</td>
-
+					</td>		
 				</tr>
-				
 			</table>
 		</td>
+	</tr>
+	<tr>
 	</tr>
 </table>

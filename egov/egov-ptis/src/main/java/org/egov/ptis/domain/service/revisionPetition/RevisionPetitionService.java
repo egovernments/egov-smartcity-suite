@@ -559,6 +559,8 @@ public class RevisionPetitionService extends PersistenceService<RevisionPetition
         infoBean.setApplicationDate(DateUtils.getFormattedDate(objection.getCreatedDate(), DATE_FORMAT_DDMMYYY));
         infoBean.setHearingDate(
                 DateUtils.getFormattedDate(objection.getHearings().get(0).getPlannedHearingDt(), DATE_FORMAT_DDMMYYY));
+		infoBean.setActualHearingDate(
+				DateUtils.getFormattedDate(objection.getHearings().get(0).getActualHearingDt(), DATE_FORMAT_DDMMYYY));
         final User approver = userService.getUserById(ApplicationThreadLocals.getUserId());
         infoBean.setApproverName(approver.getName());
         final BigDecimal revTax = currDemand.getBaseDemand();

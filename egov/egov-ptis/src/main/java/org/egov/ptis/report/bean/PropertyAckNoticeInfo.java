@@ -120,6 +120,7 @@ public class PropertyAckNoticeInfo {
     private String noticeNumber;
     private String hearingDate;
     private String hearingTime;
+    private String actualHearingDate;
     private BigDecimal extentOfSite = BigDecimal.ZERO;
     private String surveyNumber;
     private String northBoundary;
@@ -672,7 +673,15 @@ public class PropertyAckNoticeInfo {
         this.hearingTime = hearingTime;
     }
 
-    public BigDecimal getExtentOfSite() {
+    public String getActualHearingDate() {
+		return actualHearingDate;
+	}
+
+	public void setActualHearingDate(String actualHearingDate) {
+		this.actualHearingDate = actualHearingDate;
+	}
+
+	public BigDecimal getExtentOfSite() {
         return extentOfSite;
     }
 
