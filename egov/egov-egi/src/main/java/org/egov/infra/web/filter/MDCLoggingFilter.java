@@ -62,16 +62,15 @@ import java.io.IOException;
 
 public class MDCLoggingFilter implements Filter {
 
-    @Override
-    public void init(final FilterConfig filterConfig) throws ServletException {
-    }
+    private static final String ULBCODE = "ulbcode";
+    private static final String APPNAME = "appname";
 
     @Override
     public void doFilter(final ServletRequest request, final ServletResponse response, final FilterChain chain) throws IOException, ServletException {
 
         try {
-            MDC.put("ulbcode", ApplicationThreadLocals.getCityName());
-            MDC.put("appname", WebUtils.currentContextPath(request));
+            MDC.put(ULBCODE, ApplicationThreadLocals.getCityName());
+            MDC.put(APPNAME, WebUtils.currentContextPath(request).toUpperCase());
             chain.doFilter(request, response);
         } finally {
             MDC.clear();
@@ -79,7 +78,13 @@ public class MDCLoggingFilter implements Filter {
     }
 
     @Override
+    public void init(final FilterConfig filterConfig) throws ServletException {
+        //Do nothing
+    }
+
+    @Override
     public void destroy() {
+        //Do nothing
     }
 
 }

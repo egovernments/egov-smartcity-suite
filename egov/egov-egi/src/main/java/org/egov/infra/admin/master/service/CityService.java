@@ -50,7 +50,6 @@ package org.egov.infra.admin.master.service;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.repository.CityRepository;
-import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,21 +63,23 @@ import java.util.List;
 import java.util.Map;
 
 import static java.lang.String.format;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainName;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CODE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_BYTE_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_CACHE_KEY;
+import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_FS_UUID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 
 @Service
 @Transactional(readOnly = true)
 public class CityService {
 
-    private static final String CITY_PREFS_CK = "%s-cityPrefs";
+    private static final String CITY_DATA_CACHE_KEY = "%s-cache";
 
     private final CityRepository cityRepository;
 
@@ -129,7 +130,7 @@ public class CityService {
     public Map<String, Object> cityDataAsMap() {
         Map<String, Object> cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         if (cityPrefs.isEmpty()) {
-            cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(ApplicationThreadLocals.getDomainName()).toMap());
+            cityPrefCache.putAll(cityPrefCacheKey(), getCityByURL(getDomainName()).toMap());
             cityPrefs = cityPrefCache.entries(cityPrefCacheKey());
         }
         return cityPrefs;
@@ -160,20 +161,20 @@ public class CityService {
     }
 
     public byte[] getCityLogoAsBytes() {
-        byte[] fileBytes = (byte[]) cityDataForKey(CITY_LOGO_BYTE_KEY);
-        if (fileBytes == null || fileBytes.length == 0) {
-            fileBytes = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), getCityCode());
-            cityPrefCache.put(cityPrefCacheKey(), CITY_LOGO_BYTE_KEY, fileBytes);
+        byte[] cityLogo = (byte[]) cityDataForKey(CITY_LOGO_CACHE_KEY);
+        if (cityLogo == null || cityLogo.length < 1) {
+            cityLogo = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), getCityCode());
+            cityPrefCache.put(cityPrefCacheKey(), CITY_LOGO_CACHE_KEY, cityLogo);
         }
-        return fileBytes;
+        return cityLogo;
     }
 
     public String getCityLogoFileStoreId() {
-        return (String) cityDataForKey(CITY_LOGO_KEY);
+        return (String) cityDataForKey(CITY_LOGO_FS_UUID_KEY);
     }
 
     public String cityPrefCacheKey() {
-        return format(CITY_PREFS_CK, ApplicationThreadLocals.getDomainName());
+        return format(CITY_DATA_CACHE_KEY, getTenantID());
     }
 
     public Object cityDataForKey(String key) {

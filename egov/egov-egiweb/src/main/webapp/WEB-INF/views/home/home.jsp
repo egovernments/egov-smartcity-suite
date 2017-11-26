@@ -134,7 +134,7 @@
 					<!-- logo -->
 					<div class="navbar-brand">
 						<a href="javascript:void(0);">
-							<img src="/egi/downloadfile/logo.jpg" height="60" class="homepage_logo">
+							<img src="/egi/downloadfile/logo" height="60" class="homepage_logo">
 						</a>
 					</div>
 					

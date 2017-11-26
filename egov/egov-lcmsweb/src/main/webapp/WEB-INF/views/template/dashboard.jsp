@@ -107,7 +107,7 @@
             </button>
 
             <a class="navbar-brand customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="/dashboard/home">
-                <img src="<c:url value='/downloadfile/logo.jpg' context='/egi'/>" height="55">
+                <img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="55">
             </a>
             <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Complaint Redressal Home" href="/pgr/dashboard/home?isdefault=true">Complaints Redressal</a>
             <span class="navbar-brand visible-sm-block visible-xs-block" style="color:#FFF"><span class="title"></span></span>

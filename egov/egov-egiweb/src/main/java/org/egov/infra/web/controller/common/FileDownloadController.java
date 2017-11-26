@@ -53,8 +53,6 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -63,15 +61,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
-
-import static java.lang.String.format;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
-import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
-import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_INLINE;
 
 @Controller
 @RequestMapping("/downloadfile")
@@ -90,18 +82,10 @@ public class FileDownloadController {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId, moduleName, toSave);
     }
 
-    @GetMapping("/logo.jpg")
+    @GetMapping("/logo")
     @ResponseBody
-    public ResponseEntity getLogo() throws IOException {
-        byte[] fileBytes = cityService.getCityLogoAsBytes();
-        return fileBytes.length == 0 ?
-                ResponseEntity.notFound().build() :
-                ResponseEntity
-                        .ok()
-                        .contentType(MediaType.IMAGE_JPEG)
-                        .contentLength(fileBytes.length)
-                        .header(CONTENT_DISPOSITION, format(CONTENT_DISPOSITION_INLINE, getCityCode()))
-                        .body(new InputStreamResource(new ByteArrayInputStream(fileBytes)));
+    public void getLogo(HttpServletResponse response) throws IOException {
+        IOUtils.write(cityService.getCityLogoAsBytes(), response.getOutputStream());
     }
 
     @GetMapping("/gis")

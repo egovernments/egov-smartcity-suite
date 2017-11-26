@@ -53,8 +53,8 @@ public final class ApplicationConstant {
     public static final String CITY_CODE_KEY = "cityCode";
     public static final String CITY_NAME_KEY = "cityname";
     public static final String CITY_URL_KEY = "cityurl";
-    public static final String CITY_LOGO_KEY = "citylogo";
-    public static final String CITY_LOGO_BYTE_KEY = "citylogbytes";
+    public static final String CITY_LOGO_FS_UUID_KEY = "citylogo";
+    public static final String CITY_LOGO_CACHE_KEY = "city-logo";
     public static final String CITY_LOCAL_NAME_KEY = "citynamelocal";
     public static final String CITY_CAPTCHA_PRIV_KEY = "siteSecret";
     public static final String CITY_CAPTCHA_PUB_KEY = "siteKey";
@@ -74,7 +74,7 @@ public final class ApplicationConstant {
     public static final String CITY_REGION_NAME_KEY = "cityRegion";
     public static final String CITY_GOOGLE_API_KEY = "googleApiKey";
 
-    public static final String CITY_LOGO_URL = "%s/egi/downloadfile/logo.jpg";
+    public static final String CITY_LOGO_URL = "%s/egi/downloadfile/logo";
     public static final String CITY_LOGIN_URL = "%s/egi/login/secure";
 
     public static final String CDN_ATTRIB_NAME = "cdn";

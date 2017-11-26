@@ -256,7 +256,7 @@ public class City extends AbstractAuditable {
         cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
         cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
         if (preferences != null) {
-            cityPrefs.put(CITY_LOGO_KEY, preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
+            cityPrefs.put(CITY_LOGO_FS_UUID_KEY, preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
             cityPrefs.put(CITY_CORP_NAME_KEY, preferences.getMunicipalityName());
             cityPrefs.put(CITY_CORP_ADDRESS_KEY, preferences.getMunicipalityAddress());
             cityPrefs.put(CITY_CORP_CALLCENTER_NO_KEY, preferences.getMunicipalityCallCenterNo());

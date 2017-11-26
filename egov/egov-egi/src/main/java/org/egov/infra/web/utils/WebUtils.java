@@ -114,7 +114,7 @@ public final class WebUtils {
     }
 
     public static String currentContextPath(ServletRequest request) {
-        return request.getServletContext().getContextPath().toUpperCase().replace(SLASH, EMPTY);
+        return request.getServletContext().getContextPath().replace(SLASH, EMPTY);
     }
 
     public static void setUserLocale(User user, HttpServletRequest request, HttpServletResponse response) {
