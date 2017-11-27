@@ -128,7 +128,6 @@ public class LicenseProcessWorkflowService {
             else
                 workflowBean.setAdditionaRule(RENEWLICENSECOLLECTION);
         WorkFlowMatrix workFlowMatrix = getWorkFlowMatrix(tradeLicense, workflowBean);
-
         if (!tradeLicense.hasState() || tradeLicense.transitionCompleted()) {
             wfInitiator = getWfInitiatorByUser(workFlowMatrix.getCurrentDesignation());
             LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, wfInitiator, workFlowMatrix, new LicenseStateInfo(), wfInitiator);
@@ -142,11 +141,7 @@ public class LicenseProcessWorkflowService {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments())
                     .withDateInfo(currentDate.toDate());
-            tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
-            tradeLicense.setCollectionPending(false);
-            if (tradeLicense.isNewApplication())
-                tradeLicense.setActive(false);
-            tradeLicense.setNewWorkflow(false);
+            updateCancelStatus(tradeLicense);
         } else if (SIGNWORKFLOWACTION.equals(workflowBean.getWorkFlowAction())) {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withStateValue(workFlowMatrix.getCurrentState())
@@ -157,6 +152,14 @@ public class LicenseProcessWorkflowService {
             LicenseStateInfo licenseStateInfo = getLicenseStateInfo(workflowBean, owner, workFlowMatrix, tradeLicense.extraInfo(), (Position) currentState.getOwnerPosition());
             commonWorkflowTransition(tradeLicense, workflowBean, workFlowMatrix, licenseStateInfo);
         }
+    }
+
+    private void updateCancelStatus(TradeLicense tradeLicense) {
+        tradeLicense.setStatus(licenseStatusService.getLicenseStatusByCode(STATUS_CANCELLED));
+        tradeLicense.setCollectionPending(false);
+        if (tradeLicense.isNewApplication())
+            tradeLicense.setActive(false);
+        tradeLicense.setNewWorkflow(false);
     }
 
     private void initiateWfTransition(TradeLicense tradeLicense) {
@@ -189,7 +192,7 @@ public class LicenseProcessWorkflowService {
         if (!licenseUtils.isDigitalSignEnabled() && BUTTONAPPROVE.equalsIgnoreCase(workflowBean.getWorkFlowAction()) && !tradeLicense.isCollectionPending()) {
             tradeLicense.transition().end().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
                     .withComments(workflowBean.getApproverComments()).withStateValue(workFlowMatrix.getNextState())
-                    .withDateInfo(currentDate.toDate()).withOwner(tradeLicense.getCurrentState().getOwnerPosition()).withExtraInfo(licenseStateInfo);
+                    .withDateInfo(currentDate.toDate());
             updateActiveStatus(tradeLicense);
         } else {
             tradeLicense.transition().progressWithStateCopy().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
@@ -225,7 +228,6 @@ public class LicenseProcessWorkflowService {
                 throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
         } else
             throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, "No officials assigned to process this application");
-
     }
 
     public WorkFlowMatrix getWorkFlowMatrix(TradeLicense tradeLicense, WorkflowBean workflowBean) {

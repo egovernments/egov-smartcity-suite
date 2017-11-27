@@ -224,7 +224,7 @@ public class NewTradeLicenseAction extends BaseLicenseAction<TradeLicense> {
                     || license().getState().getValue().equals(WF_ACTION_DIGI_SIGN_COMMISSION_NO_COLLECTION))
                 mode = DISABLE_APPROVER_MODE;
         }
-        if (license().isCollectionPending() || STATUS_ACKNOWLEDGED.equals(license().getStatus().getStatusCode()))
+        if (STATUS_COLLECTIONPENDING.equals(license().getStatus().getStatusCode()) || STATUS_ACKNOWLEDGED.equals(license().getStatus().getStatusCode()))
             message = PENDING_COLLECTION_MSG;
         List<Position> positionList = positionMasterService
                 .getPositionsForEmployee(securityUtils.getCurrentUser().getId(), new Date());
