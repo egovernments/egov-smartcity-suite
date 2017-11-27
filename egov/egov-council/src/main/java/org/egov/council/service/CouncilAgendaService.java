@@ -48,6 +48,14 @@
 
 package org.egov.council.service;
 
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+
+import java.util.List;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.council.entity.CouncilAgenda;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.repository.CouncilAgendaDetailsRepository;
@@ -62,18 +70,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.List;
-
-import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-
 @Service
 @Transactional(readOnly = true)
 public class CouncilAgendaService {
 	
-	private final CouncilAgendaDetailsRepository councilAgendaDetailsRepository;
+    private final CouncilAgendaDetailsRepository councilAgendaDetailsRepository;
     private final CouncilAgendaRepository councilAgendaRepository;
     @PersistenceContext
     private EntityManager entityManager;
@@ -107,6 +108,10 @@ public class CouncilAgendaService {
     public List<CouncilAgenda> findAll() {
         return councilAgendaRepository.findAll(new Sort(Sort.Direction.DESC, "agendaNumber"));
     }
+    
+    public CouncilAgenda findByAgendaNumber(String agendaNumber) {
+        return councilAgendaRepository.findByAgendaNumber(agendaNumber);
+    }
 
     public CouncilAgenda findOne(Long id) {
         return councilAgendaRepository.findById(id);
@@ -119,7 +124,7 @@ public class CouncilAgendaService {
     
     @SuppressWarnings("unchecked")
     public List<CouncilAgenda> searchForAgendaToCreateMeeting(CouncilAgenda councilAgenda) {
-        return buildSearchCriteria(councilAgenda).add(Restrictions.in("status.code", new String[] {APPROVED, ADJOURNED})).list();
+        return buildSearchCriteria(councilAgenda).add(Restrictions.in("status.code", APPROVED, ADJOURNED)).list();
     }
     
     public Criteria buildSearchCriteria(CouncilAgenda councilAgenda){

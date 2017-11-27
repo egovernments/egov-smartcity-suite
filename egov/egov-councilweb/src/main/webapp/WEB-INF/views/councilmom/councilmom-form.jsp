@@ -116,6 +116,9 @@
 							<th width="7%"><spring:message code="lbl.agenda.number" /></th>
 							<th><spring:message code="lbl.preamble.number" /></th>
 							<th width="12%"><spring:message code="lbl.resolution" /></th>
+							<c:if test="${!autoResolutionNoGenEnabled}">
+								<th><spring:message code="lbl.resolutionNumber" /></th>
+							</c:if>
 							<th width="24%"><spring:message code="lbl.comments" /></th>
 						</tr>
 					</thead>
@@ -148,6 +151,13 @@
 											</form:select> <form:errors
 												path="meetingMOMs[${counter.index}].resolutionStatus"
 												cssClass="error-msg" /></td>
+										<c:if test="${!autoResolutionNoGenEnabled}">
+											<td><form:input
+													path='meetingMOMs[${counter.index}].resolutionNumber'
+													id="meetingMOMs[${counter.index}].resolutionNumber"
+													class="form-control validnum" required="required"
+													cssErrorClass="form-control error" /></td>
+										</c:if>
 										<td>
 											<div class="input-group">
 												<form:textarea
@@ -182,6 +192,7 @@
 </div>
 
 <input type="hidden" name="councilMeeting" value="${councilMeeting.id}" />
+<input type="hidden" id="autoResolutionNoGenEnabled" value="${autoResolutionNoGenEnabled}" />
 
 <%@ include file="upload-meeting-documents.jsp"%>
 
@@ -204,11 +215,13 @@
 							<%-- <th><spring:message code="lbl.preamble.number" /></th> --%>
 							<th width="19%"><spring:message code="lbl.department" /><span
 								class="mandatory"></span></th>
-							<%-- <th><spring:message code="lbl.wardnumber" /></th> --%>
 							<th width="27%"><spring:message code="lbl.gist.sumoto" /><span
 								class="mandatory"></span></th>
 							<th width="15%"><spring:message code="lbl.amount" /></th>
 							<th width="12%"><spring:message code="lbl.resolution" /></th>
+							<c:if test="${!autoResolutionNoGenEnabled}">
+								<th><spring:message code="lbl.resolutionNumber" /></th>
+							</c:if>
 							<th width="27%"><spring:message code="lbl.comments" /></th>
 						</tr>
 					</thead>

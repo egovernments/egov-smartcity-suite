@@ -53,6 +53,7 @@ import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIO
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
@@ -116,6 +117,7 @@ import com.google.gson.reflect.TypeToken;
 @RequestMapping("/councilmom")
 public class CouncilMomController {
 
+    private static final String RESOLUTION_NUMBER_AUTO = "RESOLUTION_NUMBER_AUTO";
     private static final String MESSAGE = "message";
     private static final String COUNCIL_MEETING = "councilMeeting";
     private static final String COUNCIL_MOM_MEETING_SEARCH = "councilmomMeeting-search";
@@ -202,6 +204,7 @@ public class CouncilMomController {
         }
         if (councilMeeting != null) {
             sortMeetingMomByItemNumber(councilMeeting);
+            model.addAttribute("autoResolutionNoGenEnabled", isAutoResolutionNoGenEnabled());
             model.addAttribute(COUNCIL_MEETING, councilMeeting);
         }
         return COUNCILMOM_NEW;
@@ -374,7 +377,8 @@ public class CouncilMomController {
 
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
             // if mom status is approved, generate resolution number
-            if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())) {
+            if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())
+                    && isAutoResolutionNoGenEnabled()) {
                 MOMResolutionNumberGenerator momResolutionNumberGenerator = autonumberServiceBeanResolver
                         .getAutoNumberServiceFor(MOMResolutionNumberGenerator.class);
                 meetingMOM.setResolutionNumber(
@@ -403,5 +407,10 @@ public class CouncilMomController {
 
     private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting) {
         return councilReportService.generatePDFForMom(councilMeeting);
+    }
+    
+    public Boolean isAutoResolutionNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                MODULE_FULLNAME, RESOLUTION_NUMBER_AUTO);
     }
 }

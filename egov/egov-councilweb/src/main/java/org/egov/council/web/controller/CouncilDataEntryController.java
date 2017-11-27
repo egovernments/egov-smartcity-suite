@@ -47,6 +47,20 @@
  */
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilAgendaDetails;
@@ -56,6 +70,7 @@ import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.service.CommitteeTypeService;
+import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilMeetingTypeService;
 import org.egov.council.service.CouncilPreambleService;
@@ -69,20 +84,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import static org.egov.council.utils.constants.CouncilConstants.AGENDAUSEDINMEETING;
-import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
-import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/councilmom")
@@ -106,6 +107,9 @@ public class CouncilDataEntryController {
 
     @Autowired
     private CouncilPreambleService councilPreambleService;
+    
+    @Autowired
+    private CouncilAgendaService councilAgendaService;
 
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
@@ -196,5 +200,15 @@ public class CouncilDataEntryController {
     public boolean uniqueResolutionNumber(@RequestParam final String resolutionNumber) {
         MeetingMOM meetingMOM = councilMeetingService.findByResolutionNumber(resolutionNumber);
         return meetingMOM != null ? false : true;
+    }
+    
+    /**
+     * @param resolutionNumber
+     * @return
+     */
+    @RequestMapping(value = "/checkUnique-agendaNo", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public boolean uniqueAgendaNumber(@RequestParam final String agendaNumber) {
+        return councilAgendaService.findByAgendaNumber(agendaNumber) != null ? false : true;
     }
 }

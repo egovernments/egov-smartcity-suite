@@ -47,6 +47,21 @@
  */
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.AGENDA_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.council.utils.constants.CouncilConstants.WARD;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.AgendaNumberGenerator;
 import org.egov.council.entity.CommitteeType;
@@ -56,6 +71,7 @@ import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilPreambleService;
+import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilAgendaJsonAdaptor;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -76,25 +92,11 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.council.utils.constants.CouncilConstants.AGENDA_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.AGENDA_STATUS_APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLEUSEDINAGENDA;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_STATUS_APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.council.utils.constants.CouncilConstants.WARD;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 @Controller
 @RequestMapping("/agenda")
 public class CouncilAgendaController {
 
+    private static final String AGENDA_NUMBER_AUTO = "AGENDA_NUMBER_AUTO";
     private static final String DATA = "{\"data\":";
     private static final String COUNCIL_AGENDA = "councilAgenda";
     private static final String COUNCILAGENDA_NEW = "create-agenda";
@@ -146,6 +148,7 @@ public class CouncilAgendaController {
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
+        model.addAttribute("autoAgendaNoGenEnabled", isAutoAgendaNoGenEnabled()); 
         model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
         model.addAttribute("councilPreamble", new CouncilPreamble());
         return COUNCILAGENDA_NEW;
@@ -171,12 +174,12 @@ public class CouncilAgendaController {
                 preambleList.add(councilAgendaDetails);
             }
         }
-
-        AgendaNumberGenerator agendaNumberGenerator = autonumberServiceBeanResolver
-                .getAutoNumberServiceFor(AgendaNumberGenerator.class);
-        councilAgenda.setAgendaNumber(agendaNumberGenerator
-                .getNextNumber(councilAgenda));
-
+        if (isAutoAgendaNoGenEnabled()) {
+            AgendaNumberGenerator agendaNumberGenerator = autonumberServiceBeanResolver
+                    .getAutoNumberServiceFor(AgendaNumberGenerator.class);
+            councilAgenda.setAgendaNumber(agendaNumberGenerator
+                    .getNextNumber(councilAgenda));
+        }
         councilAgenda.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                 AGENDA_MODULENAME, AGENDA_STATUS_APPROVED));
         councilAgenda.setAgendaDetails(preambleList);
@@ -235,7 +238,7 @@ public class CouncilAgendaController {
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model,
-            final HttpServletResponse response) throws IOException {
+            final HttpServletResponse response){
         CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
         councilAgenda.setCouncilAgendaDetailsForUpdate(councilAgenda
                 .getAgendaDetails());
@@ -320,6 +323,11 @@ public class CouncilAgendaController {
                 .append(toJSON(searchResultList, CouncilAgenda.class,
                         CouncilAgendaJsonAdaptor.class))
                 .append("}").toString();
+    }
+    
+    public Boolean isAutoAgendaNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                CouncilConstants.MODULE_FULLNAME, AGENDA_NUMBER_AUTO);
     }
 
 }

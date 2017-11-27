@@ -54,7 +54,9 @@ import org.egov.council.entity.MeetingMOM;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.repository.CouncilPreambleRepository;
 import org.egov.council.service.workflow.PreambleWorkflowCustomImpl;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -82,12 +84,15 @@ import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPRO
 @Transactional(readOnly = true)
 public class CouncilPreambleService {
 
+    private static final String STATUS_CODE = "status.code";
     private final CouncilPreambleRepository councilPreambleRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private PreambleWorkflowCustomImpl preambleWorkflowCustomImpl;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     protected AutonumberServiceBeanResolver autonumberServiceBeanResolver;
@@ -136,25 +141,31 @@ public class CouncilPreambleService {
     public CouncilPreamble findbyPreambleNumber(String preambleNumber) {
         return councilPreambleRepository.findByPreambleNumber(preambleNumber);
     }
+    
+    public Boolean autoGenerationModeEnabled(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue());
+    }
+    
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchForPreamble(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
-        criteria.add(Restrictions.in("status.code", new String[] { APPROVED, ADJOURNED }));
+        criteria.add(Restrictions.in(STATUS_CODE, APPROVED,ADJOURNED));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchPreambleForWardwiseReport(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
-        criteria.add(Restrictions.ne("status.code",  REJECTED));
+        criteria.add(Restrictions.ne(STATUS_CODE,  REJECTED));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> search(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
-        criteria.add(Restrictions.ne("status.code",  REJECTED));
+        criteria.add(Restrictions.ne(STATUS_CODE,  REJECTED));
         return criteria.list();
     }
 
@@ -168,8 +179,8 @@ public class CouncilPreambleService {
                         .isNull("implementationStatus.code"), Restrictions.ne(
                                 "implementationStatus.code",
                                 IMPLEMENTATION_STATUS_FINISHED)))
-                .add(Restrictions.and(Restrictions.in("status.code",
-                        new String[] { RESOLUTION_APPROVED_PREAMBLE })));
+                .add(Restrictions.and(Restrictions.in(STATUS_CODE,
+                        RESOLUTION_APPROVED_PREAMBLE )));
         return criteria.list();
     }
 

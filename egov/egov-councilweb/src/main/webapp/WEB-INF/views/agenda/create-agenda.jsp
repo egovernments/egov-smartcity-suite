@@ -74,26 +74,68 @@
 	enctype="multipart/form-data">
 
 	<div class="row display-hide agenda-section">
-		<div class="col-md-12">
-			<div class="form-group">
-				<div class="table-header text-left col-md-8 col-sm-7">Create
-					Agenda</div>
-				<label class="col-md-2 col-sm-2 control-label text-right"><spring:message
-						code="lbl.committeetype" /> <span class="mandatory"></span> </label>
-				<div class="col-md-2 col-sm-3">
-					<form:select path="committeeType" id="committeeType"
-						required="required" cssClass="form-control"
-						cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${committeeType}" itemValue="id"
-							itemLabel="name" />
-					</form:select>
-					<form:errors path="committeeType" cssClass="error-msg" />
+		<c:choose>
+			<c:when test="${!autoAgendaNoGenEnabled}">
+				<div class="col-md-12">
+					<div class="table-header text-left col-md-8 col-sm-7">Create
+						Agenda</div>
 				</div>
-			</div>
-		</div>
+				<br />
+				<br />
+				<div class="col-md-12">
+					<div class="col-md-6 col-sm-6">
+						<label class="col-md-3 col-sm-3"><spring:message
+								code="lbl.agendaNumber" /> <span class="mandatory"></span> </label>
+						<div class="col-md-5 col-sm-5">
+							<form:input path="agendaNumber" id="agendaNumber" type="text"
+								class="form-control" maxlength="5" placeholder=""
+								autocomplete="off" />
+							<form:errors path="agendaNumber" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-6">
+						<label class="col-md-7 control-label text-right"><spring:message
+								code="lbl.committeetype" /> </label>
+						<div class="col-md-5 col-sm-5 pull-right">
+							<form:select path="committeeType" id="committeeType"
+								required="required" cssClass="form-control"
+								cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${committeeType}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="committeeType" cssClass="error-msg" />
+						</div>
+					</div>
+				</div>
+				<br />
+				<br />
+			</c:when>
+			<c:otherwise>
+				<div class="col-md-12">
+					<div class="form-group">
+						<div class="table-header text-left col-md-8 col-sm-7">Create
+							Agenda</div>
+						<label class="col-md-2 col-sm-2 control-label text-right"><spring:message
+								code="lbl.committeetype" /> <span class="mandatory"></span> </label>
+						<div class="col-md-2 col-sm-3">
+							<form:select path="committeeType" id="committeeType"
+								required="required" cssClass="form-control"
+								cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${committeeType}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="committeeType" cssClass="error-msg" />
+						</div>
+					</div>
+				</div>
+			</c:otherwise>
+		</c:choose>
 
 		<div class="col-md-12 report-table-container dragging">
 			<table

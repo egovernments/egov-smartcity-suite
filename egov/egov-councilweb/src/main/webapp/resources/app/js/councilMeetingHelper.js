@@ -122,3 +122,32 @@ $("#resultTable").on('click','tbody tr td  .view',function(event) {
 	window.open('/council/councilmeeting/new' + '/'+id,'','width=800, height=600,scrollbars=yes');
 	
 });
+
+$('#meetingNumber').blur(function(){
+	validateMeetingNumber();
+});
+
+
+function validateMeetingNumber(){
+	var meetingNumber=$('#meetingNumber').val();
+	if(meetingNumber != '') {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-MeetingNo",      
+			type: "GET",
+			data: {
+				meetingNumber : meetingNumber,  
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$('#meetingNumber').val('');
+						bootbox.alert("Entered Meeting Number already exists. Please Enter Unique Number.");
+				}
+			}, 
+			error: function (response) {
+				$('#meetingNumber').val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}

@@ -58,6 +58,17 @@
 		</div>
 		<div class="panel-body">
 			<div class="form-group">
+				<c:if test="${!autoPreambleNoGenEnabled && currentState=='NEW'}">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.preamble.number" /> <span class="mandatory"></span></label>
+					<div class="col-sm-3 add-margin">
+						<form:input path="preambleNumber" required="required"
+							id="preambleNumber"
+							class="form-control text-left patternvalidation" />
+						<form:errors path="preambleNumber" cssClass="error-msg" />
+					</div>
+				</c:if>
+
 				<c:if
 					test="${councilPreamble.preambleNumber!= null && !''.equalsIgnoreCase(councilPreamble.preambleNumber)}">
 					<label class="col-sm-2 control-label text-right"> <spring:message
@@ -69,8 +80,6 @@
 
 				<input type="hidden" name="councilPreamble"
 					value="${councilPreamble.id}" />
-				<form:hidden path="preambleNumber" id="preambleNumber"
-					value="${councilPreamble.preambleNumber}" />
 				<form:hidden path="type" id="type" value="${councilPreamble.type}" />
 			</div>
 			<div class="form-group">
@@ -112,21 +121,8 @@
 					<form:errors path="gistOfPreamble" cssClass="error-msg" />
 				</div>
 
-
-				<%-- <label class="col-sm-2 control-label text-right"><spring:message
-						code="lbl.PreambleType" /> <span class="mandatory"></span></label>
-				<div class="col-sm-3 add-margin">
-					<form:select path="type" id="type" required="required"
-						cssClass="form-control" cssErrorClass="form-control error">
-						<form:option value="">
-							<spring:message code="lbl.select" />
-						</form:option>
-						<form:options items="${type}" />
-					</form:select>
-					<form:errors path="type" cssClass="error-msg" />
-				</div> --%>
 			</div>
-
+			
 			<div class="form-group">
 				<label class="col-sm-2 control-label text-right"><spring:message
 						code="lbl.upload" /><span class="mandatory"></span></label>
@@ -179,7 +175,6 @@
 					</select>
 				</div>
 			</div>
-
 			<div>Note: After getting the council preamble prepared and
 				approved by the head of the section, the same should be uploaded
 				here and forward to the competent authority for further action</div>

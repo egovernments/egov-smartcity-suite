@@ -332,6 +332,10 @@ $("#resultTable,#preambleResultTable").on('click','tbody tr td button.details',f
 	e.preventDefault();
 });
 
+$("#preambleNumber").on('blur',function(event) {
+	validatePreambleNumber($(this));
+});
+
 
 $("#resultTable").on(
 		'click',
@@ -360,3 +364,27 @@ $("#momdetails").on(
     var id = $('#test').val();
     window.open('/council/councilmom/view'+ '/'+id,'','width=800, height=600,scrollbars=yes');
 });
+
+function validatePreambleNumber(preambleNumber){
+	var preambleNo= preambleNumber.val()
+	if(preambleNo != '') {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-preambleNo",      
+			type: "GET",
+			data: {
+				preambleNumber : preambleNo, 
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$(preambleNumber).val('');
+						bootbox.alert("Entered Preamble Number already exists. Please Enter Unique Number.");
+				}
+			}, 
+			error: function (response) {
+				$(preambleNumber).val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}

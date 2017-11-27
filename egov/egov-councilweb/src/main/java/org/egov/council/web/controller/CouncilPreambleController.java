@@ -48,6 +48,21 @@
 
 package org.egov.council.web.controller;
 
+import static org.egov.council.utils.constants.CouncilConstants.CHECK_BUDGET;
+import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATIONSTATUS;
+import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
+import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.council.utils.constants.CouncilConstants.WARD;
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
+import java.io.IOException;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.EgwStatus;
@@ -73,6 +88,7 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -88,23 +104,11 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.util.List;
-
-import static org.egov.council.utils.constants.CouncilConstants.CHECK_BUDGET;
-import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATIONSTATUS;
-import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
-import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
-import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.council.utils.constants.CouncilConstants.WARD;
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
 @Controller
 @RequestMapping("/councilpreamble")
 public class CouncilPreambleController extends GenericWorkFlowController {
+    private static final String PREAMBLE_NUMBER_AUTO = "PREAMBLE_NUMBER_AUTO";
+    private static final String REDIRECT_COUNCILPREAMBLE_RESULT = "redirect:/councilpreamble/result/";
     private static final String MESSAGE2 = "message";
     private static final String APPLICATION_HISTORY = "applicationHistory";
     private static final String APPROVAL_POSITION = "approvalPosition";
@@ -176,6 +180,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public String newForm(final Model model) {
         CouncilPreamble councilPreamble = new CouncilPreamble();
         councilPreamble.setType(PreambleType.GENERAL);
+        model.addAttribute("autoPreambleNoGenEnabled", isAutoPreambleNoGenEnabled());     
         model.addAttribute(COUNCIL_PREAMBLE, councilPreamble);
         prepareWorkFlowOnLoad(model, councilPreamble);
         model.addAttribute(CURRENT_STATE, "NEW");
@@ -215,10 +220,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 LOGGER.error("Error in loading documents" + e.getMessage(), e);
             }
         }
+        if (isAutoPreambleNoGenEnabled()){
         PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
                 .getAutoNumberServiceFor(PreambleNumberGenerator.class);
         councilPreamble.setPreambleNumber(preamblenumbergenerator
                 .getNextNumber(councilPreamble));
+        }
         councilPreamble.setStatus(egwStatusHibernateDAO
                 .getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULENAME,
                         CouncilConstants.PREAMBLE_STATUS_CREATED));
@@ -250,12 +257,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                         councilPreamble.getPreambleNumber()},
                 null);
         redirectAttrs.addFlashAttribute(MESSAGE2, message);
-        return "redirect:/councilpreamble/result/" + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
     @ResponseBody
-    public ResponseEntity download(@PathVariable final String fileStoreId) {
+    public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
         return fileStoreUtils.fileAsResponseEntity(fileStoreId,
                 CouncilConstants.MODULE_NAME, false);
     }
@@ -337,12 +344,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             }
             redirectAttrs.addFlashAttribute(MESSAGE2, message);
         }
-        return "redirect:/councilpreamble/result/" + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
     }
 
     @RequestMapping(value = "/updateimplimentaionstatus/{id}", method = RequestMethod.GET)
     public String updateStatus(@PathVariable("id") final Long id, final Model model,
-                               final HttpServletResponse response) throws IOException {
+                               final HttpServletResponse response) {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         if (null != councilPreamble.getImplementationStatus()
                 && IMPLEMENTATION_STATUS_FINISHED.equals(councilPreamble.getImplementationStatus().getCode())) {
@@ -366,7 +373,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             councilPreambleService.updateImplementationStatus(councilPreamble);
         }
         redirectAttrs.addFlashAttribute(MESSAGE2, messageSource.getMessage("msg.councilPreamble.update", null, null));
-        return "redirect:/councilpreamble/result/" + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
     }
 
     private String getMessage(String messageLabel,
@@ -379,7 +386,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model,
-                       final HttpServletResponse response) throws IOException {
+                       final HttpServletResponse response){
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         WorkflowContainer workFlowContainer = new WorkflowContainer();
         prepareWorkflow(model, councilPreamble, workFlowContainer);
@@ -431,6 +438,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 .append(toJSON(searchResultList, CouncilPreamble.class,
                         CouncilPreambleJsonAdaptor.class))
                 .append("}").toString();
+    }
+    
+    public Boolean isAutoPreambleNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);
     }
 
 }

@@ -386,6 +386,10 @@ $(document).ready(function() {
 
 	});
 	
+	$("#agendaNumber").on('blur',function(event) {
+		validateAgendaNumber($(this));
+	});
+
 	
 	// changing order of preambles while creating and upating agenda.
     $('.sorted_table').sortable({
@@ -401,3 +405,27 @@ $(document).ready(function() {
 	});
 		   
 });
+
+function validateAgendaNumber(agendaNumber){
+	var agendaNo= agendaNumber.val()
+	if(agendaNo) {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-agendaNo",      
+			type: "GET",
+			data: {
+				agendaNumber : agendaNo, 
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$(agendaNumber).val('');
+						bootbox.alert("Entered Agenda Number already exists. Please Enter Unique Number.");
+				}
+			}, 
+			error: function (response) {
+				$(agendaNumber).val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}

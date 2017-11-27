@@ -82,8 +82,10 @@ import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilCommitteeMemberService;
 import org.egov.council.service.CouncilMeetingService;
 import org.egov.council.service.CouncilMeetingTypeService;
+import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilReportService;
 import org.egov.council.service.CouncilSmsAndEmailService;
+import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilMeetingJsonAdaptor;
 import org.egov.council.web.adaptor.MeetingAttendanceJsonAdaptor;
 import org.egov.infra.admin.master.entity.Department;
@@ -116,6 +118,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/councilmeeting")
 public class CouncilMeetingController {
 
+    private static final String MEETING_NUMBER_AUTO = "MEETING_NUMBER_AUTO";
     private static final String APPLICATION_RTF = "application/rtf";
     private static final String DATA = "{ \"data\":";
     private static final String MSG_ATTENDANCE_ALREADY_FINALIZD = "msg.attendance.already.finalizd";
@@ -142,6 +145,8 @@ public class CouncilMeetingController {
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
     @Autowired
     private CouncilAgendaService councilAgendaService;
+    @Autowired
+    private CouncilPreambleService councilPreambleService;
     @Autowired
     private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
     @Autowired
@@ -187,6 +192,7 @@ public class CouncilMeetingController {
                           final Model model) {
 
         CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
+        model.addAttribute("autoMeetingNoGenEnabled", isAutoMeetingNoGenEnabled()); 
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
         if (councilAgenda != null && AGENDAUSEDINMEETING.equals(councilAgenda.getStatus().getCode())) {
             model.addAttribute(MESSAGE, "msg.agenda.exist");
@@ -226,10 +232,11 @@ public class CouncilMeetingController {
         }
         if (councilMeeting.getStatus() == null)
             councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCILMEETING, APPROVED));
-        CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
-                .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
-        councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
-
+        if (isAutoMeetingNoGenEnabled()) {
+            CouncilMeetingNumberGenerator meetingNumberGenerator = autonumberServiceBeanResolver
+                    .getAutoNumberServiceFor(CouncilMeetingNumberGenerator.class);
+            councilMeeting.setMeetingNumber(meetingNumberGenerator.getNextNumber(councilMeeting));
+        }
         for (MeetingMOM meetingMom : councilMeeting.getMeetingMOMs()) {
             meetingMom.setMeeting(councilMeeting);
             meetingMom.getAgenda()
@@ -254,6 +261,7 @@ public class CouncilMeetingController {
     public String edit(@PathVariable("id") final Long id, final Model model) {
         CouncilMeeting councilMeeting = councilMeetingService.findOne(id);
         councilMeetingService.sortMeetingMomByItemNumber(councilMeeting);
+        model.addAttribute("autoMeetingNoGenEnabled", true);
         model.addAttribute(COUNCIL_MEETING, councilMeeting);
 
         return COUNCILMEETING_EDIT;
@@ -544,5 +552,10 @@ public class CouncilMeetingController {
         headers.add("content-disposition", "inline;filename=meetingdetails.rtf");
         return new ResponseEntity<>(reportOutput, headers, HttpStatus.CREATED);
 
+    }
+    
+    public Boolean isAutoMeetingNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                CouncilConstants.MODULE_FULLNAME, MEETING_NUMBER_AUTO);
     }
 }

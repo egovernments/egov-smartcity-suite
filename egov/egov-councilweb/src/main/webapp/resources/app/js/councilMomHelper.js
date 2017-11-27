@@ -158,5 +158,36 @@ $(document).ready(function() {
 		}
 	}
 
+	$('#agendaTable tbody').on('blur','tr .validnum',function() {
+    	validateResolutionNumber($(this));
+    });
+    
+    $('#sumotoTable tbody').on('blur','tr .validnum',function() {
+    	validateResolutionNumber($(this));
+    });
 	
 });
+
+function validateResolutionNumber(resolutionNumber){
+	var resolutionNo = resolutionNumber.val();
+	if(resolutionNo) {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-resolutionNo",      
+			type: "GET",
+			data: {
+				resolutionNumber : resolutionNo, 
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$(resolutionNumber).val('');
+						bootbox.alert("Entered Resolution Number already exists. Please Enter Unique Number.");
+				}
+			}, 
+			error: function (response) {
+				$(resolutionNumber).val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}

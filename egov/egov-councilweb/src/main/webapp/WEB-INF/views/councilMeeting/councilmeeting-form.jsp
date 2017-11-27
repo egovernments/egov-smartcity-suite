@@ -108,9 +108,19 @@
 			</div>
 		</div>
 
+		<c:if test="${!autoMeetingNoGenEnabled}">
+			<div class="form-group">
+				<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.meeting.number" /> <span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin">
+					<form:input path="meetingNumber" id="meetingNumber"
+						cssClass="form-control" required="required"
+						cssErrorClass="form-control error" />
+					<form:errors path="meetingNumber" cssClass="error-msg" />
+				</div>
+			</div>
+		</c:if>
 		<form:hidden path="id" id="id" value="${councilMeeting.id}" />
-		<form:hidden path="meetingNumber" id="meetingNumber"
-			value="${councilMeeting.meetingNumber}" />
 	</div>
 </div>
 
