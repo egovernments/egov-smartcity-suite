@@ -54,7 +54,6 @@ public final class ApplicationConstant {
     public static final String CITY_NAME_KEY = "cityname";
     public static final String CITY_URL_KEY = "cityurl";
     public static final String CITY_LOGO_FS_UUID_KEY = "citylogo";
-    public static final String CITY_LOGO_CACHE_KEY = "city-logo";
     public static final String CITY_LOCAL_NAME_KEY = "citynamelocal";
     public static final String CITY_CAPTCHA_PRIV_KEY = "siteSecret";
     public static final String CITY_CAPTCHA_PUB_KEY = "siteKey";

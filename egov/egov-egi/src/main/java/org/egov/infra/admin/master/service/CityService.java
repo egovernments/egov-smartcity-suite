@@ -71,7 +71,6 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_EMAIL_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_GRADE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_CORP_NAME_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_DIST_NAME_KEY;
-import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_CACHE_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_FS_UUID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 
@@ -79,7 +78,9 @@ import static org.egov.infra.utils.ApplicationConstant.CITY_LOGO_URL;
 @Transactional(readOnly = true)
 public class CityService {
 
-    private static final String CITY_DATA_CACHE_KEY = "%s-cache";
+    private static final String CITY_DATA_CACHE_KEY = "%s-city-pref";
+    private static final String CITY_LOGO_CACHE_KEY = "%s-city-logo";
+    private static final String CITY_LOGO_HASH_KEY = "city-logo";
 
     private final CityRepository cityRepository;
 
@@ -88,6 +89,9 @@ public class CityService {
 
     @Resource(name = "redisTemplate")
     private HashOperations<String, String, Object> cityPrefCache;
+
+    @Resource(name = "redisTemplate")
+    private HashOperations<String, String, Object> cityLogoCache;
 
     @Autowired
     private RedisTemplate<Object, Object> redisTemplate;
@@ -103,6 +107,7 @@ public class CityService {
     @Transactional
     public City updateCity(City city) {
         redisTemplate.delete(cityPrefCacheKey());
+        redisTemplate.delete(cityLogoCacheKey());
         cityDataAsMap();
         return cityRepository.save(city);
     }
@@ -161,10 +166,10 @@ public class CityService {
     }
 
     public byte[] getCityLogoAsBytes() {
-        byte[] cityLogo = (byte[]) cityDataForKey(CITY_LOGO_CACHE_KEY);
+        byte[] cityLogo = (byte[]) cityLogoCache.get(cityLogoCacheKey(), CITY_LOGO_HASH_KEY);
         if (cityLogo == null || cityLogo.length < 1) {
             cityLogo = fileStoreUtils.fileAsByteArray(getCityLogoFileStoreId(), getCityCode());
-            cityPrefCache.put(cityPrefCacheKey(), CITY_LOGO_CACHE_KEY, cityLogo);
+            cityLogoCache.put(cityLogoCacheKey(), CITY_LOGO_HASH_KEY, cityLogo);
         }
         return cityLogo;
     }
@@ -173,11 +178,15 @@ public class CityService {
         return (String) cityDataForKey(CITY_LOGO_FS_UUID_KEY);
     }
 
-    public String cityPrefCacheKey() {
+    public Object cityDataForKey(String key) {
+        return cityPrefCache.get(cityPrefCacheKey(), key);
+    }
+
+    private String cityPrefCacheKey() {
         return format(CITY_DATA_CACHE_KEY, getTenantID());
     }
 
-    public Object cityDataForKey(String key) {
-        return cityPrefCache.get(cityPrefCacheKey(), key);
+    private String cityLogoCacheKey() {
+        return format(CITY_LOGO_CACHE_KEY, getTenantID());
     }
 }

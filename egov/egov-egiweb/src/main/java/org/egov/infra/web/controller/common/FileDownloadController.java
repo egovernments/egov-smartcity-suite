@@ -83,7 +83,6 @@ public class FileDownloadController {
     }
 
     @GetMapping("/logo")
-    @ResponseBody
     public void getLogo(HttpServletResponse response) throws IOException {
         IOUtils.write(cityService.getCityLogoAsBytes(), response.getOutputStream());
     }
