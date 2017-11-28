@@ -77,9 +77,7 @@
 
 						<div class="col-sm-6 add-margin">
 							<form:input id="name" path="name" type="text"
-								cssClass="form-control patternvalidation"
-								data-pattern="alphanumericwithspecialcharacters"
-								autocomplete="off" required="required" />
+								cssClass="form-control" autocomplete="off" required="required" />
 							<form:errors path="name" cssClass="error-msg" />
 						</div>
 					</div>
