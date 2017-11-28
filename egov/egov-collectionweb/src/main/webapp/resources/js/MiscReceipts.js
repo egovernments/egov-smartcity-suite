@@ -1368,7 +1368,7 @@ var subledgerselected = new Array();
 		
 			if(Math.round(accountDetailamount*100)/100  != Math.round(subledgerTotalAmt*100)/100)
 			{
-				document.getElementById('receipt_error_area').innerHTML += "Total subjedger amount is not matching for account code : "+ document.getElementById('billCreditDetailslist['+i+'].glcodeDetail').value+'<br>';
+				document.getElementById('receipt_error_area').innerHTML += "Total subledger amount is not matching for account code : "+ document.getElementById('billCreditDetailslist['+i+'].glcodeDetail').value+'<br>';
 				return false;
 			}
 		}
