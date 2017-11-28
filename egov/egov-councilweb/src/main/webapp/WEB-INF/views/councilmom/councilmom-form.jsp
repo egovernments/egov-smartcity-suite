@@ -220,7 +220,8 @@
 							<th width="15%"><spring:message code="lbl.amount" /></th>
 							<th width="12%"><spring:message code="lbl.resolution" /></th>
 							<c:if test="${!autoResolutionNoGenEnabled}">
-								<th><spring:message code="lbl.resolutionNumber" /></th>
+								<th><spring:message code="lbl.resolutionNumber" /><span
+								class="mandatory"></span></th>
 							</c:if>
 							<th width="27%"><spring:message code="lbl.comments" /></th>
 						</tr>
