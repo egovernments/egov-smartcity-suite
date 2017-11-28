@@ -157,7 +157,9 @@
 	<%@ include file="builtupPropDetailsForm.jsp"%>
 	</div>
 </s:if>
-
+<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND}">
+	<%@ include file="../common/vacantLandForm.jsp"%>
+</s:if>
 <s:if test="%{!documentTypes.isEmpty()}">
 	<%@ include file="../common/DocumentUploadForm_new.jsp"%>
 </s:if>

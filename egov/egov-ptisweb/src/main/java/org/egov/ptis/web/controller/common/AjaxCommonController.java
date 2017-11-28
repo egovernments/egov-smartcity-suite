@@ -74,6 +74,7 @@ import java.util.Map;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
 import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND_STR;
 
 @Controller
 @RequestMapping(value = "/common")
@@ -95,16 +96,21 @@ public class AjaxCommonController {
      */
     @RequestMapping(value = "/amalgamation/getamalgamatedpropdetails", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") final String assessmentNo) {
+    public AmalgamatedPropInfo getAmalgamatedPropertyDetails(@RequestParam("assessmentNo") final String assessmentNo,@RequestParam("retainerAssessmentNo") final String retainerAssessmentNo) {
         final AmalgamatedPropInfo amalgamatedProp = new AmalgamatedPropInfo();
         amalgamatedProp.setValidationMsg("");
         final BasicProperty basicProp = basicPropertyDAO.getBasicPropertyByPropertyID(assessmentNo);
+        String amalgPropType = basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
         amalgamatedProp.setAssessmentNo(assessmentNo);
+        final BasicProperty retainerBasicProp = basicPropertyDAO.getBasicPropertyByPropertyID(retainerAssessmentNo);
+        String retainerPropType = retainerBasicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getType();
         if (basicProp == null)
             amalgamatedProp.setValidationMsg("Assessment does not exist!");
         else {
             if (basicProp.isUnderWorkflow())
                 amalgamatedProp.setValidationMsg("Assessment: " + basicProp.getUpicNo() + " is under workflow!");
+            else if ((retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && !amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)) || (!retainerPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR) && amalgPropType.equals(OWNERSHIP_TYPE_VAC_LAND_STR)))
+                amalgamatedProp.setValidationMsg("Vacant Land cannot be amalgamated with Non Vacant Land");
             else {
                 final BigDecimal totalDue = propService.getTotalPropertyTaxDue(basicProp);
                 final boolean hasDues = totalDue.compareTo(BigDecimal.ZERO) > 0 ? true : false;

@@ -78,8 +78,11 @@ import org.egov.ptis.domain.dao.property.PropertyTypeMasterDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.enums.TransactionType;
 import org.egov.ptis.domain.entity.property.*;
+import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthorityRepository;
+import org.egov.ptis.domain.repository.master.vacantland.VacantLandPlotAreaRepository;
 import org.egov.ptis.domain.service.property.PropertyPersistenceService;
 import org.egov.ptis.domain.service.property.PropertyService;
+import org.egov.ptis.domain.service.property.SurroundingsAuditService;
 import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.ApartmentService;
@@ -132,6 +135,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private BasicProperty basicProp = new BasicPropertyImpl();
     private PropertyImpl oldProperty = new PropertyImpl();
     private PropertyImpl propertyModel = new PropertyImpl();
+    private SurroundingsAudit oldSurroundings = new SurroundingsAudit();
     private PropertyImpl propWF;// would be current property workflow obj
     private String mode;
     private String areaOfPlot;
@@ -164,7 +168,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private String instStartDt;
     private List<String> guardianRelations;
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
-
+    private Long vacantLandPlotAreaId;
+    private Long layoutApprovalAuthorityId;
+    
     @Autowired
     private transient PropertyPersistenceService basicPropertyService;
     @Autowired
@@ -198,7 +204,13 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     private transient PropertyService propertyService;
     @Autowired
     private ReassignService reassignService;
-
+    @Autowired
+    private VacantLandPlotAreaRepository vacantLandPlotAreaRepository;
+    @Autowired
+    private LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
+    @Autowired
+    private SurroundingsAuditService surroundingsAuditService;
+    
     public AmalgamationAction() {
         super();
         propertyModel.setPropertyDetail(new BuiltUpProperty());
@@ -255,6 +267,8 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         addDropdownData("OccupancyList", propertyOccupationService.getAllPropertyOccupations());
         addDropdownData("StructureList", structureClassificationService.getAllActiveStructureTypes());
         addDropdownData("apartments", apartmentService.getAllApartments());
+        addDropdownData("vacantLandPlotAreaList", vacantLandPlotAreaRepository.findAll());
+        addDropdownData("layoutApprovalAuthorityList", layoutApprovalAuthorityRepository.findAll());
         populatePropertyTypeCategory();
         if (propertyModel != null && propertyModel.getPropertyDetail() != null
                 && propertyModel.getPropertyDetail().getCategoryType() != null)
@@ -323,6 +337,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
             woodTypeId = propertyModel.getPropertyDetail().getWoodType().getId();
         if (propertyModel.getPropertyDetail().getSitalArea() != null)
             setAreaOfPlot(propertyModel.getPropertyDetail().getSitalArea().getArea().toString());
+        if (propertyModel.getPropertyDetail().getVacantLandPlotArea() != null)
+            vacantLandPlotAreaId = propertyModel.getPropertyDetail().getVacantLandPlotArea().getId();
+        if (propertyModel.getPropertyDetail().getLayoutApprovalAuthority() != null)
+            layoutApprovalAuthorityId = propertyModel.getPropertyDetail().getLayoutApprovalAuthority().getId();
         if (basicProp.getPropertyID() != null) {
             final PropertyID propertyID = basicProp.getPropertyID();
             northBoundary = propertyID.getNorthBoundary();
@@ -450,6 +468,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         transitionWorkFlow(propertyModel);
         basicProp.setUnderWorkflow(Boolean.TRUE);
         setAmalgamationsForPersist();
+        if (propertyModel.getId() == null && basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
+                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+                   surroundingsAuditService.saveSurroundingDetails(oldSurroundings);
         applyAuditingAndUpdateIndex();
         prepareAckMsg();
         showAckBtn = Boolean.TRUE;
@@ -652,7 +673,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
             if (propertyDetail != null)
                 validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
-                        northBoundary, modifyRsn, propCompletionDate, null, null, propertyModel);
+                        northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, propertyModel);
         } else {
             validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
             validateFloor(propTypeMstr, propertyModel.getPropertyDetail().getFloorDetailsProxy(), propertyModel, areaOfPlot,
@@ -713,6 +734,9 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         basicProp.setPropertyMutationMaster(propMutMstr);
         basicProp.setPropOccupationDate(propCompletionDate);
         createAmalgamationOwners(propertyModel, basicProp, basicProp.getAddress());
+        if(propertyModel.getId()==null && basicProp.getProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
+                .equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+        oldSurroundings = propertyTaxCommonUtils.setSurroundingDetails(basicProp);
         setProperty(propService.createProperty(propertyModel, getAreaOfPlot(), modifyRsn, proptypeMstr.getId().toString(), null,
                 null, status, propertyModel.getDocNumber(), null, floorTypeId, roofTypeId, wallTypeId, woodTypeId,
                 null, null, null, null, Boolean.FALSE));
@@ -721,6 +745,10 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         propertyModel.setBasicProperty(basicProp);
         propertyModel.setEffectiveDate(propCompletionDate);
         changePropertyDetail(proptypeMstr);
+        propertyModel.getPropertyDetail()
+                            .setVacantLandPlotArea(vacantLandPlotAreaId != null ? vacantLandPlotAreaRepository.findOne(vacantLandPlotAreaId) : null);
+        propertyModel.getPropertyDetail()
+                            .setLayoutApprovalAuthority(layoutApprovalAuthorityId != null ? layoutApprovalAuthorityRepository.findOne(layoutApprovalAuthorityId) : null);
 
         try {
             modProperty = propService.modifyDemand(propertyModel, oldProperty);
@@ -956,9 +984,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("reject: BasicProperty: " + basicProperty);
         transitionWorkFlow(propertyModel);
-        if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED))
-            for (final Amalgamation amalProp : basicProp.getAmalgamations())
-                amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
+        onCancelSetOldValues();
 
         propService.updateIndexes(propertyModel, getApplicationType());
         propertyImplService.update(propertyModel);
@@ -974,6 +1000,18 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
         if (logger.isDebugEnabled())
             logger.debug("reject: Property rejection ended");
         return RESULT_ACK;
+    }
+
+    private void onCancelSetOldValues() {
+        if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED)){
+            SurroundingsAudit oldSurroundings = surroundingsAuditService.getLatestSurroundings(basicProp.getId());
+            basicProp.getPropertyID().setNorthBoundary(oldSurroundings.getNorthBoundary() != null ? oldSurroundings.getNorthBoundary() : null);
+            basicProp.getPropertyID().setSouthBoundary(oldSurroundings.getSouthBoundary() != null ? oldSurroundings.getSouthBoundary() : null);
+            basicProp.getPropertyID().setEastBoundary(oldSurroundings.getEastBoundary() != null ? oldSurroundings.getEastBoundary() : null);
+            basicProp.getPropertyID().setWestBoundary(oldSurroundings.getWestBoundary() != null ? oldSurroundings.getWestBoundary() : null);
+            for (final Amalgamation amalProp : basicProp.getAmalgamations())
+                amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
+        }
     }
 
     @SkipValidation
@@ -1306,5 +1344,21 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
 
     public void setGuardianRelations(List<String> guardianRelations) {
         this.guardianRelations = guardianRelations;
+    }
+
+    public Long getVacantLandPlotAreaId() {
+        return vacantLandPlotAreaId;
+    }
+
+    public void setVacantLandPlotAreaId(Long vacantLandPlotAreaId) {
+        this.vacantLandPlotAreaId = vacantLandPlotAreaId;
+    }
+
+    public Long getLayoutApprovalAuthorityId() {
+        return layoutApprovalAuthorityId;
+    }
+
+    public void setLayoutApprovalAuthorityId(Long layoutApprovalAuthorityId) {
+        this.layoutApprovalAuthorityId = layoutApprovalAuthorityId;
     }
 }

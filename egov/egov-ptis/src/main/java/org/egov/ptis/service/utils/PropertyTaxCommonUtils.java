@@ -81,10 +81,12 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.SurroundingsAudit;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
@@ -790,4 +792,16 @@ public class PropertyTaxCommonUtils {
         }
         return list;
     }
+    
+    public SurroundingsAudit setSurroundingDetails(final BasicProperty basicProperty) {
+        SurroundingsAudit oldSurroundings = new SurroundingsAudit();
+        PropertyID propertyId = basicProperty.getPropertyID();
+        oldSurroundings.setBasicproperty(basicProperty.getId());
+        oldSurroundings.setEastBoundary(propertyId.getEastBoundary() != null ? propertyId.getEastBoundary() : null);
+        oldSurroundings.setNorthBoundary(propertyId.getNorthBoundary() != null ? propertyId.getNorthBoundary() : null);
+        oldSurroundings.setSouthBoundary(propertyId.getSouthBoundary() != null ? propertyId.getSouthBoundary() : null);
+        oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
+        return oldSurroundings;
+    }
+
 }

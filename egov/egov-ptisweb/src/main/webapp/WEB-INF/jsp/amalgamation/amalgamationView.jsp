@@ -128,3 +128,6 @@
 	<%@ include file="builtupPropDetailsView.jsp"%>
 </s:if>
 
+<s:if test="%{oldPropertyTypeCode==@org.egov.ptis.constants.PropertyTaxConstants@OWNERSHIP_TYPE_VAC_LAND}">
+	<%@ include file="../common/vacantLandView.jsp"%>
+</s:if>

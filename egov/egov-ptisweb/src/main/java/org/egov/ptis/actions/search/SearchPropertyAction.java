@@ -325,11 +325,6 @@ public class SearchPropertyAction extends SearchFormAction {
              * (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
              * addActionError(getText("tax.dues.error")); return COMMON_FORM; }
              */
-            if (property != null
-                    && property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
-                addActionError(getText("amalgamation.vlt.error"));
-                return COMMON_FORM;
-            }
             if (basicProperty.isUnderWorkflow()) {
                 addActionError(getText("amalgamation.wf.error"));
                 return COMMON_FORM;

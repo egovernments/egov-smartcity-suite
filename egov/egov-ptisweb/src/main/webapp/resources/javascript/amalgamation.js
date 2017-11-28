@@ -201,7 +201,8 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
     jQuery.ajax({
         url: "/ptis/common/amalgamation/getamalgamatedpropdetails",
         type: "GET",
-        data:{"assessmentNo":jQuery(this).val()},
+        data:{"assessmentNo":jQuery(this).val(),
+        	"retainerAssessmentNo":jQuery('#retainerPropertyId').val()},
         beforeSend:function()
         {
         	jQuery('.loader-class').modal('show', {backdrop: 'static'});
