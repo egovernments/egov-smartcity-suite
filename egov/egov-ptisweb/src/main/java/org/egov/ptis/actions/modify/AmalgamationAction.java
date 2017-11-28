@@ -1003,15 +1003,19 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     }
 
     private void onCancelSetOldValues() {
-        if (propertyModel.getStatus().equals(PropertyTaxConstants.STATUS_CANCELLED)){
-            SurroundingsAudit oldSurroundings = surroundingsAuditService.getLatestSurroundings(basicProp.getId());
-            basicProp.getPropertyID().setNorthBoundary(oldSurroundings.getNorthBoundary() != null ? oldSurroundings.getNorthBoundary() : null);
-            basicProp.getPropertyID().setSouthBoundary(oldSurroundings.getSouthBoundary() != null ? oldSurroundings.getSouthBoundary() : null);
-            basicProp.getPropertyID().setEastBoundary(oldSurroundings.getEastBoundary() != null ? oldSurroundings.getEastBoundary() : null);
-            basicProp.getPropertyID().setWestBoundary(oldSurroundings.getWestBoundary() != null ? oldSurroundings.getWestBoundary() : null);
+        if (propertyModel.getStatus().equals(STATUS_CANCELLED)){
+            SurroundingsAudit prevSurroundings = surroundingsAuditService.getLatestSurroundings(basicProp.getId());
+            setPreviousSurroundings(prevSurroundings);
             for (final Amalgamation amalProp : basicProp.getAmalgamations())
                 amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
         }
+    }
+
+    private void setPreviousSurroundings(SurroundingsAudit prevSurroundings) {
+        basicProp.getPropertyID().setNorthBoundary(prevSurroundings.getNorthBoundary() != null ? prevSurroundings.getNorthBoundary() : null);
+        basicProp.getPropertyID().setSouthBoundary(prevSurroundings.getSouthBoundary() != null ? prevSurroundings.getSouthBoundary() : null);
+        basicProp.getPropertyID().setEastBoundary(prevSurroundings.getEastBoundary() != null ? prevSurroundings.getEastBoundary() : null);
+        basicProp.getPropertyID().setWestBoundary(prevSurroundings.getWestBoundary() != null ? prevSurroundings.getWestBoundary() : null);
     }
 
     @SkipValidation
