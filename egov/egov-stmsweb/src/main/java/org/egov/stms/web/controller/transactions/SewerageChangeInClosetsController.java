@@ -213,24 +213,10 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
                 .findByCode(SewerageTaxConstants.CHANGEINCLOSETS);
         sewerageApplicationDetails.setApplicationType(applicationType);
         sewerageApplicationDetails.setApplicationDate(new Date());
-
-        model.addAttribute("allowIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-        model.addAttribute("propertyTypes", PropertyType.values());
-        model.addAttribute("shscNumber", shscNumber);
-        model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
-        final WorkflowContainer workFlowContainer = new WorkflowContainer();
-        workFlowContainer.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
-        prepareWorkflow(model, sewerageApplicationDetails, workFlowContainer);
-        model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-        model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
-        model.addAttribute("typeOfConnection", SewerageTaxConstants.CHANGEINCLOSETS);
         final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
-        model.addAttribute("inspectionFeesCollectionRequired", inspectionFeeCollectionRequired);
+        prepareChangeForm(sewerageApplicationDetails, shscNumber, model, isCitizenPortalUser);
         if (inspectionFeeCollectionRequired)
             createSewerageConnectionFee(sewerageApplicationDetails, SewerageTaxConstants.FEE_INSPECTIONCHARGE);
-
-        model.addAttribute("mode", "edit");
-        model.addAttribute("isCitizenPortalUser", isCitizenPortalUser);
         return "changeInClosetsConnection-form";
     }
 
@@ -275,15 +261,9 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
 
         if (resultBinder.hasErrors()) {
             sewerageApplicationDetails.setApplicationDate(new Date());
-            model.addAttribute("validateIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
-            model.addAttribute("propertyTypes", PropertyType.values());
-            model.addAttribute("mode", "edit");
-            model.addAttribute(PTASSESSMENT_NUMBER, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-            prepareWorkflow(model, sewerageApplicationDetails, new WorkflowContainer());
-            model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
-            model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+            prepareChangeForm(sewerageApplicationDetails, shscNumber, model, citizenPortalUser);       
             model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVAL_POSITION));
-            model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
+            model.addAttribute(PTASSESSMENT_NUMBER, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             return "changeInClosetsConnection-form";
         }
         /**
@@ -328,6 +308,9 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
 
             }
         }
+        /**
+         * populate fee details
+         */
         populateFeesDetails(sewerageApplicationDetails);
 
         final SewerageConnection sewerageConnection = sewerageConnectionService.findByShscNumber(shscNumber);
@@ -360,7 +343,7 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
                 + (currentUserAssignment != null ? currentUserAssignment.getDesignation().getName() : EMPTY) + ","
                 + (nextDesign != null ? nextDesign : EMPTY);
         String message = messageSource.getMessage("msg.success.forward",
-                new String[] {approverName.concat("~").concat(nextDesignation),
+                new String[] {null!=approverName ?approverName.concat("~").concat(nextDesignation):EMPTY,
                         newSewerageApplicationDetails.getApplicationNumber() },
                 null);
         model.addAttribute("message", message);
@@ -371,13 +354,13 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
     }
 
     @RequestMapping(value = "/changeInClosets-success", method = RequestMethod.GET)
-    public ModelAndView successView(@ModelAttribute SewerageApplicationDetails sewerageApplicationDetails,
-            final HttpServletRequest request, final Model model, final ModelMap modelMap) {
+    public ModelAndView successView( final HttpServletRequest request, final Model model, final ModelMap modelMap) {
         final String[] keyNameArray = request.getParameter("pathVars").split(",");
         String applicationNumber = EMPTY;
         String approverName = EMPTY;
         String currentUserDesgn = EMPTY;
         String nextDesign = EMPTY;
+        SewerageApplicationDetails changeinclosetSuccessObj = null;
         if (keyNameArray.length != 0 && keyNameArray.length > 0)
             if (keyNameArray.length == 1)
                 applicationNumber = keyNameArray[0];
@@ -392,22 +375,27 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
                 nextDesign = keyNameArray[3];
             }
 
-        if (isNotBlank(applicationNumber))
-            sewerageApplicationDetails = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
+        if (isNotBlank(applicationNumber)) {
+            changeinclosetSuccessObj = sewerageApplicationDetailsService.findByApplicationNumber(applicationNumber);
+        }
         model.addAttribute("approverName", approverName);
         model.addAttribute("currentUserDesgn", currentUserDesgn);
         model.addAttribute("nextDesign", nextDesign);
 
         model.addAttribute("cityName", ApplicationThreadLocals.getCityName());
         model.addAttribute("mode", "ack");
-        setCommonDetails(sewerageApplicationDetails, modelMap, request);
+        if (null != changeinclosetSuccessObj) {
+            setCommonDetails(changeinclosetSuccessObj, modelMap, request);
+            model.addAttribute("inspectionDetails", changeinclosetSuccessObj.getConnectionFees());
+        }
         final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
         model.addAttribute("inspectionFeesCollectionRequired", inspectionFeeCollectionRequired);
-        if (inspectionFeeCollectionRequired)
-            model.addAttribute("inspectionDetails", sewerageApplicationDetails.getConnectionFees());
-        model.addAttribute("documentNamesList",
-                sewerageConnectionService.getSewerageApplicationDoc(sewerageApplicationDetails));
-        return new ModelAndView("changeInClosets-success", "sewerageApplicationDetails", sewerageApplicationDetails);
+        if (inspectionFeeCollectionRequired) {
+            model.addAttribute("documentNamesList",
+                    sewerageConnectionService.getSewerageApplicationDoc(changeinclosetSuccessObj));
+        }
+        return new ModelAndView("changeInClosets-success", "sewerageApplicationDetails", changeinclosetSuccessObj);
+
     }
 
     private void setCommonDetails(final SewerageApplicationDetails sewerageApplicationDetails, final ModelMap modelMap,
@@ -445,4 +433,23 @@ public class SewerageChangeInClosetsController extends GenericWorkFlowController
         }
     }
 
+    public void prepareChangeForm(final SewerageApplicationDetails sewerageApplicationDetails, final String shscNumber,
+            final Model model, final Boolean isCitizenPortalUser) {
+        model.addAttribute("allowIfPTDueExists", sewerageTaxUtils.isNewConnectionAllowedIfPTDuePresent());
+        model.addAttribute("propertyTypes", PropertyType.values());
+        model.addAttribute("shscNumber", shscNumber);
+        model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode()); 
+        final WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setAdditionalRule(sewerageApplicationDetails.getApplicationType().getCode());
+        prepareWorkflow(model, sewerageApplicationDetails, workFlowContainer);
+        model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
+        model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
+        model.addAttribute("typeOfConnection", SewerageTaxConstants.CHANGEINCLOSETS);
+        final boolean inspectionFeeCollectionRequired = sewerageTaxUtils.isInspectionFeeCollectionRequired();
+        model.addAttribute("inspectionFeesCollectionRequired", inspectionFeeCollectionRequired);
+        model.addAttribute("mode", "edit");
+        model.addAttribute("isCitizenPortalUser", isCitizenPortalUser);
+        model.addAttribute("additionalRule", sewerageApplicationDetails.getApplicationType().getCode());
+
+    }
 }

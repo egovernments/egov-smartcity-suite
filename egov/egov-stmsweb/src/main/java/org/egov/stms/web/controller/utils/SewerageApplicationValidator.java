@@ -84,6 +84,8 @@ import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_ST
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_FORWARD;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
 import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+
 
 @Component
 public class SewerageApplicationValidator extends SewerageApplicationCommonValidator {
@@ -322,6 +324,7 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
 
     public void validateChangeInClosetsApplication(final SewerageApplicationDetails sewerageApplicationDetails,
             final Errors errors, final HttpServletRequest request) {
+
         if (sewerageApplicationDetails.getConnectionDetail().getPropertyType() == null)
             errors.rejectValue(CONNECTIONDTL_PROPERTYTYPE, NOTEMPTY_SEWERAGE_PROPERTYTYPE);
         else
@@ -336,6 +339,28 @@ public class SewerageApplicationValidator extends SewerageApplicationCommonValid
             if (errorMessage != null && !errorMessage.equals(""))
                 errors.reject(CONNECTIONDTL_PROPERTYID_ISVALID,
                         new String[] { errorMessage }, null);
+        }
+        List<SewerageApplicationDetails> sewerageList = sewerageApplicationDetailsService
+                .getSewerageConnectionDetailsByPropertyIDentifier(
+                        sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+        if (!sewerageList.isEmpty()) {
+
+            for (SewerageApplicationDetails sewerageobj : sewerageList) {
+                if (CHANGEINCLOSETS.equalsIgnoreCase(sewerageApplicationDetails.getApplicationType().getCode())
+                        && sewerageApplicationDetails.getConnectionDetail().getPropertyType()
+                                .equals(sewerageobj.getConnectionDetail().getPropertyType())
+                        && (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential() != null
+                                && (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsNonResidential()
+                                        .equals(sewerageobj.getConnectionDetail().getNoOfClosetsNonResidential()))
+                                || sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential() != null
+                                        && (sewerageApplicationDetails.getConnectionDetail().getNoOfClosetsResidential()
+                                                .equals(sewerageobj.getConnectionDetail().getNoOfClosetsResidential())))) {
+
+                    errors.reject("err.validate.seweragechangeincloset.noofcloset");
+
+                }
+
+            }
         }
         checkWaterTaxDue(sewerageApplicationDetails, errors, request);
     }
