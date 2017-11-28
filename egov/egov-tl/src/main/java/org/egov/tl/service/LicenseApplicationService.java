@@ -122,12 +122,12 @@ public class LicenseApplicationService extends TradeLicenseService {
 
     @Transactional
     public License renew(final TradeLicense license, final WorkflowBean workflowBean) {
+        license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         if (!currentUserIsMeeseva())
             license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
         recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
                 license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
         license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
         processAndStoreDocument(license);
         if (securityUtils.currentUserIsEmployee())
             licenseProcessWorkflowService.createNewLicenseWorkflowTransition((TradeLicense) license, workflowBean);
