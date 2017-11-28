@@ -125,6 +125,34 @@ $('#meetingNumber').blur(function(){
 	validateMeetingNumber();
 });
 
+$('#agendaNumber').blur(function(){
+	validateAgendaNumber();
+});
+
+function validateAgendaNumber(){
+	var agendaNumber=$('#agendaNumber').val();
+	if(agendaNumber != '') {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-agendaNo",      
+			type: "GET",
+			data: {
+				agendaNumber : agendaNumber,  
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$('#agendaNumber').val('');
+						bootbox.alert("Entered Agenda Number already exists. Please Enter Unique Number.");
+				}
+			}, 
+			error: function (response) {
+				$('#agendaNumber').val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}
+
 
 function validateMeetingNumber(){
 	var meetingNumber=$('#meetingNumber').val();
