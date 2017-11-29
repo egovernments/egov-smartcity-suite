@@ -48,9 +48,24 @@
   -->
 
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pgr_routerescalation_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6532bf9c-d318-410e-a0f3-56fc02fc0b56">
-	<property name="ireport.zoom" value="2.0"/>
-	<property name="ireport.x" value="404"/>
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.3" value="lastPageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns=true"/>
+	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.page.margins=true"/>
+	<property name="net.sf.jasperreports.export.xls.wrap.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet=true"/>
+	<property name="net.sf.jasperreports.export.xls.column.width.ratio" value="1.10f"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
 	<parameter name="RouterEscalationForm" class="java.util.List"/>
 	<field name="ctname" class="java.lang.String"/>
 	<field name="bndryname" class="java.lang.String"/>
@@ -78,7 +93,10 @@
 	<columnHeader>
 		<band height="19" splitType="Stretch">
 			<staticText>
-				<reportElement x="32" y="-1" width="124" height="20" uuid="9ad5d02c-f756-4d0e-addd-65f363aaee81"/>
+				<reportElement x="32" y="-1" width="124" height="20" uuid="9ad5d02c-f756-4d0e-addd-65f363aaee81">
+					<property name="$V{PAGE_NUMBER}==1" value=""/>
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -88,7 +106,10 @@
 				<text><![CDATA[Grievance Type]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="156" y="-1" width="124" height="20" uuid="cdb3d39a-9e72-4fd2-a96c-ddb81a50893a"/>
+				<reportElement x="156" y="-1" width="124" height="20" uuid="cdb3d39a-9e72-4fd2-a96c-ddb81a50893a">
+					<property name="$V{PAGE_NUMBER}==1" value=""/>
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -98,7 +119,10 @@
 				<text><![CDATA[Ward]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="280" y="-1" width="124" height="20" uuid="5efbdecc-e30a-4b76-9d17-17f96f13ac42"/>
+				<reportElement x="280" y="-1" width="124" height="20" uuid="5efbdecc-e30a-4b76-9d17-17f96f13ac42">
+					<property name="$V{PAGE_NUMBER}==1" value=""/>
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -108,7 +132,10 @@
 				<text><![CDATA[Routed To]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="404" y="-1" width="124" height="20" uuid="306c4be5-1240-41d4-a082-40283d765980"/>
+				<reportElement x="404" y="-1" width="124" height="20" uuid="306c4be5-1240-41d4-a082-40283d765980">
+					<property name="$V{PAGE_NUMBER}==1" value=""/>
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -118,7 +145,10 @@
 				<text><![CDATA[First Escalation]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="528" y="-1" width="124" height="20" uuid="0611831f-cbf0-4650-bc99-a179e02575ed"/>
+				<reportElement x="528" y="-1" width="124" height="20" uuid="0611831f-cbf0-4650-bc99-a179e02575ed">
+					<property name="$V{PAGE_NUMBER}==1" value=""/>
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -128,7 +158,10 @@
 				<text><![CDATA[Second Escalation]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="652" y="-1" width="124" height="20" uuid="2e86b7e2-ec82-4e53-928e-303830257c4d"/>
+				<reportElement x="652" y="-1" width="124" height="20" uuid="2e86b7e2-ec82-4e53-928e-303830257c4d">
+					<property name="$V{PAGE_NUMBER}==1" value=""/>
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -140,49 +173,49 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
-			<textField>
-				<reportElement x="32" y="0" width="124" height="20" uuid="f3408949-1f32-49a5-9349-773cf07f0641"/>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="32" y="0" width="124" height="20" isPrintWhenDetailOverflows="true" uuid="f3408949-1f32-49a5-9349-773cf07f0641"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{ctname}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="156" y="0" width="124" height="20" uuid="9a63e3cb-8f23-49e5-b0eb-71d4c9617569"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="156" y="0" width="124" height="20" isPrintWhenDetailOverflows="true" uuid="9a63e3cb-8f23-49e5-b0eb-71d4c9617569"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{bndryname}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="280" y="0" width="124" height="20" uuid="0b241da4-46b3-4dc8-8850-1c70a1e2a4db"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="280" y="0" width="124" height="20" isPrintWhenDetailOverflows="true" uuid="0b241da4-46b3-4dc8-8850-1c70a1e2a4db"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{routerposname}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="404" y="0" width="124" height="20" uuid="2faa5457-7953-4f96-b86f-2e41fe9417fb"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="404" y="0" width="124" height="20" isPrintWhenDetailOverflows="true" uuid="2faa5457-7953-4f96-b86f-2e41fe9417fb"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{esclvl1posname}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="528" y="0" width="124" height="20" uuid="3798cddc-406d-4737-9394-9ddf2a0a0a8b"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="528" y="0" width="124" height="20" isPrintWhenDetailOverflows="true" uuid="3798cddc-406d-4737-9394-9ddf2a0a0a8b"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{esclvl2posname}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="652" y="0" width="124" height="20" uuid="cce17780-fbbd-4cd8-bf5f-847232752fe9"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="652" y="0" width="124" height="20" isPrintWhenDetailOverflows="true" uuid="cce17780-fbbd-4cd8-bf5f-847232752fe9"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>

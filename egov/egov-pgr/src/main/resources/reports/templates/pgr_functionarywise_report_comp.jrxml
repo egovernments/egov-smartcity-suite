@@ -51,6 +51,21 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.3" value="lastPageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns=true"/>
+	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.page.margins=true"/>
+	<property name="net.sf.jasperreports.export.xls.wrap.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet=true"/>
+	<property name="net.sf.jasperreports.export.xls.column.width.ratio" value="1.10f"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
 	<parameter name="FunctionarywiseReport" class="java.util.List"/>
 	<parameter name="groupBy" class="java.lang.String"/>
 	<parameter name="type" class="java.lang.String"/>
@@ -69,7 +84,9 @@
 		<band height="20" splitType="Stretch">
 			<textField>
 				<reportElement x="110" y="0" width="583" height="20" uuid="5a24eb2c-816d-4fb3-ab1e-2c27222c4774"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{type} == null || $P{type}.isEmpty()? ($P{groupBy} == null || $P{groupBy}.isEmpty() ? "Functionarywise Report":"DrillDown Report" ): "ComplaintTypewise Report"]]></textFieldExpression>
 			</textField>
 		</band>
@@ -80,107 +97,139 @@
 	<columnHeader>
 		<band height="21" splitType="Stretch">
 			<staticText>
-				<reportElement x="13" y="1" width="100" height="20" uuid="0cec5b47-ec98-494e-8cc7-92fa111ad092"/>
+				<reportElement x="13" y="1" width="100" height="20" uuid="0cec5b47-ec98-494e-8cc7-92fa111ad092">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Grievance Number]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="113" y="1" width="100" height="20" uuid="7935edda-80c7-455f-8983-786857ed47d4"/>
+				<reportElement x="113" y="1" width="100" height="20" uuid="7935edda-80c7-455f-8983-786857ed47d4">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Grievance Date]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="213" y="1" width="100" height="20" uuid="527f7e2c-4c07-4cc7-b21d-faddaacf5fc4"/>
+				<reportElement x="213" y="1" width="100" height="20" uuid="527f7e2c-4c07-4cc7-b21d-faddaacf5fc4">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Complainant Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="313" y="1" width="100" height="20" uuid="d38d8da1-98de-417f-bbc6-88bbb72320e5"/>
+				<reportElement x="313" y="1" width="100" height="20" uuid="d38d8da1-98de-417f-bbc6-88bbb72320e5">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Grievance Address]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="413" y="1" width="100" height="20" uuid="0ef48a30-50e5-492f-a9b8-26672e0e7198"/>
+				<reportElement x="413" y="1" width="100" height="20" uuid="0ef48a30-50e5-492f-a9b8-26672e0e7198">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Grievance Detail]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="513" y="1" width="90" height="20" uuid="cf570b44-76a0-47d3-9c22-1263403d8f01"/>
+				<reportElement x="513" y="1" width="90" height="20" uuid="cf570b44-76a0-47d3-9c22-1263403d8f01">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Status]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="603" y="1" width="93" height="20" uuid="4a30af34-b790-427f-ba65-3aa2609afcef"/>
+				<reportElement x="603" y="1" width="93" height="20" uuid="4a30af34-b790-427f-ba65-3aa2609afcef">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Feedback]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="696" y="1" width="95" height="20" uuid="d7bfee25-e906-4554-bcc1-88b33775b401"/>
+				<reportElement x="696" y="1" width="95" height="20" uuid="d7bfee25-e906-4554-bcc1-88b33775b401">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[WithinSLA(Yes/No)]]></text>
 			</staticText>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
-			<textField>
-				<reportElement x="13" y="0" width="100" height="20" uuid="e2ead45b-ca11-4582-afac-26decb1ed689"/>
+		<band height="20" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="13" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="e2ead45b-ca11-4582-afac-26decb1ed689"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{crn}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="113" y="0" width="100" height="20" uuid="e8101151-8228-40b6-8bab-6c234e4f371a"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="113" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="e8101151-8228-40b6-8bab-6c234e4f371a"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{createdDate}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="213" y="0" width="100" height="20" uuid="b5b732bc-82a5-4384-9176-3086af0902a2"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="213" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="b5b732bc-82a5-4384-9176-3086af0902a2"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{complainantName}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="313" y="0" width="100" height="20" uuid="ce3eba39-a02d-421b-ad77-83e8a2893e45"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="313" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="ce3eba39-a02d-421b-ad77-83e8a2893e45"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{boundaryName} == null || $F{boundaryName}.isEmpty() ? "N/A" :$F{boundaryName}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="413" y="0" width="100" height="20" uuid="2f75d164-091c-4a3a-92b8-d907640dfa0b"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="413" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="2f75d164-091c-4a3a-92b8-d907640dfa0b"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -188,15 +237,15 @@
 				<textFieldExpression><![CDATA[$F{complaintDetail}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="513" y="0" width="90" height="20" uuid="144a418d-4544-4e59-8f8e-679b224ec03b"/>
+				<reportElement stretchType="RelativeToTallestObject" x="513" y="0" width="90" height="20" isPrintWhenDetailOverflows="true" uuid="144a418d-4544-4e59-8f8e-679b224ec03b"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{status}]]></textFieldExpression>
 			</textField>
-			<textField>
-				<reportElement x="603" y="0" width="93" height="20" uuid="fe06f673-5779-40e2-81f4-47d0abc8c74b"/>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="603" y="0" width="93" height="20" isPrintWhenDetailOverflows="true" uuid="fe06f673-5779-40e2-81f4-47d0abc8c74b"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -204,7 +253,7 @@
 				<textFieldExpression><![CDATA[$F{feedback} == null? "N/A" : $F{feedback}]]></textFieldExpression>
 			</textField>
 			<textField>
-				<reportElement x="696" y="0" width="95" height="20" uuid="a0ea6961-ec4c-40e6-806d-46a1e1913242"/>
+				<reportElement stretchType="RelativeToTallestObject" x="696" y="0" width="95" height="20" isPrintWhenDetailOverflows="true" uuid="a0ea6961-ec4c-40e6-806d-46a1e1913242"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -213,7 +262,7 @@
 			</textField>
 		</band>
 	</detail>
-	<columnFooter>
+	<pageFooter>
 		<band height="21" splitType="Stretch">
 			<textField>
 				<reportElement x="702" y="0" width="100" height="20" uuid="f6eb2c80-5c7e-4214-bd5f-8fef2c034d85"/>
@@ -221,11 +270,8 @@
 				<textFieldExpression><![CDATA[$V{PAGE_NUMBER}]]></textFieldExpression>
 			</textField>
 		</band>
-	</columnFooter>
-	<pageFooter>
-		<band splitType="Stretch"/>
 	</pageFooter>
 	<summary>
-		<band height="1" splitType="Stretch"/>
+		<band splitType="Stretch"/>
 	</summary>
 </jasperReport>

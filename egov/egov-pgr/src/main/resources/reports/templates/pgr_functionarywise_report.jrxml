@@ -49,8 +49,23 @@
 
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="pgr_functionarywise_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="56571bd1-6db1-4d1e-af8d-8994751e2e2b">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="142"/>
+	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.3" value="lastPageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns=true"/>
+	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.page.margins=true"/>
+	<property name="net.sf.jasperreports.export.xls.wrap.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet=true"/>
+	<property name="net.sf.jasperreports.export.xls.column.width.ratio" value="1.10f"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
 	<parameter name="FunctionarywiseReport" class="java.util.List"/>
 	<parameter name="groupBy" class="java.lang.String"/>
 	<parameter name="type" class="java.lang.String"/>
@@ -98,7 +113,9 @@
 		<band height="21" splitType="Stretch">
 			<textField>
 				<reportElement x="48" y="0" width="706" height="20" uuid="7ea8709c-b197-4ab3-b9d8-82ddd3b215b4"/>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{type} == null || $P{type}.isEmpty()? ($P{groupBy} == null || $P{groupBy}.isEmpty() ? "Functionarywise Report":"DrillDown Report" ): "ComplaintTypewise Report"]]></textFieldExpression>
 			</textField>
 		</band>
@@ -109,87 +126,123 @@
 	<columnHeader>
 		<band height="21" splitType="Stretch">
 			<staticText>
-				<reportElement x="128" y="1" width="80" height="20" uuid="ac4141d9-cd81-4aa7-b517-c0f3e43479b3"/>
+				<reportElement x="128" y="1" width="80" height="20" uuid="ac4141d9-cd81-4aa7-b517-c0f3e43479b3">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Registered]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="208" y="1" width="83" height="20" uuid="4a673b10-709f-408b-9fb7-9d5bced3caec"/>
+				<reportElement x="208" y="1" width="83" height="20" uuid="4a673b10-709f-408b-9fb7-9d5bced3caec">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Inprocess]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="291" y="1" width="78" height="20" uuid="402b0080-d905-4f8a-9ff4-83ba8c9deee8"/>
+				<reportElement x="291" y="1" width="78" height="20" uuid="402b0080-d905-4f8a-9ff4-83ba8c9deee8">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Completed]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="369" y="1" width="81" height="20" uuid="e33d5872-4bb6-46b0-971f-37944baf6aa0"/>
+				<reportElement x="369" y="1" width="81" height="20" uuid="e33d5872-4bb6-46b0-971f-37944baf6aa0">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Rejected]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="450" y="1" width="89" height="20" uuid="1c5f7b13-7fe3-40aa-a23d-d531d21a339d"/>
+				<reportElement x="450" y="1" width="89" height="20" uuid="1c5f7b13-7fe3-40aa-a23d-d531d21a339d">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Reopened]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="539" y="1" width="87" height="20" uuid="20dad520-beb4-48ef-b257-b158f726a8b8"/>
+				<reportElement x="539" y="1" width="87" height="20" uuid="20dad520-beb4-48ef-b257-b158f726a8b8">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[WithinSLA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="626" y="1" width="79" height="20" uuid="d5672361-367c-41b4-b6df-b89bdbad16eb"/>
+				<reportElement x="626" y="1" width="79" height="20" uuid="d5672361-367c-41b4-b6df-b89bdbad16eb">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[BeyondSLA]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="705" y="1" width="83" height="20" uuid="d23a0673-8216-4a11-861f-0a979cdf72fb"/>
+				<reportElement x="705" y="1" width="83" height="20" uuid="d23a0673-8216-4a11-861f-0a979cdf72fb">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
 			<textField>
-				<reportElement x="28" y="1" width="100" height="20" uuid="4e405145-d1e2-40e5-b616-92e9b88235c2"/>
+				<reportElement x="28" y="1" width="100" height="20" uuid="4e405145-d1e2-40e5-b616-92e9b88235c2">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font isBold="true"/>
+				</textElement>
 				<textFieldExpression><![CDATA[$P{type} == null || $P{type}.isEmpty()? ($P{groupBy} == null || $P{groupBy}.isEmpty() ? "Employee Name":$P{reportTitle} ): "Grievance Type Name"]]></textFieldExpression>
 			</textField>
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
+		<band height="20" splitType="Prevent">
 			<textField isStretchWithOverflow="true">
-				<reportElement x="28" y="0" width="100" height="20" uuid="b3d1b7e2-7656-419a-b66b-55894729d005"/>
+				<reportElement stretchType="RelativeToTallestObject" x="28" y="0" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="b3d1b7e2-7656-419a-b66b-55894729d005"/>
 				<box topPadding="10" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
-				<textElement textAlignment="Left" verticalAlignment="Bottom" markup="none"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle" markup="none"/>
 				<textFieldExpression><![CDATA[$F{complaintTypeName} == null || $F{complaintTypeName}.isEmpty() ? $F{employeeName}: $F{complaintTypeName}]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">

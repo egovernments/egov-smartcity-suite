@@ -51,6 +51,21 @@
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="pageHeader"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.3" value="lastPageFooter"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.cell.background" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.white.page.background" value="false"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.graphics" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.detect.cell.type=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.rows=true"/>
+	<property name="net.sf.jasperreports.export.xls.remove.empty.space.between.columns=true"/>
+	<property name="net.sf.jasperreports.export.xls.collapse.row.span" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.ignore.page.margins=true"/>
+	<property name="net.sf.jasperreports.export.xls.wrap.text" value="true"/>
+	<property name="net.sf.jasperreports.export.xls.one.page.per.sheet=true"/>
+	<property name="net.sf.jasperreports.export.xls.column.width.ratio" value="1.10f"/>
+	<property name="net.sf.jasperreports.export.xls.auto.fit.column" value="true"/>
 	<parameter name="AgeingReportForm" class="java.util.List"/>
 	<parameter name="status" class="java.lang.String"/>
 	<field name="department" class="java.lang.String"/>
@@ -101,7 +116,9 @@
 	<columnHeader>
 		<band height="21" splitType="Stretch">
 			<staticText>
-				<reportElement x="17" y="1" width="110" height="20" uuid="04c3e2cc-8c37-4113-ab31-0d77acb5bfa1"/>
+				<reportElement x="17" y="1" width="110" height="20" uuid="04c3e2cc-8c37-4113-ab31-0d77acb5bfa1">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -111,7 +128,9 @@
 				<text><![CDATA[Name]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="127" y="1" width="110" height="20" uuid="f15be093-00a2-40d4-a496-7061280caf75"/>
+				<reportElement x="127" y="1" width="110" height="20" uuid="f15be093-00a2-40d4-a496-7061280caf75">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -121,7 +140,9 @@
 				<text><![CDATA[>30(Days)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="237" y="1" width="110" height="20" uuid="4ee283f5-68aa-4aee-9453-9194df4681c3"/>
+				<reportElement x="237" y="1" width="110" height="20" uuid="4ee283f5-68aa-4aee-9453-9194df4681c3">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -131,7 +152,9 @@
 				<text><![CDATA[10-30 (Days)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="347" y="1" width="110" height="20" uuid="7aafe03d-8dc8-49ed-9422-bd82bbdee86c"/>
+				<reportElement x="347" y="1" width="110" height="20" uuid="7aafe03d-8dc8-49ed-9422-bd82bbdee86c">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -141,7 +164,9 @@
 				<text><![CDATA[5-10 (Days)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="457" y="1" width="110" height="20" uuid="b011c57c-3af4-4e20-aa4e-1e1782154e37"/>
+				<reportElement x="457" y="1" width="110" height="20" uuid="b011c57c-3af4-4e20-aa4e-1e1782154e37">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -151,7 +176,9 @@
 				<text><![CDATA[2-5 (Days)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="567" y="1" width="110" height="20" uuid="d34d16b9-19ad-4677-9a2a-db5a53ed5d39"/>
+				<reportElement x="567" y="1" width="110" height="20" uuid="d34d16b9-19ad-4677-9a2a-db5a53ed5d39">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -161,7 +188,9 @@
 				<text><![CDATA[0-2 (Days)]]></text>
 			</staticText>
 			<staticText>
-				<reportElement x="677" y="1" width="110" height="20" uuid="d178dce8-251b-48c5-beed-e39c61634dc1"/>
+				<reportElement x="677" y="1" width="110" height="20" uuid="d178dce8-251b-48c5-beed-e39c61634dc1">
+					<printWhenExpression><![CDATA[$V{PAGE_NUMBER}==1]]></printWhenExpression>
+				</reportElement>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
@@ -173,9 +202,9 @@
 		</band>
 	</columnHeader>
 	<detail>
-		<band height="21" splitType="Stretch">
-			<textField>
-				<reportElement x="17" y="0" width="110" height="20" uuid="1c80bb6d-444a-4f98-8595-af85b7ae6bf1"/>
+		<band height="21" splitType="Prevent">
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="17" y="0" width="110" height="20" isPrintWhenDetailOverflows="true" uuid="1c80bb6d-444a-4f98-8595-af85b7ae6bf1"/>
 				<box topPadding="1" leftPadding="3" bottomPadding="1" rightPadding="1">
 					<pen lineWidth="0.5"/>
 				</box>
