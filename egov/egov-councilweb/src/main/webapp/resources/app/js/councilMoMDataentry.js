@@ -100,12 +100,56 @@ $("#preambleTable tbody").on('click','tr td .delete',function(event) {
 });
 
 $("#preambleTable tbody").on('blur','tr .numberval',function(event) {
+	var rowObj = $(this).closest('tr');
+	validateUniquePreambleNumber(rowObj.index(), $(rowObj).find('.numberval').val());
 	validatePreambleNumber($(this));
 });
 
+function validateUniquePreambleNumber(idx, preambleNo) {
+	if (preambleNo) {
+		$('#preambleTable tbody tr')
+				.each(
+						function(index) {
+							if (idx === index)
+								return;
+							var preambleNum = $(this).find(
+									'*[name$="preambleNumber"]').val();
+
+							if (preambleNum && preambleNum === preambleNo) {
+								$('#preambleTable tbody tr:eq(' + idx + ')')
+										.find('.numberval').val('');
+								bootbox.alert("Duplicate Preamble Number.Please enter different Preamble number");
+								return false;
+							}
+						});
+	}
+}
+
 $("#preambleTable tbody").on('blur','tr .validnum',function(event) {
+	var rowObj = $(this).closest('tr');
+	validateUniqueResolutionNumber(rowObj.index(), $(rowObj).find('.validnum').val());
 	validateResolutionNumber($(this));
 });
+
+function validateUniqueResolutionNumber(idx, resNo) {
+	if (resNo) {
+		$('#preambleTable tbody tr')
+				.each(
+						function(index) {
+							if (idx === index)
+								return;
+							var resolutionNum = $(this).find(
+									'*[name$="resolutionNumber"]').val();
+
+							if (resolutionNum && resolutionNum === resNo) {
+								$('#preambleTable tbody tr:eq(' + idx + ')')
+										.find('.validnum').val('');
+								bootbox.alert("Duplicate Resolution Number.Please enter different Resolution number");
+								return false;
+							}
+						});
+	}
+}
 
 $('#buttonSubmit').click(function(e) {
 	if($('#emptyRow').length){

@@ -159,13 +159,19 @@ $(document).ready(function() {
 	}
 
 	$('#agendaTable tbody').on('blur','tr .validnum',function() {
+		var rowObj = $(this).closest('tr');
+    	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
+    	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
     	validateResolutionNumber($(this));
     });
     
-    $('#sumotoTable tbody').on('blur','tr .validnum',function() {
+    $('#sumotoTable tbody').on('blur','tr .validnum',function(e) {
+    	var rowObj = $(this).closest('tr');
+    	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');
+    	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');
     	validateResolutionNumber($(this));
     });
-	
+    
 });
 
 function validateResolutionNumber(resolutionNumber){
@@ -190,4 +196,60 @@ function validateResolutionNumber(resolutionNumber){
 			}
 		});
 	}	
+}
+
+
+function validateUniqueDetails(idx, resno,tablename) {
+	if (resno) {
+		$('#agendaTable tbody tr')
+				.each(
+						function(index) {
+							if (idx === index && tablename=='agendaTable')
+								return;
+							var resolutionNo = $(this).find(
+									'*[name$="resolutionNumber"]').val();
+
+							if (resno && resno === resolutionNo) {
+								if(tablename=='agendaTable'){
+								$('#agendaTable tbody tr:eq(' + idx + ')')
+										.find('.validnum').val('');
+								}
+								else
+									{
+									$('#sumotoTable tbody tr:eq(' + idx + ')')
+									.find('.validnum').val('');
+									}
+								bootbox.alert("Duplicate Resolution Number.Please enter different resolution number");
+								return false;
+							}
+						});
+	}
+}
+
+
+function validateSumotoDetails(idx, resno,tablename) {
+	if (resno) {
+		$('#sumotoTable tbody tr')
+				.each(
+						function(index) {
+							if (idx === index && tablename=='sumotoTable')
+								return;
+							var resolutionNo = $(this).find(
+									'*[name$="resolutionNumber"]').val();
+
+							if (resno && resno === resolutionNo) {
+								if(tablename=='sumotoTable'){
+								$('#sumotoTable tbody tr:eq(' + idx + ')')
+										.find('.validnum').val('');
+								}
+								else
+									{
+									$('#agendaTable tbody tr:eq(' + idx + ')')
+									.find('.validnum').val('');
+									}
+								bootbox.alert("Duplicate Resolution Number.Please enter different resolution number");
+								return false;
+							}
+						});
+	}
 }
