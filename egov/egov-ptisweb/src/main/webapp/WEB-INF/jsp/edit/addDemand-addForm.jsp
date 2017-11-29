@@ -502,7 +502,7 @@
 													    <s:if test="%{#demandInfoStatus.count == 1}" >
 															<s:textfield
 																name="demandDetailBeanList[%{#idx}].actualAmount"
-																id="revisedTax" size="10" maxlength="7"
+																id="revisedTax" size="10" maxlength="10"
 																onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
 																value="%{demandDetailBeanList[#idx].actualAmount}"
 																data-optional="0" data-errormsg="Actual amount is required"
@@ -511,7 +511,7 @@
 														<s:else>
 															<s:textfield
 																name="demandDetailBeanList[%{#idx}].actualAmount"
-																id="revisedTax" size="10" maxlength="7"
+																id="revisedTax" size="10" maxlength="10"
 																onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Tax');"
 																value="%{demandDetailBeanList[#idx].actualAmount}"
 																style="text-align: right" />
@@ -525,7 +525,7 @@
 													<div align="right">
 														<s:textfield
 															name="demandDetailBeanList[%{#idx}].actualCollection"
-															id="revisedCollection" size="10" maxlength="7"
+															id="revisedCollection" size="10" maxlength="10"
 															onblur="trim(this,this.value); checkNumber(this); isPositiveNumber(this, 'Actual Collection');"
 															style="text-align: right"
 															value="%{demandDetailBeanList[#idx].actualCollection}" />
