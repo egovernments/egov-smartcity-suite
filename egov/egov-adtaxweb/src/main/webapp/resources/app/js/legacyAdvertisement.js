@@ -232,7 +232,7 @@ $(document).ready(function () {
                 data: {'assessmentNoRequest': propertyNo},
                 success: function (data) {
                     if (data.errorDetails.errorCode != null && data.errorDetails.errorCode != '') {
-                        alert(data.errorDetails.errorMessage);
+                    	bootbox.alert(data.errorDetails.errorMessage);
                         $('#locality').val("");
 
                         document.getElementById("propertyNumber").value = "";
@@ -260,7 +260,7 @@ $(document).ready(function () {
                     console.log('error:' + e.message);
                     document.getElementById("propertyNumber").value = "";
                     resetOnPropertyNumChange();
-                    alert("Error getting property details");
+                    bootbox.alert("Error getting property details");
                 }
             });
         } else {
@@ -300,7 +300,7 @@ $(document).ready(function () {
                 $('#ward').html("");
                 $('#block').html("");
                 $('#street').html("");
-                alert("No boundary details mapped for locality");
+                bootbox.alert("No boundary details mapped for locality");
             });
 
 
@@ -325,7 +325,7 @@ $(document).ready(function () {
             .fail(function (response1) {
                 console.log("failed");
                 $('#block').html("");
-                alert("No block details mapped for ward");
+                bootbox.alert("No block details mapped for ward");
             });
 
     }
@@ -338,6 +338,34 @@ $(document).ready(function () {
         var formatted = degree + ((minutes * 60) + seconds) / 3600;
 
         return formatted;
+    }
+    
+    $('#advertisementnumber').blur(function () {
+        validateAdvertisementNumber();
+    });
+    
+    function validateAdvertisementNumber(){
+    	var advertisementnumber=$('#advertisementnumber').val();
+    	if(advertisementnumber != '') {
+    		$.ajax({
+    			url: "/adtax/hoarding/checkUnique-advertisementNo",      
+    			type: "GET",
+    			data: {
+    				hoardingNumber : advertisementnumber,  
+    			},
+    			dataType: "json",
+    			success: function (response) { 
+    				if(!response) {
+    						$('#advertisementnumber').val('');
+    						bootbox.alert("Entered Advertisement Number already exists. Please Enter Unique Number.");
+    				}
+    			}, 
+    			error: function (response) {
+    				$('#advertisementnumber').val('');
+    				bootbox.alert("connection validation failed");
+    			}
+    		});
+    	}	
     }
 
     function calculateTax() {

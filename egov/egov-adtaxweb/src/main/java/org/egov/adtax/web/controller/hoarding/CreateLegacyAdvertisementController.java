@@ -47,6 +47,12 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import javax.validation.Valid;
+
 import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.enums.AdvertisementStatus;
@@ -63,14 +69,9 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.validation.Valid;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @Controller
 @RequestMapping("/hoarding")
@@ -85,10 +86,12 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
 
     @RequestMapping(value = "adtaxCreateLegacy", method = GET)
     public String createLegacyHoardingForm(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getAdvertisement() == null)
-            advertisementPermitDetail.setAdvertisement(new Advertisement());
-        advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
-        advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
+        if (advertisementPermitDetail != null) {
+            if (advertisementPermitDetail.getAdvertisement() == null)
+                advertisementPermitDetail.setAdvertisement(new Advertisement());
+            advertisementPermitDetail.getAdvertisement().setStatus(AdvertisementStatus.ACTIVE);
+            advertisementPermitDetail.getAdvertisement().setLegacy(Boolean.TRUE);
+        }
         return "hoarding-createLegacy";
     }
 
@@ -115,34 +118,36 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
     public String createLegacyHoarding(@Valid @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
             final BindingResult resultBinder, final RedirectAttributes redirAttrib) {
         User currentUser = securityUtils.getCurrentUser();
-        final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         validateLegacyApplicationDate(advertisementPermitDetail, resultBinder);
         if (resultBinder.hasErrors())
             return "hoarding-createLegacy";
         storeHoardingDocuments(advertisementPermitDetail);
+        if (advertisementPermitDetail != null) {
         advertisementPermitDetail.setIsActive(Boolean.TRUE);
         advertisementPermitDetail.setStatus(advertisementPermitDetailService
                 .getStatusByModuleAndCode(AdvertisementTaxConstants.APPLICATION_STATUS_ADTAXPERMITGENERATED));
         final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-        if (installmentObj != null && installmentObj.getFromDate() != null)
-            try {
+            if (installmentObj != null && installmentObj.getFromDate() != null)
                 advertisementPermitDetail.getAdvertisement()
-                        .setPenaltyCalculationDate(formatter.parse(formatter.format(installmentObj.getFromDate())));
-            } catch (final ParseException e) {
-                // TODO: CHECK THIS CASE AGAIN.
-            }
-
-        advertisementPermitDetailService.createAdvertisementPermitDetail(advertisementPermitDetail, null, null, null, null,
+                        .setPenaltyCalculationDate(installmentObj.getFromDate());
+        }
+        AdvertisementPermitDetail advertisementPermitDetailObj = advertisementPermitDetailService.createAdvertisementPermitDetail(
+                advertisementPermitDetail, null, null, null, null,
                 currentUser);
         final String message = messageSource.getMessage("hoarding.create.success",
-                new String[] { advertisementPermitDetail.getAdvertisement().getAdvertisementNumber(),
-                        advertisementPermitDetail.getApplicationNumber(), advertisementPermitDetail.getPermissionNumber() },
+                new String[] { advertisementPermitDetailObj.getAdvertisement().getAdvertisementNumber(),
+                        advertisementPermitDetailObj.getApplicationNumber(), advertisementPermitDetailObj.getPermissionNumber() },
                 null);
         redirAttrib.addFlashAttribute("message", message);
-        // return "redirect:/hoarding/createLegacy";
-        return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
+        return "redirect:/hoarding/success/" + advertisementPermitDetailObj.getId();
+    }
+    
+    @RequestMapping(value = "/checkUnique-advertisementNo", method = GET, produces = APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public boolean uniqueAgendaNumber(@RequestParam final String hoardingNumber) {
+        return advertisementService.findByAdvertisementNumber(hoardingNumber) != null ? false : true;
     }
 
 }
