@@ -1,12 +1,52 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
+
 package org.egov.council.web.controller;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-
-import java.io.IOException;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.Valid;
 
 import org.apache.log4j.Logger;
 import org.egov.commons.service.EducationalQualificationService;
@@ -26,6 +66,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -38,6 +79,13 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.IOException;
+import java.util.List;
+
+import static org.egov.infra.utils.JsonUtils.toJSON;
+
 @Controller
 @RequestMapping("/councilmember")
 public class CouncilMemberController {
@@ -48,6 +96,12 @@ public class CouncilMemberController {
     private static final String COUNCILMEMBER_VIEW = "councilmember-view";
     private static final String COUNCILMEMBER_SEARCH = "councilmember-search";
     private static final String MODULE_NAME = "COUNCIL";
+    private static final Logger LOGGER = Logger.getLogger(CouncilMemberController.class);
+    @Qualifier("fileStoreService")
+    @Autowired
+    protected FileStoreService fileStoreService;
+    @Autowired
+    protected FileStoreUtils fileStoreUtils;
     @Autowired
     private CouncilMemberService councilMemberService;
     @Autowired
@@ -62,21 +116,15 @@ public class CouncilMemberController {
     private CouncilCasteService councilCasteService;
     @Autowired
     private CouncilPartyService councilPartyService;
-    @Qualifier("fileStoreService")
-    @Autowired
-    protected FileStoreService fileStoreService;
-    @Autowired
-    protected FileStoreUtils fileStoreUtils;
     @Autowired
     private CouncilMemberIndexService councilMemberIndexService;
     @Autowired
     private CouncilMemberValidator councilMemberValidator;
-    private static final Logger LOGGER = Logger.getLogger(CouncilMemberController.class);
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("boundarys",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "ADMINISTRATION"));// GET
-                                                                                                                  // ELECTION
+        // ELECTION
         model.addAttribute("councilDesignations", councilDesignationService.getActiveDesignations());                                                                                                      // WARD.
         model.addAttribute("councilQualifications", educationalQualificationService.getActiveQualifications());
         model.addAttribute("councilCastes", councilCasteService.getActiveCastes());
@@ -94,8 +142,8 @@ public class CouncilMemberController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilMember councilMember, final BindingResult errors,
-            @RequestParam final MultipartFile attachments, final Model model,
-            final RedirectAttributes redirectAttrs) {
+                         @RequestParam final MultipartFile attachments, final Model model,
+                         final RedirectAttributes redirectAttrs) {
         councilMemberValidator.validate(councilMember, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
@@ -130,8 +178,8 @@ public class CouncilMemberController {
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilMember councilMember, @RequestParam final MultipartFile attachments,
-            final BindingResult errors,
-            final Model model, final RedirectAttributes redirectAttrs) {
+                         final BindingResult errors,
+                         final Model model, final RedirectAttributes redirectAttrs) {
         councilMemberValidator.validate(councilMember, errors);
         if (errors.hasErrors()) {
             prepareNewForm(model);
@@ -179,7 +227,7 @@ public class CouncilMemberController {
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final CouncilMember councilMember) {
+                             @ModelAttribute final CouncilMember councilMember) {
         List<CouncilMember> searchResultList = councilMemberService.search(councilMember);
         return new StringBuilder("{ \"data\":")
                 .append(toJSON(searchResultList, CouncilMember.class, CouncilMemberJsonAdaptor.class)).append("}")
@@ -187,8 +235,9 @@ public class CouncilMemberController {
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
-    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, MODULE_NAME, false, response);
+    @ResponseBody
+    public ResponseEntity download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, MODULE_NAME, false);
     }
 
 }

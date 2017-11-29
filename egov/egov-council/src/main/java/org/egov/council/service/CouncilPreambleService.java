@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,19 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.council.service;
-import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
-import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
-import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.egov.commons.EgwStatus;
 import org.egov.council.autonumber.SumotoNumberGenerator;
@@ -57,7 +54,9 @@ import org.egov.council.entity.MeetingMOM;
 import org.egov.council.entity.enums.PreambleType;
 import org.egov.council.repository.CouncilPreambleRepository;
 import org.egov.council.service.workflow.PreambleWorkflowCustomImpl;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -70,16 +69,30 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.APPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.IMPLEMENTATION_STATUS_FINISHED;
+import static org.egov.council.utils.constants.CouncilConstants.REJECTED;
+import static org.egov.council.utils.constants.CouncilConstants.RESOLUTION_APPROVED_PREAMBLE;
+
 @Service
 @Transactional(readOnly = true)
 public class CouncilPreambleService {
 
+    private static final String STATUS_CODE = "status.code";
     private final CouncilPreambleRepository councilPreambleRepository;
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
     private PreambleWorkflowCustomImpl preambleWorkflowCustomImpl;
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
 
     @Autowired
     protected AutonumberServiceBeanResolver autonumberServiceBeanResolver;
@@ -124,25 +137,35 @@ public class CouncilPreambleService {
     public CouncilPreamble findOne(Long id) {
         return councilPreambleRepository.findById(id);
     }
+    
+    public CouncilPreamble findbyPreambleNumber(String preambleNumber) {
+        return councilPreambleRepository.findByPreambleNumber(preambleNumber);
+    }
+    
+    public Boolean autoGenerationModeEnabled(final String moduleName, final String keyName) {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(moduleName, keyName);
+        return !appConfigValues.isEmpty() && "YES".equals(appConfigValues.get(0).getValue());
+    }
+    
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchForPreamble(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
-        criteria.add(Restrictions.in("status.code", new String[] { APPROVED, ADJOURNED }));
+        criteria.add(Restrictions.in(STATUS_CODE, APPROVED,ADJOURNED));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> searchPreambleForWardwiseReport(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
-        criteria.add(Restrictions.ne("status.code",  REJECTED));
+        criteria.add(Restrictions.ne(STATUS_CODE,  REJECTED));
         return criteria.list();
     }
 
     @SuppressWarnings("unchecked")
     public List<CouncilPreamble> search(CouncilPreamble councilPreamble) {
         final Criteria criteria = buildSearchCriteria(councilPreamble);
-        criteria.add(Restrictions.ne("status.code",  REJECTED));
+        criteria.add(Restrictions.ne(STATUS_CODE,  REJECTED));
         return criteria.list();
     }
 
@@ -156,8 +179,8 @@ public class CouncilPreambleService {
                         .isNull("implementationStatus.code"), Restrictions.ne(
                                 "implementationStatus.code",
                                 IMPLEMENTATION_STATUS_FINISHED)))
-                .add(Restrictions.and(Restrictions.in("status.code",
-                        new String[] { RESOLUTION_APPROVED_PREAMBLE })));
+                .add(Restrictions.and(Restrictions.in(STATUS_CODE,
+                        RESOLUTION_APPROVED_PREAMBLE )));
         return criteria.list();
     }
 

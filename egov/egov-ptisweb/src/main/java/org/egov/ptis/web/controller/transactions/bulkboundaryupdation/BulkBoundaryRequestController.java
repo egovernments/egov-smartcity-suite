@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,19 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.ptis.web.controller.transactions.bulkboundaryupdation;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-
-import java.util.List;
-
+import com.google.gson.JsonObject;
+import org.apache.commons.io.IOUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
@@ -63,7 +64,22 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.BLOCK;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
 
 @Controller
 @RequestMapping(value = "/bulkboundaryupdation")
@@ -91,11 +107,18 @@ public class BulkBoundaryRequestController {
 	public List<Boundary> zones() {
 		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(ZONE, REVENUE_HIERARCHY_TYPE);
 	}
+	@ModelAttribute("wardlist")
+	public List<Boundary> wards() {
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(WARD, REVENUE_HIERARCHY_TYPE);
+	}
+	@ModelAttribute("blocklist")
+	public List<Boundary> blocks() {
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
+	}
 
 	@ModelAttribute("localityList")
 	public List<Boundary> localities() {
-		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,
-				LOCATION_HIERARCHY_TYPE);
+		return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName(LOCALITY,LOCATION_HIERARCHY_TYPE);
 	}
 
 	@ModelAttribute("electionWardList")
@@ -108,6 +131,19 @@ public class BulkBoundaryRequestController {
 		model.addAttribute("PropertyMVInfo", propertyMVInfo());
 		return BULK_BOUNDARY_FORM;
 	}
+	
+	
+	@RequestMapping(value = {"/ajaxBoundary-wardByBlock"}, method = RequestMethod.GET)
+    public void blockByWard(@RequestParam Long blockId , HttpServletResponse response) throws IOException {
+		Boundary block=boundaryService.getBoundaryById(blockId);
+		final List<JsonObject> jsonObjects = new ArrayList<>();
+		final Boundary ward =block.getParent();
+			final JsonObject jsonObj = new JsonObject();
+			jsonObj.addProperty("wardId", ward.getId());
+			jsonObj.addProperty("wardName", ward.getName());
+			jsonObjects.add(jsonObj);
+		IOUtils.write(jsonObjects.toString(), response.getWriter());
+    }
 
 	@PostMapping(value = "/search", produces = MediaType.TEXT_PLAIN_VALUE)
 	@ResponseBody

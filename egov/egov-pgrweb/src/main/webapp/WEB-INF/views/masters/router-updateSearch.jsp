@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -46,9 +54,9 @@
 <div class="row">
 	<div class="col-md-12">
 		<form:form id="updateRouter" method="post" class="form-horizontal form-groups-bordered" modelAttribute="complaintRouter">
-			<c:if test="${not empty warning}">
-               	<div class="alert alert-danger" role="alert">${warning}</div>
-          	</c:if>
+			<c:if test="${not empty message}">
+				<div class="alert alert-warning" role="alert"><spring:message code="${message}"/></div>
+			</c:if>
 			<div class="panel panel-primary" data-collapsed="0">
 				<div class="panel-heading ">
 					<div class="panel-title">
@@ -91,17 +99,6 @@
 	                    	<div class="error-msg boundaryerror all-errors display-hide"></div>
 						</div>
 	                 </div>
-					<%-- <div class="form-group">
-						<label class="col-sm-3 control-label"><spring:message code="lbl.router.position" /><span class="mandatory"></span></label>
-						<div class="col-sm-6">
-							<form:input id="com_position" path="position.name" type="text" 
-							class="form-control typeahead is_valid_alphabet" placeholder="" autocomplete="off" />
-							<form:hidden path="position" id="positionId"/>
-							<form:errors path="position" cssClass="error-msg" />
-							<div class="error-msg positionerror all-errors display-hide"></div>
-						</div>
-						
-					</div> --%>
 					<div class="form-group">
 						<label class="col-sm-3 control-label">
 						<spring:message code="lbl.router.position" /><span class="mandatory"></span></label>

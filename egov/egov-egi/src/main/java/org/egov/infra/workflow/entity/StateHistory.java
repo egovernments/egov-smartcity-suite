@@ -1,47 +1,54 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.infra.workflow.entity;
 
 import org.egov.infra.admin.master.entity.User;
-import org.egov.pims.commons.Position;
 import org.hibernate.annotations.Immutable;
 
 import javax.persistence.Entity;
@@ -63,9 +70,9 @@ import java.util.Date;
 @Immutable
 @Table(name = "eg_wf_state_history")
 @SequenceGenerator(name = StateHistory.SEQ_STATEHISTORY, sequenceName = StateHistory.SEQ_STATEHISTORY, allocationSize = 1)
-public class StateHistory implements Serializable {
-    private static final long serialVersionUID = -2286621991905578107L;
+public class StateHistory<T extends OwnerGroup> implements Serializable {
     static final String SEQ_STATEHISTORY = "SEQ_EG_WF_STATE_HISTORY";
+    private static final long serialVersionUID = -2286621991905578107L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = SEQ_STATEHISTORY)
@@ -85,16 +92,16 @@ public class StateHistory implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     private Date lastModifiedDate;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "state_id")
-    private State state;
+    private State<T> state;
 
     @NotNull
     private String value;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_POS")
-    private Position ownerPosition;
+    private T ownerPosition;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "OWNER_USER")
@@ -107,15 +114,15 @@ public class StateHistory implements Serializable {
     private String extraInfo;
     private Date dateInfo;
     private Date extraDateInfo;
-    
-    @ManyToOne(fetch = FetchType.LAZY)
+
+    @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
     @JoinColumn(name = "INITIATOR_POS")
-    private Position initiatorPosition;
-    
+    private T initiatorPosition;
+
     StateHistory() {
     }
 
-    public StateHistory(final State state) {
+    public StateHistory(State<T> state) {
         this.state = state;
         createdBy = state.getCreatedBy();
         createdDate = state.getCreatedDate();
@@ -138,7 +145,7 @@ public class StateHistory implements Serializable {
         return state;
     }
 
-    public void setState(final State state) {
+    public void setState(State state) {
         this.state = state;
     }
 
@@ -146,15 +153,15 @@ public class StateHistory implements Serializable {
         return value;
     }
 
-    public void setValue(final String value) {
+    public void setValue(String value) {
         this.value = value;
     }
 
-    public Position getOwnerPosition() {
+    public T getOwnerPosition() {
         return ownerPosition;
     }
 
-    public void setOwnerPosition(final Position ownerPosition) {
+    public void setOwnerPosition(T ownerPosition) {
         this.ownerPosition = ownerPosition;
     }
 
@@ -162,7 +169,7 @@ public class StateHistory implements Serializable {
         return ownerUser;
     }
 
-    public void setOwnerUser(final User ownerUser) {
+    public void setOwnerUser(User ownerUser) {
         this.ownerUser = ownerUser;
     }
 
@@ -170,7 +177,7 @@ public class StateHistory implements Serializable {
         return senderName;
     }
 
-    public void setSenderName(final String senderName) {
+    public void setSenderName(String senderName) {
         this.senderName = senderName;
     }
 
@@ -178,7 +185,7 @@ public class StateHistory implements Serializable {
         return nextAction;
     }
 
-    public void setNextAction(final String nextAction) {
+    public void setNextAction(String nextAction) {
         this.nextAction = nextAction;
     }
 
@@ -186,7 +193,7 @@ public class StateHistory implements Serializable {
         return comments;
     }
 
-    public void setComments(final String comments) {
+    public void setComments(String comments) {
         this.comments = comments;
     }
 
@@ -194,7 +201,7 @@ public class StateHistory implements Serializable {
         return natureOfTask;
     }
 
-    public void setNatureOfTask(final String natureOfTask) {
+    public void setNatureOfTask(String natureOfTask) {
         this.natureOfTask = natureOfTask;
     }
 
@@ -202,7 +209,7 @@ public class StateHistory implements Serializable {
         return extraInfo;
     }
 
-    public void setExtraInfo(final String extraInfo) {
+    public void setExtraInfo(String extraInfo) {
         this.extraInfo = extraInfo;
     }
 
@@ -210,7 +217,7 @@ public class StateHistory implements Serializable {
         return dateInfo;
     }
 
-    public void setDateInfo(final Date dateInfo) {
+    public void setDateInfo(Date dateInfo) {
         this.dateInfo = dateInfo;
     }
 
@@ -218,7 +225,7 @@ public class StateHistory implements Serializable {
         return extraDateInfo;
     }
 
-    public void setExtraDateInfo(final Date extraDateInfo) {
+    public void setExtraDateInfo(Date extraDateInfo) {
         this.extraDateInfo = extraDateInfo;
     }
 
@@ -226,7 +233,7 @@ public class StateHistory implements Serializable {
         return id;
     }
 
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -234,7 +241,7 @@ public class StateHistory implements Serializable {
         return createdBy;
     }
 
-    public void setCreatedBy(final User createdBy) {
+    public void setCreatedBy(User createdBy) {
         this.createdBy = createdBy;
     }
 
@@ -242,7 +249,7 @@ public class StateHistory implements Serializable {
         return createdDate;
     }
 
-    public void setCreatedDate(final Date createdDate) {
+    public void setCreatedDate(Date createdDate) {
         this.createdDate = createdDate;
     }
 
@@ -250,7 +257,7 @@ public class StateHistory implements Serializable {
         return lastModifiedBy;
     }
 
-    public void setLastModifiedBy(final User lastModifiedBy) {
+    public void setLastModifiedBy(User lastModifiedBy) {
         this.lastModifiedBy = lastModifiedBy;
     }
 
@@ -258,15 +265,15 @@ public class StateHistory implements Serializable {
         return lastModifiedDate;
     }
 
-    public void setLastModifiedDate(final Date lastModifiedDate) {
+    public void setLastModifiedDate(Date lastModifiedDate) {
         this.lastModifiedDate = lastModifiedDate;
     }
 
-    public Position getInitiatorPosition() {
+    public T getInitiatorPosition() {
         return initiatorPosition;
     }
 
-    public void setInitiatorPosition(Position initiatorPosition) {
+    public void setInitiatorPosition(T initiatorPosition) {
         this.initiatorPosition = initiatorPosition;
     }
 

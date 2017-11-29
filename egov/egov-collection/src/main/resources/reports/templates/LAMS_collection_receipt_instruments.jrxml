@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
+
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-01-03T09:00:05 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="LAMS_collection_receipt_accounts" language="groovy" pageWidth="555" pageHeight="802" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" isFloatColumnFooter="true" uuid="46795a30-f2c3-4e7f-9acb-4a87b9bd797d">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="0"/>
+	<import value="org.egov.collection.constants.*"/>
+	<parameter name="TOTAL_AMOUNT" class="java.math.BigDecimal">
+		<defaultValueExpression><![CDATA[BigDecimal.valueOf(0)]]></defaultValueExpression>
+	</parameter>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<field name="instrumentNumber" class="java.lang.String">
+		<fieldDescription><![CDATA[instrumentNumber]]></fieldDescription>
+	</field>
+	<field name="instrumentDate" class="java.util.Date">
+		<fieldDescription><![CDATA[instrumentDate]]></fieldDescription>
+	</field>
+	<field name="instrumentAmount" class="java.lang.Double">
+		<fieldDescription><![CDATA[instrumentAmount]]></fieldDescription>
+	</field>
+	<field name="instrumentType" class="java.lang.String">
+		<fieldDescription><![CDATA[instrumentType]]></fieldDescription>
+	</field>
+	<field name="bankName" class="java.lang.String">
+		<fieldDescription><![CDATA[Bank Name of the instrument]]></fieldDescription>
+	</field>
+	<field name="bankBranchName" class="java.lang.String">
+		<fieldDescription><![CDATA[Bank Branch Name of the instrument]]></fieldDescription>
+	</field>
+	<field name="transactionNumber" class="java.lang.String"/>
+	<field name="transactionDate" class="java.util.Date"/>
+	<field name="bankAccountNumber" class="java.lang.String"/>
+	<variable name="branchname" class="java.lang.String">
+		<variableExpression><![CDATA[$F{bankBranchName}.equals(null)?"":$F{bankBranchName}]]></variableExpression>
+	</variable>
+	<detail>
+		<band height="21" splitType="Stretch">
+			<textField isStretchWithOverflow="true">
+				<reportElement positionType="Float" stretchType="RelativeToTallestObject" x="0" y="0" width="555" height="20" isRemoveLineWhenBlank="true" uuid="bbf4dba5-0fcf-4029-8c3b-f2ec5b07a07b"/>
+				<box leftPadding="5" rightPadding="5">
+					<pen lineWidth="0.5"/>
+					<topPen lineWidth="0.5"/>
+					<leftPen lineWidth="0.5"/>
+					<bottomPen lineWidth="0.5"/>
+					<rightPen lineWidth="0.5"/>
+				</box>
+				<textElement verticalAlignment="Middle">
+					<font fontName="Times New Roman" size="12" pdfFontName="Times-Roman" pdfEncoding="Cp1252" isPdfEmbedded="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CASH ? "Received Cash: " + ($P{TOTAL_AMOUNT}.setScale(2, BigDecimal.ROUND_UP)) :
+$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CHEQUE ? "Cheque # " + $F{instrumentNumber} + " Drawn on " +  $F{bankName} + ", " + $V{branchname}+ " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) +"\nCheque payments are subject to realisation.":
+$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_DD ? "Demand Draft # " + $F{instrumentNumber}  + " Drawn on " +  $F{bankName} + ", " + $V{branchname} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{instrumentDate}) :
+$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_CARD ? "Transaction No: " +  $F{transactionNumber} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}):
+$F{instrumentType} == CollectionConstants.INSTRUMENTTYPE_BANK ? "Bank Challan # " + $F{transactionNumber}  + " Drawn on " +  $F{bankName} + ", " + $F{bankBranchName} + ", " + $F{bankAccountNumber} + " Dated " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate}) :
+"Online Transaction Number: " + $F{transactionNumber} + ",Payment Dated: " + new SimpleDateFormat("dd-MM-yyyy").format($F{transactionDate})]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

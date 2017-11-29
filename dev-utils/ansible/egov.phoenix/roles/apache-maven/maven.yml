@@ -1,0 +1,15 @@
+
+- name: "Install Apache Maven"
+
+#  vars_prompt:
+#    selected_hosts: Specify the hosts to provision
+
+# hosts: "{{selected_hosts}}"
+  sudo: yes
+#  become: yes
+#  become_method: sudo
+  tasks:
+    - include: tasks/main.yml
+
+
+

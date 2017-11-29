@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,57 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.actions.notice;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_CHOULTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_EDU_INST;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_EXSERVICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_NGO;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_PENSIONER;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION_PUBLIC_WORSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_BASICPROPID;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_CHOULTRY_EXEMPTION_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_EDU_INST_EXEMPTION_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_EXSRVICE_EXEMPTION_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_NGO_EXEMPTION_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_PUBLIC_WORSHIP_EXEMPTION_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_RETIRED_EXEMPTION_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISHISTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_NOTICE_GENERATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SIGN;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -102,6 +61,7 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.eis.entity.Assignment;
 import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -114,7 +74,6 @@ import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
@@ -144,11 +103,25 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
+
 @ParentPackage("egov")
 @Results({ @Result(name = PropertyTaxNoticeAction.NOTICE, location = "propertyTaxNotice-notice.jsp"),
 		@Result(name = PropertyTaxNoticeAction.DIGITAL_SIGNATURE_REDIRECTION, location = "propertyTaxNotice-digitalSignatureRedirection.jsp") })
 public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
-	private static final String CITY_GRADE = "cityGrade";
 	private static final String EXEMPTION_REASON = "exemptionReason";
 	private static final String COMMISSIONER = "commissioner";
 	private static final String NOTICE_DATE = "noticeDate";
@@ -175,55 +148,56 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	private static final String TAXEXEMPT = "Tax_Exemption";
 	private static final String IS_COMMISSIONER = "isCommissioner";
 	private static final String AMALGAMATION = "Amalgamation";
+	private static final String OBJECTION = "objection";
 	private PropertyImpl property;
-	private ReportService reportService;
-	private NoticeService noticeService;
-	private PropertyTaxNumberGenerator propertyTaxNumberGenerator;
+	private transient ReportService reportService;
+	private transient NoticeService noticeService;
+	private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
 	private String reportId;
 	private String noticeType;
-	private InputStream NoticePDF;
+	private transient InputStream NoticePDF;
 	private Long basicPropId;
 	private String noticeMode;
-	private PersistenceService<BasicProperty, Long> basicPropertyService;
-	private PropertyService propService;
+	private transient PersistenceService<BasicProperty, Long> basicPropertyService;
+	private transient PropertyService propService;
 	final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
 	private String actionType;
 	private String basicPropertyIds;
 	private String fileStoreIds;
 	private String ulbCode;
-	private RevisionPetitionService revisionPetitionService;
+	private transient RevisionPetitionService revisionPetitionService;
 	private String signedFileStoreId;
 	private boolean digitalSignEnabled;
 	@Autowired
-	private PtDemandDao ptDemandDAO;
+	private transient PtDemandDao ptDemandDAO;
 
 	@Autowired
 	@Qualifier("transferOwnerService")
-	private PropertyTransferService transferOwnerService;
+	private transient PropertyTransferService transferOwnerService;
 
 	@Autowired
-	private InstallmentDao installmentDao;
+	private transient InstallmentDao installmentDao;
 
 	@Autowired
-	private ModuleService moduleDao;
+	private transient ModuleService moduleDao;
 
 	@Autowired
-	private PropertyTaxCommonUtils propertyTaxCommonUtils;
+	private transient PropertyTaxCommonUtils propertyTaxCommonUtils;
 
 	@Autowired
-	private ReportViewerUtil reportViewerUtil;
+	private transient ReportViewerUtil reportViewerUtil;
 
 	@Autowired
-	private SecurityUtils securityUtils;
+	private transient SecurityUtils securityUtils;
 	
 	@Autowired
-	private VacancyRemissionService vacancyRemissionService;
+	private transient VacancyRemissionService vacancyRemissionService;
 	
 	@Autowired
-	private UserService userService;
+	private transient UserService userService;
 
-	public PropertyTaxNoticeAction() {
-	}
+	@Autowired
+	private transient CityService cityService;
 
 	@Override
 	public StateAware getModel() {
@@ -243,12 +217,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		setUlbCode(ApplicationThreadLocals.getCityCode());
 		noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
 		actionType = WFLOW_ACTION_STEP_SIGN;
-		final String entries[] = basicPropertyIds.split(",");
+		final String[] entries = basicPropertyIds.split(",");
 		final StringBuilder fileStoreId = new StringBuilder();
 		for (final String entry : entries) {
 			if (!fileStoreId.toString().equals(""))
 				fileStoreId.append(",");
-			final String id[] = entry.split("~");
+			final String[] id = entry.split("~");
 			if (CREATE.equalsIgnoreCase(id[1]) || ALTER.equalsIgnoreCase(id[1]) || BIFURCATE.equalsIgnoreCase(id[1]) || AMALGAMATION.equalsIgnoreCase(id[1])) {
 				noticeMode = CREATE.equalsIgnoreCase(id[1]) ? CREATE : MODIFY;
 				fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[1]));
@@ -260,8 +234,8 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				if (property == null)
 					property = (PropertyImpl) basicProperty.getWFProperty();
 				if (property.getTaxExemptedReason() == null) {
-					noticeType = PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-					noticeMode = PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
+					noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
+					noticeMode = APPLICATION_TYPE_TAX_EXEMTION;
 				} else {
 					noticeType = NOTICE_TYPE_EXEMPTION;
 					noticeMode = NOTICE_TYPE_EXEMPTION;
@@ -269,7 +243,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 				fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[1]));
 				noticeType = NOTICE_TYPE_SPECIAL_NOTICE;
 			} else if (GRP.equalsIgnoreCase(id[1]) || RP.equalsIgnoreCase(id[1])) {
-				noticeMode = MODIFY;
+				noticeMode = OBJECTION;
+				noticeType = id[1].equalsIgnoreCase(RP)
+	                                ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS;
 				fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[1]));
 			} else if (DEMOLITION.equalsIgnoreCase(id[1])) {
 				noticeMode = APPLICATION_TYPE_DEMOLITION;
@@ -296,13 +272,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 noticeType = NOTICE_TYPE_VRPROCEEDINGS;
                 fileStoreId.append(generatePropertyNotice(Long.valueOf(id[0]), id[2]));
             } else {
-                final HttpServletRequest request = ServletActionContext.getRequest();
-                final String url = WebUtils.extractRequestDomainURL(request, false);
-                final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-                        .concat((String) request.getSession().getAttribute("citylogo"));
-                final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-                final String cityGrade = request.getSession().getAttribute(CITY_GRADE) != null
-                        ? request.getSession().getAttribute(CITY_GRADE).toString() : null;
+                final String cityGrade = cityService.getCityGrade();
                 Boolean isCorporation;
                 if (cityGrade != null && cityGrade != ""
                         && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
@@ -313,7 +283,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
                 final PropertyMutation propertyMutation = (PropertyMutation) persistenceService
                         .find("From PropertyMutation where id = ? ", Long.valueOf(id[0]));
                 final BasicProperty basicProperty = propertyMutation.getBasicProperty();
-                transferOwnerService.generateTransferNotice(basicProperty, propertyMutation, cityName, cityLogo,
+                transferOwnerService.generateTransferNotice(basicProperty, propertyMutation,
                         WFLOW_ACTION_STEP_SIGN, isCorporation);
                 final PtNotice notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(
                         NOTICE_TYPE_MUTATION_CERTIFICATE, propertyMutation.getApplicationNo());
@@ -322,9 +292,9 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
         }
 
 	private String generatePropertyNotice(final Long basicPropertyId, final String type) {
-		BasicPropertyImpl basicProperty = null;
-		PtNotice notice = null;
-		Position ownerPosition = null;
+		BasicPropertyImpl basicProperty;
+		PtNotice notice;
+		Position ownerPosition;
 		RevisionPetition revisionPetition = null;
 		VacancyRemissionApproval vacancyRemissionApproval = null;
 		if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type)) {
@@ -334,8 +304,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			property = (PropertyImpl) basicProperty.getProperty();
 			if (property == null)
 				property = (PropertyImpl) basicProperty.getWFProperty();
-			notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(type.equalsIgnoreCase(RP)
-                                ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS,
+			notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType,
 					revisionPetition.getObjectionNumber());
 		} else if (AMALGAMATION.equalsIgnoreCase(type)) {
 		    property = (PropertyImpl) getPersistenceService()
@@ -360,43 +329,45 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 			ownerPosition = property.getCurrentState().getOwnerPosition();
 			notice = noticeService.getNoticeByNoticeTypeAndApplicationNumber(noticeType, property.getApplicationNo());
 		}
-		ReportOutput reportOutput = new ReportOutput();
-		PropertyNoticeInfo propertyNotice = null;
+		ReportOutput reportOutput;
+		PropertyNoticeInfo propertyNotice;
 		final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
 		propertyNotice = new PropertyNoticeInfo(property, noticeNo);
-		ReportRequest reportInput = null;
-		if (!noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION) && !noticeMode.equalsIgnoreCase(VACANCYREMISSIONAPPROVAL))
-			reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, ownerPosition);
-		else if (noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION))
-			reportInput = generateExemptedNoticeReportRequest(basicProperty, propertyNotice, noticeNo);
-		else if (noticeMode.equalsIgnoreCase(VACANCYREMISSIONAPPROVAL))
-                    reportInput = vacancyRemissionService.generateVRReportRequest(vacancyRemissionApproval.getVacancyRemission(), noticeNo, ServletActionContext.getRequest(),userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
-
+		ReportRequest reportInput = getReportInputs(basicProperty, ownerPosition, revisionPetition, vacancyRemissionApproval,
+                propertyNotice, noticeNo);
 		reportOutput = reportService.createReport(reportInput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null)
 			NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
-		PtNotice savedNotice = null;
+		PtNotice savedNotice;
 		if (notice == null) {
-			if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type))
-				savedNotice = noticeService.saveNotice(revisionPetition.getObjectionNumber(),
-				        noticeNo,
-				        type.equalsIgnoreCase(RP)
-	                                ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS, revisionPetition.getBasicProperty(),
-						NoticePDF);
-			else if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type))
-                            savedNotice = noticeService.saveNotice(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber(),
-                                    noticeNo,
-                                                            NOTICE_TYPE_VRPROCEEDINGS, vacancyRemissionApproval.getVacancyRemission().getBasicProperty(),
-                                            NoticePDF);
-			else
-				savedNotice = noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),
-						noticeNo, noticeType, basicProperty, NoticePDF);
+			savedNotice = saveAllNotice(type, basicProperty, revisionPetition, vacancyRemissionApproval, noticeNo);
 		} else
 			savedNotice = noticeService.updateNotice(notice, NoticePDF);
 		noticeService.getSession().flush();
 		return savedNotice.getFileStore().getFileStoreId();
 	}
 
+        private ReportRequest generateObjectionReportRequest(final RevisionPetition revisionPetition,
+                        final PropertyNoticeInfo propertyNotice, final Position ownerPosition) {
+                final Map<String, Object> reportParams = new HashMap<>();
+                ReportRequest reportInput = null;
+                String natureOfWork;
+                    getCommonReportParams(ownerPosition, reportParams);
+                    if (NATURE_OF_WORK_RP.equalsIgnoreCase(revisionPetition.getType()))
+                        natureOfWork = NATURE_REVISION_PETITION;
+                else
+                        natureOfWork = NATURE_GENERAL_REVISION_PETITION;
+                reportParams.put("natureOfWork", natureOfWork);
+                revisionPetitionService.setNoticeInfo(revisionPetition.getProperty(), propertyNotice, (BasicPropertyImpl) revisionPetition.getBasicProperty(), revisionPetition);
+                final List<PropertyAckNoticeInfo> floorDetails = getFloorDetailsForNotice();
+                propertyNotice.setFloorDetailsForNotice(floorDetails);
+                reportInput = new ReportRequest(PropertyTaxConstants.REPORT_TEMPLATENAME_RP_SPECIAL_NOTICE, propertyNotice,
+                        reportParams);
+                reportInput.setPrintDialogOnOpenReport(true);
+                reportInput.setReportFormat(ReportFormat.PDF);
+                return reportInput;
+        }
+        
     @Action(value = "/notice/propertyTaxNotice-generateNoticeForActionExemption")
 	public String generateNoticeForActionExemption() {
 		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
@@ -418,7 +389,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	@Action(value = "/notice/propertyTaxNotice-generateNotice")
 	public String generateNotice() {
 		setUlbCode(ApplicationThreadLocals.getCityCode());
-		Position ownerPosition = null;
+		Position ownerPosition;
 		final BasicPropertyImpl basicProperty = (BasicPropertyImpl) getPersistenceService()
 				.findByNamedQuery(QUERY_BASICPROPERTY_BY_BASICPROPID, basicPropId);
 		property = (PropertyImpl) basicProperty.getProperty();
@@ -553,12 +524,11 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		if (property == null)
 			property = (PropertyImpl) basicProperty.getWFProperty();
 		ownerPosition = property.getCurrentState().getOwnerPosition();
-		ReportOutput reportOutput = new ReportOutput();
 		PropertyNoticeInfo propertyNotice = null;
 		final String noticeNo = propertyTaxNumberGenerator.generateNoticeNumber(noticeType);
 		propertyNotice = new PropertyNoticeInfo(property, noticeNo);
 		reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, ownerPosition);
-		reportOutput = reportService.createReport(reportInput);
+        ReportOutput reportOutput = reportService.createReport(reportInput);
 		reportId = reportViewerUtil.addReportToTempCache(reportOutput);
 		if (reportOutput != null && reportOutput.getReportOutputData() != null)
 			NoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
@@ -588,41 +558,12 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
 	private ReportRequest generateNoticeReportRequest(final BasicPropertyImpl basicProperty,
 			final PropertyNoticeInfo propertyNotice, final Position ownerPosition) {
-		final Map<String, Object> reportParams = new HashMap<String, Object>();
-		List<Assignment> loggedInUserAssignment;
-		String loggedInUserDesignation;
+		final Map<String, Object> reportParams = new HashMap<>();
 		ReportRequest reportInput = null;
-		reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
-				? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
 		if (NOTICE_TYPE_SPECIAL_NOTICE.equals(noticeType)) {
-			final HttpServletRequest request = ServletActionContext.getRequest();
-			final String url = WebUtils.extractRequestDomainURL(request, false);
-			final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-					.concat((String) request.getSession().getAttribute("citylogo"));
-			final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-			final String cityGrade = request.getSession().getAttribute(CITY_GRADE) != null
-					? request.getSession().getAttribute(CITY_GRADE).toString() : null;
-			Boolean isCorporation;
-			reportParams.put("logoPath", imagePath);
-			reportParams.put("cityName", cityName);
-			reportParams.put("isStructure",
-					basicProperty.getProperty().getPropertyDetail().isStructure() ? Boolean.TRUE : Boolean.FALSE);
-			if (cityGrade != null && cityGrade != ""
-					&& cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
-				isCorporation = true;
-			else
-				isCorporation = false;
-			reportParams.put("isCorporation", isCorporation);
-			final User user = securityUtils.getCurrentUser();
-			loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(ownerPosition.getId(),
-					user.getId(), new Date());
-			loggedInUserDesignation = !loggedInUserAssignment.isEmpty()
-					? loggedInUserAssignment.get(0).getDesignation().getName() : "";
-			if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
-				reportParams.put(IS_COMMISSIONER, true);
-			else
-				reportParams.put(IS_COMMISSIONER, false);
-
+		    getCommonReportParams(ownerPosition, reportParams);
+		    reportParams.put("isStructure",
+                            basicProperty.getProperty().getPropertyDetail().isStructure() ? Boolean.TRUE : Boolean.FALSE);
 			if (CREATE.equalsIgnoreCase(noticeMode))
 				reportParams.put("mode", CREATE);
 			else if (MODIFY.equalsIgnoreCase(noticeMode))
@@ -642,6 +583,34 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		}
 		return reportInput;
 	}
+
+    private void getCommonReportParams(final Position ownerPosition,
+            final Map<String, Object> reportParams) {
+        List<Assignment> loggedInUserAssignment;
+        String loggedInUserDesignation;
+        reportParams.put("userSignature", securityUtils.getCurrentUser().getSignature() != null
+                ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : "");
+
+                final String cityGrade = cityService.getCityGrade();
+                Boolean isCorporation;
+                reportParams.put("logoPath", cityService.getCityLogoURL());
+                reportParams.put("cityName", cityService.getMunicipalityName());
+                if (cityGrade != null && cityGrade != ""
+                                && cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
+                        isCorporation = true;
+                else
+                        isCorporation = false;
+                reportParams.put("isCorporation", isCorporation);
+                final User user = securityUtils.getCurrentUser();
+                loggedInUserAssignment = assignmentService.getAssignmentByPositionAndUserAsOnDate(ownerPosition.getId(),
+                                user.getId(), new Date());
+                loggedInUserDesignation = !loggedInUserAssignment.isEmpty()
+                                ? loggedInUserAssignment.get(0).getDesignation().getName() : "";
+                if (COMMISSIONER_DESGN.equalsIgnoreCase(loggedInUserDesignation))
+                        reportParams.put(IS_COMMISSIONER, true);
+                else
+                        reportParams.put(IS_COMMISSIONER, false);
+    }
 
 	private ReportRequest generateExemptedNoticeReportRequest(final BasicPropertyImpl basicProperty,
 			final PropertyNoticeInfo propertyNotice, final String noticeNo) {
@@ -674,16 +643,10 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 		reportParams.put(NOTICE_DATE, formatter.format(new Date()));
 		reportParams.put(COMMISSIONER, securityUtils.getCurrentUser().getName());
 		reportParams.put(EXEMPTION_REASON, basicProperty.getProperty().getTaxExemptedReason().getName());
-		final HttpServletRequest request = ServletActionContext.getRequest();
-		final String url = WebUtils.extractRequestDomainURL(request, false);
-		final String imagePath = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-				.concat((String) request.getSession().getAttribute("citylogo"));
-		final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
-		final String cityGrade = request.getSession().getAttribute(CITY_GRADE) != null
-				? request.getSession().getAttribute(CITY_GRADE).toString() : null;
+		final String cityGrade = cityService.getCityGrade();
 		Boolean isCorporation;
-		reportParams.put("logoPath", imagePath);
-		reportParams.put("cityName", cityName);
+		reportParams.put("logoPath", cityService.getCityLogoURL());
+		reportParams.put("cityName", cityService.getMunicipalityName());
 		if (cityGrade != null && cityGrade != ""
 				&& cityGrade.equalsIgnoreCase(PropertyTaxConstants.CITY_GRADE_CORPORATION))
 			isCorporation = true;
@@ -904,7 +867,7 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 	}
 
 	private List<PropertyAckNoticeInfo> getFloorDetailsForNotice() {
-		final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<PropertyAckNoticeInfo>();
+		final List<PropertyAckNoticeInfo> floorDetailsList = new ArrayList<>();
 		final PropertyDetail detail = property.getPropertyDetail();
 		PropertyAckNoticeInfo floorInfo = null;
 		for (final Floor floor : detail.getFloorDetails()) {
@@ -940,6 +903,40 @@ public class PropertyTaxNoticeAction extends PropertyTaxBaseAction {
 
 	Boolean checkMeesevaSource(final PropertyImpl property) {
 		return property.getSource() != null ? property.getSource().equals(PropertyTaxConstants.SOURCE_MEESEVA) : false;
+	}
+
+	private PtNotice saveAllNotice(final String type, BasicPropertyImpl basicProperty, RevisionPetition revisionPetition,
+	            VacancyRemissionApproval vacancyRemissionApproval, final String noticeNo) {
+	        PtNotice savedNotice;
+	        if (GRP.equalsIgnoreCase(type) || RP.equalsIgnoreCase(type))
+	                savedNotice = noticeService.saveNotice(revisionPetition.getObjectionNumber(),
+	                        noticeNo,
+	                        type.equalsIgnoreCase(RP)
+	                                ? NOTICE_TYPE_RPPROCEEDINGS : NOTICE_TYPE_GRPPROCEEDINGS, revisionPetition.getBasicProperty(),
+	                                NoticePDF);
+	        else if (VACANCYREMISSIONAPPROVAL.equalsIgnoreCase(type))
+	                        savedNotice = noticeService.saveNotice(vacancyRemissionApproval.getVacancyRemission().getApplicationNumber(),
+	                                noticeNo,NOTICE_TYPE_VRPROCEEDINGS, vacancyRemissionApproval.getVacancyRemission().getBasicProperty(),
+	                                        NoticePDF);
+	        else
+	                savedNotice = noticeService.saveNotice(basicProperty.getPropertyForBasicProperty().getApplicationNo(),
+	                                noticeNo, noticeType, basicProperty, NoticePDF);
+	        return savedNotice;
+	}
+	
+	private ReportRequest getReportInputs(BasicPropertyImpl basicProperty, Position ownerPosition,
+	            RevisionPetition revisionPetition, VacancyRemissionApproval vacancyRemissionApproval,
+	            PropertyNoticeInfo propertyNotice, final String noticeNo) {
+	        ReportRequest reportInput = null;
+	                if (!noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION) && !noticeMode.equalsIgnoreCase(VACANCYREMISSIONAPPROVAL) && !noticeMode.equalsIgnoreCase(OBJECTION))
+	                        reportInput = generateNoticeReportRequest(basicProperty, propertyNotice, ownerPosition);
+	                else if (noticeMode.equalsIgnoreCase(NOTICE_TYPE_EXEMPTION))
+	                        reportInput = generateExemptedNoticeReportRequest(basicProperty, propertyNotice, noticeNo);
+	                else if (noticeMode.equalsIgnoreCase(OBJECTION))
+	                    reportInput = generateObjectionReportRequest(revisionPetition, propertyNotice, ownerPosition);
+	                else if (noticeMode.equalsIgnoreCase(VACANCYREMISSIONAPPROVAL))
+	                    reportInput = vacancyRemissionService.generateVRReportRequest(vacancyRemissionApproval.getVacancyRemission(), noticeNo, ServletActionContext.getRequest(),userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
+	        return reportInput;
 	}
 
 	public void setReportService(final ReportService reportService) {

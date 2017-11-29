@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,26 +43,10 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.council.service;
-
-import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
-import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
-import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.ArrayUtils;
 import org.egov.commons.dao.EgwStatusHibernateDAO;
@@ -64,6 +55,7 @@ import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.repository.CouncilMeetingRepository;
+import org.egov.council.repository.CouncilMoMRepository;
 import org.egov.council.repository.MeetingAttendanceRepository;
 import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.eis.service.EisCommonService;
@@ -82,6 +74,23 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static org.egov.council.utils.constants.CouncilConstants.ADJOURNED;
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGSTATUSAPPROVED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
+
 @Service
 @Transactional(readOnly = true)
 public class CouncilMeetingService {
@@ -93,6 +102,8 @@ public class CouncilMeetingService {
     private EntityManager entityManager;
     @Autowired
     private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private CouncilMoMRepository councilMoMRepository;
     @Autowired
     private EisCommonService eisCommonService;
     @Autowired
@@ -120,6 +131,11 @@ public class CouncilMeetingService {
     public CouncilMeeting update(final CouncilMeeting councilMeeting) {
         return councilMeetingRepository.save(councilMeeting);
     }
+    
+    @Transactional
+    public List<MeetingMOM> createDataEntry(final List<MeetingMOM> meetingMOM) {
+        return councilMoMRepository.save(meetingMOM);
+    }
 
     public List<CouncilMeeting> findAll() {
         return councilMeetingRepository.findAll(new Sort(Sort.Direction.DESC, "meetingDate"));
@@ -136,6 +152,10 @@ public class CouncilMeetingService {
     public CouncilMeeting findByMeetingNumber(String meetingNumber) {
         return councilMeetingRepository.findByMeetingNumber(meetingNumber);
     }
+    
+    public MeetingMOM findByResolutionNumber(String resolutionNumber) {
+        return councilMoMRepository.findByResolutionNumber(resolutionNumber);
+    }
 
     public CouncilMeeting updateMoMStatus(CouncilMeeting councilMeeting) {
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
@@ -150,7 +170,7 @@ public class CouncilMeetingService {
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingToCreateMOM(CouncilMeeting councilMeeting) {
         return buildSearchCriteria(councilMeeting)
-                .add(Restrictions.in(STATUS_DOT_CODE, new String[] { MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED})).list();
+                .add(Restrictions.in(STATUS_DOT_CODE, MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED)).list();
     }
 
     @SuppressWarnings("unchecked")
@@ -160,15 +180,19 @@ public class CouncilMeetingService {
     
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingForEdit(CouncilMeeting councilMeeting) {
-        return buildSearchCriteria(councilMeeting).add(Restrictions.in(STATUS_DOT_CODE, new String[] { MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED})).list();
+        return buildSearchCriteria(councilMeeting).add(Restrictions.in(STATUS_DOT_CODE, MEETINGSTATUSAPPROVED,ATTENDANCEFINALIZED)).list();
     }
     
     @SuppressWarnings("unchecked")
     public List<CouncilMeeting> searchMeetingWithMomCreatedStatus(CouncilMeeting councilMeeting) {
         return buildSearchCriteria(councilMeeting)
-                .add(Restrictions.in(STATUS_DOT_CODE, new String[] { MEETINGUSEDINRMOM})).list();
+                .add(Restrictions.in(STATUS_DOT_CODE, MEETINGUSEDINRMOM)).list();
     }
 
+    public void sortMeetingMomByItemNumber(CouncilMeeting councilMeeting) {
+        councilMeeting.getMeetingMOMs().sort((MeetingMOM f1, MeetingMOM f2) -> Long.valueOf(f1.getItemNumber()).compareTo(Long.valueOf(f2.getItemNumber())));
+    }
+    
     public Criteria buildSearchCriteria(CouncilMeeting councilMeeting) {
         final Criteria criteria = getCurrentSession().createCriteria(CouncilMeeting.class, "councilMeeting")
                 .createAlias("councilMeeting.status", "status");
@@ -182,6 +206,8 @@ public class CouncilMeetingService {
             criteria.add(Restrictions.between("meetingDate", councilMeeting.getFromDate(),
                     DateUtils.addDays(councilMeeting.getToDate(), 1)));
         }
+        if(councilMeeting.getMeetingType()!=null)
+            criteria.add(Restrictions.eq("meetingType", councilMeeting.getMeetingType()));
         return criteria;
     }
     @Transactional
@@ -229,7 +255,7 @@ public class CouncilMeetingService {
                 }
             }).collect(Collectors.toSet());
         else
-            return null;
+            return Collections.emptySet();
 }
     
 }

@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,10 +43,12 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <html>
 <head>
     <title>Acknowledgement Slip for Renewal of Trade License</title>
@@ -62,9 +71,7 @@
             <table width="100%" border="0" style="margin-left: 25px">
                 <tr class="add-margin">
                     <td colspan="4" align="center">
-                        <c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-                            <img src="<c:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
-                        </c:if>
+                        <img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="60">
                     </td>
                 </tr>
 
@@ -152,10 +159,10 @@
     <s:if test="%{hasCscOperatorRole == true}">
         <input type="button" value="Print" name="PrintAck" id="PrintAck" class="button"
                onclick="window.open('/tl/newtradelicense/newtradelicense-printAck.action?model.id=<s:property value="%{id}"/>',
-                       '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');" >
+                       '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');">
     </s:if>
     <s:else>
-        <input type="button" id="print" class="button printbtn" value="Print"/>  </s:else>
+        <input type="button" id="print" class="button printbtn" value="Print"/> </s:else>
     &nbsp;&nbsp;
     <input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();"/>
 </div>

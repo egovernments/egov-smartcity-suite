@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <script type="text/javascript" src="${pageContext.request.contextPath}/resources/js/MiscReceipts.js?rnd=${app_release_no}"></script>
@@ -488,14 +496,14 @@ var totaldbamt=0,totalcramt=0;
                     "glcodeid":'<s:property value="glcodeIdDetail"/>',
                     "glcode":'<s:property value="glcodeDetail"/>',
                     "accounthead":'<s:property value="accounthead"/>',
-                    "creditamount":'<s:property value="%{creditAmountDetail}"/>'
+                    "creditamount":'<s:property value="getText(\'format.amount\',{creditAmountDetail})"/>'
                 });
                 var index = '<s:property value="#stat.index"/>';
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeIdDetail',index,'<s:property value="glcodeIdDetail"/>');
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'glcodeDetail',index,'<s:property value="glcodeDetail"/>');
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'accounthead',index,'<s:property value="accounthead"/>');
-                updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',index,'<s:property value="creditAmountDetail"/>');
-                totalcramt = totalcramt+parseFloat('<s:property value="creditAmountDetail"/>');
+                updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',index,'<s:property value="getText(\'format.amount\',{creditAmountDetail})"/>');
+                totalcramt = totalcramt+parseInt('<s:property value="getText(\'format.amount\',{creditAmountDetail})"/>');
                 updateAccountTableIndex();  
             </s:iterator>
                 
@@ -520,7 +528,7 @@ var totaldbamt=0,totalcramt=0;
         td.style.padding='4px 10px';
         td.innerHTML="<input type='text' style='text-align:right;width:80px;align:center;height:20px;'  id='totalcramount' name='totalcramount' readonly='true' tabindex='-1'/>";
         if(totalcramt>0){
-            totalcramt=totalcramt.toFixed(2);
+            totalcramt=totalcramt;
         }
         document.getElementById('totalcramount').value=totalcramt;
         var td2 = tr.insertCell(-1);
@@ -618,7 +626,7 @@ var totaldbamt=0,totalcramt=0;
         td2.style.borderTop = '1px #c8c8c8 solid';  
         td2.className='tdfortotal';
         if(totaldbamt>0){
-            totaldbamt=totaldbamt.toFixed(2);
+            totaldbamt=totaldbamt;
         }
         document.getElementById('totaldbamount').value=totaldbamt;
         td2.innerHTML='&nbsp;';

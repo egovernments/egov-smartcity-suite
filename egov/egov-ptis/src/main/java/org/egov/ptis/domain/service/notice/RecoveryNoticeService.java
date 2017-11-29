@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,43 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.service.notice;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLIENT_SPECIFIC_DMD_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILLTYPE_MANUAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_DISTRESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_ESD;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_INVENTORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OC;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_OCCUPIER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OCC_TENANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_CORPORATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.REPORT_INVENTORY_NOTICE_MUNICIPALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE_CORPORATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.VALUATION_CERTIFICATE_MUNICIPALITY;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -117,6 +90,24 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 
 @Service
@@ -231,7 +222,7 @@ public class RecoveryNoticeService {
         else if (VALUATION_CERTIFICATE.equals(noticeType))
             validateCertificate(errors, basicProperty);
         else if (NOTICE_TYPE_OC.equals(noticeType))
-        	validateOwnerCertificate(errors, basicProperty);
+            validateOwnerCertificate(errors, basicProperty);
         else
             validateOccupierNotice(errors, basicProperty);
         return errors;
@@ -287,12 +278,12 @@ public class RecoveryNoticeService {
             reportInput = generateEsdNotice(basicProperty, reportParams, city, noticeNo, formatter);
         else if (NOTICE_TYPE_INVENTORY.equals(noticeType))
             reportInput = generateInventoryNotice(basicProperty, reportParams, city, formatter);
-		else if (VALUATION_CERTIFICATE.equals(noticeType))
-			reportInput = generateValuationCertificate(basicProperty, reportParams, city, noticeNo);
-		else if (NOTICE_TYPE_OC.equals(noticeType))
-			reportInput = generateOwnershipCertificate(basicProperty, reportParams, city, noticeNo);
-		else if (NOTICE_TYPE_OCCUPIER.equals(noticeType))
-			reportOutput = prepareOccupierNotice(basicProperty, reportParams, city, noticeNo);
+        else if (VALUATION_CERTIFICATE.equals(noticeType))
+            reportInput = generateValuationCertificate(basicProperty, reportParams, city, noticeNo);
+        else if (NOTICE_TYPE_OC.equals(noticeType))
+            reportInput = generateOwnershipCertificate(basicProperty, reportParams, city, noticeNo);
+        else if (NOTICE_TYPE_OCCUPIER.equals(noticeType))
+            reportOutput = prepareOccupierNotice(basicProperty, reportParams, city, noticeNo);
         else
             reportInput = generateDistressNotice(basicProperty, reportParams, city, noticeNo);
 
@@ -323,8 +314,7 @@ public class RecoveryNoticeService {
                     pdfs.add(new ByteArrayInputStream(reportOutput.getReportOutputData()));
             }
         if (!pdfs.isEmpty()) {
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            byte[] mergedPdfs = PdfUtils.appendFiles(pdfs, output);
+            byte[] mergedPdfs = PdfUtils.appendFiles(pdfs);
             if (reportOutput != null)
                 reportOutput.setReportOutputData(mergedPdfs);
         }
@@ -422,36 +412,36 @@ public class RecoveryNoticeService {
             errors.add("assessment.has.pt.due");
     }
 
-	private void validateOwnerCertificate(final List<String> errors, final BasicProperty basicProperty) {
-		validateCertificate(errors, basicProperty);
-		validateDemandBillExistance(errors, basicProperty);
-	}
-    
-	private List<String> validateDemandBill(final BasicProperty basicProperty, final List<String> errors) {
-		final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
-		if (totalDue.compareTo(BigDecimal.ZERO) == 0)
-			errors.add("common.no.property.due");
-		validateDemandBillExistance(errors, basicProperty);
-		return errors;
-	}
+    private void validateOwnerCertificate(final List<String> errors, final BasicProperty basicProperty) {
+        validateCertificate(errors, basicProperty);
+        validateDemandBillExistance(errors, basicProperty);
+    }
 
-	private List<String> validateOccupierNotice(final List<String> errors, final BasicProperty basicProperty) {
-		Boolean hasTenant = Boolean.FALSE;
-		for (final Floor floor : basicProperty.getProperty().getPropertyDetail().getFloorDetails())
-			if (OCC_TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode()))
-				hasTenant = Boolean.TRUE;
-		if (!hasTenant)
-			errors.add("error.tenant.not.exist");
-		validateDemandBillExistance(errors, basicProperty);
-		return errors;
-	}
-    
-	private List<String> validateDemandBillExistance(final List<String> errors, final BasicProperty basicProperty) {
-		final boolean billExists = getDemandBillByAssessmentNo(basicProperty);
-		if (!billExists)
-			errors.add("common.demandbill.not.exists");
-		return errors;
-	}
+    private List<String> validateDemandBill(final BasicProperty basicProperty, final List<String> errors) {
+        final BigDecimal totalDue = getTotalPropertyTaxDue(basicProperty);
+        if (totalDue.compareTo(BigDecimal.ZERO) == 0)
+            errors.add("common.no.property.due");
+        validateDemandBillExistance(errors, basicProperty);
+        return errors;
+    }
+
+    private List<String> validateOccupierNotice(final List<String> errors, final BasicProperty basicProperty) {
+        Boolean hasTenant = Boolean.FALSE;
+        for (final Floor floor : basicProperty.getProperty().getPropertyDetail().getFloorDetails())
+            if (OCC_TENANT.equalsIgnoreCase(floor.getPropertyOccupation().getOccupancyCode()))
+                hasTenant = Boolean.TRUE;
+        if (!hasTenant)
+            errors.add("error.tenant.not.exist");
+        validateDemandBillExistance(errors, basicProperty);
+        return errors;
+    }
+
+    private List<String> validateDemandBillExistance(final List<String> errors, final BasicProperty basicProperty) {
+        final boolean billExists = getDemandBillByAssessmentNo(basicProperty);
+        if (!billExists)
+            errors.add("common.demandbill.not.exists");
+        return errors;
+    }
 
     private ReportRequest generateDistressNotice(final BasicProperty basicProperty, final Map<String, Object> reportParams,
                                                  final City city, final String noticeNo) {
@@ -598,7 +588,7 @@ public class RecoveryNoticeService {
 
         prepareDemandBillDetails(reportParams, basicProperty);
     }
-    
+
     @ReadOnly
     private Query getSearchQuery(final NoticeRequest noticeRequest) {
         final Map<String, Object> params = new HashMap<>();

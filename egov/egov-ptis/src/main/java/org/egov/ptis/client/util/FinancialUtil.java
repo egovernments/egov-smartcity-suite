@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,8 +43,32 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.client.util;
+
+import org.apache.log4j.Logger;
+import org.egov.billsaccounting.services.CreateVoucher;
+import org.egov.billsaccounting.services.VoucherConstant;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.Installment;
+import org.egov.commons.dao.InstallmentDao;
+import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.ModuleService;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.ptis.constants.PropertyTaxConstants;
+import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import static org.egov.billsaccounting.services.VoucherConstant.VOUCHERNUMBER;
 import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS_DEMAND;
@@ -52,29 +83,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENT
 import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_TAX_PAYABLE;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTIS_EG_MODULES_ID;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-
-import org.apache.log4j.Logger;
-import org.egov.billsaccounting.services.CreateVoucher;
-import org.egov.billsaccounting.services.VoucherConstant;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.Installment;
-import org.egov.commons.dao.InstallmentDao;
-import org.egov.infra.admin.master.entity.Module;
-import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 
 /**
  * @author subhash Provides API to create Voucher in financials whenever there

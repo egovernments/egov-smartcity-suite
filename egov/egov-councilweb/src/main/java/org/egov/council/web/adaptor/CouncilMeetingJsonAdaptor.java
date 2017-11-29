@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,28 +43,29 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.council.web.adaptor;
 
-import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
-import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
-import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
-
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
-
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonSerializationContext;
+import com.google.gson.JsonSerializer;
 import org.egov.council.entity.CommitteeMembers;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.CouncilMemberStatus;
 import org.egov.council.entity.MeetingAttendence;
 import org.egov.infra.utils.StringUtils;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import com.google.gson.JsonSerializer;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.egov.council.utils.constants.CouncilConstants.ATTENDANCEFINALIZED;
+import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
+import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
+import static org.egov.infra.utils.StringUtils.emptyIfNull;
 
 public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting> {
     @Override
@@ -68,35 +76,14 @@ public class CouncilMeetingJsonAdaptor implements JsonSerializer<CouncilMeeting>
             int noOfMembersAbsent = 0;
             int totCommitteMemCount = 0;
             if (councilMeeting != null) {
-            if (councilMeeting.getMeetingNumber() != null)
-                jsonObject.addProperty("meetingNumber", councilMeeting.getMeetingNumber());
-            else
-                jsonObject.addProperty("meetingNumber", StringUtils.EMPTY);
-            if (councilMeeting.getCommitteeType() != null)
-                jsonObject.addProperty("committeeType", councilMeeting.getCommitteeType().getName());
-            else
-                jsonObject.addProperty("committeeType", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingDate() != null)
-                jsonObject.addProperty("meetingDate", councilMeeting.getMeetingDate().toString());
-            else
-                jsonObject.addProperty("meetingDate", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingDate() != null)
-                jsonObject.addProperty("meetingLocation", councilMeeting.getMeetingLocation());
-            else
-                jsonObject.addProperty("meetingLocation", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingTime() != null)
-                jsonObject.addProperty("meetingTime", councilMeeting.getMeetingTime());
-            else
-                jsonObject.addProperty("meetingTime", StringUtils.EMPTY);
-            
-            if (councilMeeting.getStatus() != null)
-                jsonObject.addProperty("meetingStatus", councilMeeting.getStatus().getCode());
-            else
-                jsonObject.addProperty("meetingStatus", StringUtils.EMPTY);
-            if (councilMeeting.getMeetingDate() != null)
-                jsonObject.addProperty("meetingCreatedDate", councilMeeting.getCreatedDate().toString());
-            else
-                jsonObject.addProperty("meetingCreatedDate", StringUtils.EMPTY);
+                jsonObject.addProperty("meetingNumber", emptyIfNull(councilMeeting.getMeetingNumber()));
+                jsonObject.addProperty("meetingType", emptyIfNull(councilMeeting.getMeetingType().getName()));
+                jsonObject.addProperty("meetingDate", emptyIfNull(councilMeeting.getMeetingDate().toString()));
+                jsonObject.addProperty("meetingLocation", emptyIfNull(councilMeeting.getMeetingLocation()));
+                jsonObject.addProperty("meetingTime", emptyIfNull(councilMeeting.getMeetingTime()));
+                jsonObject.addProperty("meetingStatus", emptyIfNull(councilMeeting.getStatus().getCode()));
+                jsonObject.addProperty("meetingCreatedDate", emptyIfNull(councilMeeting.getCreatedDate().toString()));
+       
             List<Long> committeeMembersId=new ArrayList<>();
             if (ATTENDANCEFINALIZED.equalsIgnoreCase(councilMeeting.getStatus().getCode())
                     || MOM_FINALISED.equalsIgnoreCase(councilMeeting.getStatus().getCode())

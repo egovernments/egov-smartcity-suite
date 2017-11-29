@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,17 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.service.collection;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
@@ -67,6 +66,15 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
 
 public class MutationFeeCollection extends TaxCollection {
 
@@ -113,17 +121,8 @@ public class MutationFeeCollection extends TaxCollection {
                 throw new ValidationException();
             }
         }
-        String nextAction = null;
         if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
-            final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
-                    null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
-            nextAction = wFMatrix.getNextAction();
-            if (propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER))
-                propertyMutation.transition().progressWithStateCopy().withSenderName(propertyMutation.getState().getSenderName())
-                        .withDateInfo(new Date())
-                        .withOwner(propertyMutation.getState().getOwnerPosition())
-                        .withStateValue(TRANSFER_FEE_COLLECTED)
-                        .withNextAction(nextAction);
+            updateTransitionForFullTransfer(bri, propertyMutation);
         } else {
             LOGGER.error("Mutation workflow is already closed for the receipt : " + propertyMutation.getReceiptNum()
                     + " payed for assessment : "
@@ -132,6 +131,20 @@ public class MutationFeeCollection extends TaxCollection {
         }
         propertyMutationService.persist(propertyMutation);
         propertyMutationService.getSession().flush();
+    }
+
+    private void updateTransitionForFullTransfer(final BillReceiptInfo bri, final PropertyMutation propertyMutation) {
+        if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)
+                && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)
+                && !(TRANSFER_FEE_COLLECTED).equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
+            final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
+                    null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
+            propertyMutation.transition().progressWithStateCopy().withSenderName(propertyMutation.getState().getSenderName())
+                    .withDateInfo(new Date())
+                    .withOwner(propertyMutation.getState().getOwnerPosition())
+                    .withStateValue(TRANSFER_FEE_COLLECTED)
+                    .withNextAction(wFMatrix.getNextAction());
+        }
     }
 
     @Override

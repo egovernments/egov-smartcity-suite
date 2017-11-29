@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html" language="java" %>
@@ -70,7 +78,7 @@
                          id="ct-mobno">
                         <c:choose>
                             <c:when test="${complaint.complainant.mobile !=null}">
-                                <c:out value="${complaint.complainant.mobile}"></c:out>
+                                <c:out value="${complaint.complainant.mobile}" default="N/A"></c:out>
                             </c:when>
                             <c:otherwise><spring:message code="msg.not.applicable"/></c:otherwise>
                         </c:choose>
@@ -82,8 +90,8 @@
                             <spring:message code="lbl.address"/>
                         </div>
                         <div class="col-md-3 col-xs-6 add-margin view-content"
-                             id="ct-ctnumber">
-                            <c:out value="${complaint.complainant.address}"></c:out>
+                             id="ct-address">
+                            <c:out value="${complaint.complainant.address}" default="N/A"></c:out>
                         </div>
                     </div>
                 </c:if>
@@ -99,18 +107,18 @@
                         <spring:message code="lbl.complaintDate"/>
                     </div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-date">
-                        <fmt:formatDate value="${complaint.createdDate}" var="complaintDate" pattern="dd-MM-yyyy"/>
+                        <fmt:formatDate value="${complaint.createdDate}" var="complaintDate" pattern="dd/MMM/yyyy HH:mm a"/>
                         <c:out value="${complaintDate}"></c:out>
                     </div>
                 </div>
                 <div class="row add-border">
                     <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.complaintDepartment"/></div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-dept">
-                        <c:out value="${complaint.department.name}"></c:out>
+                        <c:out value="${complaint.department.name}" default="N/A"></c:out>
                     </div>
                     <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.nextescalation.date"/></div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-nextescalation">
-                        <fmt:formatDate value="${complaint.escalationDate}" var="nextEscalationDate" pattern="dd-MM-yyyy HH:mm"/>
+                        <fmt:formatDate value="${complaint.escalationDate}" var="nextEscalationDate" pattern="dd/MMM/yyyy HH:mm a"/>
                         <c:out value="${nextEscalationDate}"/>
                     </div>
                 </div>
@@ -126,7 +134,11 @@
                 <div class="row add-border">
                     <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.compDetails"/></div>
                     <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-details">
-                        <c:out value="${complaint.details }"></c:out>
+                        <c:out value="${complaint.details }" default="N/A"></c:out>
+                    </div>
+                    <div class="col-md-3 col-xs-6 add-margin"><spring:message code="lbl.receivingcenter.details"/></div>
+                    <div class="col-md-3 col-xs-6 add-margin view-content" id="ct-receiving-detail">
+                        <c:out value="${complaint.receivingCenterDetails}" default="N/A"/>
                     </div>
                 </div>
                 <div class="row add-border">
@@ -139,21 +151,17 @@
                             <c:forEach items="${complaint.supportDocsOrderById()}" var="file">
                                 <div class="col-md-4 col-sm-6 col-xs-12 add-margin down-file view-content" id="links">
                                     <c:choose>
-                                        <c:when test="${(file.contentType == 'image/jpg') || (file.contentType == 'image/jpeg')|| (file.contentType == 'image/gif')||
-										(file.contentType == 'image/png')}">
-                                            <a href="../downloadfile/${file.fileStoreId}"
+                                        <c:when test="${file.contentType.contains('image')}">
+                                            <a href="/pgr/complaint/downloadfile/${file.fileStoreId}"
                                                data-gallery> <img class="img-width add-margin"
-                                                                  src="../downloadfile/${file.fileStoreId}"/></a>
+                                                                  src="/pgr/complaint/downloadfile/${file.fileStoreId}"/></a>
                                         </c:when>
                                         <c:otherwise>
-                                            <a href="../downloadfile/${file.fileStoreId}"
-                                               data-gallery>
-                                                <video class="img-width add-margin" controls="controls"
-                                                       src="../downloadfile/${file.fileStoreId}">
-                                                    <source src="../downloadfile/${file.fileStoreId}"
-                                                            type="${file.contentType}"/>
-                                                </video>
-                                            </a>
+                                            <video class="img-width add-margin" controls="controls"
+                                                   src="/pgr/complaint/downloadfile/${file.fileStoreId}">
+                                                <source src="/pgr/complaint/downloadfile/${file.fileStoreId}"
+                                                        type="${file.contentType}"/>
+                                            </video>
                                         </c:otherwise>
                                     </c:choose>
                                 </div>
@@ -222,7 +230,7 @@
                                 <div class="row  add-border">
                                     <div class="col-sm-2 col-xs-12 add-margin">
                                         <fmt:formatDate value="${history.date}" var="historyDate"
-                                                        pattern="dd-MM-yyyy HH:mm a E"/>
+                                                        pattern="E dd/MMM/yyyy HH:mm a"/>
                                         <c:out value="${historyDate}"/>
                                     </div>
                                     <div class="col-sm-2 col-xs-12 add-margin">
@@ -252,7 +260,15 @@
         </div>
     </div>
 </div>
-
+<c:if test="${approvalDepartmentList == null}">
+    <div class="row" id="clsdiv">
+        <div class="text-center">
+            <button type="button" class="btn btn-primary" onclick="window.close();">
+                <spring:message code="lbl.close"/>
+            </button>
+        </div>
+    </div>
+</c:if>
 <!-- Modal 6 (Long Modal)-->
 <div class="modal fade" id="complaint-locate">
     <div class="modal-dialog">
@@ -268,7 +284,7 @@
                             </div>
                             <!-- panel body -->
                             <div class="panel-body no-padding">
-                                <script src="https://maps.googleapis.com/maps/api/js"></script>
+                                <script src="https://maps.googleapis.com/maps/api/js?key=${sessionScope.googleApiKey}"></script>
                                 <div id="normal" class="img-prop"></div>
                             </div>
                         </div>

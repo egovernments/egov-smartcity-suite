@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,25 +43,27 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.eis.service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.repository.PositionHierarchyRepository;
 import org.egov.eis.repository.PositionMasterRepository;
 import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.PersistenceUtils;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 /**
  * @author Vaibhav.K
@@ -112,7 +121,7 @@ public class PositionMasterService {
     }
 
     public List<Position> getPositionsForDeptDesigAndName(final Long departmentId, final Long designationId,
-            final Date fromDate, final Date toDate, final String posName) {
+                                                          final Date fromDate, final Date toDate, final String posName) {
         List<Position> posList;
         final List<Assignment> assignList = assignmentService.getAssignmentsByDeptDesigAndDates(departmentId,
                 designationId, fromDate, toDate);
@@ -125,7 +134,7 @@ public class PositionMasterService {
     }
 
     public List<Position> getPositionsForDeptDesigAndNameLike(final Long departmentId, final Long designationId,
-            final String posName) {
+                                                              final String posName) {
         return positionMasterRepository
                 .findByDeptDesig_Department_IdAndDeptDesig_Designation_IdAndNameContainingIgnoreCase(departmentId,
                         designationId, posName);
@@ -186,7 +195,7 @@ public class PositionMasterService {
     }
 
     public List<Position> getPositionsByDepartmentAndDesignationForGivenRange(final Long departmentId,
-            final Long designationId, final Date givenDate) {
+                                                                              final Long designationId, final Date givenDate) {
 
         final List<Position> positionList = new ArrayList<>();
 
@@ -205,12 +214,12 @@ public class PositionMasterService {
         return getPositionsByDepartmentAndDesignationForGivenRange(departmentId, designationId, new Date());
     }
 
-	public Position getCurrentPositionForUser(final Long userId) {
-		final Assignment assign = assignmentService.getPrimaryAssignmentForEmployee(userId);
+    public Position getCurrentPositionForUser(final Long userId) {
+        final Assignment assign = assignmentService.getPrimaryAssignmentForEmployee(userId);
         if (assign != null)
             return assign.getPosition();
         return null;
-	}
+    }
 
     /**
      * Returns the superior employee position
@@ -232,7 +241,7 @@ public class PositionMasterService {
      * @return returns position object
      */
     public Position getSuperiorPositionByObjectAndObjectSubTypeAndPositionFrom(final Integer objectId,
-            final String objectSubType, final Long posId) {
+                                                                               final String objectSubType, final Long posId) {
         return positionHierarchyRepository.getPosHirByPosAndObjectTypeAndObjectSubType(posId, objectId, objectSubType)
                 .getToPosition();
     }
@@ -265,7 +274,11 @@ public class PositionMasterService {
         final List<Assignment> assignList = assignmentService.getAllAssignmentsByEmpId(employeeId);
         for (final Assignment assign : assignList)
             positions.add(assign.getPosition());
-        return new ArrayList<Position>(positions);
+        return new ArrayList<>(positions);
+    }
+
+    public List<Position> getCurrentUserPositions() {
+        return getPositionsForEmployee(ApplicationThreadLocals.getUserId());
     }
 
     /**

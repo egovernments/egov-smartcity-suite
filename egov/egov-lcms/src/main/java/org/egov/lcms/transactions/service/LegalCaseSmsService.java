@@ -1,9 +1,9 @@
 
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -27,6 +27,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -37,13 +44,14 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.lcms.transactions.service;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.egov.eis.entity.Employee;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.entity.enums.JudgmentImplIsComplied;
 import org.egov.lcms.transactions.entity.CounterAffidavit;
 import org.egov.lcms.transactions.entity.EmployeeHearing;
@@ -63,6 +71,8 @@ import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.MessageSource;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 @Scope(ConfigurableBeanFactory.SCOPE_PROTOTYPE)
@@ -668,6 +678,52 @@ public class LegalCaseSmsService {
                                 counterAffidavit.get(0).getLegalCase().getCaseNumber() },
                         null);
         return smsMsg;
+    }
+
+    // Send SMS and Email Notification to StandingCounsel
+    public void sendSmsAndEmailForAdvocate(final AdvocateMaster advocateMaster) {
+        final User user = advocateMaster.getAdvocateUser();
+        String advocateName = advocateMaster.getName();
+        String userName = user.getUsername();
+        String mobileNumber = advocateMaster.getMobileNumber();
+        String emailId = advocateMaster.getEmail() != null ? advocateMaster.getEmail() : "";
+        String smsMsg = "";
+        String body = "";
+        String subject = "";
+        if (advocateMaster.getAdvocateUser() != null && advocateMaster.getAdvocateUser().getUsername() != null) {
+
+            if (StringUtils.isNotBlank(mobileNumber)) {
+                final StringBuilder smsBody = new StringBuilder().append("Dear ").append(advocateName)
+                        .append(",Your details are registered in Municipal ERP application.")
+                        .append("You can access and update Legal Case details of ").append(legalCaseUtil.getMunicipalityName())
+                        .append(" Municipality.  Login to the application with User name: Advocate ").append(userName)
+                        .append(" and Password is your mobile number.");
+
+                smsMsg = smsBody.toString();
+                if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
+                    legalCaseUtil.sendSMSOnLegalCase(mobileNumber, smsMsg);
+            }
+
+            if (StringUtils.isNotBlank(emailId)) {
+
+                final StringBuilder bodyMsg = new StringBuilder().append("Dear ").append(advocateName)
+                        .append(",\n\nYour details are registered in Municipal ERP application.")
+                        .append("You can access and update Legal Case details of ").append(legalCaseUtil.getMunicipalityName())
+                        .append(" Municipality.  Login to the application with User name: Advocate ").append(userName)
+                        .append(" and Password is your mobile number.")
+                        .append("\n\nRegards ,").append("\nCommissioner ,\n").append(legalCaseUtil.getMunicipalityName())
+                        .append("\n\nNote: This is computer generated email. Please don't reply.");
+
+                final StringBuilder subjectMsg = new StringBuilder().append(legalCaseUtil.getMunicipalityName())
+                        .append("  Municipality Legal application user details");
+
+                body = bodyMsg.toString();
+
+                subject = subjectMsg.toString();
+                if (StringUtils.isNotBlank(emailId) && subjectMsg != null && bodyMsg != null)
+                    legalCaseUtil.sendEmailOnLegalCase(emailId, body, subject);
+            }
+        }
     }
 
 }

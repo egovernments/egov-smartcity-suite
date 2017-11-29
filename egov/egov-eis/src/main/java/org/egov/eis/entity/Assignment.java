@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,14 +43,24 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.eis.entity;
 
-import static org.egov.eis.entity.Assignment.SEQ_ASSIGNMENT;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import com.google.common.base.Objects;
+import org.egov.commons.CFunction;
+import org.egov.commons.Functionary;
+import org.egov.commons.Fund;
+import org.egov.infra.admin.master.entity.Department;
+import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.pims.commons.Designation;
+import org.egov.pims.commons.Position;
+import org.egov.pims.model.GradeMaster;
+import org.hibernate.annotations.NamedQuery;
+import org.hibernate.envers.AuditOverride;
+import org.hibernate.envers.AuditOverrides;
+import org.hibernate.envers.Audited;
+import org.hibernate.envers.RelationTargetAuditMode;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -59,26 +76,17 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotNull;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
-import org.egov.commons.CFunction;
-import org.egov.commons.Functionary;
-import org.egov.commons.Fund;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.persistence.entity.AbstractAuditable;
-import org.egov.pims.commons.Designation;
-import org.egov.pims.commons.Position;
-import org.egov.pims.model.GradeMaster;
-import org.hibernate.annotations.NamedQuery;
-import org.hibernate.envers.AuditOverride;
-import org.hibernate.envers.AuditOverrides;
-import org.hibernate.envers.Audited;
-import org.hibernate.envers.RelationTargetAuditMode;
+import static org.egov.eis.entity.Assignment.SEQ_ASSIGNMENT;
 
 @Entity
 @Table(name = "egeis_assignment")
 @SequenceGenerator(name = SEQ_ASSIGNMENT, sequenceName = SEQ_ASSIGNMENT, allocationSize = 1)
-@AuditOverrides({ @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
-        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate") })
+@AuditOverrides({@AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedBy"),
+        @AuditOverride(forClass = AbstractAuditable.class, name = "lastModifiedDate")})
 @NamedQuery(name = "getDesignationForActiveAssignmentsByListOfDesgNames", query = "select distinct A.designation from  Assignment A where A.fromDate<=current_date and A.toDate>=current_date and trim(upper(A.designation.name)) in(:param_0)")
 public class Assignment extends AbstractAuditable {
 
@@ -134,7 +142,7 @@ public class Assignment extends AbstractAuditable {
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Employee employee;
     @OneToMany(mappedBy = "assignment", orphanRemoval = true, fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private final List<HeadOfDepartments> deptSet = new ArrayList<>(0);
+    private List<HeadOfDepartments> deptSet = new ArrayList<>(0);
 
     @Transient
     private List<HeadOfDepartments> hodList = new ArrayList<>(0);
@@ -144,17 +152,17 @@ public class Assignment extends AbstractAuditable {
         return id;
     }
 
+    @Override
+    public void setId(final Long id) {
+        this.id = id;
+    }
+
     public List<HeadOfDepartments> getHodList() {
         return hodList;
     }
 
     public void setHodList(final List<HeadOfDepartments> hodLists) {
         hodList = hodLists;
-    }
-
-    @Override
-    public void setId(final Long id) {
-        this.id = id;
     }
 
     public Designation getDesignation() {
@@ -255,4 +263,19 @@ public class Assignment extends AbstractAuditable {
             this.deptSet.addAll(deptSet);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        //Removing this will break assignment comparison across erp
+        if (this == o)
+            return true;
+        if (!(o instanceof Assignment))
+            return false;
+        Assignment that = (Assignment) o;
+        return Objects.equal(id, that.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hashCode(id);
+    }
 }

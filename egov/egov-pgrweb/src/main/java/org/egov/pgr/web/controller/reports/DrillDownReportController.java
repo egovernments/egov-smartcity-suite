@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,101 +43,79 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.web.controller.reports;
 
 import org.apache.commons.lang.StringUtils;
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.dto.DrillDownReportRequest;
-import org.egov.pgr.service.reports.DrillDownReportService;
-import org.egov.pgr.web.controller.response.adaptor.ComplaintDrillDownHelperAdaptor;
-import org.egov.pgr.web.controller.response.adaptor.DrillDownComplaintTypeAdaptor;
+import org.egov.pgr.report.entity.contract.DrilldownAdaptor;
+import org.egov.pgr.report.entity.contract.DrilldownReportRequest;
+import org.egov.pgr.report.entity.contract.GrievanceDrilldownReportAdaptor;
+import org.egov.pgr.report.service.DrillDownReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.HashMap;
-import java.util.Map;
-
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 
 @Controller
-@RequestMapping("/report")
+@RequestMapping("/report/drilldown")
 public class DrillDownReportController {
 
     @Autowired
     private DrillDownReportService drillDownReportService;
 
-    @Autowired
-    private ReportService reportService;
-
-    @ModelAttribute
-    public void getReportHelper(Model model) {
-        ReportHelper reportHealperObj = new ReportHelper();
-        model.addAttribute("reportHelper", reportHealperObj);
-
-    }
-
-    @GetMapping("drillDownReportByBoundary")
-    public String searchAgeingReportByBoundaryForm(Model model) {
+    @GetMapping("boundarywise")
+    public String showBoundarywiseDrilldownReportForm(Model model) {
         model.addAttribute("mode", "ByBoundary");
         return "drillDown-search";
     }
 
-    @GetMapping("drillDownReportByDept")
-    public String searchAgeingReportByDepartmentForm(Model model) {
+    @GetMapping("departmentwise")
+    public String showDepartmentwiseDrilldownReportForm(Model model) {
         model.addAttribute("mode", "ByDepartment");
         return "drillDown-search";
     }
 
-    @GetMapping(value = "drillDown/resultList-update", produces = TEXT_PLAIN_VALUE)
+    @GetMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchDrillDownReport(DrillDownReportRequest reportRequest) {
-        if (StringUtils.isNotBlank(reportRequest.getDeptid()) &&
-                StringUtils.isNotBlank(reportRequest.getComplainttypeid()) && StringUtils.isNotBlank(reportRequest.getSelecteduserid())) {
-            return new DataTable<>(drillDownReportService.pagedDrillDownRecordsByCompalintId(reportRequest),
-                    reportRequest.draw())
-                    .toJson(DrillDownComplaintTypeAdaptor.class);
-
+    public String searchDrilldownReport(DrilldownReportRequest reportRequest) {
+        if (StringUtils.isNotBlank(reportRequest.getDeptid())
+                && StringUtils.isNotBlank(reportRequest.getComplainttypeid())
+                && StringUtils.isNotBlank(reportRequest.getSelecteduserid())) {
+            return new DataTable<>(drillDownReportService.pagedDrilldownRecordsByCompalintId(reportRequest), reportRequest.draw())
+                    .toJson(DrilldownAdaptor.class);
         } else
-            return new DataTable<>(drillDownReportService.pagedDrillDownRecords(reportRequest),
-                    reportRequest.draw())
-                    .toJson(ComplaintDrillDownHelperAdaptor.class);
+            return new DataTable<>(drillDownReportService.pagedDrilldownRecords(reportRequest), reportRequest.draw())
+                    .toJson(GrievanceDrilldownReportAdaptor.class);
     }
 
-    @GetMapping("/drilldown/grand-total")
+    @GetMapping("grand-total")
     @ResponseBody
-    public Object[] drillDownReportGrandTotal(DrillDownReportRequest reportRequest) {
-        return drillDownReportService.drillDownRecordsGrandTotal(reportRequest);
+    public Object[] drilldownReportGrandTotal(DrilldownReportRequest reportRequest) {
+        return drillDownReportService.drilldownRecordsGrandTotal(reportRequest);
     }
 
-    @GetMapping("/drilldown/download")
+    @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadReport(DrillDownReportRequest request) {
-        final ReportRequest reportRequest;
-        final Map<String, Object> reportparam = new HashMap<>();
-        if (StringUtils.isNotBlank(request.getDeptid()) &&
-                StringUtils.isNotBlank(request.getComplainttypeid()) && StringUtils.isNotBlank(request.getSelecteduserid())) {
-            reportRequest = new ReportRequest("pgr_functionarywise_report_comp",
-                    drillDownReportService.getDrillDownRecordsByComplaintId(request), new HashMap<>());
-        } else
-            reportRequest = new ReportRequest("pgr_functionarywise_report",
-                    drillDownReportService.getAllDrillDownRecords(request), new HashMap<>());
-        reportparam.put("groupBy", request.getGroupBy());
-        reportparam.put("reportTitle",request.getReportTitle());
-        reportRequest.setReportParams(reportparam);
-        reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("pgr_drillDown_report");
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadDrilldownReport(DrilldownReportRequest reportCriteria) {
+        ReportOutput reportOutput;
+        if (isNotBlank(reportCriteria.getDeptid()) && isNotBlank(reportCriteria.getComplainttypeid())
+                && isNotBlank(reportCriteria.getSelecteduserid()))
+            reportOutput = drillDownReportService.generateComplaintwiseDrilldownReport(reportCriteria);
+        else
+            reportOutput = drillDownReportService.generateDrilldownReport(reportCriteria);
+        reportOutput.setReportName("drilldown_report");
+        return reportAsResponseEntity(reportOutput);
     }
 }

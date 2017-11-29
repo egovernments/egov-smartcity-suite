@@ -1,47 +1,58 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.infra.admin.master.entity;
 
+import com.google.common.base.Objects;
 import com.google.gson.annotations.Expose;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.NotBlank;
 import org.hibernate.validator.constraints.SafeHtml;
 
@@ -61,6 +72,7 @@ import static org.egov.infra.admin.master.entity.BoundaryType.SEQ_BOUNDARY_TYPE;
 
 @Entity
 @Table(name = "EG_BOUNDARY_TYPE")
+@Unique(fields = "code", enableDfltMsg = true)
 @SequenceGenerator(name = SEQ_BOUNDARY_TYPE, sequenceName = SEQ_BOUNDARY_TYPE, allocationSize = 1)
 public class BoundaryType extends AbstractAuditable {
 
@@ -74,6 +86,11 @@ public class BoundaryType extends AbstractAuditable {
     @NotBlank
     @SafeHtml
     private String name;
+
+    @NotBlank
+    @Length(max = 25)
+    @SafeHtml
+    private String code;
 
     @ManyToOne
     @NotNull
@@ -101,7 +118,7 @@ public class BoundaryType extends AbstractAuditable {
     }
 
     @Override
-    public void setId(final Long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -109,15 +126,23 @@ public class BoundaryType extends AbstractAuditable {
         return name;
     }
 
-    public void setName(final String name) {
+    public void setName(String name) {
         this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 
     public HierarchyType getHierarchyType() {
         return hierarchyType;
     }
 
-    public void setHierarchyType(final HierarchyType hierarchyType) {
+    public void setHierarchyType(HierarchyType hierarchyType) {
         this.hierarchyType = hierarchyType;
     }
 
@@ -125,7 +150,7 @@ public class BoundaryType extends AbstractAuditable {
         return parent;
     }
 
-    public void setParent(final BoundaryType parent) {
+    public void setParent(BoundaryType parent) {
         this.parent = parent;
     }
 
@@ -133,7 +158,7 @@ public class BoundaryType extends AbstractAuditable {
         return hierarchy;
     }
 
-    public void setHierarchy(final Long hierarchy) {
+    public void setHierarchy(Long hierarchy) {
         this.hierarchy = hierarchy;
     }
 
@@ -141,7 +166,7 @@ public class BoundaryType extends AbstractAuditable {
         return parentName;
     }
 
-    public void setParentName(final String parentName) {
+    public void setParentName(String parentName) {
         this.parentName = parentName;
     }
 
@@ -149,11 +174,11 @@ public class BoundaryType extends AbstractAuditable {
         return childBoundaryTypes;
     }
 
-    public void setChildBoundaryTypes(final Set<BoundaryType> childBoundaryTypes) {
+    public void setChildBoundaryTypes(Set<BoundaryType> childBoundaryTypes) {
         this.childBoundaryTypes = childBoundaryTypes;
     }
 
-    public void addChildBoundaryType(final BoundaryType boundaryType) {
+    public void addChildBoundaryType(BoundaryType boundaryType) {
         boundaryType.setParent(this);
         childBoundaryTypes.add(boundaryType);
     }
@@ -167,33 +192,18 @@ public class BoundaryType extends AbstractAuditable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + (id == null ? 0 : id.hashCode());
-        result = prime * result + (name == null ? 0 : name.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof BoundaryType))
+            return false;
+        BoundaryType that = (BoundaryType) o;
+        return Objects.equal(name, that.name) &&
+                Objects.equal(hierarchyType, that.hierarchyType);
     }
 
     @Override
-    public boolean equals(final Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        final BoundaryType other = (BoundaryType) obj;
-        if (id == null) {
-            if (other.id != null)
-                return false;
-        } else if (!id.equals(other.id))
-            return false;
-        if (name == null) {
-            if (other.name != null)
-                return false;
-        } else if (!name.equals(other.name))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hashCode(name, hierarchyType);
     }
 }

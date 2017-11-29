@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,19 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 /**
  *
  */
 package org.egov.collection.web.actions.reports;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -68,6 +69,7 @@ import org.egov.eis.entity.Jurisdiction;
 import org.egov.eis.service.EmployeeService;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -77,6 +79,13 @@ import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.model.masters.AccountCodePurpose;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Results({ @Result(name = RemittanceStatementReportAction.INDEX, location = "remittanceStatementReport-index.jsp"),
         @Result(name = RemittanceStatementReportAction.REPORT, location = "remittanceStatementReport-report.jsp") })
@@ -121,6 +130,9 @@ public class RemittanceStatementReportAction extends ReportFormAction {
     private String voucherNumber;
     private RemittanceServiceImpl remittanceService;
 
+    @Autowired
+    private CityService cityService;
+
     @Override
     public void prepare() {
         setReportFormat(ReportFormat.PDF);
@@ -158,6 +170,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         final User user = collectionsUtil.getLoggedInUser();
 
         critParams.put(SELECTED_DEPT_ID, getDeptId());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
 
         final Integer bounaryId = getDeptId();
 
@@ -199,11 +212,13 @@ public class RemittanceStatementReportAction extends ReportFormAction {
         critParams.put(EGOV_BANK, bank);
         critParams.put(EGOV_BANK_ACCOUNT, bankAccount);
         critParams.put(EGOV_REMITTANCE_DATE, remittanceDate == null ? new Date() : remittanceDate);
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         bankRemittanceList = (List<CollectionBankRemittanceReport>) getSession().get("REMITTANCE_LIST");
         critParams.put(EGOV_REMITTANCE_VOUCHER,
                 bankRemittanceList.isEmpty() ? "" : bankRemittanceList.get(0).getVoucherNumber());
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);
         final ReportOutput reportOutput = reportService.createReport(reportInput);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
@@ -236,6 +251,7 @@ public class RemittanceStatementReportAction extends ReportFormAction {
                 ? remittanceObj.getBankAccount().getBankbranch().getBank().getName() : "");
         critParams.put(EGOV_BANK_ACCOUNT,
                 remittanceObj.getBankAccount() != null ? remittanceObj.getBankAccount().getAccountnumber() : "");
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         collReportResult.setCollectionBankRemittanceReportList(bankRemittanceList);
         final ReportRequest reportInput = new ReportRequest(PRINT_BANK_CHALLAN_TEMPLATE, collReportResult, critParams);

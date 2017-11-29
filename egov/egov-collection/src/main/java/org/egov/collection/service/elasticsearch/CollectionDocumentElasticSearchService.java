@@ -1,7 +1,8 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -25,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -35,29 +43,10 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.collection.service.elasticsearch;
-
-import static org.egov.collection.constants.CollectionConstants.COLLECTION_INDEX_NAME;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_DISTRICTWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_GRADEWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_REGIONWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_ULBWISE;
-import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_WARDWISE;
-import static org.egov.collection.constants.CollectionConstants.DATEFORMATTER_YYYY_MM_DD;
-import static org.egov.collection.constants.CollectionConstants.DATE_FORMAT_YYYYMMDD;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.collection.bean.dashboard.CollectionDashBoardRequest;
@@ -70,8 +59,10 @@ import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.es.CollectionDocument;
 import org.egov.commons.CFinancialYear;
 import org.egov.infra.utils.DateUtils;
+import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
+import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.aggregations.AggregationBuilder;
 import org.elasticsearch.search.aggregations.AggregationBuilders;
 import org.elasticsearch.search.aggregations.Aggregations;
@@ -90,6 +81,26 @@ import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Service;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+
+import static org.egov.collection.constants.CollectionConstants.COLLECTION_INDEX_NAME;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_DISTRICTWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_GRADEWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_REGIONWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_ULBWISE;
+import static org.egov.collection.constants.CollectionConstants.DASHBOARD_GROUPING_WARDWISE;
+import static org.egov.collection.constants.CollectionConstants.DATEFORMATTER_YYYY_MM_DD;
+import static org.egov.collection.constants.CollectionConstants.DATE_FORMAT_YYYYMMDD;
 
 @Service
 public class CollectionDocumentElasticSearchService {
@@ -352,6 +363,7 @@ public class CollectionDocumentElasticSearchService {
         String name;
         CollectionTableData collTableData;
         String aggregationField = REGION_NAME;
+        Map detailsForAggregationField = Collections.emptyMap();
         /**
          * Select the grouping based on the type parameter, by default the
          * grouping is done based on Regions. If type is region, group by
@@ -369,7 +381,7 @@ public class CollectionDocumentElasticSearchService {
                 aggregationField = CITY_GRADE;
             else if (collectionDashBoardRequest.getType().equalsIgnoreCase(DASHBOARD_GROUPING_WARDWISE))
                 aggregationField = REVENUE_WARD;
-
+       
         /**
          * As per Elastic Search functionality, to get the total collections
          * between 2 dates, add a day to the endDate and fetch the results For
@@ -418,6 +430,10 @@ public class CollectionDocumentElasticSearchService {
         for (final Map.Entry<String, BigDecimal> entry : totalCollMap.entrySet()) {
             collTableData = new CollectionTableData();
             name = entry.getKey();
+            if (DISTRICT_NAME.equalsIgnoreCase(aggregationField) || CITY_NAME.equalsIgnoreCase(aggregationField)
+                    || REGION_NAME.equalsIgnoreCase(aggregationField) || REVENUE_WARD.equalsIgnoreCase(aggregationField))
+                detailsForAggregationField = getDetailsForAggregationType(collectionDashBoardRequest, name,
+                        aggregationField);
             if (aggregationField.equals(REGION_NAME))
                 collTableData.setRegionName(name);
             else if (aggregationField.equals(DISTRICT_NAME)) {
@@ -429,8 +445,13 @@ public class CollectionDocumentElasticSearchService {
                 collTableData.setUlbGrade(collectionDashBoardRequest.getUlbGrade());
             } else if (aggregationField.equals(CITY_GRADE))
                 collTableData.setUlbGrade(name);
-            else if (aggregationField.equals(REVENUE_WARD))
+            else if (aggregationField.equals(REVENUE_WARD)){
                 collTableData.setWardName(name);
+                collTableData.setRegionName(detailsForAggregationField.get(REGION_NAME).toString());
+                collTableData.setDistrictName(detailsForAggregationField.get(DISTRICT_NAME).toString());
+                collTableData.setUlbGrade(detailsForAggregationField.get(CITY_GRADE).toString());
+                collTableData.setUlbName(detailsForAggregationField.get(CITY_NAME).toString());
+            }
             collTableData.setTotalCollection(totalCollMap.get(name) == null ? BigDecimal.ZERO : totalCollMap.get(name));
             collTableData.setTodaysCollection(todaysCollMap.get(name) == null ? BigDecimal.ZERO : todaysCollMap.get(name));
             collIndDataList.add(collTableData);
@@ -439,6 +460,36 @@ public class CollectionDocumentElasticSearchService {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Time taken for setting values in getResponseTableData() is : " + timeTaken + MILLISECS);
         return collIndDataList;
+    }
+    
+    private Map getDetailsForAggregationType(CollectionDashBoardRequest collectionDashBoardRequest, String name,
+            String aggregationField) {
+        String[] requiredFields = null;
+        BoolQueryBuilder boolQuery = prepareBoolQuery(collectionDashBoardRequest);
+        if (REVENUE_WARD.equalsIgnoreCase(aggregationField)) {
+            boolQuery = boolQuery.filter(QueryBuilders.matchQuery(REVENUE_WARD, name));
+            requiredFields = new String[4];
+            requiredFields[0] = REGION_NAME;
+            requiredFields[1] = DISTRICT_NAME;
+            requiredFields[2] = CITY_GRADE;
+            requiredFields[3] = CITY_NAME;
+        }
+        Map collectionTypeDetails = new HashMap<>();
+        SearchResponse response = elasticsearchTemplate.getClient()
+                .prepareSearch(COLLECTION_INDEX_NAME)
+                .setQuery(boolQuery).setSize(1)
+                .setFetchSource(requiredFields, null)
+                .execute().actionGet();
+        for (SearchHit hit : response.getHits())
+            collectionTypeDetails = hit.sourceAsMap();
+        return collectionTypeDetails;
+    }
+
+    private BoolQueryBuilder prepareBoolQuery(CollectionDashBoardRequest collectionDashBoardRequest){
+        BoolQueryBuilder boolQuery=new BoolQueryBuilder();
+            if(StringUtils.isNotBlank(collectionDashBoardRequest.getRevenueWard()))
+                boolQuery=boolQuery.filter(QueryBuilders.matchQuery(REVENUE_WARD, collectionDashBoardRequest.getRevenueWard()));
+        return boolQuery;
     }
 
     /**

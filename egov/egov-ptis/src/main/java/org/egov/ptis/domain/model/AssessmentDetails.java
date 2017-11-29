@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,10 +43,14 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.model;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Set;
 
 /**
@@ -54,19 +65,25 @@ public class AssessmentDetails implements Serializable {
 
     private static final long serialVersionUID = 355399781881256186L;
     private String propertyID;
-    private String houseNo;
+    private String oldAssessmentNo = StringUtils.EMPTY;
+    private String owners = StringUtils.EMPTY;
+    private String houseNo = StringUtils.EMPTY;
     private Set<OwnerName> ownerNames;
     private BoundaryDetails boundaryDetails;
     private String propertyAddress;
     private PropertyDetails propertyDetails;
-    private ErrorDetails errorDetails;
-    private String primaryEmail;
-    private String primaryMobileNo;
+    private String primaryEmail = StringUtils.EMPTY;
+    private String primaryMobileNo = StringUtils.EMPTY;
     private Integer flag;
     private double latitude;
     private double longitude;
     private boolean status;
     private boolean exempted;
+    private BigDecimal propertyDue = BigDecimal.ZERO;
+    private BigDecimal waterTaxDue = BigDecimal.ZERO;
+    private BigDecimal sewerageDue = BigDecimal.ZERO;
+    private int connectionCount;
+    private ErrorDetails errorDetails;
 
     public String getPropertyID() {
         return propertyID;
@@ -187,5 +204,52 @@ public class AssessmentDetails implements Serializable {
     public void setExempted(boolean exempted) {
         this.exempted = exempted;
     }
-    
+
+    public String getOldAssessmentNo() {
+        return oldAssessmentNo;
+    }
+
+    public void setOldAssessmentNo(String oldAssessmentNo) {
+        this.oldAssessmentNo = oldAssessmentNo;
+    }
+
+    public String getOwners() {
+        return owners;
+    }
+
+    public void setOwners(String owners) {
+        this.owners = owners;
+    }
+
+    public BigDecimal getPropertyDue() {
+        return propertyDue;
+    }
+
+    public void setPropertyDue(BigDecimal propertyDue) {
+        this.propertyDue = propertyDue;
+    }
+
+    public BigDecimal getWaterTaxDue() {
+        return waterTaxDue;
+    }
+
+    public void setWaterTaxDue(BigDecimal waterTaxDue) {
+        this.waterTaxDue = waterTaxDue;
+    }
+
+    public BigDecimal getSewerageDue() {
+        return sewerageDue;
+    }
+
+    public void setSewerageDue(BigDecimal sewerageDue) {
+        this.sewerageDue = sewerageDue;
+    }
+
+    public int getConnectionCount() {
+        return connectionCount;
+    }
+
+    public void setConnectionCount(int connectionCount) {
+        this.connectionCount = connectionCount;
+    }
 }

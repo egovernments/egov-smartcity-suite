@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,12 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.tl.service;
 
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.tl.entity.License;
 import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,13 +60,11 @@ import org.springframework.stereotype.Service;
 import java.math.BigDecimal;
 import java.util.Locale;
 
-import static org.egov.tl.utils.Constants.WF_DIGI_SIGNED;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_APPROVED_CODE;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
-import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
-import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.BUTTONFORWARD;
+import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
+import static org.egov.tl.utils.Constants.STATUS_UNDERWORKFLOW;
 
 @Service
 public class TradeLicenseSmsAndEmailService {
@@ -78,7 +84,7 @@ public class TradeLicenseSmsAndEmailService {
     private static final String MSG_LICENSE_DIGI_APPROVALAMT_BODY = "msg.%s.license.digienabled.approvalAmt.email.body";
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -88,11 +94,11 @@ public class TradeLicenseSmsAndEmailService {
     private LicenseUtils licenseUtils;
 
     public void sendSMSOnLicense(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 
     public void sendEmailOnLicense(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailSubject, emailBody);
+        notificationService.sendEmail(email, emailSubject, emailBody);
     }
 
     public String getMunicipalityName() {
@@ -180,7 +186,7 @@ public class TradeLicenseSmsAndEmailService {
                         emailCode,
                         new String[]{license.getLicensee().getApplicantName(),
                                 license.getApplicationNumber(),
-                                license.getNameOfEstablishment(),license.getLicenseNumber(), license.getTotalBalance().toString(), ApplicationThreadLocals.getDomainURL(),
+                                license.getNameOfEstablishment(), license.getLicenseNumber(), license.getTotalBalance().toString(), ApplicationThreadLocals.getDomainURL(),
                                 getMunicipalityName()}, locale);
                 smsCode = "msg.digi.enabled.newTradeLicenseapprovalAmt.sms";
                 smsMsg = licenseMessageSource.getMessage(
@@ -240,9 +246,7 @@ public class TradeLicenseSmsAndEmailService {
         String emailBody;
         String emailSubject;
         final Locale locale = Locale.getDefault();
-
-        if (APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE.equals(license.getEgwStatus().getCode())) {
-
+        if ("First Level Fee Collected".equals(license.getState().getValue()) || (license.getEgwStatus() != null && APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE.equals(license.getEgwStatus().getCode()))) {
             smsMsg = licenseMessageSource.getMessage(
                     String.format(MSG_LICENSE_FIRSTLEVEL_SMS, license.getLicenseAppType().getName().toLowerCase()),
                     new String[]{license.getLicensee().getApplicantName(),
@@ -334,32 +338,26 @@ public class TradeLicenseSmsAndEmailService {
     }
 
     public void sendSMsAndEmailOnDigitalSign(final License license) {
-        String smsMsg = "";
-        String emailBody = "";
-        String emailSubject = "";
         final Locale locale = Locale.getDefault();
-
-        if (WF_DIGI_SIGNED.equals(license.getState().getValue()) && APPLICATION_STATUS_APPROVED_CODE.equals(license.getEgwStatus().getCode())) {
-            String smsCode = "msg.digi.sign.no.collection";
-            smsMsg = licenseMessageSource.getMessage(
-                    smsCode,
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getApplicationNumber(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
-                            getMunicipalityName()},
-                    locale);
-            emailSubject = licenseMessageSource.getMessage("msg.Licensedigisign.email.subject",
-                    new String[]{license.getNameOfEstablishment()}, locale);
-            emailBody = licenseMessageSource.getMessage(
-                    "msg.digi.sign.no.collection",
-                    new String[]{license.getLicensee().getApplicantName(),
-                            license.getApplicationNumber(),
-                            license.getNameOfEstablishment(),
-                            license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
-                            getMunicipalityName()},
-                    locale);
-        }
+        String smsCode = "msg.digi.sign.no.collection";
+        String smsMsg = licenseMessageSource.getMessage(
+                smsCode,
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getApplicationNumber(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
+                        getMunicipalityName()},
+                locale);
+        String emailSubject = licenseMessageSource.getMessage("msg.Licensedigisign.email.subject",
+                new String[]{license.getNameOfEstablishment()}, locale);
+        String emailBody = licenseMessageSource.getMessage(
+                "msg.digi.sign.no.collection",
+                new String[]{license.getLicensee().getApplicantName(),
+                        license.getApplicationNumber(),
+                        license.getNameOfEstablishment(),
+                        license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(), license.getDigiSignedCertFileStoreId(),
+                        getMunicipalityName()},
+                locale);
         sendSMSOnLicense(license.getLicensee().getMobilePhoneNumber(), smsMsg);
         sendEmailOnLicense(license.getLicensee().getEmailId(), emailBody,
                 emailSubject);

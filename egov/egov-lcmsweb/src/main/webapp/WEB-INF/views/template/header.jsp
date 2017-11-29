@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,43 +43,42 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <header class="navbar navbar-fixed-top"><!-- set fixed position by adding class "navbar-fixed-top" -->
-	<nav class="navbar navbar-default navbar-custom navbar-fixed-top">
-		<div class="container-fluid">
-			<div class="navbar-header col-md-10 col-xs-10">
-				<a class="navbar-brand" href="javascript:void(0);">
-					<c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-					<img src="<cdn:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="60">
-					</c:if>
-					<div>
+    <nav class="navbar navbar-default navbar-custom navbar-fixed-top">
+        <div class="container-fluid">
+            <div class="navbar-header col-md-10 col-xs-10">
+                <a class="navbar-brand" href="javascript:void(0);">
+                    <img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="60">
+                    <div>
 						<span class="title2">
 						<c:set var="titleKey">
-                			<tiles:getAsString name="page-title"/>
-            			</c:set>
+                            <tiles:getAsString name="page-title"/>
+                        </c:set>
 						<spring:message code="${titleKey}"/>
 						</span>
-					</div>
-				</a>
-			</div>
-			
-			<div class="nav-right-menu col-md-2 col-xs-2">
-				<ul class="hr-menu text-right">
-					<li class="ico-menu">
-						<a href="http://www.egovernments.org" target="_blank">
-							<img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
-						</a>
-					</li>
-					
-				</ul>
-			</div>
-			
-		</div>
-	</nav>
+                    </div>
+                </a>
+            </div>
+
+            <div class="nav-right-menu col-md-2 col-xs-2">
+                <ul class="hr-menu text-right">
+                    <li class="ico-menu">
+                        <a href="http://www.egovernments.org" target="_blank">
+                            <img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" title="Powered by eGovernments" height="20px">
+                        </a>
+                    </li>
+
+                </ul>
+            </div>
+
+        </div>
+    </nav>
 </header>

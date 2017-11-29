@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
@@ -88,6 +96,8 @@
 									<tbody>
 										<tr>
 											<c:set var="count" value="1" />
+											<c:set var="countResd" value="0" />
+											<c:set var="countNresd" value="0" />
 											<c:forEach var="taxRate"
 												items="${taxRatesForm.demandReasonDetails}"
 												varStatus="status">
@@ -102,29 +112,38 @@
 													test="${fn:endsWith(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non Residential')}">
 													<td><c:out
 															value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Non')}" /></td>
+													<c:set var="countNresd"
+														value="${taxRate.percentage + countNresd}" />
 												</c:when>
 												<c:otherwise>
 													<td><c:out
 															value="${fn:substringBefore(taxRate.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(), 'Residential')}" /></td>
+													<c:set var="countResd"
+														value="${taxRate.percentage + countResd}" />
 												</c:otherwise>
 											</c:choose>
 											<td class="text-right"><fmt:formatNumber
 													var="formattedRate" type="number" minFractionDigits="2"
 													maxFractionDigits="2" value="${taxRate.percentage}" /> <c:out
 													value="${formattedRate}" /></td>
-											<%-- <td><fmt:formatDate value="${taxRate.fromDate}"
-																pattern="dd-MM-yyyy" /></td>
-														<td><fmt:formatDate value="${taxRate.toDate}"
-																pattern="dd-MM-yyyy" /></td> --%>
-
 											</c:forEach>
 										</tr>
 										<tr>
 											<td></td>
 											<td><spring:message code="lbl.total.resd" /></td>
-											<td class="text-right"><c:out value="${genTaxResd}" /></td>
+											<td class="text-right"><fmt:formatNumber
+													var="countResdRate" type="number" minFractionDigits="2"
+													maxFractionDigits="2" value="${countResd}" /> <input
+												name="genTaxResd" id="sum" class="patternvalidation"
+												data-pattern="decimalvalue" autocomplete="off" maxlength="5"
+												value="${countResdRate}" readonly="true" /></td>
 											<td><spring:message code="lbl.total.nresd" /></td>
-											<td class="text-right"><c:out value="${genTaxNonResd}" /></td>
+											<td class="text-right"><fmt:formatNumber
+													var="countNresdRate" type="number" minFractionDigits="2"
+													maxFractionDigits="2" value="${countNresd}" /> <input
+												name="genTaxNonResd" id="sum" class="patternvalidation"
+												data-pattern="decimalvalue" autocomplete="off" maxlength="5"
+												value="${countNresdRate}" readonly="true" /></td>
 
 										</tr>
 									</tbody>

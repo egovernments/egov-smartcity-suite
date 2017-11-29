@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,31 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.egf.web.actions.payment;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.math.BigDecimal;
-import java.text.DecimalFormat;
-import java.text.NumberFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
+import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
@@ -120,7 +107,27 @@ import org.hibernate.transform.Transformers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
-import net.sf.jasperreports.engine.JRException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Serializable;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.NumberFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 @ParentPackage("egov")
 @Results({
@@ -1146,7 +1153,7 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             if (row.getKey() != null)
                 if (getRtgsSeceltedAccMap().get(row.getKey()) != null && getRtgsSeceltedAccMap().get(row.getKey())) {
                     if (isRtgsNoGenerationAuto()) {
-                        final String[] dateArray = new String[] { getRtgsdateMap().get(row.getKey()) };
+                        final String[] dateArray = new String[] { getRtgsdateMap().get(String.valueOf(Long.valueOf(row.getKey()))) };
                         // LOGGER.debug(dateArray);
                         Date rtgsdate = null;
                         final Date autoNoCutOffDate = FinancialConstants.RTGS_FINYEAR_WISE_ROLLING_SEQ_CUTOFF_DATE;
@@ -1212,25 +1219,25 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
                 rtgsEntry.add(chqAssgn);
                 if (chqAssgn.getBankAccountId() != null && !"".equals(chqAssgn.getBankAccountId()))
-                    resultMap.put(chqAssgn.getBankAccountId().toString(), rtgsEntry);
+                    resultMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), rtgsEntry);
                 if (chqAssgn.getIsSelected()) {
-                    rtgsSeceltedAccMap.put(chqAssgn.getBankAccountId().toString(), true);
+                    rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
                     if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
                         if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
                             ContractorbillList.add(chqAssgn);
-                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
+                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
                                 " RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
                 }
-            } else if (resultMap.containsKey(chqAssgn.getBankAccountId().toString())) {
-                resultMap.get(chqAssgn.getBankAccountId().toString()).add(chqAssgn);
+            } else if (resultMap.containsKey(String.valueOf(chqAssgn.getBankAccountId().longValue()))) {
+                resultMap.get(String.valueOf(chqAssgn.getBankAccountId().longValue())).add(chqAssgn);
                 if (chqAssgn.getIsSelected()) {
-                    rtgsSeceltedAccMap.put(chqAssgn.getBankAccountId().toString(), true);
+                    rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
                     if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
                         if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
                             ContractorbillList.add(chqAssgn);
-                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
+                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
                                 "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());
@@ -1238,13 +1245,13 @@ public class ChequeAssignmentAction extends BaseVoucherAction {
             } else {
                 rtgsEntry = new ArrayList<ChequeAssignment>();
                 rtgsEntry.add(chqAssgn);
-                resultMap.put(chqAssgn.getBankAccountId().toString(), rtgsEntry);
+                resultMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), rtgsEntry);
                 if (chqAssgn.getIsSelected()) {
-                    rtgsSeceltedAccMap.put(chqAssgn.getBankAccountId().toString(), true);
+                    rtgsSeceltedAccMap.put(String.valueOf(chqAssgn.getBankAccountId().longValue()), true);
                     if (chqAssgn.getExpenditureType() != null && !"".equals(chqAssgn.getExpenditureType()))
                         if (chqAssgn.getExpenditureType().equalsIgnoreCase("Works"))
                             ContractorbillList.add(chqAssgn);
-                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(chqAssgn.getBankAccountId().toString()));
+                    rtgsdate = Constants.DDMMYYYYFORMAT2.parse(getRtgsdateMap().get(String.valueOf(chqAssgn.getBankAccountId().longValue())));
                     if (chqAssgn.getVoucherDate().compareTo(rtgsdate) > 0)
                         addFieldError("rtgs.date.less.than.payment.date",
                                 "RTGS Date cannot be less than Payment Date." + chqAssgn.getVoucherNumber());

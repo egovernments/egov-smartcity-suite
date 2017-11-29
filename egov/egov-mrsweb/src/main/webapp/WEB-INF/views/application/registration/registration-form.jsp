@@ -1,3 +1,51 @@
+<%--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  --%>
+
 <!-- #-------------------------------------------------------------------------------
 # eGov suite of products aim to improve the internal efficiency,transparency, 
 #    accountability and the service delivery of the government  organizations.
@@ -50,12 +98,15 @@
 <script
 	src="<cdn:url value='/resources/js/app/registrationformvalidation.js?rnd=${app_release_no}'/> "></script>
 <script
-	src="<cdn:url value='/resources/js/app/registration.js?rnd=${app_release_no}'/> "></script>
+	src="<cdn:url value='/resources/js/app/registration-common.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/registration-new.js?rnd=${app_release_no}'/> "></script>
+<script
+	src="<cdn:url value='/resources/js/app/documentsupload.js?rnd=${app_release_no}'/> "></script>
 
 <div class="row">
 	<div class="col-md-12">
-
-		<div class="text-right error-msg" style="font-size: 14px;"></div>		
+		<div class="text-right error-msg" style="font-size: 14px;"></div>
 		<c:set value="/mrs/registration/register" var="actionUrl" />
 		<input type="hidden" id="message" value="${message}" />
 		<c:if test="${marriageRegistration.status == 'Rejected'}">
@@ -69,7 +120,8 @@
 				var="actionUrl"></c:set>
 		</c:if>
 		<form:form role="form" action="${actionUrl}" method="POST"
-			modelAttribute="marriageRegistration" id="form-registration"
+			modelAttribute="marriageRegistration"
+			id="newMarriageRegistrationForm"
 			cssClass="form-horizontal form-groups-bordered"
 			enctype="multipart/form-data">
 
@@ -82,9 +134,12 @@
 				</spring:hasBindErrors>
 				<br />
 			</div>
-			<input type="hidden" name="applicationNo" value="${marriageRegistration.applicationNo}" />
-			<input type="hidden" name="source" value="${marriageRegistration.source}" />
-			<input type="hidden" name="stateType" id="stateType" value="${stateType}" />
+			<input type="hidden" name="applicationNo"
+				value="${marriageRegistration.applicationNo}" />
+			<input type="hidden" name="source"
+				value="${marriageRegistration.source}" />
+			<input type="hidden" name="stateType" id="stateType"
+				value="${stateType}" />
 			<input type="hidden" id="currentState" value="${currentState}" />
 			<input type="hidden" id="registrationId"
 				value="${marriageRegistration.id}" />
@@ -107,49 +162,50 @@
 				</div>
 				<div id="witness-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
+						<div class="panel-body custom-form ">
+							<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
+							<form:hidden path="witnesses[0].id" />
+							<form:hidden path="witnesses[0].applicantType" value="Husband" />
+							<input type="hidden" name="ApplicantType" value="Husband" />
+							<jsp:include page="witnessinfo.jsp">
+								<jsp:param value="subheading.witness1.info" name="subhead" />
+								<jsp:param value="husbandside.witness" name="header" />
+							</jsp:include>
 
-						<c:set value="witnesses[0]" var="witness" scope="request"></c:set>
-						<form:hidden path="witnesses[0].id" />
-						<form:hidden path="witnesses[0].applicantType" value="Husband" />
-						<input type="hidden" name="ApplicantType" value="Husband" />
-						<jsp:include page="witnessinfo.jsp">
-							<jsp:param value="subheading.witness1.info" name="subhead" />
-							<jsp:param value="husbandside.witness" name="header" />
-						</jsp:include>
+							<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
+							<form:hidden path="witnesses[1].id" />
+							<form:hidden path="witnesses[1].applicantType" value="Husband" />
+							<jsp:include page="witnessinfo.jsp">
+								<jsp:param value="subheading.witness2.info" name="subhead" />
+								<jsp:param value="" name="header" />
+							</jsp:include>
 
-						<c:set value="witnesses[1]" var="witness" scope="request"></c:set>
-						<form:hidden path="witnesses[1].id" />
-						<form:hidden path="witnesses[1].applicantType" value="Husband" />
-						<jsp:include page="witnessinfo.jsp">
-							<jsp:param value="subheading.witness2.info" name="subhead" />
-							<jsp:param value="" name="header" />
-						</jsp:include>
+							<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
+							<form:hidden path="witnesses[2].id" />
+							<form:hidden path="witnesses[2].applicantType" value="Wife" />
+							<jsp:include page="witnessinfo.jsp">
+								<jsp:param value="subheading.witness1.info" name="subhead" />
+								<jsp:param value="wifeside.witness" name="header" />
+							</jsp:include>
+							<c:set value="witnesses[3]" var="witness" scope="request"></c:set>
+							<form:hidden path="witnesses[3].id" />
+							<form:hidden path="witnesses[3].applicantType" value="Wife" />
+							<jsp:include page="witnessinfo.jsp">
+								<jsp:param value="subheading.witness2.info" name="subhead" />
+								<jsp:param value="" name="header" />
+							</jsp:include>
 
-						<c:set value="witnesses[2]" var="witness" scope="request"></c:set>
-						<form:hidden path="witnesses[2].id" />
-						<form:hidden path="witnesses[2].applicantType" value="Wife" />
-						<jsp:include page="witnessinfo.jsp">
-							<jsp:param value="subheading.witness1.info" name="subhead" />
-							<jsp:param value="wifeside.witness" name="header" />
-						</jsp:include>
-						<c:set value="witnesses[3]" var="witness" scope="request"></c:set>
-						<form:hidden path="witnesses[3].id" />
-						<form:hidden path="witnesses[3].applicantType" value="Wife" />
-						<jsp:include page="witnessinfo.jsp">
-							<jsp:param value="subheading.witness2.info" name="subhead" />
-							<jsp:param value="" name="header" />
-						</jsp:include>
-
-						<%-- <jsp:include page="priestinfo.jsp"></jsp:include> --%>
+							<%-- <jsp:include page="priestinfo.jsp"></jsp:include> --%>
+						</div>
 					</div>
 				</div>
 				<div id="checklist-info" class="tab-pane fade">
 					<div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="checklist.jsp"></jsp:include>
+						<div class="panel-body custom-form ">
+							<jsp:include page="checklist.jsp"></jsp:include>
+							<%-- <jsp:include page="documentdetails.jsp"></jsp:include>--%>
+						</div>
 					</div>
-					<%-- <div class="panel panel-primary" data-collapsed="0">
-						<jsp:include page="documentdetails.jsp"></jsp:include>
-					</div> --%>
 				</div>
 			</div>
 			<%-- <c:if test="${registration.rejectionReason != null}">
@@ -169,4 +225,3 @@
 		</form:form>
 	</div>
 </div>
-

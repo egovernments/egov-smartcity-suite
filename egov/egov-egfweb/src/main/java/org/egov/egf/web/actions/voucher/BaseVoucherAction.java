@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 /**
  *
@@ -43,7 +51,6 @@
 package org.egov.egf.web.actions.voucher;
 
 import com.exilant.eGov.src.transactions.VoucherTypeForULB;
-
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.interceptor.validation.SkipValidation;
@@ -62,15 +69,12 @@ import org.egov.commons.SubScheme;
 import org.egov.commons.Vouchermis;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.actions.workflow.GenericWorkFlowAction;
-import org.egov.infra.admin.master.entity.AppConfig;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
-import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.entity.State;
@@ -107,22 +111,18 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     private static final String EXCEPTION_WHILE_SAVING_DATA = "Exception while saving data";
     private static final Logger LOGGER = Logger.getLogger(BaseVoucherAction.class);
     // sub class should add getter and setter this workflowBean
-    public WorkflowBean workflowBean = new WorkflowBean();
-    public CVoucherHeader voucherHeader = new CVoucherHeader();
-    protected List<String> headerFields = new ArrayList<String>();
-    protected List<String> mandatoryFields = new ArrayList<String>();
+    public transient WorkflowBean workflowBean = new WorkflowBean();
+    public transient CVoucherHeader voucherHeader = new CVoucherHeader();
+    protected transient List<String> headerFields = new ArrayList<>();
+    protected transient List<String> mandatoryFields = new ArrayList<>();
     protected String voucherNumManual;
-    protected UserService userMngr;
-    protected EisUtilService eisService;
-    protected AssignmentService assignmentService;
+    protected transient EisUtilService eisService;
+    protected transient AssignmentService assignmentService;
    
     @Autowired
     private VoucherTypeForULB voucherTypeForULB;
-    protected SecurityUtils securityUtils;
     protected String reversalVoucherNumber;
     protected String reversalVoucherDate;
-    final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
-    final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
     private Integer voucherNumberPrefixLength;
     public static final String ZERO = "0";
     private FinancingSourceService financingSourceService;
@@ -181,9 +181,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         if (headerFields.contains("field"))
             addDropdownData("fieldList", masterDataCache.get("egi-ward"));
         if (headerFields.contains("scheme"))
-            addDropdownData("schemeList", Collections.EMPTY_LIST);
+            addDropdownData("schemeList", Collections.emptyList());
         if (headerFields.contains("subscheme"))
-            addDropdownData("subschemeList", Collections.EMPTY_LIST);
+            addDropdownData("subschemeList", Collections.emptyList());
 
         // addDropdownData("typeList",
         // persistenceService.findAllBy(" select distinct vh.type from CVoucherHeader vh where vh.status!=4 order by vh.type"));
@@ -200,9 +200,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
             for (final AppConfigValues appConfigVal : appConfigList) {
                 final String value = appConfigVal.getValue();
-                final String header = value.substring(0, value.indexOf("|"));
+                final String header = value.substring(0, value.indexOf('|'));
                 headerFields.add(header);
-                final String mandate = value.substring(value.indexOf("|") + 1);
+                final String mandate = value.substring(value.indexOf('|') + 1);
                 if (mandate.equalsIgnoreCase("M"))
                     mandatoryFields.add(header);
             }
@@ -262,16 +262,9 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         }
     }
 
-    /*
-     * protected void loadFunction(){ if(headerFields.contains("function") && null !=
-     * voucherHeader.getVouchermis().getFunction()){ List<Fundsource> fundSourceList =
-     * financingSourceService.getFinancialSourceBasedOnSubScheme(voucherHeader.getVouchermis().getSubschemeid().getId());
-     * addDropdownData("fundsourceList", fundSourceList); } }
-     */
-
     protected HashMap<String, Object> createHeaderAndMisDetails() throws ValidationException
     {
-        final HashMap<String, Object> headerdetails = new HashMap<String, Object>();
+        final HashMap<String, Object> headerdetails = new HashMap<>();
         headerdetails.put(VoucherConstant.VOUCHERNAME, voucherHeader.getName());
         headerdetails.put(VoucherConstant.VOUCHERTYPE, voucherHeader.getType());
         headerdetails.put((String) VoucherConstant.VOUCHERSUBTYPE, voucherHeader.getVoucherSubType());
@@ -330,18 +323,14 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         try {
             final HashMap<String, Object> headerDetails = createHeaderAndMisDetails();
             // update DirectBankPayment source path
-            // headerDetails.put(VoucherConstant.SOURCEPATH,
-            // "/EGF/payment/directBankPayment!beforeView.action?voucherHeader.id=");
-            HashMap<String, Object> detailMap = null;
             HashMap<String, Object> subledgertDetailMap = null;
-            final List<HashMap<String, Object>> accountdetails = new ArrayList<HashMap<String, Object>>();
-            final List<HashMap<String, Object>> subledgerDetails = new ArrayList<HashMap<String, Object>>();
+            final List<HashMap<String, Object>> accountdetails = new ArrayList<>();
+            final List<HashMap<String, Object>> subledgerDetails = new ArrayList<>();
 
-            detailMap = new HashMap<String, Object>();
-            final Map<String, Object> glcodeMap = new HashMap<String, Object>();
+            final Map<String, Object> glcodeMap = new HashMap<>();
             for (final VoucherDetails voucherDetail : billDetailslist)
             {
-                detailMap = new HashMap<String, Object>();
+                HashMap<String, Object> detailMap = new HashMap<>();
                 if (voucherDetail.getFunctionIdDetail() != null)
                     if (voucherHeader.getIsRestrictedtoOneFunctionCenter())
                         detailMap.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
@@ -370,7 +359,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             }
 
             for (final VoucherDetails voucherDetail : subLedgerlist) {
-                subledgertDetailMap = new HashMap<String, Object>();
+                subledgertDetailMap = new HashMap<>();
                 final String amountType = glcodeMap.get(voucherDetail.getSubledgerCode()) != null ? glcodeMap.get(
                         voucherDetail.getSubledgerCode()).toString() : null; // Debit or Credit.
                 if (voucherDetail.getFunctionDetail() != null && !voucherDetail.getFunctionDetail().equalsIgnoreCase("")
@@ -417,26 +406,14 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
         BigDecimal totalCrAmt = BigDecimal.ZERO;
         int index = 0;
         boolean isValFailed = false;
-        final Map<String, List<String>> accCodeFuncMap = new HashMap<String, List<String>>();
+        final Map<String, List<String>> accCodeFuncMap = new HashMap<>();
 
-        // Map<String, String> glcodeMap = new HashMap<String, String>();// to support same account code to be used multiple
-        // times.
         for (final VoucherDetails voucherDetails : billDetailslist) {
             index = index + 1;
-            totalDrAmt = totalDrAmt.add(voucherDetails.getDebitAmountDetail());
-            totalCrAmt = totalCrAmt.add(voucherDetails.getCreditAmountDetail());
-            /*
-             * if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO)==0 &&
-             * voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0 &&
-             * voucherDetails.getGlcodeDetail().trim().length()==0) {
-             * addActionError(getText("journalvoucher.accdetail.emptyaccrow",new String[]{""+index})); isValFailed= true ; } else
-             */
-            /*
-             * if(null != glcodeMap.get(voucherDetails.getGlcodeDetail().trim())){
-             * addActionError(getText("journalvoucher.accdetail.repeated",new String[]{voucherDetails.getGlcodeDetail()}));
-             * isValFailed= true ; }else{ glcodeMap.put(voucherDetails.getGlcodeDetail().trim(),
-             * voucherDetails.getGlcodeDetail().trim()); }
-             */// to support same account code to be used multiple times.
+            totalDrAmt = totalDrAmt.add(voucherDetails.getDebitAmountDetail() == null ? BigDecimal.ZERO : voucherDetails.getDebitAmountDetail());
+            totalCrAmt = totalCrAmt.add(voucherDetails.getCreditAmountDetail() == null ? BigDecimal.ZERO : voucherDetails.getCreditAmountDetail());
+           
+             // to support same account code to be used multiple times.
 
             if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0 &&
                     voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) == 0
@@ -450,7 +427,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             } else if ((voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) > 0
                     || voucherDetails.getCreditAmountDetail().compareTo(BigDecimal.ZERO) > 0)
                     && voucherDetails.getGlcodeDetail().trim().length() == 0 || voucherDetails.getGlcodeIdDetail() == null) {
-                addActionError(getText("journalvoucher.accdetail.accmissing", new String[] { "" + index }));
+                addActionError(getText("journalvoucher.accdetail.accmissing", new String[] { Integer.toString(index) }));
                 isValFailed = true;
             } else if (voucherDetails.getFunctionDetail() != null && !voucherDetails.getFunctionDetail().equalsIgnoreCase("")
                     && voucherDetails.getFunctionIdDetail() == null) {
@@ -459,15 +436,11 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             }
             else {
                 String functionId = null;
-                /*
-                 * if(voucherHeader.getIsRestrictedtoOneFunctionCenter()){ functionId =
-                 * voucherHeader.getFunctionId()!=null?voucherHeader.getFunctionId().toString():"0"; }else{
-                 */
+               
                 functionId = voucherDetails.getFunctionIdDetail() != null ? voucherDetails.getFunctionIdDetail().toString() : "0";
-                // }
                 final List<String> existingFuncs = accCodeFuncMap.get(voucherDetails.getGlcodeDetail());
                 if (null == existingFuncs) {
-                    final List<String> list = new ArrayList<String>();
+                    final List<String> list = new ArrayList<>();
                     list.add(functionId);
                     accCodeFuncMap.put(voucherDetails.getGlcodeDetail(), list);
                 } else if (functionId.equals("0") || existingFuncs.contains("0")) {
@@ -503,7 +476,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             final List<VoucherDetails> subLedgerlist) {
 
         Map<String, Object> accountDetailMap;
-        final List<Map<String, Object>> subLegAccMap = new ArrayList<Map<String, Object>>(); // this list will contain the details
+        final List<Map<String, Object>> subLegAccMap = new ArrayList<>(); // this list will contain the details
                                                                                              // about
         // the account code those are detail codes.
         final List<String> repeatedglCodes = VoucherHelper.getRepeatedGlcodes(billDetailslist);
@@ -512,17 +485,17 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                     " from CChartOfAccountDetail" +
                             " where glCodeId=(select id from CChartOfAccounts where glcode=?)", voucherDetails.getGlcodeDetail());
             if (null != chartOfAccountDetail) {
-                accountDetailMap = new HashMap<String, Object>();
+                accountDetailMap = new HashMap<>();
                 if (repeatedglCodes.contains(voucherDetails.getGlcodeIdDetail().toString()))
                     /*
                      * if(voucherHeader.getIsRestrictedtoOneFunctionCenter()){ accountDetailMap.put("glcodeId-funcId",
-                     * voucherDetails.getGlcodeIdDetail()+"-"+voucherHeader.getFunctionId()); }else{
+                     * voucherDetails.getGlcodeIdDetail()+'-'+voucherHeader.getFunctionId()); }else{
                      */
                     accountDetailMap.put("glcodeId-funcId",
-                            voucherDetails.getGlcodeIdDetail() + "-" + voucherDetails.getFunctionIdDetail());
+                            voucherDetails.getGlcodeIdDetail() + '-' + voucherDetails.getFunctionIdDetail());
                 // }
                 else
-                    accountDetailMap.put("glcodeId-funcId", voucherDetails.getGlcodeIdDetail() + "-" + "0");
+                    accountDetailMap.put("glcodeId-funcId", voucherDetails.getGlcodeIdDetail() + '-' + "0");
                 accountDetailMap.put("glcode", voucherDetails.getGlcodeDetail());
                 if (voucherDetails.getDebitAmountDetail().compareTo(BigDecimal.ZERO) == 0)
                     accountDetailMap.put("amount", voucherDetails.getCreditAmountDetail());
@@ -547,12 +520,12 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
                 // multiple times
                 // then take the function into consideration while calculating the total sl amount , else igone the function by
                 // paasing function value=0
-                if (null != subledAmtmap.get(voucherDetails.getGlcode().getId() + "-" + function)) {
-                    final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId() + "-" + function)
+                if (null != subledAmtmap.get(voucherDetails.getGlcode().getId() + '-' + function)) {
+                    final BigDecimal debitTotalAmount = subledAmtmap.get(voucherDetails.getGlcode().getId() + '-' + function)
                             .add(voucherDetails.getAmount());
-                    subledAmtmap.put(voucherDetails.getGlcode().getId() + "-" + function, debitTotalAmount);
+                    subledAmtmap.put(voucherDetails.getGlcode().getId() + '-' + function, debitTotalAmount);
                 } else
-                    subledAmtmap.put(voucherDetails.getGlcode().getId() + "-" + function
+                    subledAmtmap.put(voucherDetails.getGlcode().getId() + '-' + function
                             , voucherDetails.getAmount());
                 final StringBuffer subledgerDetailRow = new StringBuffer();
                 if (voucherDetails.getDetailType().getId() == 0 || null == voucherDetails.getDetailKeyId()) {
@@ -618,7 +591,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     @SuppressWarnings("unchecked")
     protected void loadBankAccountNumber(final ContraBean contraBean) {
         if (null != contraBean.getBankBranchId() && !contraBean.getBankBranchId().equalsIgnoreCase("-1")) {
-            final int index1 = contraBean.getBankBranchId().indexOf("-");
+            final int index1 = contraBean.getBankBranchId().indexOf('-');
             final Integer branchId = Integer.valueOf(contraBean.getBankBranchId().substring(index1 + 1,
                     contraBean.getBankBranchId().length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
@@ -634,7 +607,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
     @SuppressWarnings("unchecked")
     protected void loadBankAccountNumber(final String bankBranchId) {
         if (null != bankBranchId && !bankBranchId.equalsIgnoreCase("-1")) {
-            final int index1 = bankBranchId.indexOf("-");
+            final int index1 = bankBranchId.indexOf('-');
             final Integer branchId = Integer.valueOf(bankBranchId.substring(index1 + 1, bankBranchId.length()));
             final List<Bankaccount> bankAccountList = getPersistenceService().findAllBy(
                     "from Bankaccount ba where ba.bankbranch.id=? " +
@@ -665,10 +638,10 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("Bank list size is " + bankBranch.size());
-            final List<Map<String, Object>> bankBranchList = new ArrayList<Map<String, Object>>();
+            final List<Map<String, Object>> bankBranchList = new ArrayList<>();
             Map<String, Object> bankBrmap;
             for (final Object[] element : bankBranch) {
-                bankBrmap = new HashMap<String, Object>();
+                bankBrmap = new HashMap<>();
                 bankBrmap.put("bankBranchId", element[0].toString());
                 bankBrmap.put("bankBranchName", element[1].toString());
                 bankBranchList.add(bankBrmap);
@@ -692,7 +665,7 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
             LOGGER.debug("Inside shouldShowHeaderField menthod");
         if (field.equals("vouchernumber"))
         {
-            String vNumGenMode = "Manual";
+            String vNumGenMode;
             if (voucherHeader.getType() != null && voucherHeader.getType().equalsIgnoreCase("Journal Voucher"))
                 vNumGenMode = voucherTypeForULB.readVoucherTypes("Journal");
             else
@@ -776,13 +749,13 @@ public class BaseVoucherAction extends GenericWorkFlowAction {
 
     public void saveReverse(final String voucherName, final String type) {
         CVoucherHeader reversalVoucher = null;
-        final HashMap<String, Object> reversalVoucherMap = new HashMap<String, Object>();
+        final HashMap<String, Object> reversalVoucherMap = new HashMap<>();
         reversalVoucherMap.put("Original voucher header id", voucherHeader.getId());
         reversalVoucherMap.put("Reversal voucher type", type);
         reversalVoucherMap.put("Reversal voucher name", voucherName);
         reversalVoucherMap.put("Reversal voucher date", getReversalVoucherDate());
         reversalVoucherMap.put("Reversal voucher number", getReversalVoucherNumber());
-        final List<HashMap<String, Object>> reversalList = new ArrayList<HashMap<String, Object>>();
+        final List<HashMap<String, Object>> reversalList = new ArrayList<>();
         reversalList.add(reversalVoucherMap);
         try {
             reversalVoucher = createVoucher.reverseVoucher(reversalList);

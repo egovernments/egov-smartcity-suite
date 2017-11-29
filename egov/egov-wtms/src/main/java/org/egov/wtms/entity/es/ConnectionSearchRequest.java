@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.entity.es;
 
@@ -84,12 +92,13 @@ public class ConnectionSearchRequest {
     private Long arrearsDemand;
     private Long currentDemand;
     public String meesevaApplicationNumber;
+    private String closureType;
 
     public String getMeesevaApplicationNumber() {
         return meesevaApplicationNumber;
     }
 
-    public void setMeesevaApplicationNumber(String meesevaApplicationNumber) {
+    public void setMeesevaApplicationNumber(final String meesevaApplicationNumber) {
         this.meesevaApplicationNumber = meesevaApplicationNumber;
     }
 
@@ -137,18 +146,6 @@ public class ConnectionSearchRequest {
         this.searchText = searchText;
     }
 
-    /*
-     * public Filters searchFilters() { final List<Filter> andFilters = new
-     * ArrayList<>(0); andFilters.add(termsStringFilter("clauses.ulbname",
-     * ulbName)); andFilters.add(queryStringFilter("searchable.consumername",
-     * applicantName)); andFilters.add(queryStringFilter("clauses.consumercode",
-     * consumerCode)); andFilters.add(queryStringFilter("searchable.locality",
-     * locality)); andFilters.add(queryStringFilter("clauses.mobilenumber",
-     * mobileNumber)); andFilters.add(termsStringFilter("clauses.doorno",
-     * doorNumber)); andFilters.add(termsStringFilter("clauses.ward",
-     * revenueWard)); if (logger.isDebugEnabled()) logger.debug(
-     * "finished filters"); return Filters.withAndFilters(andFilters); }
-     */
     public String searchQuery() {
         return searchText;
     }
@@ -441,16 +438,24 @@ public class ConnectionSearchRequest {
         return oldConsumerNumber;
     }
 
-    public void setOldConsumerNumber(String oldConsumerNumber) {
+    public void setOldConsumerNumber(final String oldConsumerNumber) {
         this.oldConsumerNumber = oldConsumerNumber;
     }
-    
+
     public String getApplicationType() {
         return applicationType;
     }
 
-    public void setApplicationType(String applicationType) {
+    public void setApplicationType(final String applicationType) {
         this.applicationType = applicationType;
+    }
+
+    public String getClosureType() {
+        return closureType;
+    }
+
+    public void setClosureType(final String closureType) {
+        this.closureType = closureType;
     }
 
 }

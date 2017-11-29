@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,15 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.web.actions.receipts;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.TreeMap;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.struts2.convention.annotation.Action;
@@ -54,12 +55,20 @@ import org.apache.struts2.convention.annotation.Results;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.ReceiptHeader;
 import org.egov.collection.utils.CollectionsUtil;
-import org.egov.eis.service.EisCommonService;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infstr.search.SearchQuery;
 import org.egov.infstr.search.SearchQueryHQL;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.TreeMap;
 
 @ParentPackage("egov")
 @Results({
@@ -84,7 +93,7 @@ public class SearchReceiptAction extends SearchFormAction {
     private Integer branchId;
 
     @Autowired
-    private EisCommonService eisCommonService;
+    private AssignmentService assignmentService;
 
     @Override
     public Object getModel() {
@@ -187,9 +196,10 @@ public class SearchReceiptAction extends SearchFormAction {
 
         for (ReceiptHeader receiptHeader : receiptList) {
             if (receiptHeader.getState() != null && receiptHeader.getState().getOwnerPosition() != null) {
-                Long posId = receiptHeader.getState().getOwnerPosition().getId();
-                receiptHeader.setWorkflowUserName(
-                        eisCommonService.getUserForPosition(posId, receiptHeader.getCreatedDate()).getUsername());
+                List<Assignment> assignments = assignmentService.getAssignmentsForPosition(
+                        receiptHeader.getState().getOwnerPosition().getId(), receiptHeader.getCreatedDate());
+                if (!assignments.isEmpty())
+                    receiptHeader.setWorkflowUserName(assignments.get(0).getEmployee().getUsername());
             }
             searchResult.getList().add(receiptHeader);
         }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 jQuery('#btnsearch').click(function(e) {
@@ -85,7 +93,7 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "committeeType", "sClass" : "text-left"} ,{ 
+"data" : "meetingType", "sClass" : "text-left"} ,{ 
 "data" : "meetingNumber", "sClass" : "text-left"} ,{ 
 "data" : "meetingDate", "sClass" : "text-left"},{
 "data" : "meetingLocation", "sClass" : "text-left"},{
@@ -150,5 +158,98 @@ $(document).ready(function() {
 		}
 	}
 
-	
+	$('#agendaTable tbody').on('blur','tr .validnum',function() {
+		var rowObj = $(this).closest('tr');
+    	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
+    	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'agendaTable');
+    	validateResolutionNumber($(this));
+    });
+    
+    $('#sumotoTable tbody').on('blur','tr .validnum',function(e) {
+    	var rowObj = $(this).closest('tr');
+    	validateSumotoDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');
+    	validateUniqueDetails(rowObj.index(), $(rowObj).find('.validnum').val(),'sumotoTable');
+    	validateResolutionNumber($(this));
+    });
+    
 });
+
+function validateResolutionNumber(resolutionNumber){
+	var resolutionNo = resolutionNumber.val();
+	if(resolutionNo) {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-resolutionNo",      
+			type: "GET",
+			data: {
+				resolutionNumber : resolutionNo, 
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$(resolutionNumber).val('');
+						bootbox.alert("Entered Resolution Number already exists. Please Enter Unique Number.");
+				}
+			}, 
+			error: function (response) {
+				$(resolutionNumber).val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}
+
+
+function validateUniqueDetails(idx, resno,tablename) {
+	if (resno) {
+		$('#agendaTable tbody tr')
+				.each(
+						function(index) {
+							if (idx === index && tablename=='agendaTable')
+								return;
+							var resolutionNo = $(this).find(
+									'*[name$="resolutionNumber"]').val();
+
+							if (resno && resno === resolutionNo) {
+								if(tablename=='agendaTable'){
+								$('#agendaTable tbody tr:eq(' + idx + ')')
+										.find('.validnum').val('');
+								}
+								else
+									{
+									$('#sumotoTable tbody tr:eq(' + idx + ')')
+									.find('.validnum').val('');
+									}
+								bootbox.alert("Duplicate Resolution Number.Please enter different resolution number");
+								return false;
+							}
+						});
+	}
+}
+
+
+function validateSumotoDetails(idx, resno,tablename) {
+	if (resno) {
+		$('#sumotoTable tbody tr')
+				.each(
+						function(index) {
+							if (idx === index && tablename=='sumotoTable')
+								return;
+							var resolutionNo = $(this).find(
+									'*[name$="resolutionNumber"]').val();
+
+							if (resno && resno === resolutionNo) {
+								if(tablename=='sumotoTable'){
+								$('#sumotoTable tbody tr:eq(' + idx + ')')
+										.find('.validnum').val('');
+								}
+								else
+									{
+									$('#agendaTable tbody tr:eq(' + idx + ')')
+									.find('.validnum').val('');
+									}
+								bootbox.alert("Duplicate Resolution Number.Please enter different resolution number");
+								return false;
+							}
+						});
+	}
+}

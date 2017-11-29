@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,13 +43,17 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.entity;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CVoucherHeader;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.pims.commons.Position;
+import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -56,21 +67,20 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CVoucherHeader;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.model.instrument.InstrumentHeader;
-import org.hibernate.validator.constraints.Length;
+import static org.egov.collection.entity.CollectionDishonorCheque.SEQ_EGCL_DISHONORCHEQUE;
 
 @Entity
 @Table(name = "EGCL_DISHONORCHEQUE")
-@SequenceGenerator(name = CollectionDishonorCheque.SEQ_EGCL_DISHONORCHEQUE, sequenceName = CollectionDishonorCheque.SEQ_EGCL_DISHONORCHEQUE, allocationSize = 1)
-public class CollectionDishonorCheque extends StateAware {
+@SequenceGenerator(name = SEQ_EGCL_DISHONORCHEQUE, sequenceName = SEQ_EGCL_DISHONORCHEQUE, allocationSize = 1)
+public class CollectionDishonorCheque extends StateAware<Position> {
 
-    private static final long serialVersionUID = -6134188498111765210L;
     public static final String SEQ_EGCL_DISHONORCHEQUE = "SEQ_EGCL_DISHONORCHEQUE";
+    private static final long serialVersionUID = -6134188498111765210L;
     @Id
     @GeneratedValue(generator = SEQ_EGCL_DISHONORCHEQUE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -78,7 +88,7 @@ public class CollectionDishonorCheque extends StateAware {
     @ManyToOne
     @JoinColumn(name = "instrumentheader")
     private InstrumentHeader instrumentHeader;
-    
+
     @ManyToOne
     @JoinColumn(name = "collectionheader")
     private ReceiptHeader collectionHeader;
@@ -112,7 +122,7 @@ public class CollectionDishonorCheque extends StateAware {
     private CVoucherHeader bankchargesVoucherHeader;
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "dishonorcheque", targetEntity = CollectionDishonorChequeDetails.class)
-    private Set<CollectionDishonorChequeDetails> details = new HashSet<CollectionDishonorChequeDetails>(0);
+    private Set<CollectionDishonorChequeDetails> details = new HashSet<>();
 
     @Override
     public Long getId() {
@@ -126,9 +136,8 @@ public class CollectionDishonorCheque extends StateAware {
 
     @Override
     public String getStateDetails() {
-        final String instInfo = "Instrument Number :" + getInstrumentHeader().getInstrumentNumber() + " Amount : "
-                + getInstrumentHeader().getInstrumentAmount();
-        return instInfo;
+        return new StringBuilder().append("Instrument Number :").append(getInstrumentHeader().getInstrumentNumber())
+                .append(" Amount : ").append(getInstrumentHeader().getInstrumentAmount()).toString();
     }
 
     public Date getTransactionDate() {
@@ -220,12 +229,12 @@ public class CollectionDishonorCheque extends StateAware {
         return instrumentDishonorReason;
     }
 
-    public String getBankreason() {
-        return bankreason;
-    }
-
     public void setInstrumentDishonorReason(final String instrumentDishonorReason) {
         this.instrumentDishonorReason = instrumentDishonorReason;
+    }
+
+    public String getBankreason() {
+        return bankreason;
     }
 
     public void setBankreason(final String bankreason) {

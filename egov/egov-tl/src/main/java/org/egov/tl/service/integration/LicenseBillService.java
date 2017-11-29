@@ -1,48 +1,49 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.service.integration;
@@ -87,10 +88,12 @@ import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.TradeLicense;
+import org.egov.tl.service.LicenseApplicationService;
+import org.egov.tl.service.LicenseCitizenPortalService;
 import org.egov.tl.service.PenaltyRatesService;
 import org.egov.tl.service.TradeLicenseSmsAndEmailService;
 import org.egov.tl.service.es.LicenseApplicationIndexService;
-import org.egov.tl.utils.Constants;
 import org.egov.tl.utils.LicenseNumberUtils;
 import org.egov.tl.utils.LicenseUtils;
 import org.joda.time.DateTime;
@@ -117,17 +120,7 @@ import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.APPLICATION_STATUS_DIGUPDATE_CODE;
-import static org.egov.tl.utils.Constants.BILL_TYPE_AUTO;
-import static org.egov.tl.utils.Constants.CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.tl.utils.Constants.DMD_STATUS_CHEQUE_BOUNCED;
-import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.PENALTY_DMD_REASON_CODE;
-import static org.egov.tl.utils.Constants.TL_SERVICE_CODE;
-import static org.egov.tl.utils.Constants.TRADELICENSE;
-import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.egov.tl.utils.Constants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -181,6 +174,11 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
 
     @Autowired
     protected LicenseNumberUtils licenseNumberUtils;
+
+    @Autowired
+    protected LicenseApplicationService licenseApplicationService;
+    @Autowired
+    private LicenseCitizenPortalService licenseCitizenPortalService;
 
     @Transactional
     public String createLicenseBillXML(License license) {
@@ -266,7 +264,7 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                 final EgBillDetails billdetailRebate = new EgBillDetails();
                 if (demandDetail.getAmtRebate() != null && demandDetail.getAmtRebate().compareTo(ZERO) != 0) {
                     final EgReasonCategory reasonCategory = demandGenericDao
-                            .getReasonCategoryByCode(Constants.DEMANDRSN_REBATE);
+                            .getReasonCategoryByCode(DEMANDRSN_REBATE);
                     final List<EgDemandReasonMaster> demandReasonMasterByCategory = demandGenericDao
                             .getDemandReasonMasterByCategoryAndModule(reasonCategory, module);
                     for (final EgDemandReasonMaster demandReasonMaster : demandReasonMasterByCategory) {
@@ -416,8 +414,14 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
                                     + rcptAccInfo.getCrAmount());
                     }
 
-                if (ld.getLicense().getState() != null)
-                    updateWorkflowState(ld.getLicense());
+                if (ld.getLicense().hasState())
+                    if (!ld.getLicense().isNewWorkflow())
+                        updateWorkflowState(ld.getLicense());
+                    else {
+                        ld.getLicense().setCollectionPending(false);
+                        licenseApplicationService.collectionTransition((TradeLicense) ld.getLicense());
+                    }
+                licenseCitizenPortalService.onUpdate((TradeLicense) ld.getLicense());
                 licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(ld.getLicense());
                 tradeLicenseSmsAndEmailService.sendSMsAndEmailOnCollection(ld.getLicense(), billReceipt.getTotalAmount());
             } else if (billReceipt.getEvent().equals(EVENT_RECEIPT_CANCELLED))
@@ -442,43 +446,43 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         final Boolean digitalSignEnabled = licenseUtils.isDigitalSignEnabled();
         WorkFlowMatrix wfmatrix = null;
         final String natureOfWork = licenseObj.isReNewApplication()
-                ? Constants.RENEWAL_NATUREOFWORK : Constants.NEW_NATUREOFWORK;
-        if (digitalSignEnabled && !licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE)) {
+                ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK;
+        if (digitalSignEnabled && !licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE)) {
             licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_DIGUPDATE_CODE);
             final Position position = licenseUtils.getCityLevelCommissioner();
-            licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_APPROVED_CODE);
+            licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.isReNewApplication())
-                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
-                        .withComments(Constants.WF_SECOND_LVL_FEECOLLECTED)
-                        .withStateValue(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                        .withOwner(position).withNextAction(Constants.WF_ACTION_DIGI_PENDING);
+                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                        .withComments(WF_SECOND_LVL_FEECOLLECTED)
+                        .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
+                        .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
             else
-                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
-                        .withComments(Constants.WF_SECOND_LVL_FEECOLLECTED)
-                        .withStateValue(Constants.DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
-                        .withOwner(position).withNextAction(Constants.WF_ACTION_DIGI_PENDING);
+                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
+                        .withComments(WF_SECOND_LVL_FEECOLLECTED)
+                        .withStateValue(DIGI_ENABLED_WF_SECOND_LVL_FEECOLLECTED).withDateInfo(currentDate.toDate())
+                        .withOwner(position).withNextAction(WF_ACTION_DIGI_PENDING);
         } else {
-            licenseUtils.licenseStatusUpdate(licenseObj, Constants.STATUS_UNDERWORKFLOW);
-            if (licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_CREATED_CODE))
-                licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE);
+            licenseUtils.licenseStatusUpdate(licenseObj, STATUS_UNDERWORKFLOW);
+            if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_CREATED_CODE))
+                licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE);
             else
-                licenseUtils.applicationStatusChange(licenseObj, Constants.APPLICATION_STATUS_APPROVED_CODE);
+                licenseUtils.applicationStatusChange(licenseObj, APPLICATION_STATUS_APPROVED_CODE);
             if (licenseObj.isReNewApplication()) {
-                if (licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE))
-                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.RENEW_ADDITIONAL_RULE,
-                            Constants.WF_LICENSE_CREATED, null);
-                else if (licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE))
-                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.RENEW_ADDITIONAL_RULE,
-                            Constants.WF_STATE_COMMISSIONER_APPROVED_STR, null);
+                if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE))
+                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, RENEW_ADDITIONAL_RULE,
+                            WF_LICENSE_CREATED, null);
+                else if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE))
+                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, RENEW_ADDITIONAL_RULE,
+                            WF_STATE_COMMISSIONER_APPROVED_STR, null);
             } else if (licenseObj.isNewApplication())
-                if (licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE))
-                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.NEW_ADDITIONAL_RULE,
-                            Constants.WF_LICENSE_CREATED, null);
-                else if (licenseObj.getEgwStatus().getCode().equals(Constants.APPLICATION_STATUS_APPROVED_CODE))
-                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, Constants.NEW_ADDITIONAL_RULE,
-                            Constants.WF_STATE_COMMISSIONER_APPROVED_STR, null);
+                if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_FIRSTCOLLECTIONDONE_CODE))
+                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, NEW_ADDITIONAL_RULE,
+                            WF_LICENSE_CREATED, null);
+                else if (licenseObj.getEgwStatus().getCode().equals(APPLICATION_STATUS_APPROVED_CODE))
+                    wfmatrix = tradeLicenseWorkflowService.getWfMatrix(TRADELICENSE, null, null, NEW_ADDITIONAL_RULE,
+                            WF_STATE_COMMISSIONER_APPROVED_STR, null);
             if (wfmatrix != null)
-                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + Constants.DELIMITER_COLON + user.getName())
+                licenseObj.transition().progressWithStateCopy().withSenderName(user.getUsername() + DELIMITER_COLON + user.getName())
                         .withComments(wfmatrix.getNextStatus()).withNatureOfTask(natureOfWork)
                         .withStateValue(wfmatrix.getNextState()).withDateInfo(currentDate.toDate())
                         .withOwner(licenseObj.getState().getInitiatorPosition())

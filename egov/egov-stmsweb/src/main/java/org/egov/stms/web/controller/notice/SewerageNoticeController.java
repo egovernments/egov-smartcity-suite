@@ -1,61 +1,51 @@
-/**
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
- * <p>
- * Copyright (C) <2016>  eGovernments Foundation
- * <p>
- * The updated version of eGov suite of products as by eGovernments Foundation
- * is available at http://www.egovernments.org
- * <p>
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * any later version.
- * <p>
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- * <p>
- * You should have received a copy of the GNU General Public License
- * along with this program. If not, see http://www.gnu.org/licenses/ or
- * http://www.gnu.org/licenses/gpl.html .
- * <p>
- * In addition to the terms of the GPL license to be adhered to in using this
- * program, the following additional terms are to be complied with:
- * <p>
- * 1) All versions of this program, verbatim or modified must carry this
- * Legal Notice.
- * <p>
- * 2) Any misrepresentation of the origin of the material is prohibited. It
- * is required that all modified versions of this material be marked in
- * reasonable ways as different from the original version.
- * <p>
- * 3) This license does not grant any rights to any user of the program
- * with regards to rights under trademark law for use of the trade names
- * or trademarks of eGovernments Foundation.
- * <p>
- * In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.stms.web.controller.notice;
-
-import static org.egov.infra.utils.PdfUtils.appendFiles;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.zip.ZipOutputStream;
-
-import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
@@ -69,19 +59,19 @@ import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.stms.elasticSearch.entity.SewerageNoticeSearchRequest;
-import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
+import org.egov.stms.elasticsearch.entity.SewerageNoticeSearchRequest;
+import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
 import org.egov.stms.notice.entity.SewerageNotice;
 import org.egov.stms.notice.service.SewerageNoticeService;
 import org.egov.stms.service.es.SewerageIndexService;
+import org.egov.stms.service.es.SeweragePaginationService;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -90,6 +80,21 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
+
+import javax.servlet.http.HttpServletResponse;
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.zip.ZipOutputStream;
+
+import static org.egov.infra.utils.PdfUtils.appendFiles;
+import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -107,6 +112,8 @@ public class SewerageNoticeController {
     private SewerageNoticeService sewerageNoticeService;
     @Autowired
     private SewerageIndexService sewerageIndexService;
+    @Autowired
+    private SeweragePaginationService seweragePaginationService;
 
     @RequestMapping(value = "/search-notice", method = RequestMethod.GET)
     public String newSearchNoticeForm(final Model model) {
@@ -122,46 +129,26 @@ public class SewerageNoticeController {
         final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilterForNotice(searchRequest);
         return sewerageIndexService.getNoticeSearchResultByBoolQuery(boolQuery);
     }
+
     private Page<SewerageIndex> getNoticeSearchResult(final SewerageNoticeSearchRequest searchRequest) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             searchRequest.setUlbName(cityWebsite.getName());
         final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilterForNotice(searchRequest);
-        return sewerageIndexService.getPagedNoticeSearchResultByBoolQuery(boolQuery,searchRequest);
+        return sewerageIndexService.getPagedNoticeSearchResultByBoolQuery(boolQuery, searchRequest);
     }
+
     @RequestMapping(value = "/searchResult", method = RequestMethod.POST)
     @ResponseBody
     public DataTable<SewerageSearchResult> searchApplication(@ModelAttribute final SewerageNoticeSearchRequest searchRequest) {
-        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
         final List<SewerageSearchResult> searchResultFomatted = new ArrayList<>();
         final Page<SewerageIndex> searchResult = getNoticeSearchResult(searchRequest);
-        SewerageSearchResult searchResultObject ;
-        final Pageable pageable = new PageRequest(searchRequest.pageNumber(),
-                searchRequest.pageSize(), searchRequest.orderDir(), searchRequest.orderBy());
-        for (final SewerageIndex sewerageIndexObject : searchResult) {
-            searchResultObject = new SewerageSearchResult();
-            searchResultObject.setApplicationNumber(sewerageIndexObject.getApplicationNumber());
-            if (searchRequest.getNoticeType() != null)
-                if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_WORK_ORDER)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getWorkOrderNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getWorkOrderDate()));
-                } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_ESTIMATION)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getEstimationNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getEstimationDate()));
-                } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_CLOSE_CONNECTION)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getClosureNoticeNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getClosureNoticeDate()));
-                } else if (searchRequest.getNoticeType().equals(SewerageTaxConstants.NOTICE_REJECTION)) {
-                    searchResultObject.setNoticeNumber(sewerageIndexObject.getRejectionNoticeNumber());
-                    searchResultObject.setNoticeDate(formatter.format(sewerageIndexObject.getRejectionNoticeDate()));
-                }
-            searchResultObject.setShscNumber(sewerageIndexObject.getShscNumber());
-            searchResultObject.setDoorNumber(sewerageIndexObject.getDoorNo());
-            searchResultObject.setAddress(sewerageIndexObject.getAddress());
-            searchResultObject.setApplicantName(sewerageIndexObject.getConsumerName());
-            searchResultFomatted.add(searchResultObject);
-        }
-        return new DataTable<>(new PageImpl<>(searchResultFomatted, pageable, searchResult.getTotalElements()),searchRequest.draw()) ;  }
+        final Pageable pageable = seweragePaginationService.sewerageNoticeSearch(searchRequest, searchResultFomatted,
+                searchResult);
+        return new DataTable<>(new PageImpl<>(searchResultFomatted, pageable, searchResult.getTotalElements()),
+                searchRequest.draw());
+    }
+
 
     @RequestMapping(value = "/search-NoticeResultSize", method = RequestMethod.GET)
     @ResponseBody
@@ -171,7 +158,7 @@ public class SewerageNoticeController {
     }
 
     private List<SewerageNotice> getSearchedNotices(final SewerageNoticeSearchRequest searchRequest) {
-        String noticeType ;
+        String noticeType;
         String noticeTypeInput = null;
         String noticeNo;
         final List<SewerageNotice> noticeList = new ArrayList<>(0);
@@ -200,10 +187,9 @@ public class SewerageNoticeController {
         return noticeList;
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/searchNotices-mergeAndDownload", method = RequestMethod.GET)
     public String mergeAndDownload(@ModelAttribute final SewerageNoticeSearchRequest searchRequest,
-            final HttpServletResponse response) throws Exception {
+                                   final HttpServletResponse response) throws IOException {
         final String noticeType = null;
         final List<SewerageNotice> noticeList = getSearchedNotices(searchRequest);
         if (LOGGER.isDebugEnabled())
@@ -235,8 +221,7 @@ public class SewerageNoticeController {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Number of pdfs : " + (pdfs != null ? pdfs.size() : 0));
         try {
-            final ByteArrayOutputStream output = new ByteArrayOutputStream();
-            final byte[] data = appendFiles(pdfs, output);
+            final byte[] data = appendFiles(pdfs);
             response.setHeader("Content-disposition", "attachment;filename=" + "notice_" + noticeType + ".pdf");
             response.setContentType("application/pdf");
             response.setContentLength(data.length);
@@ -255,10 +240,9 @@ public class SewerageNoticeController {
         return null;
     }
 
-    @SuppressWarnings("unchecked")
     @RequestMapping(value = "/searchNotices-seweragezipAndDownload")
     public String zipAndDownload(@ModelAttribute final SewerageNoticeSearchRequest searchRequest,
-            final HttpServletResponse response) throws ValidationException {
+                                 final HttpServletResponse response) {
         final List<SewerageNotice> noticeList = getSearchedNotices(searchRequest);
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Entered into zipAndDownload method");
@@ -275,7 +259,7 @@ public class SewerageNoticeController {
                 response.setContentType("application/zip");
             }
 
-            for (final SewerageNotice sewerageNotice : noticeList){
+            for (final SewerageNotice sewerageNotice : noticeList) {
                 try {
                     if (sewerageNotice != null && sewerageNotice.getFileStore() != null) {
                         final FileStoreMapper fsm = sewerageNotice.getFileStore();
@@ -320,31 +304,30 @@ public class SewerageNoticeController {
 
     @RequestMapping(value = "/searchNotices-showSewerageNotice/{noticeNo}/{noticeType}", method = RequestMethod.GET)
     public String showNotice(@PathVariable("noticeNo") final String noticeNo,
-            @PathVariable("noticeType") final String noticeTypeInput, final Model model,
-            final HttpServletResponse response) throws IOException {
-        String noticeType = null;
+                             @PathVariable("noticeType") final String noticeTypeInput, final Model model,
+                             final HttpServletResponse response) throws IOException {
         if (noticeNo != null) {
-            noticeType = getSewerageNoticeType(noticeNo, noticeTypeInput);
+            String noticeType = getSewerageNoticeType(noticeNo, noticeTypeInput);
             final SewerageNotice sewerageNotice = sewerageNoticeService.findByNoticeNoAndNoticeType(noticeNo,
                     noticeType);
             if (sewerageNotice != null) {
                 final FileStoreMapper fsm = sewerageNotice.getFileStore();
                 final File file = fileStoreService.fetch(fsm, SewerageTaxConstants.FILESTORE_MODULECODE);
-                final InputStream is = new FileInputStream(file);
-                // MIME type of the file
-                response.setContentType("application/pdf");
-                // Response header
-                response.setHeader("Content-Disposition", "attachment; filename=\"" + sewerageNotice.getNoticeNo()
-                        + ".pdf\"");
-                // Read from the file and write into the response
-                final OutputStream os = response.getOutputStream();
-                final byte[] buffer = new byte[1024];
-                int len;
-                while ((len = is.read(buffer)) != -1)
-                    os.write(buffer, 0, len);
-                os.flush();
-                os.close();
-                is.close();
+                try (InputStream is = new FileInputStream(file)) {
+                    // MIME type of the file
+                    response.setContentType("application/pdf");
+                    // Response header
+                    response.setHeader("Content-Disposition", "attachment; filename=\"" + sewerageNotice.getNoticeNo()
+                            + ".pdf\"");
+                    // Read from the file and write into the response
+                    final OutputStream os = response.getOutputStream();
+                    final byte[] buffer = new byte[1024];
+                    int len;
+                    while ((len = is.read(buffer)) != -1)
+                        os.write(buffer, 0, len);
+                    os.flush();
+                    os.close();
+                }
             } else {
                 model.addAttribute("message", "msg.notice.not.found");
                 return "common-error";

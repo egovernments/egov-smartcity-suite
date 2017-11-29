@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -27,6 +27,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -37,6 +44,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   -->
 <!DOCTYPE tiles-definitions PUBLIC
         "-//Apache Software Foundation//DTD Tiles Configuration 3.0//EN"
@@ -50,34 +58,34 @@
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
     </definition>
 
-	<definition name="error" template="/WEB-INF/views/template/error.jsp">
-		<put-attribute name="page-title" value="title.error.page" cascade="true"/>
+    <definition name="error" template="/WEB-INF/views/template/error.jsp">
+        <put-attribute name="page-title" value="title.error.page" cascade="true"/>
         <put-attribute name="header" value="/WEB-INF/views/template/header.jsp"/>
         <put-attribute name="body" value=""/>
         <put-attribute name="footer" value="/WEB-INF/views/template/footer.jsp"/>
-	</definition>
+    </definition>
+
+    <definition name="error/*" extends="error">
+        <put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp"/>
+    </definition>
 
     <definition name="index" extends="base_layout">
         <put-attribute name="body" value="/WEB-INF/views/index.jsp"/>
     </definition>
 
-	<definition name="error/*" extends="error">
-		<put-attribute name="body" value="/WEB-INF/views/error/{1}.jsp" />
-	</definition>
-	
-	<definition name="home" extends="base_layout">
-		<put-attribute name="page-title" value="title.dashboard" cascade="true"/>
+    <definition name="home" extends="base_layout">
+        <put-attribute name="page-title" value="title.dashboard" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/home.jsp"/>
     </definition>
-    
+
     <definition name="kibana-dashboard" template="/WEB-INF/views/dashboard/kibana-dashboard.jsp"/>
-    
+
     <definition name="erpReports" extends="base_layout">
-		<put-attribute name="page-title" value="title.erpReports" cascade="true"/>
+        <put-attribute name="page-title" value="title.erpReports" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/report.jsp"/>
     </definition>
-      <definition name="erpPublicReports" extends="base_layout">
-		<put-attribute name="page-title" value="title.erpPublicReports" cascade="true"/>
+    <definition name="erpPublicReports" extends="base_layout">
+        <put-attribute name="page-title" value="title.erpPublicReports" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/dashboard/public-report.jsp"/>
     </definition>
 </tiles-definitions>

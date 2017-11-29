@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,46 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.service.collection;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_ADVANCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_PENALTY_FINES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DMD_STATUS_CHEQUE_BOUNCED;
-import static org.egov.ptis.constants.PropertyTaxConstants.FIRST_REBATETAX_PERC;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODEMAP_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_ARREARTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODES_FOR_CURRENTTAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.GLCODE_FOR_TAXREBATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.SECOND_REBATETAX_PERC;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_CASH_ADJUSTMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_FOR_SUBMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_CHEQUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_INSTRUMENTTYPE_DD;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_REALIZATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.STR_WITH_AMOUNT;
-import static org.egov.ptis.constants.PropertyTaxConstants.SUPER_STRUCTURE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
@@ -103,7 +73,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.utils.MoneyUtils;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.bill.PTBillServiceImpl;
@@ -117,6 +87,18 @@ import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * This class is used to persist Collections .This is used for the integration of Collections and Bills and property tax.
@@ -142,7 +124,7 @@ public class PropertyTaxCollection extends TaxCollection {
     private PersistenceService<Property, Long> propertyImplService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private FunctionHibernateDAO functionDAO;
@@ -230,7 +212,7 @@ public class PropertyTaxCollection extends TaxCollection {
                     .append(((BillReceiptInfoImpl) billRcptInfo).getReceiptMisc().getReceiptHeader().getConsumerCode());
 
         if (mobileNumber != null)
-            messagingService.sendSMS(mobileNumber, smsMsg.toString());
+            notificationService.sendSMS(mobileNumber, smsMsg.toString());
 
     }
 
@@ -290,17 +272,17 @@ public class PropertyTaxCollection extends TaxCollection {
         final BigDecimal totalCollChqBounced = getTotalChequeAmt(billRcptInfo);
         final BigDecimal chqBouncePenalty = getChqBouncePenaltyAmt(totalCollChqBounced);
         cancelBill(Long.valueOf(billRcptInfo.getBillReferenceNum()));
-        EgDemandDetails dmdDet = null;
+        EgDemandDetails dmdDet;
 
         final EgDemandDetails penaltyDmdDet = ptBillServiceImpl.getDemandDetail(demand, currInstallment,
-                DEMANDRSN_STR_CHQ_BOUNCE_PENALTY);
+                DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY);
         if (penaltyDmdDet == null)
             dmdDet = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_CHQ_BOUNCE_PENALTY, chqBouncePenalty,
                     currInstallment);
         else {
             BigDecimal existDmdDetAmt = penaltyDmdDet.getAmount();
-            existDmdDetAmt = existDmdDetAmt == null || existDmdDetAmt.equals(BigDecimal.ZERO) ? existDmdDetAmt = BigDecimal.ZERO
-                    : existDmdDetAmt;
+            if (existDmdDetAmt == null)
+                existDmdDetAmt = ZERO;
             penaltyDmdDet.setAmount(existDmdDetAmt.add(chqBouncePenalty));
             dmdDet = penaltyDmdDet;
         }
@@ -309,7 +291,10 @@ public class PropertyTaxCollection extends TaxCollection {
         // min of this amount with mode of payment cash or DD
         demand.setMinAmtPayable(totalCollChqBounced.add(chqBouncePenalty));
         demand.setAmtCollected(demand.getAmtCollected().subtract(billRcptInfo.getTotalAmount()));
-        demand.setBaseDemand(demand.getBaseDemand().add(chqBouncePenalty));
+        BigDecimal baseDemand = demand.getBaseDemand();
+        if (baseDemand == null)
+            baseDemand = demand.getEgDemandDetails().stream().map(EgDemandDetails::getAmount).reduce(ZERO, BigDecimal::add);
+        demand.setBaseDemand(baseDemand.add(chqBouncePenalty));
         demand.setStatus(DMD_STATUS_CHEQUE_BOUNCED);
         demand.addEgDemandDetails(dmdDet);
         updateDmdDetForRcptCancel(demand, billRcptInfo);
@@ -721,8 +706,9 @@ public class PropertyTaxCollection extends TaxCollection {
 
         final EgBill egBill = egBillDAO.findById(billId, false);
 
-        final String query = "SELECT ptd FROM Ptdemand ptd " + "WHERE ptd.egInstallmentMaster = ? "
+        final String query = "SELECT ptd FROM Ptdemand ptd WHERE ptd.egInstallmentMaster = ? "
                 + "AND ptd.egptProperty.basicProperty.upicNo = ? "
+                + "AND ptd.isHistory = 'N' "
                 + "AND (ptd.egptProperty.status = 'I' OR ptd.egptProperty.status = 'A') "
                 + "AND ptd.egptProperty.basicProperty.active = true";
 

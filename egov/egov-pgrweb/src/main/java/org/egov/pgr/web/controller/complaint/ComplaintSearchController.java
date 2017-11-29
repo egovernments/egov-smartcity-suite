@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,18 +43,10 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.web.controller.complaint;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
@@ -56,15 +55,14 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.entity.contract.ComplaintSearchRequest;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.es.ComplaintIndex;
-import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusService;
 import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.ReceivingModeService;
-import org.egov.pgr.service.es.ComplaintIndexService;
-import org.egov.pgr.web.contract.ComplaintSearchRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -72,11 +70,16 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import java.util.List;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.pgr.utils.constants.PGRConstants.GO_ROLE_NAME;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
 @Controller
 public class ComplaintSearchController {
-
-    @Autowired
-    private ComplaintService complaintService;
 
     @Autowired
     private ComplaintStatusService complaintStatusService;
@@ -121,15 +124,15 @@ public class ComplaintSearchController {
 
     @ModelAttribute("currentLoggedUser")
     public String currentLoggedUser() {
-        final User user = securityUtils.getCurrentUser();
+        User user = securityUtils.getCurrentUser();
         return user != null ? user.getUsername() : EMPTY;
     }
 
     @ModelAttribute("isGrievanceOfficer")
     public Boolean validateForGo() {
-        final User user = securityUtils.getCurrentUser();
+        User user = securityUtils.getCurrentUser();
         if (user != null)
-            for (final Role role : user.getRoles())
+            for (Role role : user.getRoles())
                 if (GO_ROLE_NAME.equalsIgnoreCase(role.getName()))
                     return Boolean.TRUE;
         return Boolean.FALSE;
@@ -137,7 +140,7 @@ public class ComplaintSearchController {
 
     @ModelAttribute("employeeposition")
     public Long employeePosition() {
-        final User user = securityUtils.getCurrentUser();
+        User user = securityUtils.getCurrentUser();
         return user != null && !assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).isEmpty()
                 ? assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId()).get(0).getPosition().getId()
                 : 0L;
@@ -153,15 +156,15 @@ public class ComplaintSearchController {
         return ApplicationThreadLocals.getCityName();
     }
 
-    @RequestMapping(method = GET, value = { "/complaint/search", "/complaint/citizen/anonymous/search" })
-    public String showSearch(final HttpServletRequest request, final Model model) {
+    @RequestMapping(method = GET, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
+    public String showSearch(HttpServletRequest request, Model model) {
         model.addAttribute("isMore", Boolean.parseBoolean(request.getParameter("isMore")));
         return "complaint-search";
     }
 
-    @RequestMapping(method = POST, value = { "/complaint/search", "/complaint/citizen/anonymous/search" })
+    @RequestMapping(method = POST, value = {"/complaint/search", "/complaint/citizen/anonymous/search"})
     @ResponseBody
-    public Iterable<ComplaintIndex> searchComplaints(@ModelAttribute final ComplaintSearchRequest searchRequest) {
+    public Iterable<ComplaintIndex> searchComplaints(@ModelAttribute ComplaintSearchRequest searchRequest) {
         return complaintIndexService.searchComplaintIndex(searchRequest.query());
     }
 }

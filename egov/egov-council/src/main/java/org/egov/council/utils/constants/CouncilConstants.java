@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.council.utils.constants; 
 
@@ -43,6 +51,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 public class CouncilConstants {
 	
@@ -78,32 +87,32 @@ public class CouncilConstants {
     public static final String IMPLEMENTATION_STATUS_WORKINPROGRESS="Work In Progress";
     public static final String IMPLEMENTATION_STATUS_FINISHED="Finished";
     
-    public static final LinkedHashMap<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
+    public static final Map<String, String> MEETING_TIMINGS = new LinkedHashMap<String, String>() {
         /**
 		 * 
 		 */
 		private static final long serialVersionUID = 1L;
 
 		{
-            put("9.00 AM", "9.00 AM");
-            put("9.30 AM", "9.30 AM");
-            put("10.00 AM", "10.00 AM");
-            put("10.30 AM", "10.30 AM");
-            put("11.00 AM", "11.00 AM");
-            put("11.30 AM", "11.30 AM");
-            put("12.00 PM", "12.00 PM");
-            put("12.30 PM", "12.30 PM");
-            put("01.00 PM", "01.00 PM");
-            put("01.30 PM", "01.30 PM");
-            put("02.00 PM", "02.00 PM");
-            put("02.30 PM", "02.30 PM");
-            put("03.00 PM", "03.00 PM");
-            put("03.30 PM", "03.30 PM");
-            put("04.00 PM", "04.00 PM");
-            put("04.30 PM", "04.30 PM");
-            put("05.00 PM", "05.00 PM");
-            put("05.30 PM", "05.30 PM");
-            put("06.00 PM", "06.00 PM");
+            put("9:00 AM", "9:00 AM");
+            put("9:30 AM", "9:30 AM");
+            put("10:00 AM", "10:00 AM");
+            put("10:30 AM", "10:30 AM");
+            put("11:00 AM", "11:00 AM");
+            put("11:30 AM", "11:30 AM");
+            put("12:00 PM", "12:00 PM");
+            put("12:30 PM", "12:30 PM");
+            put("01:00 PM", "01:00 PM");
+            put("01:30 PM", "01:30 PM");
+            put("02:00 PM", "02:00 PM");
+            put("02:30 PM", "02:30 PM");
+            put("03:00 PM", "03:00 PM");
+            put("03:30 PM", "03:30 PM");
+            put("04:00 PM", "04:00 PM");
+            put("04:30 PM", "04:30 PM");
+            put("05:00 PM", "05:00 PM");
+            put("05:30 PM", "05:30 PM");
+            put("06:00 PM", "06:00 PM");
 
         }
     };

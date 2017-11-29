@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.works.models.measurementbook;
 
@@ -46,6 +54,7 @@ import org.egov.infra.persistence.validator.annotation.Required;
 import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.works.contractorbill.entity.ContractorBillRegister;
 import org.egov.works.models.workorder.WorkOrder;
 import org.egov.works.models.workorder.WorkOrderEstimate;
@@ -59,23 +68,9 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-public class MBHeader extends StateAware {
+public class MBHeader extends StateAware<Position> {
 
     private static final long serialVersionUID = 121631467636260459L;
-
-    public enum MeasurementBookStatus {
-        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
-    }
-
-    public enum Actions {
-        SAVE, SUBMIT_FOR_APPROVAL, REJECT, CANCEL, APPROVAL;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
     private Long id;
 
     @Required(message = "mbheader.workorder.null")
@@ -86,33 +81,36 @@ public class MBHeader extends StateAware {
 
     @Length(max = 400, message = "mbheader.contractorComments.length")
     private String contractorComments;
+
     @Required(message = "mbheader.mbdate.null")
     @ValidateDate(allowPast = true, dateFormat = "dd/MM/yyyy", message = "mbheader.mbDate.futuredate")
     @DateFormat(message = "invalid.fieldvalue.mbDate")
     private Date mbDate;
-    // @Required(message = "mbheader.mbabstract.null")
+
     @Length(max = 400, message = "mbheader.mbabstract.length")
     private String mbAbstract;
+
     @Required(message = "mbheader.fromPageNo.null")
     @GreaterThan(value = 0, message = "mbheader.fromPageNo.non.negative")
     private Integer fromPageNo;
+
     @Min(value = 0, message = "mbheader.toPageNo.non.negative")
     private Integer toPageNo;
-
     private WorkOrderEstimate workOrderEstimate;
     private Integer approverUserId;
     private ContractorBillRegister egBillregister;
+
     @Valid
-    private List<MBDetails> mbDetails = new LinkedList<MBDetails>();
+    private List<MBDetails> mbDetails = new LinkedList<>();
     private String owner;
-    private List<String> mbActions = new ArrayList<String>();
+    private List<String> mbActions = new ArrayList<>();
     private EgwStatus egwStatus;
     private boolean isLegacyMB;
     private BigDecimal mbAmount;
     private Date approvedDate;
 
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
+        final List<ValidationError> validationErrors = new ArrayList<>();
         if (workOrder != null && (workOrder.getId() == null || workOrder.getId() == 0 || workOrder.getId() == -1))
             validationErrors.add(new ValidationError("workOrder", "mbheader.workorder.null"));
 
@@ -125,36 +123,36 @@ public class MBHeader extends StateAware {
         return validationErrors;
     }
 
-    public void setWorkOrder(final WorkOrder workOrder) {
-        this.workOrder = workOrder;
-    }
-
     public WorkOrder getWorkOrder() {
         return workOrder;
     }
 
-    public void setMbRefNo(final String mbRefNo) {
-        this.mbRefNo = mbRefNo;
+    public void setWorkOrder(final WorkOrder workOrder) {
+        this.workOrder = workOrder;
     }
 
     public String getMbRefNo() {
         return mbRefNo;
     }
 
-    public void setMbDate(final Date mbDate) {
-        this.mbDate = mbDate;
+    public void setMbRefNo(final String mbRefNo) {
+        this.mbRefNo = mbRefNo;
     }
 
     public Date getMbDate() {
         return mbDate;
     }
 
-    public void setMbAbstract(final String mbAbstract) {
-        this.mbAbstract = mbAbstract;
+    public void setMbDate(final Date mbDate) {
+        this.mbDate = mbDate;
     }
 
     public String getMbAbstract() {
         return mbAbstract;
+    }
+
+    public void setMbAbstract(final String mbAbstract) {
+        this.mbAbstract = mbAbstract;
     }
 
     public Integer getFromPageNo() {
@@ -269,7 +267,7 @@ public class MBHeader extends StateAware {
     }
 
     public BigDecimal getTotalMBAmount() {
-        double amount = 0.0;
+        double amount;
         BigDecimal resultAmount = BigDecimal.ZERO;
         for (final MBDetails mbd : mbDetails) {
             if (mbd.getWorkOrderActivity().getActivity().getNonSor() == null)
@@ -298,6 +296,19 @@ public class MBHeader extends StateAware {
     @Override
     public void setId(final Long id) {
         this.id = id;
+    }
+
+    public enum MeasurementBookStatus {
+        NEW, CREATED, CHECKED, REJECTED, RESUBMITTED, CANCELLED, APPROVED
+    }
+
+    public enum Actions {
+        SAVE, SUBMIT_FOR_APPROVAL, REJECT, CANCEL, APPROVAL;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 
 }

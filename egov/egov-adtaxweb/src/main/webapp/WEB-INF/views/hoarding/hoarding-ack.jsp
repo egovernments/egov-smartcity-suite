@@ -4,10 +4,10 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2017>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -31,6 +31,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -41,6 +48,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <div class="row">
@@ -134,12 +142,9 @@
 	</div>
 	<div class="row text-center">
 		<div class="add-margin">
-			<%-- <a onclick="window.open('/adtax/hoarding/showack/${advertisementPermitDetail.id}','print','width=800, height=600,scrollbars=yes')">PrintAck</a> --%>
-		<c:if test="${Source != 'online' && advertisementPermitDetail.advertisement.legacy == 'true'}">
 			<input type="button" value="Print" name="PrintAck" id="PrintAck"
 				class="button"
 				onclick="window.open('/adtax/hoarding/printack/${advertisementPermitDetail.id}','_blank');" > 
-				</c:if>
 				<a href="javascript:void(0)" class="btn btn-default"
 				onclick="self.close()"><spring:message code="lbl.close" /></a>
 		</div>

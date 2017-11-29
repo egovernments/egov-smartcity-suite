@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,20 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.restapi.web.rest;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
@@ -72,6 +68,8 @@ import org.egov.ptis.domain.model.PayPropertyTaxDetails;
 import org.egov.ptis.domain.model.PropertyTaxDetails;
 import org.egov.ptis.domain.model.ReceiptDetails;
 import org.egov.ptis.domain.model.RestPropertyTaxDetails;
+import org.egov.ptis.domain.model.TaxCalculatorRequest;
+import org.egov.ptis.domain.model.TaxCalculatorResponse;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.restapi.model.AssessmentRequest;
@@ -86,8 +84,19 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.TreeMap;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 /**
  * The AssessmentService class is used as the RESTFul service to handle user request and response.
@@ -627,7 +636,7 @@ public class AssessmentService {
     @RequestMapping(value = "/property/wardWisePropertyDetails", method = RequestMethod.GET, produces = APPLICATION_JSON_VALUE)
     public List<AssessmentInfo> getWardWisePropertyDetails(AssessmentRequest assessmentRequest) throws IOException {
         return propertyExternalService.getPropertyDetailsForWard(assessmentRequest.getUlbCode(), assessmentRequest.getWardNum(),
-                assessmentRequest.getAssessmentNo(), assessmentRequest.getDoorNo());
+                assessmentRequest.getAssessmentNo(), assessmentRequest.getDoorNo(), assessmentRequest.getOldAssessmentNo());
     }
     
     /**
@@ -691,6 +700,54 @@ public class AssessmentService {
         List<MasterCodeNamePairDetails> mstrCodeNamePairDetailsList = propertyExternalService
                 .getReasonsForChangeProperty(PropertyTaxConstants.PROP_MUTATION_RSN);
         return getJSONResponse(mstrCodeNamePairDetailsList);
+    }
+
+    /**
+     * This method gives the various dues related to a property - property dues, water dues, sewerage dues
+     * @param assessmentRequest
+     * @param request
+     * @return AssessmentDetails
+     * @throws IOException
+     */
+    @RequestMapping(value = "/property/taxDues", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public AssessmentDetails getDCBDetails(@RequestBody AssessmentRequest assessmentRequest, final HttpServletRequest request){
+        AssessmentDetails assessmentDetails;
+        ErrorDetails errorDetails = validationUtil.validateAssessmentDetailsRequest(assessmentRequest);
+        if(errorDetails != null){
+            assessmentDetails = new AssessmentDetails();
+            assessmentDetails.setErrorDetails(errorDetails);
+        } else {
+            assessmentDetails = propertyExternalService.getDuesForProperty(request, assessmentRequest.getAssessmentNo(),
+                    assessmentRequest.getOldAssessmentNo());
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            assessmentDetails.setErrorDetails(errorDetails);
+        }
+        return assessmentDetails;
+    }
+
+    /**
+     * This method calculates the ARV and taxes for the given calculation parameters of a property 
+     * @param taxCalculatorRequest
+     * @return TaxCalculatorResponse
+     * @throws ParseException
+     */
+    @RequestMapping(value = "/property/calculateTax", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public TaxCalculatorResponse calculateTaxes(@RequestBody TaxCalculatorRequest taxCalculatorRequest) throws ParseException {
+        TaxCalculatorResponse taxCalculatorResponse;
+        ErrorDetails errorDetails = validationUtil.validateTaxCalculatorRequest(taxCalculatorRequest);
+        if (errorDetails != null && StringUtils.isNotBlank(errorDetails.getErrorCode())) {
+            taxCalculatorResponse = new TaxCalculatorResponse();
+            taxCalculatorResponse.setErrorDetails(errorDetails);
+        } else {
+            taxCalculatorResponse = propertyExternalService.calculateTaxes(taxCalculatorRequest);
+            errorDetails = new ErrorDetails();
+            errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_ERR_CODE_SUCCESS);
+            errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_SUCCESS);
+            taxCalculatorResponse.setErrorDetails(errorDetails);
+        }
+        return taxCalculatorResponse;
     }
 
     /**

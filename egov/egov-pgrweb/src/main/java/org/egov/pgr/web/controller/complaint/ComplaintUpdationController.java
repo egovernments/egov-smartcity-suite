@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.web.controller.complaint;
@@ -49,11 +57,12 @@ import org.egov.infra.utils.FileStoreUtils;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.enums.CitizenFeedback;
 import org.egov.pgr.service.ComplaintHistoryService;
-import org.egov.pgr.service.ComplaintMessagingService;
+import org.egov.pgr.service.ComplaintNotificationService;
 import org.egov.pgr.service.ComplaintProcessFlowService;
 import org.egov.pgr.service.ComplaintService;
 import org.egov.pgr.service.ComplaintStatusMappingService;
 import org.egov.pgr.service.ComplaintTypeService;
+import org.egov.pgr.web.validator.ComplaintValidator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -116,7 +125,7 @@ public class ComplaintUpdationController {
     private ComplaintHistoryService complaintHistoryService;
 
     @Autowired
-    private ComplaintMessagingService complaintMessagingService;
+    private ComplaintNotificationService complaintNotificationService;
 
     @Autowired
     private ComplaintProcessFlowService complaintProcessFlowService;
@@ -154,7 +163,7 @@ public class ComplaintUpdationController {
         }
         if (null != complaint.getComplaintType()) {
             model.addAttribute("mailSubject", "Grievance regarding " + complaint.getComplaintType().getName());
-            model.addAttribute("mailBody", complaintMessagingService.getEmailBody(complaint));
+            model.addAttribute("mailBody", complaintNotificationService.getEmailBody(complaint));
         }
         if (complaint.getStatus() != null)
             model.addAttribute("complaintStatus", complaint.getStatus().getName());

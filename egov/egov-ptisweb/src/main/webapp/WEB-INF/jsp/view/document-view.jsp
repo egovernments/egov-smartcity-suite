@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
@@ -49,6 +57,13 @@
 <table width="100%" border="0" cellpadding="0" cellspacing="0">
 	<tr>
 		<td colspan="5">
+			<div class="headingsmallbg">
+				<s:text name="docsectiontitle" />
+			</div>
+		</td>
+	</tr>
+	<tr>
+		<td colspan="5">
 			<table class="tablebottom" id="nameTable" width="100%" border="0"
 				cellpadding="0" cellspacing="0">
 				<tbody>
@@ -58,25 +73,25 @@
 						<th class="bluebgheadtd"><s:text name="file" /></th>
 					</tr>
 					<s:iterator value="documents" status="status" var="document">
+					<s:if test="%{!documents[#status.index].files.isEmpty()}">
 						<tr>
-							<td class="blueborderfortd" style="text-align: center"><span
-								class="bold"><s:property value="#status.index + 1" /></span></td>
-							<td class="blueborderfortd" style="text-align: left"><span
-								class="bold"><s:property
-										value="documents[#status.index].type.name" /></span></td>
-							<td class="blueborderfortd" style="text-align: center"><s:if
-									test="%{documents.isEmpty() || documents[#status.index].files.isEmpty()}">
-									<span class="bold">N/A</span>
-								</s:if> <s:else>
-									<s:iterator value="%{documents[#status.index].files}">
+								<td class="blueborderfortd" style="text-align: center"><span
+									class="bold"><s:property value="#status.index + 1" /></span></td>
+								<td class="blueborderfortd" style="text-align: left"><span
+									class="bold"><s:property
+											value="documents[#status.index].type.name" /> </span></td>
+								<td class="blueborderfortd" style="text-align: center">
+								<s:iterator
+										value="%{documents[#status.index].files}">
 										<a
 											href="javascript:viewDocument('<s:property value="fileStoreId"/>')">
 											<s:property value="%{fileName}" />
 										</a>
-									</s:iterator>
-								</s:else></td>
+									</s:iterator> </td>
 						</tr>
+						</s:if>
 					</s:iterator>
+					
 				</tbody>
 			</table>
 		</td>

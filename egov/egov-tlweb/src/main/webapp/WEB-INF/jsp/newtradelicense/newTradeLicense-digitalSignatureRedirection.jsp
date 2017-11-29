@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,29 +43,30 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
-<%@ page language="java" pageEncoding="UTF-8"%>
+<%@ page language="java" pageEncoding="UTF-8" %>
 <html>
-	<head>
-		<title>Digital Signature</title>
-		<script type="text/javascript">
+    <head>
+        <title>Digital Signature</title>
+        <script type="text/javascript">
 
-		$(document).ready( function() {
-			
-	 		var ulbCode = '${ulbCode}' ;
-	 		var fileStoreIds='${fileStoreIds}';
-	 		var callBackUrl = '/tl/digitalSignature/tradeLicense/transitionWorkflow';
-			jQuery('<form>.').attr({
-				method: 'post',
-				action: '/digisign/reports/selectCertificate.jsp?fileStoreId='+fileStoreIds+'&moduleName=TL&ulbCode='+ulbCode+'&callBackUrl='+callBackUrl,
-				target: '_self'
-			})
-			.appendTo(document.body).submit();  
-		});
-		
-		</script>
-	</head>
-	<body>
-	</body>
+            $(document).ready(function () {
+                var ulbCode = '${ulbCode}';
+                var fileStoreIds = '${fileStoreIds}';
+                var applicationNo = '${applicationNo}';
+                var callBackUrl = encodeURIComponent('/tl/tradelicense/digisign-transition?applicationNumbers=' + applicationNo + '&fileStoreIds=' + fileStoreIds + '&r=');
+                jQuery('<form>.').attr({
+                    method: 'post',
+                    action: '/digisign/reports/selectCertificate.jsp?fileStoreId=' + fileStoreIds + '&moduleName=TL&ulbCode=' + ulbCode + '&callBackUrl=' + callBackUrl,
+                    target: '_self'
+                })
+                    .appendTo(document.body).submit();
+            });
+
+        </script>
+    </head>
+    <body>
+    </body>
 </html>

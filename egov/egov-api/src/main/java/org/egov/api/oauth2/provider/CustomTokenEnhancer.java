@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,12 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.api.oauth2.provider;
 
 import org.egov.infra.admin.master.service.CityService;
-import org.egov.infra.config.security.authentication.SecureUser;
+import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.oauth2.common.DefaultOAuth2AccessToken;
 import org.springframework.security.oauth2.common.OAuth2AccessToken;
@@ -51,23 +59,24 @@ import org.springframework.security.oauth2.provider.token.TokenEnhancerChain;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-public class CustomTokenEnhancer extends TokenEnhancerChain{
+public class CustomTokenEnhancer extends TokenEnhancerChain {
 
-	@Autowired
-	CityService cityService;
+    @Autowired
+    private CityService cityService;
+
     @Override
     public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
         DefaultOAuth2AccessToken token = (DefaultOAuth2AccessToken) accessToken;
-        SecureUser su = (SecureUser) authentication.getUserAuthentication()
-				.getPrincipal();              
-        Map<String, Object> info = new LinkedHashMap<String, Object>();        
-        info.put("Id", su.getUserId());
-        info.put("name", su.getUser().getName());
-        info.put("mobileNumber", su.getUser().getMobileNumber());
-        info.put("emailId", su.getUser().getEmailId());
-        info.put("userType", su.getUser().getType());
-        info.put("cityLat", (cityService.cityDataForKey("citylat")==null?0:cityService.cityDataForKey("citylat")));
-        info.put("cityLng", (cityService.cityDataForKey("citylng")==null?0:cityService.cityDataForKey("citylng")));
+        CurrentUser currentUser = (CurrentUser) authentication.getUserAuthentication()
+                .getPrincipal();
+        Map<String, Object> info = new LinkedHashMap<String, Object>();
+        info.put("Id", currentUser.getUserId());
+        info.put("name", currentUser.getUser().getName());
+        info.put("mobileNumber", currentUser.getUser().getMobileNumber());
+        info.put("emailId", currentUser.getUser().getEmailId());
+        info.put("userType", currentUser.getUser().getType());
+        info.put("cityLat", (cityService.cityDataForKey("citylat") == null ? 0 : cityService.cityDataForKey("citylat")));
+        info.put("cityLng", (cityService.cityDataForKey("citylng") == null ? 0 : cityService.cityDataForKey("citylng")));
         token.setAdditionalInformation(info);
         return super.enhance(token, authentication);
     }

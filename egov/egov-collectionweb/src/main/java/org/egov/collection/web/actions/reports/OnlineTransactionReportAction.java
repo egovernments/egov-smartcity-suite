@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,15 +43,10 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.collection.web.actions.reports;
-
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.Result;
@@ -54,15 +56,23 @@ import org.egov.collection.entity.OnlinePayment;
 import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Action class for Online Transaction Report
  */
 @Results({ @Result(name = OnlineTransactionReportAction.INDEX, location = "onlineTransactionReport-index.jsp"),
-    @Result(name = OnlineTransactionReportAction.REPORT, location = "onlineTransactionReport-report.jsp") })
+        @Result(name = OnlineTransactionReportAction.REPORT, location = "onlineTransactionReport-report.jsp") })
 public class OnlineTransactionReportAction extends ReportFormAction {
     private static final long serialVersionUID = 1L;
     // Report parameter names
@@ -76,6 +86,9 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     private static final String EGOV_COLLECTION_TYPE = "EGOV_COLLECTION_TYPE";
     private CollectionsUtil collectionsUtil;
     private Map<Character, String> collectionTypeMap = new TreeMap<>();
+
+    @Autowired
+    private CityService cityService;
 
     @Override
     public void prepare() {
@@ -100,7 +113,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
         addDropdownData("paymentServiceList", persistenceService.findAllByNamedQuery(
                 CollectionConstants.QUERY_SERVICES_BY_TYPE, CollectionConstants.SERVICE_TYPE_PAYMENT));
         addDropdownData(CollectionConstants.DROPDOWN_DATA_ONLINETRANSACTIONSTATUS_LIST, getOnlineReceiptStatuses());
-        addDropdownData("userList",Collections.emptyList());
+        addDropdownData("userList", Collections.emptyList());
         collectionTypeMap.put(CollectionConstants.COLLECTION_TYPE_COUNTER, "Counter");
         collectionTypeMap.put(CollectionConstants.COLLECTION_TYPE_ONLINECOLLECTION, "Online");
         // default value for from/to date = today
@@ -110,6 +123,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     @Override
     @Action(value = "/reports/onlineTransactionReport-report")
     public String report() {
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         return super.report();
     }
 
@@ -124,8 +138,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param collectionsUtil
-     *            The collections util object
+     * @param collectionsUtil The collections util object
      */
     public void setCollectionsUtil(final CollectionsUtil collectionsUtil) {
         this.collectionsUtil = collectionsUtil;
@@ -139,8 +152,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param deptId
-     *            the department id to set
+     * @param deptId the department id to set
      */
     public void setDepartmentId(final Integer deptId) {
         setReportParam(EGOV_DEPT_ID, deptId);
@@ -154,8 +166,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param fromDate
-     *            the from date to set
+     * @param fromDate the from date to set
      */
     public void setFromDate(final Date fromDate) {
         setReportParam(EGOV_FROM_DATE, fromDate);
@@ -169,8 +180,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param toDate
-     *            the to date to set
+     * @param toDate the to date to set
      */
     public void setToDate(final Date toDate) {
         setReportParam(EGOV_TO_DATE, toDate);
@@ -184,8 +194,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param billingServiceId
-     *            The Billing service id to set
+     * @param billingServiceId The Billing service id to set
      */
     public void setBillingServiceId(final Long billingServiceId) {
         setReportParam(EGOV_BILLING_SERVICE_ID, billingServiceId);
@@ -207,8 +216,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param paymentServiceId
-     *            The Billing service id to set
+     * @param paymentServiceId The Billing service id to set
      */
     public void setPaymentServiceId(final Long paymentServiceId) {
         setReportParam(EGOV_PAYMENT_SERVICE_ID, paymentServiceId);
@@ -222,8 +230,7 @@ public class OnlineTransactionReportAction extends ReportFormAction {
     }
 
     /**
-     * @param userId
-     *            the user id to set
+     * @param userId the user id to set
      */
     public void setUserId(final Long userId) {
         setReportParam(EGOV_COUNTER_OPERATOR_ID, userId);

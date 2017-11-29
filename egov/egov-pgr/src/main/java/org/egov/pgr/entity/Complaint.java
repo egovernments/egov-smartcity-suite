@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.entity;
@@ -75,7 +83,7 @@ import static org.egov.pgr.entity.enums.ComplaintStatus.WITHDRAWN;
 @Table(name = "egpgr_complaint")
 @SequenceGenerator(name = SEQ_COMPLAINT, sequenceName = SEQ_COMPLAINT, allocationSize = 1)
 @Unique(fields = "crn", enableDfltMsg = true)
-public class Complaint extends StateAware {
+public class Complaint extends StateAware<Position> {
     protected static final String SEQ_COMPLAINT = "SEQ_EGPGR_COMPLAINT";
     private static final long serialVersionUID = 4020616083055647372L;
 
@@ -137,6 +145,10 @@ public class Complaint extends StateAware {
     @ManyToOne
     @JoinColumn(name = "receivingCenter")
     private ReceivingCenter receivingCenter;
+
+    @SafeHtml
+    @Length(max = 200)
+    private String receivingCenterDetails;
 
     @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinTable(name = "egpgr_supportdocs", joinColumns = @JoinColumn(name = "complaintid"),
@@ -264,6 +276,14 @@ public class Complaint extends StateAware {
 
     public void setReceivingCenter(ReceivingCenter receivingCenter) {
         this.receivingCenter = receivingCenter;
+    }
+
+    public String getReceivingCenterDetails() {
+        return receivingCenterDetails;
+    }
+
+    public void setReceivingCenterDetails(final String receivingCenterDetails) {
+        this.receivingCenterDetails = receivingCenterDetails;
     }
 
     public Set<FileStoreMapper> getSupportDocs() {

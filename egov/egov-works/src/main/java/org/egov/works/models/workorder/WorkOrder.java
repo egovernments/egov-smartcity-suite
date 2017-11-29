@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,20 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.works.models.workorder;
-
-import java.text.DecimalFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
-
-import javax.validation.constraints.Min;
-import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.eis.entity.Employee;
@@ -61,6 +57,7 @@ import org.egov.infra.persistence.validator.annotation.ValidateDate;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.works.lineestimate.entity.DocumentDetails;
 import org.egov.works.models.masters.Contractor;
 import org.egov.works.models.measurementbook.MBHeader;
@@ -68,7 +65,18 @@ import org.egov.works.models.tender.OfflineStatus;
 import org.egov.works.revisionestimate.entity.enums.RevisionType;
 import org.hibernate.validator.constraints.Length;
 
-public class WorkOrder extends StateAware implements Auditable {
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
+import java.text.DecimalFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
+public class WorkOrder extends StateAware<Position> implements Auditable {
 
     private static final long serialVersionUID = -3955155765490287178L;
 
@@ -145,13 +153,13 @@ public class WorkOrder extends StateAware implements Auditable {
     private String status;
     private transient String percentageSign;
 
-    private List<WorkOrderEstimate> workOrderEstimates = new LinkedList<WorkOrderEstimate>();
-    private Set<OfflineStatus> offlineStatuses = new HashSet<OfflineStatus>();
-    private List<String> workOrderActions = new ArrayList<String>();
-    private Set<WorkOrder> revisionWOs = new HashSet<WorkOrder>();
-    private Set<MBHeader> mbHeaders = new HashSet<MBHeader>();
+    private List<WorkOrderEstimate> workOrderEstimates = new LinkedList<>();
+    private Set<OfflineStatus> offlineStatuses = new HashSet<>();
+    private List<String> workOrderActions = new ArrayList<>();
+    private Set<WorkOrder> revisionWOs = new HashSet<>();
+    private Set<MBHeader> mbHeaders = new HashSet<>();
 
-    private transient List<DocumentDetails> documentDetails = new ArrayList<DocumentDetails>(0);
+    private transient List<DocumentDetails> documentDetails = new ArrayList<>();
 
     private String cancellationReason;
 
@@ -415,10 +423,6 @@ public class WorkOrder extends StateAware implements Auditable {
         this.revisionWOs = revisionWOs;
     }
 
-    public void setExpectedCompletionDate(final Date expectedCompletionDate) {
-        this.expectedCompletionDate = expectedCompletionDate;
-    }
-
     public void addWorkOrderEstimate(final WorkOrderEstimate workOrderEstimate) {
         workOrderEstimates.add(workOrderEstimate);
     }
@@ -439,10 +443,8 @@ public class WorkOrder extends StateAware implements Auditable {
     }
 
     public List<ValidationError> validate() {
-        final List<ValidationError> validationErrors = new ArrayList<ValidationError>();
-        if (contractor != null && (contractor.getId() == null || contractor.getId() == 0 || contractor.getId() == -1))
-            validationErrors.add(new ValidationError("contractor", "workOrder.contractor.null"));
-        else if (contractor == null)
+        final List<ValidationError> validationErrors = new ArrayList<>();
+        if (contractor == null || contractor.getId() == null || contractor.getId() == 0 || contractor.getId() == -1)
             validationErrors.add(new ValidationError("contractor", "workOrder.contractor.null"));
         return validationErrors;
     }
@@ -474,6 +476,10 @@ public class WorkOrder extends StateAware implements Auditable {
         }
 
         return expectedCompletionDate;
+    }
+
+    public void setExpectedCompletionDate(final Date expectedCompletionDate) {
+        this.expectedCompletionDate = expectedCompletionDate;
     }
 
     @Override

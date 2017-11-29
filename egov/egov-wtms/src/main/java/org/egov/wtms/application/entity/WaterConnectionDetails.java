@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,42 +43,16 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.application.entity;
-
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.ChairPerson;
 import org.egov.commons.entity.Source;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.egov.wtms.masters.entity.ApplicationType;
 import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.PipeSize;
@@ -84,18 +65,23 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.hibernate.validator.constraints.Length;
 import org.hibernate.validator.constraints.SafeHtml;
 
+import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 @Entity
 @Table(name = "egwtr_connectiondetails")
 @SequenceGenerator(name = WaterConnectionDetails.SEQ_CONNECTIONDETAILS, sequenceName = WaterConnectionDetails.SEQ_CONNECTIONDETAILS, allocationSize = 1)
-public class WaterConnectionDetails extends StateAware {
+public class WaterConnectionDetails extends StateAware<Position> {
 
-    private static final long serialVersionUID = -4667948558401042849L;
     public static final String SEQ_CONNECTIONDETAILS = "SEQ_EGWTR_CONNECTIONDETAILS";
-
-    public enum WorkFlowState {
-        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED;
-    }
-
+    private static final long serialVersionUID = -4667948558401042849L;
     @Id
     @GeneratedValue(generator = SEQ_CONNECTIONDETAILS, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -194,6 +180,9 @@ public class WaterConnectionDetails extends StateAware {
 
     private String estimationNumber;
 
+    @Temporal(value = TemporalType.DATE)
+    private Date estimationNoticeDate;
+
     private double donationCharges;
     private Boolean legacy = false;
 
@@ -217,6 +206,10 @@ public class WaterConnectionDetails extends StateAware {
     @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @JoinColumn(name = "reconnectionfilestoreid")
     private FileStoreMapper reconnectionFileStore;
+
+    @ManyToOne(cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JoinColumn(name = "estimationnoticefilestoreid")
+    private FileStoreMapper estimationNoticeFileStoreId;
 
     @ManyToOne
     @JoinColumn(name = "chairPerson")
@@ -477,6 +470,10 @@ public class WaterConnectionDetails extends StateAware {
         return applicationDocs;
     }
 
+    public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
+        this.applicationDocs = applicationDocs;
+    }
+
     public List<WaterDemandConnection> getWaterDemandConnection() {
         return waterDemandConnection;
     }
@@ -487,10 +484,6 @@ public class WaterConnectionDetails extends StateAware {
 
     public void addWaterDemandConnection(final WaterDemandConnection waterDemandConnection) {
         getWaterDemandConnection().add(waterDemandConnection);
-    }
-
-    public void setApplicationDocs(final List<ApplicationDocuments> applicationDocs) {
-        this.applicationDocs = applicationDocs;
     }
 
     public List<ConnectionEstimationDetails> getEstimationDetails() {
@@ -521,6 +514,10 @@ public class WaterConnectionDetails extends StateAware {
         return bplCardHolderName;
     }
 
+    public void setBplCardHolderName(final String bplCardHolderName) {
+        this.bplCardHolderName = bplCardHolderName;
+    }
+
     public Date getWorkOrderDate() {
         return workOrderDate;
     }
@@ -543,10 +540,6 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setEstimationNumber(final String estimationNumber) {
         this.estimationNumber = estimationNumber;
-    }
-
-    public void setBplCardHolderName(final String bplCardHolderName) {
-        this.bplCardHolderName = bplCardHolderName;
     }
 
     public ExistingConnectionDetails getExistingConnection() {
@@ -739,6 +732,26 @@ public class WaterConnectionDetails extends StateAware {
 
     public void setReconnectionFileStore(final FileStoreMapper reconnectionFileStore) {
         this.reconnectionFileStore = reconnectionFileStore;
+    }
+
+    public FileStoreMapper getEstimationNoticeFileStoreId() {
+        return estimationNoticeFileStoreId;
+    }
+
+    public void setEstimationNoticeFileStoreId(final FileStoreMapper estimationNoticeFileStoreId) {
+        this.estimationNoticeFileStoreId = estimationNoticeFileStoreId;
+    }
+
+    public Date getEstimationNoticeDate() {
+        return estimationNoticeDate;
+    }
+
+    public void setEstimationNoticeDate(final Date estimationNoticeDate) {
+        this.estimationNoticeDate = estimationNoticeDate;
+    }
+
+    public enum WorkFlowState {
+        CREATED, CHECKED, APPROVED, REJECTED, CANCELLED;
     }
 
 }

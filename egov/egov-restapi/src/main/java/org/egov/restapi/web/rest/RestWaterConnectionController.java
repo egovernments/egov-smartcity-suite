@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,34 +43,37 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.restapi.web.rest;
 
+import static org.egov.restapi.constants.RestApiConstants.THIRD_PARTY_ERR_CODE_SUCCESS;
+import static org.egov.restapi.constants.RestApiConstants.THIRD_PARTY_ERR_MSG_SUCCESS;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 import java.io.IOException;
-import java.text.ParseException;
 import java.util.Date;
 import java.util.List;
 
 import javax.validation.Valid;
 
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.annotate.JsonAutoDetect.Visibility;
 import org.codehaus.jackson.annotate.JsonMethod;
-import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.ErrorDetails;
+import org.egov.restapi.model.WaterChargesConnectionInfo;
 import org.egov.restapi.model.WaterConnectionInfo;
 import org.egov.wtms.application.entity.WaterConnection;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.rest.WaterChargesDetails;
+import org.egov.wtms.application.rest.WaterChargesRestApiResponse;
 import org.egov.wtms.application.service.ChangeOfUseService;
 import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.application.service.WaterConnectionService;
+import org.egov.wtms.masters.entity.WaterChargesDetailInfo;
 import org.egov.wtms.masters.entity.WaterTaxDetailRequest;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.masters.entity.enums.ConnectionType;
@@ -77,7 +87,6 @@ import org.egov.wtms.masters.service.WaterSourceService;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -90,10 +99,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class RestWaterConnectionController {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
-
-    /*
-     * @Autowired private TokenService tokenService;
-     */
 
     @Autowired
     private ApplicationTypeService applicationTypeService;
@@ -131,52 +136,62 @@ public class RestWaterConnectionController {
     @Autowired
     private ConnectionDetailService connectionDetailService;
 
-    /*
-     * @PersistenceContext private EntityManager entityManager;
-     */
-
     public static final String SUCCESS = "SUCCESS";
 
-    /*
-     * public Session getCurrentSession() { return entityManager.unwrap(Session.class); }
-     */
-
-    @RequestMapping(value = "/watercharges/newconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String createNewConnection(@Valid @RequestBody final WaterConnectionInfo WaterConnectionInfo)
-            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-        final ErrorDetails response = restWaterConnectionValidationService.validatePropertyID(WaterConnectionInfo
+    @RequestMapping(value = "/watercharges/newconnection", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public String createNewConnection(@Valid @RequestBody final WaterConnectionInfo waterConnectionInfo)
+            throws IOException {
+        final WaterChargesRestApiResponse response = restWaterConnectionValidationService.validatePropertyID(waterConnectionInfo
                 .getPropertyID());
         if (response != null)
             return getJSONResponse(response);
-        final ErrorDetails errorMessage = restWaterConnectionValidationService
-                .validateWaterConnectionDetails(WaterConnectionInfo);
+        final WaterChargesRestApiResponse errorMessage = restWaterConnectionValidationService
+                .validateWaterConnectionDetails(waterConnectionInfo.getPropertyID());
         if (errorMessage != null)
             return getJSONResponse(errorMessage);
-        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(WaterConnectionInfo);
+        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateServiceRequest(
+                waterConnectionInfo.getPropertyType(),
+                waterConnectionInfo.getUsageType(), waterConnectionInfo.getPipeSize(), waterConnectionInfo.getCategory());
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
         final String applicationCode = WaterTaxConstants.NEWCONNECTION;
-        final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(WaterConnectionInfo,
+        final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(waterConnectionInfo,
                 applicationCode);
         return waterConnectionDetails.getApplicationNumber();
-        /*
-         * String httpStatus = HttpStatus.OK.getReasonPhrase(); try { final Boolean isAuthenticatedUser =
-         * authenticateUser("mahesh", "demo"); final Token tokenObj = validateToken(token); if (tokenObj != null) { if
-         * (isAuthenticatedUser) { tokenService.redeem(tokenObj); } else httpStatus = HttpStatus.UNAUTHORIZED.getReasonPhrase(); }
-         * else httpStatus = HttpStatus.PRECONDITION_FAILED.getReasonPhrase(); } catch (final Exception exp) { } return
-         * httpStatus;
-         */
     }
 
-    @RequestMapping(value = "/watercharges/additionalconnection", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
+    @RequestMapping(value = "/watercharges/regulariseconnection", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public String createRegularisedConnection(@Valid @RequestBody final WaterChargesConnectionInfo waterChargesConnectionInfo)
+            throws IOException {
+        final WaterChargesRestApiResponse errorDetails = restWaterConnectionValidationService
+                .validatePropertyAssessmentNumber(waterChargesConnectionInfo.getPropertyId());
+        if (errorDetails != null) {
+            errorDetails.setReferenceId(waterChargesConnectionInfo.getReferenceId());
+            return getJSONResponse(errorDetails);
+        }
+        final WaterChargesRestApiResponse response = restWaterConnectionValidationService
+                .populateAndPersistRegularisedWaterConnection(waterChargesConnectionInfo);
+        if (response != null) {
+            response.setReferenceId(waterChargesConnectionInfo.getReferenceId());
+            response.setErrorCode(THIRD_PARTY_ERR_CODE_SUCCESS);
+            response.setErrorMessage(THIRD_PARTY_ERR_MSG_SUCCESS);
+
+        }
+
+        return getJSONResponse(response);
+    }
+
+    @RequestMapping(value = "/watercharges/additionalconnection", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
     public String createAddtionalConnection(@Valid @RequestBody final WaterConnectionInfo waterConnectionInfo)
-            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
+            throws IOException {
         final ErrorDetails response = restWaterConnectionValidationService
                 .validateAdditionalWaterConnectionDetails(waterConnectionInfo);
         final String applicationCode = WaterTaxConstants.ADDNLCONNECTION;
         if (response != null)
             return getJSONResponse(response);
-        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(waterConnectionInfo);
+        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateServiceRequest(
+                waterConnectionInfo.getPropertyType(),
+                waterConnectionInfo.getUsageType(), waterConnectionInfo.getPipeSize(), waterConnectionInfo.getCategory());
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
         final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(waterConnectionInfo,
@@ -185,108 +200,102 @@ public class RestWaterConnectionController {
 
     }
 
-    /*
-     * @RequestMapping(value = "/watercharges/token", method = RequestMethod.GET, produces = MediaType.APPLICATION_JSON_VALUE)
-     * public String getToken() throws JsonGenerationException, JsonMappingException, IOException { final String strQuery =
-     * "select md from EgModules md where md.name=:name"; final Query hql = getCurrentSession().createQuery(strQuery);
-     * hql.setParameter("name", WaterTaxConstants.EGMODULES_NAME); final Map<String, String> tokenMap = new HashMap<String,
-     * String>(0); tokenMap.put("tokennumber", tokenService.generate(TTL_FOR_TOKEN_SECS, ((EgModules)
-     * hql.uniqueResult()).getName()).getTokenNumber()); return getJSONResponse(tokenMap); }
-     */
-
-    @RequestMapping(value = "/watercharges/changeofuse", method = RequestMethod.POST, produces = MediaType.APPLICATION_JSON_VALUE)
-    public String createChangeOfUsageConnection(@Valid @RequestBody final WaterConnectionInfo waterConnectionInfo)
-            throws JsonGenerationException, JsonMappingException, IOException, ParseException {
-
+    @RequestMapping(value = "/watercharges/changeofuse", method = RequestMethod.POST, produces = APPLICATION_JSON_VALUE)
+    public String createChangeOfUsageConnection(@Valid @RequestBody final WaterChargesDetailInfo waterConnectionInfo)
+            throws IOException {
+        WaterConnectionDetails waterConnectionDetails = null;
+        Long approvalPosition = 0l;
+        Position userPosition = null;
         final ErrorDetails response = restWaterConnectionValidationService
                 .validateChangOfUsageWaterConnectionDetails(waterConnectionInfo);
-
-        final String applicationCode = WaterTaxConstants.CHANGEOFUSE;
         if (response != null)
             return getJSONResponse(response);
         final ErrorDetails errorMessage = restWaterConnectionValidationService
                 .validateCombinationOfChangOfUsage(waterConnectionInfo);
         if (errorMessage != null)
             return getJSONResponse(response);
-        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateCreateRequest(waterConnectionInfo);
+        final ErrorDetails errorDetails = restWaterConnectionValidationService.validateServiceRequest(
+                waterConnectionInfo.getPropertyType(),
+                waterConnectionInfo.getUsageType(), waterConnectionInfo.getPipeSize(), waterConnectionInfo.getCategory());
         if (errorDetails != null)
             return getJSONResponse(errorDetails);
-        final WaterConnectionDetails waterConnectionDetails = populateAndPersistWaterConnectionDetails(waterConnectionInfo,
-                applicationCode);
+        final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
+                .findByConsumerCodeAndConnectionStatus(waterConnectionInfo.getConsumerCode(), ConnectionStatus.ACTIVE);
+        waterConnectionDetails = prepareChangeOfUsageWaterConnectionDetails(waterConnectionInfo, connectionUnderChange);
+        if (connectionUnderChange != null) {
+            waterConnectionDetails.setConnection(connectionUnderChange.getConnection());
+            userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(connectionUnderChange.getConnection()
+                    .getPropertyIdentifier());
+            if (userPosition != null)
+                approvalPosition = userPosition.getId();
+        }
+        waterConnectionDetails = changeOfUseService.createChangeOfUseApplication(waterConnectionDetails,
+                approvalPosition, WaterTaxConstants.APPLICATION_GIS_SYSTEM, waterConnectionDetails.getApplicationType().getCode(),
+                null,
+                WaterTaxConstants.SURVEY);
         return waterConnectionDetails.getApplicationNumber();
 
     }
 
-    private WaterConnectionDetails populateAndPersistWaterConnectionDetails(final WaterConnectionInfo WaterConnectionInfo,
+    private WaterConnectionDetails populateAndPersistWaterConnectionDetails(final WaterConnectionInfo waterConnectionInfo,
             final String applicationCode) {
         WaterConnectionDetails waterConnectionDetails = null;
         Long approvalPosition = 0l;
 
         Position userPosition = null;
         if (!applicationCode.equals(WaterTaxConstants.CHANGEOFUSE)) {
-            waterConnectionDetails = prepareNewAndAdditionalConnectionDetails(WaterConnectionInfo, applicationCode);
+            waterConnectionDetails = prepareNewAndAdditionalConnectionDetails(waterConnectionInfo, applicationCode);
             userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection()
-                    .getPropertyIdentifier());
-        } else {
-            final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
-                    .findByConsumerCodeAndConnectionStatus(WaterConnectionInfo.getConsumerCode(), ConnectionStatus.ACTIVE);
-            waterConnectionDetails = prepareChangeOfUsageWaterConnectionDetails(WaterConnectionInfo, connectionUnderChange);
-            waterConnectionDetails.setConnection(connectionUnderChange.getConnection());
-            userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(connectionUnderChange.getConnection()
                     .getPropertyIdentifier());
         }
 
         if (userPosition != null)
             approvalPosition = userPosition.getId();
-
-        if (applicationCode.equals(WaterTaxConstants.CHANGEOFUSE))
-            waterConnectionDetails = changeOfUseService.createChangeOfUseApplication(waterConnectionDetails,
-                    approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null, null);
-        else
+        if (!applicationCode.equals(WaterTaxConstants.CHANGEOFUSE))
             waterConnectionDetails = waterConnectionDetailsService.createNewWaterConnection(waterConnectionDetails,
                     approvalPosition, "Rest Api", waterConnectionDetails.getApplicationType().getCode(), null, null);
         return waterConnectionDetails;
 
     }
 
-    private WaterConnectionDetails prepareNewAndAdditionalConnectionDetails(final WaterConnectionInfo WaterConnectionInfo,
+    private WaterConnectionDetails prepareNewAndAdditionalConnectionDetails(final WaterConnectionInfo waterConnectionInfo,
             final String applicationCode) {
 
         final WaterConnection waterConnection = new WaterConnection();
 
         final WaterConnectionDetails waterConnectionDetails = new WaterConnectionDetails();
 
-        waterConnection.setPropertyIdentifier(WaterConnectionInfo.getPropertyID());
+        waterConnection.setPropertyIdentifier(waterConnectionInfo.getPropertyID());
         waterConnectionDetails.setConnection(waterConnection);
         waterConnectionDetails.setApplicationDate(new Date());
         if (applicationCode.equals(WaterTaxConstants.NEWCONNECTION))
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.NEWCONNECTION));
         else {
-            final WaterConnection connection = waterConnectionService.findByConsumerCode(WaterConnectionInfo
+            final WaterConnection connection = waterConnectionService.findByConsumerCode(waterConnectionInfo
                     .getConsumerCode());
             waterConnectionDetails.setApplicationType(applicationTypeService
                     .findByCode(WaterTaxConstants.ADDNLCONNECTION));
             waterConnection.setParentConnection(connection);
         }
-        waterConnectionDetails.setCategory(connectionCategoryService.findByCode(WaterConnectionInfo.getCategory()));
-        return prepareWaterConnectionDetails(WaterConnectionInfo, waterConnectionDetails);
+        waterConnectionDetails.setCategory(connectionCategoryService.findByCode(waterConnectionInfo.getCategory()));
+        return prepareWaterConnectionDetails(waterConnectionInfo, waterConnectionDetails);
     }
 
-    private WaterConnectionDetails prepareChangeOfUsageWaterConnectionDetails(final WaterConnectionInfo waterConnectionInfo,
+    private WaterConnectionDetails prepareChangeOfUsageWaterConnectionDetails(final WaterChargesDetailInfo waterConnectionInfo,
             final WaterConnectionDetails waterConnectionDetails) {
         final WaterConnectionDetails changeOfUse = new WaterConnectionDetails();
         changeOfUse.setApplicationDate(new Date());
         changeOfUse.setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CHANGEOFUSE));
         changeOfUse.setCategory(connectionCategoryService.findByCode(waterConnectionInfo.getCategory()));
         changeOfUse.setConnectionReason(waterConnectionInfo.getReasonforChangeOfUsage());
-        return prepareWaterConnectionDetails(waterConnectionInfo, changeOfUse);
+        return prepareConnectionDetailsForChangeOfUse(waterConnectionInfo, changeOfUse);
     }
 
-    private WaterConnectionDetails prepareWaterConnectionDetails(final WaterConnectionInfo WaterConnectionInfo,
+    private WaterConnectionDetails prepareWaterConnectionDetails(final WaterConnectionInfo waterConnectionInfo,
             final WaterConnectionDetails waterConnectionDetails) {
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
-        waterConnectionDetails.setConnectionType(WaterConnectionInfo.getConnectionType().equals(
+        waterConnectionDetails.setConnectionType(waterConnectionInfo.getConnectionType().equals(
                 ConnectionType.METERED.toString()) ? ConnectionType.METERED : ConnectionType.NON_METERED);
 
         final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
@@ -296,21 +305,45 @@ public class RestWaterConnectionController {
                     waterConnectionDetails, appProcessTime));
         waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
                 WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
-        waterConnectionDetails.setPipeSize(pipeSizeService.findByCode(WaterConnectionInfo.getPipeSize()));
-        waterConnectionDetails.setPropertyType(propertyTypeService.findByCode(WaterConnectionInfo.getPropertyType()));
-        waterConnectionDetails.setUsageType(usageTypeService.findByCode(WaterConnectionInfo.getUsageType()));
-        waterConnectionDetails.setWaterSource(waterSourceService.findByCode(WaterConnectionInfo.getWaterSource()));
+        waterConnectionDetails.setPipeSize(pipeSizeService.findByCode(waterConnectionInfo.getPipeSize()));
+        waterConnectionDetails.setPropertyType(propertyTypeService.findByCode(waterConnectionInfo.getPropertyType()));
+        waterConnectionDetails.setUsageType(usageTypeService.findByCode(waterConnectionInfo.getUsageType()));
+        waterConnectionDetails.setWaterSource(waterSourceService.findByCode(waterConnectionInfo.getWaterSource()));
         if (waterConnectionDetails.getUsageType().getCode().equals("LODGES"))
-            waterConnectionDetails.setNumberOfRooms(WaterConnectionInfo.getNumberOfRooms());
+            waterConnectionDetails.setNumberOfRooms(waterConnectionInfo.getNumberOfRooms());
         else
-            waterConnectionDetails.setNumberOfPerson(WaterConnectionInfo.getNumberOfPersons());
+            waterConnectionDetails.setNumberOfPerson(waterConnectionInfo.getNumberOfPersons());
 
         return waterConnectionDetails;
     }
 
-    @RequestMapping(value = "/watertax/connectiondetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(final WaterTaxDetailRequest waterTaxDetailRequest)
-            throws IOException {
+    private WaterConnectionDetails prepareConnectionDetailsForChangeOfUse(final WaterChargesDetailInfo waterConnectionInfo,
+            final WaterConnectionDetails waterConnectionDetails) {
+        waterConnectionDetails.setConnectionStatus(ConnectionStatus.INPROGRESS);
+        waterConnectionDetails.setConnectionType(waterConnectionInfo.getConnectionType().equals(
+                ConnectionType.METERED.toString()) ? ConnectionType.METERED : ConnectionType.NON_METERED);
+
+        final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
+                waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
+        if (appProcessTime != null)
+            waterConnectionDetails.setDisposalDate(waterConnectionDetailsService.getDisposalDate(
+                    waterConnectionDetails, appProcessTime));
+        waterConnectionDetails.setStatus(waterTaxUtils.getStatusByCodeAndModuleType(
+                WaterTaxConstants.APPLICATION_STATUS_CREATED, WaterTaxConstants.MODULETYPE));
+        waterConnectionDetails.setPipeSize(pipeSizeService.findByCode(waterConnectionInfo.getPipeSize()));
+        waterConnectionDetails.setPropertyType(propertyTypeService.findByCode(waterConnectionInfo.getPropertyType()));
+        waterConnectionDetails.setUsageType(usageTypeService.findByCode(waterConnectionInfo.getUsageType()));
+        waterConnectionDetails.setWaterSource(waterSourceService.findByCode(waterConnectionInfo.getWaterSource()));
+        if (waterConnectionDetails.getUsageType().getCode().equals("LODGES"))
+            waterConnectionDetails.setNumberOfRooms(waterConnectionInfo.getNumberOfRooms());
+        else
+            waterConnectionDetails.setNumberOfPerson(waterConnectionInfo.getNumberOfPersons());
+
+        return waterConnectionDetails;
+    }
+
+    @RequestMapping(value = "/watertax/connectiondetails", method = RequestMethod.GET, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
+    public List<WaterChargesDetails> getWaterConnectionDetailsByPropertyId(final WaterTaxDetailRequest waterTaxDetailRequest) {
 
         List<WaterChargesDetails> waterChargesDetailsList;
         waterChargesDetailsList = connectionDetailService.getWaterTaxDetailsByPropertyId(
@@ -320,11 +353,10 @@ public class RestWaterConnectionController {
         return waterChargesDetailsList;
     }
 
-    private String getJSONResponse(final Object obj) throws JsonGenerationException, JsonMappingException, IOException {
+    private String getJSONResponse(final Object obj) throws IOException {
         final ObjectMapper objectMapper = new ObjectMapper();
         objectMapper.setVisibility(JsonMethod.FIELD, Visibility.ANY);
-        final String jsonResponse = objectMapper.writeValueAsString(obj);
-        return jsonResponse;
+        return objectMapper.writeValueAsString(obj);
     }
 
     public Boolean authenticateUser(final String username, final String password) {

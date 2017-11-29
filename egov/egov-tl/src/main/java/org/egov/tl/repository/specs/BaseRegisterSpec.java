@@ -1,5 +1,5 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
  *     Copyright (C) 2017  eGovernments Foundation
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,20 +43,21 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.repository.specs;
 
-import javax.persistence.criteria.Predicate;
-
-import org.egov.tl.entity.dto.BaseRegisterRequest;
+import org.egov.tl.entity.contracts.BaseRegisterRequest;
 import org.egov.tl.entity.view.BaseRegister;
 import org.springframework.data.jpa.domain.Specification;
 
-public class BaseRegisterSpec {
+import javax.persistence.criteria.Predicate;
+
+public final class BaseRegisterSpec {
 
     private BaseRegisterSpec() {
-
+        //static methods only
     }
 
     public static Specification<BaseRegister> baseRegisterSpecification(final BaseRegisterRequest baseRegisterRequest) {

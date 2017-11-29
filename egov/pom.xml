@@ -1,42 +1,50 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~ accountability and the service delivery of the government  organizations.
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) 2016  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
-  ~  The updated version of eGov suite of products as by eGovernments Foundation
-  ~  is available at http://www.egovernments.org
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
   ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  any later version.
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
   ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
   ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~  http://www.gnu.org/licenses/gpl.html .
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
   ~
-  ~  In addition to the terms of the GPL license to be adhered to in using this
-  ~  program, the following additional terms are to be complied with:
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
   ~
-  ~      1) All versions of this program, verbatim or modified must carry this
-  ~         Legal Notice.
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~      2) Any misrepresentation of the origin of the material is prohibited. It
-  ~         is required that all modified versions of this material be marked in
-  ~         reasonable ways as different from the original version.
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
-  ~      3) This license does not grant any rights to any user of the program
-  ~         with regards to rights under trademark law for use of the trade names
-  ~         or trademarks of eGovernments Foundation.
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
   ~
-  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   -->
 
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://maven.apache.org/POM/4.0.0"
@@ -147,46 +155,41 @@
         <db.user/>
         <db.password/>
         <disable.drop.db>true</disable.drop.db>
-        <!-- Sonar properties -->
-        <sonar.core.codeCoveragePlugin>jacoco</sonar.core.codeCoveragePlugin>
-        <sonar.dynamicAnalysis>reuseReports</sonar.dynamicAnalysis>
-        <sonar.jacoco.reportPath>${project.basedir}/../target/jacoco.exec</sonar.jacoco.reportPath>
-
         <!-- Application server provided dependency versions -->
-        <hibernate-version>5.0.10.Final</hibernate-version>
-        <hibernate-search-version>5.5.4.Final</hibernate-search-version>
-        <hibernate-validator-version>5.2.4.Final</hibernate-validator-version>
+        <hibernate-version>5.1.10.Final</hibernate-version>
+        <hibernate-search-version>5.5.8.Final</hibernate-search-version>
+        <hibernate-validator-version>5.3.5.Final</hibernate-validator-version>
         <javax-validation-version>1.1.0.Final</javax-validation-version>
         <javax-servlet-api-version>1.0.0.Final</javax-servlet-api-version>
-        <javax-servlet-jstl-version>1.1.3.Final</javax-servlet-jstl-version>
+        <javax-servlet-jstl-version>1.2.6-RC1</javax-servlet-jstl-version>
         <javax-servlet-jsp-version>1.0.1.Final</javax-servlet-jsp-version>
-        <javax-jms-version>1.0.0.Final</javax-jms-version>
-        <javax-mail-version>1.5.5</javax-mail-version>
+        <javax-jms-version>1.0.1.Final</javax-jms-version>
+        <javax-mail-version>1.5.6</javax-mail-version>
         <javax-el-version>3.0.1-b08</javax-el-version>
-        <xerces-version>2.11.0.SP4</xerces-version>
-        <postgres-version>42.1.1</postgres-version>
+        <xerces-version>2.11.0.SP5</xerces-version>
+        <postgres-version>42.1.4</postgres-version>
 
         <!-- Other application dependency versions -->
-        <struts2-version>2.5.10.1</struts2-version>
+        <struts2-version>2.5.13</struts2-version>
         <struts2-jquery-version>4.0.2</struts2-jquery-version>
         <xstream-version>1.4.10</xstream-version>
-        <spring-version>4.3.9.RELEASE</spring-version>
-        <spring-session-version>1.3.0.RELEASE</spring-session-version>
+        <spring-version>4.3.11.RELEASE</spring-version>
+        <spring-session-version>1.3.1.RELEASE</spring-session-version>
         <spring-data-jpa-version>1.10.6.RELEASE</spring-data-jpa-version>
         <spring-data-jpa-envers-version>1.0.6.RELEASE</spring-data-jpa-envers-version>
         <spring-security-version>4.2.3.RELEASE</spring-security-version>
-        <spring-security-oauth2-version>2.1.1.RELEASE</spring-security-oauth2-version>
+        <spring-security-oauth2-version>2.2.0.RELEASE</spring-security-oauth2-version>
         <spring-data-elasticsearch>2.0.6.RELEASE</spring-data-elasticsearch>
-        <elastic-search-version>2.4.1</elastic-search-version>
+        <elastic-search-version>2.4.6</elastic-search-version>
         <apache-tiles-version>3.0.7</apache-tiles-version>
         <embedded-redis-version>0.6</embedded-redis-version>
         <quartz-version>2.3.0</quartz-version>
         <jasper-report-version>6.1.0</jasper-report-version>
         <json-simple-version>1.1.1</json-simple-version>
-        <jackson-version>2.8.2</jackson-version>
-        <orika-core.version>1.5.1</orika-core.version>
-        <gson-version>2.8.0</gson-version>
-        <antisamy-version>1.5.5</antisamy-version>
+        <jackson-version>2.9.2</jackson-version>
+        <orika-core.version>1.5.2</orika-core.version>
+        <gson-version>2.8.2</gson-version>
+        <antisamy-version>1.5.7</antisamy-version>
         <jasypt-version>1.9.2</jasypt-version>
         <display-tag-version>1.2</display-tag-version>
         <jfreechart-version>1.0.19</jfreechart-version>
@@ -198,46 +201,49 @@
         <commons-config-version>1.10</commons-config-version>
         <commons-lang-version>2.6</commons-lang-version>
         <commons-lang3-version>3.6</commons-lang3-version>
-        <commons-email-version>1.4</commons-email-version>
+        <commons-email-version>1.5</commons-email-version>
         <commons-collections-version>3.2.2</commons-collections-version>
-        <commons-codec-version>1.10</commons-codec-version>
+        <commons-collections4-version>4.1</commons-collections4-version>
+        <commons-codec-version>1.11</commons-codec-version>
         <commons-dbcp-version>1.4</commons-dbcp-version>
-        <commons-io-version>2.5</commons-io-version>
+        <commons-io-version>2.6</commons-io-version>
         <commons-fileupload-version>1.3.3</commons-fileupload-version>
+        <commons.text.version>1.1</commons.text.version>
+        <commons.compress.version>1.15</commons.compress.version>
         <httpclient-version>4.5.3</httpclient-version>
         <sitemesh-version>2.4.2</sitemesh-version>
         <ehcache-web-version>2.0.4</ehcache-web-version>
         <joda-time-version>2.9.9</joda-time-version>
         <joda-time-jsptag-version>1.1.1</joda-time-jsptag-version>
         <jsoup-version>1.10.3</jsoup-version>
-        <jython-version>2.5.2</jython-version>
+        <jython-version>2.7.1b3</jython-version>
         <flyway-core-version>4.2.0</flyway-core-version>
         <junit-version>4.12</junit-version>
         <mockito-all-version>1.10.19</mockito-all-version>
         <springockito-version>1.0.9</springockito-version>
-        <easymock-version>3.4</easymock-version>
+        <easymock-version>3.5</easymock-version>
         <easymockclassextension-version>3.2</easymockclassextension-version>
         <hamcrest-all-version>1.3</hamcrest-all-version>
         <slf4j-version>1.7.25</slf4j-version>
         <log4j-version>1.2.17</log4j-version>
-        <google-guava-version>22.0</google-guava-version>
+        <google-guava-version>23.2-jre</google-guava-version>
         <google.zxing.version>3.3.0</google.zxing.version>
         <recaptcha.version>0.0.8</recaptcha.version>
+        <jcaptcha.version>2.0-alpha-1</jcaptcha.version>
         <javaxt.core.version>1.7.8</javaxt.core.version>
+        <pdfbox.version>2.0.4</pdfbox.version>
         <!-- Plugin dependency versions-->
         <mvn.javadoc.plugin.version>2.10.4</mvn.javadoc.plugin.version>
         <mvn.release.plugin.version>2.5.3</mvn.release.plugin.version>
         <mvn.jacoco.plugin.version>0.7.9</mvn.jacoco.plugin.version>
         <mvn.ear.plugin.version>2.10.1</mvn.ear.plugin.version>
-        <mvn.war.plugin.version>3.1.0</mvn.war.plugin.version>
+        <mvn.war.plugin.version>3.2.0</mvn.war.plugin.version>
         <mvn.jar.plugin.version>3.0.2</mvn.jar.plugin.version>
-        <mvn.compiler.plugin.version>3.6.1</mvn.compiler.plugin.version>
-        <mvn.dependency.plugin.version>3.0.1</mvn.dependency.plugin.version>
+        <mvn.compiler.plugin.version>3.7.0</mvn.compiler.plugin.version>
+        <mvn.dependency.plugin.version>3.0.2</mvn.dependency.plugin.version>
         <mvn.resource.plugin.version>3.0.1</mvn.resource.plugin.version>
-        <mvn.sonar.plugin.version>3.3.0.603</mvn.sonar.plugin.version>
-        <mvn.wildfly.plugin.version>1.1.0.Final</mvn.wildfly.plugin.version>
         <mvn.versioneye.plugin.version>3.11.4</mvn.versioneye.plugin.version>
-        <mvn.surefire.plugin.version>2.20</mvn.surefire.plugin.version>
+        <mvn.surefire.plugin.version>2.20.1</mvn.surefire.plugin.version>
         <mvn.eclipse.lifecycle.plugin.version>1.0.0</mvn.eclipse.lifecycle.plugin.version>
         <mvn.clean.plugin.version>3.0.0</mvn.clean.plugin.version>
     </properties>
@@ -297,6 +303,12 @@
                 <groupId>org.elasticsearch</groupId>
                 <artifactId>elasticsearch</artifactId>
                 <version>${elastic-search-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>snakeyaml</artifactId>
+                        <groupId>org.yaml</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
 
             <!-- HIBERNATE DEPENDENCIES START -->
@@ -349,8 +361,20 @@
                 <scope>provided</scope>
             </dependency>
             <dependency>
-                <groupId>org.jboss.spec.javax.servlet.jstl</groupId>
-                <artifactId>jboss-jstl-api_1.2_spec</artifactId>
+                <groupId>org.apache.taglibs</groupId>
+                <artifactId>taglibs-standard-compat</artifactId>
+                <version>${javax-servlet-jstl-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.taglibs</groupId>
+                <artifactId>taglibs-standard-spec</artifactId>
+                <version>${javax-servlet-jstl-version}</version>
+                <scope>provided</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.taglibs</groupId>
+                <artifactId>taglibs-standard-impl</artifactId>
                 <version>${javax-servlet-jstl-version}</version>
                 <scope>provided</scope>
             </dependency>
@@ -508,6 +532,12 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-jpa</artifactId>
                 <version>${spring-data-jpa-version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.data</groupId>
+                        <artifactId>spring-data-commons</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.springframework.data</groupId>
@@ -529,6 +559,12 @@
                 <groupId>org.springframework.data</groupId>
                 <artifactId>spring-data-elasticsearch</artifactId>
                 <version>${spring-data-elasticsearch}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework.data</groupId>
+                        <artifactId>spring-data-commons</artifactId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <!-- SPRING END -->
 
@@ -766,6 +802,17 @@
                 <artifactId>commons-fileupload</artifactId>
                 <version>${commons-fileupload-version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-text</artifactId>
+                <version>${commons.text.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-collections4</artifactId>
+                <version>${commons-collections4-version}</version>
+            </dependency>
+
             <!-- COMMONS END -->
 
             <!-- MISC START -->
@@ -820,9 +867,51 @@
                 <version>${recaptcha.version}</version>
             </dependency>
             <dependency>
+                <groupId>com.octo.captcha</groupId>
+                <artifactId>jcaptcha</artifactId>
+                <version>${jcaptcha.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-logging</artifactId>
+                        <groupId>commons-logging</groupId>
+                    </exclusion>
+                    <exclusion>
+                        <artifactId>imaging</artifactId>
+                        <groupId>com.jhlabs</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>com.octo.captcha</groupId>
+                <artifactId>jcaptcha-api</artifactId>
+                <version>${jcaptcha.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.jhlabs</groupId>
+                <artifactId>filters</artifactId>
+                <version>2.0.235-1</version>
+            </dependency>
+
+            <dependency>
                 <groupId>javaxt</groupId>
                 <artifactId>javaxt-core</artifactId>
                 <version>${javaxt.core.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.pdfbox</groupId>
+                <artifactId>pdfbox</artifactId>
+                <version>${pdfbox.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>commons-logging</artifactId>
+                        <groupId>commons-logging</groupId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <version>${commons.compress.version}</version>
             </dependency>
             <!-- MISC END -->
 
@@ -997,6 +1086,40 @@
     </dependencyManagement>
 
     <dependencies>
+        <!-- SERVLET SPEC JBOSS DEPENDENCIES START -->
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet</groupId>
+            <artifactId>jboss-servlet-api_3.1_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-compat</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.taglibs</groupId>
+            <artifactId>taglibs-standard-impl</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.servlet.jsp</groupId>
+            <artifactId>jboss-jsp-api_2.3_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.jboss.spec.javax.jms</groupId>
+            <artifactId>jboss-jms-api_2.0_spec</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish</groupId>
+            <artifactId>javax.el</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>javax.mail</groupId>
+            <artifactId>javax.mail-api</artifactId>
+        </dependency>
+        <!-- SERVLET SPEC JBOSS DEPENDENCIES END -->
 
         <!-- COMMONS START -->
         <dependency>
@@ -1016,6 +1139,14 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-text</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-collections4</artifactId>
         </dependency>
         <!-- COMMONS END -->
 
@@ -1154,8 +1285,29 @@
             <artifactId>recaptcha4j</artifactId>
         </dependency>
         <dependency>
+            <groupId>com.octo.captcha</groupId>
+            <artifactId>jcaptcha</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.octo.captcha</groupId>
+            <artifactId>jcaptcha-api</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.jhlabs</groupId>
+            <artifactId>filters</artifactId>
+        </dependency>
+
+        <dependency>
             <groupId>javaxt</groupId>
             <artifactId>javaxt-core</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.commons</groupId>
+            <artifactId>commons-compress</artifactId>
         </dependency>
         <!-- MISC ENDS -->
 
@@ -1225,54 +1377,28 @@
         </dependency>
         <!-- DATABASE END -->
 
-        <!-- https://mvnrepository.com/artifact/com.netflix.zuul/zuul-core -->
         <dependency>
             <groupId>com.netflix.zuul</groupId>
             <artifactId>zuul-core</artifactId>
             <version>1.3.0</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.codehaus.jackson</groupId>
+                    <artifactId>jackson-core-asl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.codehaus.jackson</groupId>
+                    <artifactId>jackson-mapper-asl</artifactId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
     <build>
-        <pluginManagement>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>sonar-maven-plugin</artifactId>
-                    <version>${mvn.sonar.plugin.version}</version>
-                </plugin>
-                <!--This plugin's configuration is used to store Eclipse m2e settings
-                    only. It has no influence on the Maven build itself. -->
-                <plugin>
-                    <groupId>org.eclipse.m2e</groupId>
-                    <artifactId>lifecycle-mapping</artifactId>
-                    <version>${mvn.eclipse.lifecycle.plugin.version}</version>
-                    <configuration>
-                        <lifecycleMappingMetadata>
-                            <pluginExecutions>
-                                <pluginExecution>
-                                    <pluginExecutionFilter>
-                                        <groupId>org.jacoco</groupId>
-                                        <artifactId>
-                                            jacoco-maven-plugin
-                                        </artifactId>
-                                        <versionRange>
-                                            [0.7.5.201505241946,)
-                                        </versionRange>
-                                        <goals>
-                                            <goal>prepare-agent</goal>
-                                        </goals>
-                                    </pluginExecutionFilter>
-                                    <action>
-                                        <ignore/>
-                                    </action>
-                                </pluginExecution>
-                            </pluginExecutions>
-                        </lifecycleMappingMetadata>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </pluginManagement>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -1323,20 +1449,6 @@
             </plugin>
 
             <plugin>
-                <groupId>org.wildfly.plugins</groupId>
-                <artifactId>wildfly-maven-plugin</artifactId>
-                <version>${mvn.wildfly.plugin.version}</version>
-                <configuration>
-                    <skip>true</skip>
-                </configuration>
-            </plugin>
-
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>sonar-maven-plugin</artifactId>
-            </plugin>
-
-            <plugin>
                 <groupId>org.jacoco</groupId>
                 <artifactId>jacoco-maven-plugin</artifactId>
                 <version>${mvn.jacoco.plugin.version}</version>
@@ -1355,9 +1467,6 @@
                         </goals>
                     </execution>
                 </executions>
-                <configuration>
-                    <destFile>${sonar.jacoco.reportPath}</destFile>
-                </configuration>
             </plugin>
 
             <plugin>

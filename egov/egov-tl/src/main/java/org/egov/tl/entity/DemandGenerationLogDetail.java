@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.entity;
@@ -52,7 +60,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import java.util.Objects;
@@ -69,9 +76,9 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
     @GeneratedValue(generator = SEQ, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @OneToOne(optional = false)
-    @JoinColumn(name = "license", nullable = false)
-    private License license;
+    private String licenseNumber;
+
+    private Long licenseId;
 
     @Enumerated(EnumType.STRING)
     private ProcessStatus status;
@@ -92,12 +99,20 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
         this.id = id;
     }
 
-    public License getLicense() {
-        return license;
+    public String getLicenseNumber() {
+        return licenseNumber;
     }
 
-    public void setLicense(final License license) {
-        this.license = license;
+    public void setLicenseNumber(final String licenseNumber) {
+        this.licenseNumber = licenseNumber;
+    }
+
+    public Long getLicenseId() {
+        return licenseId;
+    }
+
+    public void setLicenseId(final Long licenseId) {
+        this.licenseId = licenseId;
     }
 
     public ProcessStatus getStatus() {
@@ -131,12 +146,12 @@ public class DemandGenerationLogDetail extends AbstractPersistable<Long> {
         if (!(other instanceof DemandGenerationLogDetail))
             return false;
         DemandGenerationLogDetail that = (DemandGenerationLogDetail) other;
-        return Objects.equals(license, that.license) &&
+        return Objects.equals(licenseId, that.licenseId) &&
                 Objects.equals(demandGenerationLog, that.demandGenerationLog);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(license, demandGenerationLog);
+        return Objects.hash(licenseId, demandGenerationLog);
     }
 }

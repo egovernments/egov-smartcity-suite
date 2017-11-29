@@ -1,48 +1,49 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.utils;
@@ -59,14 +60,9 @@ public final class Constants {
     public static final String VIEW = "view";
     public static final String ROLE_BILLCOLLECTOR = "Collection Operator";
     public static final String WF_STATE_COMMISSIONER_APPROVED_STR = "Commissioner approved";
-    public static final String WF_STATE_GENERATE_CERTIFICATE = "Create License:generate Certificate";
     public static final String WF_STATE_SANITORY_INSPECTOR_APPROVAL_PENDING = "Sanitary inspector Approve pending";
     public static final String BUILDINGTYPE_RENTAL_AGREEMANT = "Rental";
     public static final String BUILDINGTYPE_OWN_BUILDING = "Own Building";
-    public static final String NEW_LICENSE_REGISTERED = "NEW";
-    public static final int PAGE_SIZE = 20;
-    public static final String ZONE = "Zone";
-    public static final String DIVISION = "Ward";
     public static final String FROM = "from";
     public static final String DROPDOWN_DIVISION_LIST_LICENSE = "divisionListLicense";
     public static final String DROPDOWN_DIVISION_LIST_LICENSEE = "divisionListLicensee";
@@ -78,45 +74,23 @@ public final class Constants {
     public static final String BUTTONAPPROVE = "Approve";
     public static final String BUTTONFORWARD = "Forward";
     public static final String BUTTONREJECT = "Reject";
-    public static final String BUTTONSUBMIT = "Submit";
+    public static final String BUTTONCANCEL = "Cancel";
     public static final String BUTTONGENERATEDCERTIFICATE = "GeneratedCertificate";
     public static final String WORKFLOW_STATE_REJECTED = "Rejected";
     public static final String WORKFLOW_STATE_GENERATECERTIFICATE = "Generate Certificate";
     public static final String ACKNOWLEDGEMENT = "acknowledgement";
     public static final String LICENSE_STATUS_ACKNOWLEDGED = "Acknowledged";
+    public static final String STATUS_ACKNOWLEDGED = "ACK";
     public static final String LICENSE_STATUS_ACTIVE = "Active";
-    public static final String LICENSE_STATUS_OBJECTED = "Objected";
     public static final String LICENSE_STATUS_CANCELLED = "Cancelled";
     public static final String LICENSE_STATUS_UNDERWORKFLOW = "UnderWorkflow";
     public static final String STATUS_CANCELLED = "CAN";
     public static final String STATUS_ACTIVE = "ACT";
-    public static final String STATUS_ACKNOLEDGED = "ACK";
     public static final String STATUS_UNDERWORKFLOW = "UWF";
     public static final String STATUS_REJECTED = "REJ";
     public static final String TRADELICENSE = "TradeLicense";
     public static final String TRADELICENSEMODULE = "TRADELICENSE";
-    public static final String CANCELLED = "CANCELLED";
-    public static final String TOTAL_LICENSES = "TOTAL_LICENSES";
-    public static final String ZONE_ID = "ZONE_ID";
-    public static final String WARD_ID = "WARD_ID";
-    public static final String TOTAL_AMOUNT = "TOTAL_AMOUNT";
-    public static final String OBJECTED = "OBJECTED";
-    public static final String PENDING_RENEWALS = "PENDING_RENEWALS";
-    public static final String RENEWED = "RENEWED";
     public static final String WARD = "WARD";
-    public static final String WARD_NUM = "WARD_NUM";
-    public static final String WARD_NAME = "WARD_NAME";
-    public static final String NO_OF_LATE_RENEWALS = "NO_OF_LATE_RENEWALS";
-    public static final String TRADE_ID = "TRADE_ID";
-    public static final String TOTAL_NEW = "TOTAL_NEW";
-    public static final String TOTAL_CAN = "TOTAL_CAN";
-    public static final String TOTAL_OBJ = "TOTAL_OBJ";
-    public static final String TOTAL_AMT = "TOTAL_AMT";
-    public static final String TOTAL_PENDING = "TOTAL_PENDING";
-    public static final String TOTAL_RENEWED = "TOTAL_RENEWED";
-    public static final String TOTAL_ISSUED = "TOTAL_ISSUED";
-    public static final String TOTAL_LATEREN = "TOTAL_LATEREN";
-    public static final int AMOUNT_PRECISION_DEFAULT = 2;
     public static final String BEFORE_RENEWAL = "beforeRenew";
     public static final String ACKNOWLEDGEMENT_RENEW = "acknowledgement_renew";
     public static final BigDecimal CHQ_BOUNCE_PENALTY = BigDecimal.valueOf(1000);
@@ -156,7 +130,6 @@ public final class Constants {
     public static final String PENALTY_DMD_REASON_CODE = "Penalty";
     public static final String SIGNWORKFLOWACTION = "Sign";
     public static final String WF_PREVIEW_BUTTON = "Preview";
-    public static final String FILE_STORE_ID_APPLICATION_NUMBER = "fileStoreIdApplicationNumber";
     public static final String DIGITALSIGNINCLUDEINWORKFLOW = "DIGITALSIGNINCLUDEINWORKFLOW";
     public static final String SIGNED_DOCUMENT_PREFIX = "SN/";
     public static final String ROLE_COMMISSIONERDEPARTEMNT = "Health";
@@ -198,21 +171,31 @@ public final class Constants {
     public static final String JA_DESIGNATION = "Junior Assistant";
     public static final String RC_DESIGNATION = "Revenue Clerk";
     public static final String SA_DESIGNATION = "Senior Assistant";
-    public static final String SA_DESIGNATION_CODE= "SASST";
-    public static final String JA_DESIGNATION_CODE="JASST";
+    public static final String SA_DESIGNATION_CODE = "SASST";
+    public static final String JA_DESIGNATION_CODE = "JASST";
     public static final String CLOSURE_NATUREOFTASK = "Closure License";
     public static final String BILL_TYPE_AUTO = "AUTO";
     public static final String TRADE_LICENSE = "Trade License";
     public static final String TL_SERVICE_CODE = "TL";
-    private static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
     public static final String CLOSURE_LIC_APPTYPE = "Closure";
     public static final String DMD_GENERATION_DATA = "demandgenerationdata";
     public static final String DMD_GEN_INSTALLMENT = "installmentYear";
     public static final String DMD_GEN_RETRY = "retry";
     public static final String COMMISSIONER_DESGN = "Commissioner";
     public static final String MEESEVA_RESULT_ACK = "meesevaAck";
-    public static final String MEESEVAOPERATOR="MeeSeva Operator";
-
+    public static final String MEESEVAOPERATOR = "MeeSeva Operator";
+    public static final Map<String, String> OWNERSHIP_TYPE = new HashMap<>();
+    public static final String NEWLICENSECOLLECTION = "NEWLICENSECOLLECTION";
+    public static final String RENEWLICENSECOLLECTION = "RENEWLICENSECOLLECTION";
+    public static final String NEWLICENSE = "NEWLICENSE";
+    public static final String RENEWLICENSE = "RENEWLICENSE";
+    public static final String CSCOPERATORRENEWLICENSE = "CSCOPERATORRENEWLICENSE";
+    public static final String CSCOPERATORNEWLICENSE = "CSCOPERATORNEWLICENSE";
+    public static final String NEWLICENSEREJECT = "NEWLICENSEREJECT";
+    public static final String RENEWLICENSEREJECT = "RENEWLICENSEREJECT";
+    public static final String GENERATE_PROVISIONAL_CERTIFICATE = "Generate Provisional Certificate";
+    public static final String REPORT_PAGE = "report";
+    public static final String STATUS_COLLECTIONPENDING="COLLECTIONPENDING";
     static {
 
         OWNERSHIP_TYPE.put(OWNERSHIP_TYPE_OWN, OWNERSHIP_TYPE_OWN);

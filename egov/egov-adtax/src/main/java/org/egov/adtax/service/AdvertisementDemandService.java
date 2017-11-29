@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,9 +43,28 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.adtax.service;
+
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 
 import org.apache.log4j.Logger;
 import org.egov.adtax.entity.Advertisement;
@@ -65,22 +91,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionTemplate;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementDemandService {
+    private static final String DEMAND_AMOUNT = "demandAmount";
+    private static final String COLLECTED_AMOUNT = "collectedAmount";
     private static final Logger LOGGER = Logger.getLogger(AdvertisementDemandService.class);
     private static final String SUCCESSFUL = "Successful";
 
@@ -229,6 +244,21 @@ public class AdvertisementDemandService {
         return pendingTaxCollection;
 
     }
+    
+    /**
+     * @param advertisement
+     * @return
+     */
+    public BigDecimal getPendingTaxAmount(final Advertisement advertisement) {
+        BigDecimal pendingTaxAmount = BigDecimal.ZERO;
+        if (advertisement != null && advertisement.getDemandId() != null)
+            for (final EgDemandDetails demandDtl : advertisement.getDemandId().getEgDemandDetails())
+                if (demandDtl.getAmount().subtract(demandDtl.getAmtCollected()).compareTo(BigDecimal.ZERO) > 0) {
+                    pendingTaxAmount = pendingTaxAmount
+                            .add(demandDtl.getAmount().subtract(demandDtl.getAmtCollected()));
+                }
+        return pendingTaxAmount;
+    }
 
     /**
      * Check any tax pay pending for selected advertisement in selected installment
@@ -351,9 +381,7 @@ public class AdvertisementDemandService {
     }
 
     public List<BillReceipt> getBilReceiptsByDemand(final EgDemand demand) {
-        List<BillReceipt> billReceiptList = new ArrayList<>();
-        billReceiptList = demandGenericDao.getBillReceipts(demand);
-        return billReceiptList;
+        return demandGenericDao.getBillReceipts(demand);
     }
 
     public EgDemand createDemand(final AdvertisementPermitDetail advertisementPermitDetail) {
@@ -867,7 +895,7 @@ public class AdvertisementDemandService {
      */
     public Map<String, Map<String, BigDecimal>> getReasonWiseDemandAndCollection(
             final AdvertisementPermitDetail advPermitDetail) {
-        final Map<String, Map<String, BigDecimal>> reasonwiseDmnd_CollDtls = new HashMap<>();
+        final Map<String, Map<String, BigDecimal>> reasonWiseDmndCollDtls = new HashMap<>();
         Map<String, BigDecimal> demandCollectionSum = null;
         BigDecimal totalAmount = BigDecimal.ZERO;  // Holds sum of all demand detail reason base amount
         BigDecimal totalAmountCollected = BigDecimal.ZERO; // Holds sum of all demand detail reason collected amount
@@ -875,34 +903,34 @@ public class AdvertisementDemandService {
                 && advPermitDetail.getAdvertisement().getDemandId() != null) {
             for (final EgDemandDetails demandDtl : advPermitDetail.getAdvertisement().getDemandId().getEgDemandDetails()) {
                 demandCollectionSum = new HashMap<>();
-                if (reasonwiseDmnd_CollDtls.containsKey(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
-                    final Map<String, BigDecimal> temp = reasonwiseDmnd_CollDtls
+                if (reasonWiseDmndCollDtls.containsKey(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode())) {
+                    final Map<String, BigDecimal> temp = reasonWiseDmndCollDtls
                             .get(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode());
-                    demandCollectionSum.put("demandAmount", temp.get("demandAmount")
+                    demandCollectionSum.put(DEMAND_AMOUNT, temp.get(DEMAND_AMOUNT)
                             .add(demandDtl.getAmount() != null ? demandDtl.getAmount() : BigDecimal.ZERO));
-                    demandCollectionSum.put("collectedAmount", temp.get("collectedAmount")
+                    demandCollectionSum.put(COLLECTED_AMOUNT, temp.get(COLLECTED_AMOUNT)
                             .add(demandDtl.getAmtCollected() != null ? demandDtl.getAmtCollected() : BigDecimal.ZERO));
                     totalAmount = totalAmount.add(demandDtl.getAmount() != null ? demandDtl.getAmount() : BigDecimal.ZERO);
                     totalAmountCollected = totalAmountCollected
                             .add(demandDtl.getAmtCollected() != null ? demandDtl.getAmtCollected() : BigDecimal.ZERO);
-                    reasonwiseDmnd_CollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(),
+                    reasonWiseDmndCollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(),
                             demandCollectionSum);
                 } else {
                     // New Entry
-                    demandCollectionSum.put("demandAmount", demandDtl.getAmount());
-                    demandCollectionSum.put("collectedAmount", demandDtl.getAmtCollected());
+                    demandCollectionSum.put(DEMAND_AMOUNT, demandDtl.getAmount());
+                    demandCollectionSum.put(COLLECTED_AMOUNT, demandDtl.getAmtCollected());
                     totalAmount = totalAmount.add(demandDtl.getAmount());
                     totalAmountCollected = totalAmountCollected.add(demandDtl.getAmtCollected());
-                    reasonwiseDmnd_CollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(),
+                    reasonWiseDmndCollDtls.put(demandDtl.getEgDemandReason().getEgDemandReasonMaster().getCode(),
                             demandCollectionSum);
                 }
             }
             demandCollectionSum = new HashMap<>();
             demandCollectionSum.put("totalAmount", totalAmount);
             demandCollectionSum.put("totalAmountCollected", totalAmountCollected);
-            reasonwiseDmnd_CollDtls.put("Total", demandCollectionSum);
+            reasonWiseDmndCollDtls.put("Total", demandCollectionSum);
         }
-        return reasonwiseDmnd_CollDtls;
+        return reasonWiseDmndCollDtls;
     }
 
     private String getErrorMessage(final Exception exception) {
@@ -912,6 +940,21 @@ public class AdvertisementDemandService {
         else
             error = "Error : " + exception;
         return error;
+    }
+    
+    public String getLastPaymentPaidFinYear(final Advertisement advertisement) {
+        String paidUptoFinYearDesc = EMPTY;
+        if (advertisement != null && advertisement.getDemandId() != null) {
+            List<EgDemandDetails> demandDetailsList = advertisement.getDemandId().getEgDemandDetails().stream()
+                    .sorted(Comparator.comparing(EgDemandDetails::getModifiedDate).reversed())
+                    .filter(demandDtl -> demandDtl.getAmtCollected().compareTo(BigDecimal.ZERO) > 0).collect(Collectors.toList());
+            if (!demandDetailsList.isEmpty())
+                paidUptoFinYearDesc = getInsatllmentByModuleForGivenDate(demandDetailsList.get(0).getModifiedDate())
+                        .getDescription();
+            else
+                paidUptoFinYearDesc = "No Payment Done Yet";
+        }
+        return paidUptoFinYearDesc;
     }
 
 }

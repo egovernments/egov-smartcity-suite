@@ -1,41 +1,49 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
- *  
- *  Copyright (C) 2017  eGovernments Foundation
- *  
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
- *  
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
- *  
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
- *  
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
- *  
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
- *  
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- *  
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
- *  
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
- *  
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 var reportdatatable;
@@ -356,34 +364,35 @@ $(document).ready(function () {
                 var inactive = $('#inactive').is(":checked");
                 reportdatatable = drillDowntableContainer
                     .dataTable({
-                    	 processing : true,
-	       		         serverSide : true,
-	       		         sort : true,
-	       		         filter : true,
-                        scrollY:        "500px",
-                        scrollX:        true,
+                        processing: true,
+                        serverSide: true,
+                        sort: true,
+                        filter: true,
+                        scrollY: "500px",
+                        scrollX: true,
                         scrollCollapse: true,
-                        fixedColumns:   {
+                        fixedColumns: {
                             leftColumns: 1
                         },
                         ajax: {
-                            type:"POST",
-                            data:function (args) {
-                       		 return {"args": JSON.stringify(args),
-                                applicationNumber: applicationNumber,
-                                licenseNumber: licenseNumber,
-                                oldLicenseNumber: oldLicenseNumber,
-                                categoryId: category,
-                                subCategoryId: subCategory,
-                                tradeTitle: tradeTitle,
-                                tradeOwnerName: tradeOwnerName,
-                                propertyAssessmentNo: propertyAssessmentNo,
-                                mobileNo: mobileNo,
-                                ownerName: ownerName,
-                                statusId: status,
-                                expiryYear: expiryYear,
-                                inactive: inactive
-                            }
+                            type: "POST",
+                            data: function (args) {
+                                return {
+                                    "args": JSON.stringify(args),
+                                    applicationNumber: applicationNumber,
+                                    licenseNumber: licenseNumber,
+                                    oldLicenseNumber: oldLicenseNumber,
+                                    categoryId: category,
+                                    subCategoryId: subCategory,
+                                    tradeTitle: tradeTitle,
+                                    tradeOwnerName: tradeOwnerName,
+                                    propertyAssessmentNo: propertyAssessmentNo,
+                                    mobileNo: mobileNo,
+                                    ownerName: ownerName,
+                                    statusId: status,
+                                    expiryYear: expiryYear,
+                                    inactive: inactive
+                                }
                             }
                         },
                         "bDestroy": true,
@@ -400,50 +409,50 @@ $(document).ready(function () {
                                     + data.id + '">' + data.name + '</a>';
                             },
                             "sTitle": "Application Number",
-                          "name":"applicationNumber"
+                            "name": "applicationNumber"
                         }, {
                             "data": "tlNumber",
-                            "name":"licenseNumber",
+                            "name": "licenseNumber",
                             "sTitle": "TL Number"
                         }, {
                             "data": "oldTLNumber",
-                          "name":"oldLicenseNumber",
+                            "name": "oldLicenseNumber",
                             "sTitle": "Old TL Number"
                         }, {
                             "data": "category",
-                             "name":"categoryName",
+                            "name": "categoryName",
                             "sTitle": "Category"
                         }, {
                             "data": "subCategory",
-                            "name":"tradeName.name",
+                            "name": "tradeName.name",
                             "sTitle": "Sub-Category"
                         }, {
                             "data": "tradeTitle",
-                            "name":"nameOfEstablishment",
+                            "name": "nameOfEstablishment",
                             "sTitle": "Title of Trade"
                         }, {
                             "data": "tradeOwner",
-                           "name":"licensee.applicantName",
+                            "name": "licensee.applicantName",
                             "sTitle": "Trade Owner"
                         }, {
                             "data": "mobileNumber",
-                            "name":"licensee.mobilePhoneNumber",
+                            "name": "licensee.mobilePhoneNumber",
                             "sTitle": "Mobile Number"
                         }, {
                             "data": "propertyAssmntNo",
-                            "name":"assessmentNo",
+                            "name": "assessmentNo",
                             "sTitle": "Property Assessment Number"
                         }, {
                             "data": "expiryYear",
-                             "name":"dateOfExpiry",
+                            "name": "dateOfExpiry",
                             "sTitle": "Financial Year"
                         }, {
                             "data": "status",
-                             "name":"status.id",
+                            "name": "status.id",
                             "sTitle": "Application Status"
                         }, {
                             "data": "active",
-                           "name":"isActive",
+                            "name": "isActive",
                             "sTitle": "License Active"
                         }, {
                             "data": "ownerName",
@@ -470,6 +479,7 @@ $(document).ready(function () {
         }
     );
 });
+
 function goToView(id) {
     window.open("/tl/viewtradelicense/viewTradeLicense-view.action?id=" + id, '', 'scrollbars=yes,width=1000,height=700,status=yes');
 }
@@ -481,15 +491,19 @@ function goToAction(obj, id) {
         window.open("/tl/legacylicense/update/" + id, 'mll' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Collect Fees')
         window.open("/tl/integration/licenseBillCollect.action?licenseId=" + id, 'cf' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
-    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate' || obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
-        window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id, 'gc' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Certificate')
+        window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + id);
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Provisional Certificate')
+        window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + id);
     else if (obj.options[obj.selectedIndex].innerHTML == 'Renew License')
         window.open("/tl/newtradelicense/newTradeLicense-beforeRenew.action?model.id=" + id, 'rl' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand Notice')
         window.open("/tl/demand-notice/generate/" + id, 'dn' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
     else if (obj.options[obj.selectedIndex].innerHTML == 'Closure')
         window.open("/tl/viewtradelicense/showclosureform.action?id=" + id, 'vt' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
-    else if(obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
-        window.open("/tl/demand/licensedemandgenerate?licenseId=" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Generate Demand')
+        window.open("/tl/demand/generate/" + id, 'gd' + id, 'scrollbars=yes,width=1000,height=700,status=yes');
+    else if (obj.options[obj.selectedIndex].innerHTML == 'Print Acknowledgment')
+        window.open("/tl/license/acknowledgement/" + id);
     $(obj).val('');
 }

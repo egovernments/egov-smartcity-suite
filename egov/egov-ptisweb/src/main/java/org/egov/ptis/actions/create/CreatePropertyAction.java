@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,76 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.actions.create;
 
-import static org.apache.commons.lang.StringUtils.isBlank;
-import static org.apache.commons.lang.StringUtils.isNotBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADMIN_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPURTENANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_CENTRAL_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_MIXED;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_NON_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_RESIDENTIAL;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_VACANT_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEVIATION_PERCENTAGE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTIONWARD_BNDRY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ELECTION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NON_VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_PRIVATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_STATE_GOVT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_BIFUR;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROP_CREATE_RSN_NEWPROPERTY_CODE;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_PROPERTYIMPL_BYID;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCE_ONLINE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_BILL_NOTCREATED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_DEMAND_INACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_ISACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_WORKFLOW;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_YES_XML_MIGRATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.VAC_LAND_PROPERTY_TYPE_CATEGORY;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.SortedMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.Query;
-import javax.servlet.http.HttpServletRequest;
-
+import com.google.gson.GsonBuilder;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -131,7 +73,6 @@ import org.egov.infra.persistence.entity.CorrespondenceAddress;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.portal.entity.Citizen;
 import org.egov.ptis.actions.common.CommonServices;
@@ -141,32 +82,7 @@ import org.egov.ptis.client.util.PropertyTaxNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.enums.TransactionType;
-import org.egov.ptis.domain.entity.property.Apartment;
-import org.egov.ptis.domain.entity.property.BasicProperty;
-import org.egov.ptis.domain.entity.property.BasicPropertyImpl;
-import org.egov.ptis.domain.entity.property.BuiltUpProperty;
-import org.egov.ptis.domain.entity.property.DocumentType;
-import org.egov.ptis.domain.entity.property.Floor;
-import org.egov.ptis.domain.entity.property.FloorType;
-import org.egov.ptis.domain.entity.property.Property;
-import org.egov.ptis.domain.entity.property.PropertyAddress;
-import org.egov.ptis.domain.entity.property.PropertyDepartment;
-import org.egov.ptis.domain.entity.property.PropertyDetail;
-import org.egov.ptis.domain.entity.property.PropertyID;
-import org.egov.ptis.domain.entity.property.PropertyImpl;
-import org.egov.ptis.domain.entity.property.PropertyMutationMaster;
-import org.egov.ptis.domain.entity.property.PropertyOccupation;
-import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
-import org.egov.ptis.domain.entity.property.PropertyStatus;
-import org.egov.ptis.domain.entity.property.PropertyStatusValues;
-import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
-import org.egov.ptis.domain.entity.property.PropertyUsage;
-import org.egov.ptis.domain.entity.property.RoofType;
-import org.egov.ptis.domain.entity.property.StructureClassification;
-import org.egov.ptis.domain.entity.property.TaxExemptionReason;
-import org.egov.ptis.domain.entity.property.VacantProperty;
-import org.egov.ptis.domain.entity.property.WallType;
-import org.egov.ptis.domain.entity.property.WoodType;
+import org.egov.ptis.domain.entity.property.*;
 import org.egov.ptis.domain.entity.property.vacantland.LayoutApprovalAuthority;
 import org.egov.ptis.domain.entity.property.vacantland.VacantLandPlotArea;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
@@ -179,7 +95,24 @@ import org.egov.ptis.domain.service.reassign.ReassignService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.google.gson.GsonBuilder;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
+import javax.servlet.http.HttpServletRequest;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.SortedMap;
+
+import static org.apache.commons.lang.StringUtils.isBlank;
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 /**
  * @author parvati
@@ -195,7 +128,8 @@ import com.google.gson.GsonBuilder;
         @Result(name = "error", location = "common/meeseva-errorPage.jsp"),
         @Result(name = CreatePropertyAction.PRINT_ACK, location = "create/createProperty-printAck.jsp"),
         @Result(name = CreatePropertyAction.MEESEVA_RESULT_ACK, location = "common/meesevaAck.jsp"),
-        @Result(name = CreatePropertyAction.EDIT_DATA_ENTRY, location = "create/createProperty-editDataEntry.jsp") })
+        @Result(name = CreatePropertyAction.EDIT_DATA_ENTRY, location = "create/createProperty-editDataEntry.jsp"),
+        @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp")})
 public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private static final long serialVersionUID = -2329719786287615451L;
@@ -223,7 +157,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     transient PropertyPersistenceService basicPropertyService;
     @Autowired
     transient APTaxCalculator taxCalculator;
-
+    
     private Long zoneId;
     private Long wardId;
     private Long blockId;
@@ -270,10 +204,10 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
 
     private Long mutationId;
 
-    private Map<String, String> propTypeCategoryMap;
-    private SortedMap<Integer, String> floorNoMap;
-    private Map<String, String> deviationPercentageMap;
-    private List<DocumentType> documentTypes = new ArrayList<>();
+    private transient Map<String, String> propTypeCategoryMap;
+    private transient SortedMap<Integer, String> floorNoMap;
+    private transient Map<String, String> deviationPercentageMap;
+    private transient List<DocumentType> documentTypes = new ArrayList<>();
 
     private String reportId;
     private boolean approved;
@@ -282,11 +216,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient BasicProperty basicProp;
     @Autowired
     private transient PropertyService propService;
-    private PropertyTypeMaster propTypeMstr;
+    private transient PropertyTypeMaster propTypeMstr;
     @Autowired
     private transient PropertyTaxNumberGenerator propertyTaxNumberGenerator;
-    private PropertyImpl newProperty = new PropertyImpl();
-    private Address ownerAddress = new CorrespondenceAddress();
+    private transient PropertyImpl newProperty = new PropertyImpl();
+    private transient Address ownerAddress = new CorrespondenceAddress();
     Date propCompletionDate = null;
     @Autowired
     private transient BoundaryService boundaryService;
@@ -302,19 +236,19 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private String modifyRsn;
     private Boolean showTaxCalcBtn = Boolean.FALSE;
     private Long propertyDepartmentId;
-    private List<PropertyDepartment> propertyDepartmentList = new ArrayList<>();
-    private List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
-    private List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
+    private transient List<PropertyDepartment> propertyDepartmentList = new ArrayList<>();
+    private transient List<VacantLandPlotArea> vacantLandPlotAreaList = new ArrayList<>();
+    private transient List<LayoutApprovalAuthority> layoutApprovalAuthorityList = new ArrayList<>();
     private Long vacantLandPlotAreaId;
     private Long layoutApprovalAuthorityId;
     private boolean allowEditDocument = Boolean.FALSE;
-    private List<DocumentType> assessmentDocumentTypes = new ArrayList<>();
-    private List<String> assessmentDocumentNames;
+    private transient List<DocumentType> assessmentDocumentTypes = new ArrayList<>();
+    private transient List<String> assessmentDocumentNames;
     private transient DocumentTypeDetails documentTypeDetails = new DocumentTypeDetails();
     private boolean eligibleInitiator = Boolean.TRUE;
     private boolean dataEntry = Boolean.FALSE;
     private String applicationSource;
-    private List<String> guardianRelations;
+    private transient List<String> guardianRelations;
 
     @Autowired
     private transient PropertyDepartmentRepository propertyDepartmentRepository;
@@ -326,7 +260,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     private transient LayoutApprovalAuthorityRepository layoutApprovalAuthorityRepository;
     
     @Autowired
-    private ReassignService reassignmentservice;
+    private transient ReassignService reassignmentservice;
 
     @PersistenceContext
     private transient EntityManager entityManager;
@@ -410,7 +344,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
         }
         if (SOURCE_ONLINE.equalsIgnoreCase(applicationSource) && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
-
+        if (multipleSubmitCondition(property, approverPositionId)) {
+            return multipleSubmitRedirect();
+        }
         if (property.getPropertyDetail().isAppurtenantLandChecked()) {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
                     Long.valueOf(propTypeId));
@@ -418,12 +354,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 property.getPropertyDetail().setPropertyType(VACANT_PROPERTY);
             else
                 property.getPropertyDetail().setPropertyType(PropertyTaxConstants.BUILT_UP_PROPERTY);
-            return createAppurTenantProperties(STATUS_DEMAND_INACTIVE);
+            return createAppurTenantProperties(STATUS_WORKFLOW);
         }
 
-        final BasicProperty basicProperty = createBasicProp(STATUS_DEMAND_INACTIVE);
+        final BasicProperty basicProperty = createBasicProp(STATUS_WORKFLOW);
         try {
-            addDemandAndCompleteDate(STATUS_DEMAND_INACTIVE, basicProperty, basicProperty.getPropertyMutationMaster());
+            addDemandAndCompleteDate(STATUS_WORKFLOW, basicProperty, basicProperty.getPropertyMutationMaster());
         } catch (final TaxCalculatorExeption e) {
             basicProperty.setPropertyOwnerInfoProxy(basicProperty.getPropertyOwnerInfo());
             addActionError(getText(UNIT_RATE_ERROR));
@@ -684,8 +620,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             for (final PropertyOwnerInfo ownerInfo : basicProp.getPropertyOwnerInfo())
                 for (final Address userAddress : ownerInfo.getOwner().getAddress())
                     if (null != userAddress) {
-                        final String corrAddress = userAddress.getHouseNoBldgApt() + ","
-                                + userAddress.getAreaLocalitySector();
+                        final String corrAddress = (userAddress.getHouseNoBldgApt() != null
+                                ? userAddress.getHouseNoBldgApt() + ","
+                                : "") + userAddress.getAreaLocalitySector();
                         setCorrAddress1(corrAddress);
                         setCorrAddress2(userAddress.getStreetRoadLine());
                         setCorrPinCode(userAddress.getPinCode());
@@ -819,6 +756,9 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             validateApproverDetails();
             if (hasErrors())
                 return RESULT_VIEW;
+        }
+        if (multipleSubmitCondition(property, approverPositionId)) {
+            return multipleSubmitRedirect();
         }
         if (!WFLOW_ACTION_STEP_REJECT.equalsIgnoreCase(workFlowAction))
             transitionWorkFlow(property);
@@ -1057,7 +997,12 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 preparePropertyTaxDetails(property);
             historyMap = propService.populateHistory(property);
         }
-
+        if (property.getState() != null) {
+        endorsementRequired = propertyTaxCommonUtils.getEndorsementGenerate(securityUtils.getCurrentUser().getId(), property.getCurrentState());
+        ownersName = property.getBasicProperty().getFullOwnerName();
+        applicationNumber =  property.getApplicationNo();
+        endorsementNotices = propertyTaxCommonUtils.getEndorsementNotices(applicationNumber);
+    }
         documentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE);
         assessmentDocumentTypes = propService.getDocumentTypesForTransactionType(TransactionType.CREATE_ASMT_DOC);
         final List<FloorType> floorTypeList = getPersistenceService().findAllBy("from FloorType order by name");
@@ -1081,9 +1026,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (property.getMeesevaServiceCode().equalsIgnoreCase(MEESEVA_SERVICE_CODE_SUBDIVISION))
                 getMutationListByCode(PROP_CREATE_RSN_NEWPROPERTY_BIFURCATION_CODE);
         }
-        List<PropertyUsage> usageList = getPersistenceService()
-                .findAllBy("from PropertyUsage where isActive = true order by usageName");
-
         final List<String> ageFacList = getPersistenceService().findAllBy("from DepreciationMaster");
         final List<String> structureList = getPersistenceService()
                 .findAllBy("from StructureClassification where isActive = true order by typeName ");
@@ -1133,24 +1075,14 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 setPropTypeCategoryMap(NON_VAC_LAND_PROPERTY_TYPE_CATEGORY);
         } else
             setPropTypeCategoryMap(Collections.emptyMap());
-
-        // Loading property usages based on property category
-        if (StringUtils.isNoneBlank(propertyCategory))
-            if (propertyCategory.equals(CATEGORY_MIXED))
-                usageList = getPersistenceService().findAllBy("From PropertyUsage where isActive = true order by usageName");
-            else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
-                usageList = getPersistenceService()
-                        .findAllBy("From PropertyUsage where isResidential = true and isActive = true order by usageName");
-            else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
-                usageList = getPersistenceService()
-                        .findAllBy("From PropertyUsage where isResidential = false and isActive = true  order by usageName");
-
-        addDropdownData(USAGE_LIST, usageList);
-        // tax exempted properties
+       if(property!=null)
+           populateUsages(isNotBlank(propertyCategory) ? propertyCategory : property.getPropertyDetail().getCategoryType());
+       else
+           populateUsages(propertyCategory);
+       // tax exempted properties
         addDropdownData(EXEMPTED_REASON_LIST, CommonServices.getTaxExemptedList());
 
         // Loading Property Department based on ownership of property
-
         if (propTypeId != null && !propTypeId.trim().isEmpty() && !"-1".equals(propTypeId)) {
             propTypeMstr = (PropertyTypeMaster) getPersistenceService().find(PROPTYPEMASTER_QUERY,
                     Long.valueOf(propTypeId));
@@ -1329,7 +1261,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 ownerAddress.setAreaLocalitySector(getCorrAddress1());
             else
                 ownerAddress.setAreaLocalitySector(corrAddr[1]);
-            ownerAddress.setHouseNoBldgApt(getHouseNumber());
             ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setCityTownVillage(cityName);
             ownerAddress.setPinCode(getCorrPinCode());
@@ -1362,7 +1293,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             ownerAddress.setPinCode(propAddr.getPinCode());
         } else {
             ownerAddress = new CorrespondenceAddress();
-            ownerAddress.setHouseNoBldgApt(getHouseNumber());
             ownerAddress.setAreaLocalitySector(getCorrAddress1());
             ownerAddress.setStreetRoadLine(getCorrAddress2());
             ownerAddress.setCityTownVillage(cityName);
@@ -1456,8 +1386,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             if (owner != null)
                 for (int j = i + 1; j <= count - 1; j++) {
                     final PropertyOwnerInfo owner1 = property.getBasicProperty().getPropertyOwnerInfoProxy().get(j);
-                    if (owner1 != null)
-                        if (owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
+                    if (owner1 != null && owner.getOwner().getMobileNumber().equalsIgnoreCase(owner1.getOwner().getMobileNumber())
                                 && owner.getOwner().getName().equalsIgnoreCase(owner1.getOwner().getName()))
                             addActionError(getText("error.owner.duplicateMobileNo", "",
                                     owner.getOwner().getMobileNumber().concat(",").concat(owner.getOwner().getName())));
@@ -1537,16 +1466,11 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
     @SkipValidation
     @Action(value = "/createProperty-printAck")
     public String printAck() {
-        final HttpServletRequest request = ServletActionContext.getRequest();
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        final String cityLogo = url.concat(PropertyTaxConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo"));
-        final String cityName = request.getSession().getAttribute("citymunicipalityname").toString();
         if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())
                 && ApplicationThreadLocals.getUserId() == null)
             ApplicationThreadLocals.setUserId(securityUtils.getCurrentUser().getId());
         reportId = reportViewerUtil
-                .addReportToTempCache(basicPropertyService.propertyAcknowledgement(property, cityLogo, cityName));
+                .addReportToTempCache(basicPropertyService.propertyAcknowledgement(property));
         return PRINT_ACK;
     }
 
@@ -1644,7 +1568,6 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
             logger.debug("create: BasicProperty after creatation: " + basicProperty);
         basicProperty.setAssessmentdate(propCompletionDate);
         basicProperty.setIsTaxXMLMigrated(STATUS_YES_XML_MIGRATION);
-        // basicPropertyService.applyAuditing(property);
         basicPropertyService.persist(basicProperty);
         // TODO update index by assesment no
         // propService.updateIndexes(property, APPLICATION_TYPE_NEW_ASSESSENT);
@@ -1702,7 +1625,7 @@ public class CreatePropertyAction extends PropertyTaxBaseAction {
                 basicProp.setPropOccupationDate(propCompletionDate);
                 property.setBasicProperty(basicProp);
             }
-            if (propTypeMstr != null && propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
+            if (propTypeMstr.getCode().equals(OWNERSHIP_TYPE_VAC_LAND))
                 property.setPropertyDetail(propService.changePropertyDetail(property, property.getPropertyDetail(), 0)
                         .getPropertyDetail());
             try {

@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
@@ -61,17 +69,28 @@
 						<s:textarea name="objection.inspections[%{inspectionIdx}].inspectionRemarks"
 							id="inspectionRemarks" cols="40" rows="2" onblur="checkLength(this)"></s:textarea>
 					</td>
-					<td class="bluebox" width="25%">
-						<s:text name="revisionPetition.generateSpecialNotice" />
+					<td class="bluebox" width="25%"><s:text
+							name="objection.actualhearingdate" /><span class="mandatory1">*</span>
+						&nbsp;</td>
+					<td class="bluebox" width="25%"><s:hidden name="objection.hearings[0].id"
+							id="objection.hearings[0].id" /> <s:textfield
+							name="objection.hearings[0].actualHearingDt"
+							cssClass="datepicker" value="%{#actualHearingDtId}"
+							autocomplete="off" id="actualHearingDtId" size="12"
+							maxlength="12"></s:textfield></td>
+				</tr>
+				<tr>
+				<td class="bluebox" width="25%">
+						<s:text name="revisionPetition.generateProceedings" />
 					</td>
 					<td class="bluebox" width="25%">
 						<s:radio name="generateSpecialNotice"
 							list="#{'true':'Yes','false':'No'}" id="generateSpecialNotice" value="%{generateSpecialNotice}" />
-					</td>
-
+					</td>		
 				</tr>
-				
 			</table>
 		</td>
+	</tr>
+	<tr>
 	</tr>
 </table>

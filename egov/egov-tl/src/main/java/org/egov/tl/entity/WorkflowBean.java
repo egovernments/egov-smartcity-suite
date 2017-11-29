@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.entity;
@@ -60,33 +68,47 @@ public class WorkflowBean {
     private String workFlowAction;
     private Long approverPositionId;
     private String currentState;
+    private String currentDesignation;
+    private String disabledFields;
 
     public String getActionName() {
         return actionName;
-    }
-
-    public String getActionState() {
-        return actionState;
-    }
-
-    public Long getApproverUserId() {
-        return approverUserId;
-    }
-
-    public List<Department> getDepartmentList() {
-        return departmentList;
-    }
-
-    public List<Designation> getDesignationList() {
-        return designationList;
     }
 
     public void setActionName(final String actionName) {
         this.actionName = actionName;
     }
 
+    public String getActionState() {
+        return actionState;
+    }
+
     public void setActionState(final String actionState) {
         this.actionState = actionState;
+    }
+
+    public Long getApproverUserId() {
+        return approverUserId;
+    }
+
+    public void setApproverUserId(final Long approverUserId) {
+        this.approverUserId = approverUserId;
+    }
+
+    public List<Department> getDepartmentList() {
+        return departmentList;
+    }
+
+    public void setDepartmentList(final List<Department> departmentList) {
+        this.departmentList = departmentList;
+    }
+
+    public List<Designation> getDesignationList() {
+        return designationList;
+    }
+
+    public void setDesignationList(final List<Designation> designationList) {
+        this.designationList = designationList;
     }
 
     public List<User> getAppoverUserList() {
@@ -95,14 +117,6 @@ public class WorkflowBean {
 
     public void setAppoverUserList(final List<User> appoverUserList) {
         this.appoverUserList = appoverUserList;
-    }
-
-    public void setApproverUserId(final Long approverUserId) {
-        this.approverUserId = approverUserId;
-    }
-
-    public void setDepartmentList(final List<Department> departmentList) {
-        this.departmentList = departmentList;
     }
 
     public Integer getDepartmentId() {
@@ -121,10 +135,6 @@ public class WorkflowBean {
         this.designationId = designationId;
     }
 
-    public void setDesignationList(final List<Designation> designationList) {
-        this.designationList = designationList;
-    }
-    
     public String getApproverComments() {
         return approverComments;
     }
@@ -140,7 +150,7 @@ public class WorkflowBean {
     public void setWorkFlowAction(String workFlowAction) {
         this.workFlowAction = workFlowAction;
     }
-    
+
     public Long getApproverPositionId() {
         return approverPositionId;
     }
@@ -148,7 +158,7 @@ public class WorkflowBean {
     public void setApproverPositionId(Long approverPositionId) {
         this.approverPositionId = approverPositionId;
     }
-    
+
     public String getCurrentState() {
         return currentState;
     }
@@ -156,7 +166,7 @@ public class WorkflowBean {
     public void setCurrentState(String currentState) {
         this.currentState = currentState;
     }
-    
+
     public String getAdditionaRule() {
         return additionaRule;
     }
@@ -164,6 +174,20 @@ public class WorkflowBean {
     public void setAdditionaRule(String additionaRule) {
         this.additionaRule = additionaRule;
     }
-    
 
+    public String getCurrentDesignation() {
+        return currentDesignation;
+    }
+
+    public void setCurrentDesignation(String currentDesignation) {
+        this.currentDesignation = currentDesignation;
+    }
+
+    public String getDisabledFields() {
+        return disabledFields;
+    }
+
+    public void setDisabledFields(String disabledFields) {
+        this.disabledFields = disabledFields;
+    }
 }

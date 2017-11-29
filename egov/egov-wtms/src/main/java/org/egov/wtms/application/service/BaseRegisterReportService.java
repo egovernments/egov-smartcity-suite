@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,14 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.application.service;
-
-import java.text.ParseException;
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang.StringUtils;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
@@ -54,6 +56,11 @@ import org.hibernate.Session;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.text.ParseException;
+import java.util.List;
 
 @Service
 @Transactional(readOnly = true)
@@ -87,8 +94,37 @@ public class BaseRegisterReportService {
                 " egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id ");
         queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
         queryStr.append(
-                " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=true and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
+                " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=true  and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
                         + ConnectionStatus.ACTIVE.toString() + "'");
+        if (StringUtils.isNotBlank(ward))
+            queryStr.append(" and wardboundary.id = :ward");
+        queryStr.append(
+                " UNION select dcbinfo.hscno as \"consumerNo\", dcbinfo.oldhscno as \"oldConsumerNo\", dcbinfo.propertyid as \"assementNo\", ");
+        queryStr.append(
+                "dcbinfo.username as \"ownerName\",dcbinfo.categorytype as \"categoryType\",dcbinfo.username as \"period\",dcbinfo.houseno as \"doorNo\",");
+        queryStr.append(
+                " dcbinfo.connectiontype as \"connectionType\" , dcbinfo.arr_demand as \"arrears\" ,  dcbinfo.curr_demand as \"current\" , ");
+        queryStr.append(" dcbinfo.arr_coll as \"arrearsCollection\" ,  dcbinfo.curr_coll as \"currentCollection\" , ");
+        queryStr.append(
+                " dcbinfo.arr_demand+dcbinfo.curr_demand as \"totalDemand\" , dcbinfo.usagetype as \"usageType\" , dcbinfo.waterSource as \"waterSource\" ,");
+        queryStr.append(
+                " dcbinfo.pipesize as \"pipeSize\" , dcbinfo.arr_coll+dcbinfo.curr_coll as \"totalCollection\" , 0 as \"monthlyRate\" ");
+        queryStr.append(
+                " from  egwtr_usage_type ut, egwtr_water_source wt, egwtr_pipesize ps, egwtr_water_rates_header wrh,egwtr_water_rates_details wrd ,");
+        queryStr.append(
+                " egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id ");
+        queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+        queryStr.append(
+                " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=false and dcbinfo.connectionstatus = '"
+                        + ConnectionStatus.ACTIVE.toString() + "'" +" and dcbinfo.hscno not in (");
+        queryStr.append(
+                " select dcbinfo.hscno from  egwtr_usage_type ut, egwtr_water_source wt, egwtr_pipesize ps, egwtr_water_rates_header wrh,egwtr_water_rates_details wrd ,");
+        queryStr.append(
+                " egwtr_mv_dcb_view dcbinfo INNER JOIN eg_boundary wardboundary on dcbinfo.wardid = wardboundary.id ");
+        queryStr.append(" INNER JOIN eg_boundary localboundary on dcbinfo.locality = localboundary.id");
+        queryStr.append(
+                " where ut.id=wrh.usagetype and wt.id=wrh.watersource and ps.id=wrh.pipesize and dcbinfo.usagetype =ut.name and  dcbinfo.watersource = wt.watersourcetype and dcbinfo.pipesize = ps.code and wrd.waterratesheader=wrh.id and wrh.active=true  and wrd.fromdate <= now() and  wrd.todate >= now() and dcbinfo.connectionstatus = '"
+                        + ConnectionStatus.ACTIVE.toString() + "')");
         if (StringUtils.isNotBlank(ward))
             queryStr.append(" and wardboundary.id = :ward");
         final SQLQuery query = getCurrentSession().createSQLQuery(queryStr.toString());

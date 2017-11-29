@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ taglib prefix="s" uri="/WEB-INF/taglib/struts-tags.tld"%>
@@ -114,9 +122,12 @@
 			</div>
 			<div class="col-xs-3 add-margin view-content">
 				Rs.
+				<s:if test='%{viewMap.ARV != null}'>
 				<s:text name="format.money">
 					<s:param value="viewMap.ARV" />
 				</s:text>
+				</s:if>
+				<s:else>0</s:else>
 			</div>
 			<div class="col-xs-3 add-margin">
 				<s:text name="effectivedt" />
@@ -480,21 +491,8 @@
 	<div class="panel-heading">
 		<div class="panel-title">Tax Details</div>
 	</div>
-	<%@ include file="../common/taxDetails.jsp"%>
-	
+	<%@ include file="../common/taxDetails.jsp"%>	
 </div>
-<div class="panel panel-primary" data-collapsed="0"
-	style="text-align: left">
-	<div class="panel-heading">
-		<div class="panel-title">Uploaded Documents</div>
-	</div>
-	<%@ include file="document-view.jsp"%>	
-</div>
-<div class="panel panel-primary" data-collapsed="0"
-	style="text-align: left">
-	<%@ include file="../common/workflowHistoryView.jsp"%>	
-</div>
-
 <script type="text/javascript">
 	function showDocumentManagerView(indexNum) {
 		var url = "../view/viewProperty!viewDoc.action?propertyId=" + indexNum;

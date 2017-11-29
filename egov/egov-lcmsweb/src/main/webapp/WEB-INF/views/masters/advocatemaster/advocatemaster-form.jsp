@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 <div class="row">
 	<div class="col-md-12">
@@ -43,6 +51,7 @@
 			<div class="panel-heading">
 				<div class="panel-title">Standing Counsel</div>
 			</div>
+			<form:hidden id="mode" path="" value="${mode}" />
 			<div class="panel-body">
 				<div class="form-group">
 					<label for="field-1" class="col-sm-2 control-label"><spring:message
@@ -171,9 +180,11 @@
 					</label>
 					<div class="col-sm-3 add-margin">
 						<form:input path="monthlyRenumeration" maxlength="10"
-							id="monthlyRenumeration"
-							class="form-control patternvalidation" 
-							data-pattern="decimalvalues" required="required"  pattern="\d{0,5}(\.\d{1,2})?" title="It will allow upto 5 digits and 2 decimal points"  data-first-option="false&true"/>
+							id="monthlyRenumeration" class="form-control patternvalidation"
+							data-pattern="decimalvalues" required="required"
+							pattern="\d{0,6}(\.\d{1,2})?"
+							title="It will allow upto 7 digits and 2 decimal points"
+							data-first-option="false&true" />
 						<form:errors path="monthlyRenumeration" cssClass="error-msg" />
 					</div>
 					<label class="col-sm-2 control-label text-right"><spring:message
@@ -182,6 +193,18 @@
 						<form:checkbox path="isRetaineradvocate" />
 						<form:errors path="isRetaineradvocate" cssClass="error-msg" />
 					</div>
+				</div>
+				<div class="form-group">
+					<c:if test="${mode == 'edit'}">
+					<label class="col-sm-2 control-label text-right"><spring:message
+							code="lbl.userName" />:</label>
+					<div class="col-sm-3 add-margin text-center">
+						<form:input class="form-control patternvalidation"
+						  id="username"
+							readonly="readonly" path="advocateUser.username" />
+					</div>
+					<form:errors path="advocateUser.username" cssClass="add-margin error-msg" />
+				</c:if>
 				</div>
 				<div class="form-group" id="b1details">
 					<label class="col-sm-2 control-label text-right"><spring:message

@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
@@ -59,7 +67,8 @@
 					</div>
 				</div>
 				<div class="panel-body custom-form ">
-				<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/>  
+				<input type="hidden" id="currentUser" name="currentUser" value="${currentUser}"/> 
+				<input type="hidden" id="isAnonymousUser" name="isAnonymousUser" value="${isAnonymousUser}"/> 
 				<input type="hidden" name="validateIfPTDueExists" id="validateIfPTDueExists" value="${validateIfPTDueExists}"> 
 				<form:hidden id="mode" path=""  value="${mode}"/>
 				<input type="hidden" name="noJAORSAMessage" id="noJAORSAMessage" value="${noJAORSAMessage}">
@@ -74,7 +83,9 @@
 					<jsp:include page="commonappdetails-view.jsp"></jsp:include>
 				<c:if test="${validationMessage==''}">	
 					<jsp:include page="connectiondetails.jsp"></jsp:include>	
-					<jsp:include page="documentdetails.jsp"></jsp:include>	
+					<c:if test="${!documentNamesList.isEmpty()}">
+						<jsp:include page="documentdetails.jsp"></jsp:include>
+					</c:if>	
 				</c:if>
 				</div>
 			</div>			

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,28 +43,15 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.entity.property;
 
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Transient;
+import javax.persistence.*;
 import javax.validation.constraints.NotNull;
-
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
@@ -66,11 +60,10 @@ import java.util.List;
 @Entity
 @Table(name = "egpt_vacancy_remission")
 @SequenceGenerator(name = VacancyRemission.SEQ_VACANCYREMISSION, sequenceName = VacancyRemission.SEQ_VACANCYREMISSION, allocationSize = 1)
-public class VacancyRemission extends StateAware {
+public class VacancyRemission extends StateAware<Position> {
 
-    private static final long serialVersionUID = 3387659460257524470L;
     public static final String SEQ_VACANCYREMISSION = "SEQ_EGPT_VACANCY_REMISSION";
-
+    private static final long serialVersionUID = 3387659460257524470L;
     @Id
     @GeneratedValue(generator = SEQ_VACANCYREMISSION, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -105,17 +98,17 @@ public class VacancyRemission extends StateAware {
     @OrderBy("id")
     @OneToMany(mappedBy = "vacancyRemission", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<VacancyRemissionApproval> vacancyRemissionApproval = new LinkedList<>();
-    
-    @OneToMany(fetch = FetchType.LAZY,cascade = CascadeType.ALL)
+
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egpt_vacancy_remission_docs", joinColumns = @JoinColumn(name = "vacancyremission"), inverseJoinColumns = @JoinColumn(name = "document"))
-    private List<Document> documents = new ArrayList<>(0);
-    
+    private List<Document> documents = new ArrayList<>();
+
     @Transient
     private String meesevaApplicationNumber;
-   
+
     @Column(name = "source")
     private String source;
-    
+
     @Override
     public String getStateDetails() {
         return "Vacancy Remission" + " - " + this.basicProperty.getUpicNo();
@@ -210,7 +203,7 @@ public class VacancyRemission extends StateAware {
     public void setSource(String source) {
         this.source = source;
     }
-    
+
     public List<Document> getDocuments() {
         return documents;
     }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,21 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.egf.web.controller.contract;
 
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletResponse;
-
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
 import org.egov.commons.CFiscalPeriod;
@@ -63,21 +61,7 @@ import org.egov.commons.service.FunctionService;
 import org.egov.commons.service.FunctionaryService;
 import org.egov.commons.service.FundService;
 import org.egov.commons.service.FundsourceService;
-import org.egov.egf.contract.model.AccountDetailContract;
-import org.egov.egf.contract.model.AccountDetailKeyContract;
-import org.egov.egf.contract.model.AccountDetailTypeContract;
-import org.egov.egf.contract.model.ErrorDetail;
-import org.egov.egf.contract.model.FinancialYearContract;
-import org.egov.egf.contract.model.FiscalPeriodContract;
-import org.egov.egf.contract.model.FunctionContract;
-import org.egov.egf.contract.model.FunctionaryContract;
-import org.egov.egf.contract.model.FundsourceContract;
-import org.egov.egf.contract.model.SchemeContract;
-import org.egov.egf.contract.model.SubledgerDetailContract;
-import org.egov.egf.contract.model.VoucherContract;
-import org.egov.egf.contract.model.VoucherContractResponse;
-import org.egov.egf.contract.model.VoucherRequest;
-import org.egov.egf.contract.model.VoucherResponse;
+import org.egov.egf.contract.model.*;
 import org.egov.egf.voucher.service.ContractVoucherService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -95,7 +79,15 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 
 @Controller
 @RequestMapping("/vouchers")

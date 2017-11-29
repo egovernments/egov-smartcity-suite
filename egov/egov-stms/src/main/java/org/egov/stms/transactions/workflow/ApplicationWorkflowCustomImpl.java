@@ -1,8 +1,8 @@
-/*******************************************************************************
- * eGov suite of products aim to improve the internal efficiency,transparency,
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -24,25 +24,32 @@
  *     In addition to the terms of the GPL license to be adhered to in using this
  *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org
- ******************************************************************************/
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
+
 package org.egov.stms.transactions.workflow;
 
 
-import java.math.BigDecimal;
-import java.util.Date;
-
+import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
@@ -60,6 +67,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.util.Date;
+
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
 
 /**
  * The Class ApplicationCommonWorkflow.
@@ -104,7 +119,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final DateTime currentDate = new DateTime();
         Position pos = null;
         Assignment wfInitiator = null;
-        String currState = "";
+        String currState = StringUtils.EMPTY;
         WorkFlowMatrix wfmatrix = null;
         
         String natureOfwork =  sewerageApplicationDetails.getApplicationType().getName();
@@ -212,6 +227,12 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
 
+            } // End workflow on executive engineer approval 
+            else if (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)
+                    && WF_STATE_PAYMENTDONE.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())) {
+                sewerageApplicationDetails.transition().end()
+                        .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
             } // End workflow on execute connection
             else if (SewerageTaxConstants.WF_STATE_CONNECTION_EXECUTION_BUTTON.equalsIgnoreCase(workFlowAction)) {
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
@@ -222,7 +243,18 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                     sewerageApplicationDetails.transition().end()
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                             .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
-            } // TODO : Need to check this usecase. 
+            }
+            //  End workflow on executive engineer approval when application directly fwd from DEE to EE
+            else if (WF_STATE_DEPUTY_EXE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())
+                    && CHANGEINCLOSETS_NOCOLLECTION.equalsIgnoreCase(additionalRule)) {
+                sewerageApplicationDetails.setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(
+                        SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED, SewerageTaxConstants.MODULETYPE));
+                sewerageApplicationDetails.transition().end()
+                        .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+
+            }
+            // TODO : Need to check this usecase. 
             else if (null != approvalComent && "Receipt Cancelled".equalsIgnoreCase(approvalComent)) {  
                 wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                         null, null, additionalRule, SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED, null);
@@ -281,7 +313,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
         final DateTime currentDate = new DateTime();
         Position pos = null;
         Assignment wfInitiator = null;
-        String currState = "";
+        String currState = StringUtils.EMPTY;
         WorkFlowMatrix wfmatrix = null;
         
         String natureOfwork =  sewerageApplicationDetails.getApplicationType().getName();
@@ -317,7 +349,14 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                             .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
                             .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(pos)
                             .withNextAction(wfmatrix.getNextAction()).withNatureOfTask(natureOfwork);
-                }  // End workflow on execute connection
+                }  
+                // close connection on executive engineer approval
+                else if (WF_STATE_DEPUTY_EXE_APPROVED.equalsIgnoreCase(sewerageApplicationDetails.getState().getValue())) {
+                sewerageApplicationDetails.transition().end()
+                        .withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNatureOfTask(natureOfwork);
+                }
+                // End workflow on execute connection
                 else if (SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON.equalsIgnoreCase(workFlowAction)) {
                     wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                             null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), SewerageTaxConstants.WF_STATE_CLOSECONNECTION_NOTICEGENERATION_PENDING);
@@ -338,7 +377,7 @@ public abstract class ApplicationWorkflowCustomImpl implements ApplicationWorkfl
                         .withDateInfo(currentDate.toDate()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(natureOfwork);
                         
-                    }  else{ 
+                    }  else { 
                             wfmatrix = sewerageApplicationWorkflowService.getWfMatrix(sewerageApplicationDetails.getStateType(),
                             null, null, additionalRule, sewerageApplicationDetails.getCurrentState().getValue(), pendingActions);
                             sewerageApplicationDetails.transition().progressWithStateCopy().withSenderName(user.getUsername() + "::" + user.getName())

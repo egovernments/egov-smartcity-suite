@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.council.web.controller;
 
@@ -48,7 +56,6 @@ import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCH
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -64,6 +71,7 @@ import org.egov.council.entity.CouncilPreamble;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilAgendaService;
 import org.egov.council.service.CouncilPreambleService;
+import org.egov.council.utils.constants.CouncilConstants;
 import org.egov.council.web.adaptor.CouncilAgendaJsonAdaptor;
 import org.egov.council.web.adaptor.CouncilPreambleJsonAdaptor;
 import org.egov.infra.admin.master.entity.Boundary;
@@ -88,6 +96,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/agenda")
 public class CouncilAgendaController {
 
+    private static final String AGENDA_NUMBER_AUTO = "AGENDA_NUMBER_AUTO";
     private static final String DATA = "{\"data\":";
     private static final String COUNCIL_AGENDA = "councilAgenda";
     private static final String COUNCILAGENDA_NEW = "create-agenda";
@@ -139,6 +148,7 @@ public class CouncilAgendaController {
 
     @RequestMapping(value = "/new", method = RequestMethod.GET)
     public String newForm(final Model model) {
+        model.addAttribute("autoAgendaNoGenEnabled", isAutoAgendaNoGenEnabled()); 
         model.addAttribute(COUNCIL_AGENDA, new CouncilAgenda());
         model.addAttribute("councilPreamble", new CouncilPreamble());
         return COUNCILAGENDA_NEW;
@@ -164,12 +174,12 @@ public class CouncilAgendaController {
                 preambleList.add(councilAgendaDetails);
             }
         }
-
-        AgendaNumberGenerator agendaNumberGenerator = autonumberServiceBeanResolver
-                .getAutoNumberServiceFor(AgendaNumberGenerator.class);
-        councilAgenda.setAgendaNumber(agendaNumberGenerator
-                .getNextNumber(councilAgenda));
-
+        if (isAutoAgendaNoGenEnabled()) {
+            AgendaNumberGenerator agendaNumberGenerator = autonumberServiceBeanResolver
+                    .getAutoNumberServiceFor(AgendaNumberGenerator.class);
+            councilAgenda.setAgendaNumber(agendaNumberGenerator
+                    .getNextNumber(councilAgenda));
+        }
         councilAgenda.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(
                 AGENDA_MODULENAME, AGENDA_STATUS_APPROVED));
         councilAgenda.setAgendaDetails(preambleList);
@@ -228,7 +238,7 @@ public class CouncilAgendaController {
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model,
-            final HttpServletResponse response) throws IOException {
+            final HttpServletResponse response){
         CouncilAgenda councilAgenda = councilAgendaService.findOne(id);
         councilAgenda.setCouncilAgendaDetailsForUpdate(councilAgenda
                 .getAgendaDetails());
@@ -313,6 +323,11 @@ public class CouncilAgendaController {
                 .append(toJSON(searchResultList, CouncilAgenda.class,
                         CouncilAgendaJsonAdaptor.class))
                 .append("}").toString();
+    }
+    
+    public Boolean isAutoAgendaNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                CouncilConstants.MODULE_FULLNAME, AGENDA_NUMBER_AUTO);
     }
 
 }

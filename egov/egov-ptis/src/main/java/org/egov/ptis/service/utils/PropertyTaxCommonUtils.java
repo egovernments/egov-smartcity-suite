@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,80 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.service.utils;
-
-import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDITIONAL_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_DIGITAL_SIGNATURE;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARREARS;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ASSISTANT_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CITIZEN_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.CSC_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_PRIMARY_SERVICE_CHARGES;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_SEWERAGE_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_CODE_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEPUTY_COMMISSIONER_DESIGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_RP;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TITLE_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_GRPPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_MUTATION_CERTIFICATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_RPPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_SPECIAL_NOTICE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOTICE_TYPE_VRPROCEEDINGS;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_AMALG;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSACTION_TYPE_CREATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONAL_COMMISSIONER_DESIGN;
-
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.TreeMap;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -133,20 +69,24 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.persistence.entity.enums.GuardianRelation;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberUtil;
+import org.egov.infra.workflow.entity.State;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
+import org.egov.ptis.domain.entity.property.PropertyID;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyOwnerInfo;
 import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
+import org.egov.ptis.domain.entity.property.SurroundingsAudit;
 import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.model.calculator.MiscellaneousTax;
 import org.egov.ptis.domain.model.calculator.TaxCalculationInfo;
@@ -157,6 +97,24 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.text.ParseException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.TreeMap;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import static org.egov.collection.constants.CollectionConstants.QUERY_RECEIPTS_BY_RECEIPTNUM;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public class PropertyTaxCommonUtils {
     private static final Logger LOGGER = Logger.getLogger(PropertyTaxCommonUtils.class);
@@ -192,7 +150,7 @@ public class PropertyTaxCommonUtils {
     private DepartmentService departmentService;
         
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     /**
      * Gives the first half of the current financial year
@@ -302,6 +260,12 @@ public class PropertyTaxCommonUtils {
     public boolean isDigitalSignatureEnabled() {
         final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
                 APPCONFIG_DIGITAL_SIGNATURE);
+        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
+    }
+    
+    public boolean isMuadIntegrationRequired() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                APPCONFIG_MAUD_INTEGRATION_REQUIRED);
         return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
     }
 
@@ -648,15 +612,15 @@ public class PropertyTaxCommonUtils {
         return Stream.of(GuardianRelation.values()).map(GuardianRelation::name).collect(Collectors.toList());
     }
     
-    public Position getPositionForUser(final Long userId) {
-        Position position = null;
+    public List<Long> getPositionForUser(final Long userId) {
+        List<Long> positionIds = new ArrayList<>();
         if (userId != null && userId.intValue() != 0) {
-            position = positionMasterService.getPositionByUserId(userId);
+            for(Position position : positionMasterService.getPositionsForEmployee(ApplicationThreadLocals.getUserId()))
+                positionIds.add(position.getId());
         }
-        return position;
+        return positionIds;
     }
     
-   
     public void buildMailAndSMS(final Property property) {
         String transactionType;
         String modifyReason = property.getPropertyModifyReason();
@@ -720,9 +684,9 @@ public class PropertyTaxCommonUtils {
                     + ApplicationThreadLocals.getMunicipalityName();
         }
         if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
-            messagingService.sendEmail(emailid, emailSubject, emailBody);
+            notificationService.sendEmail(emailid, emailSubject, emailBody);
         if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
-            messagingService.sendSMS(mobileNumber, smsMsg);
+            notificationService.sendSMS(mobileNumber, smsMsg);
     }
 
     public String getNoticeNumber(final String applicationNo, final String workFlowAction) {
@@ -743,6 +707,101 @@ public class PropertyTaxCommonUtils {
         qry.setParameter(2, noticeType);
         PtNotice notice = (PtNotice) qry.getSingleResult();
         return notice.getNoticeNo();
+    }
+
+    @SuppressWarnings("unchecked")
+    public List<PtNotice> getEndorsementNotices(final String applicationNo) {
+        final javax.persistence.Query qry = entityManager
+                .createQuery("from PtNotice notice where applicationNumber=? and noticeType='Endorsement Notice'");
+        qry.setParameter(1, applicationNo);
+        return (List<PtNotice>) qry.getResultList();
+    }
+
+    public Boolean getEndorsementGenerate(final Long userId, final State state) {
+        String loggedInUserDesignation;
+        final List<Assignment> loggedInUserAssign = assignmentService.getAssignmentByPositionAndUserAsOnDate(
+                state.getOwnerPosition().getId(), userId,
+                new Date());
+        loggedInUserDesignation = !loggedInUserAssign.isEmpty()
+                ? loggedInUserAssign.get(0).getDesignation().getName() : null;
+        return !StringUtils.isBlank(loggedInUserDesignation) && isValidDesignationForEndorsement(loggedInUserDesignation, state)
+                && isPrintPendingAction(state) && isEndorsementEnabled();
+    }
+
+    private Boolean isValidDesignationForEndorsement(String loggedInUserDesignation, State state) {
+        return loggedInUserDesignation.equalsIgnoreCase(REVENUE_INSPECTOR_DESGN) ||
+                ((loggedInUserDesignation.equalsIgnoreCase(JUNIOR_ASSISTANT) ||
+                        loggedInUserDesignation.equalsIgnoreCase(SENIOR_ASSISTANT))
+                        && (state.getOwnerPosition() != null));
+    }
+
+    private Boolean isPrintPendingAction(State state) {
+        return !(state.getNextAction()).equalsIgnoreCase(WF_STATE_NOTICE_PRINT_PENDING) &&
+                !(state.getNextAction()).equalsIgnoreCase(WFLOW_ACTION_STEP_PRINT_NOTICE);
+    }
+    
+    public boolean isEndorsementEnabled() {
+        final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                PropertyTaxConstants.APPCONFIG_ENDORSEMENT);
+        return !appConfigValues.isEmpty() && "Y".equals(appConfigValues.get(0).getValue()) ? true : false;
+    }
+    
+    /**
+     * Returns whether the logged in user is the current owner of the application
+     *
+     * @return boolean
+     */
+    public Boolean isOwnerOfApplication(PropertyImpl property, User user, Long approverPositionId) {
+        return !positionMasterService.getPositionsForEmployee(user.getId())
+                .contains(property.getCurrentState().getOwnerPosition()) ? Boolean.TRUE
+                        : validateApproverPosition(approverPositionId,
+                                property.getCurrentState().getOwnerPosition().getId());
+
+    }
+
+    /**
+     * Returns whether the approver user position is same as the current owner position of the application
+     *
+     * @return boolean
+     */
+    public Boolean validateApproverPosition(Long approverPositionId, Long currentPosition) {
+
+        if (null != approverPositionId && approverPositionId != -1 && currentPosition != null) {
+            Boolean b = approverPositionId.longValue() == currentPosition.longValue();
+            return b ? Boolean.TRUE : Boolean.FALSE;
+        } else
+            return Boolean.FALSE;
+    }
+    
+    public List<String> validationForInactiveProperty(BasicProperty basicProperty) {
+        String noOfDays;
+        String reason = null;
+        List<String> list = new ArrayList<>();
+        if (isCorporation())
+            noOfDays = "30";
+        else
+            noOfDays = "15";
+        list.add(noOfDays);
+        if (basicProperty.getProperty().getStatus() == 'I') {
+            if ("CREATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
+                reason = "New Assessment";
+            else if ("ADD_OR_ALTER".equals(basicProperty.getProperty().getPropertyModifyReason()))
+                reason = "Addition/Alteration";
+            list.add(reason);
+            list.add(DateUtils.getFormattedDate(basicProperty.getModifiedDate(), "dd/MM/yyyy"));
+        }
+        return list;
+    }
+    
+    public SurroundingsAudit setSurroundingDetails(final BasicProperty basicProperty) {
+        SurroundingsAudit oldSurroundings = new SurroundingsAudit();
+        PropertyID propertyId = basicProperty.getPropertyID();
+        oldSurroundings.setBasicproperty(basicProperty.getId());
+        oldSurroundings.setEastBoundary(propertyId.getEastBoundary() != null ? propertyId.getEastBoundary() : null);
+        oldSurroundings.setNorthBoundary(propertyId.getNorthBoundary() != null ? propertyId.getNorthBoundary() : null);
+        oldSurroundings.setSouthBoundary(propertyId.getSouthBoundary() != null ? propertyId.getSouthBoundary() : null);
+        oldSurroundings.setWestBoundary(propertyId.getWestBoundary() != null ? propertyId.getWestBoundary() : null);
+        return oldSurroundings;
     }
 
 }

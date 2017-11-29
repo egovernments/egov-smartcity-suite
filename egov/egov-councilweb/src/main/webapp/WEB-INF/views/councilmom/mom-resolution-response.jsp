@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2017>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -44,42 +52,37 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
 <%@ page language="java" pageEncoding="UTF-8"%>
-	
+
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
 				<div class="panel-title text-center no-float">
-							<c:if test="${not empty message}">
-                    			<strong><spring:message code="${message}"/></strong>
-                			</c:if>
-                			<input type="hidden" id="id" name="id" value="${id}">
+					<c:if test="${not empty message}">
+						<strong><spring:message code="${message}" /></strong>
+					</c:if>
+					<input type="hidden" id="id" name="id" value="${id}">
 				</div>
 			</div>
-			
-				<div class="row text-center">
-						<div class="row">
-							<div class="text-center">
-								<button type="button" class="btn btn-default" data-dismiss="modal" onclick="self.close()" ><spring:message code="lbl.close"/></button>
-							</div>
-						</div>
+
+			<div class="row text-center">
+				<div class="row">
+					<div class="text-center">
+						<button type="button" class="btn btn-default" data-dismiss="modal"
+							onclick="self.close()">
+							<spring:message code="lbl.close" />
+						</button>
 					</div>
-	
+				</div>
+			</div>
+
 		</div>
 	</div>
-</div> 
+</div>
 
 <script>
 $( document ).ready(function() {
-	
-	$.ajax({
-	    type: 'GET',
-	    url: '/council/councilmeeting/downloadfile/'+$('#id').val(),
-	    success: function() {
-	    	window.location.href = '/council/councilmeeting/downloadfile/'+$('#id').val();
-	    }
-	});
-	
+	window.location.href = '/council/councilmeeting/downloadfile/'+$('#id').val();
 });
 
 </script>

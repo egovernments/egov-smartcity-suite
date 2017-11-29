@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.service;
@@ -56,6 +64,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.persistence.entity.enums.UserType;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -65,12 +74,15 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.entity.LicenseDemand;
+import org.egov.tl.entity.LicenseDocument;
+import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.NatureOfBusiness;
 import org.egov.tl.entity.TradeLicense;
 import org.egov.tl.entity.WorkflowBean;
-import org.egov.tl.entity.dto.DemandNoticeForm;
-import org.egov.tl.entity.dto.OnlineSearchForm;
-import org.egov.tl.entity.dto.SearchForm;
+import org.egov.tl.entity.contracts.DemandNoticeForm;
+import org.egov.tl.entity.contracts.OnlineSearchForm;
+import org.egov.tl.entity.contracts.SearchForm;
 import org.egov.tl.repository.SearchTradeRepository;
 import org.egov.tl.repository.specs.SearchTradeSpec;
 import org.egov.tl.utils.Constants;
@@ -86,6 +98,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -100,18 +113,23 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.egov.infra.config.core.GlobalSettings.currencySymbolUtf8;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
+import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
 import static org.egov.infra.utils.DateUtils.toYearFormat;
+import static org.egov.infra.utils.FileUtils.addFilesToZip;
+import static org.egov.infra.utils.FileUtils.byteArrayToFile;
+import static org.egov.infra.utils.FileUtils.toByteArray;
+import static org.egov.infra.utils.StringUtils.append;
 import static org.egov.tl.utils.Constants.BUTTONAPPROVE;
 import static org.egov.tl.utils.Constants.BUTTONREJECT;
 import static org.egov.tl.utils.Constants.CITY_GRADE_CORPORATION;
 import static org.egov.tl.utils.Constants.CLOSURE_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.COMMISSIONER_DESGN;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_UNDERWORKFLOW;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
@@ -174,6 +192,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
 
     @Transactional
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
+        processAndStoreDocument(license);
         licenseRepository.save(license);
         tradeLicenseSmsAndEmailService.sendSmsAndEmail(license, workflowBean.getWorkFlowAction());
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
@@ -238,17 +257,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     @ReadOnly
-    public ReportOutput generateLicenseCertificate(License license) {
+    public ReportOutput generateLicenseCertificate(License license, boolean isProvisional) {
         if (CITY_GRADE_CORPORATION.equals(cityService.getCityGrade())) {
             return reportService.createReport(
-                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license)));
+                    new ReportRequest("tl_licenseCertificateForCorp", license, getReportParamsForCertificate(license, isProvisional)));
         } else {
             return reportService.createReport(
-                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license)));
+                    new ReportRequest("tl_licenseCertificate", license, getReportParamsForCertificate(license, isProvisional)));
         }
     }
 
-    private Map<String, Object> getReportParamsForCertificate(License license) {
+    private Map<String, Object> getReportParamsForCertificate(License license, boolean isProvisional) {
 
         final Map<String, Object> reportParams = new HashMap<>();
         reportParams.put("applicationnumber", license.getApplicationNumber());
@@ -285,9 +304,16 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         reportParams.put("demandUpdateDate", getDefaultFormattedDate(license.getCurrentDemand().getModifiedDate()));
         reportParams.put("demandTotalamt", amtPaid);
 
-        if (license.getStatus() != null && LICENSE_STATUS_UNDERWORKFLOW.equals(license.getStatus().getName())) {
+        List<Assignment> commissionerAssignments = assignmentService.findPrimaryAssignmentForDesignationName(COMMISSIONER_DESGN);
+        if (!commissionerAssignments.isEmpty()) {
+            User commissioner = commissionerAssignments.get(0).getEmployee();
+            ByteArrayInputStream commissionerSign = new ByteArrayInputStream(
+                    commissioner.getSignature() == null ? new byte[0] : commissioner.getSignature());
+            reportParams.put("commissionerSign", commissionerSign);
+        }
+        if (isProvisional)
             reportParams.put("certificateType", "provisional");
-        } else {
+        else {
             StringBuilder qrCodeValue = new StringBuilder();
             qrCodeValue.append("License Number : ").append(license.getLicenseNumber()).append(System.lineSeparator());
             qrCodeValue.append("Trade Title : ").append(license.getNameOfEstablishment()).append(System.lineSeparator());
@@ -409,14 +435,17 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final List<DemandNoticeForm> finalList = new LinkedList<>();
 
         for (final TradeLicense license : (List<TradeLicense>) searchCriteria.list()) {
-            Installment currentInstallment = license.getCurrentDemand().getEgInstallmentMaster();
-            List<Installment> previousInstallment = installmentDao
-                    .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
-                            licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
-            Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
-                    currentInstallment, previousInstallment.get(0));
-            Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
-            finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
+            LicenseDemand licenseDemand = license.getCurrentDemand();
+            if (licenseDemand != null) {
+                Installment currentInstallment = licenseDemand.getEgInstallmentMaster();
+                List<Installment> previousInstallment = installmentDao
+                        .fetchPreviousInstallmentsInDescendingOrderByModuleAndDate(
+                                licenseUtils.getModule(TRADE_LICENSE), currentInstallment.getToDate(), 1);
+                Map<String, Map<String, BigDecimal>> outstandingFees = getOutstandingFeeForDemandNotice(license,
+                        currentInstallment, previousInstallment.get(0));
+                Map<String, BigDecimal> licenseFees = outstandingFees.get(LICENSE_FEE_TYPE);
+                finalList.add(new DemandNoticeForm(license, licenseFees, getOwnerName(license)));
+            }
         }
         return finalList;
     }
@@ -437,7 +466,7 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     public List<HashMap<String, Object>> populateHistory(final TradeLicense tradeLicense) {
         final List<HashMap<String, Object>> processHistoryDetails = new ArrayList<>();
         if (tradeLicense.hasState()) {
-            State state = tradeLicense.getCurrentState();
+            State<Position> state = tradeLicense.getCurrentState();
             User lastModifiedUser = state.getLastModifiedBy();
             final HashMap<String, Object> currentStateDetail = new HashMap<>();
             currentStateDetail.put("date", state.getLastModifiedDate());
@@ -453,13 +482,13 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
                 currentStateDetail.put("user", ownerUser == null ? EMPTY : ownerUser.getName());
 
             processHistoryDetails.add(currentStateDetail);
-            state.getHistory().stream().sorted(Comparator.comparing(StateHistory::getLastModifiedDate).reversed()).
+            state.getHistory().stream().sorted(Comparator.comparing(StateHistory<Position>::getLastModifiedDate).reversed()).
                     forEach(sh -> processHistoryDetails.add(constructHistory(sh, tradeLicense)));
         }
         return processHistoryDetails;
     }
 
-    private HashMap<String, Object> constructHistory(StateHistory stateHistory, TradeLicense tradeLicense) {
+    private HashMap<String, Object> constructHistory(StateHistory<Position> stateHistory, TradeLicense tradeLicense) {
         final HashMap<String, Object> processHistory = new HashMap<>();
         User lastModifiedUser = stateHistory.getLastModifiedBy();
         processHistory.put("date", stateHistory.getLastModifiedDate());
@@ -483,8 +512,67 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
     }
 
     public List<BillReceipt> getReceipts(License license) {
-        List<BillReceipt> billReceipts = demandGenericDao.getBillReceipts(license.getCurrentDemand());
-        return billReceipts;
+        return demandGenericDao.getBillReceipts(license.getCurrentDemand());
     }
 
+    public LicenseDocumentType getLicenseDocumentType(Long id) {
+        return licenseDocumentTypeRepository.findOne(id);
+    }
+
+    public Map<String, Map<String, List<LicenseDocument>>> getAttachedDocument(Long licenseId) {
+
+        List<LicenseDocument> licenseDocuments = getLicenseById(licenseId).getDocuments();
+        Map<String, Map<String, List<LicenseDocument>>> licenseDocumentDetails = new HashMap<>();
+        licenseDocumentDetails.put(NEW_LIC_APPTYPE.toUpperCase(), new HashMap<>());
+        licenseDocumentDetails.put(RENEWAL_LIC_APPTYPE.toUpperCase(), new HashMap<>());
+
+        for (LicenseDocument document : licenseDocuments) {
+            String docType = document.getType().getName();
+            String appType = document.getType().getApplicationType().toString();
+
+            if (licenseDocumentDetails.get(appType).containsKey(docType)) {
+                licenseDocumentDetails.get(appType).get(docType).add(document);
+            } else {
+                List<LicenseDocument> documents = new ArrayList<>();
+                documents.add(document);
+                licenseDocumentDetails.get(appType).put(docType, documents);
+            }
+        }
+        return licenseDocumentDetails;
+    }
+
+    public ReportOutput generateAcknowledgment(Long licenseId) {
+        License license = getLicenseById(licenseId);
+        Map<String, Object> reportParams = new HashMap<>();
+        reportParams.put("amount", license.getTotalBalance());
+        ReportRequest reportRequest = new ReportRequest("tl_license_acknowledgment", license, reportParams);
+        reportRequest.setReportFormat(ReportFormat.PDF);
+        ReportOutput reportOutput = reportService.createReport(reportRequest);
+        reportOutput.setReportName(append("license_ack_", license.getApplicationNumber()));
+        return reportOutput;
+    }
+
+    @ReadOnly
+    public ReportOutput generateClosureNotice(String reportFormat) {
+        ReportOutput reportOutput = new ReportOutput();
+        Map<String, Object> reportParams = new HashMap<>();
+        List<License> licenses = searchTradeRepository.findLicenseClosureByCurrentInstallmentYear(new Date());
+        if (licenses.isEmpty()) {
+            reportOutput.setReportName("tl_closure_notice");
+            reportOutput.setReportFormat(ReportFormat.PDF);
+            reportOutput.setReportOutputData("No Data".getBytes());
+        } else {
+            reportParams.put("License", licenses);
+            reportParams.put("corp", cityService.getCityGrade());
+            reportParams.put("currentDate", currentDateToDefaultDateFormat());
+            reportParams.put("ulb", getCityName());
+            reportParams.put("municipality", cityService.getMunicipalityName());
+            reportOutput = reportService.createReport(
+                    new ReportRequest("tl_closure_notice", licenses, reportParams));
+        }
+        if (reportFormat.equalsIgnoreCase("zip"))
+            reportOutput.setReportOutputData(toByteArray(addFilesToZip(byteArrayToFile(reportOutput.getReportOutputData(),
+                    "tl_closure_notice_", ".pdf").toFile())));
+        return reportOutput;
+    }
 }

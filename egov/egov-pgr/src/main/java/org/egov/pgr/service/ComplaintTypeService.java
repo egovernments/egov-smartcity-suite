@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,11 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.service;
 
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.repository.ComplaintTypeRepository;
@@ -53,7 +62,6 @@ import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -68,27 +76,28 @@ import java.util.stream.Collectors;
 @Transactional(readOnly = true)
 public class ComplaintTypeService {
 
+    private static final String COMPLAINT_COMPLAINT_TYPE = "complaint.complaintType";
     private final ComplaintTypeRepository complaintTypeRepository;
 
     @PersistenceContext
     private EntityManager entityManager;
 
     @Autowired
-    public ComplaintTypeService(final ComplaintTypeRepository complaintTypeRepository) {
+    public ComplaintTypeService(ComplaintTypeRepository complaintTypeRepository) {
         this.complaintTypeRepository = complaintTypeRepository;
     }
 
-    public ComplaintType findBy(final Long complaintTypeId) {
+    public ComplaintType findBy(Long complaintTypeId) {
         return complaintTypeRepository.findOne(complaintTypeId);
     }
 
     @Transactional
-    public ComplaintType createComplaintType(final ComplaintType complaintType) {
+    public ComplaintType createComplaintType(ComplaintType complaintType) {
         return complaintTypeRepository.save(complaintType);
     }
 
     @Transactional
-    public ComplaintType updateComplaintType(final ComplaintType complaintType) {
+    public ComplaintType updateComplaintType(ComplaintType complaintType) {
         return complaintTypeRepository.save(complaintType);
     }
 
@@ -96,30 +105,25 @@ public class ComplaintTypeService {
         return complaintTypeRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public List<ComplaintType> findAllActiveByNameLike(final String name) {
+    public List<ComplaintType> findAllActiveByNameLike(String name) {
         return complaintTypeRepository.findByIsActiveTrueAndNameContainingIgnoreCase(name);
     }
 
-    public List<ComplaintType> findActiveComplaintTypesByCategory(final Long categoryId) {
+    public List<ComplaintType> findActiveComplaintTypesByCategory(Long categoryId) {
         return complaintTypeRepository.findByIsActiveTrueAndCategoryIdOrderByNameAsc(categoryId);
     }
 
-    public List<ComplaintType> findAllByNameLike(final String name) {
-        return complaintTypeRepository.findByNameContainingIgnoreCase(name);
-    }
-
-    public ComplaintType findByName(final String name) {
+    public ComplaintType findByName(String name) {
         return complaintTypeRepository.findByName(name);
     }
 
-    public ComplaintType load(final Long id) {
+    public ComplaintType load(Long id) {
         return complaintTypeRepository.getOne(id);
     }
 
     @ReadOnly
-    public Page<ComplaintType> getListOfComplaintTypes(final Integer pageNumber, final Integer pageSize) {
-        final Pageable pageable = new PageRequest(pageNumber - 1, pageSize, Sort.Direction.ASC, "name");
-        return complaintTypeRepository.findAll(pageable);
+    public Page<ComplaintType> getComplaintType(DataTableSearchRequest request) {
+        return complaintTypeRepository.findAll(new PageRequest(request.pageNumber(), request.pageSize()));
     }
 
     /**
@@ -131,22 +135,22 @@ public class ComplaintTypeService {
     public List<ComplaintType> getFrequentlyFiledComplaints() {
 
         DateTime previousDate = new DateTime();
-        final DateTime currentDate = new DateTime();
+        DateTime currentDate = new DateTime();
         previousDate = previousDate.minusMonths(1);
 
-        final Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint");
-        criteria.createAlias("complaint.complaintType", "compType");
-        criteria.setProjection(Projections.projectionList().add(Projections.property("complaint.complaintType"))
-                .add(Projections.count("complaint.complaintType").as("count"))
-                .add(Projections.groupProperty("complaint.complaintType")));
+        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint");
+        criteria.createAlias(COMPLAINT_COMPLAINT_TYPE, "compType");
+        criteria.setProjection(Projections.projectionList().add(Projections.property(COMPLAINT_COMPLAINT_TYPE))
+                .add(Projections.count(COMPLAINT_COMPLAINT_TYPE).as("count"))
+                .add(Projections.groupProperty(COMPLAINT_COMPLAINT_TYPE)));
         criteria.add(Restrictions.between("complaint.createdDate", previousDate.toDate(), currentDate.toDate()));
         criteria.add(Restrictions.eq("compType.isActive", Boolean.TRUE));
         criteria.setMaxResults(5).addOrder(Order.desc("count"));
-        final List<Object> resultList = criteria.list();
-        final List<ComplaintType> complaintTypeList = new ArrayList<>();
+        List<Object> resultList = criteria.list();
+        List<ComplaintType> complaintTypeList = new ArrayList<>();
 
-        for (final Object row : resultList) {
-            final Object[] columns = (Object[]) row;
+        for (Object row : resultList) {
+            Object[] columns = (Object[]) row;
             complaintTypeList.add((ComplaintType) columns[0]);
         }
         return complaintTypeList;
@@ -167,5 +171,9 @@ public class ComplaintTypeService {
                 .stream()
                 .map(ComplaintType::getCode)
                 .collect(Collectors.toList());
+    }
+
+    public List<ComplaintType> getComplaintTypeByDepartmentId(Long departmentId) {
+        return departmentId == null ? findAll() : complaintTypeRepository.findByDepartmentId(departmentId);
     }
 }

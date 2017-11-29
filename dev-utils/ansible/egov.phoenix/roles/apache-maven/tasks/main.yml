@@ -1,0 +1,18 @@
+---
+# tasks file for apache-maven
+- name: Unarchive maven {{maven_version}}
+  unarchive:
+    src: "http://www.apache.org/dist/maven/maven-{{  maven_version|regex_replace('\\..*', '') }}/{{ maven_version }}/binaries/apache-maven-{{ maven_version }}-bin.tar.gz"
+    dest: "{{ maven_home_parent_directory }}"
+    copy: no
+- name: Configure maven
+  become: yes
+  become_method: sudo
+  lineinfile:
+    dest: /etc/profile.d/maven.sh
+    line: "{{ item.line }}"
+    create: yes
+    state: present
+  with_items:
+    - { line: 'export M2_HOME={{maven_home_parent_directory}}/apache-maven-{{maven_version}}' }
+    - { line: 'export PATH=$M2_HOME/bin:$PATH' }

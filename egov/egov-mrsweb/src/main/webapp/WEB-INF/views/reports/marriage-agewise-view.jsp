@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
@@ -43,26 +51,23 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form" %>
 
-
 <div class="row">
 	<div class="col-md-12">
 		<div class="panel panel-primary" data-collapsed="0">
 			<div class="panel-heading">
-				<div class="panel-title">Marriage Registration Results</div>
+				<div class="panel-title">Applicant Age Wise Application Details :-</div>
 			</div>
 
 			<div class="panel-body custom">
-				<table class="table table-bordered  multiheadertbl"
-					name="marriageregistrationagewise" id=marriageregistrationagewise>
+				<table class="table table-bordered  multiheadertbl" id=marriageregistrationagewise>
 					<thead>
 						<tr>
-							<th>S.No</th>
+							<th><spring:message code="lbl.serial.no" /></th>
 							<th><spring:message code="lbl.application.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
 							<th><spring:message code="lbl.applicant.name" /></th>
 							<th><spring:message code="lbl.age" /></th>
 							<th><spring:message code="lbl.date.of.marriage" /></th>
-							<%----<th><spring:message code="lbl.act" /></th>--%>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.residence.address" /></th>
 							<th><spring:message code="lbl.registrationunitname"/></th>
@@ -94,7 +99,6 @@
 										</c:otherwise>
 									</c:choose></td>
 								<td><c:out value="${reg.dateOfMarriage}" /></td>
-								<%-- <td><c:out value="${reg.marriageAct.name}" /></td> --%>
 								<td><c:out value="${reg.placeOfMarriage}" /></td>
 								<td><c:choose>
 										<c:when test="${applicantType == 'husband'}">

@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -44,17 +52,26 @@
 <div class="panel panel-primary" data-collapsed="0">
 	<div class="panel-heading">
 		<div class="panel-title">
-			<spring:message code="title.councilmeeting.create" />
+			<spring:message code="title.councilmeeting.details" />
 		</div>
 	</div>
+	<input type="hidden" name="committeeType" id="committypeid" value="${councilMeeting.committeeType.id}"/>
 	<div class="panel-body">
 		<div class="form-group">
 			<div class="col-sm-3 control-label text-right">
 				<spring:message code="lbl.meeting.type" />
 			</div>
-			<div class="col-sm-3 add-margin view-content">
-				${councilMeeting.committeeType.name}
-				<form:hidden path="committeeType" id="committypeid" />
+			<div class="col-sm-3 add-margin">
+				<form:select path="meetingType" id="meetingType"
+					cssClass="form-control" required="required"
+					cssErrorClass="form-control error">
+					<form:option value="">
+						<spring:message code="lbl.select" />
+					</form:option>
+					<form:options items="${meetingType}" itemValue="id"
+				itemLabel="name"/>
+				</form:select>
+				<form:errors path="meetingType" cssClass="error-msg" />
 			</div>
 			<label class="col-sm-2 control-label text-right"><spring:message
 					code="lbl.meeting.date" /> <span class="mandatory"></span> </label>
@@ -91,10 +108,19 @@
 			</div>
 		</div>
 
+		<c:if test="${!autoMeetingNoGenEnabled}">
+			<div class="form-group">
+				<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.meeting.number" /> <span class="mandatory"></span></label>
+				<div class="col-sm-3 add-margin">
+					<form:input path="meetingNumber" id="meetingNumber"
+						cssClass="form-control" required="required"
+						cssErrorClass="form-control error" />
+					<form:errors path="meetingNumber" cssClass="error-msg" />
+				</div>
+			</div>
+		</c:if>
 		<form:hidden path="id" id="id" value="${councilMeeting.id}" />
-		<form:hidden path="meetingNumber" id="meetingNumber"
-			value="${councilMeeting.meetingNumber}" />
-
 	</div>
 </div>
 

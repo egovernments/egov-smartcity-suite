@@ -1,0 +1,27 @@
+# This playbook deploys the PHOENIX stacks
+- hosts: phoenix
+  #sudo: yes
+#  become: yes
+#  become_method: sudo
+#  connection: local
+# create a directory if it doesn't exist
+  pre_tasks:
+  - name: Create WORKSPACE directory
+    file:
+      path: "{{ANSIBLE_WORKSPACE}}"
+      state: directory
+#      owner: "{{USERNAME}}"
+#      group: "{{USERNAME}}"
+      mode: 0755
+  roles:
+    - apache-maven
+    - redis
+    - oracle-jdk
+    - postgresql
+    - wildfly
+    - { role: elasticsearch, es_instance_name: "node1" }
+  post_tasks:
+  - name: Source /etc/profile.d
+    shell: source /etc/profile.d/*
+    args:
+      executable: /bin/bash

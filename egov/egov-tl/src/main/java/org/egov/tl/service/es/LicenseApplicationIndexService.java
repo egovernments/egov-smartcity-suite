@@ -1,41 +1,49 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- *     accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *      Copyright (C) 2016  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *      The updated version of eGov suite of products as by eGovernments Foundation
- *      is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *      This program is free software: you can redistribute it and/or modify
- *      it under the terms of the GNU General Public License as published by
- *      the Free Software Foundation, either version 3 of the License, or
- *      any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *      This program is distributed in the hope that it will be useful,
- *      but WITHOUT ANY WARRANTY; without even the implied warranty of
- *      MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *      GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *      You should have received a copy of the GNU General Public License
- *      along with this program. If not, see http://www.gnu.org/licenses/ or
- *      http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *      In addition to the terms of the GPL license to be adhered to in using this
- *      program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *          1) All versions of this program, verbatim or modified must carry this
- *             Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *          2) Any misrepresentation of the origin of the material is prohibited. It
- *             is required that all modified versions of this material be marked in
- *             reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *          3) This license does not grant any rights to any user of the program
- *             with regards to rights under trademark law for use of the trade names
- *             or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *    In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.tl.service.es;
 
@@ -47,9 +55,8 @@ import org.egov.infra.elasticsearch.entity.enums.ApprovalStatus;
 import org.egov.infra.elasticsearch.entity.enums.ClosureStatus;
 import org.egov.infra.elasticsearch.service.ApplicationIndexService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.License;
-import org.egov.tl.entity.LicenseAppType;
+import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -63,11 +70,10 @@ import static org.egov.commons.entity.Source.CSC;
 import static org.egov.commons.entity.Source.SYSTEM;
 import static org.egov.infra.elasticsearch.entity.enums.ApprovalStatus.INPROGRESS;
 import static org.egov.infra.elasticsearch.entity.enums.ClosureStatus.NO;
+import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.tl.utils.Constants.APPLICATION_STATUS_GENECERT_CODE;
 import static org.egov.tl.utils.Constants.CSCOPERATOR;
 import static org.egov.tl.utils.Constants.DELIMITER_COLON;
-import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
 
@@ -86,7 +92,7 @@ public class LicenseApplicationIndexService {
     private SecurityUtils securityUtils;
 
     @Autowired
-    private TlApplicationProperties tlApplicationProperties;
+    private LicenseUtils licenseUtils;
 
     public void createOrUpdateLicenseApplicationIndex(final License license) {
         ApplicationIndex applicationIndex = applicationIndexService.findByApplicationNumber(license.getApplicationNumber());
@@ -102,14 +108,15 @@ public class LicenseApplicationIndexService {
         Optional<User> user = getApplicationCurrentOwner(license);
         if (license.getApplicationDate() == null)
             license.setApplicationDate(new Date());
-        Integer slaConfig = getSlaForAppType(license.getLicenseAppType());
+        Integer slaConfig = licenseUtils.getSlaForAppType(license.getLicenseAppType());
 
         applicationIndexService.createApplicationIndex(ApplicationIndex.builder().withModuleName(TRADE_LICENSE)
                 .withApplicationNumber(license.getApplicationNumber()).withApplicationDate(license.getApplicationDate())
                 .withApplicationType(license.getLicenseAppType().getName()).withApplicantName(license.getLicensee().getApplicantName())
-                .withStatus(license.getEgwStatus().getDescription()).withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
+                .withStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue())
+                .withUrl(format(APPLICATION_VIEW_URL, license.getApplicationNumber()))
                 .withApplicantAddress(license.getAddress()).withOwnername(user.isPresent() ?
-                        user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY)
+                        user.get().getUsername() + DELIMITER_COLON + user.get().getName() : NA)
                 .withChannel(getChannel())
                 .withMobileNumber(license.getLicensee().getMobilePhoneNumber())
                 .withAadharNumber(license.getLicensee().getUid()).withClosed(NO).withApproved(INPROGRESS)
@@ -123,25 +130,17 @@ public class LicenseApplicationIndexService {
                 securityUtils.getCurrentUser().hasRole(CSCOPERATOR) ? CSC.toString() : "ONLINE";
     }
 
-    private Integer getSlaForAppType(LicenseAppType licenseAppType) {
-        if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
-            return tlApplicationProperties.getValue("sla.new.apptype");
-        else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
-            return tlApplicationProperties.getValue("sla.renew.apptype");
-        else
-            return tlApplicationProperties.getValue("sla.closure.apptype");
-    }
 
     private void updateLicenseApplicationIndex(License license, ApplicationIndex applicationIndex) {
         Optional<User> user = getApplicationCurrentOwner(license);
-        applicationIndex.setStatus(license.getEgwStatus().getDescription());
+        applicationIndex.setStatus(license.getEgwStatus() != null ? license.getEgwStatus().getDescription() : license.getCurrentState().getValue());
         applicationIndex.setApplicantAddress(license.getAddress());
         applicationIndex
                 .setOwnerName(user.isPresent() ? user.get().getUsername() + DELIMITER_COLON + user.get().getName() : EMPTY);
         applicationIndex.setConsumerCode(license.getLicenseNumber());
         applicationIndex.setClosed(NO);
         applicationIndex.setApproved(INPROGRESS);
-        if (license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE)) {
+        if (license.getIsActive() || (license.getEgwStatus() != null && license.getEgwStatus().getCode().equals(APPLICATION_STATUS_GENECERT_CODE))) {
             applicationIndex.setClosed(ClosureStatus.YES);
             applicationIndex.setApproved(ApprovalStatus.APPROVED);
         }

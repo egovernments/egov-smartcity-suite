@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
@@ -66,22 +74,68 @@
 	enctype="multipart/form-data">
 
 	<div class="row display-hide agenda-section">
-		<div class="col-md-7 table-header text-left">Create Agenda</div>
-		<!-- <div class="col-md-6 text-right pull-right"><button type="button" class="btn btn-primary" id="add-agenda">Add Row</button></div> -->
-		<label class="col-sm-2 control-label text-right"><spring:message
-				code="lbl.committeetype" /> <span class="mandatory"></span> </label>
-		<div class="col-sm-3 add-margin">
-			<form:select path="committeeType" id="committeeType"
-				required="required" cssClass="form-control"
-				cssErrorClass="form-control error">
-				<form:option value="">
-					<spring:message code="lbl.select" />
-				</form:option>
-				<form:options items="${committeeType}" itemValue="id"
-					itemLabel="name" />
-			</form:select>
-			<form:errors path="committeeType" cssClass="error-msg" />
-		</div>
+		<c:choose>
+			<c:when test="${!autoAgendaNoGenEnabled}">
+				<div class="col-md-12">
+					<div class="table-header text-left col-md-8 col-sm-7">Create
+						Agenda</div>
+				</div>
+				<br />
+				<br />
+				<div class="col-md-12">
+					<div class="col-md-6 col-sm-6">
+						<label class="col-md-3 col-sm-3"><spring:message
+								code="lbl.agendaNumber" /> <span class="mandatory"></span> </label>
+						<div class="col-md-5 col-sm-5">
+							<form:input path="agendaNumber" id="agendaNumber" type="text"
+								class="form-control" maxlength="5" placeholder=""
+								autocomplete="off" />
+							<form:errors path="agendaNumber" cssClass="error-msg" />
+						</div>
+					</div>
+					<div class="col-md-6 col-sm-6">
+						<label class="col-md-7 control-label text-right"><spring:message
+								code="lbl.committeetype" /> </label>
+						<div class="col-md-5 col-sm-5 pull-right">
+							<form:select path="committeeType" id="committeeType"
+								required="required" cssClass="form-control"
+								cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${committeeType}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="committeeType" cssClass="error-msg" />
+						</div>
+					</div>
+				</div>
+				<br />
+				<br />
+			</c:when>
+			<c:otherwise>
+				<div class="col-md-12">
+					<div class="form-group">
+						<div class="table-header text-left col-md-8 col-sm-7">Create
+							Agenda</div>
+						<label class="col-md-2 col-sm-2 control-label text-right"><spring:message
+								code="lbl.committeetype" /> <span class="mandatory"></span> </label>
+						<div class="col-md-2 col-sm-3">
+							<form:select path="committeeType" id="committeeType"
+								required="required" cssClass="form-control"
+								cssErrorClass="form-control error">
+								<form:option value="">
+									<spring:message code="lbl.select" />
+								</form:option>
+								<form:options items="${committeeType}" itemValue="id"
+									itemLabel="name" />
+							</form:select>
+							<form:errors path="committeeType" cssClass="error-msg" />
+						</div>
+					</div>
+				</div>
+			</c:otherwise>
+		</c:choose>
 
 		<div class="col-md-12 report-table-container dragging">
 			<table
@@ -94,7 +148,7 @@
 						<th width="12%"><spring:message code="lbl.department" /></th>
 						<th><spring:message code="lbl.gist.preamble" /></th>
 						<th width="9%"><spring:message code="lbl.amount" /></th>
-						<th width="14%"><spring:message code="lbl.action" /></th>
+						<th width="11%"><spring:message code="lbl.action" /></th>
 					</tr>
 				</thead>
 				<tbody>
@@ -107,7 +161,9 @@
 		<div class="form-group">
 			<div class="text-center">
 				<input type="submit" class='btn btn-primary validate' value='Create'
-					id="btnsave">
+					id="btnsave"> <a href='javascript:void(0)'
+					class='btn btn-default' onclick='self.close()'><spring:message
+						code='lbl.close' /></a>
 			</div>
 		</div>
 	</div>

@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -45,73 +53,77 @@
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <!DOCTYPE html>
 <html>
-	<head>
-	    <meta charset="utf-8">
-	    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-	    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
-	    <meta name="description" content="eGov System" />
-	    <meta name="author" content="eGovernments Foundation" />
-	
-	    <title><tiles:insertAttribute name="title"/></title>
-		<link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
-	    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
-		<link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
-	
-		<script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
-		<script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
-		<script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
-		
-		<!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
-		<!--[if lt IE 9]>
-			<script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
-			<script src="/egi/resources/global/js/ie8/respond.min.js"></script>
-		<![endif]-->
-	
-	</head>
-    <body class="page-body" oncontextmenu="return false;">
-        <div class="page-container">
-            <tiles:insertAttribute name="header"/>
-                <div class="main-content">
-                    <tiles:insertAttribute name="body"/>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+    <meta name="description" content="eGov System"/>
+    <meta name="author" content="eGovernments Foundation"/>
+
+    <title><tiles:insertAttribute name="title"/></title>
+    <link rel="icon" href="<cdn:url value='/resources/global/images/favicon.png' context='/egi'/>" sizes="32x32">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/bootstrap.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/font-icons/font-awesome/css/font-awesome.min.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/bootstrap/typeahead.css' context='/egi'/>">
+    <link rel="stylesheet" href="<cdn:url value='/resources/global/css/egov/custom.css?rnd=${app_release_no}' context='/egi'/>">
+
+    <script src="<cdn:url value='/resources/global/js/jquery/jquery.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/bootstrap.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/bootstrap/bootbox.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.validate.min.js' context='/egi'/>"></script>
+    <script type="text/javascript" src="<cdn:url value='/resources/global/js/bootstrap/typeahead.bundle.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/patternvalidation.js?rnd=${app_release_no}' context='/egi'/>"></script>
+    <script src="<cdn:url value='/resources/global/js/egov/custom.js?rnd=${app_release_no}' context='/egi'/>"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+    <script src="/egi/resources/global/js/ie8/html5shiv.min.js"></script>
+    <script src="/egi/resources/global/js/ie8/respond.min.js"></script>
+    <![endif]-->
+    <script>
+        var googleapikey = '${sessionScope.googleApiKey}';
+        var citylat = ${sessionScope.citylat};
+        var citylng = ${sessionScope.citylng};
+    </script>
+</head>
+<body class="page-body" oncontextmenu="return false;">
+<div class="page-container">
+    <tiles:insertAttribute name="header"/>
+    <div class="main-content">
+        <tiles:insertAttribute name="body"/>
+    </div>
+    <tiles:insertAttribute name="footer"/>
+</div>
+<input type="hidden" value="${sessionScope.citylat}" id="getcitylat">
+<input type="hidden" value="${sessionScope.citylng}" id="getcitylng">
+<div class="modal fade loader-class" data-backdrop="static">
+    <div class="modal-dialog">
+        <div class="modal-body">
+            <div class="row spinner-margin text-center">
+                <div class="col-md-12 ">
+                    <div class="spinner">
+                        <div class="rect1"></div>
+                        <div class="rect2"></div>
+                        <div class="rect3"></div>
+                        <div class="rect4"></div>
+                        <div class="rect5"></div>
+                    </div>
                 </div>
-				<tiles:insertAttribute name="footer"/>
+
+                <div class="col-md-12 spinner-text">
+                    Processing your request. Please wait..
+                </div>
+            </div>
         </div>
-        <input type="hidden" value="${sessionScope.citylat}" id="getcitylat">
-        <input type="hidden" value="${sessionScope.citylng}" id="getcitylng">
-        <div class="modal fade loader-class" data-backdrop="static">
-			<div class="modal-dialog">
-					<div class="modal-body">
-						<div class="row spinner-margin text-center">
-							<div class="col-md-12 ">
-								<div class="spinner">
-									<div class="rect1"></div>
-									<div class="rect2"></div>
-									<div class="rect3"></div>
-									<div class="rect4"></div>
-									<div class="rect5"></div>
-								</div>
-							</div>
-							
-							<div class="col-md-12 spinner-text">
-								Processing your request. Please wait..
-							</div>
-						</div>
-					</div>
-			</div>
-		</div>
-		<div class="modal fade demo-class" data-backdrop="static" style="opacity:0.01">
-			<div class="modal-dialog">
-					<div class="modal-body">
-						
-					</div>
-			</div>
-		</div>
-    </body>
+    </div>
+</div>
+<div class="modal fade demo-class" data-backdrop="static" style="opacity:0.01">
+    <div class="modal-dialog">
+        <div class="modal-body">
+
+        </div>
+    </div>
+</div>
+</body>
 </html>

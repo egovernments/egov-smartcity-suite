@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.service;
@@ -47,10 +55,12 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.infra.workflow.entity.StateHistory;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
+import org.egov.pgr.event.ComplaintEventPublisher;
 import org.egov.pgr.repository.ComplaintRepository;
-import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
 import org.hibernate.Session;
@@ -58,18 +68,20 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.ArrayList;
-import java.util.Comparator;
+
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
 import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;
@@ -117,13 +129,16 @@ public class ComplaintService {
     private ConfigurationService configurationService;
 
     @Autowired
-    private ComplaintMessagingService complaintMessagingService;
+    private ComplaintNotificationService complaintNotificationService;
 
     @Autowired
     private ComplaintProcessFlowService complaintProcessFlowService;
 
     @Autowired
     private CitizenComplaintDataPublisher citizenComplaintDataPublisher;
+
+    @Autowired
+    private ComplaintEventPublisher complaintEventPublisher;
 
     @Transactional
     public Complaint createComplaint(Complaint complaint) {
@@ -153,10 +168,10 @@ public class ComplaintService {
             complaint.setPriority(configurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
-        complaintIndexService.createComplaintIndex(complaint);
         if (securityUtils.currentUserIsCitizen())
             citizenComplaintDataPublisher.onRegistration(complaint);
-        complaintMessagingService.sendRegistrationMessage(complaint);
+        complaintNotificationService.sendRegistrationMessage(complaint);
+        complaintIndexService.createComplaintIndex(complaint);
         return complaint;
     }
 
@@ -168,9 +183,10 @@ public class ComplaintService {
         else
             complaint.setDepartment(complaint.getAssignee().getDeptDesig().getDepartment());
         complaintRepository.saveAndFlush(complaint);
-        complaintIndexService.updateComplaintIndex(complaint);
+        complaintEventPublisher.publishEvent(complaint);
         citizenComplaintDataPublisher.onUpdation(complaint);
-        complaintMessagingService.sendUpdateMessage(complaint);
+        complaintNotificationService.sendUpdateMessage(complaint);
+        complaintIndexService.updateComplaintIndex(complaint);
         return complaint;
     }
 
@@ -280,5 +296,11 @@ public class ComplaintService {
             }
         });
         return complaintList;
+    }
+
+    @ReadOnly
+    public Page<Complaint> getComplaints(Specification<Complaint> spec, DataTableSearchRequest searchRequest) {
+        return complaintRepository.findAll(spec,
+                new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize()));
     }
 }

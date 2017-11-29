@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -28,6 +28,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -38,29 +45,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   -->
 <decorators defaultdir="/decorators">
-	<excludes>
-		<pattern>/40*.jsp</pattern>
-		<pattern>/commonyui/egov/genericScreenWithLeaf.jsp</pattern>
-		<pattern>/commonyui/egov/menutree.jsp</pattern>
-		<pattern>/*Ajax.action</pattern>
-		<pattern>/*Ajax.do</pattern>
-		<pattern>/*ack.action*</pattern>
-		<pattern>/*ackNotice.action*</pattern>
-		<pattern>/*dcbForAnAssessee.action*</pattern>
-		<pattern>/*findAssesseeIdList.action*</pattern>
-		<pattern>/*duplicateLicense.action*</pattern>
-		<pattern>/*generateCertificate.action*</pattern>
-		<pattern>/*generateDuplicateNoc.action*</pattern>
-		<pattern>/*createNoc.action*</pattern>
-		<pattern>/*acknowledgement.action*</pattern>
-		<pattern>/*renewalNotice.action*</pattern>
-		<pattern>/*preliminaryNotice.action*</pattern>
-		<pattern>/*showCauseNotice.action*</pattern>
-		<pattern>/*certificateForRej.action*</pattern>
-		<pattern>/*generateSusLetter.action*</pattern>
-	</excludes>
 	<decorator name="default" page="default.jsp">
 		<pattern>/*</pattern>
 	</decorator>

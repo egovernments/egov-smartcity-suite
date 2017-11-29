@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,18 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.stms.web.controller.citizen;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.io.Serializable;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
@@ -55,10 +53,10 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.ptis.domain.model.AssessmentDetails;
-import org.egov.stms.elasticSearch.entity.SewerageConnSearchRequest;
-import org.egov.stms.elasticSearch.entity.SewerageSearchResult;
+import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
+import org.egov.stms.elasticsearch.entity.SewerageSearchResult;
 import org.egov.stms.entity.es.SewerageIndex;
-import org.egov.stms.service.es.SewerageIndexService;
+import org.egov.stms.service.es.SeweragePaginationService;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
 import org.egov.stms.transactions.service.SewerageDCBReporService;
@@ -67,9 +65,6 @@ import org.egov.stms.transactions.service.SewerageThirdPartyServices;
 import org.egov.stms.transactions.service.collection.SewerageBillServiceImpl;
 import org.egov.stms.transactions.service.collection.SewerageBillable;
 import org.egov.stms.utils.constants.SewerageTaxConstants;
-import org.elasticsearch.index.query.BoolQueryBuilder;
-import org.elasticsearch.search.sort.FieldSortBuilder;
-import org.elasticsearch.search.sort.SortOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -85,6 +80,15 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import java.io.Serializable;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @Controller
 public class SewerageCitizenSupportController {
 
@@ -96,30 +100,22 @@ public class SewerageCitizenSupportController {
 
     @Autowired
     private CityService cityService;
-
-    @Autowired
-    private SewerageIndexService sewerageIndexService;
-
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
     @Autowired
     private SewerageDemandService sewerageDemandService;
-
     @Autowired
     private SewerageBillable sewerageBillable;
-
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
-
     @Autowired
     private SequenceNumberGenerator sequenceNumberGenerator;
-
     @Autowired
     private SewerageBillServiceImpl sewerageBillServiceImpl;
-
     @Autowired
     private SewerageDCBReporService sewerageDCBReporService;
+    @Autowired
+    private SeweragePaginationService seweragePaginationService;
 
     @RequestMapping(value = "/citizen/search/search-sewerage", method = GET)
     public String newSearchForm(final Model model) {
@@ -138,17 +134,7 @@ public class SewerageCitizenSupportController {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
         if (cityWebsite != null)
             sewerageConnSearchRequest.setUlbName(cityWebsite.getName());
-        final BoolQueryBuilder boolQuery = sewerageIndexService.getQueryFilter(sewerageConnSearchRequest);
-        final FieldSortBuilder sort = new FieldSortBuilder("shscNumber").order(SortOrder.DESC);
-        resultList = sewerageIndexService.getOnlinePaymentSearchResult(boolQuery, sort, sewerageConnSearchRequest);
-        for (final SewerageIndex sewerageIndex : resultList) {
-            final SewerageSearchResult searchResult = new SewerageSearchResult();
-            searchResult.setApplicationNumber(sewerageIndex.getApplicationNumber());
-            searchResult.setAssessmentNumber(sewerageIndex.getPropertyIdentifier());
-            searchResult.setShscNumber(sewerageIndex.getShscNumber());
-            searchResult.setApplicantName(sewerageIndex.getConsumerName());
-            searchResultList.add(searchResult);
-        }
+        resultList = seweragePaginationService.buildPaymentSearch(sewerageConnSearchRequest, searchResultList);
         return new DataTable<>(new PageImpl<>(searchResultList, pageable, resultList.getTotalElements()),
                 sewerageConnSearchRequest.draw());
 

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,16 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.commons;
 
-import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -60,13 +63,18 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
 
-import org.egov.infra.workflow.entity.StateAware;
+import static org.egov.commons.CVoucherHeader.SEQ_VOUCHERHEADER;
 
 @Entity
 @Table(name = "VOUCHERHEADER")
 @SequenceGenerator(name = SEQ_VOUCHERHEADER, sequenceName = SEQ_VOUCHERHEADER, allocationSize = 1)
-public class CVoucherHeader extends StateAware {
+public class CVoucherHeader extends StateAware<Position> {
 
     public static final String SEQ_VOUCHERHEADER = "SEQ_VOUCHERHEADER";
     private static final long serialVersionUID = -1950866465902911747L;
@@ -102,10 +110,10 @@ public class CVoucherHeader extends StateAware {
     private Vouchermis vouchermis;
 
     @Transient
-    private List<CGeneralLedger> accountDetails = new ArrayList<>(0);
+    private List<CGeneralLedger> accountDetails = new ArrayList<>();
 
     @Transient
-    private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>(0);
+    private List<CGeneralLedgerDetail> subLedgerDetails = new ArrayList<>();
 
     @Transient
     private String partyName;

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.entity;
@@ -46,6 +54,8 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.persistence.validator.annotation.Unique;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+import org.egov.tl.entity.contracts.LicenseStateInfo;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 import org.hibernate.validator.constraints.Length;
@@ -62,23 +72,25 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
+import static org.egov.tl.utils.Constants.CLOSURE_NATUREOFTASK;
 import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.PERMANENT_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
-import static org.egov.tl.utils.Constants.STATUS_ACKNOLEDGED;
+import static org.egov.tl.utils.Constants.STATUS_ACKNOWLEDGED;
 import static org.egov.tl.utils.Constants.STATUS_ACTIVE;
+import static org.egov.tl.utils.Constants.STATUS_COLLECTIONPENDING;
 import static org.egov.tl.utils.Constants.TEMP_NATUREOFBUSINESS;
 import static org.egov.tl.utils.Constants.WF_STATE_COMMISSIONER_APPROVED_STR;
 import static org.egov.tl.utils.Constants.WORKFLOW_STATE_REJECTED;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_CANCELLED;
 
 @Entity
 @Table(name = "EGTL_LICENSE")
 @Inheritance(strategy = InheritanceType.JOINED)
 @SequenceGenerator(name = License.SEQUENCE, sequenceName = License.SEQUENCE, allocationSize = 1)
 @Unique(fields = {"licenseNumber", "applicationNumber", "oldLicenseNumber"}, enableDfltMsg = true, isSuperclass = true)
-public class License extends StateAware {
+public class License extends StateAware<Position> {
 
     public static final String SEQUENCE = "SEQ_EGTL_LICENSE";
     private static final long serialVersionUID = -4621190785979222546L;
@@ -228,6 +240,11 @@ public class License extends StateAware {
 
     @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, mappedBy = "license")
     protected List<LicenseDocument> documents = new ArrayList<>();
+
+    //To be removed
+    private boolean newWorkflow;
+
+    private boolean collectionPending;
 
     @Override
     public Long getId() {
@@ -501,11 +518,15 @@ public class License extends StateAware {
     }
 
     public boolean isAcknowledged() {
-        return getStatus() != null && STATUS_ACKNOLEDGED.equals(getStatus().getStatusCode());
+        return getStatus() != null && STATUS_ACKNOWLEDGED.equals(getStatus().getStatusCode());
     }
 
     public boolean canCollectFee() {
-        return !isPaid() && !isRejected() && (isAcknowledged() || isApproved());
+        return !isPaid() && !isRejected() && !isNatureOfTaskClosure() && (isAcknowledged() || isApproved());
+    }
+
+    private boolean isNatureOfTaskClosure() {
+        return this.hasState() && CLOSURE_NATUREOFTASK.equals(this.getState().getNatureOfTask());
     }
 
     public boolean isStatusActive() {
@@ -556,5 +577,30 @@ public class License extends StateAware {
 
     public boolean isLegacyWithNoState() {
         return isLegacy() && !hasState();
+    }
+
+    public boolean isNewWorkflow() {
+        return newWorkflow;
+    }
+
+    public void setNewWorkflow(boolean newWorkflow) {
+        this.newWorkflow = newWorkflow;
+    }
+
+    public boolean isCollectionPending() {
+        return collectionPending;
+    }
+
+    public void setCollectionPending(boolean collectionPending) {
+        this.collectionPending = collectionPending;
+    }
+
+    public LicenseStateInfo extraInfo() {
+        return super.extraInfoAs(LicenseStateInfo.class);
+    }
+
+    public boolean canCollectLicenseFee() {
+        return this.isNewWorkflow() && !isNatureOfTaskClosure() &&
+                (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
     }
 }

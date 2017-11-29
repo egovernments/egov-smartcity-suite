@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,20 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.service;
-
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -63,6 +59,7 @@ import org.egov.collection.entity.ReceiptMisc;
 import org.egov.collection.entity.ReceiptVoucher;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.BillReceiptInfoImpl;
+import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.collection.integration.services.BillingIntegrationService;
 import org.egov.collection.utils.CollectionsNumberGenerator;
 import org.egov.collection.utils.CollectionsUtil;
@@ -84,6 +81,7 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportRequest;
+import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
@@ -97,6 +95,18 @@ import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Provides services related to receipt header
@@ -127,6 +137,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
 
     @Autowired
     private ChartOfAccountsHibernateDAO chartOfAccountsHibernateDAO;
+
+    @Autowired
+    protected SecurityUtils securityUtils;
 
     public ReceiptHeaderService() {
         super(ReceiptHeader.class);
@@ -394,16 +407,17 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void startWorkflow(final ReceiptHeader receiptHeader) {
         final Boolean createVoucherForBillingService = collectionsUtil.checkVoucherCreation(receiptHeader);
         Position position;
-        if (!collectionsUtil.isEmployee(receiptHeader.getCreatedBy()))
+        if (!collectionsUtil.isEmployee(this.securityUtils.getCurrentUser()))
             position = collectionsUtil.getPositionByDeptDesgAndBoundary(receiptHeader.getReceiptMisc().getBoundary());
         else
-            position = collectionsUtil.getPositionOfUser(receiptHeader.getCreatedBy());
+            position = collectionsUtil.getPositionOfUser(this.securityUtils.getCurrentUser());
         if (receiptHeader.getState() == null && !createVoucherForBillingService)
             receiptHeader
                     .transition()
                     .start()
                     .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                            this.securityUtils.getCurrentUser().getUsername() + "::"
+                                    + this.securityUtils.getCurrentUser().getName())
                     .withComments(CollectionConstants.WF_STATE_RECEIPT_CREATED)
                     .withStateValue(CollectionConstants.WF_STATE_RECEIPT_CREATED).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
@@ -412,11 +426,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                     .transition()
                     .start()
                     .withSenderName(
-                            receiptHeader.getCreatedBy().getUsername() + "::" + receiptHeader.getCreatedBy().getName())
+                            this.securityUtils.getCurrentUser().getUsername() + "::"
+                                    + this.securityUtils.getCurrentUser().getName())
                     .withComments("Receipt voucher created")
                     .withStateValue(CollectionConstants.WF_ACTION_CREATE_VOUCHER).withOwner(position)
                     .withDateInfo(new Date()).withNextAction(CollectionConstants.WF_ACTION_SUBMIT);
 
+        persistenceService.applyAuditing(receiptHeader.getState());
         LOGGER.debug("Workflow state transition complete");
     }
 
@@ -1054,13 +1070,13 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
     public void populateAndPersistReceipts(final ReceiptHeader receiptHeader,
             final List<InstrumentHeader> receiptInstrList) {
         try {
-            persist(receiptHeader);
-            LOGGER.info("Persisted receipts");
             LOGGER.info("Workflow started for newly created receipts");
             if (isReceiptCreateApprovedStatus(receiptHeader))
                 setReceiptApprovedStatus(receiptHeader);
             else
                 startWorkflow(receiptHeader);
+            LOGGER.info("Persisted receipts");
+            persist(receiptHeader);
             // create voucher based on configuration.
             if (collectionsUtil.checkVoucherCreation(receiptHeader))
                 createVoucherForReceipt(receiptHeader);
@@ -1069,7 +1085,6 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                 LOGGER.info("Updated billing system ");
             } else
                 updateCollectionIndexAndPushMail(receiptHeader);
-
         } catch (final HibernateException e) {
             LOGGER.error("Receipt Service HException while persisting ReceiptHeader", e);
             throw new ApplicationRuntimeException("Receipt Service Exception while persisting ReceiptHeader : ", e);
@@ -1322,5 +1337,14 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         receiptHeader.setStatus(collectionsUtil
                 .getStatusForModuleAndCode(CollectionConstants.MODULE_NAME_RECEIPTHEADER,
                         CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
+    }
+
+    public void validateReceiptCancellation(String receiptNumber, String serviceCode) {
+        BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
+        ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber);
+        if (!receiptCancellationInfo.getCancellationAllowed()) {
+            String validationMsg = receiptCancellationInfo.getValidationMessage();
+            throw new ValidationException(new ValidationError(validationMsg, validationMsg));
+        }
     }
 }

@@ -1,3 +1,51 @@
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
+ */
+
 package org.egov.council.web.controller;
 
 import static org.egov.council.utils.constants.CouncilConstants.CHECK_BUDGET;
@@ -40,7 +88,9 @@ import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -57,6 +107,8 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 @RequestMapping("/councilpreamble")
 public class CouncilPreambleController extends GenericWorkFlowController {
+    private static final String PREAMBLE_NUMBER_AUTO = "PREAMBLE_NUMBER_AUTO";
+    private static final String REDIRECT_COUNCILPREAMBLE_RESULT = "redirect:/councilpreamble/result/";
     private static final String MESSAGE2 = "message";
     private static final String APPLICATION_HISTORY = "applicationHistory";
     private static final String APPROVAL_POSITION = "approvalPosition";
@@ -71,36 +123,29 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     private static final String COUNCILPREAMBLE_SEARCH = "councilpreamble-search";
     private static final String COUNCILPREAMBLE_UPDATE_STATUS = "councilpreamble-update-status";
     private static final String COMMONERRORPAGE = "common-error-page";
-    @Autowired
-    private CouncilPreambleService councilPreambleService;
-    @Autowired
-    private MessageSource messageSource;
-
-    @Autowired
-    private DepartmentService deptService;
-
-    @Autowired
-    private EgwStatusHibernateDAO egwStatusHibernateDAO;
-
-    @Autowired
-    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
-
-    @Autowired
-    private CouncilThirdPartyService councilThirdPartyService;
-
+    private static final Logger LOGGER = Logger
+            .getLogger(CouncilPreambleController.class);
     @Qualifier("fileStoreService")
     @Autowired
     protected FileStoreService fileStoreService;
     @Autowired
     protected FileStoreUtils fileStoreUtils;
     @Autowired
+    private CouncilPreambleService councilPreambleService;
+    @Autowired
+    private MessageSource messageSource;
+    @Autowired
+    private DepartmentService deptService;
+    @Autowired
+    private EgwStatusHibernateDAO egwStatusHibernateDAO;
+    @Autowired
+    private AutonumberServiceBeanResolver autonumberServiceBeanResolver;
+    @Autowired
+    private CouncilThirdPartyService councilThirdPartyService;
+    @Autowired
     private BoundaryService boundaryService;
-
     @Autowired
     private AppConfigValueService appConfigValueService;
-
-    private static final Logger LOGGER = Logger
-            .getLogger(CouncilPreambleController.class);
 
     @ModelAttribute("departments")
     public List<Department> getDepartmentList() {
@@ -135,6 +180,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     public String newForm(final Model model) {
         CouncilPreamble councilPreamble = new CouncilPreamble();
         councilPreamble.setType(PreambleType.GENERAL);
+        model.addAttribute("autoPreambleNoGenEnabled", isAutoPreambleNoGenEnabled());     
         model.addAttribute(COUNCIL_PREAMBLE, councilPreamble);
         prepareWorkFlowOnLoad(model, councilPreamble);
         model.addAttribute(CURRENT_STATE, "NEW");
@@ -143,7 +189,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     }
 
     private void prepareWorkFlowOnLoad(final Model model,
-            CouncilPreamble councilPreamble) {
+                                       CouncilPreamble councilPreamble) {
         WorkflowContainer workFlowContainer = new WorkflowContainer();
         prepareWorkflow(model, councilPreamble, workFlowContainer);
         model.addAttribute("stateType", councilPreamble.getClass()
@@ -152,12 +198,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final CouncilPreamble councilPreamble,
-            final BindingResult errors,
-            @RequestParam final MultipartFile attachments, final Model model,
-            final HttpServletRequest request,
-            final RedirectAttributes redirectAttrs,
-            @RequestParam String workFlowAction) {
-        validatePreamble(councilPreamble,errors);
+                         final BindingResult errors,
+                         @RequestParam final MultipartFile attachments, final Model model,
+                         final HttpServletRequest request,
+                         final RedirectAttributes redirectAttrs,
+                         @RequestParam String workFlowAction) {
+        validatePreamble(councilPreamble, errors);
         if (errors.hasErrors()) {
             prepareWorkFlowOnLoad(model, councilPreamble);
             return COUNCILPREAMBLE_NEW;
@@ -174,10 +220,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 LOGGER.error("Error in loading documents" + e.getMessage(), e);
             }
         }
+        if (isAutoPreambleNoGenEnabled()){
         PreambleNumberGenerator preamblenumbergenerator = autonumberServiceBeanResolver
                 .getAutoNumberServiceFor(PreambleNumberGenerator.class);
         councilPreamble.setPreambleNumber(preamblenumbergenerator
                 .getNextNumber(councilPreamble));
+        }
         councilPreamble.setStatus(egwStatusHibernateDAO
                 .getStatusByModuleAndCode(CouncilConstants.PREAMBLE_MODULENAME,
                         CouncilConstants.PREAMBLE_STATUS_CREATED));
@@ -204,19 +252,19 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 approvalComment, workFlowAction);
 
         String message = messageSource.getMessage("msg.councilPreamble.create",
-                new String[] {
+                new String[]{
                         approverName.concat("~").concat(nextDesignation),
-                        councilPreamble.getPreambleNumber() },
+                        councilPreamble.getPreambleNumber()},
                 null);
         redirectAttrs.addFlashAttribute(MESSAGE2, message);
-        return "redirect:/councilpreamble/result/" + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
     }
 
     @RequestMapping(value = "/downloadfile/{fileStoreId}")
-    public void download(@PathVariable final String fileStoreId,
-            final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId,
-                CouncilConstants.MODULE_NAME, false, response);
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId,
+                CouncilConstants.MODULE_NAME, false);
     }
 
     @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
@@ -228,19 +276,21 @@ public class CouncilPreambleController extends GenericWorkFlowController {
         prepareWorkFlowOnLoad(model, councilPreamble);
         return COUNCILPREAMBLE_RESULT;
     }
-    public void validatePreamble(final CouncilPreamble councilPreamble,final BindingResult errors){
+
+    public void validatePreamble(final CouncilPreamble councilPreamble, final BindingResult errors) {
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "department", "notempty.preamble.department");
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "gistOfPreamble", "notempty.preamble.gistOfPreamble");
-        if(councilPreamble.getAttachments().getSize() == 0 && councilPreamble.getFilestoreid() == null)
-        errors.rejectValue("attachments", "notempty.preamble.attachments");
+        if (councilPreamble.getAttachments().getSize() == 0 && councilPreamble.getFilestoreid() == null)
+            errors.rejectValue("attachments", "notempty.preamble.attachments");
     }
+
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     public String update(@Valid @ModelAttribute final CouncilPreamble councilPreamble,
-            final Model model, @RequestParam final MultipartFile attachments,
-            final BindingResult errors, final HttpServletRequest request,
-            final RedirectAttributes redirectAttrs,
-            @RequestParam String workFlowAction) {
-        validatePreamble(councilPreamble,errors);
+                         final Model model, @RequestParam final MultipartFile attachments,
+                         final BindingResult errors, final HttpServletRequest request,
+                         final RedirectAttributes redirectAttrs,
+                         @RequestParam String workFlowAction) {
+        validatePreamble(councilPreamble, errors);
         if (errors.hasErrors()) {
             prepareWorkFlowOnLoad(model, councilPreamble);
             model.addAttribute(CURRENT_STATE, councilPreamble
@@ -294,12 +344,12 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             }
             redirectAttrs.addFlashAttribute(MESSAGE2, message);
         }
-        return "redirect:/councilpreamble/result/" + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
     }
 
     @RequestMapping(value = "/updateimplimentaionstatus/{id}", method = RequestMethod.GET)
     public String updateStatus(@PathVariable("id") final Long id, final Model model,
-            final HttpServletResponse response) throws IOException {
+                               final HttpServletResponse response) {
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         if (null != councilPreamble.getImplementationStatus()
                 && IMPLEMENTATION_STATUS_FINISHED.equals(councilPreamble.getImplementationStatus().getCode())) {
@@ -323,20 +373,20 @@ public class CouncilPreambleController extends GenericWorkFlowController {
             councilPreambleService.updateImplementationStatus(councilPreamble);
         }
         redirectAttrs.addFlashAttribute(MESSAGE2, messageSource.getMessage("msg.councilPreamble.update", null, null));
-        return "redirect:/councilpreamble/result/" + councilPreamble.getId();
+        return REDIRECT_COUNCILPREAMBLE_RESULT + councilPreamble.getId();
     }
 
     private String getMessage(String messageLabel,
-            final CouncilPreamble councilPreamble) {
+                              final CouncilPreamble councilPreamble) {
         String message;
         message = messageSource.getMessage(messageLabel,
-                new String[] { councilPreamble.getPreambleNumber() }, null);
+                new String[]{councilPreamble.getPreambleNumber()}, null);
         return message;
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
     public String edit(@PathVariable("id") final Long id, final Model model,
-            final HttpServletResponse response) throws IOException {
+                       final HttpServletResponse response){
         CouncilPreamble councilPreamble = councilPreambleService.findOne(id);
         WorkflowContainer workFlowContainer = new WorkflowContainer();
         prepareWorkflow(model, councilPreamble, workFlowContainer);
@@ -375,7 +425,7 @@ public class CouncilPreambleController extends GenericWorkFlowController {
     @RequestMapping(value = "/ajaxsearch/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String ajaxsearch(@PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final CouncilPreamble councilPreamble) {
+                             @ModelAttribute final CouncilPreamble councilPreamble) {
         List<CouncilPreamble> searchResultList;
 
         if ("edit".equalsIgnoreCase(mode)) {
@@ -388,6 +438,11 @@ public class CouncilPreambleController extends GenericWorkFlowController {
                 .append(toJSON(searchResultList, CouncilPreamble.class,
                         CouncilPreambleJsonAdaptor.class))
                 .append("}").toString();
+    }
+    
+    public Boolean isAutoPreambleNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                MODULE_FULLNAME, PREAMBLE_NUMBER_AUTO);
     }
 
 }

@@ -1,13 +1,13 @@
-# [eGov Opensource][GHPAGE] 
+# eGov SmartCity eGovernance Suite [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
 [![Join the chat at https://gitter.im/egovernments/eGov](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/egovernments/eGov?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-[![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Master)](http://ci.egovernments.org/job/eGov-Github-Master/) [![][codacy img]][codacy] [![][versioneye img]][versioneye]
+[![Build Status](http://ci.egovernments.org/buildStatus/icon?job=eGov-Github-Develop)](http://ci.egovernments.org/job/eGov-Github-Develop/) [![][codacy img]][codacy] [![][versioneye img]][versioneye]
 
 eGovernments Foundation transforms urban governance with the use of scalable and replicable technology solutions that enable efficient and effective municipal operations, better decision making, and contact-less urban service delivery.
 
 Our comprehensive software products enable Governments to put their resources to efficient use by minimising overheads. We also help bring in transparency, accountability and citizen centricity in the delivery of Government services.
 
-eGovernments Foundation has been in the forefront of implementing eGovernance solutions since 2003. Our products have been serving over 275 ULBs across the country. Our time tested products have impacted the ULBs in a large way. We have also been involved in several eGovernance initiatives in the country.
+eGovernments Foundation has been in the forefront of implementing eGovernance solutions since 2003. Our products have been serving over 325 ULBs across the country. Our time tested products have impacted the ULBs in a large way. We have also been involved in several eGovernance initiatives in the country.
 
 Our primary business motivator is to increase the footprint of eGovernance across the country and help adoption in as many ULBs as possible. Going opensource with our products is a measure in this direction. It also gives us the ability to tap into the immense talent pool in India for strengthening and improving our cities. Open source also blends well with our ethical fabric of being open and transparent in our business.
 
@@ -22,6 +22,32 @@ The eGov suit is released under version 3.0 of the [GPL][].
 This section contains steps that are involved in build and deploy the application.
 FAQ related to various deployment and development issues are discussed [here][FAQ]
 
+## Setup with auto installer
+* Clone the eGov repository (development is done on the develop branch).
+```bash
+$ mkdir -p ${HOME}/egovgithub && cd egovgithub
+$ git clone  -b develop --single-branch  https://github.com/egovernments/eGov.git
+```
+* First time setup which will install the stacks, build the source code, and deploys the artifact to Wildfly
+```bash
+$ cd ${HOME}/egovgithub/eGov && make all
+```
+-----
+* To install the prerequisites Phoenix stacks
+```bash
+$ cd ${HOME}/egovgithub/eGov &&  make install
+```
+* To build the source code base
+```bash
+$ cd ${HOME}/egovgithub/eGov && make build
+```
+* To deploy the artifact to WILDFLY
+```bash
+$ cd ${HOME}/egovgithub/eGov && make deploy
+```
+
+## Manual Setup Instruction
+
 #### Prerequisites
 
 * Install [maven v3.2.x][Maven]
@@ -30,7 +56,6 @@ FAQ related to various deployment and development issues are discussed [here][FA
 * Install [Jboss Wildfly v10.x][Wildfly Customized]
 * Install [Git 2.8.3][Git]
 * Install [JDK 8 update 112 or higher][JDK8 build]
-
 #### Database Setup
 1. Create a database and user in postgres
 2. Create a schema called `generic`
@@ -67,7 +92,7 @@ $ git checkout develop
  elasticsearch.cluster.name=elasticsearch-<username>
  
  ```
- One can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by adding an entry in `egov-erp-<username>.properties`.
+ If required, you can override any default settings available in `/egov/egov-egi/src/main/resources/config/application-config.properties` by overriding the value in `egov-erp-<username>.properties`.
 
 3. Change directory back to `<CLONED_REPO_DIR>/egov`
 
@@ -86,12 +111,13 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
  ```bash
  sudo apt-get install redis-server
  ```
-2. Installing redis server on Windows :- There is no official installable avialable for Windows OS. To install redis on Windows OS, follow the instruction given in https://chocolatey.org/packages/redis-64
+2. Installing redis server on Windows :- There is no official installable available for Windows OS. To install redis on Windows OS, follow the instruction given in https://chocolatey.org/packages/redis-64
 
 3. Once installed, set the below property in ```egov-erp-override.properties``` or ```egov-erp-<username>.properties```. 
 
  ```properties
- redis.enable.embedded=false ## true by default
+ ## true by default
+ redis.enable.embedded=false
  ```
  to control the redis server host and port use the following property values (only required if installed with non default).
 
@@ -135,8 +161,8 @@ By default eGov suit uses embedded redis server (work only in Linux & OSx), to m
   ```
 4. Change directory back to `<CLONED_REPO_DIR>/egov/dev-utils/deployment/` and run the below command
   ```
-   $  chmod +x deploy.sh
-$ ./deploy.sh
+  $  chmod +x deploy.sh
+  $ ./deploy.sh
   ```
 
  Alternatively this can be done manually by following the below steps.
@@ -148,10 +174,10 @@ $ ./deploy.sh
 
   ```
    $ cd <JBOSS_HOME>/bin/
-   $ nohup ./standalone.sh -Dspring.profiles.active=production -b 0.0.0.0 &
+   $ nohup ./standalone.sh -b 0.0.0.0 &
 
   ```
-  In Mac OS, it may also required to specify `-Djboss.modules.system.pkgs=org.jboss.byteman`
+  In Mac OSx, it may also required to specify `-Djboss.modules.system.pkgs=org.jboss.byteman`
   
   `-b 0.0.0.0` only required if application accessed using IP address or  domain name.
 
@@ -174,7 +200,7 @@ This section is to be referred only if you want the application to run using any
 
 Always start the wildfly server with the below command to access the application using IP address or  domain name.
 ```
- nohup ./standalone.sh -b 0.0.0.0 -Dspring.profiles.active=production &
+ nohup ./standalone.sh -b 0.0.0.0 &
 ```
 
 ## Developer Guide
@@ -203,7 +229,6 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 * Import the cloned git repo using maven Import Existing Project.
 * Install Jboss Tools and configure Wildfly Server.
 * Since jasperreport related jar's are not available in maven central, we have to tell eclipse to find jar's in alternative place for that navigate to `Windows -> Preference -> Maven -> User Settings -> Browse Global Settings` and point settings.xml available under egov-erp/
-* Double click on wildfly10.x --> open launch configurations --> edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
 * Now add your EAR project into the configured Wildfly server.
 * Start Wildfly in debug mode, this will enable hot deployment.
 
@@ -213,7 +238,6 @@ __Note__: Please check in [eGov Tools Repository] for any of the above software 
 * Open project
 * In project settings set JDK to 1.8
 * Add a run configuration for JBoss and point the JBOSS home to the wildfly unzipped folder
-* Open the Jboss run configuration and edit VM arguments and add string '-Dspring.profiles.active=production' at the end of existing VM arguments.
 * Run
 
 ##### 3. Database Migration Procedure
@@ -259,7 +283,8 @@ Browser:-
 [GPL]: http://www.gnu.org/licenses/
 [FAQ]:http://confluence.egovernments.org/display/FAQ/FAQ
 [GHPAGE]:https://egovernments.org/solutions.php
-[versioneye]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8
-[versioneye img]:https://www.versioneye.com/user/projects/57c7bed0968d640049e125d8/badge.svg
+[versioneye]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2
+[versioneye img]:https://www.versioneye.com/user/projects/5a0e82590fb24f00104d87b2/badge.svg?style=flat-square
 [codacy]:https://www.codacy.com/app/egovernments/eGov
 [codacy img]:https://api.codacy.com/project/badge/Grade/8e3a009a64a44d1a9d75f78261272987
+

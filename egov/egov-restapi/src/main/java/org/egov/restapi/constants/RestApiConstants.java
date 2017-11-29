@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,15 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.restapi.constants;
-
-import static org.egov.restapi.constants.RestApiConstants.MOBILENO_ALPHANUMERIC_ERROR_CODE;
-import static org.egov.restapi.constants.RestApiConstants.MOBILENO_ALPHANUMERIC_ERROR_MSG;
-
-import java.util.List;
-
-import com.google.common.collect.ImmutableList;
 
 public class RestApiConstants {
     public static final String OWNERSHIP_CATEGORY_TYPE_REQ_CODE = "01";
@@ -113,11 +114,11 @@ public class RestApiConstants {
     public static final String PLINTH_AREA_REQ_CODE = "22";
     public static final String PLINTH_AREA_REQ_MSG = "Plinth area (Sq.Mtrs) is required.";
 
-    public static final String FLOOR_TYPE_REQ_CODE = "23";
-    public static final String FLOOR_TYPE_REQ_MSG = "Floor Type is required.";
+    public static final String CLASSIFICATION_CODE_DOESNT_EXIST = "23";
+    public static final String CLASSIFICATION_CODE_DOESNT_EXIST_MSG = "Building Classification doesn't exist";
 
-    public static final String ROOF_TYPE_REQ_CODE = "24";
-    public static final String ROOF_TYPE_REQ_MSG = "Roof Type is required.";
+    public static final String USAGE_CODE_DOESNT_EXIST = "24";
+    public static final String USAGE_CODE_DOESNT_EXIST_MSG = "Nature of Usage doesn't exist";
 
     public static final String PIN_CODE_REQ_CODE = "25";
     public static final String PIN_CODE_REQ_MSG = "Pin Code is required.";
@@ -139,7 +140,7 @@ public class RestApiConstants {
 
     public static final String OWNER_NAME_REQ_CODE = "30";
     public static final String OWNER_NAME_REQ_MSG = "Owner Name is required.";
-    
+
     public static final String OWNER_NAME_ALPHANUMERIC_ERROR_CODE = "51";
     public static final String OWNER_NAME_ALPHANUMERIC_ERROR_MSG = "Invalid Owner Name";
 
@@ -220,7 +221,7 @@ public class RestApiConstants {
     public static final String CURRENT_CAPITAL_VALUE_GREATER_THAN_ZERO_MSG = "Current Capital Value should be greate than 0.";
 
     public static final String FIRMNAME_REQ_CODE = "64";
-    public static final String FIRMNAME_REQ_MSG = "Area/Extent of site should be greate than 0.";
+    public static final String FIRMNAME_REQ_MSG = "Firm Name is Required";
 
     public static final String OCCUPANCY_DATE_REQ_CODE = "65";
     public static final String OCCUPANCY_DATE_REQ_MSG = "Occupancy Date is required.";
@@ -246,11 +247,11 @@ public class RestApiConstants {
     public static final String ELECTION_WARD_REQ_CODE = "72";
     public static final String ELECTION_WARD_REQ_MSG = "Election Ward is required.";
 
-    public static final String DOOR_NO_REQ_CODE = "73";
-    public static final String DOOR_NO_REQ_MSG = "Door Number is required.";
+    public static final String VACANTLAND_AREA_REQ = "73";
+    public static final String VACANTLAND_AREA_REQ_MSG = "Vacant Land Area Type is required.";
 
-    public static final String CONSTRUCTION_DETAILS_REQ_CODE = "74";
-    public static final String CONSTRUCTION_DETAILS_REQ_MSG = "Please enter the construction details.";
+    public static final String CATEGORY_CANT_BE_RESIDENTIAL = "74";
+    public static final String CATEGORY_CANT_BE_RESIDENTIAL_MSG = "Ownership type is Vacant Land, hence Property type can't be Residential, Non-Residential or Mixed.";
 
     public static final String FUTURE_DATES_NOT_ALLOWED_CODE = "75";
     public static final String FUTURE_DATES_NOT_ALLOWED_MSG = "Registration Doc Date/Construction Date/Occupancy Date cannot be greater than current date.";
@@ -260,8 +261,6 @@ public class RestApiConstants {
 
     public static final String PLINTH_AREA_GREATER_THAN_PLOT_AREA_CODE = "77";
     public static final String PLINTH_AREA_GREATER_THAN_PLOT_AREA_MSG = "Plinth Area cannot be greater than Extent of Site.";
-
-   
 
     public static final String MOBILENO_MAX_LENGTH_ERROR_CODE = "79";
     public static final String MOBILENO_MAX_LENGTH_ERROR_MSG = "Maximum of 10 digits can be entered for the mobile number.";
@@ -274,8 +273,6 @@ public class RestApiConstants {
 
     public static final String TO_DATE_REQUIRED_CODE = "82";
     public static final String TO_DATE_REQUIRED_MSG = "To date is required.";
-    
-    
 
     public static final String PROPERTIES_LIST_EXCEED_LIMIT_CODE = "83";
     public static final String PROPERTIES_LIST_EXCEED_LIMIT_MSG = "More than 100 records found, please narrow the search criteria.";
@@ -532,91 +529,136 @@ public class RestApiConstants {
     public static final String THIRD_PARTY_ERR_MSG_NOPAYMENT_PENDING = "There is no tax pending for selected ApplicationNumber";
 
     public static final String THIRD_PARTY_ERR_CODE_ADVANCE_NOTALLOWED = "STMS-REST-2";
-    public static final String THIRD_PARTY_ERR_MSG_ADVANCE_NOTALLOWED="Payment amount should be less than demand amount";
+    public static final String THIRD_PARTY_ERR_MSG_ADVANCE_NOTALLOWED = "Payment amount should be less than demand amount";
     public static final String THIRD_PARTY_ERR_CODE_WRONG_BANK_NAME_CODE = "STMS-REST-3";
     public static final String THIRD_PARTY_ERR_MSG_WRONG_BANK_NAME_CODE = "Bank Name is not a valid.";
-    
+
     public static final String MOBILENO_ALPHANUMERIC_ERROR_CODE = "78";
     public static final String MOBILENO_ALPHANUMERIC_ERROR_MSG = "Invalid Mobile number.";
-    
+
     public static final String EMAIL_ERROR_CODE = "84";
     public static final String EMAIL_INVALID_MSG = "Invalid Email...";
-    
+
     public static final String PIN_CODE_ALPHASPL_ERROR_CODE = "85";
     public static final String PIN_CODE_ALPHASPL_ERROR_MSG = "Invalid Pin Code...";
-    
-    public static final String  GUARDIAN_NAME_NUMERICSPL_ERROR_CODE="86";
-    public static final String  GUARDIANNAME_NUMERICSPL_ERROR_MSG="Invalid Guardian Name";
-    
-    public static final String DOCUMENT_TYPE_DETAILS_REQ_CODE="87";
-    public static final String DOCUMENT_TYPE_DETAILS_REQ_MSG="Document Details Required..";
-    
-    public static final String DOCUMENT_TYPE_DETAILS_NAME_REQ_CODE="88";
-    public static final String DOCUMENT_TYPE_DETAILS_NAME_REQ_MSG="Select Atleast One Document..";
-    
+
+    public static final String GUARDIAN_NAME_NUMERICSPL_ERROR_CODE = "86";
+    public static final String GUARDIANNAME_NUMERICSPL_ERROR_MSG = "Invalid Guardian Name";
+
+    public static final String DOCUMENT_TYPE_DETAILS_REQ_CODE = "87";
+    public static final String DOCUMENT_TYPE_DETAILS_REQ_MSG = "Document Details Required..";
+
+    public static final String DOCUMENT_TYPE_DETAILS_NAME_REQ_CODE = "88";
+    public static final String DOCUMENT_TYPE_DETAILS_NAME_REQ_MSG = "Select Atleast One Document..";
+
     public static final String MRO_PROCC_NO_REQ_CODE = "89";
     public static final String MRO_PROCC_NO_REQ_MSG = "MRO Proceeding  Doc No is required.";
 
     public static final String MRO_PROCC_DATE_REQ_CODE = "90";
     public static final String MRO_PROCC_DATE_REQ_MSG = "MRO Proceeding  Doc Date is required.";
-    
+
     public static final String COURT_NAME_REQ_CODE = "91";
     public static final String COURT_NAME_REQ_MSG = "Court Name is required.";
-    
+
     public static final String VL_AREA_NUMBER_REQ_CODE = "92";
     public static final String VL_AREA_NUMBER_REQ_MSG = "Please enter valid Vacant Land Area ";
-    
+
     public static final String MKT_VAL_NUMBER_REQ_CODE = "92";
-    public static final String MKT_VAL__NUMBER_REQ_MSG = "Please enter valid Market Value ";
-    
+    public static final String MKT_VAL_NUMBER_REQ_MSG = "Please enter valid Market Value ";
+
     public static final String BUILDING_PERMISSION_NO_REQ_CODE = "93";
     public static final String BUILDING_PERMISSION_NO_REQ_MSG = "Building Permission no  is required.";
-    
+
     public static final String BUILDING_PERMISSION_DATE_REQ_CODE = "94";
     public static final String BUILDING_PERMISSION_DATE_REQ_MSG = "Building Permission Date is required.";
-    
+
     public static final String UNSTRUCTURED_LAND_REQ_CODE = "95";
     public static final String UNSTRUCTURED_LAND_REQ_MSG = "Please check Unstructured Land checkbox";
     public static final String DOCUMENT_DATE_LESS_EFFECTIVE_DATE_CODE = "97";
     public static final String DOCUMENT_DATE_LESS_EFFECTIVE_DATE_REQ_MSG = "Document Date Should be less than Effective Date";
-    
+
     public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_CODE = "98";
-    public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG = "Document Date Should be greter than Construction Date";
-    
+    public static final String DOCUMENT_DATE_GREATER_CONSTRUCTION_DATE_REQ_MSG = "Document Date Should be less than Construction Date";
+
     public static final String INVALID_GUARDIAN_RELATION_CODE = "100";
     public static final String INVALID_GUARDIAN_RELATION_REQ_MSG = "Invalid Guardian Relation";
-    
+
     public static final String DEMAND_INACTIVE_CODE = "101";
     public static final String DEMAND_INACTIVE_REQ_MSG = "Demand is Inactive Foe given Property";
-    
+
     public static final String PROPERTY_UNDERWORKFLOW_CODE = "102";
     public static final String PROPERTY_UNDERWORKFLOW_REQ_MSG = "Property is Under workflow";
-    
+
     public static final String INACTIVE_ZONE_CODE = "103";
     public static final String INACTIVE_ZONE_REQ_MSG = "Selected Zone is Inactive";
-    
+
     public static final String INACTIVE_LOCALITY_CODE = "104";
     public static final String INACTIVE_LOCALITY_REQ_MSG = "Selected Locality is Inactive";
-    
+
     public static final String INACTIVE_BLOCK_CODE = "105";
     public static final String INACTIVE_BLOCK_REQ_MSG = "Selected Block is Inactive";
-    
+
     public static final String INACTIVE_WARD_CODE = "106";
     public static final String INACTIVE_WARD_REQ_MSG = "Selected ward is Inactive";
-    
+
     public static final String INACTIVE_ELECTION_WARD_CODE = "107";
     public static final String INACTIVE_ELECTION_WARD_REQ_MSG = "Selected Election Ward is Inactive";
-    
+
     public static final String INACTIVE_USAGE_CODE = "108";
     public static final String INACTIVE_USAGE_REQ_MSG = "Usage Code is Inactive";
-    
+
     public static final String INACTIVE_CLASSIFICATION_CODE = "109";
     public static final String INACTIVE_CLASSIFICATION_REQ_MSG = "Building Classification is Inactive";
-    
+
+    public static final String INACTIVE_UNIT_RATES_CODE = "110";
+    public static final String INACTIVE_UNIT_RATES_REQ_MSG = "There is no Active Unit Rates for given Zone,Claasfication,Usage and Occupancy Date";
+
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_CODE = "111";
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_BLOCK_REQ_MSG = "There is No Mapping Found for selected Locality , Block and Ward";
+
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_CODE = "112";
+    public static final String CROSS_MAPPING_FOR_LOCALITY_WARD_REQ_MSG = "There is Mapping Found for selected Locality , Block and Ward";
+
     public static final String DOCUMENT_NAME_PATTA_CERTIFICATE = "Patta Certificate (Issued by Revenue Department)";
     public static final String DOCUMENT_NAME_REGD_WILL_DOCUMENT = "Registered Will Document";
     public static final String DOCUMENT_NAME_UNREGD_WILL_DOCUMENT = "Un-registered Will Document";
     public static final String DOCUMENT_NAME_DECREE_BY_CIVILCOURT = "Decree by Civil Court";
     public static final String DOCUMENT_NAME_REGD_DOCUMENT = "Registered Document";
     public static final String DOCUMENT_NAME_NOTARY_DOCUMENT = "Un-registered Document / Notary document";
+
+    public static final String THIRD_PARTY_ERR_CODE_NO_BUDGETHEAD = "EGF-REST-7";
+    public static final String THIRD_PARTY_ERR_MSG_NO_BUDGETHEAD = "No Budget Head exists with the given Budget Head code";
+
+    public static final String LAYOUT_AUTHORITY_REQ = "113";
+    public static final String LAYOUT_AUTHORITY_REQ_MSG = "Layout Authority Required.";
+
+    public static final String LAYOUT_AUTHORITY_NUM = "114";
+    public static final String LAYOUT_AUTHORITY_NUM_MSG = "Layout Permit Number Required.";
+
+    public static final String LAYOUT_AUTHORITY_DATE = "115";
+    public static final String LAYOUT_AUTHORITY_DATE_MSG = "Layout Permit Date Required.";
+
+    public static final String NON_VACANT_TO_VACANT = "116";
+    public static final String NON_VACANT_TO_VACANT_MSG = "Non-Vacant Property cannot be converted to Vacant land";
+
+    public static final String LAYOUT_AUTH_DOESNT_EXIST = "117";
+    public static final String LAYOUT_AUTH_DOESNT_EXIST_MSG = "Entered layout authority doesn't exist, Please enter existing one";
+
+    public static final String BLD_PERMISSION_DATE_REQ = "118";
+    public static final String BLD_PERMISSION_DATE_REQ_MSG = "Building Permission Date is Required";
+
+    public static final String BLD_PLAN_PLINTHAREA_REQ = "119";
+    public static final String BLD_PLAN_PLINTHAREA_REQ_MSG = "Building Plan Plinth Area is Required";
+
+    public static final String NATUREOFUSAGE_CANT_BE_RESIDENTIAL = "120";
+    public static final String NATUREOFUSAGE_CANT_BE_RESIDENTIAL_MSG = "Non-Residential property hence, Nature of Usage can't be Residential.";
+
+    public static final String VACANT_PLOT_AREA_TYPE_DOESNT_EXIST = "121";
+    public static final String VACANT_PLOT_AREA_TYPE_DOESNT_EXIST_MSG = "Vacant Plot Area type Doesn't Exists.";
+
+    public static final String VACANT_LAND_PROPERTY_ERROR_CODE = "122";
+    public static final String VACANT_LAND_PROPERTY_ERROR_MSG = "Given assessment number belongs to a vacant land";
+
+    public static final String CATEGORY_CANT_BE_VACANT = "123";
+    public static final String CATEGORY_CANT_BE_VACANT_MSG = "Ownership type is State/Central Govt, Hence Property Category can't be Vacant Land";
 }

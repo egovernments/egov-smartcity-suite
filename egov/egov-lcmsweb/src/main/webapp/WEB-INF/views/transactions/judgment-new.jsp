@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ include file="/includes/taglibs.jsp"%>
@@ -45,8 +53,8 @@
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 
-<form:form id="judgmentform" class="form-horizontal form-groups-bordered" 
-		modelAttribute="judgment" role="form"  method="post" enctype="multipart/form-data">
+<form:form  class="form-horizontal form-groups-bordered" 
+		modelAttribute="judgment" role="form"  method="post" id="judgmentform" enctype="multipart/form-data">
 	 <input type="hidden" name="legalCase" value="${legalCase.id}" />  
 	 <jsp:include page="../transactions/view-summarizedcase.jsp"/>  
 	 <%@ include file="judgment-form.jsp"%>
@@ -59,7 +67,7 @@
 	
 	<div class="form-group">
 		<div class="text-center">
-			<button type="submit" name="submit" id="save" class="btn btn-primary" value="Save" ><spring:message code="lbl.submit"/></button>
+		<button type="submit" class='btn btn-primary' id="buttonSubmit"><spring:message code="lbl.submit"/></button>
 			<button type='button' class='btn btn-default' id="btnclose"><spring:message code='lbl.close' />
 		</div>
 	</div>

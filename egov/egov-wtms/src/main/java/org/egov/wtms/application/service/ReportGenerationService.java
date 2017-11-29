@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,22 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.application.service;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
-
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
@@ -67,6 +61,8 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
+import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.pims.commons.Position;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
@@ -81,8 +77,25 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
 @Service
 public class ReportGenerationService {
+
+    public static final String ESTIMATION_NOTICE = "estimationNotice";
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -164,6 +177,7 @@ public class ReportGenerationService {
                     reportParams.put("workOrderDate", "");
                     reportParams.put("workOrderNo", "");
                 }
+
             }
 
             final User user = securityUtils.getCurrentUser();
@@ -297,11 +311,12 @@ public class ReportGenerationService {
                 final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
-                final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
-                String ownerName = "";
+                final String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
+                final StringBuilder ownerName = new StringBuilder();
                 for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                    ownerName = names.getOwnerName();
-                    break;
+                    if (assessmentDetails.getOwnerNames().size() > 1)
+                        ownerName.append(", ");
+                    ownerName.append(names.getOwnerName());
                 }
 
                 reportParams.put("applicationType", WordUtils.capitalize(WaterTaxConstants.CLOSURECONN));
@@ -327,4 +342,58 @@ public class ReportGenerationService {
             }
         return reportOutput;
     }
+
+    public ReportOutput generateEstimationNoticeReport(final WaterConnectionDetails waterConnectionDetails,
+            final String cityMunicipalityName, final String districtName) {
+        ReportRequest reportInput = null;
+        if (waterConnectionDetails != null) {
+            final Map<String, Object> reportParams = new HashMap<>();
+            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                    waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                    PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+            final String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
+            final StringBuilder ownerName = new StringBuilder();
+
+            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                if (assessmentDetails.getOwnerNames().size() > 1)
+                    ownerName.append(", ");
+                ownerName.append(names.getOwnerName());
+            }
+
+            reportParams.put("applicationType",
+                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+            reportParams.put("cityName", cityMunicipalityName);
+            reportParams.put("district", districtName);
+            reportParams.put("estimationDate",
+                    DateUtils.toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
+            reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
+            reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
+            final double totalCharges = waterConnectionDetails.getDonationCharges()
+                    + waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()
+                    + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
+                    + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
+            reportParams.put("totalCharges", totalCharges);
+            reportParams.put("applicationDate", DateUtils.toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
+            reportParams.put("applicantName", ownerName.toString());
+            reportParams.put("address", assessmentDetails.getPropertyAddress());
+            reportParams.put("houseNo", doorNo[0]);
+            reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
+            reportParams.put("amountInWords", getTotalAmntInWords(totalCharges));
+            reportParams.put("securityDeposit",
+                    waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit());
+            reportParams.put("roadCuttingCharges",
+                    waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
+            reportParams.put("superVisionCharges",
+                    waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+            reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
+        }
+        ReportOutput reportOutput;
+        reportOutput = reportService.createReport(reportInput);
+        return reportOutput;
+    }
+
+    public String getTotalAmntInWords(final Double totalCharges) {
+        return NumberToWordConverter.amountInWordsWithCircumfix(BigDecimal.valueOf(totalCharges));
+    }
+
 }

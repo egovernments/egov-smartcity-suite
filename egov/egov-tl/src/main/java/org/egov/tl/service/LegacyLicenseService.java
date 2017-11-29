@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -35,23 +42,10 @@
  *            with regards to rights under trademark law for use of the trade names
  *            or trademarks of eGovernments Foundation.
  *
- *   In case of any queries, you can reach eGovernments Foundation at contact @egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.tl.service;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.math.RoundingMode;
-import java.util.Date;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Stream;
 
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentHibDao;
@@ -71,6 +65,20 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Stream;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.tl.utils.Constants.LICENSE_STATUS_ACTIVE;
 
 @Service
 public class LegacyLicenseService {
@@ -277,7 +285,7 @@ public class LegacyLicenseService {
     }
 
     private void updateNewLegacyDemand(final Map<Integer, Integer> updatedInstallmentFees,
-            final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
+                                       final Map<Integer, Boolean> legacyFeePayStatus, final LicenseDemand licenseDemand) {
 
         final Module module = moduleService.getModuleByName("Trade License");
         for (final Entry<Integer, Integer> updatedInstallmentFee : updatedInstallmentFees.entrySet())
@@ -312,12 +320,12 @@ public class LegacyLicenseService {
                                     files[i].getOriginalFilename(),
                                     files[i].getContentType(), "EGTL"));
                     documents.get(i).setEnclosed(true);
+                    documents.get(i).setDocDate(license.getApplicationDate());
                 } else if (documents.get(i).getType().isMandatory() && files[i].isEmpty() && documents.isEmpty()) {
                     documents.get(i).getFiles().clear();
                     throw new ValidationException("TL-011", "File should not be Empty",
                             documents.get(i).getType().getName());
                 }
-                documents.get(i).setDocDate(license.getApplicationDate());
                 documents.get(i).setLicense(license);
             }
     }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,30 +43,26 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
 
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.HashMap;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.WordUtils;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
-import org.egov.infra.utils.NumberToWordConverter;
-import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.autonumber.EstimationNumberGenerator;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -72,15 +75,22 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+import java.io.File;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.HashMap;
+import java.util.Map;
+
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+
 @Controller
 @RequestMapping(value = "/application")
 public class EstimationNoticeController {
 
     @Autowired
     private ReportService reportService;
-
-    @Autowired
-    private AutonumberServiceBeanResolver beanResolver;
 
     public static final String ESTIMATION_NOTICE = "estimationNotice";
     @Autowired
@@ -89,72 +99,85 @@ public class EstimationNoticeController {
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
+    @Autowired
+    private ReportGenerationService reportGenerationService;
+
+    @Autowired
+    private FileStoreService fileStoreService;
+
     @RequestMapping(value = "/estimationNotice", method = RequestMethod.GET)
     @ResponseBody
     public ResponseEntity<byte[]> generateEstimationNotice(final HttpServletRequest request,
             final HttpSession session) {
-        final EstimationNumberGenerator estimationNoGen = beanResolver
-                .getAutoNumberServiceFor(EstimationNumberGenerator.class);
 
         final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
-        waterConnectionDetails.setEstimationNumber(estimationNoGen.generateEstimationNumber());
-        waterConnectionDetailsService.saveAndFlushWaterConnectionDetail(waterConnectionDetails);
         return generateReport(waterConnectionDetails, session);
     }
 
     private ResponseEntity<byte[]> generateReport(final WaterConnectionDetails waterConnectionDetails,
             final HttpSession session) {
         ReportRequest reportInput = null;
-        ReportOutput reportOutput;
-        if (waterConnectionDetails != null) {
-            final Map<String, Object> reportParams = new HashMap<>();
-            final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
-            final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
-                    waterConnectionDetails.getConnection().getPropertyIdentifier(),
-                    PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
-            final String doorNo[] = assessmentDetails.getPropertyAddress().split(",");
-            final StringBuilder ownerName = new StringBuilder();
+        ReportOutput reportOutput = new ReportOutput();
+        if (waterConnectionDetails != null)
+            if (waterConnectionDetails.getEstimationNoticeFileStoreId() != null) {
+                final FileStoreMapper fmp = waterConnectionDetails.getEstimationNoticeFileStoreId();
+                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
+                reportOutput = new ReportOutput();
+                try {
+                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+                    reportOutput.setReportFormat(ReportFormat.PDF);
+                } catch (final IOException e) {
+                    throw new ApplicationRuntimeException("Exception in generating work order notice" + e);
+                }
+            } else {
 
-            int counter = 0;
-            for (final OwnerName names : assessmentDetails.getOwnerNames()) {
-                if (counter > 0)
-                    ownerName.append(", ");
-                ownerName.append(names.getOwnerName());
-                counter++;
+                final Map<String, Object> reportParams = new HashMap<>();
+                final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
+                final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
+                        waterConnectionDetails.getConnection().getPropertyIdentifier(),
+                        PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ACTIVE);
+                final String[] doorNo = assessmentDetails.getPropertyAddress().split(",");
+                final StringBuilder ownerName = new StringBuilder();
+
+                for (final OwnerName names : assessmentDetails.getOwnerNames()) {
+                    if (assessmentDetails.getOwnerNames().size() > 1)
+                        ownerName.append(", ");
+                    ownerName.append(names.getOwnerName());
+                }
+
+                reportParams.put("applicationType",
+                        WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
+                reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
+                reportParams.put("district", session.getAttribute("districtName"));
+                reportParams.put("estimationDate",
+                        formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
+                reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
+                reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
+                final double totalCharges = waterConnectionDetails.getDonationCharges()
+                        + waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()
+                        + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
+                        + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
+                reportParams.put("totalCharges", totalCharges);
+                reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
+                reportParams.put("applicantName", ownerName.toString());
+                reportParams.put("address", assessmentDetails.getPropertyAddress());
+                reportParams.put("houseNo", doorNo[0]);
+                reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
+                reportParams.put("amountInWords", reportGenerationService.getTotalAmntInWords(totalCharges));
+                reportParams.put("securityDeposit",
+                        waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit());
+                reportParams.put("roadCuttingCharges",
+                        waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
+                reportParams.put("superVisionCharges",
+                        waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges());
+                reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
+                reportOutput = reportService.createReport(reportInput);
             }
-
-            reportParams.put("applicationType",
-                    WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()).toString());
-            reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
-            reportParams.put("district", session.getAttribute("districtName"));
-            reportParams.put("estimationDate",
-                    formatter.format(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
-            reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
-            reportParams.put("donationCharges", waterConnectionDetails.getDonationCharges());
-            final double totalCharges = waterConnectionDetails.getDonationCharges()
-                    + waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges()
-                    + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
-                    + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
-            reportParams.put("totalCharges", totalCharges);
-            reportParams.put("applicationDate", formatter.format(waterConnectionDetails.getApplicationDate()));
-            reportParams.put("applicantName", ownerName.toString());
-            reportParams.put("address", assessmentDetails.getPropertyAddress());
-            reportParams.put("houseNo", doorNo[0]);
-            reportParams.put("propertyID", waterConnectionDetails.getConnection().getPropertyIdentifier());
-            reportParams.put("amountInWords", getTotalAmntInWords(totalCharges));
-            reportParams.put("securityDeposit",
-                    waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit());
-            reportParams.put("roadCuttingCharges",
-                    waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges());
-            reportParams.put("superVisionCharges",
-                    waterConnectionDetails.getFieldInspectionDetails().getSupervisionCharges());
-            reportInput = new ReportRequest(ESTIMATION_NOTICE, waterConnectionDetails, reportParams);
-        }
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=EstimationNotice.pdf");
-        reportOutput = reportService.createReport(reportInput);
+
         return new ResponseEntity<>(reportOutput.getReportOutputData(), headers, HttpStatus.CREATED);
     }
 
@@ -167,7 +190,4 @@ public class EstimationNoticeController {
         return generateReport(waterConnectionDetails, session);
     }
 
-    public String getTotalAmntInWords(final Double totalCharges) {
-        return NumberToWordConverter.amountInWordsWithCircumfix(BigDecimal.valueOf(totalCharges));
-    }
 }

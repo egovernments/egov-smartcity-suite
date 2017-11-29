@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.utils.constants;
 
@@ -57,6 +65,7 @@ public class WaterTaxConstants {
     public static final String CREATEWORKFLOWSTATE = "CREATED";
     public static final String APPLICATION_NUMBER = "applicationNumber";
     public static final String NEWCONNECTION = "NEWCONNECTION";
+    public static final String REGULARIZE_CONNECTION = "REGLZNCONNECTION";
     public static final String METERED = "Metered";
     public static final String CONNECTIONTYPE_METERED = "METERED";
     public static final String NON_METERED = "Non-metered";
@@ -86,6 +95,7 @@ public class WaterTaxConstants {
     public static final String SYSTEM = "SYSTEM";
     public static final String REVENUE_HIERARCHY_TYPE = "REVENUE";
     public static final String EDITCOLLECTION = "EDITCOLLECTION";
+    public static final String EDITDEMAND = "EDITDEMAND";
 
     public static final String SMSEMAILTYPENEWCONNFEEPAID = "newconnfeepaid";
     public static final String SMSEMAILTYPEADDCONNFEEPAID = "addconnfeepaid";
@@ -118,6 +128,7 @@ public class WaterTaxConstants {
     public static final String ROLE_OPERATOR = "Operator";
     public static final String ROLE_PUBLIC = "PUBLIC";
     public static final String ROLE_ADMIN = "Property Administrator";
+    public static final String ROLE_MEESEVA_OPERATOR = "MeeSeva Operator";
 
     // Rest API constants
     public static final String CURR_DMD_STR = "CURR_DMD";
@@ -356,7 +367,6 @@ public class WaterTaxConstants {
     public static final String REVENUEWARDAGGREGATIONFIELD = "revenueWard";
     public static final String CITYCODEAGGREGATIONFIELD = "cityCode";
     public static final String DASHBOARD_GROUPING_ALLWARDS = "allwards";
-    
 
     public static final String RESIDENTIALCONNECTIONTYPEFORDASHBOARD = "RESIDENTIAL";
 
@@ -396,4 +406,8 @@ public class WaterTaxConstants {
     public static final String JUNIOR_ASSISTANT_DESIGN_CODE = "JASST";
     public static final String SENIOR_ASSISTANT_DESIGN_CODE = "SASST";
     public static final String REASSIGNMENT = "REASSIGNMENT";
+    public static final String SOURCECHANNEL_ONLINE = "ONLINE";
+    public static final String CITIZENPORTAL = "CITIZENPORTAL";
+    public static final String SURVEY = "Survey";
+    public static final String APPLICATION_GIS_SYSTEM= "Application has been created through GIS survey system";
 }

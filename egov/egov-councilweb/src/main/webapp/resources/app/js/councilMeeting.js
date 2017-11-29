@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 jQuery('#btnsearch').click(function(e) {
@@ -92,13 +100,13 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "committeeType", "sClass" : "text-left"} ,{ 
+"data" : "meetingType", "sClass" : "text-left"} ,{ 
 "data" : "meetingNumber", "sClass" : "text-left"} ,{ 
 "data" : "meetingDate", "sClass" : "text-left"},{
 "data" : "meetingLocation", "sClass" : "text-left"},{
 "data" : "meetingTime", "sClass" : "text-left"},{
 "data" : "meetingStatus", "sClass" : "text-left", "title": "Meeting Status"}
-,{ "data" : null, "target":-1, "sClass" : "text-center", "title": "Action",
+,{ "data" : null, "target":-1, "sClass" : "text-left", "title": "Action",
 	
     sortable: false,
     "render": function ( data, type, row, meta ) {
@@ -107,7 +115,7 @@ function callAjaxSearch() {
           	 return '<button type="button" class="btn btn-xs btn-secondary edit"><i class="fa fa-pencil" aria-hidden="true"></i>&nbsp;&nbsp;Edit</button>';
         }else{
         	 if(row.meetingStatus=="MOM FINALISED"){
-        		 return '<button type="button" class="btn btn-xs btn-secondary generateMom"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print Resolution</button> &nbsp;<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>';
+        		 return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>&nbsp;<button type="button" class="btn btn-xs btn-secondary generateMom"><i class="fa fa-print" aria-hidden="true"></i>&nbsp;&nbsp;Print Resolution</button>';
         	 }else        	
           	     return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>';
          }

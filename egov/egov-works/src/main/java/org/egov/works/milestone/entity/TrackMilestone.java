@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,57 +43,29 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.works.milestone.entity;
 
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
+
+import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OrderBy;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.StateAware;
-
 @Entity
 @Table(name = "EGW_TRACK_MILESTONE")
 @Unique(id = "id", tableName = "EGW_TRACK_MILESTONE")
 @SequenceGenerator(name = TrackMilestone.SEQ_EGW_TRACK_MILESTONE, sequenceName = TrackMilestone.SEQ_EGW_TRACK_MILESTONE, allocationSize = 1)
-public class TrackMilestone extends StateAware {
-
-    private static final long serialVersionUID = -366602348464540736L;
+public class TrackMilestone extends StateAware<Position> {
 
     public static final String SEQ_EGW_TRACK_MILESTONE = "SEQ_EGW_TRACK_MILESTONE";
-
-    public enum TrackMilestoneStatus {
-        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
-    }
-
-    public enum Actions {
-        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
-
-        @Override
-        public String toString() {
-            return name().toLowerCase();
-        }
-    }
-
+    private static final long serialVersionUID = -366602348464540736L;
     @Id
     @GeneratedValue(generator = SEQ_EGW_TRACK_MILESTONE, strategy = GenerationType.SEQUENCE)
     private Long id;
@@ -108,7 +87,7 @@ public class TrackMilestone extends StateAware {
 
     @OrderBy("id")
     @OneToMany(mappedBy = "trackMilestone", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = TrackMilestoneActivity.class)
-    private List<TrackMilestoneActivity> activities = new LinkedList<TrackMilestoneActivity>();
+    private List<TrackMilestoneActivity> activities = new LinkedList<>();
 
     private transient String ownerName;
 
@@ -174,12 +153,12 @@ public class TrackMilestone extends StateAware {
         return activities;
     }
 
-    public void addActivity(final TrackMilestoneActivity activity) {
-        activities.add(activity);
-    }
-
     public void setActivities(final List<TrackMilestoneActivity> activities) {
         this.activities = activities;
+    }
+
+    public void addActivity(final TrackMilestoneActivity activity) {
+        activities.add(activity);
     }
 
     public String getApprovalComent() {
@@ -196,6 +175,19 @@ public class TrackMilestone extends StateAware {
 
     public void setProjectCompleted(final boolean projectCompleted) {
         this.projectCompleted = projectCompleted;
+    }
+
+    public enum TrackMilestoneStatus {
+        CREATED, APPROVED, REJECTED, CANCELLED, RESUBMITTED
+    }
+
+    public enum Actions {
+        SUBMIT_FOR_APPROVAL, APPROVE, REJECT, CANCEL;
+
+        @Override
+        public String toString() {
+            return name().toLowerCase();
+        }
     }
 
 }

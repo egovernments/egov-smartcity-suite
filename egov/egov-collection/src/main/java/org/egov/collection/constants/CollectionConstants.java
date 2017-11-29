@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,15 +43,16 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.constants;
+
+import org.egov.services.instrument.InstrumentService;
+import org.egov.utils.FinancialConstants;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.TreeMap;
-
-import org.egov.services.instrument.InstrumentService;
-import org.egov.utils.FinancialConstants;
 
 public final class CollectionConstants {
     // General messages/words like YES/NO/ALL
@@ -282,7 +290,6 @@ public final class CollectionConstants {
     public static final String FINANCIAL_CONTRATVOUCHER_VOUCHERNAME = FinancialConstants.CONTRAVOUCHER_NAME_PAYIN;
 
     public static final String SESSION_VAR_RECEIPT_IDS = "EGOV_RECEIPT_IDS";
-    public static final String SUPER_USER_NAME = "egovernments";
     public static final String SESSION_VAR_LOGIN_USER_LOCATIONID = "locationId";
 
     // Separators
@@ -508,6 +515,8 @@ public final class CollectionConstants {
     public static final String AXIS_TXN_NO = "vpc_TransactionNo";
     public static final String AXIS_BATCH_NO = "vpc_BatchNo";
     public static final String AXIS_ORDER_INFO = "vpc_OrderInfo";
+    public static final String AXIS_SECURE_HASHTYPE = "vpc_SecureHashType";
+    public static final String AXIS_SECURE_HASHTYPE_VALUE = "SHA256";
 
     public static final String MESSAGEKEY_AXIS_PAYMENT_CLIENT = "axis.payment.client";
     public static final String MESSAGEKEY_AXIS_VERSION = "axis.version";
@@ -583,6 +592,7 @@ public final class CollectionConstants {
     public static final String REMITTANCE_STATUS_CODE_NEW = "NEW";
     public static final String REMITTANCE_STATUS_CODE_APPROVED = "APPROVED";
 
+    public static final String LOGO_PATH ="CITY_LOGO_PATH";
     public static final String REMITTANCE_BY_VOUCHER_NUMBER = "getRemitanceByVoucherNumber";
     public static final TreeMap<String, String> SERVICE_TYPE_CLASSIFICATION = new TreeMap<String, String>() {
         {

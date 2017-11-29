@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,12 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.portal.service;
 
 import org.egov.infra.admin.master.service.RoleService;
-import org.egov.infra.config.properties.ApplicationProperties;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.config.core.EnvironmentSettings;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.token.service.TokenService;
 import org.egov.portal.entity.Citizen;
 import org.egov.portal.repository.CitizenRepository;
@@ -59,7 +67,7 @@ import static java.lang.String.format;
 import static org.apache.commons.lang3.RandomStringUtils.randomNumeric;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getMunicipalityName;
-import static org.egov.infra.messaging.MessagePriority.HIGH;
+import static org.egov.infra.notification.entity.NotificationPriority.HIGH;
 import static org.egov.infra.utils.ApplicationConstant.CITIZEN_ROLE_NAME;
 import static org.egov.infra.utils.ApplicationConstant.CITY_LOGIN_URL;
 
@@ -73,7 +81,7 @@ public class CitizenService {
     private CitizenRepository citizenRepository;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private RoleService roleService;
@@ -82,7 +90,7 @@ public class CitizenService {
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -94,12 +102,12 @@ public class CitizenService {
     @Transactional
     public void create(Citizen citizen) {
         citizen.addRole(roleService.getRoleByName(CITIZEN_ROLE_NAME));
-        citizen.updateNextPwdExpiryDate(applicationProperties.userPasswordExpiryInDays());
+        citizen.updateNextPwdExpiryDate(environmentSettings.userPasswordExpiryInDays());
         citizen.setPassword(passwordEncoder.encode(citizen.getPassword()));
         citizen.setActive(true);
         citizenRepository.saveAndFlush(citizen);
-        messagingService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
-        messagingService.sendEmail(citizen.getEmailId(), getMessage("citizen.reg.mail.subject"),
+        notificationService.sendSMS(citizen.getMobileNumber(), getMessage("citizen.reg.sms"));
+        notificationService.sendEmail(citizen.getEmailId(), getMessage("citizen.reg.mail.subject"),
                 getMessage("citizen.reg.mail.body", citizen.getName(),
                         format(CITY_LOGIN_URL, getDomainURL()), getMunicipalityName()));
     }
@@ -126,7 +134,7 @@ public class CitizenService {
     public boolean sendOTPMessage(String mobileNumber) {
         String otp = randomNumeric(5);
         tokenService.generate(otp, mobileNumber, CITIZEN_REG_SERVICE);
-        messagingService.sendSMS(mobileNumber, getMessage("citizen.reg.otp.sms", otp), HIGH);
+        notificationService.sendSMS(mobileNumber, getMessage("citizen.reg.otp.sms", otp), HIGH);
         return TRUE;
     }
 

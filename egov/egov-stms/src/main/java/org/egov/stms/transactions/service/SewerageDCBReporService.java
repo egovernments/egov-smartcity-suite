@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,48 +43,25 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.stms.transactions.service;
 
-import static org.egov.stms.utils.constants.SewerageTaxConstants.ARREARSEWERAGETAX;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
-import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
-
-import java.io.ByteArrayInputStream;
-import java.io.InputStream;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-
 import org.egov.commons.Installment;
 import org.egov.commons.dao.InstallmentDao;
-import org.egov.commons.service.FinancialYearService;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgdmCollectedReceipt;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.BoundaryType;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.BoundaryTypeService;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
-import org.egov.infra.reporting.engine.ReportConstants;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.infra.web.utils.WebUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.OwnerName;
 import org.egov.stms.autonumber.SewerageDemandBillNumberGenerator;
@@ -92,9 +76,29 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+
+import static org.egov.stms.utils.constants.SewerageTaxConstants.ARREARSEWERAGETAX;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.BOUNDARYTYPE_WARD;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_ADVANCE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_SEWERAGETAX_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.HIERARCHYTYPE_REVENUE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULE_NAME;
+
 @Service
 @Transactional(readOnly = true)
 public class SewerageDCBReporService {
+    public static final String SEWERAGEDEMANDBILL = "sewerageDemandBill";
 
     @Autowired
     private BoundaryService boundaryService;
@@ -118,15 +122,13 @@ public class SewerageDCBReporService {
     private AutonumberServiceBeanResolver beanResolver;
 
     @Autowired
-    private FinancialYearService financialYearService;
-
-    @Autowired
     private SewerageNoticeService sewerageNoticeService;
 
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
 
-    public static final String SEWERAGEDEMANDBILL = "sewerageDemandBill";
+    @Autowired
+    private CityService cityService;
 
     public List<SewerageRateDCBResult> getSewerageRateDCBReport(final SewerageApplicationDetails sewerageApplicationDetails) {
         final List<SewerageRateDCBResult> rateResultList = new ArrayList<>();
@@ -383,7 +385,7 @@ public class SewerageDCBReporService {
 
     @Transactional
     public ReportOutput generateAndSaveDemandBillNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-            final AssessmentDetails propertyOwnerDetails, final HttpServletRequest request, final HttpSession session) {
+            final AssessmentDetails propertyOwnerDetails) {
         ReportOutput reportOutput;
         SewerageNotice sewerageNotice = null;
         String demandBillNumber;
@@ -392,9 +394,7 @@ public class SewerageDCBReporService {
                 .getAutoNumberServiceFor(SewerageDemandBillNumberGenerator.class);
         demandBillNumber = demandBillNumberGenerator.generateSewerageDemandBillNumber(sewerageApplicationDetails);
 
-        reportOutput = generateSewerageDemandBillNotice(sewerageApplicationDetails, demandBillNumber, propertyOwnerDetails,
-                session,
-                request);
+        reportOutput = generateSewerageDemandBillNotice(sewerageApplicationDetails, demandBillNumber, propertyOwnerDetails);
         if (reportOutput != null && reportOutput.getReportOutputData() != null) {
             generateNoticePDF = new ByteArrayInputStream(reportOutput.getReportOutputData());
             sewerageNotice = sewerageNoticeService.buildDemandBillNotice(sewerageApplicationDetails, generateNoticePDF,
@@ -408,8 +408,7 @@ public class SewerageDCBReporService {
     }
 
     public ReportOutput generateSewerageDemandBillNotice(final SewerageApplicationDetails sewerageApplicationDetails,
-            final String demandBillNumber, final AssessmentDetails propertyOwnerDetails,
-            final HttpSession session, final HttpServletRequest request) {
+            final String demandBillNumber, final AssessmentDetails propertyOwnerDetails) {
         final Map<String, Object> reportParams = new HashMap<>();
         ReportRequest reportInput;
         BigDecimal sewerageTax = BigDecimal.ZERO;
@@ -421,16 +420,13 @@ public class SewerageDCBReporService {
         reportParams.put("demandBillNumber", demandBillNumber);
         final SimpleDateFormat date = new SimpleDateFormat("dd/MM/yyyy");
         final String fromDate = date.format(currentInstallment.getFromDate());
-
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        reportParams.put("cityLogo", url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo")));
+        reportParams.put("cityLogo", cityService.getCityLogoURL());
         reportParams.put("currInstallmentFromDate", fromDate);
         reportParams.put("financialYear", currentInstallment.getFinYearRange());
         reportParams.put("shscnumber", sewerageApplicationDetails.getConnection().getShscNumber());
         reportParams.put("houseno", propertyOwnerDetails.getHouseNo());
-        reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
-        reportParams.put("district", session.getAttribute("districtName"));
+        reportParams.put("municipality", cityService.getMunicipalityName());
+        reportParams.put("district", cityService.getDistrictName());
         if (propertyOwnerDetails.getOwnerNames() != null && !propertyOwnerDetails.getOwnerNames().isEmpty())
             for (final OwnerName propertyOwner : propertyOwnerDetails.getOwnerNames())
                 reportParams.put("ownername", propertyOwner.getOwnerName());

@@ -2,4 +2,12 @@
 host_key_checking=False
 
 [phoenix]
-localhost 
+localhost ansible_connection=local
+
+[app_server]
+
+[db_server]
+
+[es-server]
+
+[redis]

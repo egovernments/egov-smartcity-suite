@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 jQuery('#btnsearch').click(function(e) {
@@ -86,7 +94,7 @@ function callAjaxSearch() {
 				},
 				aaSorting: [],				
 				columns : [ { 
-"data" : "committeeType", "sClass" : "text-left"} ,{ 
+"data" : "meetingType", "sClass" : "text-left"} ,{ 
 "data" : "meetingNumber", "sClass" : "text-left"} ,{ 
 "data" : "meetingDate", "sClass" : "text-left"},{
 "data" : "meetingLocation", "sClass" : "text-left"},{
@@ -121,14 +129,28 @@ String.prototype.compose = (function (){
 
 var tbody = $('#sumotoTable').children('tbody');
 var table = tbody.length ? tbody : $('#sumotoTable');
+var row;
+if($('#autoResolutionNoGenEnabled').val()==true) {
+	  row = 
+		  '<tr>'+
+				 '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
+				 '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
+				 '<td><input type="text" class="form-control text-left patternvalidation" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
+				 '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'+
+				 '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meetingMOMs[{{idx}}].resolutionDetail" maxlength="5000" value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
+		'</tr>';
+} else {
+	  row = 
+		  '<tr>'+
+				 '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
+				 '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
+				 '<td><input type="text" class="form-control text-left patternvalidation" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
+				 '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'+
+				 '<td><input type="text" class="form-control text-left patternvalidation validnum" required="required" name="meetingMOMs[{{idx}}].resolutionNumber" {{readonly}} value="{{resolutionnumberTextBoxValue}}"/></td>'+
+				 '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meetingMOMs[{{idx}}].resolutionDetail" maxlength="5000" value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
+		'</tr>';
+}
 
-var row = '<tr>'+
- '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - GIST of Sumoto Resolution"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
- '<td><input type="text" class="form-control text-left patternvalidation" name="meetingMOMs[{{idx}}].preamble.sanctionAmount" {{readonly}} data-pattern="number" value="{{amountTextBoxValue}}"/></td>'+
- '<td><select name="meetingMOMs[{{idx}}].resolutionStatus" class="form-control addorremoverequired" required="required"><option value="">Loading...</option></select></td>'+
- '<td><div class="input-group"><textarea class="form-control textarea-content addorremoverequired" required="required" name="meetingMOMs[{{idx}}].resolutionDetail" maxlength="5000" value="{{amountTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Sumoto Resolution - Resolution comments"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
-'</tr>';
 
 jQuery('#add-sumoto').click(function(){
 	$('.agenda-section').show();
@@ -142,6 +164,7 @@ jQuery('#add-sumoto').click(function(){
 	       'idx': idx
 	   };
 	addRowFromObject(row);
+	patternvalidation();
 	loadDepartmentlist("meetingMOMs["+idx+"].preamble.department");
 	loadResolutionlist("meetingMOMs["+idx+"].resolutionStatus");
 	loadWardnumberlist("meetingMOMs["+idx+"].preamble.wardNumber");
@@ -253,20 +276,19 @@ $('#buttonFinalSubmit')
 					// generating final resolution pdf all fields are mandatory
 					$('.addorremoverequired').attr("required", "required");
 					if ($('form').valid()) {
-							bootbox
-							.confirm({
-								message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
-								buttons : {
-									'cancel' : {
-										label : 'No',
-										className : 'btn-danger pull-right'
-									},
-									'confirm' : {
-										label : 'Yes',
-										className : 'btn-danger pull-right'
-									}
-								},
-								callback : function(result) {
+							bootbox.confirm({
+							    message: "Information entered in this screen will not be modified once submitted,Please confirm yes to save",
+							    buttons: {
+							        confirm: {
+							            label: 'Yes',
+							            className: 'btn-primary'
+							        },
+							        cancel: {
+							            label: 'No',
+							            className: 'btn-danger'
+							        }
+							    },
+							    callback: function(result) {
 									if (result) {
 										$('.loader-class').modal('show', {
 											backdrop : 'static'

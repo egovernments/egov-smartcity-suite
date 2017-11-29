@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,12 +43,14 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.council.entity;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -57,54 +66,50 @@ import javax.persistence.OrderBy;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-
-import org.egov.commons.EgwStatus;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.egov.infra.workflow.entity.StateAware;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 @Entity
-@Unique(id = "id", tableName = "egcncl_agenda", fields = "agendaNumber", columnName = "agendaNumber", enableDfltMsg = true)
+@Unique(fields = "agendaNumber", enableDfltMsg = true)
 @Table(name = "egcncl_agenda")
 @SequenceGenerator(name = CouncilAgenda.SEQ_AGENDA, sequenceName = CouncilAgenda.SEQ_AGENDA, allocationSize = 1)
-public class CouncilAgenda extends StateAware {
-
-    private static final long serialVersionUID = 6941145759682765506L;
+public class CouncilAgenda extends StateAware<Position> {
 
     public static final String SEQ_AGENDA = "seq_egcncl_agenda";
-
+    private static final long serialVersionUID = 6941145759682765506L;
     @Id
     @GeneratedValue(generator = SEQ_AGENDA, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-   
+
     @ManyToOne
     @JoinColumn(name = "committeeType")
     private CommitteeType committeeType;
 
-    
+
     @Column(name = "agendaNumber")
     private String agendaNumber;
 
-   
+
     @ManyToOne
     @JoinColumn(name = "status")
     private EgwStatus status;
-    
+
     @Transient
     private Date fromDate;
-    
+
     @Transient
     private Date toDate;
 
     @OneToMany(mappedBy = "agenda", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     @OrderBy("order")
-    private List<CouncilAgendaDetails> agendaDetails = new ArrayList<CouncilAgendaDetails>(0);
+    private List<CouncilAgendaDetails> agendaDetails = new ArrayList<>();
 
     @Transient
     @OrderBy("order")
-    private List<CouncilAgendaDetails> councilAgendaDetailsForUpdate = new ArrayList<CouncilAgendaDetails>(
-            0);
-  
+    private List<CouncilAgendaDetails> councilAgendaDetailsForUpdate = new ArrayList<>();
+
     public Long getId() {
         return id;
     }
@@ -144,7 +149,7 @@ public class CouncilAgenda extends StateAware {
     public void setAgendaDetails(List<CouncilAgendaDetails> agendaDetails) {
         this.agendaDetails = agendaDetails;
     }
-    
+
     public Date getFromDate() {
         return fromDate;
     }
@@ -167,13 +172,13 @@ public class CouncilAgenda extends StateAware {
 
     }
 
-	public List<CouncilAgendaDetails> getCouncilAgendaDetailsForUpdate() {
-		return councilAgendaDetailsForUpdate;
-	}
+    public List<CouncilAgendaDetails> getCouncilAgendaDetailsForUpdate() {
+        return councilAgendaDetailsForUpdate;
+    }
 
-	public void setCouncilAgendaDetailsForUpdate(
-			List<CouncilAgendaDetails> councilAgendaDetailsForUpdate) {
-		this.councilAgendaDetailsForUpdate = councilAgendaDetailsForUpdate;
-	}
+    public void setCouncilAgendaDetailsForUpdate(
+            List<CouncilAgendaDetails> councilAgendaDetailsForUpdate) {
+        this.councilAgendaDetailsForUpdate = councilAgendaDetailsForUpdate;
+    }
 
 }

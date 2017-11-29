@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 String.prototype.compose = (function (){
@@ -60,7 +68,7 @@ var row = '<tr>'+
  '<td><input type="hidden" class="form-control" name="councilAgendaDetailsForUpdate[{{idx}}].preamble.id" value="{{preamableId}}"/>'+
  '<a class="btn btn-xs btn-secondary" href="/council/councilpreamble/view/{{preamableId}}"  target="popup"' +
  'onclick="window.open(\'/council/councilpreamble/view/{{preamableId}}\',\'popup\',\'width=600,height=600,resizable=no\'); return false;">'+
- '<i class="fa fa-eye" aria-hidden="true"></i>View&nbsp;'+
+ '<i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View'+
 	'</a>&nbsp;<button type="button" class="btn btn-xs btn-secondary delete"><span class="glyphicon glyphicon-trash"></span>&nbsp;Delete</button></td>'+
 '</tr>';
 
@@ -255,7 +263,7 @@ function callAjaxSearch() {
 						{
 							 "data":null,
 							 "sClass" : "text-center",
-							 'sTitle' : "S.No.", "width": "5%",
+							 'sTitle' : "S.No.", "width": "4%",
 				        	   render: function (data, type, row, meta) {
 				        	        return meta.row + meta.settings._iDisplayStart + 1;
 			                },   
@@ -283,14 +291,14 @@ function callAjaxSearch() {
 							'sTitle' : "Status"
 						},
 						{
-							"data" : null,
+							"data" : null, "width" : "11%",
 							"target" : -1,
 							"sortable" : false,
-							'sTitle' : "Action", "width": "10%",
+							'sTitle' : "Action",
 							"render" : function(data, type, full, meta) {
-								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;&nbsp;View</button>&nbsp;&nbsp;<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
+								return '<button type="button" class="btn btn-xs btn-secondary view"><i class="fa fa-eye" aria-hidden="true"></i>&nbsp;View</button>&nbsp;<button type="button" class="btn btn-xs btn-secondary add"  data-row=\''
 										+ escape(JSON.stringify(full))
-										+ '\' onclick="addReadOnlyRow(this)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;&nbsp;Add</button>';
+										+ '\' onclick="addReadOnlyRow(this)"><i class="fa fa-plus" aria-hidden="true"></i>&nbsp;Add</button>';
 							}
 						}, {
 							"data" : "id",
@@ -378,6 +386,10 @@ $(document).ready(function() {
 
 	});
 	
+	$("#agendaNumber").on('blur',function(event) {
+		validateAgendaNumber($(this));
+	});
+
 	
 	// changing order of preambles while creating and upating agenda.
     $('.sorted_table').sortable({
@@ -393,3 +405,27 @@ $(document).ready(function() {
 	});
 		   
 });
+
+function validateAgendaNumber(agendaNumber){
+	var agendaNo= agendaNumber.val()
+	if(agendaNo) {
+		$.ajax({
+			url: "/council/councilmom/checkUnique-agendaNo",      
+			type: "GET",
+			data: {
+				agendaNumber : agendaNo, 
+			},
+			dataType: "json",
+			success: function (response) { 
+				if(!response) {
+						$(agendaNumber).val('');
+						bootbox.alert("Entered Agenda Number already exists. Please Enter Unique Number.");
+				}
+			}, 
+			error: function (response) {
+				$(agendaNumber).val('');
+				bootbox.alert("connection validation failed");
+			}
+		});
+	}	
+}

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 var VOUCHERDETAILLIST='billDetailslist';
 var VOUCHERREBATEDETAILLIST='billRebateDetailslist';
@@ -227,7 +235,7 @@ function createAmountFieldFormatterRebate(prefix,suffix,onblurfunction,table){
 	}
 
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='13'  onblur='"+onblurfunction+";updatetotalAmount()'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='13' class='form-control patternvalidation text-right' data-pattern='number' onblur='"+onblurfunction+";updatetotalAmount()'/>";
 	}
 }
 
@@ -251,7 +259,7 @@ function createSLLongTextFieldFormatter(prefix,suffix){
 function createSLAmountFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='13' style='text-align:right;width:90px;'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='13' style='text-align:right;width:90px;' class='form-control patternvalidation text-right' data-pattern='number'/>";
 	}
 }
 function createTextFieldReadOnly(prefix,suffix){
@@ -1041,6 +1049,7 @@ success: function(o) {
 				}
 			}
 		}
+		patternvalidation();
     },
     failure: function(o) {
     	bootbox.alert('unable to load subledger details');
@@ -1064,7 +1073,7 @@ function updateDebitAmount()
 			}
 		}
 	}
-	document.getElementById('totaldbamount').value = amt.toFixed(2);
+	document.getElementById('totaldbamount').value = amt;
 }
 
 function updateCreditAmount()
@@ -1081,7 +1090,7 @@ function updateCreditAmount()
 			}
 		}
 	}
-	document.getElementById('totalcramount').value = amt.toFixed(2);
+	document.getElementById('totalcramount').value = amt;
 }
 
 function updatetotalAmount(){
@@ -1093,7 +1102,7 @@ function updatetotalAmount(){
 		totalamount=parseFloat(document.getElementById('totalcramount').value);
 	}
 	
-	var totalAmountStr=(totalamount>0?totalamount.toFixed(2):totalamount);
+	var totalAmountStr=(totalamount>0?totalamount:totalamount);
 	
 	document.getElementById('misctotalAmount').value=totalAmountStr;
 	document.getElementById('totalamountdisplay').value=document.getElementById('misctotalAmount').value;
@@ -1359,7 +1368,7 @@ var subledgerselected = new Array();
 		
 			if(Math.round(accountDetailamount*100)/100  != Math.round(subledgerTotalAmt*100)/100)
 			{
-				document.getElementById('receipt_error_area').innerHTML += "Total subjedger amount is not matching for account code : "+ document.getElementById('billCreditDetailslist['+i+'].glcodeDetail').value+'<br>';
+				document.getElementById('receipt_error_area').innerHTML += "Total subledger amount is not matching for account code : "+ document.getElementById('billCreditDetailslist['+i+'].glcodeDetail').value+'<br>';
 				return false;
 			}
 		}
@@ -1450,6 +1459,7 @@ function checkLength(obj)
 function updateAccountTableIndex(){
 	
 	billDetailTableIndex = billDetailTableIndex +1 ;
+	patternvalidation();
 }
 function updateSLTableIndex(){
 	

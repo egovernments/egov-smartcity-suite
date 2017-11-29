@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,64 +43,73 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 $(document)
-		.ready(
-				function() {
-					$('#view-complaint-type')
-							.dataTable(
-									{
-										processing : true,
-										serverSide : true,
-										sort : false,
-										filter : true,
-										responsive : true,
-										"autoWidth": false,
-										ajax : "/pgr/complainttype/ajax/result",
-										"aLengthMenu" : [ [ 10, 25, 50, -1 ],
-												[ 10, 25, 50, "All" ] ],
-										"sDom" : "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
-										columns : [ {
-											"mData" : "name",
-											"sTitle" : "Name",
-										}, {
-											"mData" : "code",
-											"sTitle" : "Code"
-										}, {
-											"mData" : "category",
-											"sTitle" : "Category",
-										},{
-											"mData" : "department",
-											"sTitle" : "Department"
-										}, {
-											"mData" : "isActive",
-											"sTitle" : "Active"
-										},{
-											"mData" : "description",
-											"sTitle" : "Description"
-										},{
-											"mData" : "slahours",
-											"sTitle" : "SLA Hours"
-										},{
-											"mData" : "hasfinancialImpact",
-											"sTitle" : "Has Financial Impact"
-										} ]
-									});
+    .ready(
+        function () {
+            $('#view-complaint-type')
+                .dataTable(
+                    {
+                        processing: true,
+                        serverSide: true,
+                        sort: false,
+                        filter: true,
+                        responsive: true,
+                        "autoWidth": false,
+                        ajax: {
+                            url: "/pgr/complainttype/view/",
+                            type: "GET",
+                            data: function (args) {
+                                return {
+                                    "args": JSON.stringify(args)
+                                };
+                            }
+                        },
+                        "aLengthMenu": [[10, 25, 50, -1],
+                            [10, 25, 50, "All"]],
+                        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+                        columns: [{
+                            "mData": "name",
+                            "sTitle": "Name",
+                        }, {
+                            "mData": "code",
+                            "sTitle": "Code"
+                        }, {
+                            "mData": "category",
+                            "sTitle": "Category",
+                        }, {
+                            "mData": "department",
+                            "sTitle": "Department"
+                        }, {
+                            "mData": "isActive",
+                            "sTitle": "Active"
+                        }, {
+                            "mData": "description",
+                            "sTitle": "Description"
+                        }, {
+                            "mData": "slahours",
+                            "sTitle": "SLA Hours"
+                        }, {
+                            "mData": "hasfinancialImpact",
+                            "sTitle": "Has Financial Impact"
+                        }]
+                    });
 
-					$('#view-complaint-type tbody').on(
-							'click',
-							'tr',
-							function() {
-								if ($(this).hasClass('apply-background')) {
-									$(this).removeClass('apply-background');
-								} else {
-									$('#view-complaint-type tbody tr')
-											.removeClass('apply-background');
-									$(this).addClass('apply-background');
-								}
+            $('#view-complaint-type tbody').on(
+                'click',
+                'tr',
+                function () {
+                    if ($(this).hasClass('apply-background')) {
+                        $(this).removeClass('apply-background');
+                    } else {
+                        $('#view-complaint-type tbody tr')
+                            .removeClass('apply-background');
+                        $(this).addClass('apply-background');
+                    }
 
-							});
+                });
 
-				});
+        });
 

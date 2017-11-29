@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.adtax.web.controller.hoarding;
 
@@ -49,7 +57,7 @@ import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.web.controller.GenericController;
 import org.egov.commons.dao.FinancialYearDAO;
-import org.egov.infra.config.core.GlobalSettings;
+import org.egov.infra.config.core.LocalizationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -113,7 +121,7 @@ public class SearchHoardingController extends GenericController {
     public void searchAdtaxResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) throws IOException {
-        IOUtils.write(DATA + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write(DATA + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, "Advertisement"))
                 + "}", response.getWriter());
     }
@@ -124,7 +132,7 @@ public class SearchHoardingController extends GenericController {
                              final HttpServletRequest request,
                              final HttpServletResponse response) throws IOException {
         final String searchType = request.getParameter("searchType");
-        IOUtils.write(DATA + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write(DATA + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(advertisementPermitDetail, searchType))
                 + "}", response.getWriter());
     }
@@ -143,7 +151,7 @@ public class SearchHoardingController extends GenericController {
     @RequestMapping(value = "findhoarding-for-update", method = POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchHoarding(@ModelAttribute final HoardingSearch hoardingSearch) {
-        return DATA + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        return DATA + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getAdvertisementSearchResult(hoardingSearch, "searchLegacyRecord"))
                 + "}";
     }
@@ -167,7 +175,7 @@ public class SearchHoardingController extends GenericController {
     public void renewSearchResult(@ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail,
                                   final HttpServletRequest request,
                                   final HttpServletResponse response) throws IOException {
-        IOUtils.write(DATA + new GsonBuilder().setDateFormat(GlobalSettings.datePattern()).create()
+        IOUtils.write(DATA + new GsonBuilder().setDateFormat(LocalizationSettings.datePattern()).create()
                 .toJson(advertisementPermitDetailService.getRenewalAdvertisementSearchResult(advertisementPermitDetail,
                         "Advertisement"))
                 + "}", response.getWriter());

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,21 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
-
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
-
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
@@ -83,6 +78,20 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
+
 @Controller
 @RequestMapping(value = "/application")
 public class ReconnectionController extends GenericConnectionController {
@@ -107,9 +116,8 @@ public class ReconnectionController extends GenericConnectionController {
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String applicationCode) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+        return waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(applicationCode, ConnectionStatus.CLOSED);
-        return waterConnectionDetails;
     }
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
@@ -167,10 +175,10 @@ public class ReconnectionController extends GenericConnectionController {
         final BigDecimal waterTaxDueforParent = waterConnectionDetailsService.getTotalAmount(waterConnectionDetails);
         model.addAttribute("waterTaxDueforParent", waterTaxDueforParent);
         model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
-
+        model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
         loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
-            if (meesevaApplicationNumber == null && meesevaApplicationNumber != "")
+            if (meesevaApplicationNumber == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
             else
                 waterConnectionDetails.setMeesevaApplicationNumber(meesevaApplicationNumber);
@@ -185,10 +193,11 @@ public class ReconnectionController extends GenericConnectionController {
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
         final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
+        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
             waterConnectionDetails.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser) {
+        if (!isCSCOperator && !citizenPortalUser && !loggedUserIsMeesevaUser && !isAnonymousUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
@@ -199,7 +208,7 @@ public class ReconnectionController extends GenericConnectionController {
                 && CLOSINGCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()))
             waterConnectionDetails.getApplicationType().setCode(RECONNECTIONCONNECTION);
 
-        final String sourceChannel = request.getParameter("Source");
+        String sourceChannel = request.getParameter("Source");
         String workFlowAction = "";
 
         if (request.getParameter("mode") != null)
@@ -213,7 +222,8 @@ public class ReconnectionController extends GenericConnectionController {
 
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole();
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || loggedUserIsMeesevaUser) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || loggedUserIsMeesevaUser
+                || isAnonymousUser) {
             final Position userPosition = waterTaxUtils
                     .getZonalLevelClerkForLoggedInUser(waterConnectionDetails.getConnection().getPropertyIdentifier());
             if (userPosition == null) {
@@ -242,9 +252,15 @@ public class ReconnectionController extends GenericConnectionController {
         // waterConnectionDetails.setCloseConnectionType(request.getParameter("closeConnectionType").charAt(0));
         final String addrule = request.getParameter("additionalRule");
         // waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
-        if (citizenPortalUser)
-            if (waterConnectionDetails.getSource() == null || StringUtils.isBlank(waterConnectionDetails.getSource().toString()))
-                waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+
+        if (isAnonymousUser) {
+            waterConnectionDetails.setSource(ONLINE);
+            sourceChannel = SOURCECHANNEL_ONLINE;
+        }
+
+        if (citizenPortalUser && (waterConnectionDetails.getSource() == null
+                || StringUtils.isBlank(waterConnectionDetails.getSource().toString())))
+            waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
         WaterConnectionDetails savedWaterConnectionDetails = null;
         if (loggedUserIsMeesevaUser) {
             final HashMap<String, String> meesevaParams = new HashMap<>();

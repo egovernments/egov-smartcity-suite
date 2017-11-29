@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,26 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.utils;
-
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Locale;
 
 import org.egov.commons.EgwStatus;
 import org.egov.commons.Installment;
@@ -80,7 +70,7 @@ import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -105,9 +95,32 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Locale;
+
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.ptis.constants.PropertyTaxConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_INSTALLMENTLISTBY_MODULE_AND_STARTYEAR;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_DIGITALSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_RECONNDIGSIGNPENDING;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.JUNIOR_OR_SENIOR_ASSISTANT_DESIGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REASSIGNMENT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_APPROVERROLE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ROLE_MEESEVA_OPERATOR;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.USERNAME_ANONYMOUS;
+
 @Service
 public class WaterTaxUtils {
 
+    @Autowired
+    @Qualifier("fileStoreService")
+    protected FileStoreService fileStoreService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
 
@@ -140,7 +153,7 @@ public class WaterTaxUtils {
     private PositionMasterService positionMasterService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -156,17 +169,13 @@ public class WaterTaxUtils {
     private WaterDemandConnectionService waterDemandConnectionService;
 
     @Autowired
-    @Qualifier("fileStoreService")
-    protected FileStoreService fileStoreService;
-
-    @Autowired
     private ModuleService moduleService;
 
     @Autowired
     private InstallmentDao installmentDao;
 
     public List<AppConfigValues> getAppConfigValueByModuleNameAndKeyName(final String moduleName,
-            final String keyName) {
+                                                                         final String keyName) {
         return appConfigValuesService
                 .getConfigValuesByModuleAndKey(moduleName, keyName);
     }
@@ -339,37 +348,36 @@ public class WaterTaxUtils {
     }
 
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,
-            final String applicantName) {
+                                                           final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
         return wcmsMessageSource.getMessage(code,
-                new String[] { applicantName, approvalComment, getMunicipalityName() }, locale);
+                new String[]{applicantName, approvalComment, getMunicipalityName()}, locale);
     }
 
     public String emailBodyforApprovalEmailByCodeAndArgs(final String code,
-            final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
+                                                         final WaterConnectionDetails waterConnectionDetails, final String applicantName) {
         final Locale locale = LocaleContextHolder.getLocale();
         return wcmsMessageSource
                 .getMessage(code,
-                        new String[] { applicantName, waterConnectionDetails.getApplicationNumber(),
-                                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName() },
+                        new String[]{applicantName, waterConnectionDetails.getApplicationNumber(),
+                                waterConnectionDetails.getConnection().getConsumerCode(), getMunicipalityName()},
                         locale);
     }
 
     public String emailSubjectforEmailByCodeAndArgs(final String code, final String applicationNumber) {
         final Locale locale = LocaleContextHolder.getLocale();
-        return wcmsMessageSource.getMessage(code, new String[] { applicationNumber }, locale);
+        return wcmsMessageSource.getMessage(code, new String[]{applicationNumber}, locale);
     }
 
     public void sendSMSOnWaterConnection(final String mobileNumber, final String smsBody) {
-        messagingService.sendSMS(mobileNumber, smsBody);
+        notificationService.sendSMS(mobileNumber, smsBody);
     }
 
     public void sendEmailOnWaterConnection(final String email, final String emailBody, final String emailSubject) {
-        messagingService.sendEmail(email, emailSubject, emailBody);
+        notificationService.sendEmail(email, emailSubject, emailBody);
     }
 
     public Position getCityLevelCommissionerPosition(final String commissionerDesgn, final String assessmentNumber) {
-        commissionerDesgn.split(",");
         final Designation desgnObj = designationService.getDesignationByName(commissionerDesgn);
         if ("Commissioner".equals(commissionerDesgn)) {
             final Department deptObj = departmentService
@@ -413,7 +421,7 @@ public class WaterTaxUtils {
     }
 
     public String getRevenueWardForConsumerCode(final String code,
-            final WaterConnectionDetails waterConnectionDetails) {
+                                                final WaterConnectionDetails waterConnectionDetails) {
         BasicPropertyImpl basicPropertyImpl = null;
         if (waterConnectionDetails != null
                 && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE))
@@ -429,12 +437,12 @@ public class WaterTaxUtils {
                     code);
         return basicPropertyImpl != null && basicPropertyImpl.getPropertyID() != null
                 && basicPropertyImpl.getPropertyID().getWard() != null
-                        ? basicPropertyImpl.getPropertyID().getWard().getName() : "";
+                ? basicPropertyImpl.getPropertyID().getWard().getName() : "";
     }
 
     public Long getApproverPosition(final String designationName, final WaterConnectionDetails waterConnectionDetails) {
 
-        final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
+        final List<StateHistory<Position>> stateHistoryList = waterConnectionDetails.getStateHistory();
         Long approverPosition = 0l;
         String[] desgnArray = designationName.split(",");
         User currentUser = null;
@@ -453,7 +461,8 @@ public class WaterTaxUtils {
             if (currentUser != null && waterConnectionDetails.getLegacy().equals(true)) {
                 for (final Role userrole : currentUser.getRoles())
                     if (userrole.getName().equals(WaterTaxConstants.ROLE_SUPERUSER) ||
-                            ROLE_APPROVERROLE.equalsIgnoreCase(userrole.getName())) {
+                            ROLE_APPROVERROLE.equalsIgnoreCase(userrole.getName()) ||
+                            ROLE_MEESEVA_OPERATOR.equalsIgnoreCase(userrole.getName())) {
                         final Position positionuser = getZonalLevelClerkForLoggedInUser(
                                 waterConnectionDetails.getConnection().getPropertyIdentifier());
                         if (positionuser != null) {
@@ -505,13 +514,13 @@ public class WaterTaxUtils {
      * 'Revenue,Accounts,Administration' for department
      *
      * @param asessmentNumber ,
-     * @Param assessmentDetails
      * @param boundaryObj
      * @return Assignment
+     * @Param assessmentDetails
      */
     @Transactional(readOnly = true)
     public Assignment getUserPositionByZone(final String asessmentNumber, final AssessmentDetails assessmentDetails,
-            final Boundary boundaryObj) {
+                                            final Boundary boundaryObj) {
         final String designationStr = getDesignationForThirdPartyUser();
         final String departmentStr = getDepartmentForWorkFlow();
         final String[] department = departmentStr.split(",");
@@ -533,7 +542,7 @@ public class WaterTaxUtils {
                             // Ward->Zone->City
                             if (boundaryObj.getParent() != null && boundaryObj.getParent().getParent() != null
                                     && boundaryObj.getParent().getParent().getBoundaryType().getName()
-                                            .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
+                                    .equals(WaterTaxConstants.BOUNDARY_TYPE_CITY))
                                 assignment = assignmentService.findByDeptDesgnAndParentAndActiveChildBoundaries(
                                         departmentService.getDepartmentByName(dept).getId(),
                                         designationService.getDesignationByName(desg).getId(),
@@ -687,6 +696,17 @@ public class WaterTaxUtils {
         return source;
     }
 
+    public Boolean isAnonymousUser(final User user) {
+        return USERNAME_ANONYMOUS.equalsIgnoreCase(user.getName());
+    }
+
+    public Boolean isSuperUser(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(WaterTaxConstants.ROLE_SUPERUSER))
+                return true;
+        return false;
+    }
+
     public Boolean isCurrentUserCitizenRole() {
         Boolean citizenUserRole = Boolean.FALSE;
         User currentUser = null;
@@ -705,9 +725,9 @@ public class WaterTaxUtils {
     }
 
     public Long getApprovalPositionFromStateHistory(final WaterConnectionDetails waterConnectionDetails,
-            final String[] desgnArray) {
+                                                    final String[] desgnArray) {
         Long approverPosition = 0l;
-        final List<StateHistory> stateHistoryList = waterConnectionDetails.getStateHistory();
+        final List<StateHistory<Position>> stateHistoryList = waterConnectionDetails.getStateHistory();
         for (final StateHistory stateHistory : stateHistoryList)
             if (stateHistory.getOwnerPosition() != null) {
                 final List<Assignment> assignmentList = assignmentService
@@ -740,5 +760,12 @@ public class WaterTaxUtils {
                 REASSIGNMENT);
         return !appConfigValues.isEmpty() && "Yes".equalsIgnoreCase(appConfigValues.get(0).getValue());
 
+    }
+
+    public Boolean isRoleAdmin(final User user) {
+        for (final Role role : user.getRoles())
+            if (role != null && role.getName().equalsIgnoreCase(WaterTaxConstants.ROLE_ADMIN))
+                return true;
+        return false;
     }
 }

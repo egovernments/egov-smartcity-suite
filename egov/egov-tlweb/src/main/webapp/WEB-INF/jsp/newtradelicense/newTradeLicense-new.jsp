@@ -1,48 +1,49 @@
 <%--
-  ~ eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
-  ~ accountability and the service delivery of the government  organizations.
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
   ~
-  ~  Copyright (C) <2017>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
-  ~  The updated version of eGov suite of products as by eGovernments Foundation
-  ~  is available at http://www.egovernments.org
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
   ~
-  ~  This program is free software: you can redistribute it and/or modify
-  ~  it under the terms of the GNU General Public License as published by
-  ~  the Free Software Foundation, either version 3 of the License, or
-  ~  any later version.
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
   ~
-  ~  This program is distributed in the hope that it will be useful,
-  ~  but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~  GNU General Public License for more details.
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
   ~
-  ~  You should have received a copy of the GNU General Public License
-  ~  along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~  http://www.gnu.org/licenses/gpl.html .
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
   ~
-  ~  In addition to the terms of the GPL license to be adhered to in using this
-  ~  program, the following additional terms are to be complied with:
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
   ~
-  ~      1) All versions of this program, verbatim or modified must carry this
-  ~         Legal Notice.
-  ~ 	Further, all user interfaces, including but not limited to citizen facing interfaces,
-  ~         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
-  ~         derived works should carry eGovernments Foundation logo on the top right corner.
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~ 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
-  ~ 	For any further queries on attribution, including queries on brand guidelines,
-  ~         please contact contact@egovernments.org
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
-  ~      2) Any misrepresentation of the origin of the material is prohibited. It
-  ~         is required that all modified versions of this material be marked in
-  ~         reasonable ways as different from the original version.
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
   ~
-  ~      3) This license does not grant any rights to any user of the program
-  ~         with regards to rights under trademark law for use of the trade names
-  ~         or trademarks of eGovernments Foundation.
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
   ~
-  ~  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ include file="/includes/taglibs.jsp" %>
@@ -163,6 +164,15 @@
             // $("#licenseForm").submit();
         }
 
+        function onSave() {
+
+            if (!validateLicenseForm()) {
+                return false;
+            }
+            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-save.action';
+            return true;
+        }
+
         $(document).ready(function () {
             $("#mobilePhoneNumber").change(function () {
                 var mobileno = document.getElementById('mobilePhoneNumber').value;
@@ -198,8 +208,9 @@
         function onSubmit() {
             var mode = $("#mode").val();
             var workflowaction = $("#workFlowAction").val();
+            <s:if test="%{!isNewWorkflow()}">
             <s:if test="%{workflowaction != null && workflowaction == 'Generate Provisional Certificate'}">
-            window.open("/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=" + $('#id').val(),'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
+            window.open("/tl/viewtradelicense/generate-provisional-certificate.action?model.id=" + $('#id').val(), 'gc' + $('#id').val(), 'scrollbars=yes,width=1000,height=700,status=yes');
             return false;
             </s:if>
             <s:if test="%{mode!=null && ((mode=='view' || mode=='editForApproval' || mode== 'disableApprover') &&  mode!='editForReject' )}">
@@ -212,24 +223,31 @@
             toggleFields(false, "");
             document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
             </s:elseif>
-            <s:elseif test="%{mode!=null && mode=='edit'}">
-            clearMessage('newLicense_error');
-            toggleFields(false, "");
-            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/editTradeLicense-edit.action';
-            </s:elseif>
             <s:else>
             clearMessage('newLicense_error');
             toggleFields(false, "");
             document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
             </s:else>
-
             return true;
+            </s:if>
+            <s:else>
+            clearMessage('newLicense_error');
+            toggleFields(false, "");
+            <s:if test="%{hasState()}">
+            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-approve.action';
+            </s:if>
+            <s:else>
+            document.newTradeLicense.action = '${pageContext.request.contextPath}/newtradelicense/newTradeLicense-create.action';
+            </s:else>
+            return true;
+            </s:else>
         }
     </script>
     <script>
         function onBodyLoad() {
             var currentState = document.getElementById("currentWfstate").value;
             showHideAgreement();
+            <s:if test="%{!isNewWorkflow()}">
             if (currentState == 'Second level fee collected') {
                 $("span").remove(".mandatory");
             }
@@ -251,7 +269,7 @@
                 if (document.getElementById("mode").value == 'ACK') {
 
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
+                        'Forward', 'Reject','Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'closeBtn', 'closeDiv', 'currentWfstate']);
                     //remove onclick event for propertyno search button
                     $("#searchImg").removeAttr("onclick");
                     // remove onclick event for add and delete button having class = add-padding
@@ -273,7 +291,7 @@
                 if (document.getElementById("mode").value == 'view' || document.getElementById("mode").value == 'editForReject') {
 
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
+                        'Forward', 'Reject','Reassign', 'button2', 'Approve', 'Sign', 'Preview', 'currentWfstate']);
                     //remove onclick event for propertyno search button
                     $("#searchImg").removeAttr("onclick");
                     // remove onclick event for add and delete button having class = add-padding
@@ -294,7 +312,7 @@
             try {
                 if (document.getElementById("mode").value == 'editForApproval') {
                     toggleFields(true, ['approverDepartment', 'approverDesignation', 'approverPositionId', 'approverComments', 'Generate Certificate',
-                        'Forward', 'Reject', 'button2', 'Approve']);
+                        'Forward', 'Reject','Reassign', 'button2', 'Approve']);
                     //remove onclick event for propertyno search button
                     document.getElementById("tradeArea_weight").disabled = false;
                     $("#searchImg").removeAttr("onclick");
@@ -317,6 +335,27 @@
             if ($('#parentBoundary')) {
                 $('#parentBoundary').attr('disabled', false);
             }
+            if ($("#mode").val() != 'disableApprover') {
+                $(".supportdocs").prop("disabled", false);
+            }
+            </s:if>
+            <s:else>
+            $('#licenseForm :input').not(':hidden').not(':button').each(function (input, item) {
+                if ($(item).closest('#workflowDiv').length == 0)
+                    $(item).attr('disabled', true);
+            });
+            var fields = $("#fieldenabled").val();
+            fields = fields.split(",");
+            if (fields == 'all')
+                $('#licenseForm :input').each(function (input, item) {
+                    $(item).attr('disabled', false);
+                });
+            else if (fields != 'none')
+                $.each(fields, function (key, value) {
+                    $('#' + (value)).attr('disabled', false);
+                    console.log($('#' + (value)));
+                });
+            </s:else>
         }
     </script>
 
@@ -353,9 +392,7 @@
                 cssClass="form-horizontal form-groups-bordered" validate="true">
             <s:push value="model">
                 <s:token/>
-                <s:if test="%{state==null}">
-                    <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
-                </s:if>
+
                 <s:hidden name="actionName" value="create"/>
                 <s:hidden id="detailChanged" name="detailChanged"/>
                 <s:hidden id="applicationDate" name="applicationDate"/>
@@ -363,101 +400,161 @@
                 <s:hidden id="currentWfstate" name="currentWfstate" value="%{state.value}"/>
                 <s:hidden name="id" id="id"/>
                 <s:hidden name="feeTypeId" id="feeTypeId"/>
-                <input type="hidden" name="model.applicationNumber" value="${param.applicationNo}" id="applicationNumber"/>
-                <div class="panel panel-primary">
-                    <div class="panel-heading">
-                        <s:if test="%{mode=='edit'}">
-                            <div class="panel-title" style="text-align:center">
-                                <s:text name='page.title.edittrade'/>
-                            </div>
-                        </s:if>
-                        <s:else>
-                            <div class="panel-title" style="text-align:center">
-                                <s:if test="%{licenseAppType.name=='Renew'}">
-                                    <s:text name='renewtradeLicense.heading'/>
-                                </s:if>
-                                <s:else>
-                                    <s:text name='newtradeLicense.heading'/>
-                                </s:else>
-                            </div>
-                        </s:else>
+                <input type="hidden" name="applicationNo" value="${param.applicationNo}" id="applicationNo"/>
+                <s:hidden name="newWorkflow" id="newWorkflow"/>
+                <s:if test="%{!isNewWorkflow()}">
+                    <s:if test="%{state==null}">
+                        <s:hidden id="additionalRule" name="additionalRule" value="%{additionalRule}"/>
+                    </s:if>
+                    <div class="panel panel-primary">
+                        <div class="panel-heading">
+                            <s:if test="%{mode=='edit'}">
+                                <div class="panel-title" style="text-align:center">
+                                    <s:text name='page.title.edittrade'/>
+                                </div>
+                            </s:if>
+                            <s:else>
+                                <div class="panel-title" style="text-align:center">
+                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                        <s:text name='renewtradeLicense.heading'/>
+                                    </s:if>
+                                    <s:else>
+                                        <s:text name='newtradeLicense.heading'/>
+                                    </s:else>
+                                </div>
+                            </s:else>
 
-                        <ul class="nav nav-tabs" id="settingstab">
-                            <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
-                                                  aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
-                            <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
-                                            aria-expanded="false"><s:text name="license.support.docs"/></a></li>
-                        </ul>
-                    </div>
+                            <ul class="nav nav-tabs" id="settingstab">
+                                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
+                                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                            </ul>
+                        </div>
 
-                    <div class="panel-body">
-                        <div class="tab-content">
-                            <div class="tab-pane fade active in" id="tradedetails">
-                                <%@ include file='../common/licensee.jsp' %>
-                                <%@ include file='../common/license-address.jsp' %>
-                                <%@ include file='../common/license.jsp' %>
-                            </div>
-                            <div class="tab-pane fade" id="tradeattachments">
-                                <%@include file="../common/supportdocs-new.jsp" %>
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="tradedetails">
+                                    <%@ include file='../common/licensee.jsp' %>
+                                    <%@ include file='../common/license-address.jsp' %>
+                                    <%@ include file='../common/license.jsp' %>
+                                    <s:if test="%{transitionInprogress()}">
+                                        <%@ include file='../common/license-workflow-history.jsp' %>
+                                    </s:if>
+                                </div>
+                                <div class="tab-pane fade" id="tradeattachments">
+                                    <%@include file="../common/supportdocs-new.jsp" %>
+                                </div>
                             </div>
                         </div>
                     </div>
-                    <s:if test="%{transitionInprogress()}">
-                        <%@ include file='../common/license-workflow-history.jsp' %>
+                    <div style="text-align: center;" hidden="true" id="closeDiv">
+                        <input type="button" name="closeBtn" id="closeBtn" value="Close"
+                               class="button" onclick="window.close();" style="margin:0 5px"/>
+                    </div>
+                    <s:if test="%{state!=null && state.value!='License Created' && egwStatus.code!='SECONDLVLCOLLECTIONPENDING'}">
+                        <div class="panel panel-primary" id="workflowDiv">
+                            <%@ include file='../common/license-workflow-dropdown.jsp' %>
+                            <%@ include file='../common/license-workflow-button.jsp' %>
+                        </div>
                     </s:if>
-                </div>
-                <div style="text-align: center;" hidden="true" id="closeDiv">
-                    <input type="button" name="closeBtn" id="closeBtn" value="Close"
-                           class="button" onclick="window.close();" style="margin:0 5px"/>
-                </div>
-                <s:if test="%{state!=null && state.value!='License Created' && egwStatus.code!='SECONDLVLCOLLECTIONPENDING'}">
-                    <div class="panel panel-primary" id="workflowDiv">
-                        <%@ include file='../common/license-workflow-dropdown.jsp' %>
-                        <%@ include file='../common/license-workflow-button.jsp' %>
-                    </div>
-                </s:if>
-                <s:elseif
-                        test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
-                    <div class="text-center">
-                        <s:hidden id="workFlowAction" name="workFlowAction"/>
-                        <s:hidden name="currentState" value="%{state.value}"/>
-                        <button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">
-                            Cancel
-                        </button>
-                        <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">
-                            Close
-                        </button>
-                    </div>
-                </s:elseif>
-                <s:else>
-                    <div class="row">
+                    <s:elseif
+                            test="%{state!=null && (state.value=='License Created' || egwStatus.code=='SECONDLVLCOLLECTIONPENDING')}">
                         <div class="text-center">
-                            <button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
-                                Save
+                            <s:hidden id="workFlowAction" name="workFlowAction"/>
+                            <s:hidden name="currentState" value="%{state.value}"/>
+                            <button type="submit" id="btncancel" class="btn btn-primary" onclick="return onCancelSubmit();">
+                                Cancel
                             </button>
-                            <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+                            <button type="button" id="closebn" class="btn btn-default" onclick="window.close();">
                                 Close
                             </button>
                         </div>
+                    </s:elseif>
+                    <s:else>
+                        <div class="row">
+                            <div class="text-center">
+                                <button type="submit" id="btnsave" class="btn btn-primary" onclick="return formsubmit();">
+                                    Save
+                                </button>
+                                <button type="button" id="btnclose" class="btn btn-default" onclick="window.close();">
+                                    Close
+                                </button>
+                            </div>
+                        </div>
+                    </s:else>
+                </s:if>
+                <s:else>
+                    <div class="panel panel-primary">
+                        <s:hidden id="fieldenabled" name="enabledFields" value="%{getEnabledFields()}"/>
+                        <div class="panel-heading">
+                            <s:if test="%{mode=='edit'}">
+                                <div class="panel-title" style="text-align:center">
+                                    <s:text name='page.title.edittrade'/>
+                                </div>
+                            </s:if>
+                            <s:else>
+                                <div class="panel-title" style="text-align:center">
+                                    <s:if test="%{licenseAppType.name=='Renew'}">
+                                        <s:text name='renewtradeLicense.heading'/>
+                                    </s:if>
+                                    <s:else>
+                                        <s:text name='newtradeLicense.heading'/>
+                                    </s:else>
+                                </div>
+                            </s:else>
+
+                            <ul class="nav nav-tabs" id="settingstab">
+                                <li class="active"><a data-toggle="tab" href="#tradedetails" data-tabidx="0"
+                                                      aria-expanded="true"><s:text name="license.tradedetail"/></a></li>
+                                <li class=""><a data-toggle="tab" href="#tradeattachments" data-tabidx="1"
+                                                aria-expanded="false"><s:text name="license.support.docs"/></a></li>
+                            </ul>
+                        </div>
+
+                        <div class="panel-body">
+                            <div class="tab-content">
+                                <div class="tab-pane fade active in" id="tradedetails">
+                                    <%@ include file='../common/licensee.jsp' %>
+                                    <%@ include file='../common/license-address.jsp' %>
+                                    <%@ include file='../common/license.jsp' %>
+                                </div>
+                                <div class="tab-pane fade" id="tradeattachments">
+                                    <%@include file="../common/supportdocs-new.jsp" %>
+                                </div>
+                            </div>
+                        </div>
+                        <s:if test="%{transitionInprogress()}">
+                            <%@ include file='../common/license-workflow-history.jsp' %>
+                        </s:if>
+                    </div>
+                    <div style="text-align: center;" hidden="true" id="closeDiv">
+                        <input type="button" name="closeBtn" id="closeBtn" value="Close"
+                               class="button" onclick="window.close();" style="margin:0 5px"/>
+                    </div>
+
+                    <div class="panel panel-primary" id="workflowDiv">
+                        <%@ include file='../common/license-workflow-dropdown.jsp' %>
+                        <%@ include file='../common/license-workflow-button.jsp' %>
+                        <s:if test="%{hasState()}">
+                            <div class="text-center">
+                                <button type="submit" id="btsave" class="btn btn-primary"
+                                        onclick="return onSave();">Save
+                                </button>
+                            </div>
+                        </s:if>
                     </div>
                 </s:else>
             </s:push>
         </s:form>
         <div style="text-align: center;" id="btndiv">
-            <s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() &&  mode!=('editForReject') && state.value!='License Created'">
-                <button type="button" class="btn btn-primary" id="reassign">
-                    Reassign
-                </button>
-            </s:if>
-            <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate"
-                   style="display: none;" onclick="window.open('/tl/viewtradelicense/viewTradeLicense-generateCertificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
+            <input type="button" class="btn btn-primary" id="certificateDiv" value="Generate Provisional Certificate" style="display: none;"
+                   onclick="window.open('/tl/viewtradelicense/generate-provisional-certificate.action?model.id=<s:property value="%{id}"/>', '_blank', 'height=650,width=980,scrollbars=yes,left=0,top=0,status=yes');"/>
         </div>
 
     </div>
 </div>
-<s:if test="hasJuniorOrSeniorAssistantRole() && reassignEnabled() && mode!=('editForReject') && state.value!='License Created'">
 <jsp:include page="../common/process-owner-reassignment.jsp"/>
-</s:if>
 <script src="<cdn:url  value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
 </body>
 </html>

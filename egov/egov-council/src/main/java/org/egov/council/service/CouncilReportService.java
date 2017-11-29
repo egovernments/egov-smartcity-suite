@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,17 +43,15 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.council.service;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.WordUtils;
 import org.egov.council.entity.CouncilAgendaDetails;
 import org.egov.council.entity.CouncilMeeting;
 import org.egov.council.entity.MeetingMOM;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
@@ -56,6 +61,10 @@ import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 @Transactional(readOnly = true)
@@ -67,8 +76,10 @@ public class CouncilReportService {
     @Autowired
     private ReportService reportService;
 
-    public byte[] generatePDFForAgendaDetails(final CouncilMeeting councilMeeting, final String logoPath) {
-        ReportRequest reportInput = null;
+    @Autowired
+    private CityService cityService;
+
+    public byte[] generatePDFForAgendaDetails(final CouncilMeeting councilMeeting) {
         if (councilMeeting != null) {
             final Map<String, Object> agendaDetails = new HashMap<>();
             final List<CouncilAgendaDetails> agendaDetailsList = councilMeeting.getMeetingMOMs().get(0).getAgenda()
@@ -76,34 +87,34 @@ public class CouncilReportService {
             agendaDetailsList.sort((final CouncilAgendaDetails f1, final CouncilAgendaDetails f2) -> f1.getItemNumber()
                     .compareTo(f2.getItemNumber()));
             agendaDetails.put("agendaList", agendaDetailsList);
-            reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting, logoPath));
+            ReportRequest reportInput = new ReportRequest(AGENDA, agendaDetails, buildReportParameters(councilMeeting));
+            reportInput.setReportFormat(ReportFormat.RTF);
+            reportInput.setPrintDialogOnOpenReport(false);
+            return createReport(reportInput).getReportOutputData();
         }
-        reportInput.setReportFormat(ReportFormat.RTF);
-        reportInput.setPrintDialogOnOpenReport(false);
-        return createReport(reportInput).getReportOutputData();
 
+        return new byte[0];
     }
 
-    public byte[] generatePDFForMom(final CouncilMeeting councilMeeting, final String logoPath) {
-        ReportRequest reportInput = null;
+    public byte[] generatePDFForMom(final CouncilMeeting councilMeeting) {
         if (councilMeeting != null) {
             final Map<String, Object> momDetails = new HashMap<>();
             final List<MeetingMOM> meetingMomList = councilMeeting.getMeetingMOMs();
             meetingMomList.sort((final MeetingMOM f1, final MeetingMOM f2) -> Long.valueOf(f1.getItemNumber()).compareTo(Long.valueOf(f2.getItemNumber())));
             momDetails.put("meetingMOMList", meetingMomList);
-            reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting, logoPath));
+            ReportRequest reportInput = new ReportRequest(MEETINGMOM, momDetails, buildReportParameters(councilMeeting));
+            reportInput.setReportFormat(ReportFormat.RTF);
+            reportInput.setPrintDialogOnOpenReport(false);
+            return createReport(reportInput).getReportOutputData();
         }
-        reportInput.setReportFormat(ReportFormat.RTF);
-        reportInput.setPrintDialogOnOpenReport(false);
-        return createReport(reportInput).getReportOutputData();
-
+        return new byte[0];
     }
 
-    private Map<String, Object> buildReportParameters(final CouncilMeeting councilMeeting, final String logoPath) {
+    private Map<String, Object> buildReportParameters(final CouncilMeeting councilMeeting) {
 
         final StringBuilder meetingDateTimeLocation = new StringBuilder();
         final Map<String, Object> reportParams = new HashMap<>();
-        reportParams.put("logoPath", logoPath);
+        reportParams.put("logoPath", cityService.getCityLogoURL());
         reportParams.put("commiteeType", WordUtils.capitalize(councilMeeting.getCommitteeType().getName()));
         reportParams.put("meetingNumber", WordUtils.capitalize(councilMeeting.getMeetingNumber()));
         meetingDateTimeLocation.append(DateUtils.getDefaultFormattedDate(councilMeeting.getMeetingDate()));

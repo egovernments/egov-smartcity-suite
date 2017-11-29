@@ -1,6 +1,8 @@
 #!/bin/bash
 
-WORKING_DIR="${HOME}/PHOENIX"
+#WORKING_DIR="${HOME}/PHOENIX"
+WORK_DIR=$1 
+CURDIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 txtrst=$(tput sgr0) # Text reset
 txtred=$(tput setaf 1) # Red
@@ -29,21 +31,29 @@ chk_user()
 apt_installer()
 {
 	echo "Installing ANSIBLE ...!"
-	sudo apt-get install software-properties-common
-	sudo apt-add-repository ppa:ansible/ansible -y
+	sudo apt-get install software-properties-common -y && \
+	sudo apt-add-repository ppa:ansible/ansible -y && \
 	sudo apt-get update && sudo apt-get install ansible -y
-	run_ansible_playbook;
+	run_ansible_playbook ${WORK_DIR};
 }
 
 yum_installer()
 {
 	sudo yum install ansible -y
-	run_ansible_playbook;
+	run_ansible_playbook ${WORK_DIR};
 }
 
 run_ansible_playbook()
 {
-	echo "Running Playbook to setup the tech stacks ...!"
+	
+	if [ ! -z $1 ]
+	then
+		WORK_DIR="-e ANSIBLE_WORKSPACE=$1"
+	else
+		WORK_DIR=""
+	fi
+	echo "Running ANSIBLE Playbook to setup the PHOENIX stacks ...!"
+	ansible-playbook -K -i ${CURDIR}/egov.phoenix/hosts ${CURDIR}/egov.phoenix/main.yml ${WORK_DIR}
 }
 
 ####### MAIN PROGRAME #############
@@ -79,4 +89,3 @@ else
 	           	;;
 	esac            
 fi
-##############  END of Script ############

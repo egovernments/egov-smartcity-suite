@@ -1,0 +1,22 @@
+---
+
+- name: Download JDK tarball jdk-{{java_version}}u{{java_subversion}}
+  local_action: get_url url={{ java_download_url }}/{{ java_archive }} dest={{ java_install_dir }}/{{ java_archive }}
+  become: False
+  run_once: True
+
+- name: Unpack JDK tarball jdk-{{ java_version }}u{{java_subversion}}
+  unarchive:
+    src: "{{ java_install_dir }}/{{ java_archive }}"
+    dest: "{{ java_install_dir }}"
+    remote_src: yes
+    creates: "jdk1.{{java_version}}.0_{{java_subversion}}"
+
+- name: Set default JAVA_HOME {{java_home}}
+  become: yes
+  become_method: sudo
+  template: >
+    src=java.sh.j2
+    dest=/etc/profile.d/java.sh
+    mode=755
+

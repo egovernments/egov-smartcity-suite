@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,11 +43,14 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.lcms.masters.service;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -57,11 +67,22 @@ import org.egov.commons.dao.AccountdetailkeyHibernateDAO;
 import org.egov.commons.dao.AccountdetailtypeHibernateDAO;
 import org.egov.commons.service.EntityTypeService;
 import org.egov.commons.utils.EntityType;
+import org.egov.infra.admin.master.entity.AppConfigValues;
+import org.egov.infra.admin.master.entity.BusinessUser;
+import org.egov.infra.admin.master.entity.Role;
+import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.admin.master.service.RoleService;
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.validation.exception.ValidationException;
+import org.egov.lcms.autonumber.AdvocateUserNameGenerator;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.repository.AdvocateMasterRepository;
+import org.egov.lcms.utils.constants.LcmsConstants;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -77,7 +98,22 @@ public class AdvocateMasterService implements EntityTypeService {
 
     @Autowired
     private AccountdetailtypeHibernateDAO accountdetailtypeHibernateDAO;
-
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Autowired
+    private UserService userService;
+    
+    @Autowired
+    private RoleService roleService;
+    
+    @Autowired
+    private AdvocateUserNameGenerator advocateUserNameGenerator;
+    
+    @Autowired
+    private AppConfigValueService appConfigValuesService;
+    
     @Autowired
     public AdvocateMasterService(final AdvocateMasterRepository advocateMasterRepository) {
         this.advocateMasterRepository = advocateMasterRepository;
@@ -118,6 +154,49 @@ public class AdvocateMasterService implements EntityTypeService {
         accountdetailkey.setDetailname(accountdetailtype.getAttributename());
         accountdetailkey.setAccountdetailtype(accountdetailtype);
         accountdetailkeyHibernateDAO.create(accountdetailkey);
+    }
+
+    @Transactional
+    public void createAdvocateUser(final AdvocateMaster advocateMaster) {
+        User user = null;
+        if (advocateMaster.getAdvocateUser() != null && advocateMaster.getAdvocateUser().getId() != null)
+            user = userService.getUserById(advocateMaster.getAdvocateUser().getId());
+        if (user == null) {
+            final BusinessUser businessUser = new BusinessUser();
+            user = createNewAdvocateUser(advocateMaster, businessUser);
+            advocateMaster.setAdvocateUser(user);
+        } else {
+            user.setMobileNumber(advocateMaster.getMobileNumber());
+            user.setEmailId(advocateMaster.getEmail() != null ? advocateMaster.getEmail() : "");
+            user.setName(advocateMaster.getName());
+            user.setSalutation(advocateMaster.getSalutation());
+            user.setPan(advocateMaster.getPanNumber());
+            advocateMaster.setAdvocateUser(user);
+        }
+
+    }
+
+    private User createNewAdvocateUser(final AdvocateMaster advocateMaster, final BusinessUser businessUser) {
+        businessUser.setMobileNumber(advocateMaster.getMobileNumber());
+        businessUser.setEmailId(advocateMaster.getEmail() != null ? advocateMaster.getEmail() : "");
+        businessUser.setName(advocateMaster.getName());
+        businessUser.setSalutation(advocateMaster.getSalutation());
+        businessUser.setPassword(passwordEncoder.encode(advocateMaster.getMobileNumber()));
+        businessUser.setPwdExpiryDate(DateTime.now().plusMonths(12).toDate());
+        businessUser.setPan(advocateMaster.getPanNumber());
+        businessUser.setActive(true);
+        businessUser.setUsername(advocateUserNameGenerator.generateAdvocateUserName(advocateMaster));
+        businessUser.setRoles(getRolesForStandingCounsel());
+        return userService.createUser(businessUser);
+    }
+    
+    public Set<Role> getRolesForStandingCounsel() {
+        final Set<Role> roles = new HashSet<>();
+        final List<AppConfigValues> appConfigValueList = appConfigValuesService.getConfigValuesByModuleAndKey(
+                LcmsConstants.MODULE_NAME, LcmsConstants.STANDINGCOUNSEL_ROLES);
+        for (final AppConfigValues appConfig : appConfigValueList)
+            roles.add(roleService.getRoleByName(appConfig.getValue()));
+        return roles;
     }
 
     public List<AdvocateMaster> search(final AdvocateMaster advocateMaster) {

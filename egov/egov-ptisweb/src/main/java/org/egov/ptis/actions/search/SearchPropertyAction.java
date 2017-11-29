@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,58 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.actions.search;
 
-import static java.math.BigDecimal.ZERO;
-import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ADD_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_BIFURCATE_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_COLLECT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMAND_BILL;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_EDIT_COLLECTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_EDIT_DEMAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_EDIT_OWNER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_RP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_MODIFY_DATA_ENTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_REVISION_PETITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TAX_EXEMTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACANCY_REMISSION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.ARR_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_COLL_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NOT_AVAILABLE;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_STATUS_MARK_DEACTIVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.SESSIONLOGINID;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MIGRATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.servlet.http.HttpServletRequest;
-
+import com.opensymphony.xwork2.validator.annotations.Validations;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -104,7 +64,6 @@ import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
-import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.egov.infra.web.struts.actions.SearchFormAction;
 import org.egov.infra.web.struts.annotation.ValidationErrorPage;
 import org.egov.infra.web.utils.EgovPaginatedList;
@@ -116,17 +75,29 @@ import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
-import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
 import org.egov.ptis.domain.entity.property.PropertyMaterlizeView;
+import org.egov.ptis.domain.entity.property.PropertyMutation;
 import org.egov.ptis.domain.entity.property.PropertyStatusValues;
 import org.egov.ptis.domain.service.property.PropertyService;
-import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.opensymphony.xwork2.validator.annotations.Validations;
+import javax.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.infra.web.struts.actions.BaseFormAction.NEW;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 @ParentPackage("egov")
 @Validations
@@ -201,6 +172,7 @@ public class SearchPropertyAction extends SearchFormAction {
     protected static final String USER_DETAILS = "ownerDetails";
     protected static final String UPDATEMOBILE_FORM = "updateMobileNo";
     public static final String TARGET = "result";
+    private static final String INACTIVE_DEMAND_ERROR="error.msg.demandInactive";
     private Long zoneId;
     private Long wardId;
     private Long propertyTypeMasterId;
@@ -264,9 +236,7 @@ public class SearchPropertyAction extends SearchFormAction {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    
-    @Autowired
-    private RevisionPetitionService revisionPetitionService;
+
     @Override
     public Object getModel() {
         return null;
@@ -319,12 +289,22 @@ public class SearchPropertyAction extends SearchFormAction {
             addActionError(getText("validation.property.doesnot.exists"));
             return COMMON_FORM;
         }
+        if (Arrays.asList(APPLICATION_TYPE_ALTER_ASSESSENT, APPLICATION_TYPE_TAX_EXEMTION, APPLICATION_TYPE_BIFURCATE_ASSESSENT,
+                APPLICATION_TYPE_DEMOLITION, APPLICATION_TYPE_AMALGAMATION).contains(applicationType)) {
+            final Ptdemand ptDemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(basicProperty.getProperty());
+            if (ptDemand == null || ptDemand != null && ptDemand.getEgDemandDetails() == null) {
+                addActionError(getText("msg.no.tax"));
+                return COMMON_FORM;
+            }
+        }
+        if (APPLICATION_TYPE_EDIT_OWNER.equals(applicationType))
+            return APPLICATION_TYPE_EDIT_OWNER;
         checkIsDemandActive(basicProperty.getProperty());
         if (!applicationType.equalsIgnoreCase(APPLICATION_TYPE_COLLECT_TAX)
                 && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_DEMAND_BILL)
                 && !applicationType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION))
             if (!isDemandActive) {
-                addActionError(getText("error.msg.demandInactive"));
+               addActionError(getText(INACTIVE_DEMAND_ERROR,propertyTaxCommonUtils.validationForInactiveProperty(basicProperty)));
                 return COMMON_FORM;
             } else if (basicProperty.getActiveProperty().getPropertyDetail().getPropertyTypeMaster().getCode()
                     .equalsIgnoreCase(PropertyTaxConstants.OWNERSHIP_TYPE_EWSHS)
@@ -345,11 +325,6 @@ public class SearchPropertyAction extends SearchFormAction {
              * (currentWaterTaxDue.add(currentPropertyTaxDue).add(arrearPropertyTaxDue).longValue() > 0) {
              * addActionError(getText("tax.dues.error")); return COMMON_FORM; }
              */
-            if (property != null
-                    && property.getPropertyDetail().getPropertyTypeMaster().getCode().equals(OWNERSHIP_TYPE_VAC_LAND)) {
-                addActionError(getText("amalgamation.vlt.error"));
-                return COMMON_FORM;
-            }
             if (basicProperty.isUnderWorkflow()) {
                 addActionError(getText("amalgamation.wf.error"));
                 return COMMON_FORM;
@@ -404,8 +379,8 @@ public class SearchPropertyAction extends SearchFormAction {
                 || APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)
                 || APPLICATION_TYPE_GRP.equals(applicationType) || APPLICATION_TYPE_DEMOLITION.equals(applicationType)) {
             if (!isDemandActive) {
-                addActionError(getText("error.msg.demandInactive"));
-                return COMMON_FORM;
+               addActionError(getText(INACTIVE_DEMAND_ERROR,propertyTaxCommonUtils.validationForInactiveProperty(basicProperty)));
+               return COMMON_FORM;
             }
 
         } else if (APPLICATION_TYPE_DEMAND_BILL.equals(applicationType)) {
@@ -434,27 +409,17 @@ public class SearchPropertyAction extends SearchFormAction {
             else if (APPLICATION_TYPE_REVISION_PETITION.equals(applicationType))
                 return APPLICATION_TYPE_MEESEVA_RP;
 
-		if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
-			boolean grpDone = false;
-			RevisionPetition oldObjection = revisionPetitionService.getExistingGRP(basicProperty);
-			if (oldObjection != null || (oldObjection == null && NATURE_OF_WORK_GRP
-					.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))) {
-				grpDone = true;
-			}
-			boolean dataEntryDone = false;
-			if ((SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
-					&& basicProperty.getPropertySet().size() == 1)
-					|| (SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
-							&& grpDone))
-				dataEntryDone = true;
-			if (!(dataEntryDone
-					|| (SOURCEOFDATA_MIGRATION.toString().equalsIgnoreCase(basicProperty.getSource().toString())
-							&& grpDone))) {
+        if (APPLICATION_TYPE_EDIT_DEMAND.equals(applicationType)) {
+            if(basicProperty.isUnderWorkflow() && !isUnderMutationWorkflow(basicProperty)){
+                addActionError(getText("error.underworkflow"));
+                return COMMON_FORM;
+            }
+            if( !validateAssessmentForEditDemand(basicProperty)){
+                addActionError(getText("edit.dataEntry.source.error"));
+                return COMMON_FORM;
+            }
+        }
 
-				addActionError(getText("edit.dataEntry.source.error"));
-				return COMMON_FORM;
-			}
-		}
         if (APPLICATION_TYPE_ADD_DEMAND.equals(applicationType)) {
             if (!(basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_DATAENTRY.toString())
                     || basicProperty.getSource().toString().equalsIgnoreCase(SOURCEOFDATA_MIGRATION.toString()))) {
@@ -471,12 +436,10 @@ public class SearchPropertyAction extends SearchFormAction {
             return COMMON_FORM;
         }
 
-        if (APPLICATION_TYPE_EDIT_OWNER.equals(applicationType))
-            return APPLICATION_TYPE_EDIT_OWNER;
         if (applicationType.equalsIgnoreCase(APPLICATION_TYPE_VACANCY_REMISSION)
                 || applicationType.equalsIgnoreCase(APPLICATION_TYPE_TAX_EXEMTION))
             if (!isDemandActive) {
-                addActionError(getText("error.msg.demandInactive"));
+                addActionError(getText(INACTIVE_DEMAND_ERROR,propertyTaxCommonUtils.validationForInactiveProperty(basicProperty)));
                 return COMMON_FORM;
             } else
                 mode = "commonSearch";
@@ -488,6 +451,31 @@ public class SearchPropertyAction extends SearchFormAction {
                 return APPLICATION_TYPE_EDIT_COLLECTION;
         return applicationType;
 
+    }
+
+    private boolean isUnderMutationWorkflow(final BasicProperty basicProperty) {
+        boolean underWorkFlow = false;
+        if (basicProperty.getPropertyMutations() != null) {
+            for (PropertyMutation propertyMutation : basicProperty.getPropertyMutations()) {
+                underWorkFlow = WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getState().getValue()) ? false : true;
+                if (underWorkFlow)
+                    break;
+            }
+        } 
+        return underWorkFlow;
+    }
+    
+    private boolean validateAssessmentForEditDemand(final BasicProperty basicProperty) {
+        boolean validForEdit = false;
+        if (SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+                && (basicProperty.getPropertySet().size() == 1
+                        || NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))) {
+            validForEdit = true;
+        } else if (SOURCEOFDATA_MIGRATION.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+                && NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))
+            validForEdit = true;
+        
+        return validForEdit;
     }
 
     /**

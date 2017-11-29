@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,25 +43,16 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.web.controller.reports;
 
-import static org.egov.infra.web.utils.WebUtils.reportToResponseEntity;
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.Map;
-
-import org.egov.infra.reporting.engine.ReportRequest;
-import org.egov.infra.reporting.engine.ReportService;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.infstr.services.Page;
-import org.egov.pgr.entity.dto.AgeingReportForm;
-import org.egov.pgr.entity.dto.AgeingReportRequest;
-import org.egov.pgr.service.reports.AgeingReportService;
+import org.egov.pgr.report.entity.contract.AgeingReportAdaptor;
+import org.egov.pgr.report.entity.contract.AgeingReportRequest;
+import org.egov.pgr.report.service.AgeingReportService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -65,65 +63,59 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 @Controller
-@RequestMapping("/report")
+@RequestMapping("/report/ageing")
 public class AgeingReportController {
 
     @Autowired
     private AgeingReportService ageingReportService;
 
-    @Autowired
-    private ReportService reportService;
-
     @ModelAttribute
-    public void getReportHelper(final Model model) {
-        final ReportHelper reportHealperObj = new ReportHelper();
-        final Map<String, String> status = new LinkedHashMap<>();
+    public void ageingReportSearchForm(Model model) {
+        Map<String, String> status = new LinkedHashMap<>();
         status.put("Completed", "Completed");
         status.put("Pending", "Pending");
         status.put("Rejected", "Rejected");
         model.addAttribute("status", status);
-        model.addAttribute("reportHelper", reportHealperObj);
-
+        model.addAttribute("ageingReportForm", new AgeingReportRequest());
     }
 
-    @GetMapping("ageingReportByBoundary")
-    public String searchAgeingReportByBoundaryForm(final Model model) {
+    @GetMapping("boundarywise")
+    public String showBoundarywiseAgeingReportForm(Model model) {
         model.addAttribute("mode", "ByBoundary");
         return "ageing-search";
     }
 
-    @GetMapping("ageingReportByDept")
-    public String searchAgeingReportByDepartmentForm(final Model model) {
+    @GetMapping("departmentwise")
+    public String showDepartmentwiseAgeingReportForm(Model model) {
         model.addAttribute("mode", "ByDepartment");
         return "ageing-search";
     }
 
-    @GetMapping(value = "/ageing/resultList-update", produces = TEXT_PLAIN_VALUE)
+    @GetMapping(produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchAgeingReport(final AgeingReportRequest request) throws IOException {
-        final Page<AgeingReportForm> ageingreport = ageingReportService.pagedAgeingRecords(request);
-        final long draw = request.draw();
-        return new DataTable<>(ageingreport, draw)
-                .toJson(AgeingReportHelperAdaptor.class);
+    public String searchAgeingReport(AgeingReportRequest request) {
+        return new DataTable<>(ageingReportService.pagedAgeingRecords(request), request.draw())
+                .toJson(AgeingReportAdaptor.class);
     }
 
-    @GetMapping("/ageing/grand-total")
+    @GetMapping("grand-total")
     @ResponseBody
-    public Object[] ageingReportGrandTotal(final AgeingReportRequest request) {
+    public Object[] ageingReportGrandTotal(AgeingReportRequest request) {
         return ageingReportService.ageingReportGrandTotal(request);
     }
 
-    @GetMapping("/ageing/download")
+    @GetMapping("download")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadReport(final AgeingReportRequest request) {
-        final ReportRequest reportRequest = new ReportRequest("pgr_ageing_report",
-                ageingReportService.getAllAgeingReportRecords(request), new HashMap<>());
-        final Map<String, Object> reportparam = new HashMap<>();
-        reportparam.put("status", request.getStatus());
-        reportRequest.setReportParams(reportparam);
-        reportRequest.setReportFormat(request.getPrintFormat());
-        reportRequest.setReportName("pgr_ageing_report");
-        return reportToResponseEntity(reportRequest, reportService.createReport(reportRequest));
+    public ResponseEntity<InputStreamResource> downloadAgeingReport(AgeingReportRequest reportCriteria) {
+        ReportOutput reportOutput = ageingReportService.generateAgeingReport(reportCriteria);
+        reportOutput.setReportName("ageing_report");
+        return reportAsResponseEntity(reportOutput);
     }
 }

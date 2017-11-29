@@ -1,41 +1,49 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 $(document).ready(function () {
@@ -56,7 +64,6 @@ $(document).ready(function () {
             $(this).children('ul').hide();
         });
 
-    //TODO not yet implemented at backend
     $('#feedback-form').on('submit', function (e) {
         e.preventDefault();
         $.ajax({
@@ -125,18 +132,21 @@ $(document).ready(function () {
     $("#official_inbox").on('click', 'tbody tr td i.inbox-history', function (e) {
         $('.history-inbox').modal('show');
         historyTableContainer = $("#historyTable");
-        historyTableContainer.dataTable({
-            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
+        historyTableContainer.DataTable({
+            "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-6 col-xs-12'i>" +
+            "<'col-md-3 col-xs-6'l><'col-md-3 col-xs-6 text-right'p>>",
             "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
             "autoWidth": false,
             "paging": false,
             "destroy": true,
-            /* Disable initial sort */
             "aaSorting": [],
             "oLanguage": {
                 "sInfo": ""
             },
-            "ajax": "inbox/history?stateId=" + tableContainer1.fnGetData($(this).parent().parent(), 6),
+            "ajax": {
+                "url": "inbox/history?stateId=" + tableContainer1.dataTable().fnGetData($(this).parent().parent(), 6),
+                "dataSrc": ""
+            },
             "columns": [
                 {"data": "date", "width": "20%"},
                 {"data": "sender", "width": "15%"},
@@ -172,20 +182,22 @@ $(document).ready(function () {
     });
 
     $('.search-table').keyup(function () {
-        tableContainer1.fnFilter(this.value);
+        tableContainer1.dataTable().fnFilter(this.value);
     });
 
     $("#official_inbox").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.fnGetData(this, 7) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.fnGetData(this, 7), '' + tableContainer1.fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 7) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 7),
+                tableContainer1.dataTable().fnGetData(this, 6) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
     });
 
     $("#official_drafts").on('click', 'tbody tr', function (event) {
-        if (tableContainer1.fnGetData(this, 6) != undefined) {
-            var windowObjectReference = window.open(tableContainer1.fnGetData(this, 6), '' + tableContainer1.fnGetData(this, 5) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
+        if (tableContainer1.dataTable().fnGetData(this, 6) != undefined) {
+            var windowObjectReference = window.open(tableContainer1.dataTable().fnGetData(this, 6),
+                tableContainer1.dataTable().fnGetData(this, 5) + '', 'width=900, height=700, top=300, left=150,scrollbars=yes');
             openedWindows.push(windowObjectReference);
             windowObjectReference.focus();
         }
@@ -217,7 +229,6 @@ $(document).ready(function () {
             taskName = unescape($(this).data('now'));
 
         now_json = [];
-        //console.log('Clicked item-->'+now);
         refreshnow(taskName, moduleName);
 
         $('#inboxsearch').trigger('keyup');
@@ -358,7 +369,6 @@ $(document).ready(function () {
         }
         else {
             for (var prop in theObject) {
-                //console.log(prop + ': ' + theObject[prop]);
                 if (prop == 'name') {
                     if (theObject[prop].toLowerCase().indexOf(searchkey) >= 0) {
                         if (theObject.link != 'javascript:void(0);' && theObject.icon != 'fa fa-times-circle remove-favourite') {
@@ -429,14 +439,17 @@ function clearnow() {
 //common ajax functions for worklist, drafts and notifications
 function worklist() {
     tableContainer1 = $("#official_inbox");
-    tableContainer1.dataTable({
+    tableContainer1.DataTable({
         "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         "autoWidth": false,
-        /* Disable initial sort */
         "aaSorting": [],
-        "ajax": "inbox",
+        "ajax": {
+            "url": "inbox",
+            "dataSrc": ""
+        },
+        "deferRender": true,
         "columns": [
             {"data": "date", "width": "16%"},
             {"data": "sender", "width": "15%"},
@@ -460,7 +473,7 @@ function worklist() {
             }
         ],
         "fnInitComplete": function (oSettings, json) {
-            response_json = JSON.stringify(json.data);
+            response_json = JSON.stringify(json);
             if (JSON.parse(response_json).length != 0) {
 
                 var groupByModule = JSON.parse(response_json).reduce(function (obj, item) {
@@ -488,8 +501,6 @@ function worklist() {
 
                 loadGroupMenusModuleWise(groupByModule);
 
-            } else {
-                //console.log('Response data is empty');
             }
         }
     });
@@ -537,14 +548,18 @@ function loadGroupMenusModuleWise(moduleArray) {
 
 function drafts() {
     tableContainer1 = $("#official_drafts");
-    tableContainer1.dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+    tableContainer1.DataTable({
+        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
+        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
-        /* Disable initial sort */
         "aaSorting": [],
         "autoWidth": false,
-        "ajax": "inbox/draft",
+        "ajax": {
+            "url": "inbox/draft",
+            "dataSrc": ""
+        },
+        "deferRender": true,
         "columns": [
             {"data": "date", "width": "16%"},
             {"data": "sender", "width": "15%"},
@@ -557,7 +572,9 @@ function drafts() {
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
+                    return type === 'display' && data.length > 75 ? data.substr(0, 75) +
+                        ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More ' +
+                        '<i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
                 },
                 "targets": 4
             }
@@ -567,23 +584,25 @@ function drafts() {
 
 function notifications() {
     tableContainer1 = $("#official_notify");
-    tableContainer1.dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+    tableContainer1.DataTable({
+        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
+        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
         /* Disable initial sort */
         "aaSorting": [],
-        "autoWidth": false
+        "autoWidth": false,
+        "deferRender": true
     });
 }
 
 function worklistwrtnow(json) {
     tableContainer1 = $("#official_inbox");
-    tableContainer1.dataTable({
-        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i><'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
+    tableContainer1.DataTable({
+        "sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row buttons-margin'<'col-md-5 col-xs-12'i>" +
+        "<'col-md-3 col-xs-6'l><'col-md-4 col-xs-6 text-right'p>>",
         "aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
         "bDestroy": true,
-        /* Disable initial sort */
         "aaSorting": [],
         "autoWidth": false,
         "data": json,
@@ -604,7 +623,9 @@ function worklistwrtnow(json) {
         "columnDefs": [
             {
                 "render": function (data, type, row) {
-                    return type === 'display' && data.length > 75 ? data.substr(0, 75) + ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More <i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
+                    return type === 'display' && data.length > 75 ? data.substr(0, 75) +
+                        ' <span class="details" data-text="' + data + '"><button class="btn-xs" style="font-size:10px;">More ' +
+                        '<i class="fa fa-angle-double-right" aria-hidden="true"></i></button></span>' : data;
                 },
                 "targets": 4
             }

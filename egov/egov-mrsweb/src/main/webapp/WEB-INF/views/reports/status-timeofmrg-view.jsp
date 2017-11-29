@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,13 +43,13 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
-
 
 <div class="row">
 	<div class="col-md-12">
@@ -53,10 +60,10 @@
 
 			<div class="panel-body custom">
 				<table class="table table-bordered  multiheadertbl"
-					name="marriageregistrationagewise" id=marriageregistrationagewise>
+					id=marriageregistrationagewise>
 					<thead>
 						<tr>
-							<th>S.No</th>
+							<th><spring:message code="lbl.serial.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
 							<th><spring:message code="lbl.husband.name" /></th>
 							<th><spring:message code="lbl.marital.status" /></th>
@@ -65,7 +72,6 @@
 							<th><spring:message code="lbl.marital.status" /></th>
 							<th><spring:message code="lbl.age" /></th>
 							<th><spring:message code="lbl.date.of.marriage" /></th>
-							<%-- <th><spring:message code="lbl.act" /></th> --%>
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.residence.address" /></th>
 							<th><spring:message code="lbl.Boundary" /></th>
@@ -77,7 +83,8 @@
 							<tr>
 								<td>${counter.index+1}<input type="hidden" name="applicant"
 									id="applicant" value="" /></td>
-								<td><c:out value="${reg.registrationNo!=null?reg.registrationNo:'N/A'}"></c:out></td>
+								<td><c:out
+										value="${reg.registrationNo!=null?reg.registrationNo:'N/A'}"></c:out></td>
 								<td><c:out value="${reg.husband.name.firstName}" /></td>
 								<td><c:out value="${reg.husband.maritalStatus}" /></td>
 								<td><c:out value="${reg.husband.ageInYearsAsOnMarriage}" /></td>
@@ -85,7 +92,6 @@
 								<td><c:out value="${reg.wife.maritalStatus}" /></td>
 								<td><c:out value="${reg.wife.ageInYearsAsOnMarriage}" /></td>
 								<td><c:out value="${reg.dateOfMarriage}" /></td>
-								<%-- <td><c:out value="${reg.marriageAct.name}" /></td> --%>
 								<td><c:out value="${reg.placeOfMarriage}" /></td>
 								<td><c:choose>
 										<c:when test="${applicantType == 'husband'}">
@@ -95,7 +101,7 @@
 											<c:out value="${reg.wife.contactInfo.residenceAddress}" />
 										</c:otherwise>
 									</c:choose></td>
-									<td><c:out value="${reg.zone.name}" /></td>
+								<td><c:out value="${reg.zone.name}" /></td>
 							</tr>
 						</c:forEach>
 					</tbody>

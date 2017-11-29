@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 jQuery(document).ready(function() {
@@ -47,6 +55,8 @@ jQuery(document).ready(function() {
 										var houseNo = jQuery('#houseNo').val();
 										var zone = jQuery('#revenueZoneId').val();
 										var locality = jQuery('#localityId').val();
+										var block = jQuery('#blockId').val();
+										var ward = jQuery('#wardId').val();
 										var electionWard = jQuery('#electionWardId').val();
 										var res=checking();
 										if(res==true){
@@ -54,27 +64,10 @@ jQuery(document).ready(function() {
 										}
 										else{
 											var status=false;
-											if(zone != ""&& locality != "" && electionWard != ""){
+											if(zone != "" || locality != "" || electionWard != "" || block!="" || ward!=""){
 												status=true;
 											}
-											else if(zone != ""&& locality == "" && electionWard == ""){
-												status=true;
-											}
-											else if(zone == ""&& locality != "" && electionWard == ""){
-												status=true;
-											}
-											else if(zone == "" && locality == "" && electionWard != ""){
-												status=true;
-											}
-											else if(zone == "" && locality != "" && electionWard != ""){
-												status=true;
-											}
-											else if(zone != "" && locality == "" && electionWard != ""){
-												status=true;
-											}
-											else if(zone != "" && locality != "" && electionWard == ""){
-												status=true;
-											}
+											
 											if(status==false){
 												bootbox.alert("Please Select Atleast One Option...");
 												return;
@@ -94,8 +87,10 @@ jQuery(document).ready(function() {
 													"searching" : false,
 													responsive : true,
 													destroy : true,
-													dom : "<'row'<'col-xs-4 pull-right'f>r>t<'row add-margin'<'col-md-3 col-xs-6'i><'col-md-2 col-xs-6'l><'col-md-2 col-xs-6 text-right'B><'col-md-5 col-xs-6 text-right'p>>",
+													"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+													"aLengthMenu": [[50, 100, 1000], [50, 100, 1000]],
 													"autoWidth" : false,
+													pagingType: 'full_numbers',
 													"bDestroy" : true,
 													"order" : [ [ 1, 'asc' ] ],
 													ajax : {
@@ -107,6 +102,8 @@ jQuery(document).ready(function() {
 																"assessmentNumber" : propertyid,
 																"doorNumber" : houseNo,
 																"zone" : zone,
+																"block":block,
+																"ward":ward,
 																"locality" : locality,
 																"electionWard" : electionWard
 															};
@@ -251,7 +248,7 @@ jQuery(document).ready(function() {
 					 * loadrevenue($(this)); console.log('value',
 					 * $(this).val()); }); });
 					 */
-
+					
 					function loadrevenue(localityDropdown) {
 						var locality = localityDropdown.val();
 						jQuery
@@ -275,7 +272,7 @@ jQuery(document).ready(function() {
 										});
 									},
 									error : function(response) {
-										$tr.find('wardClass_tbl').html("");
+										$tr.find('.wardClass_tbl').html("");
 										$tr.find('.blockClass_tbl').html("");
 										bootbox.alert("No boundary details mapped for locality")
 									}
@@ -287,31 +284,31 @@ jQuery(document).ready(function() {
 						loadrevenue(jQuery(this));
 					});
 
-					jQuery(document).on('change', ".wardClass_tbl", function() {
-						loadblock(jQuery(this));
+					jQuery(document).on('change', ".blockClass_tbl", function() {
+						loadward(jQuery(this));
 					});
 
-					function loadblock(wardDropdown) {
-						var ward = wardDropdown.val();
+					function loadward(blockDropdown) {
+						var block = blockDropdown.val();
 						jQuery
 								.ajax({
-									url : "/egi/boundary/ajaxBoundary-blockByWard.action",
+									url : "/ptis/bulkboundaryupdation/ajaxBoundary-wardByBlock",
 									type : "GET",
 									data : {
-										wardId : ward
+										blockId : block
 									},
 									cache : false,
 									dataType : "json",
 									success : function(response) {
-										var $tr = wardDropdown.closest('tr');
-										$tr.find('.blockClass_tbl').html("");
-										jQuery.each(response,function(j, block) {
-											$tr.find('.blockClass_tbl').append("<option value='"+ block.blockId + "'>"+ block.blockName+ "</option>");
+										var $tr = blockDropdown.closest('tr');
+										$tr.find('.wardClass_tbl').html("");
+										jQuery.each(response,function(j, ward) {
+											$tr.find('.wardClass_tbl').append("<option value='"+ ward.wardId + "'>"+ ward.wardName+ "</option>");
 										});
 									},
 									error : function(response) {
 										jQuery('#revenueBlockId').html("");
-										bootbox.alert("No block details mapped for ward")
+										bootbox.alert("No ward details mapped for Block")
 									}
 								});
 					}

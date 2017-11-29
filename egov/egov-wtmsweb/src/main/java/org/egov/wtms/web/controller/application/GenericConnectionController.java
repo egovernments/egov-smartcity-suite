@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,10 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -99,13 +108,9 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
 
     @Autowired
     protected AssignmentService assignmentService;
-    
+
     @Autowired
     protected WaterSupplyService waterSupplyService;
-    
-    /*public @ModelAttribute("meterCostMasters") List<MeterCost> meterCostMasters() {
-        return meterCostService.findAll();
-    }*/
 
     public @ModelAttribute("waterSourceTypes") List<WaterSource> waterSourceTypes() {
         return waterSourceService.getAllActiveWaterSourceTypes();
@@ -115,27 +120,15 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
         return waterConnectionDetailsService.getConnectionTypesMap();
     }
 
-    /*public @ModelAttribute("connectionCategories") List<ConnectionCategory> connectionCategories() {
-        return connectionCategoryService.getAllActiveConnectionCategory();
-    }
-
-    public @ModelAttribute("usageTypes") List<UsageType> usageTypes() {
-        return usageTypeService.getActiveUsageTypes();
-    }
-
-    public @ModelAttribute("pipeSizes") List<PipeSize> pipeSizes() {
-        return pipeSizeService.getAllActivePipeSize();
-    }*/
-
     public @ModelAttribute("propertyTypes") List<PropertyType> propertyTypes() {
         return propertyTypeService.getAllActivePropertyTypes();
     }
 
-    @ModelAttribute("waterSupplyTypes") 
-    public List<WaterSupply> supplyTypes(){
+    @ModelAttribute("waterSupplyTypes")
+    public List<WaterSupply> supplyTypes() {
         return waterSupplyService.findAllWaterSupplyType();
     }
-    
+
     protected Set<FileStoreMapper> addToFileStore(final MultipartFile[] files) {
         if (ArrayUtils.isNotEmpty(files))
             return Arrays
@@ -151,7 +144,7 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                         }
                     }).collect(Collectors.toSet());
         else
-            return null;
+            return Collections.emptySet();
     }
 
     protected void processAndStoreApplicationDocuments(final WaterConnectionDetails waterConnectionDetails) {
@@ -163,12 +156,4 @@ public abstract class GenericConnectionController extends GenericWorkFlowControl
                 applicationDocument.setSupportDocs(addToFileStore(applicationDocument.getFiles()));
             }
     }
-
-    protected boolean validApplicationDocument(final ApplicationDocuments applicationDocument) {
-        if (!applicationDocument.getDocumentNames().isRequired() && applicationDocument.getDocumentNumber() == null
-                && applicationDocument.getDocumentDate() == null)
-            return false;
-        return true;
-    }
-
 }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,10 +43,12 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.adtax.service.collection;
 
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -53,21 +62,27 @@ import java.util.Map;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 
+import org.egov.adtax.entity.Advertisement;
 import org.egov.adtax.entity.AdvertisementAdditionalTaxRate;
 import org.egov.adtax.service.AdvertisementAdditinalTaxRateService;
 import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.penalty.AdvertisementPenaltyCalculator;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
+import org.egov.collection.integration.models.BillInfo.COLLECTIONTYPE;
+import org.egov.collection.integration.models.BillInfoImpl;
 import org.egov.commons.Installment;
 import org.egov.demand.interfaces.BillServiceInterface;
 import org.egov.demand.interfaces.Billable;
+import org.egov.demand.model.EgBill;
 import org.egov.demand.model.EgBillDetails;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.persistence.utils.SequenceNumberGenerator;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -76,6 +91,7 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 @Transactional(readOnly = true)
 public class AdvertisementBillServiceImpl extends BillServiceInterface {
+    private static final String ADVERTISEMENT_BILLNUMBER = "SEQ_advertisementbill_NUMBER";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -85,9 +101,14 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     private AdvertisementAdditinalTaxRateService advertisementAdditinalTaxRateService;
     @Autowired
     private AdvertisementDemandService advertisementDemandService;
-
     @Autowired
     private AdvertisementPenaltyCalculator advertisementPenaltyCalculator;
+    @Autowired
+    private AdvertisementBillable advertisementBillable;
+    @Autowired
+    private SequenceNumberGenerator sequenceNumberGenerator;
+    @Autowired
+    private AdtaxExternalService adtaxExternalService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -95,17 +116,17 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
 
     @Override
     public List<EgBillDetails> getBilldetails(final Billable billObj) {
-        final List<EgBillDetails> billDetailList = new ArrayList<EgBillDetails>();
+        final List<EgBillDetails> billDetailList = new ArrayList<>();
         int orderNo = 1;
         final AdvertisementBillable advBillable = (AdvertisementBillable) billObj;
         final EgDemand dmd = advBillable.getCurrentDemand();
-        final List<EgDemandDetails> details = new ArrayList<EgDemandDetails>(dmd.getEgDemandDetails());
+        final List<EgDemandDetails> details = new ArrayList<>(dmd.getEgDemandDetails());
         BigDecimal totalTaxableAmount = BigDecimal.ZERO;
         if (!details.isEmpty())
             Collections.sort(details, (c1, c2) -> c1.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()
                     .compareTo(c2.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster()));
 
-        final Map<String, BigDecimal> additionalTaxes = new HashMap<String, BigDecimal>();
+        final Map<String, BigDecimal> additionalTaxes = new HashMap<>();
         final List<AdvertisementAdditionalTaxRate> additionalTaxRates = advertisementAdditinalTaxRateService
                 .getAllActiveAdditinalTaxRates();
 
@@ -114,8 +135,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
 
         for (final EgDemandDetails demandDetail : details)
             if (demandDetail.getAmount().compareTo(BigDecimal.ZERO) > 0) {
-                BigDecimal creaditAmt = BigDecimal.ZERO;
-                creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
+                BigDecimal creaditAmt = demandDetail.getAmount().subtract(demandDetail.getAmtCollected());
 
                 // If Amount- collected amount greather than zero, then send
                 // these demand details to collection.
@@ -141,11 +161,8 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
                 .getPenaltyOnAdditionalTaxByInstallment(advBillable.getAdvertisement().getActiveAdvertisementPermit());
 
         if (penaltyReasons != null && penaltyReasons.size() > 0) {
-
-            BigDecimal penaltyAmount = BigDecimal.ZERO;
-
             for (final Map.Entry<Installment, BigDecimal> penaltyReason : penaltyReasons.entrySet()) {
-                penaltyAmount = penaltyReason.getValue();
+                BigDecimal penaltyAmount = penaltyReason.getValue();
 
                 if (penaltyAmount.compareTo(BigDecimal.ZERO) > 0)
                     orderNo = prepareBillDetails(billDetailList, orderNo, dmd, penaltyAmount, penaltyReason.getKey(),
@@ -180,7 +197,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
             final List<EgDemandDetails> demandDetail = advertisementDemandService.getDemandDetailByPassingDemandDemandReason(dmd,
                     pendingTaxReason);
 
-            if (demandDetail != null && demandDetail.size() > 0) {
+            if (demandDetail != null && !demandDetail.isEmpty()) {
                 final EgDemandDetails existingDemandDetail = demandDetail.get(0);
                 final BigDecimal creaditAmt = existingDemandDetail.getAmount().subtract(
                         existingDemandDetail.getAmtCollected());
@@ -266,15 +283,32 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     }
 
     private Boolean serviceTaxAndCessCalculationRequired() {
-
         final AppConfigValues isServiceTaxAndCessCollectionRequired = appConfigValuesService.getConfigValuesByModuleAndKey(
                 AdvertisementTaxConstants.MODULE_NAME, AdvertisementTaxConstants.SERVICETAXANDCESSCOLLECTIONREQUIRED).get(0);
-
-        if (isServiceTaxAndCessCollectionRequired != null
-                && "YES".equalsIgnoreCase(isServiceTaxAndCessCollectionRequired.getValue()))
-            return true;
-        return false;
-
+        return isServiceTaxAndCessCollectionRequired != null
+                && "YES".equalsIgnoreCase(isServiceTaxAndCessCollectionRequired.getValue()) ? true : false;
     }
 
+    /**
+     * API to return BillInfoImpl, used in tax payment through Mobile App
+     *
+     * @param mobileAdvertisementTaxDetails
+     * @return
+     */
+    public BillInfoImpl getBillInfo(final BigDecimal amountToBePaid, final Advertisement advertisement) {
+        advertisementBillable.setAdvertisement(advertisement);
+        ApplicationThreadLocals.setUserId(2L);
+        final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
+        advertisementBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
+                "%s%06d", "", referenceNumber)));
+        final EgBill egBill = generateBill(advertisementBillable);
+        return prepareBillForCollection(amountToBePaid, egBill, null);
+    }
+
+    @Transactional
+    public BillInfoImpl prepareBillForCollection(final BigDecimal amountToBePaid, final EgBill bill,
+            final String source) {
+        return adtaxExternalService.prepareBillInfo(amountToBePaid, COLLECTIONTYPE.O, bill,
+                source);
+    }
 }

@@ -1,48 +1,49 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.service;
@@ -77,7 +78,6 @@ import org.egov.tl.entity.FeeMatrixDetail;
 import org.egov.tl.entity.License;
 import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseDemand;
-import org.egov.tl.entity.LicenseDocument;
 import org.egov.tl.entity.LicenseDocumentType;
 import org.egov.tl.entity.LicenseSubCategoryDetails;
 import org.egov.tl.entity.NatureOfBusiness;
@@ -108,7 +108,7 @@ import java.util.Optional;
 import java.util.Set;
 
 import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.tl.utils.Constants.*;
 
 @Transactional(readOnly = true)
@@ -198,6 +198,8 @@ public abstract class AbstractLicenseService<T extends License> {
     @Autowired
     private FeeTypeService feeTypeService;
 
+    @Autowired
+    private LicenseCitizenPortalService licenseCitizenPortalService;
 
     protected abstract LicenseAppType getLicenseApplicationTypeForRenew();
 
@@ -219,55 +221,8 @@ public abstract class AbstractLicenseService<T extends License> {
         return (T) this.licenseRepository.findOne(id);
     }
 
-    @Transactional
-    public License create(final T license, final WorkflowBean workflowBean) {
-        final Date fromRange = installmentDao.getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().toDate())
-                .getFromDate();
-        final Date toRange = installmentDao
-                .getInsatllmentByModuleForGivenDate(this.getModuleName(), new DateTime().plusYears(1).toDate()).getToDate();
-        if (license.getCommencementDate().before(fromRange) || license.getCommencementDate().after(toRange))
-            throw new ValidationException("TL-009", "TL-009");
-        license.setLicenseAppType(getLicenseApplicationType());
-        raiseNewDemand(license);
-        license.getLicensee().setLicense(license);
-        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        if (isBlank(license.getApplicationNumber()))
-            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        processAndStoreDocument(license.getDocuments(), license);
-        if (securityUtils.currentUserIsEmployee())
-            transitionWorkFlow(license, workflowBean);
-        else
-            wfWithCscOperator(license, workflowBean);
-        licenseRepository.save(license);
-        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        return license;
-    }
-
-    private void wfWithCscOperator(final T license, final WorkflowBean workflowBean) {
-        List<Assignment> assignmentList = getAssignments();
-        if (!assignmentList.isEmpty()) {
-            final Assignment wfAssignment = assignmentList.get(0);
-            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), PUBLIC_HEALTH_DEPT,
-                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            if (!license.hasState())
-                license.transition().start();
-            else
-                license.transition().startNext();
-            license.transition().withSenderName(
-                    wfAssignment.getEmployee().getUsername() + DELIMITER_COLON + wfAssignment.getEmployee().getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withNatureOfTask(license.isReNewApplication() ? RENEWAL_NATUREOFWORK : NEW_NATUREOFWORK)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new Date()).withOwner(wfAssignment.getPosition())
-                    .withNextAction(wfmatrix.getNextAction()).withInitiator(wfAssignment.getPosition());
-            license.setEgwStatus(
-                    egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-        } else
-            throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
-    }
-
     private List<Assignment> getAssignments() {
-        Department nextAssigneeDept = departmentService.getDepartmentByName(PUBLIC_HEALTH_DEPT);
+        Department nextAssigneeDept = departmentService.getDepartmentByCode(PUBLIC_HEALTH_DEPT_CODE);
         Designation nextAssigneeDesig = designationService.getDesignationByName(JA_DESIGNATION);
         List<Assignment> assignmentList = getAssignmentsForDeptAndDesignation(nextAssigneeDept, nextAssigneeDesig);
         if (assignmentList.isEmpty()) {
@@ -288,7 +243,7 @@ public abstract class AbstractLicenseService<T extends License> {
                 findAllAssignmentsByDeptDesigAndDates(nextAssigneeDept.getId(), nextAssigneeDesig.getId(), new Date());
     }
 
-    private BigDecimal raiseNewDemand(final T license) {
+    public BigDecimal raiseNewDemand(final T license) {
         final LicenseDemand ld = new LicenseDemand();
         final Module moduleName = this.getModuleName();
         BigDecimal totalAmount = ZERO;
@@ -373,46 +328,6 @@ public abstract class AbstractLicenseService<T extends License> {
         licenseDemand.recalculateBaseDemand();
     }
 
-    @Transactional
-    public License renew(final T license, final WorkflowBean workflowBean) {
-        license.setLicenseAppType(getLicenseApplicationTypeForRenew());
-        final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
-        if (!currentUserIsMeeseva())
-            license.setApplicationNumber(licenseNumberUtils.generateApplicationNumber());
-        recalculateDemand(this.feeMatrixService.getLicenseFeeDetails(license,
-                license.getLicenseDemand().getEgInstallmentMaster().getFromDate()), license);
-        license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_ACKNOWLEDGED));
-        license.setEgwStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(TRADELICENSEMODULE, APPLICATION_STATUS_CREATED_CODE));
-        license.setLicenseAppType(this.getLicenseApplicationTypeForRenew());
-        final User currentUser = this.securityUtils.getCurrentUser();
-        if (securityUtils.currentUserIsEmployee()) {
-            Position wfInitiator = null;
-            if (license.getState() == null || license.transitionCompleted()) {
-                if (!assignments.isEmpty())
-                    wfInitiator = assignments.get(0).getPosition();
-                else
-                    throw new ValidationException(ERROR_KEY_WF_NEXT_OWNER_NOT_FOUND, "No employee assigned to process Renewal application", "Renewal");
-            }
-            final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
-            if (!license.hasState())
-                license.transition().start();
-            else if (license.transitionCompleted())
-                license.transition().startNext();
-            else
-                throw new ValidationException("error.appl.under.workflow", "Cannot initiate Renewal process, application under processing");
-            license.transition().withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments()).withNatureOfTask(RENEWAL_NATUREOFWORK)
-                    .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
-                    .withOwner(wfInitiator)
-                    .withNextAction(wfmatrix.getNextAction()).withInitiator(wfInitiator);
-        } else
-            wfWithCscOperator(license, workflowBean);
-        this.licenseRepository.save(license);
-        sendEmailAndSMS(license, workflowBean.getWorkFlowAction());
-        licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
-        return license;
-    }
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void raiseDemand(final T licenze, final Module module, final Installment installment) {
@@ -558,10 +473,10 @@ public abstract class AbstractLicenseService<T extends License> {
                 null, workflowBean.getAdditionaRule(), workflowBean.getCurrentState(), null);
     }
 
-    public void processAndStoreDocument(final List<LicenseDocument> documents, final License license) {
-        documents.forEach(document -> {
+    public void processAndStoreDocument(License license) {
+        license.getDocuments().forEach(document -> {
             document.setType(licenseDocumentTypeRepository.findOne(document.getType().getId()));
-            if (!(document.getUploads().isEmpty() || document.getUploadsContentType().isEmpty())) {
+            if (!(document.getUploads().isEmpty() || document.getUploadsFileName().isEmpty())) {
                 int fileCount = 0;
                 for (final File file : document.getUploads()) {
                     final FileStoreMapper fileStore = this.fileStoreService.store(file,
@@ -570,11 +485,11 @@ public abstract class AbstractLicenseService<T extends License> {
                     document.getFiles().add(fileStore);
                 }
                 document.setEnclosed(true);
+                document.setDocDate(new Date());
             } else if (document.getType().isMandatory() && document.getFiles().isEmpty()) {
                 document.getFiles().clear();
                 throw new ValidationException("TL-004", "TL-004", document.getType().getName());
             }
-            document.setDocDate(new Date());
             document.setLicense(license);
         });
     }
@@ -678,10 +593,6 @@ public abstract class AbstractLicenseService<T extends License> {
 
     }
 
-    public List<License> getAllLicensesByNatureOfBusiness(final String natureOfBusiness) {
-        return licenseRepository.findByNatureOfBusinessName(natureOfBusiness);
-    }
-
     @Transactional
     public void save(final License license) {
         licenseRepository.save(license);
@@ -717,8 +628,7 @@ public abstract class AbstractLicenseService<T extends License> {
         if (workflowBean.getApproverPositionId() != null) {
             position = positionMasterService.getPositionById(workflowBean.getApproverPositionId());
         }
-        if (license.getState() == null || "END".equals(license.getState().getValue())
-                || "Closed".equals(license.getState().getValue())) {
+        if (license.getState() == null || (license.hasState() && license.getState().isEnded())) {
             final WorkFlowMatrix wfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
                     null, workflowBean.getAdditionaRule(), "NEW", null);
             final List<Assignment> assignments = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(this.securityUtils.getCurrentUser().getId());
@@ -750,6 +660,8 @@ public abstract class AbstractLicenseService<T extends License> {
 
         }
         this.licenseRepository.save(license);
+        if (securityUtils.currentUserIsCitizen())
+            licenseCitizenPortalService.onCreate((TradeLicense) license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         return license;
     }
@@ -820,6 +732,7 @@ public abstract class AbstractLicenseService<T extends License> {
         }
 
         this.licenseRepository.save(license);
+        licenseCitizenPortalService.onUpdate((TradeLicense) license);
         licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
     }
 
@@ -850,22 +763,13 @@ public abstract class AbstractLicenseService<T extends License> {
             throw new ValidationException(ERROR_KEY_WF_INITIATOR_NOT_DEFINED, ERROR_KEY_WF_INITIATOR_NOT_DEFINED);
     }
 
-    public List<License> getLicensesForDemandGeneration(final String natureOfBusiness, final CFinancialYear installmentYear) {
-        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(), installmentYear.getStartingDate());
-        return licenseRepository.findByNatureOfBusinessNameAndStatusName(natureOfBusiness, LICENSE_STATUS_ACTIVE, installment.getFromDate());
+    public List<Long> getLicenseIdsForDemandGeneration(CFinancialYear financialYear) {
+        Installment installment = installmentDao.getInsatllmentByModuleForGivenDate(getModuleName(),
+                financialYear.getStartingDate());
+        return licenseRepository.findLicenseIdsForDemandGeneration(installment.getFromDate());
     }
 
-    @Transactional
-    public License createWithMeseva(T license, WorkflowBean wfBean) {
-        return create(license, wfBean);
-    }
 
-    @Transactional
-    public License renewWithMeeseva(T license, WorkflowBean wfBean) {
-        return renew(license, wfBean);
-    }
-
-    @Transactional
     public License closureWithMeeseva(T license, WorkflowBean wfBean) {
         return saveClosure(license, wfBean);
     }
@@ -875,10 +779,9 @@ public abstract class AbstractLicenseService<T extends License> {
     }
 
     @Transactional
-    public void digitalSignTransition(String fileStoreId, Map<String, String> appNoFileStoreIdsMap) {
+    public void digitalSignTransition(String applicationNumber) {
         final User user = securityUtils.getCurrentUser();
-        final String applicationNumber = appNoFileStoreIdsMap.get(fileStoreId);
-        if (null != applicationNumber && !applicationNumber.isEmpty()) {
+        if (isNotBlank(applicationNumber)) {
             License license = licenseRepository.findByApplicationNumber(applicationNumber);
             final DateTime currentDate = new DateTime();
             license = licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_APPROVED_CODE);

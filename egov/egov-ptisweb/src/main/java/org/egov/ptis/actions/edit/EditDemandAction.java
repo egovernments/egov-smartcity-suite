@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,40 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.actions.edit;
-
-import static java.math.BigDecimal.ZERO;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
-import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
-import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
-
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
@@ -101,6 +77,7 @@ import org.egov.ptis.domain.entity.objection.RevisionPetition;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.DemandAudit;
 import org.egov.ptis.domain.entity.property.DemandAuditDetails;
+import org.egov.ptis.domain.entity.property.Floor;
 import org.egov.ptis.domain.entity.property.PropertyImpl;
 import org.egov.ptis.domain.service.DemandAuditService;
 import org.egov.ptis.domain.service.property.PropertyService;
@@ -108,6 +85,39 @@ import org.egov.ptis.domain.service.revisionPetition.RevisionPetitionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import static java.math.BigDecimal.ZERO;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isNull;
+import static org.egov.ptis.client.util.PropertyTaxUtil.isZero;
+import static org.egov.ptis.constants.PropertyTaxConstants.BUILTUP_PROPERTY_DMDRSN_CODE_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_CHQ_BOUNCE_PENALTY;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_REASON_ORDER_MAP;
+import static org.egov.ptis.constants.PropertyTaxConstants.DEMAND_RSNS_LIST;
+import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_WORK_GRP;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
+import static org.egov.ptis.constants.PropertyTaxConstants.QUERY_BASICPROPERTY_BY_UPICNO;
+import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_DATAENTRY;
+import static org.egov.ptis.constants.PropertyTaxConstants.VACANT_PROPERTY_DMDRSN_CODE_MAP;
 
 /**
  * <p>
@@ -366,15 +376,24 @@ public class EditDemandAction extends BaseFormAction {
 	public String newEditForm() {
 		if (LOGGER.isDebugEnabled())
 			LOGGER.debug("Entered into newEditForm");
-		String resultPage = "";
-		final RevisionPetition oldObjection = revisionPetitionService.getExistingObjections(basicProperty);
-		Date effectiveDate = null;
-		if (oldObjection == null) {
-			if (NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))
-				effectiveDate = basicProperty.getActiveProperty().getEffectiveDate();
-		} else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(oldObjection.getType()))
-			effectiveDate = oldObjection.getProperty().getEffectiveDate();
+		String resultPage;
+		final RevisionPetition generalRevisionPetition = revisionPetitionService.getExistingGRP(basicProperty);
+		Date effectiveDate;
+		PropertyImpl propertyModel = null;
+		if (generalRevisionPetition == null) {
+			if ((SOURCEOFDATA_DATAENTRY.toString().equalsIgnoreCase(basicProperty.getSource().toString())
+                                && basicProperty.getPropertySet().size() == 1) || NATURE_OF_WORK_GRP.equalsIgnoreCase(basicProperty.getActiveProperty().getPropertyModifyReason()))
+				propertyModel = basicProperty.getActiveProperty();
 
+		} else if (NATURE_OF_WORK_GRP.equalsIgnoreCase(generalRevisionPetition.getType()))
+			propertyModel = generalRevisionPetition.getProperty();
+
+		if (!propertyModel.getPropertyDetail().getPropertyTypeMaster().getCode()
+				.equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND))
+			effectiveDate = getLowestDtOfCompFloorWise(propertyModel.getPropertyDetail().getFloorDetails());
+		else
+			effectiveDate = propertyModel.getPropertyDetail().getDateOfCompletion();
+			
 		ownerName = basicProperty.getFullOwnerName();
 		mobileNumber = basicProperty.getMobileNumber();
 		propertyAddress = basicProperty.getAddress().toString();
@@ -386,37 +405,37 @@ public class EditDemandAction extends BaseFormAction {
 
 		final PropertyTaxBillable billable = new PropertyTaxBillable();
 		billable.setBasicProperty(basicProperty);
-		final Map<Installment, List<String>> newDDMap = new HashMap<Installment, List<String>>();
-		String reason = null;
-		Installment existingInst = null;
+		final Map<Installment, List<String>> newDDMap = new HashMap<>();
+		String reason;
+		Installment existingInst;
 		if (!demandDetails.isEmpty())
 			for (final EgDemandDetails dd : demandDetails) {
-				List<String> existingReasons = new ArrayList<String>();
+				List<String> existingReasons = new ArrayList<>();
 				reason = dd.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster();
 				existingInst = dd.getEgDemandReason().getEgInstallmentMaster();
 				if (newDDMap.get(existingInst) == null) {
-					existingReasons = new ArrayList<String>();
+					existingReasons = new ArrayList<>();
 					existingReasons.add(reason);
 					newDDMap.put(existingInst, existingReasons);
 				} else if (newDDMap.get(existingInst) != null) {
 					existingReasons.add(reason);
 					newDDMap.get(existingInst).addAll(existingReasons);
 				} else {
-					existingReasons = new ArrayList<String>();
+					existingReasons = new ArrayList<>();
 					existingReasons.add(reason);
 					newDDMap.get(existingInst).addAll(existingReasons);
 				}
 
 			}
 
-		final Map<Installment, Map<String, Map<String, Object>>> newMap = new LinkedHashMap<Installment, Map<String, Map<String, Object>>>();
-		final Map<String, Map<String, Object>> rsnList = new LinkedHashMap<String, Map<String, Object>>();
+		final Map<Installment, Map<String, Map<String, Object>>> newMap = new LinkedHashMap<>();
+		final Map<String, Map<String, Object>> rsnList = new LinkedHashMap<>();
 
 		if (!demandDetails.isEmpty()) {
 			for (final EgDemandDetails dd : demandDetails)
 				if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) == null) {
-					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<String, Map<String, Object>>();
-					final Map<String, Object> dtls = new HashMap<String, Object>();
+					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
+					final Map<String, Object> dtls = new HashMap<>();
 					dtls.put("amount", dd.getAmount());
 					dtls.put("collection", dd.getAmtCollected());
 					dtls.put("isNew", false);
@@ -424,7 +443,7 @@ public class EditDemandAction extends BaseFormAction {
 					newMap.put(dd.getEgDemandReason().getEgInstallmentMaster(), rsns);
 				} else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
 						&& dd.getAmount().compareTo(BigDecimal.ZERO) == 0) {
-					final Map<String, Object> dtls = new HashMap<String, Object>();
+					final Map<String, Object> dtls = new HashMap<>();
 					dtls.put("amount", BigDecimal.ZERO);
 					dtls.put("collection", BigDecimal.ZERO);
 					dtls.put("isNew", false);
@@ -433,8 +452,8 @@ public class EditDemandAction extends BaseFormAction {
 
 				} else if (newMap.get(dd.getEgDemandReason().getEgInstallmentMaster()) != null
 						&& dd.getAmount().compareTo(BigDecimal.ZERO) != 0) {
-					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<String, Map<String, Object>>();
-					final Map<String, Object> dtls = new HashMap<String, Object>();
+					final Map<String, Map<String, Object>> rsns = new LinkedHashMap<>();
+					final Map<String, Object> dtls = new HashMap<>();
 					dtls.put("amount", dd.getAmount());
 					dtls.put("collection", dd.getAmtCollected());
 					dtls.put("isNew", false);
@@ -754,6 +773,24 @@ public class EditDemandAction extends BaseFormAction {
 		dmdAdtDtls.setDemandAudit(demandAudit);
 		demandAudit.getDemandAuditDetails().add(dmdAdtDtls);
 
+	}
+	
+	private Date getLowestDtOfCompFloorWise(final List<Floor> floorList) {
+		LOGGER.debug("Entered into getLowestDtOfCompFloorWise, floorList: " + floorList);
+		Date completionDate = null;
+		for (final Floor floor : floorList) {
+			Date floorDate;
+			if (floor != null) {
+				floorDate = floor.getOccupancyDate();
+				if (floorDate != null)
+					if (completionDate == null)
+						completionDate = floorDate;
+					else if (completionDate.after(floorDate))
+						completionDate = floorDate;
+			}
+		}
+		LOGGER.debug("completionDate: " + completionDate + "\nExiting from getLowestDtOfCompFloorWise");
+		return completionDate;
 	}
 
 	public String getPropertyId() {

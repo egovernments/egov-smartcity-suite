@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.web.controller.complaint;
@@ -56,7 +64,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 
@@ -115,7 +122,7 @@ public class GenericComplaintAjaxController {
     @ResponseBody
     public boolean isCrnRequired(@RequestParam Long receivingCenterId) {
         ReceivingCenter receivingCenter = receivingCenterService.findByRCenterId(receivingCenterId);
-        return receivingCenter == null ? Boolean.TRUE : receivingCenter.isCrnRequired();
+        return receivingCenter == null || receivingCenter.isCrnRequired();
     }
 
     @GetMapping(value = {"/complaint/citizen/locations", "/complaint/citizen/anonymous/locations",
@@ -127,6 +134,7 @@ public class GenericComplaintAjaxController {
         crossHierarchyService
                 .getChildBoundaryNameAndBndryTypeAndHierarchyType("Locality", "Location", "Administration", "%" + locationName + "%")
                 .stream()
+                .filter(ch -> ch.getParent().isActive() && ch.getChild().isActive())
                 .forEach(location ->
                         locationJSONData.append("{\"name\":\"")
                                 .append(location.getChild().getName()).append(" - ").append(location.getParent().getName())
@@ -142,18 +150,18 @@ public class GenericComplaintAjaxController {
 
     @GetMapping(value = {"/complaint/router/position", "/complaint/escalation/position"}, produces = TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String getAllPositionByNameLike(@RequestParam String positionName) throws IOException {
+    public String getAllPositionByNameLike(@RequestParam String positionName) {
         StringBuilder positionUser = new StringBuilder();
         positionUser.append("[");
         String likePositionName = "%" + positionName.toUpperCase() + "%";
         employeeViewService
                 .getEmployeeByNameOrCodeOrPositionLike(likePositionName, likePositionName, likePositionName, new Date())
                 .stream()
-                .forEach(position ->
+                .forEach(employee ->
                         positionUser.append("{\"name\":\"")
-                                .append(position.getPosition().getName()).append('-')
-                                .append(position.getName()).append('-').append(position.getCode())
-                                .append("\",\"id\":").append(position.getPosition().getId()).append("},")
+                                .append(employee.getPosition().getName()).append('-')
+                                .append(employee.getName()).append('-').append(employee.getCode())
+                                .append("\",\"id\":").append(employee.getPosition().getId()).append("},")
                 );
         if (positionUser.lastIndexOf(",") != -1)
             positionUser.deleteCharAt(positionUser.lastIndexOf(","));
@@ -165,7 +173,7 @@ public class GenericComplaintAjaxController {
     @GetMapping(value = {"/complaint/router/boundaries-by-type", "/complaint/escalation/boundaries-by-type"},
             produces = APPLICATION_JSON_VALUE)
     @ResponseBody
-    public List<Boundary> getBoundariesbyType(@RequestParam String boundaryName,
+    public List<Boundary> getBoundariesByType(@RequestParam String boundaryName,
                                               @RequestParam Long boundaryTypeId) {
         return boundaryService.getBondariesByNameAndTypeOrderByBoundaryNumAsc("%" + boundaryName + "%", boundaryTypeId);
     }

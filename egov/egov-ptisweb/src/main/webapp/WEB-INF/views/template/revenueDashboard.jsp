@@ -1,41 +1,49 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~      accountability and the service delivery of the government  organizations.
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
   ~
-  ~       Copyright (C) 2016  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
-  ~       The updated version of eGov suite of products as by eGovernments Foundation
-  ~       is available at http://www.egovernments.org
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
   ~
-  ~       This program is free software: you can redistribute it and/or modify
-  ~       it under the terms of the GNU General Public License as published by
-  ~       the Free Software Foundation, either version 3 of the License, or
-  ~       any later version.
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
   ~
-  ~       This program is distributed in the hope that it will be useful,
-  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~       GNU General Public License for more details.
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
   ~
-  ~       You should have received a copy of the GNU General Public License
-  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~       http://www.gnu.org/licenses/gpl.html .
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
   ~
-  ~       In addition to the terms of the GPL license to be adhered to in using this
-  ~       program, the following additional terms are to be complied with:
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
   ~
-  ~           1) All versions of this program, verbatim or modified must carry this
-  ~              Legal Notice.
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~           2) Any misrepresentation of the origin of the material is prohibited. It
-  ~              is required that all modified versions of this material be marked in
-  ~              reasonable ways as different from the original version.
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
-  ~           3) This license does not grant any rights to any user of the program
-  ~              with regards to rights under trademark law for use of the trade names
-  ~              or trademarks of eGovernments Foundation.
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
   ~
-  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -98,9 +106,7 @@
 		      </button>
 		      
 		      <a class="navbar-brand customer-logo" data-toggle="tooltip" data-placement="bottom" title="Dashboard Home" href="/dashboard/home">
-				  <c:if test="${not empty sessionScope.logopath || not empty sessionScope.citylogo}">
-					  <img src="<cdn:url value='${sessionScope.logopath == null ? sessionScope.citylogo : sessionScope.logopath}' context='/egi'/>" height="55">
-				  </c:if>
+					  <img src="<c:url value='/downloadfile/logo' context='/egi'/>" height="55">
 		      </a>
 		      <a class="navbar-brand visible-lg-block visible-md-block" data-toggle="tooltip" data-placement="bottom" title="Property Tax Home" href="/ptis/dashboard/home?isdefault=true">Property Tax</a>
 		      <span class="navbar-brand visible-sm-block visible-xs-block" style="color:#FFF"><span class="title"></span></span>
@@ -150,7 +156,7 @@
 	<script src="<cdn:url value='/resources/js/highchart/modules/data.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/highchart/modules/drilldown.js' context='/dashboard'/>"></script>
 	<script src="<cdn:url value='/resources/js/geoxml3.js' context='/dashboard'/>"></script>
-	<script src="https://maps.googleapis.com/maps/api/js?v=3.exp&sensor=true&libraries=places"></script>
+	<script src="https://maps.googleapis.com/maps/api/js?key=${sessionScope.googleApiKey}&v=3.exp&libraries=places"></script>
 	<script src="<cdn:url value='/resources/js/date.js' context='/dashboard'/>"></script>
 	<script src='<cdn:url value='/resources/js/jquery/plugins/jquery.loadmask.min.js' context='/dashboard'/>'></script>
 	<script src="<cdn:url value='/resources/js/jquery/plugins/jquery-ui/jquery-ui.min.js' context='/dashboard'/>"></script>

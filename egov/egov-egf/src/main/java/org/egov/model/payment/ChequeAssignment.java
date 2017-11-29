@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.model.payment;
 
@@ -44,7 +52,7 @@ import org.egov.commons.Bankaccount;
 import java.math.BigDecimal;
 import java.util.Date;
 
-public class ChequeAssignment implements java.io.Serializable{
+public class ChequeAssignment implements java.io.Serializable {
     private Long voucherid;
     private Date voucherDate;
     private String voucherNumber;
@@ -56,20 +64,20 @@ public class ChequeAssignment implements java.io.Serializable{
     private String departmentName;
     private boolean isSelected;
     private Date chequeDate;
-    private BigDecimal detailtypeid;
-    private BigDecimal detailkeyid;
-    private BigDecimal billVHId;
+    private Long detailtypeid;
+    private Long detailkeyid;
+    private Long billVHId;
     private String serialNo;
-    private BigDecimal bankAccountId;
+    private Long bankAccountId;
     private Bankaccount bankAcc;
     private BigDecimal rtgsTotalPaidAmt;
     private String bankBranchHeader;
     private boolean addRtgs;
     private boolean headerval;
-    private BigDecimal billId;
+    private Long billId;
     private String billNumber;
     private String expenditureType;
-    private BigDecimal glcodeId;
+    private Long glcodeId;
     private String drawingOfficerNameTAN;
     private BigDecimal receiptAmount;
     private BigDecimal deductedAmount;
@@ -82,24 +90,12 @@ public class ChequeAssignment implements java.io.Serializable{
         this.serialNo = serialNo;
     }
 
-    public BigDecimal getDetailtypeid() {
-        return detailtypeid;
-    }
-
-    public void setDetailtypeid(final BigDecimal detailtypeid) {
-        this.detailtypeid = detailtypeid;
-    }
-
-    public BigDecimal getDetailkeyid() {
-        return detailkeyid;
-    }
-
-    public void setDetailkeyid(final BigDecimal detailkeyid) {
-        this.detailkeyid = detailkeyid;
-    }
-
     public Long getVoucherid() {
         return voucherid;
+    }
+
+    public void setVoucherid(Long voucherid) {
+        this.voucherid = voucherid;
     }
 
     public void setVoucherid(final BigDecimal voucherid) {
@@ -170,28 +166,12 @@ public class ChequeAssignment implements java.io.Serializable{
         this.chequeDate = chequeDate;
     }
 
-    public void setBillVHId(final BigDecimal billVHId) {
-        this.billVHId = billVHId;
-    }
-
-    public BigDecimal getBillVHId() {
-        return billVHId;
-    }
-
     public Bankaccount getBankAcc() {
         return bankAcc;
     }
 
     public void setBankAcc(final Bankaccount bankAcc) {
         this.bankAcc = bankAcc;
-    }
-
-    public BigDecimal getBankAccountId() {
-        return bankAccountId;
-    }
-
-    public void setBankAccountId(final BigDecimal bankAccountId) {
-        this.bankAccountId = bankAccountId;
     }
 
     public String getDepartmentName() {
@@ -254,16 +234,8 @@ public class ChequeAssignment implements java.io.Serializable{
         this.isSelected = isSelected;
     }
 
-    public BigDecimal getBillId() {
-        return billId;
-    }
-
     public String getBillNumber() {
         return billNumber;
-    }
-
-    public void setBillId(final BigDecimal billId) {
-        this.billId = billId;
     }
 
     public void setBillNumber(final String billNumber) {
@@ -276,14 +248,6 @@ public class ChequeAssignment implements java.io.Serializable{
 
     public void setExpenditureType(final String expenditureType) {
         this.expenditureType = expenditureType;
-    }
-
-    public BigDecimal getGlcodeId() {
-        return glcodeId;
-    }
-
-    public void setGlcodeId(final BigDecimal glcodeId) {
-        this.glcodeId = glcodeId;
     }
 
     public String getDrawingOfficerNameTAN() {
@@ -310,4 +274,51 @@ public class ChequeAssignment implements java.io.Serializable{
         this.deductedAmount = deductedAmount;
     }
 
+    public Long getDetailtypeid() {
+        return detailtypeid;
+    }
+
+    public void setDetailtypeid(Long detailtypeid) {
+        this.detailtypeid = detailtypeid;
+    }
+
+    public Long getDetailkeyid() {
+        return detailkeyid;
+    }
+
+    public void setDetailkeyid(Long detailkeyid) {
+        this.detailkeyid = detailkeyid;
+    }
+
+    public Long getBillVHId() {
+        return billVHId;
+    }
+
+    public void setBillVHId(Long billVHId) {
+        this.billVHId = billVHId;
+    }
+
+    public Long getBankAccountId() {
+        return bankAccountId;
+    }
+
+    public void setBankAccountId(Long bankAccountId) {
+        this.bankAccountId = bankAccountId;
+    }
+
+    public Long getGlcodeId() {
+        return glcodeId;
+    }
+
+    public void setGlcodeId(Long glcodeId) {
+        this.glcodeId = glcodeId;
+    }
+
+    public Long getBillId() {
+        return billId;
+    }
+
+    public void setBillId(Long billId) {
+        this.billId = billId;
+    }
 }

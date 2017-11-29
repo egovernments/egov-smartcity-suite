@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,22 +43,10 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.collection.utils;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.apache.log4j.Logger;
 import org.egov.collection.config.properties.CollectionApplicationProperties;
@@ -95,10 +90,10 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.properties.ApplicationProperties;
+import org.egov.infra.config.core.EnvironmentSettings;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.messaging.MessagingService;
 import org.egov.infra.microservice.utils.MicroserviceUtils;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
@@ -106,11 +101,11 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.models.ServiceDetails;
-import org.egov.infstr.services.EISServeable;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.egov.pims.model.PersonalInformation;
+import org.egov.pims.service.EisUtilService;
 import org.egov.pims.service.SearchPositionService;
 import org.egov.pims.utils.EisManagersUtill;
 import org.hibernate.Query;
@@ -120,6 +115,18 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
+
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @Service
 public class CollectionsUtil {
@@ -150,7 +157,7 @@ public class CollectionsUtil {
     private ApplicationContext context;
 
     @Autowired
-    private EISServeable eisService;
+    private EisUtilService eisService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -180,7 +187,7 @@ public class CollectionsUtil {
     private ReportService reportService;
 
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
 
     @Autowired
     private CollectionApplicationProperties collectionApplicationProperties;
@@ -189,7 +196,7 @@ public class CollectionsUtil {
     MicroserviceUtils microserviceUtils;
 
     @Autowired
-    private ApplicationProperties applicationProperties;
+    private EnvironmentSettings environmentSettings;
 
     @Autowired
     @Qualifier("branchUserMapService")
@@ -360,7 +367,8 @@ public class CollectionsUtil {
             // allowed.
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_BANK);
             collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
-        }
+        } else
+            collectionsModeNotAllowed.add(CollectionConstants.INSTRUMENTTYPE_ONLINE);
         return collectionsModeNotAllowed;
     }
 
@@ -427,7 +435,17 @@ public class CollectionsUtil {
      * @return Position of logged in user
      */
     public Position getPositionOfUser(final User user) {
-        return posService.getCurrentPositionForUser(user.getId());
+        Position position = posService.getCurrentPositionForUser(user.getId());
+        if (position == null) {
+            List<Assignment> assignList = assignmentService.getAllActiveEmployeeAssignmentsByEmpId(user.getId());
+            if (!assignList.isEmpty())
+                position = assignList.get(0).getPosition();
+            else
+                throw new ValidationException(user.getUsername() + " User doesn't have active assignments.",
+                        user.getUsername() + " User doesn't have active assignments.");
+        }
+
+        return position;
     }
 
     public List<Position> getPositionsForEmployee(final User user) {
@@ -487,9 +505,7 @@ public class CollectionsUtil {
         validityEnd.clear(Calendar.SECOND);
         validityEnd.clear(Calendar.MILLISECOND);
 
-        if (validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0)
-            return true;
-        return false;
+        return validityStart.compareTo(current) <= 0 && validityEnd.compareTo(current) >= 0;
     }
 
     /**
@@ -812,7 +828,7 @@ public class CollectionsUtil {
                 LOGGER.error(errMsg, e);
                 throw new ApplicationRuntimeException(errMsg, e);
             }
-        final CollectionIndex collectionIndex = CollectionIndex
+        return CollectionIndex
                 .builder()
                 .withReceiptDate(receiptHeader.getReceiptdate())
                 .withReceiptnumber(receiptHeader.getReceiptnumber())
@@ -843,13 +859,12 @@ public class CollectionsUtil {
                 .withRevenueWard(receiptAmountInfo.getRevenueWard())
                 .withConsumerType(receiptHeader.getConsumerType() != null ? receiptHeader.getConsumerType() : "")
                 .withConflict(receiptAmountInfo.getConflict() != null ? receiptAmountInfo.getConflict() : 0).build();
-        return collectionIndex;
     }
 
     public Boolean checkVoucherCreation(final ReceiptHeader receiptHeader) {
         Boolean createVoucherForBillingService = Boolean.FALSE;
         if (receiptHeader.getService().getVoucherCutOffDate() != null
-                && receiptHeader.getReceiptDate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
+                && receiptHeader.getReceiptdate().compareTo(receiptHeader.getService().getVoucherCutOffDate()) > 0) {
             if (receiptHeader.getService().getVoucherCreation() != null)
                 createVoucherForBillingService = receiptHeader.getService().getVoucherCreation();
         } else if (receiptHeader.getService().getVoucherCutOffDate() == null
@@ -936,7 +951,7 @@ public class CollectionsUtil {
                 LOGGER.info("Billing system specific report template [" + templateName
                         + "] not available. Using the default template [" + CollectionConstants.RECEIPT_TEMPLATE_NAME
                         + "]");
-                templateName = "PT_collection_receipt"; // CollectionConstants.RECEIPT_TEMPLATE_NAME;
+                templateName = "PT_collection_receipt";
 
                 if (!isValidTemplate(templateName)) {
                     // No template available for creating the receipt report.
@@ -967,7 +982,7 @@ public class CollectionsUtil {
                 ApplicationThreadLocals.getCityName());
         String emailSubject = collectionApplicationProperties.getEmailSubject();
         emailSubject = String.format(emailSubject, receiptHeader.getService().getName());
-        messagingService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
+        notificationService.sendEmailWithAttachment(receiptHeader.getPayeeEmail(), emailSubject, emailBody,
                 "application/pdf", "Receipt" + receiptHeader.getReceiptdate().toString(), attachment);
     }
 
@@ -986,7 +1001,7 @@ public class CollectionsUtil {
     public String getBeanNameForDebitAccountHead() {
         Class<?> service = null;
         try {
-            service = Class.forName(applicationProperties.getProperty("collection.debitaccounthead.client.impl.class"));
+            service = Class.forName(environmentSettings.getProperty("collection.debitaccounthead.client.impl.class"));
         } catch (final ClassNotFoundException e) {
             LOGGER.error("Error getting Class name for Debit Account Head" + e);
         }
@@ -1036,14 +1051,12 @@ public class CollectionsUtil {
     }
 
     public List<Bankbranch> getBankCollectionBankBranchList() {
-        List<Bankbranch> bankBranchArrayList = new ArrayList<Bankbranch>(0);
-        List<Object[]> queryResult = Collections.EMPTY_LIST;
-        User loggedInUser = getLoggedInUser();
+        List<Bankbranch> bankBranchArrayList = new ArrayList<>();
         StringBuilder queryString = new StringBuilder(
                 "select distinct(bb.id) as branchid,b.NAME||'-'||bb.BRANCHNAME as branchname from BANK b,BANKBRANCH bb,"
                         + " EGCL_COLLECTIONMIS cmis where bb.BANKID=b.ID  and bb.id=cmis.depositedBranch ");
         final Query query = persistenceService.getSession().createSQLQuery(queryString.toString());
-        queryResult = query.list();
+        List<Object[]> queryResult = query.list();
         for (int i = 0; i < queryResult.size(); i++) {
             final Object[] arrayObjectInitialIndex = queryResult.get(i);
             final Bankbranch newBankbranch = new Bankbranch();

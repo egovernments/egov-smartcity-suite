@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.api.controller;
@@ -66,7 +74,6 @@ import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.infra.utils.StringUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
@@ -95,6 +102,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.imageio.ImageIO;
@@ -115,6 +123,10 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.validation.regex.Constants.EMAIL;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
@@ -275,17 +287,16 @@ public class ComplaintController extends ApiController {
                 if (complaintRequest.containsKey(COMPLAINANT_NAME) &&
                         complaintRequest.containsKey(COMPLAINANT_MOBILE_NO)) {
 
-                    if (org.apache.commons.lang.StringUtils.isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
-                            || org.apache.commons.lang.StringUtils
-                            .isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
+                    if (isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
+                            || isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
                         return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
 
                     complaint.getComplainant().setName(complaintRequest.get(COMPLAINANT_NAME).toString());
                     complaint.getComplainant().setMobile(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString());
 
                     if (complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
-                        final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString();
-                        if (!email.matches("^[A-Za-z0-9+_.-]+@(.+)$"))
+                        final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString().trim();
+                        if (!email.matches(EMAIL))
                             return getResponseHandler().error(getMessage("msg.invalid.mail"));
                         complaint.getComplainant().setEmail(email);
                     }
@@ -296,15 +307,15 @@ public class ComplaintController extends ApiController {
                     final User currentUser = securityUtils.getCurrentUser();
                     complaint.getComplainant().setName(currentUser.getName());
                     complaint.getComplainant().setMobile(currentUser.getMobileNumber());
-                    if (!org.apache.commons.lang.StringUtils.isEmpty(currentUser.getEmailId()))
-                        complaint.getComplainant().setEmail(currentUser.getEmailId());
+                    if (!isEmpty(currentUser.getEmailId()))
+                        complaint.getComplainant().setEmail(currentUser.getEmailId().trim());
                 } else
                     return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
 
             if (!complaintRequest.containsKey(COMPLAINT_TYPE_ID))
                 return getResponseHandler().error(getMessage("msg.complaint.type.required"));
 
-            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || StringUtils.isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
+            if (!complaintRequest.containsKey(COMPLAINT_DETAILS) || isBlank(complaintRequest.get(COMPLAINT_DETAILS).toString()))
                 return getResponseHandler().error(getMessage("msg.complaint.desc.required"));
             else if (complaintRequest.get(COMPLAINT_DETAILS).toString().length() < 10)
                 return getResponseHandler().error(getMessage("msg.complaint.desc.min.required"));
@@ -343,7 +354,7 @@ public class ComplaintController extends ApiController {
 
             String priorityCode = "NORMAL";
 
-            if (complaintRequest.get(receivingModeKey) != null && StringUtils.isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
+            if (complaintRequest.get(receivingModeKey) != null && isNotBlank(complaintRequest.get(receivingModeKey).toString())) {
                 String receivingModeVal = complaintRequest.get(receivingModeKey).toString();
                 receivingMode = receivingModeService.getReceivingModeByCode(receivingModeVal);
                 if (Arrays.asList(highPriorityComplaintSource).contains(receivingModeVal)) {
@@ -583,7 +594,7 @@ public class ComplaintController extends ApiController {
 
             Page<Complaint> pagelist = null;
             boolean hasNextPage = false;
-            if (org.apache.commons.lang.StringUtils.isEmpty(complaintStatus)
+            if (isEmpty(complaintStatus)
                     || complaintStatus.equals(PGRConstants.COMPLAINT_ALL)) {
                 pagelist = complaintService.getMyComplaint(page, pageSize);
                 hasNextPage = pagelist.getTotalElements() > page * pageSize;
@@ -702,11 +713,10 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT_BY_ID)
-    public void download(@PathVariable final String fileStoreId, final HttpServletResponse response) throws IOException {
-        fileStoreUtils.fetchFileAndWriteToStream(fileStoreId, PGRConstants.MODULE_NAME, false, response);
+    @ResponseBody
+    public ResponseEntity download(@PathVariable final String fileStoreId) {
+        return fileStoreUtils.fileAsResponseEntity(fileStoreId, PGRConstants.MODULE_NAME, false);
     }
-
-    // ---------------------------------------------------------------------//
 
     /**
      * This will update the status of the complaint.
@@ -727,7 +737,7 @@ public class ComplaintController extends ApiController {
             if ("COMPLETED".equals(complaint.getStatus().getName())) {
                 if (UNSATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.TWO.name();
-                else if (StringUtils.isBlank(citizenfeedback) || SATISFACTORY.equals(citizenfeedback))
+                else if (isBlank(citizenfeedback) || SATISFACTORY.equals(citizenfeedback))
                     citizenfeedback = CitizenFeedback.FIVE.name();
                 complaint.setCitizenFeedback(CitizenFeedback.valueOf(citizenfeedback));
             }
@@ -832,7 +842,7 @@ public class ComplaintController extends ApiController {
                 hasNextPage = true;
                 list.remove(pageSize);
             }
-            if (list != null) {
+            if (!list.isEmpty()) {
                 for (final StateAware stateAware : list)
                     inboxItems.add(new JsonParser().parse(stateAware.getStateInfoJson()).getAsJsonObject());
                 final ApiResponse res = ApiResponse.newInstance();

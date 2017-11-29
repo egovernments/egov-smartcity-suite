@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,71 +43,68 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.entity.property;
 
 import javax.validation.constraints.NotNull;
+import java.io.Serializable;
 import java.math.BigDecimal;
 
-/**
- *
- * @author nayeem
- *
- */
+public class UnitAreaCalculationDetail implements Serializable {
 
-public class UnitAreaCalculationDetail {
+    @NotNull
+    private Long id;
 
-	@NotNull
-	private Long id;
+    @NotNull
+    private BigDecimal taxableArea = BigDecimal.ZERO;
 
-	@NotNull
-	private BigDecimal taxableArea = BigDecimal.ZERO;
+    @NotNull
+    private BigDecimal monthlyBaseRent = BigDecimal.ZERO;
 
-	@NotNull
-	private BigDecimal monthlyBaseRent = BigDecimal.ZERO;
+    @NotNull
+    private BigDecimal monthlyRentalValue = BigDecimal.ZERO;
 
-	@NotNull
-	private BigDecimal monthlyRentalValue = BigDecimal.ZERO;
+    @NotNull
+    private UnitCalculationDetail unitCalculationDetail;
 
-	@NotNull
-	private UnitCalculationDetail unitCalculationDetail;
+    private String floorNumber;
+    private String unitOccupation;
 
-	private String floorNumber;
-	private String unitOccupation;
+    private String unitUsage;
 
-	private String unitUsage;
+    @NotNull
+    private BigDecimal baseRentPerSqMtr = BigDecimal.ZERO;
 
-	@NotNull
-	private BigDecimal baseRentPerSqMtr = BigDecimal.ZERO;
+    @NotNull
+    private BigDecimal manualALV = BigDecimal.ZERO;
 
-	@NotNull
-	private BigDecimal manualALV = BigDecimal.ZERO;
+    @NotNull
+    private BigDecimal monthlyRentPaidByTenanted = BigDecimal.ZERO;
 
-	@NotNull
-	private BigDecimal monthlyRentPaidByTenanted = BigDecimal.ZERO;
-
-	@NotNull
-	private String unitIdentifier;
+    @NotNull
+    private String unitIdentifier;
 
 
-	public UnitAreaCalculationDetail() {}
+    public UnitAreaCalculationDetail() {
+    }
 
-	public UnitAreaCalculationDetail(UnitAreaCalculationDetail other) {
-		this.taxableArea = other.taxableArea;
-		this.monthlyBaseRent = other.monthlyBaseRent;
-		this.monthlyRentalValue = other.monthlyRentalValue;
-		this.floorNumber = other.floorNumber;
-		this.unitOccupation = other.unitOccupation;
-		this.unitUsage = other.unitUsage;
-		this.baseRentPerSqMtr = other.baseRentPerSqMtr;
-		this.manualALV = other.manualALV;
-		this.monthlyRentPaidByTenanted = other.monthlyRentPaidByTenanted;
-		this.unitIdentifier = other.unitIdentifier;
-	}
+    public UnitAreaCalculationDetail(UnitAreaCalculationDetail other) {
+        this.taxableArea = other.taxableArea;
+        this.monthlyBaseRent = other.monthlyBaseRent;
+        this.monthlyRentalValue = other.monthlyRentalValue;
+        this.floorNumber = other.floorNumber;
+        this.unitOccupation = other.unitOccupation;
+        this.unitUsage = other.unitUsage;
+        this.baseRentPerSqMtr = other.baseRentPerSqMtr;
+        this.manualALV = other.manualALV;
+        this.monthlyRentPaidByTenanted = other.monthlyRentPaidByTenanted;
+        this.unitIdentifier = other.unitIdentifier;
+    }
 
 
 	/*@Override
-	public int hashCode() {
+    public int hashCode() {
 
 		int seedValue = HashCodeUtil.SEED;
 
@@ -193,124 +197,124 @@ public class UnitAreaCalculationDetail {
 		return true;
 	}*/
 
-	@Override
-	public String toString() {
-		return new StringBuilder()
-			.append("UnitAreaCalculationDetail [")
-			.append("id=").append(id)
-			.append(", baseRentPerSqMtr=").append(baseRentPerSqMtr)
-			.append(", taxableArea=").append(taxableArea)
-			.append(", monthlyRent").append(monthlyBaseRent)
-			.append(", calculatedTax").append(monthlyRentalValue)
-			.append(", floorNumber").append(floorNumber)
-			.append(", unitOccupation").append(unitOccupation)
-			.append(", unitUsage").append(unitUsage)
-			.append(", manualALV").append(manualALV)
-			.append(", monthlyRentPaidByTenanted").append(monthlyRentPaidByTenanted)
-			.append(", unitIdentifier").append(unitIdentifier)
-			.append("]").toString();
-	}
+    @Override
+    public String toString() {
+        return new StringBuilder()
+                .append("UnitAreaCalculationDetail [")
+                .append("id=").append(id)
+                .append(", baseRentPerSqMtr=").append(baseRentPerSqMtr)
+                .append(", taxableArea=").append(taxableArea)
+                .append(", monthlyRent").append(monthlyBaseRent)
+                .append(", calculatedTax").append(monthlyRentalValue)
+                .append(", floorNumber").append(floorNumber)
+                .append(", unitOccupation").append(unitOccupation)
+                .append(", unitUsage").append(unitUsage)
+                .append(", manualALV").append(manualALV)
+                .append(", monthlyRentPaidByTenanted").append(monthlyRentPaidByTenanted)
+                .append(", unitIdentifier").append(unitIdentifier)
+                .append("]").toString();
+    }
 
-	/**
-	 * @return the id
-	 */
-	public Long getId() {
-		return id;
-	}
+    /**
+     * @return the id
+     */
+    public Long getId() {
+        return id;
+    }
 
 
-	/**
-	 * @param id the id to set
-	 */
-	public void setId(Long id) {
-		this.id = id;
-	}
+    /**
+     * @param id the id to set
+     */
+    public void setId(Long id) {
+        this.id = id;
+    }
 
-	public UnitCalculationDetail getUnitCalculationDetail() {
-		return unitCalculationDetail;
-	}
+    public UnitCalculationDetail getUnitCalculationDetail() {
+        return unitCalculationDetail;
+    }
 
-	public void setUnitCalculationDetail(UnitCalculationDetail unitCalculationDetail) {
-		this.unitCalculationDetail = unitCalculationDetail;
-	}
+    public void setUnitCalculationDetail(UnitCalculationDetail unitCalculationDetail) {
+        this.unitCalculationDetail = unitCalculationDetail;
+    }
 
-	public BigDecimal getTaxableArea() {
-		return taxableArea;
-	}
+    public BigDecimal getTaxableArea() {
+        return taxableArea;
+    }
 
-	public void setTaxableArea(BigDecimal taxableArea) {
-		this.taxableArea = taxableArea;
-	}
+    public void setTaxableArea(BigDecimal taxableArea) {
+        this.taxableArea = taxableArea;
+    }
 
-	public BigDecimal getMonthlyBaseRent() {
-		return monthlyBaseRent;
-	}
+    public BigDecimal getMonthlyBaseRent() {
+        return monthlyBaseRent;
+    }
 
-	public void setMonthlyBaseRent(BigDecimal monthlyBaseRent) {
-		this.monthlyBaseRent = monthlyBaseRent;
-	}
+    public void setMonthlyBaseRent(BigDecimal monthlyBaseRent) {
+        this.monthlyBaseRent = monthlyBaseRent;
+    }
 
-	public BigDecimal getMonthlyRentalValue() {
-		return monthlyRentalValue;
-	}
+    public BigDecimal getMonthlyRentalValue() {
+        return monthlyRentalValue;
+    }
 
-	public void setMonthlyRentalValue(BigDecimal monthlyRentalValue) {
-		this.monthlyRentalValue = monthlyRentalValue;
-	}
+    public void setMonthlyRentalValue(BigDecimal monthlyRentalValue) {
+        this.monthlyRentalValue = monthlyRentalValue;
+    }
 
-	public String getFloorNumber() {
-		return floorNumber;
-	}
+    public String getFloorNumber() {
+        return floorNumber;
+    }
 
-	public void setFloorNumber(String floorNumber) {
-		this.floorNumber = floorNumber;
-	}
+    public void setFloorNumber(String floorNumber) {
+        this.floorNumber = floorNumber;
+    }
 
-	public String getUnitUsage() {
-		return unitUsage;
-	}
+    public String getUnitUsage() {
+        return unitUsage;
+    }
 
-	public void setUnitUsage(String unitUsage) {
-		this.unitUsage = unitUsage;
-	}
+    public void setUnitUsage(String unitUsage) {
+        this.unitUsage = unitUsage;
+    }
 
-	public String getUnitOccupation() {
-		return unitOccupation;
-	}
+    public String getUnitOccupation() {
+        return unitOccupation;
+    }
 
-	public void setUnitOccupation(String unitOccupation) {
-		this.unitOccupation = unitOccupation;
-	}
+    public void setUnitOccupation(String unitOccupation) {
+        this.unitOccupation = unitOccupation;
+    }
 
-	public BigDecimal getBaseRentPerSqMtr() {
-		return baseRentPerSqMtr;
-	}
+    public BigDecimal getBaseRentPerSqMtr() {
+        return baseRentPerSqMtr;
+    }
 
-	public void setBaseRentPerSqMtr(BigDecimal baseRentPerSqMtr) {
-		this.baseRentPerSqMtr = baseRentPerSqMtr;
-	}
+    public void setBaseRentPerSqMtr(BigDecimal baseRentPerSqMtr) {
+        this.baseRentPerSqMtr = baseRentPerSqMtr;
+    }
 
-	public BigDecimal getManualALV() {
-		return manualALV;
-	}
+    public BigDecimal getManualALV() {
+        return manualALV;
+    }
 
-	public void setManualALV(BigDecimal manualALV) {
-		this.manualALV = manualALV;
-	}
+    public void setManualALV(BigDecimal manualALV) {
+        this.manualALV = manualALV;
+    }
 
-	public BigDecimal getMonthlyRentPaidByTenanted() {
-		return monthlyRentPaidByTenanted;
-	}
+    public BigDecimal getMonthlyRentPaidByTenanted() {
+        return monthlyRentPaidByTenanted;
+    }
 
-	public void setMonthlyRentPaidByTenanted(BigDecimal monthlyRentPaidByTenanted) {
-		this.monthlyRentPaidByTenanted = monthlyRentPaidByTenanted;
-	}
+    public void setMonthlyRentPaidByTenanted(BigDecimal monthlyRentPaidByTenanted) {
+        this.monthlyRentPaidByTenanted = monthlyRentPaidByTenanted;
+    }
 
-	public String getUnitIdentifier() {
-		return unitIdentifier;
-	}
+    public String getUnitIdentifier() {
+        return unitIdentifier;
+    }
 
-	public void setUnitIdentifier(String unitIdentifier) {
-		this.unitIdentifier = unitIdentifier;
-	}
+    public void setUnitIdentifier(String unitIdentifier) {
+        this.unitIdentifier = unitIdentifier;
+    }
 }

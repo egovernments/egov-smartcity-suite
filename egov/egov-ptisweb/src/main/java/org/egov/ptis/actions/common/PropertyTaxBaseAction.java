@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,80 +43,11 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.actions.common;
 
-import static java.lang.Boolean.FALSE;
-import static java.lang.Boolean.TRUE;
-import static java.math.BigDecimal.ZERO;
-import static org.apache.commons.lang3.StringUtils.isBlank;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_ALTER_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_BIFURCATE_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.ALTERATION_OF_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.ANONYMOUS_USER;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_ALTER_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_GRP;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_NEW_ASSESSENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.BILL_COLLECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESIGNATIONS;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_FIRST_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.CURR_SECONDHALF_DMD_STR;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_EDUCATIONAL_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_GENERAL_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_LIBRARY_CESS;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_UNAUTHORIZED_PENALTY;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMANDRSN_STR_VACANT_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.FILESTORE_MODULE_NAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.FLOOR_MAP;
-import static org.egov.ptis.constants.PropertyTaxConstants.JUNIOR_ASSISTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_ALTERATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_AMALGAMATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_BIFURCATION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_DEMOLITION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_NEW_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_OF_USAGE_RESIDENCE;
-import static org.egov.ptis.constants.PropertyTaxConstants.NATURE_TAX_EXEMPTION;
-import static org.egov.ptis.constants.PropertyTaxConstants.NEW_ASSESSMENT;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_ADD_OR_ALTER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PROPERTY_MODIFY_REASON_BIFURCATE;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_INSPECTOR_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.REVENUE_OFFICER_DESGN;
-import static org.egov.ptis.constants.PropertyTaxConstants.SENIOR_ASSISTANT;
-import static org.egov.ptis.constants.PropertyTaxConstants.SOURCEOFDATA_MOBILE;
-import static org.egov.ptis.constants.PropertyTaxConstants.STATUS_CANCELLED;
-import static org.egov.ptis.constants.PropertyTaxConstants.UD_REVENUE_INSPECTOR_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.VACANTLAND_MIN_CUR_CAPITALVALUE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_APPROVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_FORWARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_REJECT;
-import static org.egov.ptis.constants.PropertyTaxConstants.WFLOW_ACTION_STEP_SAVE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVAL_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_COMMISSIONER_APPROVED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_DIGITAL_SIGNATURE_PENDING;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_REJECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.TAX_COLLECTOR_DESGN;
-
-import java.io.File;
-import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Hashtable;
-import java.util.List;
-import java.util.Map;
-
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.Installment;
 import org.egov.eis.entity.Assignment;
@@ -122,13 +60,13 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.messaging.MessagingService;
+import org.egov.infra.notification.service.NotificationService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.entity.StateHistory;
-import org.egov.infra.workflow.inbox.InboxRenderServiceDeligate;
+import org.egov.infra.workflow.inbox.InboxRenderServiceDelegate;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Designation;
@@ -152,11 +90,28 @@ import org.egov.ptis.domain.repository.master.vacantland.LayoutApprovalAuthority
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.SMSEmailService;
 import org.egov.ptis.master.service.PropertyUsageService;
+import org.egov.ptis.notice.PtNotice;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+
+import java.io.File;
+import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static java.lang.Boolean.FALSE;
+import static java.lang.Boolean.TRUE;
+import static java.math.BigDecimal.ZERO;
+import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.egov.ptis.constants.PropertyTaxConstants.*;
 
 public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
@@ -181,12 +136,17 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     protected String ackMessage;
     protected String userDesgn;
     protected String wfErrorMsg;
+    protected Boolean endorsementRequired = FALSE;
+    protected String ownersName;
+    protected List<PtNotice> endorsementNotices;
+    protected String applicationNumber;
+    protected String assessmentNumber;
     final SimpleDateFormat dateFormatter = new SimpleDateFormat("dd/MM/yyyy");
 
     @Autowired
     protected AssignmentService assignmentService;
     @Autowired
-    private InboxRenderServiceDeligate<StateAware> inboxRenderServiceDeligate;
+    private InboxRenderServiceDelegate<StateAware> inboxRenderServiceDeligate;
     @Autowired
     protected EisCommonService eisCommonService;
     @Autowired
@@ -196,7 +156,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyImpl> propertyWorkflowService;
     @Autowired
-    private MessagingService messagingService;
+    private NotificationService notificationService;
     @Autowired
     private PtDemandDao ptDemandDAO;
     @Autowired
@@ -216,7 +176,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     private List<String> uploadFileNames = new ArrayList<>();
     private List<String> uploadContentTypes = new ArrayList<>();
     protected Map<String, BigDecimal> propertyTaxDetailsMap = new HashMap<>(0);
-    protected List<Hashtable<String, Object>> historyMap = new ArrayList<>();
+    protected List<HashMap<String, Object>> historyMap = new ArrayList<>();
 
     protected Boolean propertyByEmployee = Boolean.TRUE;
     protected String userDesignationList;
@@ -271,7 +231,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     }
 
     protected List<StateHistory> setUpWorkFlowHistory(final Long stateId) {
-        final List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getWorkflowHistory(stateId);
+        final List<StateHistory> workflowHisObj = inboxRenderServiceDeligate.getStateHistory(stateId);
         if (workflowBean != null)
             workflowBean.setWorkFlowHistoryItems(workflowHisObj);
         return workflowHisObj;
@@ -325,10 +285,10 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                 if (propTypeMstr.getCode().equalsIgnoreCase(OWNERSHIP_TYPE_VAC_LAND)) {
                     if (null != propertyDetail)
                         validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary,
-                                northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId);
+                                northBoundary, modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, property);
                 } else if (null == ((PropertyImpl) property).getId() && TRUE.equals(propertyDetail.isAppurtenantLandChecked())) {
                     validateVacantProperty(propertyDetail, eastBoundary, westBoundary, southBoundary, northBoundary,
-                            modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId);
+                            modifyRsn, propCompletionDate, vacantLandPlotAreaId, layoutApprovalAuthorityId, property);
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
                 } else
                     validateBuiltUpProperty(propertyDetail, floorTypeId, roofTypeId, areaOfPlot, regDocDate, modifyRsn);
@@ -343,7 +303,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     public void validateVacantProperty(final PropertyDetail propertyDetail, final String eastBoundary,
             final String westBoundary, final String southBoundary, final String northBoundary, final String modifyRsn,
-            final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId) {
+            final Date propCompletionDate, final Long vacantLandPlotAreaId, final Long layoutApprovalAuthorityId, final Property property) {
 
         if (logger.isDebugEnabled())
             logger.debug("Entered into validateVacantProperty");
@@ -353,7 +313,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             addActionError(getText("mandatory.pattaNum"));
         if (null == propertyDetail.getSitalArea().getArea())
             addActionError(getText("mandatory.vacantLandArea"));
-        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
+        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
         if (null == propertyDetail.getDateOfCompletion() || "".equals(propertyDetail.getDateOfCompletion()))
             addActionError(getText("mandatory.dtOfCmpln"));
         else if (propertyDetail.getDateOfCompletion().before(effDate))
@@ -411,10 +371,6 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         else if (FALSE.equals(propertyDetail.isAppurtenantLandChecked())
                 && ("".equals(areaOfPlot) || Double.valueOf(areaOfPlot) == 0))
             addActionError(getText("mandatory.extentsite.greaterthanzero"));
-        if (floorTypeId == null || floorTypeId == -1)
-            addActionError(getText("mandatory.floorType"));
-        if (roofTypeId == null || roofTypeId == -1)
-            addActionError(getText("mandatory.roofType"));
         if (propertyDetail.getOccupancyCertificationDate() != null && propCompletionDate != null
                 && propertyDetail.getOccupancyCertificationDate().before(propCompletionDate))
             addActionError(getText("occupancydate.before.constrDate.error"));
@@ -509,7 +465,7 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                         if (floor.getConstructionDate() == null || "".equals(floor.getConstructionDate()))
                             addActionError(getText("mandatory.floor.constrDate"));
 
-                        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty();
+                        final Date effDate = propertyTaxUtil.getEffectiveDateForProperty(property);
                         if (floor.getOccupancyDate() == null || "".equals(floor.getOccupancyDate()))
                             addActionError(getText("mandatory.floor.docOcc"));
                         if (floor.getOccupancyDate() != null && !"".equals(floor.getOccupancyDate())) {
@@ -940,9 +896,9 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
             }
         }
         if (StringUtils.isNotBlank(mobileNumber) && StringUtils.isNotBlank(smsMsg))
-            messagingService.sendSMS(mobileNumber, smsMsg);
+            notificationService.sendSMS(mobileNumber, smsMsg);
         if (StringUtils.isNotBlank(emailid) && StringUtils.isNotBlank(emailSubject) && StringUtils.isNotBlank(emailBody))
-            messagingService.sendEmail(emailid, emailSubject, emailBody);
+            notificationService.sendEmail(emailid, emailSubject, emailBody);
 
     }
 
@@ -1068,6 +1024,34 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         return PropertyTaxConstants.DOCUMENT_NAME_REGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName())
                 || PropertyTaxConstants.DOCUMENT_NAME_UNREGD_WILL_DOCUMENT.equals(documentTypeDetails.getDocumentName());
     }
+    
+    public void populateUsages(String propertyCategory) {
+        List<PropertyUsage> usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
+        // Loading property usages based on property category
+        if (StringUtils.isNoneBlank(propertyCategory))
+                if (propertyCategory.equals(CATEGORY_MIXED))
+                        usageList = propertyUsageService.getAllActiveMixedPropertyUsages();
+                else if (propertyCategory.equals(CATEGORY_RESIDENTIAL))
+                        usageList = propertyUsageService.getResidentialPropertyUsages();
+                else if (propertyCategory.equals(CATEGORY_NON_RESIDENTIAL))
+                        usageList = propertyUsageService.getNonResidentialPropertyUsages();
+        addDropdownData("UsageList", usageList);
+    }
+    
+    public String multipleSubmitRedirect() {
+        setWfErrorMsg(getText("error.multiple.submit"));
+        return TARGET_WORKFLOW_ERROR;
+    }
+
+    public Boolean multipleSubmitCondition(PropertyImpl property, Long approverPositionId) {
+        if (property.getId() != null) {
+            if (null == approverPositionId && !property.getStatus().equals(PropertyTaxConstants.STATUS_WORKFLOW))
+                return Boolean.TRUE;
+            else
+                return propertyTaxCommonUtils.isOwnerOfApplication(property, securityUtils.getCurrentUser(), approverPositionId);
+        } else
+            return Boolean.FALSE;
+    }
 
     public WorkflowBean getWorkflowBean() {
         return workflowBean;
@@ -1180,11 +1164,11 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
 
     }
 
-    public List<Hashtable<String, Object>> getHistoryMap() {
+    public List<HashMap<String, Object>> getHistoryMap() {
         return historyMap;
     }
 
-    public void setHistoryMap(final List<Hashtable<String, Object>> historyMap) {
+    public void setHistoryMap(final List<HashMap<String, Object>> historyMap) {
         this.historyMap = historyMap;
     }
 
@@ -1235,4 +1219,45 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
     public void setTransactionType(String transactionType) {
         this.transactionType = transactionType;
     }
+
+    public Boolean getEndorsementRequired() {
+        return endorsementRequired;
+    }
+
+    public void setEndorsementRequired(Boolean endorsementRequired) {
+        this.endorsementRequired = endorsementRequired;
+    }
+
+    public String getOwnersName() {
+        return ownersName;
+    }
+
+    public void setOwnersName(String ownersName) {
+        this.ownersName = ownersName;
+    }
+
+    public List<PtNotice> getEndorsementNotices() {
+        return endorsementNotices;
+    }
+
+    public void setEndorsementNotices(List<PtNotice> endorsementNotices) {
+        this.endorsementNotices = endorsementNotices;
+    }
+
+    public String getApplicationNumber() {
+        return applicationNumber;
+    }
+
+    public void setApplicationNumber(String applicationNumber) {
+        this.applicationNumber = applicationNumber;
+    }
+
+    public String getAssessmentNumber() {
+        return assessmentNumber;
+    }
+
+    public void setAssessmentNumber(String assessmentNumber) {
+        this.assessmentNumber = assessmentNumber;
+    }
+
 }

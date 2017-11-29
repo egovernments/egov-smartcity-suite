@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html" language="java"%>
@@ -57,14 +65,14 @@
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.shsc.number" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="shscNumber" id="shscNumber" class="form-control is_valid_number" maxlength="10" data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
+							<input type="text" name="shscNumber" id="shscNumber" class="form-control is_valid_number"  data-inputmask="'mask': '9999999999'" id="app-appcodo" min="10"  />
 						</div>
 				</div> 
 				<div class="form-group">
 					<label  class="col-md-4 control-label"> 
 					<spring:message code="lbl.applicantname" /></label>
 						<div class="col-md-4 add-margin">
-							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidation" data-pattern="alphabetwithspace" maxlength="24" id="app-mobno" />
+							<input type="text" name="applicantName" id="applicantName" class="form-control patternvalidation" data-pattern="alphanumericwithspacespecialcharacters" maxlength="100" id="app-mobno" />
 						</div>
 				</div>
 				<div class="form-group">
@@ -92,10 +100,10 @@
 						</div>
 				</div>
 				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.type" /></label>
+					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.type" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
 						 	<select name="noticeType" id="noticetype" class="form-control" data-first-option="false"><span class="mandatory"></span>
-								<option value=""></option>
+								<option value="">Select</option>
                                 <option value="EM">Estimation Notice</option>
                                 <option value="WO">WorkOrder Notice</option>
                                 <option value="CC">Close Connection Notice</option>
@@ -104,15 +112,15 @@
 						</div>
 				</div>
 				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.fromdate" /></label>
+					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.fromdate" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
-						 	<input  type="text" name="noticeGeneratedFrom" class="form-control datepicker"  id="noticeGeneratedFrom" maxlength="24" />
+						 	<input  type="text" name="noticeGeneratedFrom" class="form-control datepicker"  id="noticeGeneratedFrom" maxlength="24" required="required"/>
 						</div>
 				</div>
 				<div class="form-group">
-					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.todate" /></label>
+					<label for="field-1" class="col-md-4 control-label"><spring:message code="lbl.notice.todate" /><span class="mandatory"></span></label>
 						<div class="col-md-4 add-margin">
-						 	<input  type="text" name="noticeGeneratedTo" class="form-control datepicker"  id="noticeGeneratedTo" maxlength="24" />
+						 	<input  type="text" name="noticeGeneratedTo" class="form-control datepicker"  id="noticeGeneratedTo" maxlength="24" required="required"/>
 						</div>
 				</div>
 			

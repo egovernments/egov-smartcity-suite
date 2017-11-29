@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines, 
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,61 +43,54 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 $(document).ready(function() {
 	
-	
-	$(".councilcommitmem").change(function(){  
+	$(".councilcommitmem").change(function() {  
     	var $hiddenName=$(this).data('change-to');
-    	if($(this).is(':checked')){
+    	if($(this).is(':checked')) {
     		$('input[name="'+$hiddenName+'"]').val(true);
-    	}else{
+    	} else {
     		$('input[name="'+$hiddenName+'"]').val(false);
     	}
     });
 
-	$("#committeechk").change(function(){  
-		if($(this).is(':checked')){
+	$("#committeechk").change(function() {  
+		if($(this).is(':checked')) {
 			$('#councilcommittee')
 	        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
 	        .prop('checked', true);
 			setHiddenValue(true);
-		}else{
+		} else {
 			$('#councilcommittee')
 	        .find('> tbody > tr > td:first-child > input[type="checkbox"]')
 	        .prop('checked', false);
 			setHiddenValue(false);
 		}
 	});
-	
 
-	$("#btnsubmit").click(function(e){ 
-		
-			var chkbxLength = $('.councilcommitmem:checked').length;
-			if(chkbxLength <= 0){
-				bootbox.alert('Please enter attendance details atleast for one member');
-				return false;
-			}
-			return true;
+	$("#btnsubmit").click(function(e) { 
+		var chkbxLength = $('.councilcommitmem:checked').length;
+		if(chkbxLength <= 0) {
+			bootbox.alert('Please enter attendance details atleast for one member');
+			return false;
+		}
+		return true;
 	});  
-	
 
-	jQuery('#btnsearch').click(function(e) {
-			
-			callAjaxSearch();
-		});
-
+	$('#btnsearch').click(function(e) {
+		callAjaxSearch();
+	});
 });
 
 function setHiddenValue(flag)
 {
-	
 	$('.councilcommitmem').each(function(){
 		var $hiddenName=$(this).data('change-to');
 		$('input[name="'+$hiddenName+'"]').val(flag);
 	});
-	
 }
 
 function getFormData($form){
@@ -148,7 +148,7 @@ function callAjaxSearch() {
 				aaSorting: [],				
 				columns : [ { 
 					"data" : "meetingDate", "sClass" : "text-left"},{ 
-					"data" : "committeeType", "sClass" : "text-left",
+					"data" : "meetingType", "sClass" : "text-left",
 					"render": function ( data, type, row, meta ) {
 						return '<a target="_new" onclick="openPopup(\'/council/councilmeeting/attendance/search/view/'+ row.id +'\')">'+data+'</a>' 
 					  }
@@ -191,30 +191,28 @@ var isSubmit=false;
 $('#finalizeAttendanceBtn').click(
        function(e) {
 
-                   if(isSubmit)
-                   {
+                   if(isSubmit) {
                      return true;
                    }
 
                    if ($('form').valid()) {
                        var chkbxLength = $('.councilcommitmem:checked').length;
-                       if(chkbxLength <= 0){
+                       if(chkbxLength <= 0) {
                            bootbox.alert('Please enter attendance details');
-                       }else{
-                           bootbox
-                           .confirm({
-                               message : 'Information entered in this screen will not be modified once submitted,Please confirm yes to save',
-                               buttons : {
-                                   'cancel' : {
-                                       label : 'No',
-                                       className : 'btn-danger pull-right'
-                                   },
-                                   'confirm' : {
-                                       label : 'Yes',
-                                       className : 'btn-danger pull-right'
-                                   }
-                               },
-                               callback : function(result) {
+                       } else {
+                           bootbox.confirm({
+                        	    message: "Information entered in this screen will not be modified once submitted,Please confirm yes to save",
+                        	    buttons: {
+                        	        confirm: {
+                        	            label: 'Yes',
+                        	            className: 'btn-primary'
+                        	        },
+                        	        cancel: {
+                        	            label: 'No',
+                        	            className: 'btn-danger'
+                        	        }
+                        	    },
+                        	    callback: function(result) {
                                    if (result) {
                                         var action = '/council/councilmeeting/attendance/finalizeattendance';
                                             $('#councilMeetingform').attr('method', 'post');
@@ -225,11 +223,9 @@ $('#finalizeAttendanceBtn').click(
                                        e.preventDefault();
                                    }
                                }
-                           });
+                        	});
                        }
            }
-
            return false;
-
 });
 

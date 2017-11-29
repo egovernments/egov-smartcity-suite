@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
@@ -59,7 +67,7 @@
 						<spring:message code="lbl.meeting.type" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilMeeting.committeeType.name}</div>
+						${councilMeeting.meetingType.name}</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.meeting.number" />
 					</div>
@@ -195,11 +203,11 @@
 
 <div class="row text-center">
 	<div class="add-margin">
-		<a href="javascript:void(0)" class="btn btn-default"
-			onclick="self.close()">Close</a>
 		<button type="button" id="printAgenda" value="Print Agenda"
 			onclick="location.href='/council/councilmeeting/generateagenda/'+${councilMeeting.id};"
 			class='btn btn-primary'>Print</button>
+		<a href="javascript:void(0)" class="btn btn-default"
+			onclick="self.close()">Close</a>
 	</div>
 </div>
 

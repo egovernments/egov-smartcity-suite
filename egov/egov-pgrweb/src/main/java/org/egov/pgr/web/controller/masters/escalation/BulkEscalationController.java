@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,19 +43,18 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.web.controller.masters.escalation;
 
-import org.apache.commons.io.IOUtils;
-import org.egov.commons.ObjectType;
-import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.PositionHierarchy;
-import org.egov.eis.service.PositionHierarchyService;
 import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.entity.contract.BulkEscalationGenerator;
+import org.egov.pgr.entity.contract.EscalationHelper;
+import org.egov.pgr.entity.contract.EscalationHelperAdaptor;
 import org.egov.pgr.service.ComplaintEscalationService;
 import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.utils.constants.PGRConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -61,16 +67,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
 @Controller
-@RequestMapping("/bulkEscalation")
+@RequestMapping("/complaint/bulkescalation")
 public class BulkEscalationController {
 
     @Autowired
@@ -80,10 +83,7 @@ public class BulkEscalationController {
     private ComplaintTypeService complaintTypeService;
 
     @Autowired
-    private ObjectTypeService objectTypeService;
-
-    @Autowired
-    private PositionHierarchyService positionHierarchyService;
+    private ComplaintEscalationService complaintEscalationService;
 
     @ModelAttribute("complainttypes")
     public List<ComplaintType> complaintTypes() {
@@ -95,57 +95,30 @@ public class BulkEscalationController {
         return new BulkEscalationGenerator();
     }
 
-    @GetMapping("search")
-    public String newform() {
-        return "bulkEscalation-new";
+    @GetMapping
+    public String bulkEscalationForm() {
+        return "bulkescalation";
     }
 
-    @GetMapping(value = "search-result", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public void search(@ModelAttribute BulkEscalationGenerator bulkEscalationGenerator, HttpServletResponse response)
-            throws IOException {
-        final List<EscalationHelper> escalationHelperList = new ArrayList<>();
-        final List<PositionHierarchy> escalationRecords = escalationService
-                .getEscalationObjByComplaintTypeFromPosition(bulkEscalationGenerator.getComplaintTypes(),
-                        bulkEscalationGenerator.getFromPosition());
-        for (final PositionHierarchy posHir : escalationRecords) {
-            final EscalationHelper escalationHelper = new EscalationHelper();
-            if (posHir.getObjectSubType() != null)
-                escalationHelper.setComplaintType(complaintTypeService.findByCode(posHir.getObjectSubType()));
-
-            escalationHelper.setFromPosition(posHir.getFromPosition());
-            escalationHelper.setToPosition(posHir.getToPosition());
-            escalationHelperList.add(escalationHelper);
-        }
-        final String escalationJSONData = new StringBuilder("{ \"data\":").append(toJSON(escalationHelperList, EscalationHelper.class, EscalationHelperAdaptor.class)).append("}")
-                .toString();
-        IOUtils.write(escalationJSONData, response.getWriter());
-
+    public String searchBulkEscalation(BulkEscalationGenerator bulkEscalationGenerator) {
+        List<PositionHierarchy> positionHierarchies = escalationService.getEscalationObjByComplaintTypeFromPosition(
+                bulkEscalationGenerator.getComplaintTypes(), bulkEscalationGenerator.getFromPosition());
+        return new StringBuilder("{ \"data\":").append(toJSON(complaintEscalationService.getEscalationDetailByPositionHierarchy(positionHierarchies),
+                EscalationHelper.class, EscalationHelperAdaptor.class)).append("}").toString();
     }
 
-    @PostMapping("save")
-    public String save(@Valid @ModelAttribute BulkEscalationGenerator bulkEscalationGenerator, BindingResult errors,
-                       final RedirectAttributes redirectAttrs, final Model model) {
+    @PostMapping("update")
+    public String updateBulkEscalation(@Valid BulkEscalationGenerator bulkEscalationGenerator,
+                                       BindingResult errors, RedirectAttributes redirectAttrs, Model model) {
         if (errors.hasErrors()) {
             model.addAttribute("message", "bulkescalation.unble.to.save");
-            return "bulkEscalation-new";
+            return "bulkescalation";
         } else {
-            for (final ComplaintType complaintType : bulkEscalationGenerator.getComplaintTypes()) {
-                final ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
-                final PositionHierarchy positionHierarchy = new PositionHierarchy();
-                positionHierarchy.setObjectType(objectType);
-                positionHierarchy.setObjectSubType(complaintType.getCode());
-                positionHierarchy.setFromPosition(bulkEscalationGenerator.getFromPosition());
-                positionHierarchy.setToPosition(bulkEscalationGenerator.getToPosition());
-                final PositionHierarchy existingPosHierarchy = escalationService.getExistingEscalation(positionHierarchy);
-                if (existingPosHierarchy != null) {
-                    existingPosHierarchy.setToPosition(bulkEscalationGenerator.getToPosition());
-                    positionHierarchyService.updatePositionHierarchy(existingPosHierarchy);
-                } else
-                    positionHierarchyService.createPositionHierarchy(positionHierarchy);
-            }
+            complaintEscalationService.updateBulkEscalation(bulkEscalationGenerator);
             redirectAttrs.addFlashAttribute("message", "msg.bulkescalation.success");
-            return "redirect:/bulkEscalation/search";
+            return "redirect:/complaint/bulkescalation";
         }
     }
 }

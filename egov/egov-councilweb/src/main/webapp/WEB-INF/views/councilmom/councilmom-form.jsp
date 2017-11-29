@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
@@ -60,7 +68,7 @@
 						<spring:message code="lbl.meeting.type" />
 					</div>
 					<div class="col-sm-3 add-margin view-content">
-						${councilMeeting.committeeType.name}</div>
+						${councilMeeting.meetingType.name}</div>
 					<div class="col-xs-3 add-margin">
 						<spring:message code="lbl.meeting.number" />
 					</div>
@@ -108,6 +116,9 @@
 							<th width="7%"><spring:message code="lbl.agenda.number" /></th>
 							<th><spring:message code="lbl.preamble.number" /></th>
 							<th width="12%"><spring:message code="lbl.resolution" /></th>
+							<c:if test="${!autoResolutionNoGenEnabled}">
+								<th><spring:message code="lbl.resolutionNumber" /></th>
+							</c:if>
 							<th width="24%"><spring:message code="lbl.comments" /></th>
 						</tr>
 					</thead>
@@ -140,6 +151,13 @@
 											</form:select> <form:errors
 												path="meetingMOMs[${counter.index}].resolutionStatus"
 												cssClass="error-msg" /></td>
+										<c:if test="${!autoResolutionNoGenEnabled}">
+											<td><form:input
+													path='meetingMOMs[${counter.index}].resolutionNumber'
+													id="meetingMOMs[${counter.index}].resolutionNumber"
+													class="form-control validnum" required="required"
+													cssErrorClass="form-control error" /></td>
+										</c:if>
 										<td>
 											<div class="input-group">
 												<form:textarea
@@ -174,6 +192,7 @@
 </div>
 
 <input type="hidden" name="councilMeeting" value="${councilMeeting.id}" />
+<input type="hidden" id="autoResolutionNoGenEnabled" value="${autoResolutionNoGenEnabled}" />
 
 <%@ include file="upload-meeting-documents.jsp"%>
 
@@ -196,11 +215,14 @@
 							<%-- <th><spring:message code="lbl.preamble.number" /></th> --%>
 							<th width="19%"><spring:message code="lbl.department" /><span
 								class="mandatory"></span></th>
-							<%-- <th><spring:message code="lbl.wardnumber" /></th> --%>
 							<th width="27%"><spring:message code="lbl.gist.sumoto" /><span
 								class="mandatory"></span></th>
 							<th width="15%"><spring:message code="lbl.amount" /></th>
 							<th width="12%"><spring:message code="lbl.resolution" /></th>
+							<c:if test="${!autoResolutionNoGenEnabled}">
+								<th><spring:message code="lbl.resolutionNumber" /><span
+								class="mandatory"></span></th>
+							</c:if>
 							<th width="27%"><spring:message code="lbl.comments" /></th>
 						</tr>
 					</thead>

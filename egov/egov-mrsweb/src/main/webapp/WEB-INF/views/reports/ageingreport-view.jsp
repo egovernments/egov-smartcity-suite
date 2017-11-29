@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2016>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
@@ -50,15 +58,15 @@
 
 <br /><br />
 <div class="row display-hide report-section" id="regageingtable_container">   
-	<div class="col-md-12 table-header text-left">The Registration Status Search result is</div>             
+	<div class="col-md-12 table-header text-left">The Marriage Registration Ageing Application Details :-</div>             
 	<div class="col-md-12 form-group report-table-container">
 	    <table class="table table-bordered table-hover multiheadertbl" id="registrationageing_table">
 	    	<thead>
 	    		<tr>
-							<th>S.No</th>
+							<th><spring:message code="lbl.serial.no" /></th>
 							<th><spring:message code="lbl.application.no" /></th>
 							<th><spring:message code="lbl.registration.no" /></th>
-							<th>Application Type</th>
+							<th><spring:message code="lbl.appln.type" /></th>
 							<th><spring:message code="lbl.husband.name" /></th>
 							<th><spring:message code="lbl.wife.name" /></th>
 							<th><spring:message code="lbl.application.date" /></th>
@@ -66,8 +74,8 @@
 							<th><spring:message code="lbl.place.of.marriage" /></th>
 							<th><spring:message code="lbl.Boundary" /></th>
 							<th><spring:message code="lbl.status" /></th>
-							<th>User Name</th>
-							<th>Pending Action</th>
+							<th><spring:message code="lbl.user.name" /></th>
+							<th><spring:message code="lbl.pending.action" /></th>
 							
 						</tr>
 	    	</thead>

@@ -1,41 +1,49 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.infra.admin.master.entity;
@@ -61,6 +69,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.validation.Valid;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -100,14 +109,6 @@ public class City extends AbstractAuditable {
 
     @SafeHtml
     @NotBlank
-    private String recaptchaPK;
-
-    @SafeHtml
-    @NotBlank
-    private String recaptchaPub;
-
-    @SafeHtml
-    @NotBlank
     private String code;
 
     @SafeHtml
@@ -132,6 +133,7 @@ public class City extends AbstractAuditable {
     @JoinColumn(name = "preferences")
     @NotAudited
     @Fetch(FetchMode.JOIN)
+    @Valid
     private CityPreferences preferences;
 
     @Override
@@ -174,22 +176,6 @@ public class City extends AbstractAuditable {
 
     public void setDomainURL(final String domainURL) {
         this.domainURL = domainURL;
-    }
-
-    public String getRecaptchaPK() {
-        return recaptchaPK;
-    }
-
-    public void setRecaptchaPK(final String recaptchaPK) {
-        this.recaptchaPK = recaptchaPK;
-    }
-
-    public String getRecaptchaPub() {
-        return recaptchaPub;
-    }
-
-    public void setRecaptchaPub(final String recaptchaPub) {
-        this.recaptchaPub = recaptchaPub;
     }
 
     public String getCode() {
@@ -260,12 +246,17 @@ public class City extends AbstractAuditable {
         final Map<String, Object> cityPrefs = new HashMap<>();
         cityPrefs.put(CITY_URL_KEY, domainURL);
         cityPrefs.put(CITY_NAME_KEY, name);
-        if (preferences == null) {
-            cityPrefs.put(CITY_LOGO_KEY, "/resources/global/images/logo@2x.png");
-            cityPrefs.put(CITY_CORP_NAME_KEY, name);
-        } else {
-            cityPrefs.put(CITY_LOGO_KEY,
-                    preferences.logoExist() ? String.format(CITY_LOGO_URL, preferences.getMunicipalityLogo().getFileStoreId(), code) : EMPTY);
+        cityPrefs.put(CITY_CORP_NAME_KEY, name);
+        cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
+        cityPrefs.put(CITY_CODE_KEY, code);
+        cityPrefs.put(CITY_LAT_KEY, latitude);
+        cityPrefs.put(CITY_LNG_KEY, longitude);
+        cityPrefs.put(CITY_DIST_NAME_KEY, districtName);
+        cityPrefs.put(CITY_DIST_CODE_KEY, districtCode);
+        cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
+        cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
+        if (preferences != null) {
+            cityPrefs.put(CITY_LOGO_FS_UUID_KEY, preferences.logoExist() ? preferences.getMunicipalityLogo().getFileStoreId() : EMPTY);
             cityPrefs.put(CITY_CORP_NAME_KEY, preferences.getMunicipalityName());
             cityPrefs.put(CITY_CORP_ADDRESS_KEY, preferences.getMunicipalityAddress());
             cityPrefs.put(CITY_CORP_CALLCENTER_NO_KEY, preferences.getMunicipalityCallCenterNo());
@@ -274,18 +265,10 @@ public class City extends AbstractAuditable {
             cityPrefs.put(CITY_CORP_TWITTER_KEY, preferences.getMunicipalityTwitterLink());
             cityPrefs.put(CITY_CORP_FB_KEY, preferences.getMunicipalityFacebookLink());
             cityPrefs.put(CITY_CORP_GOOGLE_MAP_KEY, preferences.getMunicipalityGisLocation());
+            cityPrefs.put(CITY_CAPTCHA_PRIV_KEY, preferences.getRecaptchaPK());
+            cityPrefs.put(CITY_CAPTCHA_PUB_KEY, preferences.getRecaptchaPub());
+            cityPrefs.put(CITY_GOOGLE_API_KEY, preferences.getGoogleApiKey());
         }
-
-        cityPrefs.put(CITY_LOCAL_NAME_KEY, localName);
-        cityPrefs.put(CITY_CODE_KEY, code);
-        cityPrefs.put(CITY_CAPTCHA_PRIV_KEY, recaptchaPK);
-        cityPrefs.put(CITY_CAPTCHA_PUB_KEY, recaptchaPub);
-        cityPrefs.put(CITY_LAT_KEY, latitude);
-        cityPrefs.put(CITY_LNG_KEY, longitude);
-        cityPrefs.put(CITY_DIST_NAME_KEY, districtName);
-        cityPrefs.put(CITY_DIST_CODE_KEY, districtCode);
-        cityPrefs.put(CITY_CORP_GRADE_KEY, grade);
-        cityPrefs.put(CITY_REGION_NAME_KEY, regionName);
         return cityPrefs;
     }
 

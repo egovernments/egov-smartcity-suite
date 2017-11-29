@@ -1,52 +1,61 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) 2016  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.infra.workflow.matrix.entity;
 
 import java.math.BigDecimal;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> {
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+
+public class WorkFlowMatrixDetails {
 
     private Long approverNo;
     private String[] designation;
@@ -68,7 +77,6 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
     private Date toDateAlias;
     private String departmentAlias;
     private String additionalRuleAlias;
-    private final SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
     private String objectTypeDisplay;
     private Long rejectApproverNo;
     private String[] rejectDesignation;
@@ -76,6 +84,7 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
     private String rejectAction;
     private String rejectStatus;
     private String[] rejectButtons;
+    private List<WorkFlowMatrixDetails> matrixdetails = new ArrayList<>();
 
     public Long getRejectApproverNo() {
         return rejectApproverNo;
@@ -196,8 +205,6 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
         toDate = toDateAlias;
     }
 
-    private List<WorkFlowMatrixDetails> matrixdetails = new ArrayList<WorkFlowMatrixDetails>();
-
     public String getAdditionalRule() {
         return additionalRule;
     }
@@ -251,25 +258,25 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
         return fromDate;
     }
 
-    public String getFromDateString() {
-
-        return sdf.format(fromDate);
-    }
-
     public void setFromDate(final Date fromDate) {
         this.fromDate = fromDate;
+    }
+
+    public String getFromDateString() {
+
+        return toDefaultDateFormat(fromDate);
     }
 
     public Date getToDate() {
         return toDate;
     }
 
-    public String getToDateString() {
-        return sdf.format(toDate);
-    }
-
     public void setToDate(final Date toDate) {
         this.toDate = toDate;
+    }
+
+    public String getToDateString() {
+        return toDefaultDateFormat(toDate);
     }
 
     public String[] getButtons() {
@@ -321,20 +328,20 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
     }
 
     public String getDesignationString() {
-        final StringBuffer str = new StringBuffer();
+        final StringBuilder str = new StringBuilder();
         if (getDesignation() != null) {
             for (final String designationname : getDesignation()) {
                 str.append(designationname);
                 str.append(",");
             }
-            final String designationString = new String(str);
+            final String designationString = str.toString();
             return designationString.substring(0, designationString.length() - 1);
         } else
             return "";
     }
 
     public String getButtonString() {
-        final StringBuffer str = new StringBuffer();
+        final StringBuilder str = new StringBuilder();
         if (getButtons() != null) {
             for (final String buttonname : getButtons()) {
                 str.append(buttonname);
@@ -347,7 +354,7 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
     }
 
     public String getRejectdesignationString() {
-        final StringBuffer str = new StringBuffer();
+        final StringBuilder str = new StringBuilder();
         if (getRejectDesignation() != null) {
             for (final String designationname : getRejectDesignation()) {
                 str.append(designationname);
@@ -360,7 +367,7 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
     }
 
     public String getRejectbuttonString() {
-        final StringBuffer str = new StringBuffer();
+        final StringBuilder str = new StringBuilder();
         if (getRejectButtons() != null) {
             for (final String buttonname : getRejectButtons()) {
                 str.append(buttonname);
@@ -371,16 +378,4 @@ public class WorkFlowMatrixDetails implements Comparable<WorkFlowMatrixDetails> 
         } else
             return "";
     }
-
-    @Override
-    public int compareTo(final WorkFlowMatrixDetails o) {
-
-        if (getApproverNo() < o.getApproverNo())
-            return -1;
-        else if (getApproverNo() < o.getApproverNo())
-            return 1;
-        else
-            return 0;
-    }
-
 }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.adtax.web.controller.hoarding;
 
@@ -72,6 +80,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping("/advertisement")
 public class AdvertisementRenewalController extends HoardingControllerSupport {
 	
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String RENEWAL_NEWFORM = "renewal-newform";
     private static final String MESSAGE = "message";
     private static final String RENEWAL_ERROR = "renewal-error";
@@ -90,12 +99,12 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             @ModelAttribute final AdvertisementPermitDetail renewalPermitDetail) {
         final AdvertisementPermitDetail parentPermitDetail = advertisementPermitDetailService.findBy(Long.valueOf(id));
         
-        if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getDemandId() != null) {
-            // CHECK ANY DEMAND PENDING for selected year.
-            if (!advertisementDemandService.checkAnyTaxPendingForSelectedFinancialYear(parentPermitDetail.getAdvertisement(),parentPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster())) {
-                model.addAttribute(MESSAGE, "msg.renewal.taxNotPending");
-                return RENEWAL_ERROR;
-            }
+        if (parentPermitDetail != null && parentPermitDetail.getAdvertisement() != null
+                && parentPermitDetail.getAdvertisement().getDemandId() != null
+                && !advertisementDemandService.checkAnyTaxPendingForSelectedFinancialYear(parentPermitDetail.getAdvertisement(),
+                        parentPermitDetail.getAdvertisement().getDemandId().getEgInstallmentMaster())) {
+            model.addAttribute(MESSAGE, "msg.renewal.taxNotPending");
+            return RENEWAL_ERROR;
         }
         if (parentPermitDetail!=null && parentPermitDetail.getAdvertisement() != null && parentPermitDetail.getAdvertisement().getStatus()!=null && parentPermitDetail.getAdvertisement().getStatus().equals(AdvertisementStatus.WORKFLOW_IN_PROGRESS)) {
              model.addAttribute(MESSAGE, "msg.renewal.alreadyInWorkFlow");
@@ -109,24 +118,29 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
             model.addAttribute(MESSAGE, "msg.renewal.paymentPending");
             return RENEWAL_ERROR;
         }
-        User currentuser=securityUtils.getCurrentUser();
-        
-        loadBasicData(model, parentPermitDetail, renewalPermitDetail);
-        model.addAttribute("renewalPermitDetail", renewalPermitDetail);
-        model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-        model.addAttribute("stateType", renewalPermitDetail.getClass().getSimpleName());
-        model.addAttribute("currentState", "NEW");
-        model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName()) && advertisementWorkFlowService.isEmployee(currentuser));
-        WorkflowContainer workFlowContainer = new WorkflowContainer();
-        workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
-        prepareWorkflow(model, renewalPermitDetail, workFlowContainer);
- 
-        model.addAttribute("agency", parentPermitDetail.getAgency());
-        model.addAttribute("advertisementDocuments", parentPermitDetail.getAdvertisement().getDocuments());
-        return RENEWAL_NEWFORM;
+        User currentuser = securityUtils.getCurrentUser();
+        if (null != parentPermitDetail) {
+            loadBasicData(parentPermitDetail, renewalPermitDetail);
+            model.addAttribute("renewalPermitDetail", renewalPermitDetail);
+            model.addAttribute("additionalRule", AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            model.addAttribute("stateType", renewalPermitDetail.getClass().getSimpleName());
+            model.addAttribute("currentState", "NEW");
+            model.addAttribute("isEmployee", !ANONYMOUS_USER.equalsIgnoreCase(currentuser.getName())
+                    && advertisementWorkFlowService.isEmployee(currentuser));
+            WorkflowContainer workFlowContainer = new WorkflowContainer();
+            workFlowContainer.setAdditionalRule(AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE);
+            prepareWorkflow(model, renewalPermitDetail, workFlowContainer);
+
+            model.addAttribute("agency", parentPermitDetail.getAgency());
+            model.addAttribute("advertisementDocuments", parentPermitDetail.getAdvertisement().getDocuments());
+            return RENEWAL_NEWFORM;
+        } else {
+            model.addAttribute(MESSAGE, "msg.renewal.parentpermitdetail.unavailable");
+            return RENEWAL_ERROR;
+        }
     }
 
-    private void loadBasicData(final Model model, final AdvertisementPermitDetail parentPermitDetail,
+    private void loadBasicData(final AdvertisementPermitDetail parentPermitDetail,
             final AdvertisementPermitDetail renewalPermitDetail) {
         renewalPermitDetail.setAdvertisement(parentPermitDetail.getAdvertisement());
         renewalPermitDetail.setAdvertisementDuration(parentPermitDetail.getAdvertisementDuration());
@@ -147,6 +161,8 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
         renewalPermitDetail.setPreviousapplicationid(parentPermitDetail);
         renewalPermitDetail.setWidth(parentPermitDetail.getWidth());
         renewalPermitDetail.setUnitOfMeasure(parentPermitDetail.getUnitOfMeasure());
+        renewalPermitDetail.setTotalHeight(parentPermitDetail.getTotalHeight());
+
     }
 
     @RequestMapping(value = "/renewal/{id}", method = POST)
@@ -193,14 +209,12 @@ public class AdvertisementRenewalController extends HoardingControllerSupport {
 
             if (request.getParameter("approvalComent") != null)
                 approvalComment = request.getParameter("approvalComent");
-            if (request.getParameter("workFlowAction") != null)
-                workFlowAction = request.getParameter("workFlowAction");
             if (request.getParameter("approverName") != null)
                 approverName = request.getParameter("approverName");
             if (request.getParameter("nextDesignation") != null)
                 nextDesignation = request.getParameter("nextDesignation");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             advertisementPermitDetailService.renewal(renewalPermitDetail, approvalPosition,
                     approvalComment, AdvertisementTaxConstants.RENEWAL_ADDITIONAL_RULE, workFlowAction);
             redirAttrib.addFlashAttribute("advertisementPermitDetail", renewalPermitDetail);

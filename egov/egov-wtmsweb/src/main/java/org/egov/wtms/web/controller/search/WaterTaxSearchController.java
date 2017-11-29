@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.wtms.web.controller.search;
@@ -46,7 +54,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.WATER_TAX_INDEX_NAME;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.entity.Role;
@@ -56,8 +64,11 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.wtms.application.entity.WaterConnectionDetails;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.entity.es.ConnectionSearchRequest;
 import org.egov.wtms.entity.es.WaterChargeDocument;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.repository.es.WaterChargeDocumentRepository;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
@@ -65,6 +76,7 @@ import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.elasticsearch.core.ElasticsearchTemplate;
 import org.springframework.data.elasticsearch.core.query.NativeSearchQueryBuilder;
 import org.springframework.data.elasticsearch.core.query.SearchQuery;
 import org.springframework.stereotype.Controller;
@@ -94,6 +106,12 @@ public class WaterTaxSearchController {
 
     @Autowired
     private WaterChargeDocumentRepository waterChargeDocumentRepository;
+
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDetailsService;
+
+    @Autowired
+    private ElasticsearchTemplate elasticsearchTemplate;
 
     @Autowired
     public WaterTaxSearchController(final CityService cityService) {
@@ -287,19 +305,28 @@ public class WaterTaxSearchController {
         final List<ConnectionSearchRequest> finalResult = new ArrayList<>();
         temList = findAllWaterChargeIndexByFilter(searchRequest);
         for (final WaterChargeDocument waterChargeIndex : temList) {
+            final WaterConnectionDetails closureapplication = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                    waterChargeIndex.getConsumerCode(), ConnectionStatus.CLOSED);
+            final WaterConnectionDetails reconnApplication = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(
+                    waterChargeIndex.getConsumerCode(), ConnectionStatus.ACTIVE);
             final ConnectionSearchRequest customerObj = new ConnectionSearchRequest();
+            if (closureapplication != null)
+                customerObj.setApplicationcode(closureapplication.getApplicationNumber());
+            else if (reconnApplication != null)
+                customerObj.setApplicationcode(reconnApplication.getApplicationNumber());
             customerObj.setApplicantName(waterChargeIndex.getConsumerName());
             customerObj.setConsumerCode(waterChargeIndex.getConsumerCode());
             customerObj.setOldConsumerNumber(waterChargeIndex.getOldConsumerCode());
             customerObj.setPropertyid(waterChargeIndex.getPropertyId());
             customerObj.setAddress(waterChargeIndex.getLocality());
-            customerObj.setApplicationcode(waterChargeIndex.getApplicationCode());
+            customerObj.setApplicationType(waterChargeIndex.getApplicationCode());
             customerObj.setUsage(waterChargeIndex.getUsage());
             customerObj.setIslegacy(waterChargeIndex.getLegacy());
             customerObj.setPropertyTaxDue(waterChargeIndex.getTotalDue());
             customerObj.setStatus(waterChargeIndex.getStatus());
             customerObj.setConnectiontype(waterChargeIndex.getConnectionType());
             customerObj.setWaterTaxDue(waterChargeIndex.getWaterTaxDue());
+            customerObj.setClosureType(waterChargeIndex.getClosureType());
             finalResult.add(customerObj);
         }
         return finalResult;
@@ -333,8 +360,10 @@ public class WaterTaxSearchController {
     public List<WaterChargeDocument> findAllWaterChargeIndexByFilter(final ConnectionSearchRequest searchRequest) {
 
         final BoolQueryBuilder query = getFilterQuery(searchRequest);
+        final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME).withQuery(query).build();
+        final long count = elasticsearchTemplate.queryForPage(countQuery, WaterChargeDocument.class).getTotalElements();
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
-                .withQuery(query).withPageable(new PageRequest(0, 250)).build();
+                .withQuery(query).withPageable(new PageRequest(0, (int) count)).build();
 
         final Iterable<WaterChargeDocument> sampleEntities = waterChargeDocumentRepository.search(searchQuery);
         final List<WaterChargeDocument> sampleEntitiesTemp = new ArrayList<>();

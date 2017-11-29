@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.service;
@@ -46,20 +54,24 @@ import org.egov.commons.service.ObjectTypeService;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.entity.PositionHierarchy;
 import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionHierarchyService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.Escalation;
-import org.egov.pgr.entity.dto.EscalationTimeSearchRequest;
+import org.egov.pgr.entity.contract.BulkEscalationGenerator;
+import org.egov.pgr.entity.contract.EscalationForm;
+import org.egov.pgr.entity.contract.EscalationHelper;
+import org.egov.pgr.entity.contract.EscalationTimeSearchRequest;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pgr.repository.EscalationRepository;
 import org.egov.pgr.repository.specs.EscalationTimeSpec;
-import org.egov.pgr.service.es.ComplaintIndexService;
 import org.egov.pgr.utils.constants.PGRConstants;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -79,8 +91,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -134,7 +148,13 @@ public class ComplaintEscalationService {
     private ComplaintIndexService complaintIndexService;
 
     @Autowired
-    private ComplaintMessagingService complaintCommunicationService;
+    private ComplaintNotificationService complaintNotificationService;
+
+    @Autowired
+    private ComplaintTypeService complaintTypeService;
+
+    @Autowired
+    private DesignationService designationService;
 
     @Transactional
     public void create(Escalation escalation) {
@@ -220,7 +240,7 @@ public class ComplaintEscalationService {
             complaintRepository.saveAndFlush(complaint);
             complaintIndexService.updateComplaintEscalationIndexValues(complaint);
             if (sendMessage)
-                complaintCommunicationService.sendEscalationMessage(complaint, nextOwner, previousAssignee);
+                complaintNotificationService.sendEscalationMessage(complaint, nextOwner, previousAssignee);
 
         }
     }
@@ -288,5 +308,94 @@ public class ComplaintEscalationService {
                 .setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 
         return criteria.list();
+    }
+
+    @Transactional
+    public void updateEscalationTime(EscalationForm escalationForm) {
+        ComplaintType compType = null;
+        if (escalationForm.getComplaintType() != null && escalationForm.getComplaintType().getId() != null) {
+            compType = complaintTypeService.findBy(escalationForm.getComplaintType().getId());
+        List<Escalation> escalationList = findAllBycomplaintTypeId(escalationForm.getComplaintType().getId());
+        if (!escalationList.isEmpty())
+            deleteAllInBatch(escalationList);
+        }
+        if (compType != null && escalationForm.getEscalationList() != null && !escalationForm.getEscalationList().isEmpty())
+        for (Escalation escalation : escalationForm.getEscalationList()) {
+            if (escalation.getDesignation() != null) {
+                Designation desig = designationService.getDesignationById(escalation.getDesignation().getId());
+                escalation.setComplaintType(compType);
+                escalation.setDesignation(desig);
+                escalation.setNoOfHrs(escalation.getNoOfHrs());
+                create(escalation);
+            }
+        }
+    }
+
+    public List<EscalationHelper> viewEscalation(Optional<Long> positionId, Optional<Long> complaintId) {
+
+        ComplaintType complaintType = complaintTypeService.findBy(complaintId.get());
+        ObjectType objectType = objectTypeService.getObjectTypeByName(EG_OBJECT_TYPE_COMPLAINT);
+        List<EscalationHelper> escalationHelpers = new ArrayList<>();
+
+        if (objectType != null) {
+            List<String> activeComplaintTypeCodes = complaintTypeService.getActiveComplaintTypeCode();
+            List<PositionHierarchy> positionHierarchies = positionHierarchyService
+                    .getListOfPositionHeirarchyByFromPositionAndObjectTypeAndSubType(positionId.get(), objectType.getId(),
+                            complaintType != null ? complaintType.getCode() : null)
+                    .stream()
+                    .filter(posHir -> activeComplaintTypeCodes.contains(posHir.getObjectSubType()))
+                    .collect(Collectors.toList());
+            return getEscalationDetailByPositionHierarchy(positionHierarchies);
+        } else return escalationHelpers;
+    }
+
+    public List<EscalationHelper> getEscalationDetailByPositionHierarchy(List<PositionHierarchy> positionHierarchies) {
+        List<EscalationHelper> escalationHelpers = new ArrayList<>();
+        for (PositionHierarchy posHir : positionHierarchies) {
+            EscalationHelper escalationHelper = new EscalationHelper();
+            if (posHir.getObjectSubType() != null)
+                escalationHelper.setComplaintType(complaintTypeService.findByCode(posHir.getObjectSubType()));
+            escalationHelper.setFromPosition(posHir.getFromPosition());
+            escalationHelper.setToPosition(posHir.getToPosition());
+            escalationHelpers.add(escalationHelper);
+        }
+        return escalationHelpers;
+    }
+
+    @Transactional
+    public void updateBulkEscalation(BulkEscalationGenerator bulkEscalationGenerator) {
+        for (ComplaintType complaintType : bulkEscalationGenerator.getComplaintTypes()) {
+            ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
+            PositionHierarchy positionHierarchy = new PositionHierarchy();
+            positionHierarchy.setObjectType(objectType);
+            positionHierarchy.setObjectSubType(complaintType.getCode());
+            positionHierarchy.setFromPosition(bulkEscalationGenerator.getFromPosition());
+            positionHierarchy.setToPosition(bulkEscalationGenerator.getToPosition());
+            PositionHierarchy existingPosHierarchy = getExistingEscalation(positionHierarchy);
+            if (existingPosHierarchy != null) {
+                existingPosHierarchy.setToPosition(bulkEscalationGenerator.getToPosition());
+                positionHierarchyService.updatePositionHierarchy(existingPosHierarchy);
+            } else
+                positionHierarchyService.createPositionHierarchy(positionHierarchy);
+        }
+    }
+
+    @Transactional
+    public void updateEscalation(Long id, EscalationForm escalationForm) {
+
+        ObjectType objectType = objectTypeService.getObjectTypeByName(PGRConstants.EG_OBJECT_TYPE_COMPLAINT);
+        List<PositionHierarchy> existingPosHierarchy = positionHierarchyService
+                .getPositionHeirarchyByFromPositionAndObjectType(id, objectType.getId());
+        if (!existingPosHierarchy.isEmpty())
+            positionHierarchyService.deleteAllInBatch(existingPosHierarchy);
+
+        for (PositionHierarchy posHierarchy : escalationForm.getPositionHierarchyList())
+            if (posHierarchy.getFromPosition() != null && posHierarchy.getToPosition() != null) {
+                posHierarchy.setFromPosition(positionMasterService.getPositionById(posHierarchy.getFromPosition().getId()));
+                posHierarchy.setToPosition(positionMasterService.getPositionById(posHierarchy.getToPosition().getId()));
+                posHierarchy.setObjectType(objectType);
+                posHierarchy.setObjectSubType(posHierarchy.getObjectSubType());
+                positionHierarchyService.createPositionHierarchy(posHierarchy);
+            }
     }
 }

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,16 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.collection.web.actions.reports;
-
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.TreeMap;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -57,18 +57,26 @@ import org.egov.collection.utils.CollectionsUtil;
 import org.egov.commons.EgwStatus;
 import org.egov.commons.entity.Source;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.reporting.engine.ReportFormat;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.reporting.engine.ReportDataSourceType;
+import org.egov.infra.reporting.engine.ReportFormat;
 import org.egov.infra.web.struts.actions.ReportFormAction;
 import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.TreeMap;
 
 /**
  * Action class for the cash collection summary report
  */
 @ParentPackage("egov")
 @Results({ @Result(name = CollectionSummaryAction.INDEX, location = "collectionSummary-index.jsp"),
-    @Result(name = CollectionSummaryAction.REPORT, location = "collectionSummary-report.jsp") })
+        @Result(name = CollectionSummaryAction.REPORT, location = "collectionSummary-report.jsp") })
 public class CollectionSummaryAction extends ReportFormAction {
 
     private static final long serialVersionUID = 1L;
@@ -80,9 +88,9 @@ public class CollectionSummaryAction extends ReportFormAction {
     private static final String EGOV_SOURCE = "EGOV_SOURCE";
     private static final String EGOV_SERVICE_ID = "EGOV_SERVICE_ID";
     private static final String EGOV_SERVICE_NAME = "EGOV_SERVICE_NAME";
-    private static final String EGOV_STATUS="EGOV_STATUS";
-    private static final String EGOV_CLASSIFICATION="EGOV_CLASSIFICATION";
-    
+    private static final String EGOV_STATUS = "EGOV_STATUS";
+    private static final String EGOV_CLASSIFICATION = "EGOV_CLASSIFICATION";
+
     private Integer statusId;
 
     private final Map<String, String> paymentModes = createPaymentModeList();
@@ -94,8 +102,9 @@ public class CollectionSummaryAction extends ReportFormAction {
     @PersistenceContext
     EntityManager entityManager;
     private String serviceType;
+    @Autowired
+    private CityService cityService;
 
-    
     /**
      * @return the payment mode list to be shown to user in criteria screen
      */
@@ -156,15 +165,17 @@ public class CollectionSummaryAction extends ReportFormAction {
     @Action(value = "/reports/collectionSummary-report")
     public String report() {
         if (getServiceId() != null && getServiceId() != -1) {
-            ServiceDetails serviceDets = (ServiceDetails) entityManager.find(ServiceDetails.class, getServiceId());
+            ServiceDetails serviceDets = entityManager.find(ServiceDetails.class, getServiceId());
             setServiceName(serviceDets.getName());
         }
         if (getStatusId() != -1) {
-            EgwStatus statusObj = (EgwStatus) entityManager.find(EgwStatus.class, getStatusId());
-            setStatusName(statusObj.getDescription());                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                        
+            EgwStatus statusObj = entityManager.find(EgwStatus.class, getStatusId());
+            setStatusName(statusObj.getDescription());
         }
         setClassification(getServiceType());
-        setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(), getSource(), getServiceId(),getStatusId(),getServiceType()));
+        setReportData(reportService.getCollectionSummaryReport(getFromDate(), getToDate(), getPaymentMode(), getSource(),
+                getServiceId(), getStatusId(), getServiceType()));
+        setReportParam(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
         return super.report();
     }
 
@@ -180,8 +191,7 @@ public class CollectionSummaryAction extends ReportFormAction {
     }
 
     /**
-     * @param fromDate
-     *            the from date to set
+     * @param fromDate the from date to set
      */
     public void setFromDate(final Date fromDate) {
         setReportParam(EGOV_FROM_DATE, fromDate);
@@ -195,8 +205,7 @@ public class CollectionSummaryAction extends ReportFormAction {
     }
 
     /**
-     * @param toDate
-     *            the to date to set
+     * @param toDate the to date to set
      */
     public void setToDate(final Date toDate) {
         setReportParam(EGOV_TO_DATE, toDate);
@@ -210,8 +219,7 @@ public class CollectionSummaryAction extends ReportFormAction {
     }
 
     /**
-     * @param paymentMode
-     *            the payment mode to set (cash/cheque)
+     * @param paymentMode the payment mode to set (cash/cheque)
      */
     public void setPaymentMode(final String paymentMode) {
         setReportParam(EGOV_PAYMENT_MODE, paymentMode);
@@ -246,7 +254,7 @@ public class CollectionSummaryAction extends ReportFormAction {
     public void setServiceId(final Long serviceId) {
         setReportParam(EGOV_SERVICE_ID, serviceId);
     }
-    
+
     public Long getServiceName() {
         return (Long) getReportParam(EGOV_SERVICE_ID);
     }
@@ -260,8 +268,6 @@ public class CollectionSummaryAction extends ReportFormAction {
         return COLLECTION_SUMMARY_TEMPLATE;
     }
 
-
-    
     public int getStatusId() {
         return statusId;
     }
@@ -277,7 +283,7 @@ public class CollectionSummaryAction extends ReportFormAction {
     public void setStatusName(final String statusName) {
         setReportParam(EGOV_STATUS, statusName);
     }
-    
+
     public TreeMap<String, String> getServiceTypeMap() {
         return serviceTypeMap;
     }
@@ -293,7 +299,7 @@ public class CollectionSummaryAction extends ReportFormAction {
     public void setServiceType(String serviceType) {
         this.serviceType = serviceType;
     }
-    
+
     public String getClassification() {
         return (String) getReportParam(EGOV_CLASSIFICATION);
     }

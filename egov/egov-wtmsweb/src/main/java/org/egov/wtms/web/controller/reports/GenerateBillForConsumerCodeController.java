@@ -1,9 +1,9 @@
 
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -27,6 +27,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -37,11 +44,41 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.reports;
 
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
+import org.apache.commons.io.FileUtils;
+import org.egov.demand.model.EgBill;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infstr.services.PersistenceService;
+import org.egov.wtms.application.service.SearchNoticeService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.collection.ConnectionBillService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.service.bill.WaterConnectionBillService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -52,42 +89,14 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
-
-import org.apache.commons.io.FileUtils;
-import org.apache.log4j.Logger;
-import org.egov.demand.model.EgBill;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.wtms.application.service.GenerateConnectionBillService;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.service.bill.WaterConnectionBillService;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
-import org.hibernate.Query;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONTENT_DISPOSITION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/report")
 public class GenerateBillForConsumerCodeController {
-    
+
     @Autowired
     @Qualifier("persistenceService")
     private PersistenceService persistenceService;
@@ -99,35 +108,40 @@ public class GenerateBillForConsumerCodeController {
     private ApplicationContext beanProvider;
 
     @Autowired
-    private GenerateConnectionBillService generateConnectionBillService;
+    private SearchNoticeService searchNoticeService;
 
     @Autowired
     private FileStoreMapperRepository fileStoreMapperRepository;
 
     @Autowired
     private FileStoreService fileStoreService;
+    
+    @Autowired
+    private ConnectionBillService connectionBillService;
 
-    private static final Logger LOGGER = Logger.getLogger(GenerateBillForConsumerCodeController.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(GenerateBillForConsumerCodeController.class);
 
     @RequestMapping(value = "/generateBillForHSCNo/{consumerCode}", method = GET)
     public String newForm(final Model model, @PathVariable final String consumerCode, final HttpServletRequest request,
             final HttpServletResponse response) {
         WaterConnectionBillService waterConnectionBillService = null;
         try {
-            EgBill  egBill=getBillByConsumerCode(consumerCode);
-              if (egBill!=null)
-                  throw new ValidationException("err.demand.bill.generated");
-              else 
-            waterConnectionBillService = (WaterConnectionBillService) beanProvider
-                    .getBean("waterConnectionBillService");
+            final EgBill egBill = connectionBillService.getBillByConsumerCode(consumerCode);
+            if (egBill != null)
+                throw new ValidationException("err.demand.bill.generated");
+            else
+                waterConnectionBillService = (WaterConnectionBillService) beanProvider
+                        .getBean("waterConnectionBillService");
         } catch (final NoSuchBeanDefinitionException e) {
 
         }
         if (waterConnectionBillService != null)
             waterConnectionBillService.generateBillForConsumercode(consumerCode);
-        final List<Long> waterChargesDocumentslist = generateConnectionBillService.getDocuments(consumerCode,
-                waterConnectionDetailsService.findByApplicationNumberOrConsumerCode(consumerCode).getApplicationType()
+        final List<Long> waterChargesDocumentslist = searchNoticeService.getDocuments(consumerCode,
+                waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE)
+                        .getApplicationType()
                         .getName());
+        model.addAttribute("consumerCode", consumerCode);
         model.addAttribute("successMessage", "Demand Bill got generated, Please click on download.");
         model.addAttribute("fileStoreId", !waterChargesDocumentslist.isEmpty() ? waterChargesDocumentslist.get(0) : "");
         return "generatebill-consumercode";
@@ -141,8 +155,8 @@ public class GenerateBillForConsumerCodeController {
         if (signedFileStoreId != null)
             try {
                 final FileStoreMapper fsm = fileStoreMapperRepository.findByFileStoreId(signedFileStoreId);
-                final List<InputStream> pdfs = new ArrayList<InputStream>();
-                final File file = fileStoreService.fetch(fsm, WaterTaxConstants.FILESTORE_MODULECODE);
+                final List<InputStream> pdfs = new ArrayList<>();
+                final File file = fileStoreService.fetch(fsm, FILESTORE_MODULECODE);
                 final byte[] bFile = FileUtils.readFileToByteArray(file);
                 pdfs.add(new ByteArrayInputStream(bFile));
                 getServletResponse(response, pdfs, consumerCode);
@@ -160,7 +174,7 @@ public class GenerateBillForConsumerCodeController {
         try {
             final ByteArrayOutputStream output = new ByteArrayOutputStream();
             final byte[] data = concatPDFs(pdfs, output);
-            response.setHeader(WaterTaxConstants.CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
+            response.setHeader(CONTENT_DISPOSITION, "attachment;filename=" + filename + ".pdf");
             response.setContentType("application/pdf");
             response.setContentLength(data.length);
             response.getOutputStream().write(data);
@@ -175,7 +189,7 @@ public class GenerateBillForConsumerCodeController {
         Document document = null;
         try {
             final List<InputStream> pdfs = streamOfPDFFiles;
-            final List<PdfReader> readers = new ArrayList<PdfReader>();
+            final List<PdfReader> readers = new ArrayList<>();
             final Iterator<InputStream> iteratorPDFs = pdfs.iterator();
 
             // Create Readers for the pdfs.
@@ -230,24 +244,6 @@ public class GenerateBillForConsumerCodeController {
         }
         return outputStream.toByteArray();
     }
+
     
-    public EgBill getBillByConsumerCode(final String consumerCode) {
-        EgBill  egBill=null;
-        final String query = "select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd "
-                        + "where billtype.id=bill.egBillType and billtype.code='MANUAL' and bill.consumerId = conn.consumerCode and conn.id=connDet.connection and connDet.id=conndem.waterConnectionDetails "
-                        + " and demd.id=bill.egDemand and demd.id=conndem.demand and connDet.connectionType='"+WaterTaxConstants.NON_METERED+"' "
-                        + " and demd.isHistory = '"+WaterTaxConstants.DEMANDISHISTORY+"' and  bill.is_Cancelled='"+WaterTaxConstants.DEMANDISHISTORY+"' and bill.serviceCode='"+WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE+"'"
-                        + " and connDet.connectionStatus='"+WaterTaxConstants.MASTERSTATUSACTIVE+"' and connDet.status=status.id and status.moduletype='"+WaterTaxConstants.MODULETYPE+"' "
-                        + " and status.code='"+WaterTaxConstants.APPLICATION_STATUS_SANCTIONED+"' and conn.consumerCode =:consumerCode  order by bill.id desc";
-        final Query hibquery = persistenceService.getSession().createQuery(query.toString())
-                        .setString("consumerCode", consumerCode);
-        List<EgBill>egBilltemp=hibquery.list();
-        if(!egBilltemp.isEmpty())
-        {
-                egBill=egBilltemp.get(0);
-        }
-        LOGGER.debug(
-                        "query to get Bill for single consumernumber" + query.toString() + " for consumer No= " + consumerCode);
-        return egBill;
-}
 }

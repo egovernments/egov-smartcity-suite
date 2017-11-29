@@ -1,48 +1,49 @@
 /*
- * eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
- * accountability and the service delivery of the government  organizations.
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
  *
- *  Copyright (C) <2017>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
- *  The updated version of eGov suite of products as by eGovernments Foundation
- *  is available at http://www.egovernments.org
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
  *
- *  This program is free software: you can redistribute it and/or modify
- *  it under the terms of the GNU General Public License as published by
- *  the Free Software Foundation, either version 3 of the License, or
- *  any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
  *
- *  This program is distributed in the hope that it will be useful,
- *  but WITHOUT ANY WARRANTY; without even the implied warranty of
- *  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *  GNU General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
  *
- *  You should have received a copy of the GNU General Public License
- *  along with this program. If not, see http://www.gnu.org/licenses/ or
- *  http://www.gnu.org/licenses/gpl.html .
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
  *
- *  In addition to the terms of the GPL license to be adhered to in using this
- *  program, the following additional terms are to be complied with:
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
  *
- *      1) All versions of this program, verbatim or modified must carry this
- *         Legal Notice.
- * 	Further, all user interfaces, including but not limited to citizen facing interfaces,
- *         Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
- *         derived works should carry eGovernments Foundation logo on the top right corner.
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
- * 	For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- * 	For any further queries on attribution, including queries on brand guidelines,
- *         please contact contact@egovernments.org
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
- *      2) Any misrepresentation of the origin of the material is prohibited. It
- *         is required that all modified versions of this material be marked in
- *         reasonable ways as different from the original version.
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
  *
- *      3) This license does not grant any rights to any user of the program
- *         with regards to rights under trademark law for use of the trade names
- *         or trademarks of eGovernments Foundation.
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
  *
- *  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.infra.workflow.entity;
@@ -51,9 +52,9 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.entity.AbstractAuditable;
+import org.egov.infra.utils.JsonUtils;
 import org.egov.infra.workflow.entity.State.StateStatus;
 import org.egov.infra.workflow.entity.contract.StateInfoBuilder;
-import org.egov.pims.commons.Position;
 import org.hibernate.envers.Audited;
 import org.hibernate.envers.RelationTargetAuditMode;
 
@@ -72,12 +73,12 @@ import java.util.List;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 
 @MappedSuperclass
-public abstract class StateAware extends AbstractAuditable {
+public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable {
     private static final long serialVersionUID = 5776408218810221246L;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
-    private State state;
+    private State<T> state;
 
     @Transient
     @JsonIgnore
@@ -100,7 +101,7 @@ public abstract class StateAware extends AbstractAuditable {
     }
 
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
-    public State getState() {
+    public State<T> getState() {
         return state;
     }
 
@@ -108,24 +109,28 @@ public abstract class StateAware extends AbstractAuditable {
         this.state = state;
     }
 
-    public final State getCurrentState() {
-        return state;
+    public final State<T> getCurrentState() {
+        return getState();
     }
 
-    public final Position currentAssignee() {
-        return state.getOwnerPosition();
+    public final T currentAssignee() {
+        return getState().getOwnerPosition();
     }
 
-    public final Position previousAssignee() {
-        return state.getPreviousOwner();
+    public final T previousAssignee() {
+        return getState().getPreviousOwner();
     }
 
-    public final List<StateHistory> getStateHistory() {
-        return state == null ? Collections.emptyList() : new LinkedList<>(state.getHistory());
+    public final List<StateHistory<T>> getStateHistory() {
+        return state == null ? Collections.emptyList() : new LinkedList(getState().getHistory());
     }
 
     public final String getStateType() {
         return this.getClass().getSimpleName();
+    }
+
+    public <S> S extraInfoAs(Class<S> type) {
+        return state.extraInfoAs(type);
     }
 
     public final boolean transitionInitialized() {
@@ -150,12 +155,12 @@ public abstract class StateAware extends AbstractAuditable {
         return this.transition;
     }
 
-    public final void changeProcessOwner(Position position) {
+    public final void changeProcessOwner(T position) {
         if (transitionInprogress())
             this.state.setOwnerPosition(position);
     }
 
-    public final void changeProcessInitiator(Position position) {
+    public final void changeProcessInitiator(T position) {
         if (transitionInprogress())
             this.state.setInitiatorPosition(position);
     }
@@ -213,7 +218,7 @@ public abstract class StateAware extends AbstractAuditable {
         }
 
         public final Transition progress() {
-            Position previousOwner = state.getOwnerPosition();
+            T previousOwner = state.getOwnerPosition();
             progressWithStateCopy();
             resetState();
             state.setPreviousOwner(previousOwner);
@@ -245,7 +250,6 @@ public abstract class StateAware extends AbstractAuditable {
             return this;
         }
 
-
         public final Transition reopen() {
             checkinTransition();
             if (transitionCompleted()) {
@@ -264,13 +268,13 @@ public abstract class StateAware extends AbstractAuditable {
             return this;
         }
 
-        public final Transition withOwner(Position owner) {
+        public final Transition withOwner(T owner) {
             checkTransitionStatus();
             state.setOwnerPosition(owner);
             return this;
         }
 
-        public final Transition withInitiator(Position owner) {
+        public final Transition withInitiator(T owner) {
             checkTransitionStatus();
             state.setInitiatorPosition(owner);
             return this;
@@ -303,6 +307,12 @@ public abstract class StateAware extends AbstractAuditable {
         public final Transition withExtraInfo(String extraInfo) {
             checkTransitionStatus();
             state.setExtraInfo(extraInfo);
+            return this;
+        }
+
+        public final Transition withExtraInfo(Object extraInfo) {
+            checkTransitionStatus();
+            state.setExtraInfo(JsonUtils.toJSON(extraInfo));
             return this;
         }
 

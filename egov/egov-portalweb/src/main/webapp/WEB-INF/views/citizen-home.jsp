@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
   <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
@@ -65,8 +73,8 @@
           <header>
             <nav class="navbar">
               <div class="col-md-6 col-sm-9 col-xs-12 left-section">
-                <span><img src="<cdn:url value='/resources/global/images/logo@2x.png' context='/egi'/>" height="52px">
-                
+                <span>
+					<img src="<c:url value='/downloadfile/logo' context="/egi"/>" height="60" class="homepage_logo">
                 </span>
                 <span class="corporation-name"><spring:message code="lbl.portalservices" /></span>
               </div>
@@ -145,6 +153,7 @@
                   <tr>
                     <th><spring:message code="lbl.slno" /></th>
                     <th><spring:message code="lbl.applicartionno" /></th>
+                    <th><spring:message code="lbl.applicant.name" /></th>
                     <th><spring:message code="lbl.applicationdate" /></th>
                     <th><spring:message code="lbl.servicegroup" /></th>
                     <th><spring:message code="lbl.servicename" /></th>
@@ -159,6 +168,7 @@
 		                 <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 		                   <td><span class="spansno">${item.index + 1}</span></td>
 		                   <td>${inboxItem.portalInbox.applicationNumber}</td>
+		                   <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
 		                   <td>
 			                   <fmt:formatDate
 								value="${inboxItem.portalInbox.applicationDate}"
@@ -196,6 +206,7 @@
 	                	<tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
+	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
 	                    <td>
 	                    	<fmt:formatDate
 								value="${inboxItem.portalInbox.applicationDate}"
@@ -234,6 +245,7 @@
 	                  <tr onclick="openPopUp('${inboxItem.portalInbox.link}');" class = "${inboxItem.portalInbox.module.contextRoot } showAll">
 	                    <td><span class="spansno">${item.index + 1}</span></td>
 	                    <td>${inboxItem.portalInbox.applicationNumber}</td>
+	                    <td>${inboxItem.portalInbox.portalInboxUsers[0].user.name}</td>
 	                    <td>
 		                   <fmt:formatDate
 							value="${inboxItem.portalInbox.applicationDate}"

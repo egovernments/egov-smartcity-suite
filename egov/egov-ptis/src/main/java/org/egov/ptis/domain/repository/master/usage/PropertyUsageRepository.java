@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,17 +43,18 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.repository.master.usage;
-
-import java.util.List;
 
 import org.egov.ptis.domain.entity.property.Category;
 import org.egov.ptis.domain.entity.property.PropertyUsage;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 @Repository
 public interface PropertyUsageRepository extends JpaRepository<PropertyUsage, Long> {
@@ -57,10 +65,10 @@ public interface PropertyUsageRepository extends JpaRepository<PropertyUsage, Lo
 
     public List<PropertyUsage> findByIsResidentialFalseAndIsActiveTrueOrderByUsageName();
     
-    @Query(value = "select isActive from egpt_property_usage_master where upper(code) = upper(:usageCode)", nativeQuery = true)
+    @Query(value = "select isActive from egpt_property_usage_master where code = :usageCode", nativeQuery = true)
     Boolean findIsActiveByCode(@Param("usageCode") String usageCode);
     
-    @Query(value = "select us from egpt_property_usage_master us where upper(us.code) = upper(:usageCode)", nativeQuery = true)
+    @Query(value = "select * from egpt_property_usage_master where code = :usageCode", nativeQuery = true)
     PropertyUsage findUsageByCode(@Param("usageCode") String usageCode);
     
     @Query(value = "select * from egpt_property_usage_master where upper(code) = upper(:usageCode) and id <> :usageId", nativeQuery = true)

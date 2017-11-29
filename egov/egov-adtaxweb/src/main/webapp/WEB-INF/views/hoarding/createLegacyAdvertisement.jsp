@@ -1,8 +1,8 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 	<%@ page contentType="text/html;charset=UTF-8" language="java"%>
@@ -143,7 +151,7 @@
 								<form:hidden path="status" id="status" value="${status.id}" /> 
 								 --%>
 										<form:input type="text"  cssClass="form-control patternvalidation" 
-                        	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" />
+                        	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="15" id="applicationNumber" />
                                		<form:errors path="applicationNumber" cssClass="error-msg" />
 								</div>
 								<label class="col-sm-2 control-label text-right">								
@@ -170,10 +178,7 @@
                                		</div>
                                		</c:otherwise>
                                		</c:choose>
-								
-							</div>
-							
-							
+									</div>
 							<div class="form-group">
 							<c:choose>
 								<c:when test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
@@ -182,14 +187,14 @@
 										</label>
 									<div class="col-sm-3 add-margin">
 										<form:input type="text" cssClass="form-control patternvalidation" 
-	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" />
+	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="15"  path="permissionNumber" id="permissionNumber" />
 	                               		<form:errors path="permissionNumber" cssClass="error-msg" />
 									</div>
 									<label class="col-sm-2 control-label text-right">
 									<spring:message code="lbl.advertisement.no"/></label>
 									<div class="col-sm-3 add-margin">
 										<form:input type="text" cssClass="form-control patternvalidation" 
-	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" />
+	                        	      data-pattern="alphanumerichyphenbackslash" maxlength="15"  path="advertisement.advertisementNumber" id="advertisementnumber" />
 	                               		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
 									</div>
 								</c:when>
@@ -354,13 +359,7 @@
 								<form:hidden path="taxAmount"  value="0"/>
 								</div>
 								</c:otherwise>
-							</c:choose>
-							
-								
-								
-								
-								
-							
+							</c:choose>		
 						<c:if test="${advertisementPermitDetail.advertisement.legacy == 'true'}">
 							<div class="form-group">
 								<label class="col-sm-3 control-label text-right">
@@ -369,10 +368,7 @@
 								<div class="col-sm-3 add-margin">
 									<form:radiobutton path="advertisement.taxPaidForCurrentYear" value="true"/>Yes 
 									<form:radiobutton path="advertisement.taxPaidForCurrentYear" value="false"/>No 
-								</div>
-									
-								
-								
+								</div>	
 							</div>
 							<div class="panel-heading custom_form_panel_heading">
 								<div class="panel-title">

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.tl.utils;
@@ -54,7 +62,9 @@ import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
+import org.egov.tl.config.properties.TlApplicationProperties;
 import org.egov.tl.entity.License;
+import org.egov.tl.entity.LicenseAppType;
 import org.egov.tl.entity.LicenseSubCategory;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.LicenseSubCategoryService;
@@ -66,9 +76,10 @@ import java.util.Date;
 import java.util.List;
 
 import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
+import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADELICENSEMODULE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
-
 @Service
 public class LicenseUtils {
     @Autowired
@@ -92,6 +103,8 @@ public class LicenseUtils {
 
     @Autowired
     private LicenseStatusService licenseStatusService;
+    @Autowired
+    private TlApplicationProperties tlApplicationProperties;
 
     public Module getModule(final String moduleName) {
         return moduleService.getModuleByName(moduleName);
@@ -144,5 +157,14 @@ public class LicenseUtils {
     public License licenseStatusUpdate(final License licenseObj, final String code) {
         licenseObj.setStatus(licenseStatusService.getLicenseStatusByCode(code));
         return licenseObj;
+    }
+
+    public Integer getSlaForAppType(LicenseAppType licenseAppType) {
+        if (NEW_LIC_APPTYPE.equals(licenseAppType.getName()))
+            return tlApplicationProperties.getValue("sla.new.apptype");
+        else if (RENEWAL_LIC_APPTYPE.equals(licenseAppType.getName()))
+            return tlApplicationProperties.getValue("sla.renew.apptype");
+        else
+            return tlApplicationProperties.getValue("sla.closure.apptype");
     }
 }

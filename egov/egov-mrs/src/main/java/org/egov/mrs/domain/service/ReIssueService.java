@@ -1,55 +1,52 @@
-/* eGov suite of products aim to improve the internal efficiency,transparency,
-   accountability and the service delivery of the government  organizations.
-
-    Copyright (C) <2016>  eGovernments Foundation
-
-    The updated version of eGov suite of products as by eGovernments Foundation
-    is available at http://www.egovernments.org
-
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    any later version.
-
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program. If not, see http://www.gnu.org/licenses/ or
-    http://www.gnu.org/licenses/gpl.html .
-
-    In addition to the terms of the GPL license to be adhered to in using this
-    program, the following additional terms are to be complied with:
-
-        1) All versions of this program, verbatim or modified must carry this
-           Legal Notice.
-
-        2) Any misrepresentation of the origin of the material is prohibited. It
-           is required that all modified versions of this material be marked in
-           reasonable ways as different from the original version.
-
-        3) This license does not grant any rights to any user of the program
-           with regards to rights under trademark law for use of the trade names
-           or trademarks of eGovernments Foundation.
-
-  In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+/*
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+ *    accountability and the service delivery of the government  organizations.
+ *
+ *     Copyright (C) 2017  eGovernments Foundation
+ *
+ *     The updated version of eGov suite of products as by eGovernments Foundation
+ *     is available at http://www.egovernments.org
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with this program. If not, see http://www.gnu.org/licenses/ or
+ *     http://www.gnu.org/licenses/gpl.html .
+ *
+ *     In addition to the terms of the GPL license to be adhered to in using this
+ *     program, the following additional terms are to be complied with:
+ *
+ *         1) All versions of this program, verbatim or modified must carry this
+ *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
+ *
+ *         2) Any misrepresentation of the origin of the material is prohibited. It
+ *            is required that all modified versions of this material be marked in
+ *            reasonable ways as different from the original version.
+ *
+ *         3) This license does not grant any rights to any user of the program
+ *            with regards to rights under trademark law for use of the trade names
+ *            or trademarks of eGovernments Foundation.
+ *
+ *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.mrs.domain.service;
-
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.commons.entity.Source;
@@ -87,6 +84,16 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 @Service
 @Transactional(readOnly = true)
 public class ReIssueService {
@@ -122,7 +129,7 @@ public class ReIssueService {
     @Autowired
     private ReIssueCertificateUpdateIndexesService reiSsueUpdateIndexesService;
     @Autowired
-    protected AppConfigValueService appConfigValuesService;
+    private AppConfigValueService appConfigValuesService;
     @Autowired
     private SecurityUtils securityUtils;
     @Autowired
@@ -189,7 +196,7 @@ public class ReIssueService {
 
     @Transactional
     public ReIssue forwardReIssue(final Long id, final ReIssue reissue,
-            final WorkflowContainer workflowContainer) {
+                                  final WorkflowContainer workflowContainer) {
         updateReIssueData(reissue);
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CREATED.toString(),
@@ -204,8 +211,7 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
-            final HttpServletRequest request) throws IOException {
+    public ReIssue approveReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer) throws IOException {
         reissue.setStatus(
                 marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.APPROVED.toString(),
                         MarriageConstants.MODULE_NAME));
@@ -214,7 +220,7 @@ public class ReIssueService {
             workflowService.transition(reissue1, workflowContainer, workflowContainer.getApproverComments());
             reiSsueUpdateIndexesService.updateReIssueAppIndex(reissue1);
         } else
-            printCertificate(reissue1, workflowContainer, request);
+            printCertificate(reissue1, workflowContainer);
         if (reissue.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(reissue.getSource())
                 && getPortalInbox(reissue.getApplicationNo()) != null)
@@ -225,14 +231,13 @@ public class ReIssueService {
     }
 
     @Transactional
-    public ReIssue rejectReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer,
-            final HttpServletRequest request)
+    public ReIssue rejectReIssue(final ReIssue reissue, final WorkflowContainer workflowContainer)
             throws IOException {
         reissue.setStatus(
                 workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_REJECT) ? marriageUtils
                         .getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.REJECTED.toString(), MarriageConstants.MODULE_NAME)
                         : marriageUtils.getStatusByCodeAndModuleType(ReIssue.ReIssueStatus.CANCELLED.toString(),
-                                MarriageConstants.MODULE_NAME));
+                        MarriageConstants.MODULE_NAME));
 
         if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_CANCEL_REISSUE)) {
             final List<AppConfigValues> appConfigValues = appConfigValuesService.getConfigValuesByModuleAndKey(
@@ -241,7 +246,7 @@ public class ReIssueService {
             if (appConfigValues != null && !appConfigValues.isEmpty()
                     && "YES".equalsIgnoreCase(appConfigValues.get(0).getValue())) {
 
-                final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue, request,
+                final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(reissue,
                         MarriageCertificateType.REJECTION);
                 reissue.addCertificate(marriageCertificate);
             }
@@ -284,35 +289,35 @@ public class ReIssueService {
     }
 
     @Transactional
-    public MarriageCertificate generateReIssueCertificate(final ReIssue reIssue,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+    public MarriageCertificate generateReIssueCertificate(final ReIssue reIssue) throws IOException {
         final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
-                reIssue, request, MarriageCertificateType.REISSUE);
+                reIssue, MarriageCertificateType.REISSUE);
         reIssue.addCertificate(marriageCertificate);
         return marriageCertificate;
     }
 
     @Transactional
     public ReIssue digiSignCertificate(final ReIssue reIssue,
-            final WorkflowContainer workflowContainer, final HttpServletRequest request) throws IOException {
+                                       final WorkflowContainer workflowContainer) {
         reIssue.setStatus(marriageUtils.getStatusByCodeAndModuleType(
-                MarriageRegistration.RegistrationStatus.DIGITALSIGNED.toString(), MarriageConstants.MODULE_NAME));
+                ReIssue.ReIssueStatus.CERTIFICATEREISSUED.toString(), MarriageConstants.MODULE_NAME));
         workflowService.transition(reIssue, workflowContainer, workflowContainer.getApproverComments());
         reiSsueUpdateIndexesService.updateReIssueAppIndex(reIssue);
         if (reIssue.getSource() != null
                 && Source.CITIZENPORTAL.name().equalsIgnoreCase(reIssue.getSource())
                 && getPortalInbox(reIssue.getApplicationNo()) != null)
             updatePortalMessage(reIssue);
+        marriageSmsAndEmailService.sendSMSForReIssueApplication(reIssue);
+        marriageSmsAndEmailService.sendEmailForReIssueApplication(reIssue);
         return reIssue;
     }
 
     @Transactional
-    public ReIssue printCertificate(final ReIssue reIssue, final WorkflowContainer workflowContainer,
-            final HttpServletRequest request)
+    public ReIssue printCertificate(final ReIssue reIssue, final WorkflowContainer workflowContainer)
             throws IOException {
         if (reIssue.getMarriageCertificate().isEmpty()) {
             final MarriageCertificate marriageCertificate = marriageCertificateService.reIssueCertificate(
-                    reIssue, request, MarriageCertificateType.REISSUE);
+                    reIssue, MarriageCertificateType.REISSUE);
             reIssue.addCertificate(marriageCertificate);
         }
         reIssue.setStatus(
@@ -334,14 +339,14 @@ public class ReIssueService {
     public List<Map<String, Object>> getHistory(final ReIssue reIssue) {
         User user;
         final List<Map<String, Object>> historyTable = new ArrayList<>();
-        final State state = reIssue.getState();
+        final State<Position> state = reIssue.getState();
         final Map<String, Object> map = new HashMap<>(0);
         if (null != state) {
             if (!reIssue.getStateHistory().isEmpty()
                     && reIssue.getStateHistory() != null)
                 Collections.reverse(reIssue.getStateHistory());
             Map<String, Object> historyMap;
-            for (final StateHistory stateHistory : reIssue.getStateHistory()) {
+            for (final StateHistory<Position> stateHistory : reIssue.getStateHistory()) {
                 historyMap = new HashMap<>(0);
                 historyMap.put("date", stateHistory.getDateInfo());
                 historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
@@ -387,7 +392,7 @@ public class ReIssueService {
     }
 
     public boolean checkAnyWorkFlowInProgressForRegistration(final MarriageRegistration registration) {
-        return reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo()) == null ? true : false;
+        return reIssueRepository.findReIssueInProgressForRegistration(registration.getRegistrationNo()) == null ? false : true;
     }
 
     /**

@@ -1,41 +1,49 @@
 <%--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
-  ~      accountability and the service delivery of the government  organizations.
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
   ~
-  ~       Copyright (C) 2016  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
-  ~       The updated version of eGov suite of products as by eGovernments Foundation
-  ~       is available at http://www.egovernments.org
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
   ~
-  ~       This program is free software: you can redistribute it and/or modify
-  ~       it under the terms of the GNU General Public License as published by
-  ~       the Free Software Foundation, either version 3 of the License, or
-  ~       any later version.
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
   ~
-  ~       This program is distributed in the hope that it will be useful,
-  ~       but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~       MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~       GNU General Public License for more details.
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
   ~
-  ~       You should have received a copy of the GNU General Public License
-  ~       along with this program. If not, see http://www.gnu.org/licenses/ or
-  ~       http://www.gnu.org/licenses/gpl.html .
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
   ~
-  ~       In addition to the terms of the GPL license to be adhered to in using this
-  ~       program, the following additional terms are to be complied with:
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
   ~
-  ~           1) All versions of this program, verbatim or modified must carry this
-  ~              Legal Notice.
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
   ~
-  ~           2) Any misrepresentation of the origin of the material is prohibited. It
-  ~              is required that all modified versions of this material be marked in
-  ~              reasonable ways as different from the original version.
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
-  ~           3) This license does not grant any rights to any user of the program
-  ~              with regards to rights under trademark law for use of the trade names
-  ~              or trademarks of eGovernments Foundation.
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
   ~
-  ~     In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   --%>
 
 <%@ page contentType="text/html;charset=UTF-8" language="java"%>
@@ -70,38 +78,38 @@ body
 						<div class="panel panel-primary" data-collapsed="0">
 							<form:hidden path="" name="propertyByEmployee" id="propertyByEmployee" value="${propertyByEmployee}" />
 							<form:hidden path="" name="applicationSource" value="${applicationSource}"/>
-							<div class="panel-heading" style="text-align: left">
-								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
-							</div>
-							<div class="panel-body custom-form">
-							       <div class="panel-body custom-form">
-							       	<jsp:include page="vacancy-remission-documents.jsp"></jsp:include>
-							     </div>
-								<div class="form-group">
-									<label class="col-sm-3 control-label text-right">
-										<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>
-									</label>
-									<div class="col-sm-3 add-margin">
-										<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
-										<form:errors path="vacancyFromDate" cssClass="add-margin error-msg"/>
-									</div>
-                                    <label class="col-sm-2 control-label text-right">
-                                    	<spring:message code="lbl.toDate" /> <span class="mandatory"></span>
-									</label>
-									<div class="col-sm-3 add-margin">
-										<form:input path="vacancyToDate" id="toDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
-										<form:errors path="vacancyToDate" cssClass="add-margin error-msg"/>
-									</div>
+							<div class="panel-body custom-form ">
+								<div class="panel-heading" style="text-align: left">
+									<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
+									<div class="form-group">
+										<label class="col-sm-3 control-label text-right">
+											<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>
+										</label>
+										<div class="col-sm-3 add-margin">
+											<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
+											<form:errors path="vacancyFromDate" cssClass="add-margin error-msg"/>
+										</div>
+	                                    <label class="col-sm-2 control-label text-right">
+	                                    	<spring:message code="lbl.toDate" /> <span class="mandatory"></span>
+										</label>
+										<div class="col-sm-3 add-margin">
+											<form:input path="vacancyToDate" id="toDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
+											<form:errors path="vacancyToDate" cssClass="add-margin error-msg"/>
+										</div>
 								</div>
-								<div class="form-group">
 									<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.vacancy.comments" /> <span class="mandatory"></span>
 									</label>
-									<div class="col-sm-8 add-margin">
+									<div class="col-sm-5 add-margin">
 										<form:textarea path="vacancyComments" class="form-control" required="required" />
 										<form:errors path="vacancyComments" cssClass="add-margin error-msg"/>
 									</div>
 								</div>
+							</div></br>
+							<div class="panel-body custom-form">
+							       <div class="panel-body custom-form">
+							       	<jsp:include page="vacancy-remission-documents.jsp"></jsp:include>
+							     </div>
 							</div>
 						</div>
 					</div>

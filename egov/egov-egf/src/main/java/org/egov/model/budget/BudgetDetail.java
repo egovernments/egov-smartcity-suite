@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.model.budget;
 
@@ -49,6 +57,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 import org.hibernate.validator.constraints.Length;
 
 import javax.persistence.CascadeType;
@@ -77,7 +86,7 @@ import static org.egov.model.budget.BudgetDetail.SEQ_BUDGETDETAIL;
 @Entity
 @Table(name = "EGF_BUDGETDETAIL")
 @SequenceGenerator(name = SEQ_BUDGETDETAIL, sequenceName = SEQ_BUDGETDETAIL, allocationSize = 1)
-public class BudgetDetail extends StateAware {
+public class BudgetDetail extends StateAware<Position> {
     public static final String SEQ_BUDGETDETAIL = "SEQ_EGF_BUDGETDETAIL";
     private static final long serialVersionUID = 5908792258911500512L;
     @Id
@@ -145,7 +154,7 @@ public class BudgetDetail extends StateAware {
     private String materializedPath;
 
     @OneToMany(mappedBy = "budgetDetail", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<BudgetReAppropriation>(
+    private Set<BudgetReAppropriation> budgetReAppropriations = new HashSet<>(
             0);
 
     @Column(name = "document_number")
@@ -334,9 +343,9 @@ public class BudgetDetail extends StateAware {
     }
 
     public List<BudgetReAppropriation> getNonApprovedReAppropriations() {
-        final List<BudgetReAppropriation> reAppList = new ArrayList<BudgetReAppropriation>();
+        final List<BudgetReAppropriation> reAppList = new ArrayList<>();
         budgetReAppropriations = budgetReAppropriations == null
-                ? new HashSet<BudgetReAppropriation>()
+                ? new HashSet<>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription()
@@ -348,14 +357,14 @@ public class BudgetDetail extends StateAware {
     public BigDecimal getApprovedReAppropriationsTotal() {
         BigDecimal total = BigDecimal.ZERO;
         budgetReAppropriations = budgetReAppropriations == null
-                ? new HashSet<BudgetReAppropriation>()
+                ? new HashSet<>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription()
                     .equalsIgnoreCase("Cancelled"))
                 if ((entry.getAdditionAmount() != null)
-                        && !(BigDecimal.ZERO
-                        .compareTo(entry.getAdditionAmount()) == 0))
+                        && BigDecimal.ZERO
+                        .compareTo(entry.getAdditionAmount()) != 0)
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -366,15 +375,15 @@ public class BudgetDetail extends StateAware {
             final Date asOnDate) {
         BigDecimal total = BigDecimal.ZERO;
         budgetReAppropriations = budgetReAppropriations == null
-                ? new HashSet<BudgetReAppropriation>()
+                ? new HashSet<>()
                 : budgetReAppropriations;
         for (final BudgetReAppropriation entry : budgetReAppropriations)
             if (!entry.getStatus().getDescription()
                     .equalsIgnoreCase("Cancelled")
                     && entry.getCreatedDate().before(asOnDate))
                 if ((entry.getAdditionAmount() != null)
-                        && !(BigDecimal.ZERO
-                        .compareTo(entry.getAdditionAmount()) == 0))
+                        && BigDecimal.ZERO
+                        .compareTo(entry.getAdditionAmount()) != 0)
                     total = total.add(entry.getAdditionAmount());
                 else
                     total = total.subtract(entry.getDeductionAmount());
@@ -470,7 +479,7 @@ public class BudgetDetail extends StateAware {
     }
 
     public void setWfState(final State state) {
-        //setState(state);
+        //Won't work
     }
 
     public EgwStatus getStatus() {

@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,19 +43,17 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.lcms.web.controller.masters;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-
-import javax.validation.Valid;
-
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import org.egov.commons.Bankbranch;
 import org.egov.commons.service.BankBranchService;
 import org.egov.lcms.masters.entity.AdvocateMaster;
 import org.egov.lcms.masters.service.AdvocateMasterService;
+import org.egov.lcms.transactions.service.LegalCaseSmsService;
 import org.egov.lcms.web.adaptor.AdvocateMasterJsonAdaptor;
 import org.egov.services.masters.BankService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,8 +70,10 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 @Controller
 @RequestMapping("/advocatemaster")
@@ -87,6 +94,9 @@ public class AdvocateMasterController {
     @Autowired
     @Qualifier("bankBranchService")
     private BankBranchService bankBranchService;
+
+    @Autowired
+    private LegalCaseSmsService legalCaseSmsService;
 
     private void prepareNewForm(final Model model) {
         model.addAttribute("banks", bankService.findAll());
@@ -117,9 +127,11 @@ public class AdvocateMasterController {
         else
             advocateMaster.setBankBranch(null);
         advocateMasterService.persist(advocateMaster);
+        model.addAttribute("mode", "create");
         advocateMasterService.createAccountDetailKey(advocateMaster);
-        redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.advocateMaster.success", null, null));
-        return "redirect:/advocatemaster/result/" + advocateMaster.getId();
+        advocateMasterService.createAdvocateUser(advocateMaster);
+        legalCaseSmsService.sendSmsAndEmailForAdvocate(advocateMaster);
+        return "redirect:/advocatemaster/result/" + advocateMaster.getId() + ",create";
     }
 
     @RequestMapping(value = "/edit/{id}", method = RequestMethod.GET)
@@ -157,8 +169,10 @@ public class AdvocateMasterController {
             advocateMaster.setBankBranch(null);
 
         advocateMasterService.persist(advocateMaster);
+        model.addAttribute("mode", "edit");
+        advocateMasterService.createAdvocateUser(advocateMaster);
         redirectAttrs.addFlashAttribute("message", messageSource.getMessage("msg.advocateMaster.update", null, null));
-        return "redirect:/advocatemaster/result/" + advocateMaster.getId();
+        return "redirect:/advocatemaster/result/" + advocateMaster.getId() + ",edit";
     }
 
     @RequestMapping(value = "/view/{id}", method = RequestMethod.GET)
@@ -169,9 +183,10 @@ public class AdvocateMasterController {
         return ADVOCATEMASTER_VIEW;
     }
 
-    @RequestMapping(value = "/result/{id}", method = RequestMethod.GET)
-    public String result(@PathVariable("id") final Long id, final Model model) {
+    @RequestMapping(value = "/result/{id},{mode}", method = RequestMethod.GET)
+    public String result(@PathVariable("id") final Long id, final Model model,@PathVariable("mode") final String mode) {
         final AdvocateMaster advocateMaster = advocateMasterService.findOne(id);
+        model.addAttribute("mode", mode);
         model.addAttribute("advocateMaster", advocateMaster);
         return ADVOCATEMASTER_RESULT;
     }

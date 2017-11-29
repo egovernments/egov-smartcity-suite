@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.council.web.controller;
 
@@ -45,6 +53,7 @@ import static org.egov.council.utils.constants.CouncilConstants.MEETINGRESOLUTIO
 import static org.egov.council.utils.constants.CouncilConstants.MEETINGUSEDINRMOM;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_MODULENAME;
 import static org.egov.council.utils.constants.CouncilConstants.MEETING_TIMINGS;
+import static org.egov.council.utils.constants.CouncilConstants.MODULE_FULLNAME;
 import static org.egov.council.utils.constants.CouncilConstants.MODULE_NAME;
 import static org.egov.council.utils.constants.CouncilConstants.MOM_FINALISED;
 import static org.egov.council.utils.constants.CouncilConstants.PREAMBLE_MODULENAME;
@@ -56,13 +65,11 @@ import static org.egov.council.utils.constants.CouncilConstants.REVENUE_HIERARCH
 import static org.egov.council.utils.constants.CouncilConstants.WARD;
 import static org.egov.infra.utils.JsonUtils.toJSON;
 
-import java.io.ByteArrayInputStream;
 import java.lang.reflect.Type;
 import java.text.ParseException;
 import java.util.List;
 import java.util.Map;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.egov.commons.EgwStatus;
@@ -70,9 +77,11 @@ import org.egov.commons.dao.EgwStatusHibernateDAO;
 import org.egov.council.autonumber.MOMResolutionNumberGenerator;
 import org.egov.council.entity.CommitteeType;
 import org.egov.council.entity.CouncilMeeting;
+import org.egov.council.entity.CouncilMeetingType;
 import org.egov.council.entity.MeetingMOM;
 import org.egov.council.service.CommitteeTypeService;
 import org.egov.council.service.CouncilMeetingService;
+import org.egov.council.service.CouncilMeetingTypeService;
 import org.egov.council.service.CouncilPreambleService;
 import org.egov.council.service.CouncilReportService;
 import org.egov.council.service.CouncilSmsAndEmailService;
@@ -84,10 +93,9 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infra.reporting.engine.ReportConstants;
+import org.egov.infra.utils.FileUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.web.support.json.adapter.BoundaryAdapter;
-import org.egov.infra.web.utils.WebUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -109,6 +117,7 @@ import com.google.gson.reflect.TypeToken;
 @RequestMapping("/councilmom")
 public class CouncilMomController {
 
+    private static final String RESOLUTION_NUMBER_AUTO = "RESOLUTION_NUMBER_AUTO";
     private static final String MESSAGE = "message";
     private static final String COUNCIL_MEETING = "councilMeeting";
     private static final String COUNCIL_MOM_MEETING_SEARCH = "councilmomMeeting-search";
@@ -155,6 +164,8 @@ public class CouncilMomController {
     @Qualifier("fileStoreService")
     @Autowired
     private FileStoreService fileStoreService;
+    @Autowired
+    private CouncilMeetingTypeService councilMeetingTypeService;
 
     @ModelAttribute("committeeType")
     public List<CommitteeType> getCommitteTypeList() {
@@ -165,7 +176,12 @@ public class CouncilMomController {
     public Map<String, String> getMeetingTimingList() {
         return MEETING_TIMINGS;
     }
-
+    
+    @ModelAttribute("meetingType")
+    public List<CouncilMeetingType> getmeetingTypeList() {
+        return councilMeetingTypeService.findAllActiveMeetingType();
+    }
+    
     @ModelAttribute("resolutionStatus")
     public List<EgwStatus> getResolutionStatusList() {
         return egwStatusHibernateDAO.getStatusByModule(COUNCIL_RESOLUTION);
@@ -186,9 +202,11 @@ public class CouncilMomController {
             }
 
         }
-        sortMeetingMomByItemNumber(councilMeeting);
-        model.addAttribute(COUNCIL_MEETING, councilMeeting);
-
+        if (councilMeeting != null) {
+            sortMeetingMomByItemNumber(councilMeeting);
+            model.addAttribute("autoResolutionNoGenEnabled", isAutoResolutionNoGenEnabled());
+            model.addAttribute(COUNCIL_MEETING, councilMeeting);
+        }
         return COUNCILMOM_NEW;
     }
 
@@ -248,7 +266,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/meetingsearch/{mode}", method = RequestMethod.GET)
     public String searchMeeting(@PathVariable("mode") final String mode,
-            Model model) {
+                                Model model) {
         model.addAttribute(COUNCIL_MEETING, new CouncilMeeting());
         return COUNCIL_MOM_MEETING_SEARCH;
 
@@ -273,9 +291,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/searchcreated-mom/{mode}", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchCreatedMOM(
-            @PathVariable("mode") final String mode, Model model,
-            @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String searchCreatedMOM(@PathVariable("mode") final String mode, @ModelAttribute final CouncilMeeting councilMeeting) {
 
         if (null != mode && !"".equals(mode)) {
             List<CouncilMeeting> searchResultList;
@@ -297,8 +313,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/departmentlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearch(final String mode, Model model,
-            @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String ajaxsearch(@ModelAttribute final CouncilMeeting councilMeeting) {
         List<Department> departmentList = departmentService.getAllDepartments();
         return new StringBuilder("{ \"departmentLists\":")
                 .append(toJSON(departmentList, Department.class,
@@ -309,8 +324,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/resolutionlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearchResolutionlist(final String mode,
-            Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String ajaxsearchResolutionlist(@ModelAttribute final CouncilMeeting councilMeeting) {
         List<EgwStatus> resolutionList = egwStatusHibernateDAO
                 .getStatusByModule(COUNCIL_RESOLUTION);
         Gson gson = new Gson();
@@ -323,8 +337,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/wardlist", method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String ajaxsearchWardlist(final String mode,
-            Model model, @ModelAttribute final CouncilMeeting councilMeeting) {
+    public String ajaxsearchWardlist(@ModelAttribute final CouncilMeeting councilMeeting) {
         List<Boundary> wardList = boundaryService
                 .getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(WARD,
                         REVENUE_HIERARCHY_TYPE);
@@ -335,9 +348,7 @@ public class CouncilMomController {
 
     @RequestMapping(value = "/generateresolution", method = RequestMethod.POST)
     public String generateResolutionnumber(
-            @Valid @ModelAttribute final CouncilMeeting councilMeeting,
-            final BindingResult errors, final Model model,
-            final RedirectAttributes redirectAttrs, final HttpServletRequest request) throws ParseException {
+            @Valid @ModelAttribute final CouncilMeeting councilMeeting) throws ParseException {
         byte[] reportOutput;
 
         EgwStatus resoulutionApprovedStatus = egwStatusHibernateDAO.getStatusByModuleAndCode(COUNCIL_RESOLUTION,
@@ -366,11 +377,13 @@ public class CouncilMomController {
 
         for (MeetingMOM meetingMOM : councilMeeting.getMeetingMOMs()) {
             // if mom status is approved, generate resolution number
-            if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())) {
+            if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionApprovedStatus.getCode())
+                    && isAutoResolutionNoGenEnabled()) {
                 MOMResolutionNumberGenerator momResolutionNumberGenerator = autonumberServiceBeanResolver
                         .getAutoNumberServiceFor(MOMResolutionNumberGenerator.class);
-                meetingMOM.setResolutionNumber(momResolutionNumberGenerator
-                        .getNextNumber(meetingMOM));
+                meetingMOM.setResolutionNumber(
+                        meetingMOM.getResolutionNumber() != null ? meetingMOM.getResolutionNumber() : momResolutionNumberGenerator
+                                .getNextNumber(meetingMOM));
                 meetingMOM.getPreamble().setStatus(resolutionApprovedStatus);
                 // if mom status adjourned, update preamble status to adjurned. These record will be used in next meeting.
             } else if (meetingMOM.getResolutionStatus().getCode().equals(resoulutionAdjurnedStatus.getCode())) {
@@ -379,9 +392,9 @@ public class CouncilMomController {
             }
         }
 
-        reportOutput = generateMomPdfByPassingMeeting(councilMeeting, request);
+        reportOutput = generateMomPdfByPassingMeeting(councilMeeting);
         if (reportOutput != null) {
-            councilMeeting.setFilestore(fileStoreService.store(new ByteArrayInputStream(reportOutput), MEETINGRESOLUTIONFILENAME,
+            councilMeeting.setFilestore(fileStoreService.store(FileUtils.byteArrayToFile(reportOutput, MEETINGRESOLUTIONFILENAME,"rtf" ).toFile(), MEETINGRESOLUTIONFILENAME,
                     APPLICATION_RTF, MODULE_NAME));
         }
         councilMeeting.setStatus(egwStatusHibernateDAO.getStatusByModuleAndCode(MEETING_MODULENAME, MOM_FINALISED));
@@ -392,13 +405,12 @@ public class CouncilMomController {
         return "forward:/councilmeeting/generateresolution/" + councilMeeting.getId();
     }
 
-    private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting,
-            final HttpServletRequest request) {
-        byte[] reportOutput;
-        final String url = WebUtils.extractRequestDomainURL(request, false);
-        String logoPath = url.concat(ReportConstants.IMAGE_CONTEXT_PATH)
-                .concat((String) request.getSession().getAttribute("citylogo"));
-        reportOutput = councilReportService.generatePDFForMom(councilMeeting, logoPath);
-        return reportOutput;
+    private byte[] generateMomPdfByPassingMeeting(final CouncilMeeting councilMeeting) {
+        return councilReportService.generatePDFForMom(councilMeeting);
+    }
+    
+    public Boolean isAutoResolutionNoGenEnabled() {
+        return councilPreambleService.autoGenerationModeEnabled(
+                MODULE_FULLNAME, RESOLUTION_NUMBER_AUTO);
     }
 }

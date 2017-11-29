@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.services.cheque;
 
@@ -61,6 +69,7 @@ import org.egov.utils.FinancialConstants;
 import org.hibernate.Query;
 import org.hibernate.transform.Transformers;
 import org.hibernate.type.BigDecimalType;
+import org.hibernate.type.LongType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 
@@ -119,8 +128,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 
     // *************IMPORTANT - CALL THIS METHOD BEFORE CALLING ANYTHING ELSE**********************************************
     public void setStatusAndFilterValues(final Map<String, String[]> parameters, final CVoucherHeader voucherHeader)
-            throws ParseException
-    {
+            throws ParseException {
         filterConditions = getFilterParamaters(parameters, voucherHeader);
         setStatusValues();
     }
@@ -128,8 +136,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     // This method returns the Direct Bank Payments and Bill Payments for Expense, Contractor and Supplier bills for mode Cheque
     public List<ChequeAssignment> getPaymentVoucherNotInInstrument(final Map<String, String[]> parameters)
             throws ApplicationException,
-            ParseException
-    {
+            ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getPaymentVoucherNotInInstrument...");
         finalChequeAssignmentList.addAll(getExpenseBillPayments());
@@ -141,8 +148,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     // This method returns the Bill Payments for Expense for mode Cheque
-    public List<ChequeAssignment> getExpenseBillPayments() throws ParseException, NumberFormatException, ApplicationException
-    {
+    public List<ChequeAssignment> getExpenseBillPayments() throws ParseException, NumberFormatException, ApplicationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getExpenseBillPayments...");
         getExpenseBillPaymentsHavingNoCheques();
@@ -158,8 +164,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     // This method returns the consolidated mode payments that are not for salary or remittance
     @SuppressWarnings("unchecked")
     public List<ChequeAssignment> getPaymentVouchersConsolidatedMode(final Map<String, String[]> parameters,
-            final CVoucherHeader voucherHeader) throws ParseException
-    {
+                                                                     final CVoucherHeader voucherHeader) throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getPaymentVouchersConsolidatedMode...");
         final String filterConditions = getFilterParamaters(parameters, voucherHeader);
@@ -184,7 +189,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 + "' , '"
                                 + FinancialConstants.PAYMENTVOUCHER_NAME_SALARY + "') " +
                                 " group by vh.id,vh.voucherNumber,vh.voucherDate order by vh.voucherNumber ")
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
@@ -196,8 +201,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 
     @SuppressWarnings("unchecked")
     public List<ChequeAssignment> getContractorSupplierPaymentsForChequeAssignment(final Map<String, String[]> parameters)
-            throws ParseException
-    {
+            throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getContractorSupplierPaymentsForChequeAssignment...");
 
@@ -277,9 +281,9 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + statusId + ")) " +
                 " group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto order by paidto,voucherNumber ";
         query = getSession().createSQLQuery(supplierBillPaymentQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE).addScalar("paidTo")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE).addScalar("paidTo")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE).addScalar("chequeDate")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
@@ -290,8 +294,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     @SuppressWarnings("unchecked")
-    public List<ChequeAssignment> getDirectBankPaymentsForChequeAssignment() throws ParseException
-    {
+    public List<ChequeAssignment> getDirectBankPaymentsForChequeAssignment() throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getDirectBankPaymentsForChequeAssignment...");
         final String bankPaymentQuery = "select vh.id as voucherid ,vh.voucherNumber as voucherNumber ,0 as detailtypeid ,0 as detailkeyid,vh.voucherDate as voucherDate  ,misbill.paidto as paidTo,sum(misbill.paidamount) as paidAmount,current_date as chequeDate"
@@ -344,8 +347,8 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + statusId + "))  group by vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto  " +
                 " order by paidto,voucherNumber ";
         query = getSession().createSQLQuery(bankPaymentQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber")
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE).addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber")
+                .addScalar("detailtypeid", LongType.INSTANCE).addScalar("detailkeyid", LongType.INSTANCE)
                 .addScalar("voucherDate").addScalar("paidTo").addScalar("paidAmount", BigDecimalType.INSTANCE)
                 .addScalar("chequeDate")
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
@@ -384,11 +387,11 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT + "' and iv.id is null  " +
                 " group by  misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
         query = getSession().createSQLQuery(strQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
-                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("NOT YET ASSIGNED No cheques - " + strQuery);
@@ -422,70 +425,59 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 generalLedgerDetails.add(gld);
                 billVHIdAndGLDListForDebtitSideCCMap.put(getLongValue(gld[3]), generalLedgerDetails);
             }
-        for (final ChequeAssignment chqAssgn : billChequeAssignmentList)
-        {
+        for (final ChequeAssignment chqAssgn : billChequeAssignmentList) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("NOT YET ASSIGNED: Start Checking for Billvhid " + chqAssgn.getBillVHId());
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("NOT YET ASSIGNED: checking getDetailTypeKeyAmtForBillVHId for Net payable codes");
 
-            List<Object[]> detailTypeKeyAmtList = billVHIdAndgeneralLedgerDetailListMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndgeneralLedgerDetailListMap
-                    .get(chqAssgn.getBillVHId().longValue())
+            List<Object[]> detailTypeKeyAmtList = billVHIdAndgeneralLedgerDetailListMap.get(chqAssgn.getBillVHId()) != null ? billVHIdAndgeneralLedgerDetailListMap
+                    .get(chqAssgn.getBillVHId())
                     : new ArrayList<Object[]>();
 
-            if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() != 0)
-            {
+            if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() != 0) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("NOT YET ASSIGNED: detailTypeKeyAmtList for Billvhid " + chqAssgn.getBillVHId() + " size :"
                             + detailTypeKeyAmtList.size());
-                if (detailTypeKeyAmtList.size() < 2)
-                {
+                if (detailTypeKeyAmtList.size() < 2) {
                     tempExpenseChequeAssignmentList.add(chqAssgn);
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("NOT YET ASSIGNED: adding inside detailTypeKeyAmtList.size()<2 block to Assignment List\n"
                                 + chqAssgn);
                 } else
-                    for (final Object[] detailTypeKeyAmtObj : detailTypeKeyAmtList)
-                    {
+                    for (final Object[] detailTypeKeyAmtObj : detailTypeKeyAmtList) {
                         final ChequeAssignment ca = new ChequeAssignment();
                         ca.setVoucherid(new BigDecimal(chqAssgn.getVoucherid()));
                         ca.setVoucherNumber(chqAssgn.getVoucherNumber());
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("NOT YET ASSIGNED: Voucher Number" + chqAssgn.getVoucherNumber());
                         ca.setVoucherDate(chqAssgn.getVoucherDate());
-                        ca.setPaidAmount((BigDecimal) detailTypeKeyAmtObj[2]);
+                        ca.setPaidAmount(BigDecimal.valueOf(Double.valueOf(detailTypeKeyAmtObj[2].toString())));
                         ca.setChequeDate(chqAssgn.getChequeDate());
                         ca.setPaidTo(getEntity(Integer.parseInt(detailTypeKeyAmtObj[0].toString()),
                                 (Serializable) detailTypeKeyAmtObj[1]).getName());
-                        ca.setDetailtypeid((BigDecimal.valueOf(Integer.valueOf(detailTypeKeyAmtObj[0].toString()).longValue())));
-                        ca.setDetailkeyid((BigDecimal.valueOf(Integer.valueOf(detailTypeKeyAmtObj[1].toString()).longValue())));
+                        ca.setDetailtypeid(Long.valueOf(detailTypeKeyAmtObj[0].toString()));
+                        ca.setDetailkeyid(Long.valueOf(detailTypeKeyAmtObj[1].toString()));
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("NOT YET ASSIGNED: detailTypeKeyAmtList.size()>=2 block to Assignment List\n" + ca);
                         tempExpenseChequeAssignmentList.add(ca);
                     }
-            }
-            else
-            {
+            } else {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("NOT YET ASSIGNED:  checking getDetailTypeKeyAmtForDebtitSideCC for " + chqAssgn.getBillVHId());
-                detailTypeKeyAmtList = billVHIdAndGLDListForDebtitSideCCMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndGLDListForDebtitSideCCMap
-                        .get(chqAssgn.getBillVHId().longValue())
+                detailTypeKeyAmtList = billVHIdAndGLDListForDebtitSideCCMap.get(chqAssgn.getBillVHId()) != null ? billVHIdAndGLDListForDebtitSideCCMap
+                        .get(chqAssgn.getBillVHId())
                         : new ArrayList<Object[]>();
-                if (detailTypeKeyAmtList == null || detailTypeKeyAmtList.size() == 0)
-                {
+                if (detailTypeKeyAmtList == null || detailTypeKeyAmtList.size() == 0) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("NOT YET ASSIGNED: adding to checkassignlist as detailTypeKeyAmtList is null or zero"
                                 + chqAssgn);
                     tempExpenseChequeAssignmentList.add(chqAssgn);
-                }
-                else if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() == 1)
-                {
+                } else if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() == 1) {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("NOT YET ASSIGNED: adding to checkassignlist as detailTypeKeyAmtList is 1" + chqAssgn);
                     tempExpenseChequeAssignmentList.add(chqAssgn);
-                }
-                else
-                {
+                } else {
                     BigDecimal deduction = BigDecimal.valueOf(0);
                     // THIS dedcution will work for only one subledger .If more than one you cannot have non subledger dedcution
                     // as
@@ -496,8 +488,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     Map<String, BigDecimal> dedMap = new HashMap<String, BigDecimal>();
                     dedMap = getSubledgerAmtForDeduction(chqAssgn.getBillVHId());
                     String key = "";
-                    for (final Object[] obj : detailTypeKeyAmtList)
-                    {
+                    for (final Object[] obj : detailTypeKeyAmtList) {
                         final ChequeAssignment c = new ChequeAssignment();
                         c.setChequeDate(chqAssgn.getChequeDate());
                         c.setVoucherHeaderId(chqAssgn.getVoucherid());
@@ -505,13 +496,13 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("NOT YET ASSIGNED: Voucher Number  :" + chqAssgn.getVoucherNumber());
                         c.setVoucherDate(chqAssgn.getVoucherDate());
-                        c.setDetailtypeid((BigDecimal) obj[0]);
-                        c.setDetailkeyid((BigDecimal) obj[1]);
+                        c.setDetailtypeid(Long.valueOf(obj[0].toString()));
+                        c.setDetailkeyid(Long.valueOf(obj[1].toString()));
                         key = obj[0].toString() + DELIMETER + obj[1].toString();
                         // deduct only if deduction is available
                         if (deduction != null)
-                            obj[2] = ((BigDecimal) obj[2]).subtract(deduction);
-                        c.setPaidAmount(dedMap.get(key) == null ? (BigDecimal) obj[2] : ((BigDecimal) obj[2]).subtract(dedMap
+                            obj[2] = (BigDecimal.valueOf(Double.valueOf(obj[2].toString()))).subtract(deduction);
+                        c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Double.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Double.valueOf(obj[2].toString()))).subtract(dedMap
                                 .get(key)));
                         c.setPaidTo(getEntity(Integer.valueOf(obj[0].toString()), (Serializable) obj[1]).getName());
                         if (LOGGER.isDebugEnabled())
@@ -525,7 +516,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             LOGGER.debug("Completed getExpenseBillPaymentsHavingNoCheques.");
     }
 
-    private BigDecimal getNonSubledgerDeductions(final BigDecimal billVHId) {
+    private BigDecimal getNonSubledgerDeductions(final Long billVHId) {
         final Query query = getSession().createSQLQuery("SELECT SUM(gl.creditamount) " +
                 "FROM generalledger gl " +
                 "WHERE gl.creditamount>0 " +
@@ -535,7 +526,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 "(SELECT glcodeid FROM chartofaccountdetail) order by gl.glcode");
         query.setParameterList("glcodeIdList", cBillGlcodeIdList);
         if (query.list() != null && !query.list().isEmpty())
-            return (BigDecimal) query.list().get(0);
+            return BigDecimal.valueOf(Double.valueOf(query.list().get(0).toString()));
         else
             return BigDecimal.valueOf(0);
 
@@ -575,11 +566,11 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 +
                 " and exists (select 1 from egf_instrumentvoucher iv where  iv.voucherheaderid=vh.id) group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
         final Query query = getSession().createSQLQuery(strQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
-                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ALREADY ASSIGNED: No surrendered cheques - " + strQuery);
@@ -612,8 +603,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 generalLedgerDetails.add(gld);
                 billVHIdAndGLDListForDebtitSideCCMap.put(getLongValue(gld[3]), generalLedgerDetails);
             }
-        for (final ChequeAssignment chqAssgn : billChequeAssignmentList)
-        {
+        for (final ChequeAssignment chqAssgn : billChequeAssignmentList) {
 
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("ALREADY ASSIGNED: Start Checking for Billvhid " + chqAssgn.getBillVHId());
@@ -622,8 +612,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             List<Object[]> detailTypeKeyAmtList = billVHIdAndgeneralLedgerDetailListMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndgeneralLedgerDetailListMap
                     .get(chqAssgn.getBillVHId().longValue())
                     : new ArrayList<Object[]>();
-            if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() != 0)
-            {
+            if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() != 0) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("ALREADY ASSIGNED: detailTypeKeyAmtList for Billvhid " + chqAssgn.getBillVHId() + " size :"
                             + detailTypeKeyAmtList.size());
@@ -642,25 +631,19 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     final List<Object> payTo = getSession().createSQLQuery(queryString)
                             .setString("payTo", chqAssgn.getPaidTo()).list();
 
-                    if (payTo == null || payTo.size() == 0)
-                    {
+                    if (payTo == null || payTo.size() == 0) {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug(" ALREADY ASSIGNED: adding to chequeAssignlist as payTo s null or size 0" + chqAssgn);
                         tempExpenseChequeAssignmentList.add(chqAssgn);
-                    }
-                    else
-                    {
+                    } else {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ALREADY ASSIGNED: Not adding continuing");
                         continue;
                     }
-                }
-                else
-                {
+                } else {
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ALREADY ASSIGNED:  Entering detailTypeKeyAmtList.size()>2 code");
-                    for (final Object[] detailTypeKeyAmtObj : detailTypeKeyAmtList)
-                    {
+                    for (final Object[] detailTypeKeyAmtObj : detailTypeKeyAmtList) {
                         String queryString = " select distinct(ih.payTo) from egf_InstrumentHeader ih, egf_InstrumentVoucher iv where "
                                 +
                                 "iv.instrumentHeaderId=ih.id and iv.voucherHeaderId="
@@ -676,8 +659,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("queryString" + queryString);
                         List<Object> payTo = getSession().createSQLQuery(queryString).list();
-                        if (payTo == null || payTo.size() == 0)
-                        {
+                        if (payTo == null || payTo.size() == 0) {
                             // this check will avoid already assigned by single subledger take subleger logic as it should be
                             // single subledger take payto
                             queryString = " select distinct(ih.payTo) from egf_InstrumentHeader ih, egf_InstrumentVoucher iv where iv.instrumentHeaderId=ih.id "
@@ -695,18 +677,16 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             ca.setVoucherid(new BigDecimal(chqAssgn.getVoucherid()));
                             ca.setVoucherNumber(chqAssgn.getVoucherNumber());
                             ca.setVoucherDate(chqAssgn.getVoucherDate());
-                            ca.setPaidAmount((BigDecimal) detailTypeKeyAmtObj[2]);
+                            ca.setPaidAmount(BigDecimal.valueOf(Double.valueOf(detailTypeKeyAmtObj[2].toString())));
                             ca.setChequeDate(chqAssgn.getChequeDate());
                             ca.setPaidTo(getEntity(Integer.parseInt(detailTypeKeyAmtObj[0].toString()),
                                     (Serializable) detailTypeKeyAmtObj[1]).getName());
-                            ca.setDetailtypeid((BigDecimal) detailTypeKeyAmtObj[0]);
-                            ca.setDetailkeyid((BigDecimal) detailTypeKeyAmtObj[1]);
+                            ca.setDetailtypeid(Long.valueOf(detailTypeKeyAmtObj[0].toString()));
+                            ca.setDetailkeyid(Long.valueOf(detailTypeKeyAmtObj[1].toString()));
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug(" ALREADY ASSIGNED: adding to chequeAssignlist" + ca);
                             tempExpenseChequeAssignmentList.add(ca);
-                        }
-                        else
-                        {
+                        } else {
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ALREADY ASSIGNED: Not adding continuing");
                             continue;
@@ -714,36 +694,29 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         }
                     }
                 }
-            }
-            else
-            {
+            } else {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("ALREADY ASSIGNED:  entering getDetailTypeKeyAmtForDebtitSideCC  ");
                 detailTypeKeyAmtList = billVHIdAndGLDListForDebtitSideCCMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndGLDListForDebtitSideCCMap
                         .get(chqAssgn.getBillVHId().longValue())
                         : new ArrayList<Object[]>();
-                if (detailTypeKeyAmtList == null || detailTypeKeyAmtList.size() == 0)
-                {
+                if (detailTypeKeyAmtList == null || detailTypeKeyAmtList.size() == 0) {
                     final String queryString = " select distinct(ih.payTo) from egf_InstrumentHeader ih, egf_InstrumentVoucher iv where iv.instrumentHeaderId=ih.id and iv.voucherHeaderId="
                             + chqAssgn.getVoucherid() + " and ih.payTo =:payTo and ih.id_status in (" + statusId + ")  ";
                     if (LOGGER.isDebugEnabled())
                         LOGGER.debug("ALREADY ASSIGNED: queryString" + queryString);
                     final List<Object> payTo = getSession().createSQLQuery(queryString)
                             .setString("payTo", chqAssgn.getPaidTo()).list();
-                    if (payTo == null || payTo.size() == 0)
-                    {
+                    if (payTo == null || payTo.size() == 0) {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ALREADY ASSIGNED: adding to chequeAssignlist as payto is null or 0" + chqAssgn);
                         tempExpenseChequeAssignmentList.add(chqAssgn);
                     }
-                }
-                else
-                {
+                } else {
                     Map<String, BigDecimal> dedMap = new HashMap<String, BigDecimal>();
                     dedMap = getSubledgerAmtForDeduction(chqAssgn.getBillVHId());
                     String key = "";
-                    for (final Object[] obj : detailTypeKeyAmtList)
-                    {
+                    for (final Object[] obj : detailTypeKeyAmtList) {
                         String queryString = " select distinct(ih.payTo) from egf_InstrumentHeader ih, egf_InstrumentVoucher iv where iv.instrumentHeaderId=ih.id and iv.voucherHeaderId="
                                 + chqAssgn.getVoucherid()
                                 + " and ih.detailTypeId="
@@ -754,8 +727,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ALREADY ASSIGNED: Querying for " + queryString);
                         List<Object> payTo = getSession().createSQLQuery(queryString).list();
-                        if (payTo == null || payTo.size() == 0)
-                        {
+                        if (payTo == null || payTo.size() == 0) {
 
                             // this check will avoid already assigned by single subledger take subleger logic as it should be
                             // single subledger take payto
@@ -776,18 +748,17 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             c.setVoucherHeaderId(chqAssgn.getVoucherid());
                             c.setVoucherNumber(chqAssgn.getVoucherNumber());
                             c.setVoucherDate(chqAssgn.getVoucherDate());
-                            c.setDetailtypeid((BigDecimal) obj[0]);
-                            c.setDetailkeyid((BigDecimal) obj[1]);
+                            c.setDetailtypeid(Long.valueOf(obj[0].toString()));
+                            c.setDetailkeyid(Long.valueOf(obj[1].toString()));
                             key = obj[0].toString() + DELIMETER + obj[1].toString();
-                            c.setPaidAmount(dedMap.get(key) == null ? (BigDecimal) obj[2] : ((BigDecimal) obj[2])
+                            c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Double.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Double.valueOf(obj[2].toString())))
                                     .subtract(dedMap.get(key)));
                             c.setPaidTo(getEntity(Integer.valueOf(obj[0].toString()), (Serializable) obj[1]).getName());
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ALREADY ASSIGNED: adding to chequeAssignlist as from payTo==null || payTo.size()==0 \n"
                                         + c);
                             tempExpenseChequeAssignmentList.add(c);
-                        }
-                        else
+                        } else
                             continue;
                     }
                 }
@@ -829,11 +800,11 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 + statusId + ") ) " +
                 " group by misbill.billvhid,vh.id,vh.voucherNumber,vh.voucherDate,misbill.paidto ";
         final Query query = getSession().createSQLQuery(strQuery)
-                .addScalar("voucherid", BigDecimalType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
+                .addScalar("voucherid", LongType.INSTANCE).addScalar("voucherNumber").addScalar("voucherDate")
                 .addScalar("paidAmount", BigDecimalType.INSTANCE)
-                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", BigDecimalType.INSTANCE)
-                .addScalar("detailtypeid", BigDecimalType.INSTANCE)
-                .addScalar("detailkeyid", BigDecimalType.INSTANCE)
+                .addScalar("chequeDate").addScalar("paidTo").addScalar("billVHId", LongType.INSTANCE)
+                .addScalar("detailtypeid", LongType.INSTANCE)
+                .addScalar("detailkeyid", LongType.INSTANCE)
                 .setResultTransformer(Transformers.aliasToBean(ChequeAssignment.class));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("ASSIGNED BUT SURRENDARD: With surrendered cheques - " + strQuery);
@@ -866,21 +837,18 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                 generalLedgerDetails.add(gld);
                 billVHIdAndGLDListForDebtitSideCCMap.put(getLongValue(gld[3]), generalLedgerDetails);
             }
-        for (final ChequeAssignment chqAssgn : billChequeAssignmentList)
-        {
+        for (final ChequeAssignment chqAssgn : billChequeAssignmentList) {
             if (LOGGER.isDebugEnabled())
                 LOGGER.debug("ASSIGNED BUT SURRENDARD: With surrendered cheques -  for Billvhid" + chqAssgn.getBillVHId());
             List<Object[]> detailTypeKeyAmtList = billVHIdAndgeneralLedgerDetailListMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndgeneralLedgerDetailListMap
                     .get(chqAssgn.getBillVHId().longValue())
                     : new ArrayList<Object[]>();
 
-            if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() != 0)
-            {
+            if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() != 0) {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("ASSIGNED BUT SURRENDARD: With surrendered cheques -  for Billvhid " + chqAssgn.getBillVHId()
                             + " and size " + detailTypeKeyAmtList);
-                if (detailTypeKeyAmtList.size() < 2)
-                {
+                if (detailTypeKeyAmtList.size() < 2) {
                     final String queryString = " select iv.id,ih.id_status from egf_instrumentheader ih, egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and iv.voucherheaderid="
                             + chqAssgn.getVoucherid() + " and ih.payTo=:payTo order by id desc   ";
                     if (LOGGER.isDebugEnabled())
@@ -890,21 +858,17 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
                             || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus) && !instrumentStatus
-                                    .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus))
-                    {
+                            .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus)) {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: Adding to chequeAssignmentlist as istrumentStatus " + chqAssgn);
                         tempExpenseChequeAssignmentList.add(chqAssgn);
-                    }
-                    else
-                    {
+                    } else {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: Continuing not adding");
                         continue;
                     }
                 } else
-                    for (final Object[] detailTypeKeyAmtObj : detailTypeKeyAmtList)
-                    {
+                    for (final Object[] detailTypeKeyAmtObj : detailTypeKeyAmtList) {
                         final String queryString = " select iv.id,ih.id_status from egf_instrumentheader ih, egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and iv.voucherheaderid="
                                 + chqAssgn.getVoucherid()
                                 + " and ih.detailtypeid="
@@ -918,18 +882,17 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 || instrumentStatus.size() == 0
                                 || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus)
                                 && !instrumentStatus
-                                        .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus))
-                        {
+                                .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus)) {
                             final ChequeAssignment ca = new ChequeAssignment();
                             ca.setVoucherid(new BigDecimal(chqAssgn.getVoucherid()));
                             ca.setVoucherNumber(chqAssgn.getVoucherNumber());
                             ca.setVoucherDate(chqAssgn.getVoucherDate());
-                            ca.setPaidAmount((BigDecimal) detailTypeKeyAmtObj[2]);
+                            ca.setPaidAmount(BigDecimal.valueOf(Double.valueOf(detailTypeKeyAmtObj[2].toString())));
                             ca.setChequeDate(chqAssgn.getChequeDate());
                             ca.setPaidTo(getEntity(Integer.parseInt(detailTypeKeyAmtObj[0].toString()),
                                     (Serializable) detailTypeKeyAmtObj[1]).getName());
-                            ca.setDetailtypeid(BigDecimal.valueOf(((Integer)detailTypeKeyAmtObj[0]).longValue()));
-                            ca.setDetailkeyid(BigDecimal.valueOf(((Integer) detailTypeKeyAmtObj[1]).longValue()));
+                            ca.setDetailtypeid(Long.valueOf(detailTypeKeyAmtObj[0].toString()));
+                            ca.setDetailkeyid(Long.valueOf(detailTypeKeyAmtObj[1].toString()));
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ASSIGNED BUT SURRENDARD: inside loop adding  " + ca);
                             tempExpenseChequeAssignmentList.add(ca);
@@ -937,16 +900,14 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                             continue;
                     }
             }// End of checking bills with SL where credit amount>0
-            else
-            {
+            else {
                 if (LOGGER.isDebugEnabled())
                     LOGGER.debug("ASSIGNED BUT SURRENDARD:  checking getDetailTypeKeyAmtForDebtitSideCC for "
                             + chqAssgn.getBillVHId());
                 detailTypeKeyAmtList = billVHIdAndGLDListForDebtitSideCCMap.get(chqAssgn.getBillVHId().longValue()) != null ? billVHIdAndGLDListForDebtitSideCCMap
                         .get(chqAssgn.getBillVHId().longValue())
                         : new ArrayList<Object[]>();
-                if (detailTypeKeyAmtList == null || detailTypeKeyAmtList.size() == 0)
-                {
+                if (detailTypeKeyAmtList == null || detailTypeKeyAmtList.size() == 0) {
                     final String queryString = " select iv.id,ih.id_status from egf_instrumentheader ih, egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and iv.voucherheaderid="
                             + chqAssgn.getVoucherid() + " and ih.payTo=:payTo order by id desc   ";
                     if (LOGGER.isDebugEnabled())
@@ -957,16 +918,13 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
                             || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus) && !instrumentStatus
-                                    .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus))
-                    {
+                            .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus)) {
                         if (LOGGER.isDebugEnabled())
                             LOGGER.debug("ASSIGNED BUT SURRENDARD: Adding to chequeAssignmentlist in getDetailTypeKeyAmtForDebtitSideCC "
                                     + chqAssgn);
                         tempExpenseChequeAssignmentList.add(chqAssgn);
                     }
-                }
-                else if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() == 1)
-                {
+                } else if (detailTypeKeyAmtList != null && detailTypeKeyAmtList.size() == 1) {
                     final String queryString = " select iv.id,ih.id_status from egf_instrumentheader ih, egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and iv.voucherheaderid="
                             + chqAssgn.getVoucherid() + " and ih.payTo=:payTo order by id desc   ";
                     if (LOGGER.isDebugEnabled())
@@ -976,8 +934,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     if (instrumentStatus == null
                             || instrumentStatus.size() == 0
                             || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus) && !instrumentStatus
-                                    .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus))
-                    {
+                            .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus)) {
                         final String queryString2 = " select iv.id,ih.id_status from egf_instrumentheader ih, " +
                                 " egf_instrumentvoucher iv where iv.instrumentheaderid=ih.id and iv.voucherheaderid="
                                 + chqAssgn.getVoucherid() + " " +
@@ -994,22 +951,19 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                         if (instrumentStatusWithsubledgerPaidto == null
                                 || instrumentStatusWithsubledgerPaidto.size() == 0
                                 || !instrumentStatusWithsubledgerPaidto.get(0)[1].toString().equalsIgnoreCase(
-                                        instrumentNewStatus) && !instrumentStatusWithsubledgerPaidto.get(0)[1].toString()
-                                        .equalsIgnoreCase(instrumentReconciledStatus))
-                        {
+                                instrumentNewStatus) && !instrumentStatusWithsubledgerPaidto.get(0)[1].toString()
+                                .equalsIgnoreCase(instrumentReconciledStatus)) {
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ASSIGNED BUT SURRENDARD: adding inside  again checking" + chqAssgn);
                             tempExpenseChequeAssignmentList.add(chqAssgn);
                         }
                     }
-                }
-                else// if more than 1 SL entries with debit side CC
+                } else// if more than 1 SL entries with debit side CC
                 {
                     Map<String, BigDecimal> dedMap = new HashMap<String, BigDecimal>();
                     dedMap = getSubledgerAmtForDeduction(chqAssgn.getBillVHId());
                     String key = "";
-                    for (final Object[] obj : detailTypeKeyAmtList)
-                    {
+                    for (final Object[] obj : detailTypeKeyAmtList) {
                         final String queryString = " select iv.id,ih.id_status from egf_instrumentheader ih, egf_instrumentvoucher iv where "
                                 +
                                 "iv.instrumentheaderid=ih.id and iv.voucherheaderid=" + chqAssgn.getVoucherid() + "" +
@@ -1022,24 +976,22 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                                 || instrumentStatus.size() == 0
                                 || !instrumentStatus.get(0)[1].toString().equalsIgnoreCase(instrumentNewStatus)
                                 && !instrumentStatus
-                                        .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus))
-                        {
+                                .get(0)[1].toString().equalsIgnoreCase(instrumentReconciledStatus)) {
                             final ChequeAssignment c = new ChequeAssignment();
                             c.setChequeDate(chqAssgn.getChequeDate());
                             c.setVoucherHeaderId(chqAssgn.getVoucherid());
                             c.setVoucherNumber(chqAssgn.getVoucherNumber());
                             c.setVoucherDate(chqAssgn.getVoucherDate());
-                            c.setDetailtypeid((BigDecimal) obj[0]);
-                            c.setDetailkeyid((BigDecimal) obj[1]);
+                            c.setDetailtypeid(Long.valueOf(obj[0].toString()));
+                            c.setDetailkeyid(Long.valueOf(obj[1].toString()));
                             key = obj[0].toString() + DELIMETER + obj[1].toString();
-                            c.setPaidAmount(dedMap.get(key) == null ? (BigDecimal) obj[2] : ((BigDecimal) obj[2])
+                            c.setPaidAmount(dedMap.get(key) == null ? BigDecimal.valueOf(Double.valueOf(obj[2].toString())) : (BigDecimal.valueOf(Double.valueOf(obj[2].toString())))
                                     .subtract(dedMap.get(key)));
                             c.setPaidTo(getEntity(Integer.valueOf(obj[0].toString()), (Serializable) obj[1]).getName());
                             if (LOGGER.isDebugEnabled())
                                 LOGGER.debug("ASSIGNED BUT SURRENDARD: adding inside  detailTypeKeyAmtList loop" + c);
                             tempExpenseChequeAssignmentList.add(c);
-                        }
-                        else
+                        } else
                             continue;
                     }
                 }
@@ -1050,8 +1002,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     private String getFilterParamaters(final Map<String, String[]> parameters, final CVoucherHeader voucherHeader)
-            throws ParseException
-    {
+            throws ParseException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getFilterParamaters...");
         final StringBuffer sql = new StringBuffer();
@@ -1084,8 +1035,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     @SuppressWarnings("unchecked")
-    private List<Object[]> getDetailTypeKeyAmtForBillVHId(final List<Long> billVHIds)
-    {
+    private List<Object[]> getDetailTypeKeyAmtForBillVHId(final List<Long> billVHIds) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getDetailTypeKeyAmtForBillVHId...");
         final List<Long> cBillGlcodeIdsList = new ArrayList<Long>();
@@ -1093,14 +1043,12 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             cBillGlcodeIdsList.add(glCodeId.longValue());
         List<Object[]> generalLedgerDetailList = new ArrayList<Object[]>();
         int size = billVHIds.size();
-        if (size > 999)
-        {
+        if (size > 999) {
             int fromIndex = 0;
             int toIndex = 0;
             final int step = 1000;
             List<Object[]> newGLDList;
-            while (size - step >= 0)
-            {
+            while (size - step >= 0) {
                 newGLDList = new ArrayList<Object[]>();
                 toIndex += step;
                 final Query generalLedgerDetailsQuery = getSession()
@@ -1116,8 +1064,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 
             }
 
-            if (size > 0)
-            {
+            if (size > 0) {
                 newGLDList = new ArrayList<Object[]>();
                 fromIndex = toIndex;
                 toIndex = fromIndex + size;
@@ -1131,8 +1078,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     generalLedgerDetailList.addAll(newGLDList);
             }
 
-        } else
-        {
+        } else {
             final Query generalLedgerDetailsQuery = getSession()
                     .createQuery(
                             " select gld.detailTypeId.id,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and gl.creditAmount>0 and gl.glcodeId.id in (:glcodeIdList)");
@@ -1146,18 +1092,15 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     @SuppressWarnings("unchecked")
-    private List<Object[]> getDetailTypeKeyAmtForDebtitSideCC(final List<Long> billVHIds)
-    {
+    private List<Object[]> getDetailTypeKeyAmtForDebtitSideCC(final List<Long> billVHIds) {
         List<Object[]> generalLedgerDetailList = new ArrayList<Object[]>();
         int size = billVHIds.size();
-        if (size > 999)
-        {
+        if (size > 999) {
             int fromIndex = 0;
             int toIndex = 0;
             final int step = 1000;
             List<Object[]> newGLDList;
-            while (size - step >= 0)
-            {
+            while (size - step >= 0) {
                 newGLDList = new ArrayList<Object[]>();
                 toIndex += step;
                 final Query generalLedgerDetailsQuery = getSession()
@@ -1172,8 +1115,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
 
             }
 
-            if (size > 0)
-            {
+            if (size > 0) {
                 newGLDList = new ArrayList<Object[]>();
                 fromIndex = toIndex;
                 toIndex = fromIndex + size;
@@ -1186,8 +1128,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
                     generalLedgerDetailList.addAll(newGLDList);
             }
 
-        } else
-        {
+        } else {
             final Query generalLedgerDetailsQuery = getSession()
                     .createQuery(
                             " select gld.detailTypeId.id,gld.detailKeyId,gld.amount,gl.voucherHeaderId.id from CGeneralLedger gl, CGeneralLedgerDetail gld  where gl.voucherHeaderId.id in ( :IDS ) and gl.id = gld.generalLedgerId.id and  gl.debitAmount>0");
@@ -1197,8 +1138,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         return generalLedgerDetailList;
     }
 
-    private void setStatusValues()
-    {
+    private void setStatusValues() {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting setStatusValues...");
         finalChequeAssignmentList = new ArrayList<ChequeAssignment>();
@@ -1214,8 +1154,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         statusId = "";
         for (final EgwStatus egwStatus : egwStatusList)
             statusId = statusId + egwStatus.getId() + ",";
-        if (egwStatusList.size() == 2)
-        {
+        if (egwStatusList.size() == 2) {
             instrumentNewStatus = egwStatusList.get(0).getId().toString();
             instrumentReconciledStatus = egwStatusList.get(1).getId().toString();
         }
@@ -1232,21 +1171,18 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         ChequeAssignment outerChqAssgn;
         ChequeAssignment innerChqAssgn;
         final List<Integer> alreadyProcessedIndices = new ArrayList<Integer>();
-        for (int i = 0; i < tempExpenseChequeAssignmentList.size(); i++)
-        {
+        for (int i = 0; i < tempExpenseChequeAssignmentList.size(); i++) {
             if (alreadyProcessedIndices.contains(i))
                 continue;
             outerChqAssgn = tempExpenseChequeAssignmentList.get(i);
-            for (int j = i + 1; j < tempExpenseChequeAssignmentList.size(); j++)
-            {
+            for (int j = i + 1; j < tempExpenseChequeAssignmentList.size(); j++) {
                 innerChqAssgn = tempExpenseChequeAssignmentList.get(j);
                 if (outerChqAssgn.getVoucherid().equals(innerChqAssgn.getVoucherid())
                         && outerChqAssgn.getVoucherDate().equals(innerChqAssgn.getVoucherDate())
                         && outerChqAssgn.getVoucherNumber().equals(innerChqAssgn.getVoucherNumber())
                         && outerChqAssgn.getPaidTo().equals(innerChqAssgn.getPaidTo())
                         && outerChqAssgn.getDetailtypeid().equals(innerChqAssgn.getDetailtypeid())
-                        && outerChqAssgn.getDetailkeyid().equals(innerChqAssgn.getDetailkeyid()))
-                {
+                        && outerChqAssgn.getDetailkeyid().equals(innerChqAssgn.getDetailkeyid())) {
                     outerChqAssgn.setPaidAmount(outerChqAssgn.getPaidAmount().add(innerChqAssgn.getPaidAmount()));
                     alreadyProcessedIndices.add(j);
                 }
@@ -1258,8 +1194,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
     }
 
     @SuppressWarnings("unchecked")
-    private Map<String, BigDecimal> getSubledgerAmtForDeduction(final BigDecimal billVHId)
-    {
+    private Map<String, BigDecimal> getSubledgerAmtForDeduction(final Long billVHId) {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getSubledgerAmtForDeduction...");
         final Map<String, BigDecimal> map = new HashMap<String, BigDecimal>();
@@ -1271,7 +1206,7 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         final List<Object[]> list = query.list();
         if (list != null && !list.isEmpty())
             for (final Object[] ob : list)
-                map.put(ob[0].toString() + DELIMETER + ob[1].toString(), (BigDecimal) ob[2]);
+                map.put(ob[0].toString() + DELIMETER + ob[1].toString(), BigDecimal.valueOf(Double.valueOf(ob[2].toString())));
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Completed getSubledgerAmtForDeduction.");
         return map;
@@ -1334,13 +1269,11 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
         return glCodeList;
     }
 
-    public EntityType getEntity(final Integer detailTypeId, final Serializable detailKeyId) throws ApplicationException
-    {
+    public EntityType getEntity(final Integer detailTypeId, final Serializable detailKeyId) throws ApplicationException {
         if (LOGGER.isDebugEnabled())
             LOGGER.debug("Starting getEntity...");
         EntityType entity;
-        try
-        {
+        try {
             final Accountdetailtype accountdetailtype = (Accountdetailtype) persistenceService.find(
                     " from Accountdetailtype where id=?", detailTypeId);
             final Class<?> service = Class.forName(accountdetailtype.getFullQualifiedName());
@@ -1355,14 +1288,12 @@ public class ChequeAssignmentService extends PersistenceService<Paymentheader, L
             else
                 entity = (EntityType) persistenceService.find(
                         "from " + detailTypeName + " where id=? order by name", Integer.valueOf(detailKeyId.toString()));
-        } catch (final Exception e)
-        {
+        } catch (final Exception e) {
             LOGGER.error("Exception to get EntityType=" + e.getMessage() + "for detailTypeId=" + detailTypeId
                     + "  for Detail key " + detailKeyId);
             throw new ApplicationException("Exception to get EntityType=" + e.getMessage());
         }
-        if (entity == null)
-        {
+        if (entity == null) {
             LOGGER.error("Exception to get EntityType  for detailTypeId=" + detailTypeId + "  for Detail key " + detailKeyId);
             throw new ApplicationException("Exception to get EntityType");
         }

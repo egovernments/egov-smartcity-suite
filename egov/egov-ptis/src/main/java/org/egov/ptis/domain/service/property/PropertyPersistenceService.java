@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,19 +43,15 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.ptis.domain.service.property;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.persistence.entity.Address;
@@ -68,6 +71,14 @@ import org.egov.ptis.report.bean.PropertyAckNoticeInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.validation.BindingResult;
 
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 public class PropertyPersistenceService extends PersistenceService<BasicProperty, Long> {
 
     private static final String FROM_USER_WHERE_NAME_AND_MOBILE_NUMBER_AND_GENDER = "From User where name = ? and mobileNumber = ? and gender = ? ";
@@ -79,6 +90,9 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     private PropertyTaxUtil propertyTaxUtil;
     @Autowired
     private ReportService reportService;
+
+    @Autowired
+    private CityService cityService;
 
     public PropertyPersistenceService() {
         super(BasicProperty.class);
@@ -171,7 +185,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
     }
 
     private User createNewOwner(final PropertyOwnerInfo ownerInfo, final Citizen newOwner) {
-        newOwner.setAadhaarNumber(ownerInfo.getOwner().getAadhaarNumber());
+        newOwner.setAadhaarNumber(StringUtils.isNotBlank(ownerInfo.getOwner().getAadhaarNumber()) ? ownerInfo.getOwner().getAadhaarNumber() : null);
         newOwner.setMobileNumber(ownerInfo.getOwner().getMobileNumber());
         newOwner.setEmailId(ownerInfo.getOwner().getEmailId());
         newOwner.setGender(ownerInfo.getOwner().getGender());
@@ -192,7 +206,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         return persist(basicProperty);
     }
 
-    public ReportOutput propertyAcknowledgement(final PropertyImpl property, final String cityLogo, final String cityName) {
+    public ReportOutput propertyAcknowledgement(final PropertyImpl property) {
         final Map<String, Object> reportParams = new HashMap<>();
         final PropertyAckNoticeInfo ackBean = new PropertyAckNoticeInfo();
         ackBean.setOwnerName(property.getBasicProperty().getFullOwnerName());
@@ -203,8 +217,8 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
         ackBean.setApprovedDate(new SimpleDateFormat("dd/MM/yyyy").format(property.getState().getCreatedDate()));
         final Date tempNoticeDate = DateUtils.add(property.getState().getCreatedDate(), Calendar.DAY_OF_MONTH, 15);
         ackBean.setNoticeDueDate(tempNoticeDate);
-        reportParams.put("logoPath", cityLogo);
-        reportParams.put("cityName", cityName);
+        reportParams.put("logoPath", cityService.getCityLogoURL());
+        reportParams.put("cityName", cityService.getMunicipalityName());
         reportParams.put("loggedInUsername", userService.getUserById(ApplicationThreadLocals.getUserId()).getName());
         final ReportRequest reportInput = new ReportRequest(CREATE_ACK_TEMPLATE, ackBean, reportParams);
         reportInput.setReportFormat(ReportFormat.PDF);
@@ -288,5 +302,26 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
 
     public BasicProperty updateBasicProperty(final BasicProperty basicProperty, final HashMap<String, String> meesevaParams) {
         return update(basicProperty);
+    }
+    
+    public void createAmalgamatedOwners(final List<PropertyOwnerInfo> childOwners, final BasicProperty basicProperty) {
+        int orderNo = 0;
+        List<Long> parentOwners = new ArrayList<>();
+        for (PropertyOwnerInfo ownerInfo : basicProperty.getPropertyOwnerInfo()) {
+            if (ownerInfo.getOrderNo() != null && orderNo < ownerInfo.getOrderNo())
+                orderNo = ownerInfo.getOrderNo();
+            parentOwners.add(ownerInfo.getOwner().getId());
+        }
+        for (PropertyOwnerInfo ownerInfo : childOwners) {
+            orderNo++;
+            if (ownerInfo != null && !parentOwners.contains(ownerInfo.getOwner().getId())) {
+                PropertyOwnerInfo childOwnerInfo = new PropertyOwnerInfo();
+                childOwnerInfo.setOwner(ownerInfo.getOwner());
+                childOwnerInfo.setOrderNo(orderNo);
+                childOwnerInfo.setSource(ownerInfo.getSource());
+                childOwnerInfo.setBasicProperty(basicProperty);
+                basicProperty.addPropertyOwners(childOwnerInfo);
+            }
+        }
     }
 }

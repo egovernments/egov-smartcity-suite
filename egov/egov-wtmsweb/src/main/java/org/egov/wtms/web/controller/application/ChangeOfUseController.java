@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,8 +43,13 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.wtms.web.controller.application;
+
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -50,8 +62,6 @@ import javax.validation.Valid;
 import javax.validation.ValidationException;
 
 import org.apache.commons.lang3.StringUtils;
-import org.egov.commons.entity.Source;
-import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -59,6 +69,7 @@ import org.egov.pims.commons.Position;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ChangeOfUseService;
+import org.egov.wtms.application.service.ConnectionDetailService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
 import org.egov.wtms.masters.entity.DocumentNames;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
@@ -82,6 +93,7 @@ public class ChangeOfUseController extends GenericConnectionController {
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
+
     @Autowired
     private ApplicationTypeService applicationTypeService;
 
@@ -92,6 +104,9 @@ public class ChangeOfUseController extends GenericConnectionController {
 
     @Autowired
     private ChangeOfUseService changeOfUseService;
+
+    @Autowired
+    private ConnectionDetailService connectionDetailService;
 
     public @ModelAttribute("documentNamesList") List<DocumentNames> documentNamesList(
             @ModelAttribute final WaterConnectionDetails changeOfUse) {
@@ -133,11 +148,12 @@ public class ChangeOfUseController extends GenericConnectionController {
         final Boolean isCSCOperator = waterTaxUtils.isCSCoperator(securityUtils.getCurrentUser());
         final Boolean citizenPortalUser = waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser());
         final Boolean loggedInMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
-
+        final Boolean isAnonymousUser = waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser());
+        model.addAttribute("isAnonymousUser", isAnonymousUser);
         if (loggedInMeesevaUser && request.getParameter("meesevaApplicationNumber") != null)
             changeOfUse.setMeesevaApplicationNumber(request.getParameter("meesevaApplicationNumber"));
         model.addAttribute("citizenPortalUser", citizenPortalUser);
-        if (!isCSCOperator && !citizenPortalUser && !loggedInMeesevaUser) {
+        if (!isCSCOperator && !citizenPortalUser && !loggedInMeesevaUser && !isAnonymousUser) {
             final Boolean isJuniorAsstOrSeniorAsst = waterTaxUtils
                     .isLoggedInUserJuniorOrSeniorAssistant(securityUtils.getCurrentUser().getId());
             if (!isJuniorAsstOrSeniorAsst)
@@ -149,8 +165,10 @@ public class ChangeOfUseController extends GenericConnectionController {
                         ConnectionStatus.ACTIVE);
         final WaterConnectionDetails parent = waterConnectionDetailsService.getParentConnectionDetails(
                 connectionUnderChange.getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
-        final String message = changeOfUseService.validateChangeOfUseConnection(parent);
-        final String sourceChannel = request.getParameter("Source");
+        String message = "";
+        if (parent != null)
+            message = changeOfUseService.validateChangeOfUseConnection(parent);
+        String sourceChannel = request.getParameter("Source");
         String consumerCode = "";
         if (!message.isEmpty() && !"".equals(message)) {
             if (changeOfUse.getConnection().getParentConnection() != null)
@@ -169,7 +187,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 if (applicationDocument.getDocumentNumber() != null && applicationDocument.getDocumentDate() == null) {
                     final String fieldError = "applicationDocs[" + i + "].documentDate";
                     resultBinder.rejectValue(fieldError, "documentDate.required");
-                } else if (validApplicationDocument(applicationDocument))
+                } else if (connectionDetailService.validApplicationDocument(applicationDocument))
                     applicationDocs.add(applicationDocument);
                 i++;
             }
@@ -187,7 +205,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                     + resultBinder.getFieldErrors().get(0).getDefaultMessage());
             model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
-            
+
             return "changeOfUse-form";
 
         }
@@ -210,7 +228,7 @@ public class ChangeOfUseController extends GenericConnectionController {
             approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
-        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser) {
+        if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
             final Position userPosition = waterTaxUtils.getZonalLevelClerkForLoggedInUser(changeOfUse.getConnection()
                     .getPropertyIdentifier());
             if (userPosition != null)
@@ -231,41 +249,26 @@ public class ChangeOfUseController extends GenericConnectionController {
                 return "changeOfUse-form";
             }
         }
-
         changeOfUse.setApplicationDate(new Date());
-        if (citizenPortalUser)
-            if (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString()))
-                changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
+        if (isAnonymousUser) {
+            changeOfUse.setSource(ONLINE);
+            sourceChannel = SOURCECHANNEL_ONLINE;
+        }
+        if (citizenPortalUser && (changeOfUse.getSource() == null || StringUtils.isBlank(changeOfUse.getSource().toString())))
+            changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
 
         if (loggedInMeesevaUser) {
             final HashMap<String, String> meesevaParams = new HashMap<>();
             meesevaParams.put("APPLICATIONNUMBER", changeOfUse.getMeesevaApplicationNumber());
             if (changeOfUse.getApplicationNumber() == null) {
                 changeOfUse.setApplicationNumber(changeOfUse.getMeesevaApplicationNumber());
-                changeOfUse.setSource(Source.MEESEVA);
+                changeOfUse.setSource(MEESEVA);
             }
             changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
                     .getApplicationType().getCode(), workFlowAction, meesevaParams, sourceChannel);
         } else
             changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
                     .getApplicationType().getCode(), workFlowAction, sourceChannel);
-        final Assignment currentUserAssignment = assignmentService.getPrimaryAssignmentForGivenRange(securityUtils
-                .getCurrentUser().getId(), new Date(), new Date());
-        String nextDesign = "";
-        Assignment assignObj = null;
-        List<Assignment> asignList = null;
-        if (approvalPosition != null)
-            assignObj = assignmentService.getPrimaryAssignmentForPositon(approvalPosition);
-        if (assignObj != null) {
-            asignList = new ArrayList<>();
-            asignList.add(assignObj);
-        } else if (assignObj == null && approvalPosition != null)
-            asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
-        nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
-        changeOfUse.getApplicationNumber();
-        waterTaxUtils.getApproverName(approvalPosition);
-        if(currentUserAssignment!=null)
-            currentUserAssignment.getDesignation().getName();
 
         if (loggedInMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + changeOfUse.getApplicationNumber();
@@ -291,7 +294,7 @@ public class ChangeOfUseController extends GenericConnectionController {
 
         loggedUserIsMeesevaUser = waterTaxUtils.isMeesevaUser(securityUtils.getCurrentUser());
         if (loggedUserIsMeesevaUser)
-            if (meesevaApplicationNumber == null && meesevaApplicationNumber != "")
+            if (meesevaApplicationNumber == null)
                 throw new ApplicationRuntimeException("MEESEVA.005");
             else
                 changeOfUse.setMeesevaApplicationNumber(meesevaApplicationNumber);
@@ -312,6 +315,7 @@ public class ChangeOfUseController extends GenericConnectionController {
         model.addAttribute("connectionCategories", connectionCategoryService.getAllActiveConnectionCategory());
         model.addAttribute("pipeSizes", pipeSizeService.getAllActivePipeSize());
         model.addAttribute("citizenPortalUser", waterTaxUtils.isCitizenPortalUser(securityUtils.getCurrentUser()));
+        model.addAttribute("isAnonymousUser", waterTaxUtils.isAnonymousUser(securityUtils.getCurrentUser()));
     }
 
 }

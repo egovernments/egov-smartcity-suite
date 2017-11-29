@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 package org.egov.pgr.service;
@@ -53,19 +61,11 @@ import java.util.List;
 @Transactional(readOnly = true)
 public class ComplaintTypeCategoryService {
 
-    private final ComplaintTypeCategoryRepository complaintTypeCategoryRepository;
-
     @Autowired
-    public ComplaintTypeCategoryService(final ComplaintTypeCategoryRepository complaintTypeCategoryRepository) {
-        this.complaintTypeCategoryRepository = complaintTypeCategoryRepository;
-    }
-
-    public ComplaintTypeCategory findById(final Long categoryId) {
-        return complaintTypeCategoryRepository.findOne(categoryId);
-    }
+    private ComplaintTypeCategoryRepository complaintTypeCategoryRepository;
 
     @Transactional
-    public ComplaintTypeCategory createComplaintTypeCategory(final ComplaintTypeCategory complaintTypeCategory) {
+    public ComplaintTypeCategory createComplaintTypeCategory(ComplaintTypeCategory complaintTypeCategory) {
         return complaintTypeCategoryRepository.save(complaintTypeCategory);
     }
 
@@ -73,7 +73,7 @@ public class ComplaintTypeCategoryService {
         return complaintTypeCategoryRepository.findAll(new Sort(Sort.Direction.ASC, "name"));
     }
 
-    public ComplaintTypeCategory findByName(final String categoryName) {
+    public ComplaintTypeCategory findByName(String categoryName) {
         return complaintTypeCategoryRepository.findByName(categoryName);
     }
 }

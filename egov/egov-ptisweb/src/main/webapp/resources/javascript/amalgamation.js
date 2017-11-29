@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 
 jQuery.noConflict();
@@ -173,7 +181,6 @@ function calculatePlinthArea(length, breadth, rowIdx){
 }
 
 jQuery(document).on('blur', ".amlgpropassessmentno", function () {
-
 	var retainerProp=jQuery('#retainerPropertyId').val();
 	var rowIdx=jQuery(this).data('idx');
 	if(retainerProp == jQuery(this).val()){
@@ -181,11 +188,21 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
 		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input').val('');
 		return;
 	}
-
+	var tableObj=document.getElementById('amalgamatedPropertiesTbl');
+	var lastRow = tableObj.rows.length;
+	var currentAssessment = jQuery(this).val();
+    for(var i=0;i<lastRow-2;i++){
+    	if(lastRow-1!=1 && currentAssessment == jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+i+')').find('.amlgpropassessmentno').val()){
+    		bootbox.alert('This property is already added to Amalgamated Properties list! Please give other property which is not added');
+    		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input').val('');
+    		return;
+    	}
+	}
     jQuery.ajax({
         url: "/ptis/common/amalgamation/getamalgamatedpropdetails",
         type: "GET",
-        data:{"assessmentNo":jQuery(this).val()},
+        data:{"assessmentNo":jQuery(this).val(),
+        	"retainerAssessmentNo":jQuery('#retainerPropertyId').val()},
         beforeSend:function()
         {
         	jQuery('.loader-class').modal('show', {backdrop: 'static'});
@@ -195,11 +212,53 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
         	{
         		if(property.validationMsg == ''){
         			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+    				.find('.amlgpropassessmentno').attr("value",property.assessmentNo);
+        			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+    				.find('.amlgpropassessmentno').attr('readonly', true);
+        			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
+    				.find('.amlgpropassessmentno').attr('disabled', 'disabled');
+        			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
         				.find('.amlgpropownername').val(property.ownerName);
 	        		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
 	    				.find('.amlgpropmobileno').val(property.mobileNo);
 	        		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
 	    				.find('.amlgpropaddress').val(property.propertyAddress);
+	        		for (i = 0; i < property.owners.length; i++) { 
+	        			var tableObj=document.getElementById('ownerInfoTbl');
+	        			var tbody=tableObj.tBodies[0];
+	        			var lastRow = tableObj.rows.length;
+	        			var rowObj = tableObj.rows[1].cloneNode(true);
+	        			var nextIdx=(lastRow-1);
+	        			jQuery(rowObj).find("input, select").each(function() {
+	        				jQuery(this).attr({
+	    								'id' : function(_, id) {
+	    									return id.replace('[0]', '['
+	    											+ nextIdx + ']');
+	    								},
+	    								'name' : function(_, name) {
+	    									return name.replace('[0]', '['
+	    											+ nextIdx + ']');
+	    									
+	    								}
+	        				});  
+	        				if(jQuery(this).attr('data-idx'))
+	        					{
+	        						jQuery(this).attr('data-idx', nextIdx);
+	        					}
+	        						jQuery(this).val('');
+	    					
+	        				});
+	        				tbody.appendChild(rowObj);
+	        				jQuery('#ownerInfoTbl tbody tr:last').find('input').val('');
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].upicNo']").val(currentAssessment);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.aadhaarNumber']").val(property.owners[i].aadhaarNumber);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.mobileNumber']").val(property.owners[i].mobileNumber);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.name']").val(property.owners[i].ownerName);
+	        				jQuery("select[name='amalgamationOwnersProxy["+ nextIdx +"].owner.gender']").val(property.owners[i].gender);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.emailId']").val(property.owners[i].emailId);
+	        				jQuery("select[name='amalgamationOwnersProxy["+ nextIdx +"].owner.guardianRelation']").val(property.owners[i].guardianRelation);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.guardian']").val(property.owners[i].guardian);
+	        			}
         		} else {
         			bootbox.alert(property.validationMsg);
         			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input')
@@ -250,7 +309,8 @@ jQuery(document).on('blur', ".txtaadhar", function () {
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.mobileNumber']").val(userInfoObj.phone);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.mobileNumber']").attr('readonly', true);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.emailId']").attr('readonly', true);
-				jQuery("select[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardianRelation']").attr('disabled', 'disabled');
+				jQuery("select[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").val(userInfoObj.careof);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").attr('readonly', true);
 			} else {
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.aadhaarNumber']").val("");
@@ -261,6 +321,7 @@ jQuery(document).on('blur', ".txtaadhar", function () {
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.mobileNumber']").val("").attr('readonly', false);
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.emailId']").attr('readonly', false);
 				jQuery("select[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardianRelation']").removeAttr('disabled');
+				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").val("");
 				jQuery("input[name='amalgamationOwnersProxy["+ rowidx +"].owner.guardian']").attr('readonly', false);
 				if(aadharNo != "NaN") {
 					bootbox.alert("Aadhar number is not valid");
@@ -353,7 +414,7 @@ function addAmalgamatedProperties()
 											+ nextIdx + ']');
 									
 								}
-					});  
+					}).attr("value",'');  
 					
 					if(jQuery(this).attr('data-idx'))
 					{
@@ -363,7 +424,10 @@ function addAmalgamatedProperties()
 					
 		   });
 			tbody.appendChild(rowObj);
-			
+			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+nextIdx+')')
+			.find('.amlgpropassessmentno').attr('readonly', false);
+			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+nextIdx+')')
+			.find('.amlgpropassessmentno').removeAttr('disabled');
 			 jQuery('#amalgamatedPropertiesTbl tbody tr:last').find('input').val('');
 		   
 }
@@ -371,21 +435,34 @@ function addAmalgamatedProperties()
 jQuery(document).on('click',"#delete_row",function (){
 	var table = document.getElementById('amalgamatedPropertiesTbl');
     var rowCount = table.rows.length;
+    var currentAssessment = jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+jQuery(this).closest('tr').index()+')')
+	.find('.amlgpropassessmentno').val();
     var counts = rowCount - 1;
     if(counts==1)
 	{
 		bootbox.alert("This Row cannot be deleted");
 		return false;
 	}else{	
-
+		removeOwners(currentAssessment);
 		jQuery(this).closest('tr').remove();		
-		
 		jQuery("#amalgamatedPropertiesTbl tr:eq(1) td span[alt='AddF']").show();
 		//regenerate index existing inputs in table row
 		regenerateIndex('amalgamatedPropertiesTbl');
 		return true;
 	}
 });
+
+function removeOwners(currentAssessment){
+	var table = document.getElementById('ownerInfoTbl');
+    for(var i=(table.rows.length)-1;i>0;i--){
+    	if(jQuery("input[name='amalgamationOwnersProxy["+ i +"].upicNo']").val() == currentAssessment){
+    		jQuery("#ownerInfoTbl tbody tr:eq("+i+")").remove();
+			jQuery("#ownerInfoTbl tr:eq(1) td span[alt='AddF']").show();
+   	 	}
+    }
+    regenerateIndex('ownerInfoTbl');
+    return true;
+} 
 
 function regenerateIndex(tableId){
 	var idx=0;

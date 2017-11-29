@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2016>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,17 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.stms.web.controller.reports;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-
-import java.text.ParseException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.commons.EgwStatus;
@@ -61,7 +60,7 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.ptis.constants.PropertyTaxConstants;
-import org.egov.stms.elasticSearch.entity.DailySTCollectionReportSearch;
+import org.egov.stms.elasticsearch.entity.DailySTCollectionReportSearch;
 import org.egov.stms.service.es.SewerageIndexService;
 import org.elasticsearch.index.query.BoolQueryBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -72,27 +71,31 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
 @Controller
 @RequestMapping("/reports/dailySTCollectionReport/search/")
 public class DailySTCollectionReportController {
 
     @Autowired
     public EgwStatusHibernateDAO egwStatusHibernateDAO;
-
     @Autowired
     public AssignmentService assignmentService;
-
     @Autowired
     public AppConfigValueService appConfigValueService;
-
     @Autowired
     private CityService cityService;
     @Autowired
     private BoundaryService boundaryService;
-
     @Autowired
     private SewerageIndexService sewerageIndexService;
-
+    
     @ModelAttribute
     public void reportModel(final Model model) {
         final DailySTCollectionReportSearch dailyCollectionReportResut = new DailySTCollectionReportSearch();
@@ -120,7 +123,6 @@ public class DailySTCollectionReportController {
 
     @ModelAttribute("status")
     public List<EgwStatus> loadStatus() {
-
         return egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
     }
 
@@ -138,14 +140,12 @@ public class DailySTCollectionReportController {
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseBody
-    public List<DailySTCollectionReportSearch> searchCollection(@ModelAttribute final DailySTCollectionReportSearch searchRequest)
-            throws ParseException {
+    public List<DailySTCollectionReportSearch> searchCollection(@ModelAttribute final DailySTCollectionReportSearch searchRequest) {
         List<DailySTCollectionReportSearch> resultList;
         final City cityWebsite = cityService.getCityByName(ApplicationThreadLocals.getCityName());
         searchRequest.setUlbName(cityWebsite.getName());
         final BoolQueryBuilder boolQuery = sewerageIndexService.getDCRSearchResult(searchRequest);
         resultList = sewerageIndexService.getDCRSewerageReportResult(searchRequest, boolQuery);
-
         return resultList;
     }
 }

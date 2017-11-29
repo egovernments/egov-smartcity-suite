@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!--
-  ~ eGov suite of products aim to improve the internal efficiency,transparency,
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) <2015>  eGovernments Foundation
+  ~     Copyright (C) 2017  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -27,6 +27,13 @@
   ~
   ~         1) All versions of this program, verbatim or modified must carry this
   ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
   ~
   ~         2) Any misrepresentation of the origin of the material is prohibited. It
   ~            is required that all modified versions of this material be marked in
@@ -37,9 +44,9 @@
   ~            or trademarks of eGovernments Foundation.
   ~
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
   -->
-<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-01-20T12:57:00 -->
+<!-- Created with Jaspersoft Studio version 6.4.0.final using JasperReports Library version 6.4.1  -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="mutationCertificate_details" language="groovy" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="0" rightMargin="0" topMargin="0" bottomMargin="0" uuid="a002afff-59b5-4b48-b40a-06d60ceff39d">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -56,6 +63,7 @@
 	<parameter name="oldOwnerName" class="java.lang.String"/>
 	<parameter name="oldOwnerParentName" class="java.lang.String"/>
 	<parameter name="newOwnerGuardianRelation" class="java.lang.String"/>
+	<parameter name="oldOwnerGuardianRelation" class="java.lang.String"/>
 	<parameter name="regDocNo" class="java.lang.String"/>
 	<parameter name="regDocDate" class="java.lang.String"/>
 	<parameter name="ownerAddress" class="java.lang.String"/>
@@ -209,7 +217,7 @@
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{doorNo}+",\n"+$P{assessmentNo}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{doorNo})+",\n"+$P{assessmentNo}]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="310" width="230" height="50" uuid="30b7cc03-1984-4bd2-a1ee-ef971a918bd3"/>
@@ -236,7 +244,7 @@
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{oldOwnerName})+", "+JRStringUtil.xmlEncode($P{oldOwnerParentName})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{oldOwnerGuardianRelation})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="410" width="230" height="50" uuid="973380fa-39a3-4baa-8bb5-db60d7e5aa7b"/>
@@ -290,7 +298,7 @@
 				<textElement textAlignment="Left" markup="none">
 					<font size="10" isBold="false" isItalic="false" isUnderline="false" isPdfEmbedded="true"/>
 				</textElement>
-				<textFieldExpression><![CDATA[$P{newOwnerGuardianRelation}]]></textFieldExpression>
+				<textFieldExpression><![CDATA[JRStringUtil.xmlEncode($P{newOwnerGuardianRelation})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement stretchType="RelativeToTallestObject" x="30" y="474" width="510" height="40" uuid="9ff7be09-66c6-4157-8446-6b345b7a833f"/>

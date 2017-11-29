@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,6 +43,7 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
   function  populateService(serviceCategory){
 		    dom.get('fundId').value="-1";
@@ -61,7 +69,6 @@
         	var url3 = path+"/receipts/ajaxReceiptCreate-ajaxFinSubledgerByService.action";
         	makeJSONCall(["subledgerCode","glcodeId","detailTypeId","detailTypeName","detailCode","detailKeyId",
         	"detailKey","amount"],url3,{serviceId:service,deptId:dept},loadFinSubledgerSuccessHandler,loadFinSubledgerFailureHandler);
-        	
         }
 
 var miscArray;
@@ -186,8 +193,8 @@ loadFinAccSuccessHandler=function(req,res){
              "accounthead":"",
              "creditamount":""
          });      
-	  updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',0,"0.00");
-	  totalcramt = "0.00";          
+	  updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',0,"0");
+	  totalcramt = "0";          
 	  billDetailTableIndex = 1;
 	for(i=0;i<res.results.length-1;i++){
 	  	 billCreditDetailsTable.addRow({SlNo:billCreditDetailsTable.getRecordSet().getLength()+1,
@@ -206,12 +213,13 @@ loadFinAccSuccessHandler=function(req,res){
                 updateGridMisc(VOUCHERCREDITDETAILLIST,'creditAmountDetail',i,res.results[i].creditAmountDetail);
                 totalcramt = parseFloat(totalcramt)+parseFloat(res.results[i].creditAmountDetail);
                 if(totalcramt>0){
-            		totalcramt=parseInt(totalcramt).toFixed(2);
+            		totalcramt=parseInt(totalcramt);
        		 	}
               
         }
 		 document.getElementById('totalcramount').value=totalcramt;
 		 updatetotalAmount();
+		patternvalidation();
     }
  loadFinAccFailureHandler=function(){
   bootbox.alert('unable to load Function');
@@ -234,7 +242,7 @@ loadFinSubledgerSuccessHandler=function(req,res){
          "amount":""
        
      });
-	 updateSLGrid('amount',0,"0.00");
+	 updateSLGrid('amount',0,"0");
 	 slDetailTableIndex = 1;
 	 for(i=0;i<res.results.length-1;i++){
 	  			 subLedgersTable.addRow({SlNo:subLedgersTable.getRecordSet().getLength()+1,
@@ -261,6 +269,7 @@ loadFinSubledgerSuccessHandler=function(req,res){
                
                 
         }
+        patternvalidation();
 }
 
  loadFinSubledgerFailureHandler=function(){

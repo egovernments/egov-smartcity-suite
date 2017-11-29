@@ -1,0 +1,9 @@
+---
+- name: install Redis server {{redis_version}}
+  apt: name=redis-server state={{redis_version}} update_cache=no
+
+- name: check if Redis is running
+  service: name=redis-server state=started
+
+- name: enable redis-server to survive reboot
+  service: name=redis-server enabled=yes

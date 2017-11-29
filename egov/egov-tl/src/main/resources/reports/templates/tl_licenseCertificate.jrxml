@@ -1,8 +1,56 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
+
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="test" language="groovy" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
-	<property name="ireport.y" value="0"/>
+	<property name="ireport.y" value="158"/>
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<parameter name="applicationnumber" class="java.lang.String"/>
 	<parameter name="licencenumber" class="java.lang.String"/>
@@ -21,42 +69,47 @@
 	<parameter name="subCategory" class="java.lang.String"/>
 	<parameter name="certificateType" class="java.lang.String"/>
 	<parameter name="appType" class="java.lang.String"/>
+	<parameter name="qrCode" class="java.io.File"/>
+	<parameter name="commissionerSign" class="java.io.InputStream" isForPrompting="false"/>
 	<parameter name="currentDate" class="java.lang.String">
 		<parameterDescription><![CDATA[]]></parameterDescription>
 	</parameter>
 	<parameter name="category" class="java.lang.String"/>
 	<background>
-		<band height="780" splitType="Stretch">
+		<band height="802">
 			<rectangle>
-				<reportElement x="0" y="62" width="555" height="689" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+				<reportElement x="0" y="0" width="555" height="802" uuid="113c06ab-af78-4c8c-8872-6fe284a565af"/>
+				<graphicElement>
+					<pen lineWidth="1.25"/>
+				</graphicElement>
 			</rectangle>
 		</band>
 	</background>
 	<title>
-		<band height="174" splitType="Stretch">
+		<band height="109" splitType="Stretch">
 			<staticText>
-				<reportElement x="3" y="81" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
+				<reportElement x="3" y="46" width="547" height="21" isPrintInFirstWholeBand="true" uuid="c58d977b-8206-48c6-94c4-35619ef6a4a7"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="14" isBold="true"/>
 				</textElement>
 				<text><![CDATA[TRADE  LICENSE]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="124" width="547" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
+				<reportElement x="3" y="89" width="547" height="20" uuid="35aa238f-85ba-4bbd-8173-f31a5dc79943"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["for the year "+$P{installMentYear}+""]]></textFieldExpression>
 			</textField>
 			<textField isStretchWithOverflow="true">
-				<reportElement x="3" y="60" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
+				<reportElement x="3" y="25" width="547" height="20" uuid="e55a933f-8d49-424e-b388-87a0078a2d26"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle" markup="styled">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
 			</textField>
 			<staticText>
-				<reportElement x="3" y="102" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
+				<reportElement x="3" y="67" width="547" height="21" isPrintInFirstWholeBand="true" uuid="ef636f14-e3f2-41cb-a205-35c032d02fe2"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -139,10 +192,13 @@
 				<textFieldExpression><![CDATA["2. License Fee Rs: "+$P{demandTotalamt}+"/- is paid on "+$P{demandUpdateDate}+" for running "+$P{appType}+ " of Trade License for the financial year " +$P{installMentYear}+".\n\n"]]></textFieldExpression>
 			</textField>
 		</band>
-		<band height="181"/>
-		<band height="91">
+		<band/>
+		<band/>
+	</detail>
+	<lastPageFooter>
+		<band height="151">
 			<staticText>
-				<reportElement x="352" y="35" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
+				<reportElement x="343" y="41" width="194" height="21" uuid="d7dd9cdd-c936-471b-83df-bdc2ed64ef3d"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="12" isBold="true"/>
 				</textElement>
@@ -150,7 +206,7 @@
 ]]></text>
 			</staticText>
 			<staticText>
-				<reportElement stretchType="RelativeToTallestObject" x="12" y="34" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
+				<reportElement stretchType="RelativeToTallestObject" x="3" y="40" width="46" height="20" uuid="5293554e-36ec-4151-8fee-9a3e93b997cc"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -164,7 +220,7 @@
 				<text><![CDATA[Date:]]></text>
 			</staticText>
 			<textField isStretchWithOverflow="true">
-				<reportElement stretchType="RelativeToTallestObject" x="58" y="34" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
+				<reportElement stretchType="RelativeToTallestObject" x="49" y="40" width="164" height="20" uuid="e68cd804-1bf0-4767-b6a1-ade7313e83b0"/>
 				<box leftPadding="5" rightPadding="5">
 					<pen lineWidth="0.0"/>
 					<topPen lineWidth="0.0"/>
@@ -177,6 +233,17 @@
 				</textElement>
 				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
 			</textField>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="138" y="63" width="260" height="70" uuid="2b22371f-417f-42af-bb21-16b7dca8a245"/>
+				<imageExpression><![CDATA[$P{qrCode}]]></imageExpression>
+			</image>
+			<image scaleImage="RetainShape" hAlign="Center" isUsingCache="true" onErrorType="Blank">
+				<reportElement mode="Transparent" x="343" y="6" width="194" height="32" uuid="739ec1f9-740e-4b0c-b848-183308ff8ddf"/>
+				<imageExpression><![CDATA[$P{commissionerSign}]]></imageExpression>
+			</image>
 		</band>
-	</detail>
+	</lastPageFooter>
+	<summary>
+		<band/>
+	</summary>
 </jasperReport>

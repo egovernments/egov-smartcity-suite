@@ -1,8 +1,8 @@
 /*
- * eGov suite of products aim to improve the internal efficiency,transparency,
+ *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) <2015>  eGovernments Foundation
+ *     Copyright (C) 2017  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,6 +26,13 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces,
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            derived works should carry eGovernments Foundation logo on the top right corner.
+ *
+ *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+ *            For any further queries on attribution, including queries on brand guidelines,
+ *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
  *            is required that all modified versions of this material be marked in
@@ -36,22 +43,9 @@
  *            or trademarks of eGovernments Foundation.
  *
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+ *
  */
 package org.egov.ptis.domain.dao.property;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
-import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
@@ -65,6 +59,19 @@ import org.hibernate.Query;
 import org.hibernate.Session;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_PROPERTY_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.CATEGORY_TYPE_VACANTLAND_TAX;
+import static org.egov.ptis.constants.PropertyTaxConstants.OWNERSHIP_TYPE_VAC_LAND;
 
 @Repository(value = "basicPropertyDAO")
 @Transactional(readOnly = true)
@@ -531,7 +538,7 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
      * API to fetch properties belonging to a particular ward
      */
     @Override
-    public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId, String upicNo, String doorNo){
+    public List<BasicProperty> getActiveBasicPropertiesForWard(Long wardId, String upicNo, String doorNo, String oldUpicNo){
         String queryStr = "select bp from BasicPropertyImpl bp where bp.active = 'Y' and bp.upicNo is not null ";
         if (wardId != null)
             queryStr = queryStr.concat(" and bp.propertyID.ward.id=:wardId ");
@@ -539,6 +546,8 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             queryStr = queryStr.concat(" and bp.upicNo =:upicNo ");
         if (StringUtils.isNotBlank(doorNo))
             queryStr = queryStr.concat(" and bp.address.houseNoBldgApt like :doorNo ");
+        if(StringUtils.isNotBlank(oldUpicNo))
+            queryStr = queryStr.concat(" and bp.oldMuncipalNum =:oldUpicNo ");
 
         queryStr = queryStr.concat(" order by bp.id desc ");
         Query query = getCurrentSession().createQuery(queryStr);
@@ -548,6 +557,8 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
             query.setString("upicNo", upicNo);
         if (StringUtils.isNotBlank(doorNo))
             query.setString("doorNo", "%" + doorNo.trim() + "%");
+        if (StringUtils.isNotBlank(oldUpicNo))
+            query.setString("oldUpicNo", oldUpicNo);
     	    
     	return query.list();
     }
@@ -560,5 +571,24 @@ public class BasicPropertyHibernateDAO implements BasicPropertyDAO {
         query.setLong("propertyId", propertyId);
         basicProperty = (BasicProperty) query.uniqueResult();
         return basicProperty;
+    }
+
+    @Override
+    public BasicProperty getBasicPropertyForUpicNoOrOldUpicNo(String upicNo, String oldUpicNo){
+        String queryStr = "select bp from BasicPropertyImpl bp where bp.active = 'Y'";
+
+        if (StringUtils.isNotBlank(upicNo))
+            queryStr = queryStr.concat(" and bp.upicNo =:upicNo ");
+        if(StringUtils.isNotBlank(oldUpicNo))
+            queryStr = queryStr.concat(" and bp.oldMuncipalNum =:oldUpicNo ");
+
+        Query query = getCurrentSession().createQuery(queryStr);
+
+        if (StringUtils.isNotBlank(upicNo))
+            query.setString("upicNo", upicNo);
+        if (StringUtils.isNotBlank(oldUpicNo))
+            query.setString("oldUpicNo", oldUpicNo);
+
+        return (BasicProperty) query.uniqueResult();
     }
 }
