@@ -52,6 +52,7 @@ import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.property.BasicProperty;
@@ -76,6 +77,8 @@ import static org.egov.ptis.constants.PropertyTaxConstants.APPLICATION_TYPE_VACA
 import static org.egov.ptis.constants.PropertyTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.ptis.constants.PropertyTaxConstants.VR_STATUS_ASSISTANT_FORWARDED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_ASSISTANT_APPROVAL_PENDING;
+
+import java.util.Date;
 
 @Controller
 @RequestMapping(value = "/vacancyremission")
@@ -140,6 +143,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
                 model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
             if (vacancyRemission.getStatus().equals(PropertyTaxConstants.VR_STATUS_APPROVED)) {
                 model.addAttribute("updated", true);
+                model.addAttribute("allowUpdate" , DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(), new Date())<1);
                 vacancyRemissionService.addModelAttributes(model, basicProperty);
                 return VACANCYREMISSION_EDIT;
             } else if (vacancyRemission.getStatus().equals(PropertyTaxConstants.VR_STATUS_REJECTED)) {

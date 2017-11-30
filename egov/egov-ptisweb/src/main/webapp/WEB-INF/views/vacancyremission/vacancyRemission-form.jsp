@@ -61,6 +61,28 @@ body
 </style>
 <script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
+<script type="text/javascript">
+function addMonths(dateObj) {
+	var stringDate = dateObj.value;
+	var pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+	var arrayDate = stringDate.match(pattern);
+	var fromDate = new Date(arrayDate[3], arrayDate[2] - 1, arrayDate[1]);
+    var temp = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
+    temp.setMonth(temp.getMonth() + (7));
+    temp.setDate(temp.getDate() - 1); 
+    if (fromDate.getDate() < temp.getDate()) { 
+        temp.setDate(fromDate.getDate()); 
+    }
+    temp.setDate(temp.getDate() - 1); 
+    var todate = temp.getDate() + '/' + (temp.getMonth() + 1) + '/' + temp.getFullYear();
+    jQuery('#toDate').val(todate);
+    
+};
+jQuery(document).on('click', "#Forward", function () {
+	jQuery('#toDate').removeAttr('disabled');
+	return true;
+});
+</script>
 <c:if test="${errorMsg != ''}">
  	<div class="panel-heading">
 				<div class="add-margin error-msg" style="text-align:center;">
@@ -86,14 +108,14 @@ body
 											<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>
 										</label>
 										<div class="col-sm-3 add-margin">
-											<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
+											<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" onChange="addMonths(this);"/>
 											<form:errors path="vacancyFromDate" cssClass="add-margin error-msg"/>
 										</div>
 	                                    <label class="col-sm-2 control-label text-right">
 	                                    	<spring:message code="lbl.toDate" /> <span class="mandatory"></span>
 										</label>
 										<div class="col-sm-3 add-margin">
-											<form:input path="vacancyToDate" id="toDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" />
+											<form:input path="vacancyToDate" id="toDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" disabled="true"/>
 											<form:errors path="vacancyToDate" cssClass="add-margin error-msg"/>
 										</div>
 								</div>

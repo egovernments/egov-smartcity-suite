@@ -75,6 +75,7 @@ import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
 import org.egov.pims.commons.Position;
+import org.egov.ptis.client.bill.PTBillServiceImpl;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
@@ -111,6 +112,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -174,6 +176,9 @@ public class VacancyRemissionService {
 
     @Autowired
     private AppConfigValueService appConfigValuesService;
+    
+    @Autowired
+    private PTBillServiceImpl ptBillServiceImpl;
 
     public VacancyRemission getApprovedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findByUpicNo(upicNo);
@@ -346,18 +351,77 @@ public class VacancyRemissionService {
     private void updateDemandDetailsWithRebate(final VacancyRemission vacancyRemission, final Installment demandInstallment,
                                                final Installment effectiveInstallment) {
         final Set<Ptdemand> activePropPtDemandSet = vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet();
+        BigDecimal excess = BigDecimal.ZERO;
+        final Set<String> demandReasons = new LinkedHashSet<>(
+                Arrays.asList(DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
+                        DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+        Ptdemand currPtDemand = getCurrentPTDemand(demandInstallment, activePropPtDemandSet);
+        if (currPtDemand != null) {
+            final Set<EgDemandDetails> effectiveInstDemandDetails = propertyService
+                    .getEgDemandDetailsSetByInstallment(
+                            currPtDemand.getEgDemandDetails())
+                    .get(effectiveInstallment);
+            for (final String demandReason : demandReasons) {
+                final EgDemandDetails dmdDet = propertyService.getEgDemandDetailsForReason(
+                        effectiveInstDemandDetails, demandReason);
+                if (dmdDet != null) {
+                    dmdDet.setAmount(dmdDet.getAmount().divide(new BigDecimal("2")).setScale(0,
+                            BigDecimal.ROUND_HALF_UP));
+                    excess = adjustCollection(excess, dmdDet);
+                }
+            }
+            EgDemandDetails advanceDemandDetails = propertyService.getEgDemandDetailsForReason(
+                    effectiveInstDemandDetails, ADVANCE_DMD_RSN_CODE);
+            updateAdvance(currPtDemand, excess, advanceDemandDetails);
+            ptDemandDAO.update(currPtDemand);
+        }
+    }
+
+    private BigDecimal adjustCollection(BigDecimal excess, final EgDemandDetails dmdDet) {
+        if (dmdDet.getAmtCollected().compareTo(dmdDet.getAmount()) > 0) {
+            excess = excess
+                    .add(dmdDet.getAmtCollected().subtract(dmdDet.getAmount()));
+            dmdDet.setAmtCollected(dmdDet.getAmount());
+        } else if (excess.compareTo(BigDecimal.ZERO) > 0) {
+            excess = adjustExcessToCollection(excess, dmdDet);
+        }
+        return excess;
+    }
+
+    private BigDecimal adjustExcessToCollection(BigDecimal excess, final EgDemandDetails dmdDet) {
+        if (excess.compareTo((dmdDet.getAmount().subtract(dmdDet.getAmtCollected()))) > 0) {
+            excess = excess.subtract(dmdDet.getAmount().subtract(dmdDet.getAmtCollected()));
+            dmdDet.setAmtCollected(dmdDet.getAmount());
+        } else {
+            dmdDet.setAmtCollected(dmdDet.getAmtCollected().add(excess));
+            excess = BigDecimal.ZERO;
+        }
+        return excess;
+    }
+
+    private Ptdemand getCurrentPTDemand(final Installment demandInstallment, final Set<Ptdemand> activePropPtDemandSet) {
         Ptdemand currPtDemand = null;
         for (final Ptdemand ptDemand : activePropPtDemandSet)
-            if (ptDemand.getIsHistory().equalsIgnoreCase("N"))
-                if (ptDemand.getEgInstallmentMaster().equals(demandInstallment)) {
-                    currPtDemand = ptDemand;
-                    break;
-                }
-        for (final EgDemandDetails dmdDet : currPtDemand.getEgDemandDetails())
-            if (dmdDet.getInstallmentStartDate().equals(effectiveInstallment.getFromDate()))
-                dmdDet.setAmount(dmdDet.getAmount().divide(new BigDecimal("2")).setScale(0,
-                        BigDecimal.ROUND_HALF_UP));
-        ptDemandDAO.update(currPtDemand);
+            if (ptDemand.getIsHistory().equalsIgnoreCase("N") && ptDemand.getEgInstallmentMaster().equals(demandInstallment)) {
+                currPtDemand = ptDemand;
+                break;
+            }
+        return currPtDemand;
+    }
+
+    private void updateAdvance(Ptdemand currPtDemand, BigDecimal excess, EgDemandDetails advanceDemandDetails) {
+        if (excess.compareTo(BigDecimal.ZERO) > 0) {
+            EgDemandDetails newDtls;
+            final Map<String, Installment> yearwiseInstMap = propertyTaxUtil.getInstallmentsForCurrYear(new Date());
+            final Installment installment = yearwiseInstMap.get(CURRENTYEAR_SECOND_HALF);
+            if (advanceDemandDetails != null)
+                advanceDemandDetails.setAmtCollected(advanceDemandDetails.getAmtCollected().add(excess));
+            else {
+                newDtls = ptBillServiceImpl.insertDemandDetails(ADVANCE_DMD_RSN_CODE, excess,
+                        installment);
+                currPtDemand.addEgDemandDetails(newDtls);
+            }
+        }
     }
 
     public void addModelAttributes(final Model model, final BasicProperty basicProperty) {
@@ -546,6 +610,7 @@ public class VacancyRemissionService {
             else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
                 vacancyRemissionApproval.setStatus(VR_STATUS_APPROVED);
                 vacancyRemissionApproval.setIsApproved(true);
+                vacancyRemissionApproval.setApprovalDate(new Date());
             }
             if (WFLOW_ACTION_STEP_APPROVE.equalsIgnoreCase(workFlowAction))
                 pos = vacancyRemissionApproval.getCurrentState().getOwnerPosition();
@@ -595,7 +660,7 @@ public class VacancyRemissionService {
         /*
          * If VR is done in 1st half, provide 50% rebate on taxes of the 2nd half
          */
-        if (DateUtils.between(vacancyRemissionApproval.getVacancyRemission().getVacancyToDate(),
+        if (DateUtils.between(new Date(),
                 installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate()))
             updateDemandDetailsWithRebate(vacancyRemissionApproval.getVacancyRemission(), installmentFirstHalf,
                     installmentSecondHalf);
@@ -695,15 +760,28 @@ public class VacancyRemissionService {
             reportParams.put("vrFromDate", formatter.format(vacancyRemission.getVacancyFromDate()));
             reportParams.put("vrToDate", formatter.format(vacancyRemission.getVacancyToDate()));
             final int noOfMonths = DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(),
-                    vacancyRemission.getVacancyToDate());
+                    new DateTime(vacancyRemission.getVacancyToDate()).plusDays(1).toDate());
             reportParams.put("totalMonths", noOfMonths);
             final Map<String, BigDecimal> currentDemand = ptDemandDAO
                     .getDemandCollMap(vacancyRemission.getBasicProperty().getProperty());
-            final BigDecimal halfYearTax = currentDemand.get(CURR_SECONDHALF_DMD_STR);
+            BigDecimal halfYearTax = currentDemand.get(CURR_SECONDHALF_DMD_STR);
+            BigDecimal newTax = BigDecimal.ZERO;
             financialYear = propertyTaxUtil.getFinancialYearforDate(new Date());
+            final Map<String, Installment> installmentMap = propertyTaxUtil.getInstallmentsForCurrYear(vacancyRemission.getVacancyRemissionApproval().get(0).getApprovalDate());
+            final Installment installmentFirstHalf = installmentMap.get(CURRENTYEAR_FIRST_HALF);
+            final Installment installmentSecondHalf = installmentMap.get(CURRENTYEAR_SECOND_HALF);
+            Ptdemand currPtDemand = getCurrentPTDemand(installmentFirstHalf, vacancyRemission.getBasicProperty().getActiveProperty().getPtDemandSet());
+            if (isApprovedInFirstHalf(vacancyRemission, installmentFirstHalf)){
+                halfYearTax = currentDemand.get(CURR_FIRSTHALF_DMD_STR);
+                newTax = getNewTax(currPtDemand, newTax, installmentFirstHalf);
+            }
+            else
+            {
+                newTax = getNewTax(currPtDemand, newTax, installmentSecondHalf);
+            }
             reportParams.put("financialYear", financialYear.getFinYearRange());
             reportParams.put("halfYearTax", halfYearTax.toString());
-            reportParams.put("newTax", halfYearTax.divide(BigDecimal.valueOf(2)).setScale(2).toString());
+            reportParams.put("newTax", newTax.toString());
             reportInput = new ReportRequest(VR_SPECIALNOTICE_TEMPLATE, vacancyRemission, reportParams);
         }
         if (reportInput != null) {
@@ -711,6 +789,21 @@ public class VacancyRemissionService {
             reportInput.setReportFormat(ReportFormat.PDF);
         }
         return reportInput;
+    }
+
+    private BigDecimal getNewTax(Ptdemand currPtDemand, BigDecimal newTax, final Installment installmentHalf) {
+        if(currPtDemand!=null)
+        for (final EgDemandDetails dmdDet : currPtDemand.getEgDemandDetails())
+            if (dmdDet.getInstallmentStartDate().equals(installmentHalf.getFromDate()) && !DEMANDRSN_CODE_PENALTY_FINES.equals(dmdDet.getEgDemandReason().getEgDemandReasonMaster().getCode())){
+                newTax = newTax.add(dmdDet.getAmount().divide(new BigDecimal("2")).setScale(0,
+                        BigDecimal.ROUND_HALF_UP));
+            }
+        return newTax;
+    }
+
+    private boolean isApprovedInFirstHalf(VacancyRemission vacancyRemission, final Installment installmentFirstHalf) {
+        return DateUtils.between(vacancyRemission.getVacancyRemissionApproval().get(0).getApprovalDate(),
+                installmentFirstHalf.getFromDate(), installmentFirstHalf.getToDate());
     }
 
     public String getLoggedInUserDesignation(final Long posId, final User user) {

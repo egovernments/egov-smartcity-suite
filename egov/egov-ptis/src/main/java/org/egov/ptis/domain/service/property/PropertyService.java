@@ -834,7 +834,7 @@ public class PropertyService {
 	 * @param demandDetailsSet
 	 * @return Map of Installment wise demand details set
 	 */
-	private Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
+	public Map<Installment, Set<EgDemandDetails>> getEgDemandDetailsSetByInstallment(
 			final Set<EgDemandDetails> demandDetailsSet) {
 		final Map<Installment, Set<EgDemandDetails>> newEgDemandDetailsSetByInstallment = new HashMap<>();
 

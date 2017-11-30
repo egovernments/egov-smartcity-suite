@@ -70,6 +70,7 @@ import org.egov.ptis.domain.entity.property.VacancyRemission;
 import org.egov.ptis.domain.service.property.PropertyService;
 import org.egov.ptis.domain.service.property.VacancyRemissionService;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
@@ -314,6 +315,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                     vacancyRemissionService.addModelAttributes(model, basicProperty);
                 }
+            model.addAttribute("endorsementNotices", new ArrayList<>());
         }
         return VACANCYREMISSION_FORM;
     }
@@ -327,7 +329,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         BasicProperty basicProperty=vacancyRemission.getBasicProperty();
         List<Document> documents = new ArrayList<>();
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(vacancyRemissionService.getLoggedInUser());
-        validateDates(vacancyRemission, resultBinder, request);
+        validateDates(vacancyRemission, resultBinder);
         vacancyRemissionSource(vacancyRemission, request);
         final Assignment assignment = propertyService.isCscOperator(vacancyRemissionService.getLoggedInUser())
                 ? propertyService.getAssignmentByDeptDesigElecWard(basicProperty)
@@ -417,11 +419,9 @@ public class VacanyRemissionController extends GenericWorkFlowController {
         return redirect;
     }
 
-    private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors,
-            final HttpServletRequest request) {
-
+    private void validateDates(final VacancyRemission vacancyRemission, final BindingResult errors) {
         final int noOfMonths = DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(),
-                vacancyRemission.getVacancyToDate());
+                new DateTime(vacancyRemission.getVacancyToDate()).plusDays(1).toDate());
         if (noOfMonths < 6)
             errors.rejectValue("vacancyToDate", "vacancyToDate.incorrect");
     }

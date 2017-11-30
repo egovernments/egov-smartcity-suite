@@ -2165,14 +2165,17 @@ public class PropertyTaxUtil {
                 .find("select vr from VacancyRemission vr where vr.basicProperty.upicNo=? and vr.status = 'APPROVED'",
                         upicNo);
         if (vacancyRemission != null)
-            if (vacancyRemission.getVacancyRemissionDetails().isEmpty())
+            if (vacancyRemission.getVacancyRemissionDetails().isEmpty() && DateUtils.noOfMonthsBetween(vacancyRemission.getVacancyFromDate(), new Date())==1)
                 monthlyUpdateFlag = true;
-            else {
+            else if (!vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
                 final VacancyRemissionDetails vrd = vacancyRemission.getVacancyRemissionDetails().get(
                         vacancyRemission.getVacancyRemissionDetails().size() - 1);
                 final int noOfMonths = DateUtils.noOfMonthsBetween(vrd.getCheckinDate(), new Date());
+                final int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
                 if (noOfMonths != 0)
                     monthlyUpdateFlag = true;
+                if (detailsSize % 5 == 0 && vacancyRemission.getVacancyToDate().compareTo(new Date())>0)
+                    monthlyUpdateFlag = false;
             }
         return monthlyUpdateFlag;
     }
@@ -2185,7 +2188,7 @@ public class PropertyTaxUtil {
         if (vacancyRemission != null)
             if (!vacancyRemission.getVacancyRemissionDetails().isEmpty()) {
                 final int detailsSize = vacancyRemission.getVacancyRemissionDetails().size();
-                if (detailsSize % 5 == 0)
+                if (detailsSize % 6 == 0 )
                     vrApprovalFlag = true;
             }
         return vrApprovalFlag;
