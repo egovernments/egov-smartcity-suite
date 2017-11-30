@@ -407,8 +407,10 @@ function DateValidation(startdate, enddate) {
 				.alert("Permission end date should be greater than Permission Start Date");
 		$('#permissionenddate').attr('style',
 				"border-radius: 5px; border:#FF0000 1px solid;");
+		return false;
 
-	}
+	}else
+		return true;
 
 }
 
