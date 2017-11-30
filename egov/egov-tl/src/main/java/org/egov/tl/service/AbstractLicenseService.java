@@ -801,6 +801,7 @@ public abstract class AbstractLicenseService<T extends License> {
                     .withNextAction(wfmatrix.getCurrentStatus());
             licenseRepository.save(license);
             tradeLicenseSmsAndEmailService.sendSMsAndEmailOnDigitalSign(license);
+            licenseApplicationIndexService.createOrUpdateLicenseApplicationIndex(license);
         }
 
     }
