@@ -122,13 +122,13 @@
 		var subledgerColumns = [ 
 	
 			{key:"glcode",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".serviceAccountDetail.glCodeId.glcode","hidden")},
-			{key:"serviceAccountDetail.glCodeId.id",label:'Account Code <span class="mandatory1">*</span>', formatter:createDropdownFormatter(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
+			{key:"serviceAccountDetail.glCodeId.id",label:'Account Code', formatter:createDropdownFormatter(SUBLEDGERLIST,"loaddropdown(this)"),  dropdownOptions:glcodeOptions},
 			{key:"detailType.name",hidden:true, formatter:createSLTextFieldFormatter(SUBLEDGERLIST,".detailType.name","hidden")},
-			{key:"detailType.id",label:'Type <span class="mandatory1">*</span>', formatter:createDropdownFormatter1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
+			{key:"detailType.id",label:'Type', formatter:createDropdownFormatter1(SUBLEDGERLIST),dropdownOptions:detailtypeOptions},
 			{key:"detailCode",label:'Code', formatter:createSLDetailCodeTextFieldFormatter(SUBLEDGERLIST,".detailCode","splitEntitiesDetailCode(this)")},
 			{key:"detailKeyId",hidden:true, formatter:createSLHiddenFieldFormatter(SUBLEDGERLIST,".detailKeyId")},
 			{key:"detailKey",label:'Name', formatter:createSLLongTextFieldFormatter(SUBLEDGERLIST,".detailKey","")},
-			{key:"amount",label:'Amount <span class="mandatory1">*</span>', formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
+			{key:"amount",label:'Amount', formatter:createSLAmountFieldFormatter(SUBLEDGERLIST,".amount")},
 			{key:'Add',label:'Add',formatter:createAddImageFormatter("${pageContext.request.contextPath}")},
 			{key:'Delete',label:'Delete',formatter:createDeleteImageFormatter("${pageContext.request.contextPath}")}
 		];

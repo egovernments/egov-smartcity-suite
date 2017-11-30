@@ -912,7 +912,7 @@ success: function(o) {
 		}
 	}
 	for(var k=0;k<obj.options.length;k++){
-		if(obj.options[k].value==selectedval){
+		if(obj.options[k].value.trim()==selectedval){
 			obj.options[k].selected=true;
 		}
 	}	
