@@ -105,13 +105,6 @@ public class CreateLegacyAdvertisementController extends HoardingControllerSuppo
                         .after(DateUtils.endOfDay(installmentObj.getToDate())))
                     resultBinder.rejectValue("applicationDate", "invalid.applicationDateForLegacy");
         }
-        if (advertisementPermitDetail != null
-                && advertisementPermitDetail.getPermissionstartdate() != null
-                && advertisementPermitDetail.getPermissionenddate() != null
-                && advertisementPermitDetail.getPermissionstartdate().after(
-                        advertisementPermitDetail.getPermissionenddate()))
-            resultBinder.rejectValue("permissionstartdate", "invalid.permissionFromDateAndToDateCompare");
-
     }
 
     @RequestMapping(value = "adtaxCreateLegacy", method = POST)

@@ -364,6 +364,7 @@ $(document).ready(function () {
         return formatted;
     }
 
+
     function calculateTax() {
 
         if ($('#rateClass').val() === '' || $('#unitOfMeasure').val() === '' || $('#subCategory').val() === '' || $('#measurement').val() === '') {
@@ -396,4 +397,19 @@ $(document).ready(function () {
     $('#category').trigger('change');
     $('#locality').trigger('change');
     $('#revenueBoundryParent').trigger('change');
+
 });
+
+function DateValidation(startdate, enddate) {
+
+	if (enddate <= startdate) {
+		bootbox
+				.alert("Permission end date should be greater than Permission Start Date");
+		$('#permissionenddate').attr('style',
+				"border-radius: 5px; border:#FF0000 1px solid;");
+
+	}
+
+}
+
+

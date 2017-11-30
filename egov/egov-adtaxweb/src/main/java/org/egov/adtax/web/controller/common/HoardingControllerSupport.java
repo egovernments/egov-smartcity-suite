@@ -226,6 +226,11 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
                 && advertisementPermitDetail.getAdvertisement().getCategory().isPropertyMandatory())
             resultBinder.rejectValue("advertisement.propertyNumber", "invalid.propertyIdIsMandatoryForCategory");
         // TODO: SAVE AUTOCALCULATED AMOUNT IN BACKEND.
-
-    }
+        
+        if (advertisementPermitDetail.getPermissionstartdate() != null
+                && advertisementPermitDetail.getPermissionenddate() != null
+                && advertisementPermitDetail.getPermissionstartdate().after(
+                        advertisementPermitDetail.getPermissionenddate()))
+            resultBinder.rejectValue("permissionstartdate", "invalid.permissionFromDateAndToDateCompare");
+    }   
 }

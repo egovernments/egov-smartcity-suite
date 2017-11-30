@@ -174,7 +174,7 @@
 						<span class="mandatory"></span>
 						</label>
 						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control datepicker" path="applicationDate" id="applicationDate" required="required" readonly="true"/>
+							<form:input type="text" cssClass="form-control" path="applicationDate" id="applicationDate" required="required" readonly="true"/>
                             <form:errors path="applicationDate" cssClass="error-msg" />
 						</div>
 					</div>
@@ -363,7 +363,7 @@ if(statuscode=='APPROVED' || statuscode=='ADTAXAMTPAYMENTPAID' || statuscode=='A
 
 $( ".workflow-submit" ).click(function( e ) {
 	if($('#advertisementform').valid()){
-		if(DateValidation($('#permissionstartdate').val() , $('#permissionenddate').val())){
+		if(DateValidation($('#permissionstartdate').datepicker('getDate') ,$('#permissionenddate').datepicker('getDate'))){
 			if(parseFloat($('#measurement').val()) <= 0){
 				bootbox.alert('Please enter valid measurement');
 				e.preventDefault();
@@ -382,6 +382,7 @@ $( ".workflow-submit" ).click(function( e ) {
 			}
 		}else{
 			e.preventDefault();
+			return false;
 		}
 	}else {
 		e.preventDefault();

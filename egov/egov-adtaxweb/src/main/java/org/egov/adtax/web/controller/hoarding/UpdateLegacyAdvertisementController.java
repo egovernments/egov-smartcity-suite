@@ -142,6 +142,7 @@ public class UpdateLegacyAdvertisementController extends HoardingControllerSuppo
             final Model model) {
 
         validateHoardingDocsOnUpdate(advertisementPermitDetail, resultBinder, redirAttrib); 
+        validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
 
         if (resultBinder.hasErrors())
             return "hoarding-updateLegacy";
