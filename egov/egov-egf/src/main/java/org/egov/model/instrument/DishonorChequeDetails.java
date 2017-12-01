@@ -47,9 +47,9 @@
  */
 package org.egov.model.instrument;
 
-import org.egov.commons.CChartOfAccounts;
-import org.egov.commons.CFunction;
-import org.egov.infstr.models.BaseModel;
+import java.math.BigDecimal;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -65,9 +65,9 @@ import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
 
-import java.math.BigDecimal;
-import java.util.HashSet;
-import java.util.Set;
+import org.egov.commons.CChartOfAccounts;
+import org.egov.commons.CFunction;
+import org.egov.infstr.models.BaseModel;
 
 @Entity
 @Table(name = "EGF_DISHONORCHEQUE_DETAIL")
@@ -103,11 +103,13 @@ public class DishonorChequeDetails extends BaseModel {
     @Transient
     private CFunction function;
 
+    @Override
     public Long getId() {
         return id;
     }
 
-    public void setId(Long id) {
+    @Override
+    public void setId(final Long id) {
         this.id = id;
     }
 
@@ -163,7 +165,7 @@ public class DishonorChequeDetails extends BaseModel {
         return subLedgerDetails;
     }
 
-    public void setSubLedgerDetails(Set<DishonorChequeSubLedgerDetails> subLedgerDetails) {
+    public void setSubLedgerDetails(final Set<DishonorChequeSubLedgerDetails> subLedgerDetails) {
         this.subLedgerDetails = subLedgerDetails;
     }
 
@@ -171,22 +173,22 @@ public class DishonorChequeDetails extends BaseModel {
     public int hashCode() {
         final int prime = 31;
         int result = super.hashCode();
-        result = prime * result + ((creditAmount == null) ? 0 : creditAmount.hashCode());
-        result = prime * result + ((debitAmt == null) ? 0 : debitAmt.hashCode());
-        result = prime * result + ((glcodeId == null) ? 0 : glcodeId.hashCode());
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        result = prime * result + (creditAmount == null ? 0 : creditAmount.hashCode());
+        result = prime * result + (debitAmt == null ? 0 : debitAmt.hashCode());
+        result = prime * result + (glcodeId == null ? 0 : glcodeId.hashCode());
+        result = prime * result + (id == null ? 0 : id.hashCode());
         return result;
     }
 
     @Override
-    public boolean equals(Object obj) {
+    public boolean equals(final Object obj) {
         if (this == obj)
             return true;
         if (!super.equals(obj))
             return false;
         if (getClass() != obj.getClass())
             return false;
-        DishonorChequeDetails other = (DishonorChequeDetails) obj;
+        final DishonorChequeDetails other = (DishonorChequeDetails) obj;
         if (creditAmount == null) {
             if (other.creditAmount != null)
                 return false;

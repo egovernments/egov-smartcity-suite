@@ -47,6 +47,13 @@
  */
 package org.egov.collection.integration.services;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
 import org.apache.log4j.Logger;
 import org.egov.billsaccounting.services.CreateVoucher;
 import org.egov.billsaccounting.services.VoucherConstant;
@@ -85,14 +92,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.TreeSet;
 
 @Service
 @Transactional(readOnly = true)
@@ -186,14 +185,14 @@ public class DishonorChequeService implements FinancialIntegrationService {
         dishonorChq.setInstrumentHeader(instrumentHeader);
         final String[] receiptGeneralLedger = chequeForm.getReceiptGLDetails().split(",");
         final String[] remittanceGeneralLedger = chequeForm.getRemittanceGLDetails().split(",");
-        Set<DishonorChequeDetails> dishonorChequeDetailsSet = new HashSet<>() ;
+        final Set<DishonorChequeDetails> dishonorChequeDetailsSet = new HashSet<>();
         CGeneralLedger ledger = new CGeneralLedger();
         for (final String gl : receiptGeneralLedger) {
             ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
                     originalVoucher.getId(), gl.split("-")[0].trim());
             final List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService.findAllBy(
                     "from CGeneralLedgerDetail where generalLedgerId.id=?", ledger.getId());
-            DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
+            final DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
             dishonourChqDetails.setHeader(dishonorChq);
             final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
                     ledger.getGlcode());
@@ -206,15 +205,15 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
                 dishonourChqSLDetails.setDetails(dishonourChqDetails);
                 dishonourChqSLDetails
-                .setAmount(dishonourChqDetails.getDebitAmt().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
-                        .getCreditAmount() : dishonourChqDetails.getDebitAmt());
+                        .setAmount(dishonourChqDetails.getDebitAmt().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
+                                .getCreditAmount() : dishonourChqDetails.getDebitAmt());
                 dishonourChqSLDetails.setDetailTypeId(ledgerDetail.getDetailTypeId().getId());
                 dishonourChqSLDetails.setDetailKeyId(ledgerDetail.getDetailKeyId());
                 dishonourChqDetails.getSubLedgerDetails().add(dishonourChqSLDetails);
             }
 
             dishonorChequeDetailsSet.add(dishonourChqDetails);
-            LOGGER.info("dishonorChq Details "+ dishonorChequeDetailsSet.size());
+            LOGGER.info("dishonorChq Details " + dishonorChequeDetailsSet.size());
         }
 
         for (final String gl : remittanceGeneralLedger) {
@@ -225,7 +224,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
                     remittanceVoucher.getId(), gl.split("-")[0].trim());
             final List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService.findAllBy(
                     "from CGeneralLedgerDetail where generalLedgerId.id=?", ledger.getId());
-            DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
+            final DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
             dishonourChqDetails.setHeader(dishonorChq);
             final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
                     ledger.getGlcode());
@@ -238,8 +237,8 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
                 dishonourChqSLDetails.setDetails(dishonourChqDetails);
                 dishonourChqSLDetails
-                .setAmount(dishonourChqDetails.getDebitAmt().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
-                        .getCreditAmount() : dishonourChqDetails.getDebitAmt());
+                        .setAmount(dishonourChqDetails.getDebitAmt().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
+                                .getCreditAmount() : dishonourChqDetails.getDebitAmt());
                 dishonourChqSLDetails.setDetailTypeId(ledgerDetail.getDetailTypeId().getId());
                 dishonourChqSLDetails.setDetailKeyId(ledgerDetail.getDetailKeyId());
                 dishonourChqDetails.getSubLedgerDetails().add(dishonourChqSLDetails);
@@ -276,7 +275,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
             final String[] receiptGeneralLedger = chequeForm.getReceiptGLDetails().split(",");
             final String[] remittanceGeneralLedger = chequeForm.getRemittanceGLDetails().split(",");
             dishonorChq.getDetails()
-            .add(populateDischonourChequedetails(chequeForm, dishonorChq, receiptGeneralLedger));
+                    .add(populateDischonourChequedetails(chequeForm, dishonorChq, receiptGeneralLedger));
             dishonorChq.getDetails().add(
                     populateDischonourChequedetails(chequeForm, dishonorChq, remittanceGeneralLedger));
             persistenceService.applyAuditing(dishonorChq);
@@ -297,7 +296,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
 
     public CollectionDishonorChequeDetails populateDischonourChequedetails(final DishonoredChequeBean chequeForm,
             final CollectionDishonorCheque dishonorChq, final String[] receiptGeneralLedger)
-            throws NumberFormatException {
+                    throws NumberFormatException {
         CollectionDishonorChequeDetails dishonourChqDetails = new CollectionDishonorChequeDetails();
         CollectionDishonorChequeSubLedgerDetails dishonourChqSLDetails;
         ReceiptDetail ledger = new ReceiptDetail();
@@ -317,8 +316,8 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 dishonourChqSLDetails = new CollectionDishonorChequeSubLedgerDetails();
                 dishonourChqSLDetails.setDishonorchequedetail(dishonourChqDetails);
                 dishonourChqSLDetails
-                .setAmount(dishonourChqDetails.getDebitAmount().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
-                        .getCreditAmount() : dishonourChqDetails.getDebitAmount());
+                        .setAmount(dishonourChqDetails.getDebitAmount().compareTo(BigDecimal.ZERO) == 0 ? dishonourChqDetails
+                                .getCreditAmount() : dishonourChqDetails.getDebitAmount());
                 dishonourChqSLDetails.setDetailType(ledgerDetail.getAccountDetailType().getId());
                 dishonourChqSLDetails.setDetailKey(ledgerDetail.getAccountDetailKey().getId());
                 dishonourChqDetails.getSubLedgerDetails().add(dishonourChqSLDetails);
@@ -432,7 +431,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
 
         if (voucherHeader.getVouchermis().getDepartmentid() != null)
             headerdetails
-            .put(VoucherConstant.DEPARTMENTCODE, voucherHeader.getVouchermis().getDepartmentid().getCode());
+                    .put(VoucherConstant.DEPARTMENTCODE, voucherHeader.getVouchermis().getDepartmentid().getCode());
         if (voucherHeader.getFundId() != null)
             headerdetails.put(VoucherConstant.FUNDCODE, voucherHeader.getFundId().getCode());
         if (voucherHeader.getVouchermis().getSchemeid() != null)
@@ -445,7 +444,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
             headerdetails.put(VoucherConstant.DIVISIONID, voucherHeader.getVouchermis().getDivisionid().getId());
         if (voucherHeader.getVouchermis().getFunctionary() != null)
             headerdetails
-            .put(VoucherConstant.FUNCTIONARYCODE, voucherHeader.getVouchermis().getFunctionary().getCode());
+                    .put(VoucherConstant.FUNCTIONARYCODE, voucherHeader.getVouchermis().getFunctionary().getCode());
         if (voucherHeader.getVouchermis().getFunction() != null)
             headerdetails.put(VoucherConstant.FUNCTIONCODE, voucherHeader.getVouchermis().getFunction().getCode());
         return headerdetails;
@@ -499,7 +498,6 @@ public class DishonorChequeService implements FinancialIntegrationService {
 
     @Override
     public void updateSourceInstrumentVoucher(final String event, final Long instrumentHeaderId) {
-
 
     }
 
