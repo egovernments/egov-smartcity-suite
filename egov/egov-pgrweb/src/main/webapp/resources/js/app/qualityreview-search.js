@@ -48,23 +48,22 @@
 
 
 $(document).ready(function (e) {
-    $("#departmentId").change(function () {
+
+    $('#location').change(function () {
         $.ajax({
-            url: "/pgr/complainttype/search/by-department",
+            url: "/pgr/ajax-getChildLocation",
             type: "GET",
             data: {
-                departmentId: $('#departmentId').val(),
+                id: $('#location').val()
             },
-            cache: false,
             dataType: "json",
             success: function (response) {
-                if (response) {
-                    $('#complaintId').find('option:gt(0)').remove();
-                    $.each(response, function (key, complaintType) {
-                        $('#complaintId').append('<option value="' + complaintType.id + '">' + complaintType.name + '</option>');
-                    });
-                }
-            }
+                $('#childLocation').empty();
+                $('#childLocation').append($("<option value=''>Select</option>"));
+                $.each(response, function (index, value) {
+                    $('#childLocation').append($('<option>').text(value.name).attr('value', value.id));
+                });
+            },
         });
     });
 
@@ -98,11 +97,13 @@ function onSubmitEvent(event) {
             data: function (args) {
                 return {
                     "args": JSON.stringify(args),
-                    "departmentId": $("#departmentId").val(),
+                    "crn": $("#complaintNumber").val(),
                     "complaintId": $("#complaintId").val(),
                     "fromDate": $("#fromDate").val(),
                     "toDate": $("#toDate").val(),
-                    "rating": $("#rating").val()
+                    "rating": $("#rating").val(),
+                    "locationId":$("#location").val(),
+                    "childLocationId":$("#childLocation").val()
                 };
             }
         },

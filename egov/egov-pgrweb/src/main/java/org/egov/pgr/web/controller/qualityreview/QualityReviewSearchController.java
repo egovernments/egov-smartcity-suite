@@ -48,8 +48,8 @@
 
 package org.egov.pgr.web.controller.qualityreview;
 
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.pgr.entity.ComplaintType;
 import org.egov.pgr.entity.contract.QualityReviewSearchRequest;
@@ -77,22 +77,22 @@ public class QualityReviewSearchController {
     private ComplaintTypeService complaintTypeService;
 
     @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
     private QualityReviewService qualityReviewService;
 
     @Autowired
     private QualityReviewAdaptor qualityReviewAdaptor;
+
+    @Autowired
+    private BoundaryService boundaryService;
 
     @ModelAttribute("complaintType")
     public List<ComplaintType> categories() {
         return complaintTypeService.findAll();
     }
 
-    @ModelAttribute("departments")
-    public List<Department> departments() {
-        return departmentService.getAllDepartments();
+    @ModelAttribute("ward")
+    public List<Boundary> boundary() {
+        return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "Administration");
     }
 
     @ModelAttribute

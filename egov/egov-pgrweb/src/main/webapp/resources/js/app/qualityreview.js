@@ -49,25 +49,8 @@
 
 $(document).ready(function (e) {
 
-    $("#feedbackReason").change(function () {
-        var feedback = $("#feedbackReason option:selected").text();
-        if (feedback == "Others") {
-            $('.feedback').removeClass('display-hide');
-            $('#detail').attr("required", true);
-        }
-        else {
-            $('.feedback').addClass('display-hide');
-            $('#detail').attr("required", false);
-        }
-    })
-
-    if ($('#detail').val())
-        $('.feedback').removeClass('display-hide');
-
     $("#clsdiv").hide();
-
 });
-
 
 $('#btnsubmit').click(function (e) {
     if ($('#searchform').valid()) {

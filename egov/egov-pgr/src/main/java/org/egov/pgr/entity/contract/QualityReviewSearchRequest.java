@@ -49,13 +49,12 @@
 package org.egov.pgr.entity.contract;
 
 import org.egov.infra.web.support.search.DataTableSearchRequest;
-import org.egov.pgr.entity.enums.CitizenFeedback;
 
 import java.util.Date;
 
 public class QualityReviewSearchRequest extends DataTableSearchRequest {
 
-    private Long departmentId;
+    private String crn;
 
     private Long complaintId;
 
@@ -63,14 +62,16 @@ public class QualityReviewSearchRequest extends DataTableSearchRequest {
 
     private Date toDate;
 
-    private CitizenFeedback rating;
+    private Long locationId;
 
-    public Long getDepartmentId() {
-        return departmentId;
+    private Long childLocationId;
+
+    public String getCrn() {
+        return crn;
     }
 
-    public void setDepartmentId(Long departmentId) {
-        this.departmentId = departmentId;
+    public void setCrn(String crn) {
+        this.crn = crn;
     }
 
     public Long getComplaintId() {
@@ -97,11 +98,19 @@ public class QualityReviewSearchRequest extends DataTableSearchRequest {
         this.toDate = toDate;
     }
 
-    public CitizenFeedback getRating() {
-        return rating;
+    public Long getLocationId() {
+        return locationId;
     }
 
-    public void setRating(CitizenFeedback rating) {
-        this.rating = rating;
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
+    }
+
+    public Long getChildLocationId() {
+        return childLocationId;
+    }
+
+    public void setChildLocationId(Long childLocationId) {
+        this.childLocationId = childLocationId;
     }
 }
