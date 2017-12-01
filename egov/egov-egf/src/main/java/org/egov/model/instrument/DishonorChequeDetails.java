@@ -64,6 +64,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.persistence.Transient;
+
 import java.math.BigDecimal;
 import java.util.HashSet;
 import java.util.Set;
@@ -167,18 +168,44 @@ public class DishonorChequeDetails extends BaseModel {
     }
 
     @Override
-    public boolean equals(final Object obj) {
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((creditAmount == null) ? 0 : creditAmount.hashCode());
+        result = prime * result + ((debitAmt == null) ? 0 : debitAmt.hashCode());
+        result = prime * result + ((glcodeId == null) ? 0 : glcodeId.hashCode());
+        result = prime * result + ((id == null) ? 0 : id.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
-        if (obj == null)
+        if (!super.equals(obj))
             return false;
         if (getClass() != obj.getClass())
             return false;
-        final DishonorChequeDetails other = (DishonorChequeDetails) obj;
-        if (debitAmt == null && creditAmount == null) {
-            if (debitAmt != null || creditAmount != null)
+        DishonorChequeDetails other = (DishonorChequeDetails) obj;
+        if (creditAmount == null) {
+            if (other.creditAmount != null)
                 return false;
-        } else if (!(debitAmt.compareTo(other.debitAmt) == 0 && creditAmount.compareTo(other.creditAmount) == 0))
+        } else if (!creditAmount.equals(other.creditAmount))
+            return false;
+        if (debitAmt == null) {
+            if (other.debitAmt != null)
+                return false;
+        } else if (!debitAmt.equals(other.debitAmt))
+            return false;
+        if (glcodeId == null) {
+            if (other.glcodeId != null)
+                return false;
+        } else if (!glcodeId.equals(other.glcodeId))
+            return false;
+        if (id == null) {
+            if (other.id != null)
+                return false;
+        } else if (!id.equals(other.id))
             return false;
         return true;
     }

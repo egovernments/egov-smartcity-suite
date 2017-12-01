@@ -89,8 +89,10 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 @Service
 @Transactional(readOnly = true)
@@ -172,7 +174,6 @@ public class DishonorChequeService implements FinancialIntegrationService {
     @Transactional
     public void createDishonorChequeForVoucher(final DishonoredChequeBean chequeForm, final DishonorCheque dishonorChq,
             final CVoucherHeader originalVoucher, final InstrumentHeader instrumentHeader) throws Exception {
-        DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
         DishonorChequeSubLedgerDetails dishonourChqSLDetails = new DishonorChequeSubLedgerDetails();
         dishonorChq.setStatus(egwStatusDAO.getStatusByModuleAndCode(FinancialConstants.STATUS_MODULE_DISHONORCHEQUE,
                 FinancialConstants.DISHONORCHEQUE_APPROVED_STATUS));
@@ -185,13 +186,14 @@ public class DishonorChequeService implements FinancialIntegrationService {
         dishonorChq.setInstrumentHeader(instrumentHeader);
         final String[] receiptGeneralLedger = chequeForm.getReceiptGLDetails().split(",");
         final String[] remittanceGeneralLedger = chequeForm.getRemittanceGLDetails().split(",");
+        Set<DishonorChequeDetails> dishonorChequeDetailsSet = new HashSet<>() ;
         CGeneralLedger ledger = new CGeneralLedger();
         for (final String gl : receiptGeneralLedger) {
             ledger = generalLedgerService.find("from CGeneralLedger where voucherHeaderId.id = ? and glcode = ?",
                     originalVoucher.getId(), gl.split("-")[0].trim());
             final List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService.findAllBy(
                     "from CGeneralLedgerDetail where generalLedgerId.id=?", ledger.getId());
-            dishonourChqDetails = new DishonorChequeDetails();
+            DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
             dishonourChqDetails.setHeader(dishonorChq);
             final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
                     ledger.getGlcode());
@@ -211,8 +213,8 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 dishonourChqDetails.getSubLedgerDetails().add(dishonourChqSLDetails);
             }
 
-            dishonorChq.getDetails().add(dishonourChqDetails);
-
+            dishonorChequeDetailsSet.add(dishonourChqDetails);
+            LOGGER.info("dishonorChq Details "+ dishonorChequeDetailsSet.size());
         }
 
         for (final String gl : remittanceGeneralLedger) {
@@ -223,7 +225,7 @@ public class DishonorChequeService implements FinancialIntegrationService {
                     remittanceVoucher.getId(), gl.split("-")[0].trim());
             final List<CGeneralLedgerDetail> ledgerDetailSet = generalLedgerDetailService.findAllBy(
                     "from CGeneralLedgerDetail where generalLedgerId.id=?", ledger.getId());
-            dishonourChqDetails = new DishonorChequeDetails();
+            DishonorChequeDetails dishonourChqDetails = new DishonorChequeDetails();
             dishonourChqDetails.setHeader(dishonorChq);
             final CChartOfAccounts glCode = chartOfAccountsService.find("from CChartOfAccounts where glcode=?",
                     ledger.getGlcode());
@@ -244,9 +246,9 @@ public class DishonorChequeService implements FinancialIntegrationService {
                 // Need to handle multiple sub ledgers
                 break;
             }
-            dishonorChq.getDetails().add(dishonourChqDetails);
+            dishonorChequeDetailsSet.add(dishonourChqDetails);
         }
-        // dishonorChq.getDetails().addAll(dishonorChequeDetails);
+        dishonorChq.getDetails().addAll(dishonorChequeDetailsSet);
         persistenceService.applyAuditing(dishonorChq);
         persistenceService.persist(dishonorChq);
         approve(chequeForm, dishonorChq, originalVoucher, instrumentHeader);
