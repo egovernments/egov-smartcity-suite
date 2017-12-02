@@ -113,7 +113,6 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
-import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
@@ -565,7 +564,6 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
             reportParams.put("License", licenses);
             reportParams.put("corp", cityService.getCityGrade());
             reportParams.put("currentDate", currentDateToDefaultDateFormat());
-            reportParams.put("ulb", getCityName());
             reportParams.put("municipality", cityService.getMunicipalityName());
             reportOutput = reportService.createReport(
                     new ReportRequest("tl_closure_notice", licenses, reportParams));
