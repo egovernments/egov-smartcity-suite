@@ -70,7 +70,7 @@ $(document)
 
 					function callAjaxSearch(callURL) {
 						$('.report-section').removeClass('display-hide');
-						var reportdatatable = $("#registration_table")
+						$("#registration_table")
 								.dataTable(
 										{
 											ajax : {
@@ -169,13 +169,20 @@ $(document)
 
 					function callReIssueAjaxSearch(callURL) {
 						$('.report-section').removeClass('display-hide');
-						var reportdatatable = $("#registration_table")
+						$("#registration_table")
 								.dataTable(
 										{
 											ajax : {
 												url : callURL,
 												type : "POST",
-
+												beforeSend : function() {
+													$('.loader-class')
+															.modal(
+																	'show',
+																	{
+																		backdrop : 'static'
+																	});
+												},
 												"data" : {
 													'registrationNo' : $(
 															"#registrationNo")
@@ -203,6 +210,10 @@ $(document)
 													'toDate' : $(
 															"#toDate")
 															.val()
+												},
+												complete : function() {
+													$('.loader-class').modal(
+															'hide');
 												}
 											},
 											"bDestroy" : true,

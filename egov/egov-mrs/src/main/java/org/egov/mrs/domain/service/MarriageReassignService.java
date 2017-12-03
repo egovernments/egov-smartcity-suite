@@ -47,15 +47,29 @@
  */
 package org.egov.mrs.domain.service;
 
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
+
 import org.apache.commons.lang.StringUtils;
+import org.egov.eis.entity.Assignment;
+import org.egov.eis.service.AssignmentService;
+import org.egov.eis.service.DesignationService;
+import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.entity.User;
+import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.mrs.application.MarriageConstants;
+import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageReassignInfo;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.mrs.service.es.MarriageRegistrationUpdateIndexesService;
 import org.egov.mrs.service.es.ReIssueCertificateUpdateIndexesService;
+import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -80,6 +94,18 @@ public class MarriageReassignService {
     @Autowired
     private ReIssueService reIssueService;
 
+    @Autowired
+    private AssignmentService assignmentService;
+
+    @Autowired
+    private RegistrationWorkflowService registrationWorkFlowService;
+
+    @Autowired
+    private DepartmentService departmentService;
+
+    @Autowired
+    private DesignationService designationService;
+
     public User getLoggedInUser() {
         return securityUtils.getCurrentUser();
     }
@@ -103,5 +129,23 @@ public class MarriageReassignService {
         } else {
             return StringUtils.EMPTY;
         }
+    }
+
+    public Map<String, String> employeePositionMap() {
+        final String designationStr = registrationWorkFlowService.getDesignationForCscOperatorWorkFlow();
+        final String departmentStr = registrationWorkFlowService.getDepartmentForCscOperatorWorkFlow();
+        Department dept = departmentService.getDepartmentByName(departmentStr.split(",")[0]);
+        List<Long> desigList = designationService.getDesignationsByNames(Arrays.asList(designationStr.toUpperCase().split(",")))
+                .stream()
+                .map(Designation::getId).collect(Collectors.toList());
+        List<Assignment> assignments = assignmentService.findByDepartmentDesignationsAndGivenDate(dept.getId(),
+                desigList, new Date());
+        assignments.removeAll(assignmentService.getAllAssignmentsByEmpId(ApplicationThreadLocals.getUserId()));
+        return assignments
+                .stream()
+                .collect(Collectors.toMap(assignment -> assignment.getPosition().getId().toString(),
+                        assignment -> new StringBuffer().append(assignment.getEmployee().getName())
+                                .append("-").append(assignment.getPosition().getName()).toString(),
+                        (posId1, posId2) -> posId1));
     }
 }

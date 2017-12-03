@@ -232,7 +232,7 @@
 		<div class="col-sm-8 setimage">
 			<c:choose>
 				<c:when
-					test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending') || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
+					test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending' || nextActn eq 'Revenue Clerk Approval Pending') || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
 					<form:hidden path="${applicant}.photoFileStore" />
 					<form:hidden class="encodedPhoto" path="${applicant}.encodedPhoto" />
 					<img class="add-border marriage-img" 
@@ -418,7 +418,7 @@
 					<c:forEach items="${nationalitylist}" var="auc" varStatus="status">
 						<c:choose>
 							<c:when test="${auc.name eq 'Indian'}">
-								<option value="${auc.id}" selected="true">${auc.name}</option>
+								<option value="${auc.id}" selected>${auc.name}</option>
 							</c:when>
 							<c:otherwise>
 								<option value="${auc.id}">${auc.name}</option>

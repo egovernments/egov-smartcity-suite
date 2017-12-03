@@ -49,6 +49,7 @@
 package org.egov.mrs.application;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class MarriageConstants {
@@ -62,7 +63,6 @@ public class MarriageConstants {
 
     public static final String REISSUE_FEECRITERIA = "Re-Issue Fee";
     public static final String ADDITIONAL_RULE_REGISTRATION = "MARRIAGE REGISTRATION";
-    public static final String IMAGE_CONTEXT_PATH = "/egi";
 
     // validactions
     public static final String WFLOW_ACTION_STEP_REJECT = "Reject";
@@ -78,6 +78,12 @@ public class MarriageConstants {
     public static final String WFLOW_PENDINGACTION_DIGISIGNPENDING = "Digital Signature Pending";
     public static final String WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN = "Commisioner Approval Pending_DigiSign";
     public static final String WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT = "Commisioner Approval Pending_PrintCert";
+    public static final String WFLOW_PENDINGACTION_CMO_APPRVLPENDING = "Chief Medical Officer of Health Approval Pending";
+    public static final String WFLOW_PENDINGACTION_MHO_APPRVLPENDING = "Municipal Health Officer Approval Pending";
+    public static final String WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING = "Revenue Clerk Approval Pending";
+    public static final String WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING ="Approver Approval Pending";
+    public static final String WFSTATE_REV_CLRK_APPROVED="Revenue Clerk Approved";
+    
 
     public static final String APPROVED = "APPROVED";
     public static final String MARRIAGEFEECOLLECTION_FUCNTION_CODE = "MARRIAGE_FUNCTION_CODE";
@@ -119,26 +125,9 @@ public class MarriageConstants {
     //CITIZEN
     public static final String ROLE_CITIZEN = "CITIZEN";
     
-
-
-    public static final List<String> venuelist = new ArrayList<String>() {
-        private static final long serialVersionUID = -6112513531476444226L;
-        {
-            add("Residence");
-            add("Function Hall");
-            add("Worship Place");
-            add("Others");
-        }
-    };
-
-    public static final List<String> witnessRelation = new ArrayList<String>() {
-        private static final long serialVersionUID = -8054560659655351886L;
-        {
-            add("S/o");
-            add("D/o");
-            add("W/o");
-        }
-    };
+    //Designations
+    public static final String CMO_DESIG = "Chief Medical Officer";
+    public static final String MHO_DESIG = "Municipal Health Officer";
 
     public static final String MARRIAGE_DEPARTMENT_CODE = "MARRIAGE_DEPARTMENT_CODE";
     public static final String MARRIAGE_DEFAULT_FUNCTIONARY_CODE = "MARRIAGE_DEFAULT_FUNCTIONARY_CODE";
@@ -178,12 +167,31 @@ public class MarriageConstants {
     
     public static final String STATETYPE_REGISTRATION = "MarriageRegistration";
     public static final String STATETYPE_REISSUE = "ReIssue";
-
-
-
-
+    public static final String N_A = "N/A";
     
+    private static final List<String> VENUELIST = new ArrayList<>();
+    static {
+        VENUELIST.add("Residence");
+        VENUELIST.add("Function Hall");
+        VENUELIST.add("Worship Place");
+        VENUELIST.add("Others");
+    }
+    private static final List<String> WITENSSRELATION = new ArrayList<>();
+    static {
+        WITENSSRELATION.add("S/o");
+        WITENSSRELATION.add("D/o");
+        WITENSSRELATION.add("W/o");
+    }
+
     private MarriageConstants() {
         // To hide implicit public
+    }
+    
+    public static List<String> getMarriageVenues() {
+        return Collections.unmodifiableList(VENUELIST);
+    }
+
+    public static List<String> getWitnessRelations() {
+        return Collections.unmodifiableList(WITENSSRELATION);
     }
 }

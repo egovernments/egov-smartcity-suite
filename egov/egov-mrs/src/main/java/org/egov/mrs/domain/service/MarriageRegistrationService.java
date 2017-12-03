@@ -129,6 +129,7 @@ import static org.egov.mrs.application.MarriageConstants.MOM;
 @Service
 @Transactional(readOnly = true)
 public class MarriageRegistrationService {
+    private static final String RE_ISSUE_APPLICATION_DATE = "reIssue.applicationDate";
     private static final String MRG_REGISTRATION_UNIT = "registrationUnit";
     private static final String MARRIAGE_ACKNOWLEDGEMENT_REPORT_FILE = "mrs_acknowledgement";
     private static final String REISSUE_MARRIAGE_CERTIFICATE = "Reissue Marriage Certificate (Duplicate)";
@@ -632,8 +633,8 @@ public class MarriageRegistrationService {
         final Criteria criteria = getCurrentSession().createCriteria(MarriageRegistration.class, MARRIAGE_REGISTRATION)
                 .createAlias("marriageRegistration.status", STATUS);
         buildMarriageRegistrationSearchCriteria(registration, criteria);
-        criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[]{MarriageRegistration.RegistrationStatus.CREATED.toString(),
-                MarriageRegistration.RegistrationStatus.APPROVED.toString()}));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, MarriageRegistration.RegistrationStatus.CREATED.name(),
+                MarriageRegistration.RegistrationStatus.APPROVED.name()));
         return criteria.list();
     }
 
@@ -643,8 +644,8 @@ public class MarriageRegistrationService {
         final Criteria criteria = getCurrentSession().createCriteria(ReIssue.class, "reIssue")
                 .createAlias("reIssue.status", STATUS);
         buildReIssueSearchCriteria(mrSearchFilter, criteria);
-        criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[]{ReIssue.ReIssueStatus.CREATED.toString(),
-                ReIssue.ReIssueStatus.APPROVED.toString()}));
+        criteria.add(Restrictions.in(STATUS_DOT_CODE, ReIssue.ReIssueStatus.CREATED.toString(),
+                ReIssue.ReIssueStatus.APPROVED.toString()));
         return criteria.list();
     }
 
@@ -666,17 +667,17 @@ public class MarriageRegistrationService {
             criteria.createAlias("registration.wife", "wife").add(
                     Restrictions.ilike("wife.name.fullname", mrSearchFilter.getWifeName(), MatchMode.ANYWHERE));
         if (mrSearchFilter.getApplicationDate() != null)
-            criteria.add(Restrictions.between("reIssue.applicationDate", toDateUsingDefaultPattern(mrSearchFilter.getApplicationDate()),
+            criteria.add(Restrictions.between(RE_ISSUE_APPLICATION_DATE, toDateUsingDefaultPattern(mrSearchFilter.getApplicationDate()),
                     org.apache.commons.lang3.time.DateUtils.addDays(toDateUsingDefaultPattern(mrSearchFilter.getApplicationDate()), 1)));
         if (mrSearchFilter.getDateOfMarriage() != null)
             criteria.add(
                     Restrictions.between("registration.dateOfMarriage", toDateUsingDefaultPattern(mrSearchFilter.getDateOfMarriage()),
                             org.apache.commons.lang3.time.DateUtils.addDays(toDateUsingDefaultPattern(mrSearchFilter.getDateOfMarriage()), 0)));
         if (mrSearchFilter.getFromDate() != null)
-            criteria.add(Restrictions.ge("reIssue.applicationDate",
+            criteria.add(Restrictions.ge(RE_ISSUE_APPLICATION_DATE,
                     marriageRegistrationReportsService.resetFromDateTimeStamp(mrSearchFilter.getFromDate())));
         if (mrSearchFilter.getToDate() != null)
-            criteria.add(Restrictions.le("reIssue.applicationDate",
+            criteria.add(Restrictions.le(RE_ISSUE_APPLICATION_DATE,
                     marriageRegistrationReportsService.resetToDateTimeStamp(mrSearchFilter.getToDate())));
         if (mrSearchFilter.getMarriageRegistrationUnit() != null)
             criteria.add(Restrictions.eq("marriageRegistrationUnit.id", mrSearchFilter.getMarriageRegistrationUnit()));
@@ -782,7 +783,7 @@ public class MarriageRegistrationService {
                 .createAlias("marriageRegistration.status", STATUS);
         buildMarriageRegistrationSearchCriteria(registration, criteria);
         if (status != null)
-            criteria.add(Restrictions.in(STATUS_DOT_CODE, new String[]{status}));
+            criteria.add(Restrictions.in(STATUS_DOT_CODE, status));
         return criteria.list();
     }
 

@@ -271,14 +271,14 @@
 
 		<c:choose>
 			<c:when
-				test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending') || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
+				test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending'  || nextActn eq 'Revenue Clerk Approval Pending') || (currentState ne 'DATAENTRY' && currentState ne 'NEW' && currentState ne 'CSC Operator created')}">
 				<form:hidden path="marriagePhotoFileStore" />
 				<form:hidden class="encodedPhoto" path="encodedMarriagePhoto" />
 				<img id="marriage-photo" class="add-margin marriage-img"
 					height="150" width="130" />
 				<input type="file" id="marriage-photo" name="marriagePhotoFile"
-					class="file-ellipsis validate-file"
-					data-fileto="marriage-photo" accept="image/*">
+					class="file-ellipsis validate-file" data-fileto="marriage-photo"
+					accept="image/*">
 				<form:errors path="marriagePhotoFile"
 					cssClass="add-margin error-msg" />
 			</c:when>
@@ -353,7 +353,7 @@
 		</div>
 		</c:if> --%>
 <c:if
-	test="${(marriageRegistration.status.code =='CREATED' && nextActn!='Junior/Senior Assistance approval pending')|| currentState == 'DATAENTRY'|| marriageRegistration.status.code =='DIGITALSIGNED'|| marriageRegistration.status.code == 'APPROVED'}">
+	test="${(marriageRegistration.status.code eq 'CREATED' && nextActn ne 'Junior/Senior Assistance approval pending'  && nextActn ne 'Revenue Clerk Approval Pending')|| currentState == 'DATAENTRY'|| marriageRegistration.status.code =='DIGITALSIGNED'|| marriageRegistration.status.code == 'APPROVED'}">
 	<div class="form-group">
 		<label class="col-sm-3 control-label validate-madatory"> <spring:message
 				code="lbl.serial.no" /> <span class="mandatory"></span>

@@ -47,7 +47,12 @@
  */
 
 $(document).ready( function () {
-	var isonline = $('#isonline').val();
+	
+	
+	if ($('#employeeAssgnNotValid').val()) {
+		$('#approvalDepartment').val('');
+		bootbox.alert($('#employeeAssgnNotValid').val());
+	}
 	
 	//Added to avoid submitting parent form on Preview button click
 	//Used to preview certificate in case of Digital signture
@@ -63,21 +68,12 @@ $(document).ready( function () {
 		 $('#txt-feepaid').val(Math.floor($('#txt-feepaid').val()));
 	 }
 	 
-	if($('#reIssueStatus').val()=='CREATED' || $('#reIssueStatus').val()=='APPROVED'){  
-		$(".show-row").hide(); 
-		$('#approverDetailHeading').hide();
-		$('#approvalDepartment').removeAttr('required');
-		$('#approvalDesignation').removeAttr('required');
-		$('#approvalPosition').removeAttr('required');
-	} else {
-		$(".show-row").show(); 
-		$('#approverDetailHeading').show();
-		$('#approvalDepartment').attr('required', 'required');
-		$('#approvalDesignation').attr('required', 'required');
-		$('#approvalPosition').attr('required', 'required');
-	}
-	
-	if(($('#reIssueStatus').val()=='CREATED' && $('#nextActn').val() != 'Junior/Senior Assistance approval pending') || $('#reIssueStatus').val()=='APPROVED'){ 
+	if($('#reIssueStatus').val()=='APPROVED' || ($('#currentState').val() =='Revenue Clerk Approved'
+		&& $("#feeCollected").val() == 'false') || ($('#reIssueStatus').val() == 'CREATED' && $(
+			'#nextActn').val() != 'Junior/Senior Assistance approval pending' && $(
+			'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
+			'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
+			'#nextActn').val() != 'Municipal Health Officer Approval Pending')){ 
         $(".show-row").hide();
         $('#approverDetailHeading').hide();
         $('#approvalDepartment').removeAttr('required');
@@ -90,7 +86,6 @@ $(document).ready( function () {
         $('#approvalDesignation').attr('required', 'required');
         $('#approvalPosition').attr('required', 'required');
     }
-
 
 	$('.slide-history-menu').click(function(){
 		$(this).parent().find('.history-slide').slideToggle();
@@ -165,52 +160,88 @@ jQuery('form').validate({
 	    }
 	});
 	
-	$('#Forward').click(function(e){
-		if($('form').valid()){
-			
-		}else{
-			e.preventDefault();
-		}
-	});
 
-$(".btn-primary").click(function() { 
+$('#Forward').click(function() {
+	if ($('form').valid()) {
+		return true;
+	} else {
+		return false;
+	}
+});
+
+$(".btn-primary").click(function(e) {
 	var action = $('#workFlowAction').val();
-	if(action == 'Reject') { 
-		 $('#Reject').attr('formnovalidate','true');
-		 var r = confirm("Do You Really Want to Reject The ReIssue!");
-		 if (r == true) {
-			 var approvalComent=$('#approvalComent').val();
-			  if(approvalComent == "") {
-				  bootbox.alert("Please enter rejection comments!");
-					$('#approvalComent').focus();
-					return false; 
-			  }
-			  else {
-				  validateWorkFlowApprover(action);
-				  //document.forms[0].submit(); 
-			  }
-		 } else {
-		     return false;
-		 }
-	}else if(action == 'Cancel ReIssue') { 
-		 $('#Cancel Registration').attr('formnovalidate','true');
-		 var r = confirm("Do You Really Want to Cancel The ReIssue!");
-		 if (r == true) {
-			 var approvalComent=$('#approvalComent').val();
-			  if(approvalComent == "") {
-				  bootbox.alert("Please enter cancellation comments!");
-					$('#approvalComent').focus();
-					return false; 
-			  }
-			  else {
-				  validateWorkFlowApprover(action);
-				  //document.forms[0].submit();
-			  }
-		 } else {
-		     return false;
-		 }
-	} else{
+	if (action == 'Reject') {
+		$('#Reject').attr('formnovalidate', 'true');
+		bootbox.confirm({
+			message : "Do You Really Want to Reject The Registration!",
+			buttons : {
+				confirm : {
+					label : 'Yes',
+					className : 'btn-primary'
+				},
+				cancel : {
+					label : 'No',
+					className : 'btn-danger'
+				}
+			},
+			callback : function(result) {
+				if (result) {
+					var approvalComent = $('#approvalComent').val();
+					if (approvalComent == "") {
+						bootbox.alert("Please enter rejection comments!");
+						$('#approvalComent').focus();
+						return true;
+					} else {
+						validateWorkFlowApprover(action);
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+						document.forms[0].submit();
+					}
+				} else {
+					e.stopPropagation();
+					e.preventDefault();
+				}
+			}
+		});
+		return false;
+	} else if (action == 'Cancel ReIssue') {
+		$('#Cancel Registration').attr('formnovalidate', 'true');
+		bootbox.confirm({
+			message : "Do You Really Want to Cancel The ReIssue!",
+			buttons : {
+				confirm : {
+					label : 'Yes',
+					className : 'btn-primary'
+				},
+				cancel : {
+					label : 'No',
+					className : 'btn-danger'
+				}
+			},
+			callback : function(result) {
+				if (result) {
+					var approvalComent = $('#approvalComent').val();
+					if (approvalComent == "") {
+						bootbox.alert("Please enter cancellation comments!");
+						$('#approvalComent').focus();
+						return true;
+					} else {
+						validateWorkFlowApprover(action);
+						$('.loader-class').modal('show', {
+							backdrop : 'static'
+						});
+						document.forms[0].submit();
+					}
+				} else {
+					e.stopPropagation();
+					e.preventDefault();
+				}
+			}
+		});
+		return false;
+	} else {
 		validateWorkFlowApprover(action);
 	}
-	  
 });

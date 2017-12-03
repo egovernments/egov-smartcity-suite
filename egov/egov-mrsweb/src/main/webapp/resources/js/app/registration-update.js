@@ -70,7 +70,7 @@ $(document)
 
 					$(".btn-primary")
 							.click(
-									function() {
+									function(e) {
 										if ($('#allowDaysValidation').val() == "YES") {
 											var noOfDays = validateApplicationDate();
 											if (noOfDays > 90) {
@@ -85,49 +85,95 @@ $(document)
 
 										var action = $('#workFlowAction').val();
 										if (action == 'Forward') {
+											validateMandatoryOnApprove(action);
 											return validateForm(validator);
 										} else if (action == 'Reject') {
 											$('#Reject').attr('formnovalidate',
 													'true');
-											var r = confirm("Do You Really Want to Reject The Registration!");
-											if (r) {
-												var approvalComent = $(
-														'#approvalComent')
-														.val();
-												if (approvalComent == "") {
-													bootbox
-															.alert("Please enter rejection comments!");
-													$('#approvalComent')
-															.focus();
-													return false;
-												} else {
-													validateWorkFlowApprover(action);
-													document.forms[0].submit();
-												}
-											} else {
-												return false;
-											}
+											bootbox
+													.confirm({
+														message : "Do You Really Want to Reject The Registration!",
+														buttons : {
+															confirm : {
+																label : 'Yes',
+																className : 'btn-primary'
+															},
+															cancel : {
+																label : 'No',
+																className : 'btn-danger'
+															}
+														},
+														callback : function(
+																result) {
+															if (result) {
+																var approvalComent = $(
+																		'#approvalComent')
+																		.val();
+																if (approvalComent == "") {
+																	bootbox
+																			.alert("Please enter rejection comments!");
+																	$(
+																			'#approvalComent')
+																			.focus();
+																	return true;
+																} else {
+																	$('#txt-serialNo').val('');
+																	$('#txt-pageNo').val('');
+																	validateWorkFlowApprover(action);
+																	$('.loader-class').modal('show', {
+																		backdrop : 'static'
+																	});
+																	document.forms[0].submit();
+																}
+															} else {
+																e.stopPropagation();
+																e.preventDefault();
+															}
+														}
+													});
+											return false;
 										} else if (action == 'Cancel Registration') {
-											$('#Cancel Registration').attr(
-													'formnovalidate', 'true');
-											var res = confirm("Do You Really Want to Cancel The Registration!");
-											if (res) {
-												var approvalComment = $(
-														'#approvalComent')
-														.val();
-												if (approvalComment == "") {
-													bootbox
-															.alert("Please enter cancellation comments!");
-													$('#approvalComent')
-															.focus();
-													return false;
-												} else {
-													validateWorkFlowApprover(action);
-													document.forms[0].submit();
+											$('#Cancel Registration').attr('formnovalidate', 'true');
+											bootbox
+											.confirm({
+												message : "Do You Really Want to Cancel The Registration!",
+												buttons : {
+													confirm : {
+														label : 'Yes',
+														className : 'btn-primary'
+													},
+													cancel : {
+														label : 'No',
+														className : 'btn-danger'
+													}
+												},
+												callback : function(
+														result) {
+													if (result) {
+														var approvalComent = $(
+																'#approvalComent')
+																.val();
+														if (approvalComent == "") {
+															bootbox
+																	.alert("Please enter cancellation comments!");
+															$(
+																	'#approvalComent')
+																	.focus();
+															return true;
+														} else {
+															validateWorkFlowApprover(action);
+															$('.loader-class').modal('show', {
+																backdrop : 'static'
+															});
+															document.forms[0].submit();
+														}
+													} else {
+														e.stopPropagation();
+														e.preventDefault();
+													}
 												}
-											} else {
-												return false;
-											}
+											});
+											return false;
 										} else if (action == 'Print Certificate') {
 											validateForm(validator);
 										} else if (action == 'Approve') {
@@ -144,7 +190,7 @@ function validateMandatoryOnApprove(action) {
 		$('.addremovemandatory').attr("required", "true");
 	} else {
 		$('.validate-madatory').find("span").removeClass("mandatory");
-		$('.addremovemandatory').removeattr("required", "true");
+		$('.addremovemandatory').removeAttr("required");
 	}
 }
 
@@ -166,7 +212,8 @@ function validateForm(validator) {
 
 function validateSerialNumber(validator) {
 	var serialNo = $('#txt-serialNo').val();
-	if (serialNo != '') {
+	var existingSerialNum = $('#existingSerialNum').val();
+	if (serialNo != '' && existingSerialNum == '') {
 		var isDuplicate = false;
 		$.ajax({url : "/mrs/registration/checkunique-serialno",
 					type : "GET",

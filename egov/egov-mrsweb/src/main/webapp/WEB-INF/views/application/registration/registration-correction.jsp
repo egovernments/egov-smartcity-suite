@@ -110,10 +110,12 @@
 			<form:hidden path="" id="serialNoExists" value="${serialNoExists}" />
 			<input type="hidden" id="pendingActions" value="${pendingActions}" />
 			<input type="hidden" id="nextActn" value="${nextActn}" />
+			<input type="hidden" id="existingSerialNum" value="${marriageRegistration.serialNo}" />
+			<input type="hidden" id="employeeAssgnNotValid" value="${employeeAssgnNotValid}" />
 			<input type="hidden" id="feeCollected"
 				value="${marriageRegistration.feeCollected}" />
 			<c:if
-				test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected && nextActn!='Junior/Senior Assistance approval pending'}">
+				test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected && nextActn ne 'Junior/Senior Assistance approval pending'  && nextActn ne 'Revenue Clerk Approval Pending'}">
 				<div data-collapsed="0">
 					<div class="panel-heading">
 						<div style="color: red; font-size: 16px;" align="center">
@@ -206,7 +208,7 @@
 
 			<c:choose>
 				<c:when
-					test="${marriageRegistration.status.code =='CREATED' && nextActn!=null && nextActn=='Junior/Senior Assistance approval pending'}">
+					test="${marriageRegistration.status.code eq 'CREATED' && (nextActn eq 'Junior/Senior Assistance approval pending'  || nextActn eq 'Revenue Clerk Approval Pending')}">
 					<div class="buttonbottom" align="center">
 						<jsp:include page="../../common/commonWorkflowMatrix-button.jsp" />
 					</div>
@@ -214,7 +216,7 @@
 				<c:otherwise>
 					<c:choose>
 						<c:when
-							test="${marriageRegistration.status.code =='CREATED' && !marriageRegistration.feeCollected}">
+							test="${marriageRegistration.status.code eq 'CREATED' && !marriageRegistration.feeCollected}">
 							<div class="buttonbottom" align="center">
 								<input type="button" name="button2" id="button2" value="Close"
 									class="btn btn-default" onclick="window.close();" />

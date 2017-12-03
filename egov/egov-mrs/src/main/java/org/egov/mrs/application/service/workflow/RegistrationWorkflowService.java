@@ -47,6 +47,26 @@
  */
 
 package org.egov.mrs.application.service.workflow;
+import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
+import static org.egov.mrs.application.MarriageConstants.CMO_DESIG;
+import static org.egov.mrs.application.MarriageConstants.CREATED;
+import static org.egov.mrs.application.MarriageConstants.CSC_OPERATOR_CREATED;
+import static org.egov.mrs.application.MarriageConstants.MEESEVA_OPERATOR_ROLE;
+import static org.egov.mrs.application.MarriageConstants.MHO_DESIG;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.MRG_ROLEFORNONEMPLOYEE;
+import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+import static org.egov.mrs.application.MarriageConstants.ROLE_CITIZEN;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
@@ -64,7 +84,6 @@ import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.workflow.entity.StateAware;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
 import org.egov.infra.workflow.service.SimpleWorkflowService;
-import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.domain.entity.MarriageRegistration;
 import org.egov.mrs.domain.entity.ReIssue;
 import org.egov.pims.commons.Designation;
@@ -72,17 +91,6 @@ import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.mrs.application.MarriageConstants.ANONYMOUS_USER;
-import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
-import static org.egov.mrs.application.MarriageConstants.MRG_ROLEFORNONEMPLOYEE;
-import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.mrs.application.MarriageConstants.MRG_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
 
 @Service
 public class RegistrationWorkflowService {
@@ -144,7 +152,7 @@ public class RegistrationWorkflowService {
 
         // In case of CSC Operator or online user or meeseva  will execute this block 
         if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()) || loggedUserIsMeesevaUser||citizenPortalUser ) {
-            currentState = MarriageConstants.CSC_OPERATOR_CREATED;
+            currentState = CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(nextStateOwner.getId());
@@ -156,11 +164,11 @@ public class RegistrationWorkflowService {
             nextAction = workflowMatrix.getNextAction();
             if(org.apache.commons.lang.StringUtils.isBlank(registration.getSource()) || !loggedUserIsMeesevaUser)
              if(isCscOperator)
-                 registration.setSource(Source.CSC.toString());
+                 registration.setSource(Source.CSC.name());
              else if(citizenPortalUser)
-                 registration.setSource(Source.CITIZENPORTAL.toString());
+                 registration.setSource(Source.CITIZENPORTAL.name());
              else
-                 registration.setSource(MarriageConstants.SOURCE_ONLINE);    
+                 registration.setSource(Source.ONLINE.name());    
         }
 
         else if (workflowContainer == null) {
@@ -173,8 +181,17 @@ public class RegistrationWorkflowService {
             // FORWARD case, 2 states, when workflow is not started then NEW else next level user
 
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
-
-            if (registration.getCurrentState() == null)
+            Assignment approverAssign = assignmentService
+                    .getPrimaryAssignmentForPositon(workflowContainer.getApproverPositionId());
+            if (CMO_DESIG.equals(approverAssign.getDesignation().getName()))
+                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
+                        null,
+                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_CMO_APPRVLPENDING);
+            else if (MHO_DESIG.equals(approverAssign.getDesignation().getName()))
+                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
+                        null,
+                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_MHO_APPRVLPENDING);
+            else if (registration.getCurrentState() == null)
                 workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
                         null,
                         REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
@@ -183,7 +200,6 @@ public class RegistrationWorkflowService {
                         null,
                         REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(),
                         null);
-
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
 
@@ -204,7 +220,7 @@ public class RegistrationWorkflowService {
         else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
             // On Approve, pick workflow matrix based on digital signature configuration
             if (workflowContainer.getPendingActions()
-                    .equalsIgnoreCase(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)){
+                    .equalsIgnoreCase(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)){
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(user.getId()).getPosition();
                 workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                         REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(),
@@ -219,7 +235,7 @@ public class RegistrationWorkflowService {
             nextAction = STATE_END;
 
 
-        } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN)) {
+        } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(WFLOW_ACTION_STEP_DIGISIGN)) {
             /*nextStateOwner = assignment != null ? assignment.getPosition() : null;
             workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                     REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(), null);
@@ -248,7 +264,7 @@ public class RegistrationWorkflowService {
         boolean citizenPortalUser = isCitizenPortalUser(user);
         // In case of CSC Operator will execute this block
         if (isCscOperator || ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())|| citizenPortalUser) {
-            currentState = MarriageConstants.CSC_OPERATOR_CREATED;
+            currentState = CSC_OPERATOR_CREATED;
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             if (nextStateOwner != null) {
                 final List<Assignment> assignmentList = assignmentService.getAssignmentsForPosition(nextStateOwner.getId());
@@ -261,7 +277,7 @@ public class RegistrationWorkflowService {
             if (citizenPortalUser)
                 reIssue.setSource(Source.CITIZENPORTAL.name());
             else
-                reIssue.setSource(isCscOperator ? Source.CSC.name() : MarriageConstants.SOURCE_ONLINE);
+                reIssue.setSource(isCscOperator ? Source.CSC.name() : Source.ONLINE.name());
 
         } else if (workflowContainer == null) {
             nextStateOwner = assignment != null ? assignment.getPosition() : null;
@@ -273,8 +289,17 @@ public class RegistrationWorkflowService {
             // FORWARD case, 2 states, when workflow is not started then NEW else next level user
 
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
-
-            if (reIssue.getCurrentState() == null)
+            Assignment approverAssign = assignmentService
+                    .getPrimaryAssignmentForPositon(workflowContainer.getApproverPositionId());
+            if (CMO_DESIG.equals(approverAssign.getDesignation().getName()))
+                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null,
+                        null,
+                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_CMO_APPRVLPENDING);
+            else if (MHO_DESIG.equals(approverAssign.getDesignation().getName()))
+                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null,
+                        null,
+                        REGISTRATION_ADDNL_RULE, CREATED, WFLOW_PENDINGACTION_MHO_APPRVLPENDING);
+            else if (reIssue.getCurrentState() == null)
                 workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
                         REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
             else
@@ -300,7 +325,7 @@ public class RegistrationWorkflowService {
         else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(STEP_APPROVE)) {
             // On Approve, pick workflow matrix based on digital signature configuration
             if (workflowContainer.getPendingActions()
-                    .equalsIgnoreCase(MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)) {
+                    .equalsIgnoreCase(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)) {
                 nextStateOwner = assignmentService.getPrimaryAssignmentForUser(user.getId()).getPosition();
                 workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
                         REGISTRATION_ADDNL_RULE, reIssue.getCurrentState().getValue(), workflowContainer.getPendingActions());
@@ -310,7 +335,7 @@ public class RegistrationWorkflowService {
 
             } else
                 nextAction = STATE_END;
-        } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN)) {
+        } else if (workflowContainer.getWorkFlowAction().equalsIgnoreCase(WFLOW_ACTION_STEP_DIGISIGN)) {
             nextAction = STATE_END;
         }
 
@@ -405,7 +430,7 @@ public class RegistrationWorkflowService {
      */
     public Boolean isCitizenPortalUser(final User user) {
         for (final Role role : user.getRoles())
-            if (role != null && role.getName().equalsIgnoreCase(MarriageConstants.ROLE_CITIZEN))
+            if (role != null && role.getName().equalsIgnoreCase(ROLE_CITIZEN))
                 return true;
         return false;
     }
@@ -527,7 +552,7 @@ public class RegistrationWorkflowService {
      */
     public Boolean isMeesevaUser(final User user) {
             for (final Role role : user.getRoles())
-                    if (role != null && role.getName().equalsIgnoreCase(MarriageConstants.MEESEVA_OPERATOR_ROLE))
+                    if (role != null && role.getName().equalsIgnoreCase(MEESEVA_OPERATOR_ROLE))
                             return true;
             return false;
     }

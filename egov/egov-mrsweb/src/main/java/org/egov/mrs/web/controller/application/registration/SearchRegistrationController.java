@@ -48,12 +48,23 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.NOOFDAYSTOPRINT;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
-import org.egov.mrs.application.MarriageConstants;
 import org.egov.mrs.application.service.MarriageCertificateService;
 import org.egov.mrs.domain.entity.MarriageCertificate;
 import org.egov.mrs.domain.entity.MarriageRegistration;
@@ -66,6 +77,7 @@ import org.egov.mrs.web.adaptor.MarriageCerftificateJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageReIssueJsonAdaptor;
 import org.egov.mrs.web.adaptor.MarriageRegistrationJsonAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
@@ -75,15 +87,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import javax.servlet.http.HttpServletRequest;
-import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
 
 /**
  * Handles the Registration search
@@ -116,7 +119,6 @@ public class SearchRegistrationController {
 
     public void prepareSearchForm(final Model model) {
         model.addAttribute("marriageRegistrationUnit", marriageRegistrationUnitService.getActiveRegistrationunit());
-
     }
 
     @RequestMapping(value = "/search", method = RequestMethod.GET)
@@ -162,7 +164,7 @@ public class SearchRegistrationController {
 
     @RequestMapping(value = "/search", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String search(final Model model, @ModelAttribute final MarriageRegistration registration) throws ParseException {
+    public String search(final Model model, @ModelAttribute final MarriageRegistration registration) {
         final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchMarriageRegistrations(registration);
         return new StringBuilder(DATA)
                 .append(toJSON(searchResultList, MarriageRegistration.class, MarriageRegistrationJsonAdaptor.class)).append("}")
@@ -171,8 +173,8 @@ public class SearchRegistrationController {
 
     @RequestMapping(value = "/searchApproved", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
-    public String searchRegisterStatusMarriageRecords(final Model model, @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+    public String searchRegisterStatusMarriageRecords(final Model model,
+            @ModelAttribute final MarriageRegistration registration) {
         final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         return new StringBuilder(DATA)
@@ -183,7 +185,7 @@ public class SearchRegistrationController {
     @RequestMapping(value = "/collectmrfeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchMarriageRegistrationsForFeeCollection(final Model model,
-                                                              @ModelAttribute final MarriageRegistration registration) throws ParseException {
+            @ModelAttribute final MarriageRegistration registration) {
         final List<MarriageRegistration> searchResultList = marriageRegistrationService
                 .searchMarriageRegistrationsForFeeCollection(registration);
         final List<MarriageRegistration> newSearchResultList = new ArrayList<>();
@@ -199,7 +201,7 @@ public class SearchRegistrationController {
     @RequestMapping(value = "/collectmrreissuefeeajaxsearch", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchApprovedMarriageReIssueRecordsForFee(final Model model,
-                                                             @ModelAttribute final MarriageRegistrationSearchFilter mrSearchFilter) throws ParseException {
+            @ModelAttribute final MarriageRegistrationSearchFilter mrSearchFilter) {
         final List<ReIssue> searchResultList = marriageRegistrationService
                 .searchApprovedReIssueRecordsForFeeCollection(mrSearchFilter);
         final List<ReIssue> newSearchResultList = new ArrayList<>();
@@ -214,8 +216,7 @@ public class SearchRegistrationController {
     @RequestMapping(value = "/searchregisteredrecord", method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String searchRegisteredStatusMarriageRecords(final Model model,
-                                                        @ModelAttribute final MarriageRegistration registration)
-            throws ParseException {
+            @ModelAttribute final MarriageRegistration registration) {
         final List<MarriageRegistration> searchResultList = marriageRegistrationService.searchRegistrationByStatus(registration,
                 MarriageRegistration.RegistrationStatus.REGISTERED.toString());
         return new StringBuilder(DATA)
@@ -235,7 +236,6 @@ public class SearchRegistrationController {
 
         model.addAttribute("certificate", new MarriageCertificate());
         model.addAttribute("certificateType", MarriageCertificateType.values());
-
         return "registration-search-certificate";
     }
 
@@ -245,9 +245,9 @@ public class SearchRegistrationController {
         final List<MarriageCertificate> searchResultList = marriageCertificateService.searchMarriageCertificates(certificate);
         int noOfToDaysToPrint = 0;
         final List<AppConfigValues> appConfigValues = appConfigValuesService
-                .getConfigValuesByModuleAndKey(MarriageConstants.MODULE_NAME, MarriageConstants.NOOFDAYSTOPRINT);
+                .getConfigValuesByModuleAndKey(MODULE_NAME, NOOFDAYSTOPRINT);
         if (appConfigValues != null && appConfigValues.get(0).getValue() != null)
-            noOfToDaysToPrint = Integer.parseInt(appConfigValues.get(0).getValue().toString());
+            noOfToDaysToPrint = Integer.parseInt(appConfigValues.get(0).getValue());
 
         for (final MarriageCertificate certficateobj : searchResultList)
             certficateobj.setPrintCertificateResrictionDays(noOfToDaysToPrint);
@@ -258,9 +258,8 @@ public class SearchRegistrationController {
 
     @RequestMapping(value = "/printcertficate/{id}")
     @ResponseBody
-    public ResponseEntity download(@PathVariable final long id) {
+    public ResponseEntity<InputStreamResource> download(@PathVariable final long id) {
         final MarriageCertificate certificate = marriageCertificateService.findById(id);
-        return fileStoreUtils.fileAsResponseEntity(certificate.getFileStore().getFileStoreId(),
-                MarriageConstants.FILESTORE_MODULECODE, false);
+        return fileStoreUtils.fileAsResponseEntity(certificate.getFileStore().getFileStoreId(), FILESTORE_MODULECODE, false);
     }
 }

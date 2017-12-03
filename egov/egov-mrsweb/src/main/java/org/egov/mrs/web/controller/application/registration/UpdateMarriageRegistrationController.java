@@ -48,8 +48,50 @@
 
 package org.egov.mrs.web.controller.application.registration;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.mrs.application.MarriageConstants.ADDITIONAL_RULE_REGISTRATION;
+import static org.egov.mrs.application.MarriageConstants.APPLICATION_NUMBER;
+import static org.egov.mrs.application.MarriageConstants.APPROVAL_COMMENT;
+import static org.egov.mrs.application.MarriageConstants.APPROVED;
+import static org.egov.mrs.application.MarriageConstants.CREATED;
+import static org.egov.mrs.application.MarriageConstants.FILESTORE_MODULECODE;
+import static org.egov.mrs.application.MarriageConstants.FILE_STORE_ID_APPLICATION_NUMBER;
+import static org.egov.mrs.application.MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING;
+import static org.egov.mrs.application.MarriageConstants.MARRIAGEREGISTRATION_DAYS_VALIDATION;
+import static org.egov.mrs.application.MarriageConstants.MODULE_NAME;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_APPROVE;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_CANCEL;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGISIGN;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_PRINTCERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE;
+import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
+import org.egov.eis.entity.enums.EmployeeStatus;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.AppConfigValues;
@@ -76,23 +118,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.File;
-import java.io.IOException;
-import java.util.Base64;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import static org.apache.commons.lang3.StringUtils.EMPTY;
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
-import static org.egov.mrs.application.MarriageConstants.*;
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
-
 /**
  * Controller to correct the registration data
  *
@@ -103,6 +128,8 @@ import static org.springframework.web.bind.annotation.RequestMethod.POST;
 @RequestMapping(value = "/registration")
 public class UpdateMarriageRegistrationController extends MarriageRegistrationController {
 
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String PENDING_ACTIONS = "pendingActions";
     private static final String MARRIAGE_REGISTRATION = "marriageRegistration";
     private static final Logger LOG = Logger.getLogger(UpdateMarriageRegistrationController.class);
@@ -198,6 +225,16 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_PRINTCERTIFICATE);
                 workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_PRINTCERTIFICATE);
             }
+        
+        if (WFSTATE_REV_CLRK_APPROVED.equals(registration.getState().getValue())
+                && WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING.equals(registration.getState().getNextAction())) {
+            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
+        } else if(WFSTATE_REV_CLRK_APPROVED.equals(registration.getState().getValue())
+                && (WFLOW_PENDINGACTION_MHO_APPRVLPENDING.equals(registration.getState().getNextAction())
+                || WFLOW_PENDINGACTION_CMO_APPRVLPENDING.equals(registration.getState().getNextAction()))) {
+            workFlowContainer.setPendingActions(registration.getState().getNextAction());
+        }
+        
         workFlowContainer.setAdditionalRule(ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, registration, workFlowContainer);
         model.addAttribute("additionalRule", ADDITIONAL_RULE_REGISTRATION);
@@ -207,9 +244,12 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         model.addAttribute("isDigitalSignEnabled", marriageUtils.isDigitalSignEnabled());
 
         if (registration.getStatus().getCode().equalsIgnoreCase(CREATED)
-                && JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING.equalsIgnoreCase(registration.getState().getNextAction())) {
-            model.addAttribute("nextActn", JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING);
+                && JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING.equalsIgnoreCase(registration.getState().getNextAction())
+                || WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING.equalsIgnoreCase(registration.getState().getNextAction())) {
+            model.addAttribute("nextActn", registration.getState().getNextAction());
             model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
+        } else {
+            model.addAttribute("nextActn", registration.getState().getNextAction());
         }
 
     }
@@ -220,22 +260,25 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             final HttpServletRequest request, final BindingResult errors) throws IOException {
 
         String workFlowAction = EMPTY;
-        if (isNotBlank(request.getParameter("workFlowAction")))
-            workFlowAction = request.getParameter("workFlowAction");
+        if (isNotBlank(request.getParameter(WORK_FLOW_ACTION)))
+            workFlowAction = request.getParameter(WORK_FLOW_ACTION);
 
         validateApplicationDate(marriageRegistration, errors);
         marriageFormValidator.validate(marriageRegistration, errors, "registration");
-        MarriageRegistration serialNoExist = null;
-        if (CREATED.equalsIgnoreCase(marriageRegistration.getStatus().getCode())
-                && isNotBlank(marriageRegistration.getSerialNo())) {
-            serialNoExist = marriageRegistrationService.findBySerialNo(marriageRegistration.getSerialNo());
-        }
-        if (errors.hasErrors() || serialNoExist != null) {
+        Assignment approverAssign = null;
+        if (isNotBlank(request.getParameter(APPROVAL_POSITION)))
+            approverAssign = assignmentService
+                    .getPrimaryAssignmentForPositon(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
+
+        if (errors.hasErrors() || (approverAssign != null
+                && !EmployeeStatus.EMPLOYED.equals(approverAssign.getEmployee().getEmployeeStatus()))) {
+            if (approverAssign != null && !EmployeeStatus.EMPLOYED.equals(approverAssign.getEmployee().getEmployeeStatus()))
+                model.addAttribute("employeeAssgnNotValid", messageSource.getMessage("msg.emp.not.valid", new String[] {
+                        approverAssign.getEmployee().getName().concat("~").concat(approverAssign.getDesignation().getName()),
+                        approverAssign.getEmployee().getEmployeeStatus().name() },
+                        null));
+
             buildMrgRegistrationUpdateResult(marriageRegistration, model);
-            if (serialNoExist != null) {
-                model.addAttribute("serialNoExists",
-                        "Entered serial number is already exists, please check and enter valid value and serial number must be unique.");
-            }
             return MRG_REGISTRATION_EDIT;
         }
 
@@ -310,7 +353,7 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             } else {
                 approverName = request.getParameter("approverName");
                 nextDesignation = request.getParameter("nextDesignation");
-                workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter("approvalPosition")));
+                workflowContainer.setApproverPositionId(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
                 marriageRegistrationService.forwardRegistration(marriageRegistration, workflowContainer);
                 message = messageSource.getMessage("msg.forward.registration", new String[] {
                         approverName.concat("~").concat(nextDesignation), marriageRegistration.getApplicationNo() },
