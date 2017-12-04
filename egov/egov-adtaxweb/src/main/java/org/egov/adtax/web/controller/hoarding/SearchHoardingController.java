@@ -56,6 +56,7 @@ import org.egov.adtax.service.AdvertisementDemandService;
 import org.egov.adtax.service.AdvertisementPermitDetailService;
 import org.egov.adtax.service.SubCategoryService;
 import org.egov.adtax.web.controller.GenericController;
+import org.egov.adtax.workflow.AdvertisementWorkFlowService;
 import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.infra.config.core.LocalizationSettings;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,6 +95,8 @@ public class SearchHoardingController extends GenericController {
     private AdvertisementDemandService advertisementDemandService;
     @Autowired
     private SubCategoryService subCategoryService;
+    @Autowired
+    private AdvertisementWorkFlowService advertisementWorkFlowService;
 
     @ModelAttribute
     public AdvertisementPermitDetail advertisementPermitDetail() {
@@ -162,6 +165,7 @@ public class SearchHoardingController extends GenericController {
         model.addAttribute("advertisementPermitDetail", advertisementPermitDetail);
         model.addAttribute("arrearTax", advertisementDemandService.getPendingArrearsTax(advertisementPermitDetail));
         model.addAttribute("previousFinancialYear", financialYearDAO.getPreviousFinancialYearByDate(new Date()));
+        model.addAttribute("applicationHistory", advertisementWorkFlowService.getHistory(advertisementPermitDetail));
         return "hoarding-view";
     }
 

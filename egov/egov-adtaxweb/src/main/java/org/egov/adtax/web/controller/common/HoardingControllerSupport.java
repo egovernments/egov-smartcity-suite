@@ -229,8 +229,8 @@ public class HoardingControllerSupport extends GenericWorkFlowController {
         
         if (advertisementPermitDetail.getPermissionstartdate() != null
                 && advertisementPermitDetail.getPermissionenddate() != null
-                && advertisementPermitDetail.getPermissionstartdate().after(
-                        advertisementPermitDetail.getPermissionenddate()))
+                && (advertisementPermitDetail.getPermissionstartdate()
+                        .compareTo(advertisementPermitDetail.getPermissionenddate()) > -1))
             resultBinder.rejectValue("permissionstartdate", "invalid.permissionFromDateAndToDateCompare");
     }   
 }

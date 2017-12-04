@@ -340,6 +340,8 @@
 			</div>
 			</div>
 		</div>
+											<jsp:include page="../workflow/workflowhistory.jsp" />
+		
 		<c:if test="${isEmployee}">
 			<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
 			</c:if>
