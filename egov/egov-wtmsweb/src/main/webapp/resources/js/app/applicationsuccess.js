@@ -69,10 +69,14 @@ $(document).ready(function(){
 						$("#nooffloors").html(response.propertyDetails.noOfFloors);
 						if(response.ownerNames[0].mobileNumber != ''){
 							$("#mobileNumber").html(response.ownerNames[0].mobileNumber);
-							$('#mobileNumber').text(function(_,val) {
+							var mobileNumber= response.ownerNames[0].mobileNumber;
+						    mobNumberwithmask = mobileNumber.slice(-4),
+						    countNum = '';
 
-					            return val.replace(/\d{6}(\d{4})/, "******$1");
-					        });
+						for(var i = (mobileNumber.length)-4; i>0; i--){
+						    countNum += '*';
+						}
+						$("#mobileNumber").html(countNum+mobNumberwithmask);
 				}
 						$("#email").html(response.ownerNames[0].emailId);
 						$("#propertyaddress").html(response.propertyAddress);
@@ -91,11 +95,17 @@ $(document).ready(function(){
 							else
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
+						if(response.ownerNames[0].aadhaarNumber != ''){
 						$("#aadhaar").html(response.ownerNames[0].aadhaarNumber);
-						$('#aadhaar').text(function(_,val) {
+						var aadhaarNum= response.ownerNames[0].aadhaarNumber;
+					    aadhaarwithmask = aadhaarNum.slice(-4),
+					    countNum = '';
 
-				            return val.replace(/\d{12}(\d{4})/, "************$1");
-				        });
+					    for(var i = (aadhaarNum.length)-4; i>0; i--){
+					    countNum += '*';
+					    	}
+					    $("#aadhaar").html(countNum+aadhaarwithmask);
+						}
 						$("#locality").html(response.boundaryDetails.localityName);
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);
@@ -107,6 +117,10 @@ $(document).ready(function(){
 			});
 		}		
 	}
+	
+	
+
+alert(countNum+vis);
 	
 	var mode = $("#mode").val();
 	if(mode=='inbox') {
