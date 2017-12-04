@@ -440,7 +440,14 @@ jQuery(document).on('click',"#delete_row",function (){
     var counts = rowCount - 1;
     if(counts==1)
 	{
-		bootbox.alert("This Row cannot be deleted");
+    	if(currentAssessment.length != 0){
+		addAmalgamatedProperties();
+		removeOwners(currentAssessment);
+		jQuery(this).closest('tr').remove();
+		jQuery("#amalgamatedPropertiesTbl tr:eq(1) td span[alt='AddF']").show();
+		regenerateIndex('amalgamatedPropertiesTbl');
+    	}else
+    		bootbox.alert("This Row cannot be deleted");
 		return false;
 	}else{	
 		removeOwners(currentAssessment);
