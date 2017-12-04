@@ -73,7 +73,7 @@
  						<div class="form-group">
  								<div class="col-sm-3 control-label text-right"><spring:message code="lbl.metermake" /><span class="mandatory"></span></div>
 								<div class="col-sm-3 add-margin">
-									<select id="meterMaker" name="meterMaker" class="form-control" required="required">
+									<select id="meterMake" name="meterMake" class="form-control" required="required">
 										<option value="">
 											<spring:message code="lbl.select" />
 										</option>

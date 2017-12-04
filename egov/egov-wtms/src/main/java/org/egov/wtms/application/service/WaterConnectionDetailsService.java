@@ -227,7 +227,7 @@ public class WaterConnectionDetailsService {
     private static final String EMPTY_LIST = "EmptyList";
     private static final String UPDATE_FAILED = "UpdateExecutionFailed";
     private static final String SUCCESS = "Success";
-    private static final String METER_MAKER = "meterMaker";
+    private static final String METER_MAKE = "meterMake";
     private static final String INITIAL_READING = "initialReading";
     private static final String METER_SERIAL_NUMBER = "meterSerialNumber";
     private static final String APPLICATION_NUMBER = "applicationNumber";
@@ -1380,23 +1380,26 @@ public class WaterConnectionDetailsService {
     public List<Object[]> getApplicationResultList(final WaterConnExecutionDetails executionDetails) {
         StringBuilder queryString = new StringBuilder();
         queryString.append(
-                "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  "
-                        + " conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn "
-                        + "     INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection "
-                        + " INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno"
-                        + " INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id"
-                        + " INNER JOIN egwtr_application_type apptype ON conndetails.applicationtype=apptype.id "
-                        + " INNER JOIN egw_status status ON conndetails.statusid=status.id "
-                        + " where apptype.name=:applicationtype and status.description= '" + APPROVED
-                        + "' and conndetails.connectiontype='" + NON_METERED_CODE + "'");
+                "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  ")
+                .append(" conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn ")
+                .append(" INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection ")
+                .append(" INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno ")
+                .append(" INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id ")
+                .append(" INNER JOIN egwtr_application_type apptype ON conndetails.applicationtype=apptype.id ")
+                .append(" INNER JOIN egw_status status ON conndetails.statusid=status.id ")
+                .append(" where apptype.name=:applicationtype and status.description=:status")
+                .append(" and conndetails.connectiontype=:connectionType");
 
         queryString = setQueryParameters(executionDetails, queryString);
         final Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        query.setParameter("connectionType", NON_METERED_CODE);
         return setParameterDetails(executionDetails, query);
     }
 
     public List<Object[]> setParameterDetails(final WaterConnExecutionDetails executionDetails, final Query query) {
         query.setParameter("applicationtype", executionDetails.getApplicationType());
+        query.setParameter("status", APPROVED);
+
         if (isNotBlank(executionDetails.getApplicationNumber()))
             query.setParameter("applicationnumber", executionDetails.getApplicationNumber());
         if (isNotBlank(executionDetails.getConsumerNumber()))
@@ -1413,18 +1416,19 @@ public class WaterConnectionDetailsService {
     public List<Object[]> getMeteredApplicationList(final WaterConnExecutionDetails executionDetails) {
         StringBuilder queryString = new StringBuilder();
         queryString.append(
-                "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  "
-                        + " conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn "
-                        + "     INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection "
-                        + " INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno"
-                        + " INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id"
-                        + " INNER JOIN egwtr_application_type apptype ON conndetails.applicationtype=apptype.id "
-                        + " INNER JOIN egw_status status ON conndetails.statusid=status.id "
-                        + " where apptype.name=:applicationtype and status.description= '" + APPROVED
-                        + "' and conndetails.connectiontype='" + CONNECTIONTYPE_METERED + "'");
+                "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  ")
+                .append(" conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn ")
+                .append(" INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection ")
+                .append(" INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno ")
+                .append(" INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id ")
+                .append(" INNER JOIN egwtr_application_type apptype ON conndetails.applicationtype=apptype.id ")
+                .append(" INNER JOIN egw_status status ON conndetails.statusid=status.id ")
+                .append(" where apptype.name=:applicationtype and status.description=:status ")
+                .append(" and conndetails.connectiontype=:connectionType ");
 
         queryString = setQueryParameters(executionDetails, queryString);
         final Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        query.setParameter("connectionType", CONNECTIONTYPE_METERED);
         return setParameterDetails(executionDetails, query);
     }
 
@@ -1549,7 +1553,7 @@ public class WaterConnectionDetailsService {
         }
         waterConnectionDetails.getConnection().setMeterSerialNumber(jsonObj.getString(METER_SERIAL_NUMBER));
         waterConnectionDetails.getConnection().setInitialReading(Long.valueOf(jsonObj.getString(INITIAL_READING)));
-        waterConnectionDetails.getConnection().setMeter(meterCostService.findByMeterMake(jsonObj.getString(METER_MAKER)).get(0));
+        waterConnectionDetails.getConnection().setMeter(meterCostService.findByMeterMake(jsonObj.getString(METER_MAKE)).get(0));
         waterConnectionDetails.setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
         waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
         return validStatus;
@@ -1557,7 +1561,7 @@ public class WaterConnectionDetailsService {
 
     public String validateRequiredFeilds(final JSONObject jsonObject) {
         String status = EMPTY;
-        if (isBlank(jsonObject.getString(METER_MAKER)))
+        if (isBlank(jsonObject.getString(METER_MAKE)))
             status = REQ_METER_MAKER;
         else if (isBlank(jsonObject.getString(EXECUTION_DATE)))
             status = REQ_EXECUTION_DATE;

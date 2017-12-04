@@ -71,7 +71,7 @@ $('#metered-search-result-table').on('click', 'td button', function() {
 		var obj = {"executeMeterApplicationDetails" : jsonObject}
 		var o = JSON.stringify(obj);
 		var result = [];
-		$("#meterMaker").find('option:gt(0)').remove();
+		$("#meterMake").find('option:gt(0)').remove();
 		$.ajax({
 			url : "/wtms/application/execute-update/search-result",
 			type : "GET",
@@ -89,7 +89,7 @@ $('#metered-search-result-table').on('click', 'td button', function() {
 				});
 				
 				$.each(result, function(i){
-					$("#meterMaker").append($('<option>').text(result[i].text).attr('value', result[i].text));
+					$("#meterMake").append($('<option>').text(result[i].text).attr('value', result[i].text));
 				});
 			}
 			
@@ -412,20 +412,20 @@ return false;
 
 
 $("#save").unbind('click').on('click', function(e) {
-	var meterMaker = $("#meterMaker").val();
+	var meterMake = $("#meterMake").val();
 	var applicationNumber = $("div.applnNumber").text();
 	var executionDate = $("#executionDate").val();
 	var initialReading = $("#initialReading").val();
 	var serialNumber = $("#meterSerialNumber").val();
 	
-		if(meterMaker==="" || executionDate==="" || initialReading==="" || serialNumber==="") {
-			$(".display-success-msg").text("Please Enter Mandatory Fields");
+		if(meterMake==="" || executionDate==="" || initialReading==="" || serialNumber==="") {
+			$(".display-err-msg").text("Please Enter Mandatory Fields");
 			$(".display-err-msg").show();
 			return false;
 		}
 		var jsonObj = [];
 		var myObj = {};
-		myObj = { "meterMaker" : ""+meterMaker,
+		myObj = { "meterMake" : ""+meterMake,
 				"executionDate" : "" +executionDate,
 				"initialReading" : "" +initialReading,
 				"meterSerialNumber" : "" +serialNumber,
@@ -460,7 +460,7 @@ $("#save").unbind('click').on('click', function(e) {
 					$(".display-err-msg").show();
 					return false;
 				}
-				else if (response === "MeterMakerRequired") {
+				else if (response === "MeterMakeRequired") {
 					$(".display-err-msg").text('Please select Meter Maker value');
 					$(".display-err-msg").show();
 					return false;
