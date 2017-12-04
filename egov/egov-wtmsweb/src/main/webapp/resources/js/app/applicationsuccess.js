@@ -95,7 +95,7 @@ $(document).ready(function(){
 							else
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
-						if(response.ownerNames[0].aadhaarNumber != ''){
+						if(response.ownerNames[0].aadhaarNumber != '' && response.ownerNames[0].aadhaarNumber != null){
 						$("#aadhaar").html(response.ownerNames[0].aadhaarNumber);
 						var aadhaarNum= response.ownerNames[0].aadhaarNumber;
 					    aadhaarwithmask = aadhaarNum.slice(-4),
@@ -120,7 +120,6 @@ $(document).ready(function(){
 	
 	
 
-alert(countNum+vis);
 	
 	var mode = $("#mode").val();
 	if(mode=='inbox') {
