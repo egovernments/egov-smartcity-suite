@@ -67,8 +67,13 @@ $(document).ready(function(){
 						}
 						$("#applicantname").html(applicantName);
 						$("#nooffloors").html(response.propertyDetails.noOfFloors);
-						if(response.ownerNames[0].mobileNumber != '')
+						if(response.ownerNames[0].mobileNumber != ''){
 							$("#mobileNumber").html(response.ownerNames[0].mobileNumber);
+							$('#mobileNumber').text(function(_,val) {
+
+					            return val.replace(/\d{6}(\d{4})/, "******$1");
+					        });
+				}
 						$("#email").html(response.ownerNames[0].emailId);
 						$("#propertyaddress").html(response.propertyAddress);
 						boundaryData = '';
@@ -87,6 +92,10 @@ $(document).ready(function(){
 								boundaryData = boundaryData + " / " +response.boundaryDetails.blockName; 
 						}
 						$("#aadhaar").html(response.ownerNames[0].aadhaarNumber);
+						$('#aadhaar').text(function(_,val) {
+
+				            return val.replace(/\d{12}(\d{4})/, "************$1");
+				        });
 						$("#locality").html(response.boundaryDetails.localityName);
 						$("#zonewardblock").html(boundaryData);
 						$("#propertytaxdue").html(response.propertyDetails.taxDue);
