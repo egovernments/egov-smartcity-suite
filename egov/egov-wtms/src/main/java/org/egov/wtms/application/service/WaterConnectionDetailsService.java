@@ -48,10 +48,10 @@
 package org.egov.wtms.application.service;
 
 import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
 import static org.egov.commons.entity.Source.MEESEVA;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_NUMBER;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_APPROVED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CANCELLED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERAPRROVED;
@@ -77,6 +77,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CITIZENPORTAL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULES_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.EXECUTIVE_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
@@ -88,6 +89,7 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MUNICIPAL_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
@@ -181,6 +183,7 @@ import org.egov.wtms.masters.entity.enums.ConnectionType;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.masters.service.ApplicationTypeService;
 import org.egov.wtms.masters.service.DocumentNamesService;
+import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.service.es.WaterChargeDocumentService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxNumberGenerator;
@@ -224,6 +227,14 @@ public class WaterConnectionDetailsService {
     private static final String EMPTY_LIST = "EmptyList";
     private static final String UPDATE_FAILED = "UpdateExecutionFailed";
     private static final String SUCCESS = "Success";
+    private static final String METER_MAKER = "meterMaker";
+    private static final String INITIAL_READING = "initialReading";
+    private static final String METER_SERIAL_NUMBER = "meterSerialNumber";
+    private static final String APPLICATION_NUMBER = "applicationNumber";
+    private static final String REQ_METER_MAKER = "MeterMakerRequired";
+    private static final String REQ_EXECUTION_DATE = "ExecutionDateRequired";
+    private static final String REQ_INITIAL_READING = "InitialReadingRequired";
+    private static final String REQ_METER_SERIAL_NUMBER = "MeterSerialNumberRequired";
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -289,6 +300,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private PortalInboxService portalInboxService;
+
+    @Autowired
+    private MeterCostService meterCostService;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -1190,14 +1204,6 @@ public class WaterConnectionDetailsService {
         return tempDocList;
     }
 
-    public WaterConnectionDetails createNewWaterConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent, final String code, final String workFlowAction,
-            final Map<String, String> meesevaParams, final String sourceChannel) {
-        return createNewWaterConnection(waterConnectionDetails, approvalPosition, approvalComent, code, workFlowAction,
-                sourceChannel);
-
-    }
-
     public void validateWaterRateAndDonationHeader(final WaterConnectionDetails waterConnectionDetails) {
         final DonationDetails donationDetails = connectionDemandService.getDonationDetails(waterConnectionDetails);
         if (donationDetails == null)
@@ -1372,28 +1378,19 @@ public class WaterConnectionDetailsService {
     }
 
     public List<Object[]> getApplicationResultList(final WaterConnExecutionDetails executionDetails) {
-        final StringBuilder queryString = new StringBuilder();
+        StringBuilder queryString = new StringBuilder();
         queryString.append(
                 "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  "
                         + " conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn "
-                        + "	INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection "
+                        + "     INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection "
                         + " INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno"
                         + " INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id"
                         + " INNER JOIN egwtr_application_type apptype ON conndetails.applicationtype=apptype.id "
                         + " INNER JOIN egw_status status ON conndetails.statusid=status.id "
-                        + " where apptype.name=:applicationtype and status.description= '" + APPROVED + "'");
+                        + " where apptype.name=:applicationtype and status.description= '" + APPROVED
+                        + "' and conndetails.connectiontype='" + NON_METERED_CODE + "'");
 
-        if (isNotBlank(executionDetails.getApplicationNumber()))
-            queryString.append(" and conndetails.applicationnumber=:applicationnumber");
-        if (isNotBlank(executionDetails.getConsumerNumber()))
-            queryString.append(" and conn.consumercode=:consumernumber");
-        if (executionDetails.getFromDate() != null)
-            queryString.append(" and conndetails.approvaldate>=:fromdate");
-        if (executionDetails.getToDate() != null)
-            queryString.append(" and conndetails.approvaldate<=:todate");
-        if (isNotBlank(executionDetails.getRevenueWard()))
-            queryString.append(" and boundary.name=:revenueWard");
-
+        queryString = setQueryParameters(executionDetails, queryString);
         final Query query = getCurrentSession().createSQLQuery(queryString.toString());
         return setParameterDetails(executionDetails, query);
     }
@@ -1411,6 +1408,38 @@ public class WaterConnectionDetailsService {
         if (isNotBlank(executionDetails.getRevenueWard()))
             query.setParameter("revenueWard", executionDetails.getRevenueWard());
         return query.list();
+    }
+
+    public List<Object[]> getMeteredApplicationList(final WaterConnExecutionDetails executionDetails) {
+        StringBuilder queryString = new StringBuilder();
+        queryString.append(
+                "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  "
+                        + " conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn "
+                        + "     INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection "
+                        + " INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno"
+                        + " INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id"
+                        + " INNER JOIN egwtr_application_type apptype ON conndetails.applicationtype=apptype.id "
+                        + " INNER JOIN egw_status status ON conndetails.statusid=status.id "
+                        + " where apptype.name=:applicationtype and status.description= '" + APPROVED
+                        + "' and conndetails.connectiontype='" + CONNECTIONTYPE_METERED + "'");
+
+        queryString = setQueryParameters(executionDetails, queryString);
+        final Query query = getCurrentSession().createSQLQuery(queryString.toString());
+        return setParameterDetails(executionDetails, query);
+    }
+
+    public StringBuilder setQueryParameters(final WaterConnExecutionDetails executionDetails, final StringBuilder queryString) {
+        if (isNotBlank(executionDetails.getApplicationNumber()))
+            queryString.append(" and conndetails.applicationnumber=:applicationnumber");
+        if (isNotBlank(executionDetails.getConsumerNumber()))
+            queryString.append(" and conn.consumercode=:consumernumber");
+        if (executionDetails.getFromDate() != null)
+            queryString.append(" and conndetails.approvaldate>=:fromdate");
+        if (executionDetails.getToDate() != null)
+            queryString.append(" and conndetails.approvaldate<=:todate");
+        if (isNotBlank(executionDetails.getRevenueWard()))
+            queryString.append(" and boundary.name=:revenueWard");
+        return queryString;
     }
 
     public String validateDate(final WaterConnectionExecutionResponse executionDetailsResponse,
@@ -1439,24 +1468,8 @@ public class WaterConnectionDetailsService {
 
     public Boolean updateStatus(final List<WaterConnectionDetails> connectionDetailsList) {
         if (!connectionDetailsList.isEmpty()) {
-            for (final WaterConnectionDetails waterConnectionDetails : connectionDetailsList) {
-
-                if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
-                    final WaterConnectionDetails connectionToBeDeactivated = waterConnectionDetailsRepository
-                            .findConnectionDetailsByConsumerCodeAndConnectionStatus(
-                                    waterConnectionDetails.getConnection().getConsumerCode(), ConnectionStatus.ACTIVE);
-                    connectionToBeDeactivated.setConnectionStatus(ConnectionStatus.INACTIVE);
-                    connectionToBeDeactivated.setIsHistory(true);
-                    waterConnectionDetailsRepository.saveAndFlush(connectionToBeDeactivated);
-                }
-
-                if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
-                        ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
-                        CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
-                    waterConnectionDetails
-                            .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
-                    waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
-                }
+            for (WaterConnectionDetails waterConnectionDetails : connectionDetailsList) {
+                waterConnectionDetails = updateApplicationStatus(waterConnectionDetails);
                 if (ConnectionType.NON_METERED.equals(waterConnectionDetails.getConnectionType())
                         && APPLICATION_STATUS_SANCTIONED
                                 .equalsIgnoreCase(waterConnectionDetails.getStatus().getCode()))
@@ -1510,5 +1523,86 @@ public class WaterConnectionDetailsService {
         else
             response = SUCCESS;
         return response;
+    }
+
+    public String validateMeterDetails(final WaterConnectionExecutionResponse executionResponse,
+            final List<WaterConnectionDetails> applicationList) {
+        String validStatus;
+
+        final JSONObject jsonObject = new JSONObject(executionResponse);
+        final JSONArray jsonArray = jsonObject.getJSONArray("executeWaterApplicationDetails");
+        final JSONObject jsonObj = jsonArray.getJSONObject(0);
+        validStatus = validateRequiredFeilds(jsonObj);
+        if (!validStatus.isEmpty())
+            return validStatus;
+        final WaterConnectionDetails waterConnectionDetails = findByApplicationNumber(jsonObj.getString("applicationNumber"));
+        if (!jsonObj.getString(EXECUTION_DATE).isEmpty() && executionResponse != null
+                && isNotBlank(jsonObj.getString(EXECUTION_DATE))) {
+            waterConnectionDetails
+                    .setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
+            if (waterConnectionDetails.getExecutionDate() != null
+                    && waterConnectionDetails.getExecutionDate().compareTo(DateUtils.toDateUsingDefaultPattern(
+                            DateUtils.getDefaultFormattedDate(waterConnectionDetails.getApplicationDate()))) < 0)
+                validStatus = DATE_VALIDATION_FAILED;
+            else
+                applicationList.add(waterConnectionDetails);
+        }
+        waterConnectionDetails.getConnection().setMeterSerialNumber(jsonObj.getString(METER_SERIAL_NUMBER));
+        waterConnectionDetails.getConnection().setInitialReading(Long.valueOf(jsonObj.getString(INITIAL_READING)));
+        waterConnectionDetails.getConnection().setMeter(meterCostService.findByMeterMake(jsonObj.getString(METER_MAKER)).get(0));
+        waterConnectionDetails.setExecutionDate(DateUtils.toDateUsingDefaultPattern(jsonObj.getString(EXECUTION_DATE)));
+        waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+        return validStatus;
+    }
+
+    public String validateRequiredFeilds(final JSONObject jsonObject) {
+        String status = EMPTY;
+        if (isBlank(jsonObject.getString(METER_MAKER)))
+            status = REQ_METER_MAKER;
+        else if (isBlank(jsonObject.getString(EXECUTION_DATE)))
+            status = REQ_EXECUTION_DATE;
+        else if (isBlank(jsonObject.getString(INITIAL_READING)))
+            status = REQ_INITIAL_READING;
+        else if (isBlank(jsonObject.getString(METER_SERIAL_NUMBER)))
+            status = REQ_METER_SERIAL_NUMBER;
+        return status;
+    }
+
+    public Boolean updateMeterDetails(final List<WaterConnectionDetails> detailList) {
+        WaterConnectionDetails waterConnectionDetails = null;
+        if (!detailList.isEmpty()) {
+            waterConnectionDetails = detailList.get(0);
+            waterConnectionDetails = updateApplicationStatus(waterConnectionDetails);
+            waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+            updatePortalMessage(waterConnectionDetails);
+            updateIndexes(waterConnectionDetails,
+                    waterConnectionDetails.getSource() != null ? waterConnectionDetails.getSource().toString() : null);
+            return true;
+        }
+        return false;
+
+    }
+
+    public WaterConnectionDetails updateApplicationStatus(final WaterConnectionDetails waterConnectionDetails) {
+        if (CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+            final WaterConnectionDetails connectionToBeDeactivated = waterConnectionDetailsRepository
+                    .findConnectionDetailsByConsumerCodeAndConnectionStatus(
+                            waterConnectionDetails.getConnection().getConsumerCode(), ConnectionStatus.ACTIVE);
+            if (connectionToBeDeactivated != null) {
+                connectionToBeDeactivated.setConnectionStatus(ConnectionStatus.INACTIVE);
+                connectionToBeDeactivated.setIsHistory(true);
+                waterConnectionDetailsRepository.saveAndFlush(connectionToBeDeactivated);
+            }
+        }
+
+        if (NEWCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
+                ADDNLCONNECTION.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode()) ||
+                CHANGEOFUSE.equalsIgnoreCase(waterConnectionDetails.getApplicationType().getCode())) {
+            waterConnectionDetails
+                    .setStatus(waterTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_SANCTIONED, MODULETYPE));
+            waterConnectionDetails.setConnectionStatus(ConnectionStatus.ACTIVE);
+        }
+
+        return waterConnectionDetails;
     }
 }

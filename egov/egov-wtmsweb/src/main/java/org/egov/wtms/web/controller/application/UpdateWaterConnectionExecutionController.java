@@ -48,12 +48,21 @@
 
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.infra.utils.JsonUtils.toJSON;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_HIERARCHY_TYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.wtms.application.entity.WaterConnExecutionDetails;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.entity.WaterConnectionExecutionResponse;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.masters.entity.MeterCost;
 import org.egov.wtms.masters.service.ApplicationTypeService;
+import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.reports.entity.ExecuteWaterConnectionAdaptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -65,13 +74,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
-
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.egov.infra.utils.JsonUtils.toJSON;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_HIERARCHY_TYPE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.REVENUE_WARD;
 
 @Controller
 @RequestMapping(value = "/application/execute-update")
@@ -86,6 +88,9 @@ public class UpdateWaterConnectionExecutionController {
     @Autowired
     private ApplicationTypeService applicationTypeService;
 
+    @Autowired
+    private MeterCostService meterCostService;
+
     @GetMapping(value = "/search")
     public String getSearchScreen(final Model model) {
         model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
@@ -93,6 +98,15 @@ public class UpdateWaterConnectionExecutionController {
         model.addAttribute("revenueWardList",
                 boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
         return "execute-update-search";
+    }
+
+    @GetMapping(value = "/search-form")
+    public String getSearchForm(final Model model) {
+        model.addAttribute("executeWaterApplicationDetails", new WaterConnExecutionDetails());
+        model.addAttribute("applicationTypeList", applicationTypeService.getActiveApplicationTypes());
+        model.addAttribute("revenueWardList",
+                boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(REVENUE_WARD, REVENUE_HIERARCHY_TYPE));
+        return "execute-search-screen";
     }
 
     @ModelAttribute
@@ -112,6 +126,18 @@ public class UpdateWaterConnectionExecutionController {
                 .toString();
     }
 
+    @PostMapping(value = "/search-form", produces = MediaType.TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String getMeteredApplicationSearchResult(final WaterConnExecutionDetails executeWaterApplicationDetails) {
+        final List<Object[]> detailList = waterConnectionDetailsService.getMeteredApplicationList(executeWaterApplicationDetails);
+        return new StringBuilder(" { \"data\" : ")
+                .append(toJSON(waterConnectionDetailsService.getConnExecutionObjectList(detailList),
+                        WaterConnExecutionDetails.class,
+                        ExecuteWaterConnectionAdaptor.class))
+                .append("}")
+                .toString();
+    }
+
     @PostMapping(value = "/result", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public String getSearchResult(@RequestBody final WaterConnectionExecutionResponse waterApplicationDetails) {
@@ -122,4 +148,19 @@ public class UpdateWaterConnectionExecutionController {
         return waterConnectionDetailsService.getResultStatus(waterApplicationDetails, validationStatus, updateStatus);
     }
 
+    @GetMapping(value = "/search-result", consumes = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<MeterCost> getMeterDetails() {
+        return meterCostService.findAll();
+    }
+
+    @PostMapping(value = "/search-result", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public String updateMeterDetails(@RequestBody final WaterConnectionExecutionResponse executeWaterApplicationDetails) {
+        final List<WaterConnectionDetails> applicationList = new ArrayList<>();
+        final String validationResult = waterConnectionDetailsService.validateMeterDetails(executeWaterApplicationDetails,
+                applicationList);
+        final Boolean status = waterConnectionDetailsService.updateMeterDetails(applicationList);
+        return waterConnectionDetailsService.getResultStatus(executeWaterApplicationDetails, validationResult, status);
+    }
 }

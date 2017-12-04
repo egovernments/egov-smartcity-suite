@@ -465,8 +465,12 @@
     	<put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"></put-attribute>
     	<put-attribute name="body" value="/WEB-INF/views/application/execute-update-search.jsp"></put-attribute>
     </definition>
-        <definition name="regulariseconnection-form" extends="base_layout">
+    <definition name="regulariseconnection-form" extends="base_layout">
         <put-attribute name="page-title" value="title.regularise.connection" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/application/regulariseconnection-form.jsp"/>
+    </definition>
+     <definition name="execute-search-screen" extends="base_layout">
+    	<put-attribute name="page-title" value="title.AppliactionSearch" cascade="true"></put-attribute>
+    	<put-attribute name="body" value="/WEB-INF/views/application/execute-search-screen.jsp"></put-attribute>
     </definition>
 </tiles-definitions>

@@ -62,6 +62,9 @@ public class WaterConnExecutionDetails {
     private String applicationStatus;
     private String approvalDate;
     private String executionDate;
+    private String meterMaker;
+    private String initialReading;
+    private String meterSerialNumber;
 
     public String getExecutionDate() {
         return executionDate;
@@ -150,4 +153,29 @@ public class WaterConnExecutionDetails {
     public void setToDate(final Date toDate) {
         this.toDate = toDate;
     }
+
+    public String getMeterMaker() {
+        return meterMaker;
+    }
+
+    public void setMeterMaker(final String meterMaker) {
+        this.meterMaker = meterMaker;
+    }
+
+    public String getInitialReading() {
+        return initialReading;
+    }
+
+    public void setInitialReading(final String initialReading) {
+        this.initialReading = initialReading;
+    }
+
+    public String getMeterSerialNumber() {
+        return meterSerialNumber;
+    }
+
+    public void setMeterSerialNumber(final String meterSerialNumber) {
+        this.meterSerialNumber = meterSerialNumber;
+    }
+
 }

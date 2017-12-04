@@ -47,9 +47,62 @@
  */
 
 jQuery(document).ready(function() {
-	
 	$('.updation').hide();
 });
+
+$('#metered-search-result-table').on('click', 'td button', function() {
+	var row = jQuery(this).closest('tr');
+	
+	var table = $("#metered-search-result-table").DataTable();
+	var rowData = table.row( $(this).parents('tr') ).data();
+	
+	if(row.find('input[type="checkbox"]').is(':checked')) {
+		$('.meterdtl-update').modal('show', {backdrop : 'static'});
+		$(".display-err-msg").hide();
+		$(".display-success-msg").hide();
+		var resultObject = {};
+		var jsonObject = [];
+		resultObject = {
+				"id" : ""+rowData['id'],
+				"applicationNumber" : "" + rowData['applicationNumber']
+		}
+		jsonObject.push(resultObject);
+		$(".applnNumber").html(rowData['applicationNumber']);
+		var obj = {"executeMeterApplicationDetails" : jsonObject}
+		var o = JSON.stringify(obj);
+		var result = [];
+		$("#meterMaker").find('option:gt(0)').remove();
+		$.ajax({
+			url : "/wtms/application/execute-update/search-result",
+			type : "GET",
+			dataType : "json",
+			cache : false,
+			contentType : "application/json ; charset=utf-8",
+			success : function(data) {
+				
+				$.each(data, function(i) {
+						var obj = data[i];
+						var o = this;
+							obj['id'] = i;
+							obj['text'] = obj.meterMake;
+					result.push(obj);
+				});
+				
+				$.each(result, function(i){
+					$("#meterMaker").append($('<option>').text(result[i].text).attr('value', result[i].text));
+				});
+			}
+			
+		});
+	
+	}
+	else {
+		bootbox.alert("Please click on checkbox provided to update the application");
+		return false;
+	}
+
+});
+
 
 $('#search').on('click', function() {
 	
@@ -253,3 +306,199 @@ function compareDate(dt1, dt2) {
 function openpopup(url) {
 	window.open(url, 'window','scrollbars=yes, resizable=yes, height=700,width=800,status=yes');
 }
+
+
+$('#searchApplication').on('click', function() {
+	
+	if($('#executeMeteredWaterApplicationForm').valid()) {
+		
+	var applicationNumber = $('#applicationNumber').val();
+	var consumerNumber = $('#consumerNumber').val();
+	var fromDate = $('#fromDate').val();
+	var toDate = $('#toDate').val();
+	var result = compareDate (fromDate, toDate);
+	if(result == -1) {
+		bootbox.alert(" From Date can not be greater than To Date");
+		return false;
+	}
+	var applicationType = $('#applicationType').val();
+	var revenueWard = $('#revenueWard').val();
+	var searchResultDataTable = jQuery("#metered-search-result-table");
+	oTable = searchResultDataTable.DataTable({
+		ajax : {
+			url : "/wtms/application/execute-update/search-form",
+			type : "POST",
+			data : { 
+					'applicationNumber' : applicationNumber,
+					'consumerNumber' : consumerNumber,
+					'fromDate' : fromDate,
+					'toDate' : toDate,
+					'applicationType' : applicationType,
+					'revenueWard' : revenueWard
+				}
+		},
+		
+		"sDom": "<'row'<'col-xs-12 hidden col-right'f>r>t<'row'<'col-md-3 col-xs-12'i><'col-md-3 col-xs-6 col-right'l><'col-xs-12 col-md-3 col-right'<'export-data'T>><'col-md-3 col-xs-6 text-right'p>>",
+		"aLengthMenu": [[10, 25, 50, -1], [10, 25, 50, "All"]],
+		"autoWidth": false,
+		"bDestroy": true,
+	"oTableTools" : {
+		"sSwfPath" : "../../../../../../egi/resources/global/swf/copy_csv_xls_pdf.swf",
+		"aButtons" : [ 
+		               {
+			             "sExtends": "pdf",
+                         "title": "Base Register Report",
+                         "sPdfOrientation": "landscape"
+		                },
+		                {
+				             "sExtends": "xls",
+                             "title": "Base Register Report"
+			             },{
+				             "sExtends": "print",
+                             "title": "Base Register Report"
+			               }],
+	},
+        columns : [
+        	{  
+        	  "class" : "text-center",
+        	  "data" : "id",
+        	  "title" : '<input type="checkbox" id="global_checkbox" class="check_box" onclick="checkbox_change(this);"/>',
+        	  "render" : function(data, type, full, meta) {
+        		  return '<input type="checkbox"  class="check_box" name="id" value="'
+					+ $('<div/>').text(data).html()
+					+ '">';
+        	  }
+        	},
+        	{ "data":"applicationNumber", 
+        		"class":"text-center", 
+        		"title":"Application Number",
+        		"render" : function(data, type, row, meta) {
+        			return '<a onclick="openpopup(\'/wtms/application/view/'+row.applicationNumber+'\')" href="javascript:void(0);">'+data+'</a>';
+        		}
+        	},
+        	{ "data":"consumerNumber", "class":"text-center", "title":"Consumer Number"},
+        	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
+        	{ "data":"applicationType", "class":"text-center", "title":"Application Type"},
+        	{ "data":"status", "class":"text-center", "title":"Application Status"},
+        	{ "data":"approvalDate",
+        		"class":"text-center",
+        		"title":"Approval Date",
+        		"render" : function(data, type, row, meta) {
+        			var date = data.split("-");
+        			return date[2]+"/"+date[1]+"/"+date[0];
+        		}
+        			
+        	},
+        	{ "data":"revenueWard", "class":"text-center", "title":"Ward"},
+        	{ "data":"executionDate",
+        		"class":"text-center", 
+        		"title":"Actions",
+        		"render" : function(data, type, full, meta) {
+        			return '<button type="button" class="btn btn-primary" id="executeTap">Execute Tap</button>';
+        		}
+        	 
+        	}
+        	
+        ],
+        columnDefs:[{orderable:false,targets:[0]}],
+        "initComplete": function(settings, json) {
+          }
+	});
+	
+}
+else 
+return false;
+});
+
+
+$("#save").unbind('click').on('click', function(e) {
+	var meterMaker = $("#meterMaker").val();
+	var applicationNumber = $("div.applnNumber").text();
+	var executionDate = $("#executionDate").val();
+	var initialReading = $("#initialReading").val();
+	var serialNumber = $("#meterSerialNumber").val();
+	
+		if(meterMaker==="" || executionDate==="" || initialReading==="" || serialNumber==="") {
+			$(".display-success-msg").text("Please Enter Mandatory Fields");
+			$(".display-err-msg").show();
+			return false;
+		}
+		var jsonObj = [];
+		var myObj = {};
+		myObj = { "meterMaker" : ""+meterMaker,
+				"executionDate" : "" +executionDate,
+				"initialReading" : "" +initialReading,
+				"meterSerialNumber" : "" +serialNumber,
+				"applicationNumber" : "" +applicationNumber
+		}
+		jsonObj.push(myObj);
+		var obj = {"executeWaterApplicationDetails" : jsonObj};
+		var o = JSON.stringify(obj);
+		
+		$.ajax({
+			url:"/wtms/application/execute-update/search-result",
+			type:"POST",
+			data:o,
+			contentType : "application/json ; charset=utf-8",
+			beforeSend : function() {
+				$('.loader-class').modal('show', {
+					backdrop : 'static'
+				});
+			},
+			complete : function() {
+				$('.loader-class').modal('hide');
+			},
+			success : function(response) {
+				if(response=="Success") {
+					$(".display-success-msg").text("The water connection application updated successfully");
+					$(".display-err-msg").hide();
+					$(".display-success-msg").show();
+					return true;
+				}
+				else if (response == "EmptyList") {
+					$(".display-err-msg").text('Please select atleast one application to execute connection');
+					$(".display-err-msg").show();
+					return false;
+				}
+				else if (response === "MeterMakerRequired") {
+					$(".display-err-msg").text('Please select Meter Maker value');
+					$(".display-err-msg").show();
+					return false;
+				}
+				else if (response === "ExecutionDateRequired") {
+					$(".display-err-msg").text('Please select Execution Date');
+					$(".display-err-msg").show();
+					return false;
+				}
+				else if (response === "InitialReadingRequired") {
+					$(".display-err-msg").text('Please enter Meter Initial Reading value');
+					$(".display-err-msg").show();
+					return false;
+				}
+				else if(response === "MeterSerialNumberRequired") {
+					$(".display-err-msg").text('Please enter Meter Serial Number value');
+					$(".display-err-msg").show();
+					return false;
+				}
+				else if (response == "DateValidationFailed") {
+					$(".display-err-msg").text('Connection execution date must be greater than the approval date');
+					$(".display-err-msg").show();
+					return false;
+				}
+				else if (response == "UpdateExecutionFailed") {
+					$(".display-err-msg").text('Water connection application update failed');
+					$(".display-err-msg").show();
+					return false;
+				}
+				return true;
+			},
+			error : function(response) {
+				$(".display-err-msg").text('Water connection application update failed');
+				$(".display-err-msg").show();
+				return false;
+			}
+			
+		});
+		
+});
+
