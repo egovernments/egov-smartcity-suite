@@ -319,10 +319,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
     @Action(value = "/save")
     public String save() {
         transitionWorkFlow(propertyMutation);
-        Boolean isOnlineApplication = Boolean.FALSE;
-        if (StringUtils.isNotBlank(applicationSource) && SOURCE_ONLINE.equalsIgnoreCase(applicationSource))
-            isOnlineApplication = Boolean.TRUE;
-        propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(), isOnlineApplication));
+		propertyMutation.setSource(propertyTaxCommonUtils.setSourceOfProperty(securityUtils.getCurrentUser(),
+				ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName())));
         loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
         if (!loggedUserIsMeesevaUser)
             transferOwnerService.initiatePropertyTransfer(basicproperty, propertyMutation);
