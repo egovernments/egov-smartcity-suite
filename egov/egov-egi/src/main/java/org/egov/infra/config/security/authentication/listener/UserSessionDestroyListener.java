@@ -52,8 +52,6 @@ import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.service.LoginAuditService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
@@ -69,8 +67,6 @@ import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
 import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 public class UserSessionDestroyListener implements HttpSessionListener {
-
-    private static final Logger LOGGER = LoggerFactory.getLogger(UserSessionDestroyListener.class);
 
     @Autowired
     private LoginAuditService loginAuditService;
@@ -88,19 +84,13 @@ public class UserSessionDestroyListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("Start Session Destroy, master{}", masterServer);
         if (masterServer)
             auditUserLogin(event.getSession());
-        if (LOGGER.isInfoEnabled())
-            LOGGER.info("End Session Destroy, master{}", masterServer);
     }
 
     private void auditUserLogin(final HttpSession session) {
         if (session.getAttribute(LOGIN_IP) != null) {
             try {
-                if (LOGGER.isInfoEnabled())
-                    LOGGER.info("Auditing Login");
                 ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
                 LoginAudit loginAudit = new LoginAudit();
                 loginAudit.setLoginTime((Date) session.getAttribute(LOGIN_TIME));
