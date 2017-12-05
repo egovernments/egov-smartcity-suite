@@ -1181,7 +1181,7 @@ public class ReceiptAction extends BaseFormAction {
         final ReceiptHeader receiptHeaderToBeCancelled = receiptHeaderService.findById(oldReceiptId, false);
         if (receiptHeader.getReceipttype() == CollectionConstants.RECEIPT_TYPE_BILL)
             receiptHeaderService.validateReceiptCancellation(receiptHeaderToBeCancelled.getReceiptnumber(),
-                    receiptHeaderToBeCancelled.getService().getCode());
+                    receiptHeaderToBeCancelled.getService().getCode(),receiptHeaderToBeCancelled.getConsumerCode());
         LOGGER.info("Receipt Header to be Cancelled : " + receiptHeaderToBeCancelled.getReceiptnumber());
 
         for (final InstrumentHeader instrumentHeader : receiptHeaderToBeCancelled.getReceiptInstrument())

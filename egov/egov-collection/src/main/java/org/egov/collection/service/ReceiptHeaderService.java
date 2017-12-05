@@ -1339,9 +1339,9 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
                         CollectionConstants.RECEIPT_STATUS_CODE_APPROVED));
     }
 
-    public void validateReceiptCancellation(String receiptNumber, String serviceCode) {
+    public void validateReceiptCancellation(String receiptNumber, String serviceCode,String consumerCode) {
         BillingIntegrationService billingService = getBillingServiceBean(serviceCode);
-        ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber);
+        ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber,consumerCode);
         if (!receiptCancellationInfo.getCancellationAllowed()) {
             String validationMsg = receiptCancellationInfo.getValidationMessage();
             throw new ValidationException(new ValidationError(validationMsg, validationMsg));
