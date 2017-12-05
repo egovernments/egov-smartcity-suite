@@ -49,10 +49,7 @@
 package org.egov.infra.config.security.authentication.handler;
 
 import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
-import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.service.LoginAttemptService;
-import org.egov.infra.security.audit.service.LoginAuditService;
-import org.egov.infra.security.utils.SecurityUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
@@ -63,26 +60,23 @@ import org.springframework.security.web.savedrequest.SavedRequest;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.regex.Pattern;
 
 import static org.egov.infra.security.utils.SecurityConstants.IPADDR_FIELD;
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOG_ID;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_IP;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_TIME;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_USER_AGENT;
 import static org.egov.infra.security.utils.SecurityConstants.USERAGENT_FIELD;
 import static org.springframework.util.StringUtils.hasText;
 
 public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
     @Autowired
-    private LoginAuditService loginAuditService;
-
-    @Autowired
     private LoginAttemptService loginAttemptService;
-
-    @Autowired
-    private SecurityUtils securityUtils;
 
     private RequestCache requestCache = new HttpSessionRequestCache();
 
@@ -128,13 +122,10 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
 
     private void auditLoginDetails(HttpServletRequest request, Authentication authentication) {
         HashMap<String, String> credentials = (HashMap<String, String>) authentication.getCredentials();
-        LoginAudit loginAudit = new LoginAudit();
-        loginAudit.setLoginTime(new Date());
-        loginAudit.setUser(securityUtils.getCurrentUser());
-        loginAudit.setIpAddress(credentials.get(IPADDR_FIELD));
-        loginAudit.setUserAgentInfo(credentials.get(USERAGENT_FIELD));
-        loginAuditService.auditLogin(loginAudit);
-        request.getSession(false).setAttribute(LOGIN_LOG_ID, loginAudit.getId());
+        HttpSession session = request.getSession(false);
+        session.setAttribute(LOGIN_TIME, new Date());
+        session.setAttribute(LOGIN_IP, credentials.get(IPADDR_FIELD));
+        session.setAttribute(LOGIN_USER_AGENT, credentials.get(USERAGENT_FIELD));
     }
 
     private void resetFailedLoginAttempt(Authentication authentication) {

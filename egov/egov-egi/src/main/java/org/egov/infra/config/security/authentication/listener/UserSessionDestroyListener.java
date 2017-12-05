@@ -48,21 +48,38 @@
 
 package org.egov.infra.config.security.authentication.listener;
 
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.service.LoginAuditService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.Date;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOG_ID;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_IP;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_TIME;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_USER_AGENT;
 import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 public class UserSessionDestroyListener implements HttpSessionListener {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(UserSessionDestroyListener.class);
+
     @Autowired
     private LoginAuditService loginAuditService;
+
+    @Autowired
+    private UserService userService;
+
+    @Value("${master.server}")
+    private boolean masterServer;
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
@@ -71,15 +88,30 @@ public class UserSessionDestroyListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
-        HttpSession session = event.getSession();
-        if (session.getAttribute(LOGIN_LOG_ID) != null) {
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("Start Session Destroy, master{}", masterServer);
+        if (masterServer)
+            auditUserLogin(event.getSession());
+        if (LOGGER.isInfoEnabled())
+            LOGGER.info("End Session Destroy, master{}", masterServer);
+    }
+
+    private void auditUserLogin(final HttpSession session) {
+        if (session.getAttribute(LOGIN_IP) != null) {
             try {
+                if (LOGGER.isInfoEnabled())
+                    LOGGER.info("Auditing Login");
                 ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
-                loginAuditService.auditLogout((Long) session.getAttribute(LOGIN_LOG_ID));
+                LoginAudit loginAudit = new LoginAudit();
+                loginAudit.setLoginTime((Date) session.getAttribute(LOGIN_TIME));
+                loginAudit.setUser(userService.getUserById((Long) session.getAttribute(USERID_KEY)));
+                loginAudit.setIpAddress((String) session.getAttribute(LOGIN_IP));
+                loginAudit.setUserAgentInfo((String) session.getAttribute(LOGIN_USER_AGENT));
+                loginAudit.setLogoutTime(new Date());
+                loginAuditService.auditLogin(loginAudit);
             } finally {
                 ApplicationThreadLocals.clearValues();
             }
         }
-
     }
 }
