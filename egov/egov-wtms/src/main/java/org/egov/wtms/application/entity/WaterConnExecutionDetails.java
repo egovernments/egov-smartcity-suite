@@ -65,6 +65,7 @@ public class WaterConnExecutionDetails {
     private String meterMake;
     private String initialReading;
     private String meterSerialNumber;
+    private String address;
 
     public String getExecutionDate() {
         return executionDate;
@@ -176,6 +177,14 @@ public class WaterConnExecutionDetails {
 
     public void setMeterSerialNumber(final String meterSerialNumber) {
         this.meterSerialNumber = meterSerialNumber;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+
+    public void setAddress(final String address) {
+        this.address = address;
     }
 
 }

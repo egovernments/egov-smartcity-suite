@@ -1381,7 +1381,7 @@ public class WaterConnectionDetailsService {
         StringBuilder queryString = new StringBuilder();
         queryString.append(
                 "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  ")
-                .append(" conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn ")
+                .append(" conndetails.applicationdate, boundary.localname, conndetails.id, mvp.address from  egwtr_connection conn ")
                 .append(" INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection ")
                 .append(" INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno ")
                 .append(" INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id ")
@@ -1417,7 +1417,7 @@ public class WaterConnectionDetailsService {
         StringBuilder queryString = new StringBuilder();
         queryString.append(
                 "select conndetails.applicationnumber, conn.consumercode, mvp.ownersname, apptype.name, status.description,  ")
-                .append(" conndetails.applicationdate, boundary.localname, conndetails.id from  egwtr_connection conn ")
+                .append(" conndetails.applicationdate, boundary.localname, conndetails.id, mvp.address from  egwtr_connection conn ")
                 .append(" INNER JOIN egwtr_connectiondetails conndetails ON conn.id=conndetails.connection ")
                 .append(" INNER JOIN egpt_mv_propertyinfo mvp ON  conn.propertyidentifier=mvp.upicno ")
                 .append(" INNER JOIN eg_boundary boundary ON mvp.wardid=boundary.id ")
@@ -1510,6 +1510,8 @@ public class WaterConnectionDetailsService {
                 details.setRevenueWard(resultObject[6].toString());
             if (resultObject[7] != null)
                 details.setId(Long.parseLong(resultObject[7].toString()));
+            if (resultObject[8] != null)
+                details.setAddress(resultObject[8].toString());
             resultList.add(details);
         }
         return resultList;

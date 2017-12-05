@@ -56,7 +56,6 @@ $('#metered-search-result-table').on('click', 'td button', function() {
 	var table = $("#metered-search-result-table").DataTable();
 	var rowData = table.row( $(this).parents('tr') ).data();
 	
-	if(row.find('input[type="checkbox"]').is(':checked')) {
 		$('.meterdtl-update').modal('show', {backdrop : 'static'});
 		$(".display-err-msg").hide();
 		$(".display-success-msg").hide();
@@ -95,11 +94,6 @@ $('#metered-search-result-table').on('click', 'td button', function() {
 			
 		});
 	
-	}
-	else {
-		bootbox.alert("Please click on checkbox provided to update the application");
-		return false;
-	}
 
 });
 
@@ -174,6 +168,7 @@ $('#search').on('click', function() {
 	        	},
 	        	{ "data":"consumerNumber", "class":"text-center", "title":"Consumer Number"},
 	        	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
+	        	{ "data":"address", "class":"text-center", "title":"Address"},
 	        	{ "data":"applicationType", "class":"text-center", "title":"Application Type"},
 	        	{ "data":"status", "class":"text-center", "title":"Application Status"},
 	        	{ "data":"approvalDate",
@@ -359,16 +354,6 @@ $('#searchApplication').on('click', function() {
 			               }],
 	},
         columns : [
-        	{  
-        	  "class" : "text-center",
-        	  "data" : "id",
-        	  "title" : '<input type="checkbox" id="global_checkbox" class="check_box" onclick="checkbox_change(this);"/>',
-        	  "render" : function(data, type, full, meta) {
-        		  return '<input type="checkbox"  class="check_box" name="id" value="'
-					+ $('<div/>').text(data).html()
-					+ '">';
-        	  }
-        	},
         	{ "data":"applicationNumber", 
         		"class":"text-center", 
         		"title":"Application Number",
@@ -378,6 +363,7 @@ $('#searchApplication').on('click', function() {
         	},
         	{ "data":"consumerNumber", "class":"text-center", "title":"Consumer Number"},
         	{ "data":"ownerName", "class":"text-center", "title":"Owner Name"},
+        	{ "data":"address", "class":"text-center", "title":"Address"},
         	{ "data":"applicationType", "class":"text-center", "title":"Application Type"},
         	{ "data":"status", "class":"text-center", "title":"Application Status"},
         	{ "data":"approvalDate",
@@ -451,6 +437,7 @@ $("#save").unbind('click').on('click', function(e) {
 			success : function(response) {
 				if(response=="Success") {
 					$(".display-success-msg").text("The water connection application updated successfully");
+					$("#save").hide();
 					$(".display-err-msg").hide();
 					$(".display-success-msg").show();
 					return true;
