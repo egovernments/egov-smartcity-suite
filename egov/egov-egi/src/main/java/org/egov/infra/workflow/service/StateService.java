@@ -54,6 +54,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -73,7 +74,8 @@ public class StateService {
     }
 
     public List<String> getAssignedWorkflowTypeNames(final List<Long> ownerIds) {
-        return stateRepository.findAllTypeByOwnerAndStatus(ownerIds);
+        return ownerIds.isEmpty() ? Collections.emptyList() :
+                stateRepository.findAllTypeByOwnerAndStatus(ownerIds);
     }
 
     public State getStateById(final Long id) {
