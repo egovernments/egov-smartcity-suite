@@ -51,299 +51,387 @@
 <%@ taglib uri="http://www.springframework.org/tags" prefix="spring"%>
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
+<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 <div class="row">
 	<div class="col-md-12">
 		<c:if test="${not empty message}">
-			<div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
-		</c:if>
-		<form:form id="advertisementform" action="" method="post" class="form-horizontal form-groups-bordered" 
-		modelAttribute="advertisementPermitDetail" commandName="advertisementPermitDetail" enctype="multipart/form-data">
-		<form:hidden path="" id="workFlowAction" name="workFlowAction"/>
-		<form:hidden path="" id="statuscode" value="${advertisementPermitDetail.status.code}"/>
-		<form:hidden path="" id="wfstate" value="${advertisementPermitDetail.state.id}"/> 
-		<form:hidden path="" id="adtaxpermitId" value="${advertisementPermitDetail.id}"/> 
-		<form:hidden path="" id="isReassignEnabled" value="${isReassignEnabled}"/> 
-		<form:hidden path="" id="applicationType" value="${applicationType}"/>
-		<form:hidden path="" id="nextAction" value="${advertisementPermitDetail.state.nextAction}"/> 
-		 
-		<div class="panel panel-primary" data-collapsed="0" id="adtaxdetailsbody">
-			<div class="panel-heading">
-				<ul class="nav nav-tabs" id="settingstab">
-					<li class="active"><a data-toggle="tab"
-						href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message code="lbl.hoarding.details"/></a></li>
-				</ul>
+			<div class="alert alert-success" role="alert">
+				<spring:message code="${message}" />
 			</div>
-			<div class="panel-body custom-form">
-			<div class="tab-content">
-				<div class="tab-pane fade active in" id="hoardingdetails">	
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.category"/>
-						<span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="advertisement.category" id="category" cssClass="form-control" cssErrorClass="form-control error" required="required" disabled="true">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${hoardingCategories}" itemLabel="name" itemValue="id"/>
-							</form:select>
-							<form:errors path="advertisement.category" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.subcategory"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="advertisement.subCategory" id="subCategory" cssClass="form-control" cssErrorClass="form-control error" required="required">
-								<form:option value=""><spring:message code="lbl.select"/></form:option>
-							</form:select>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.class"/>
-						<span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="advertisement.rateClass" id="rateClass" cssClass="form-control" cssErrorClass="form-control error" required="required">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${rateClasses}" itemLabel="description" itemValue="id"/>
-							</form:select>
-							<form:errors path="advertisement.rateClass" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.rev.inspector"/><span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="advertisement.revenueInspector" id="revenueInspector" cssClass="form-control" cssErrorClass="form-control error" required="required">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${revenueInspectors}" itemLabel="name" itemValue="id"/>
-							</form:select>
-							<form:errors path="advertisement.revenueInspector" cssClass="error-msg" />
-						</div>
-					</div>
-						<div class="form-group">
-							<label class="col-sm-3 control-label text-right">
-							<spring:message code="lbl.advertisement.electricityservicenumber"/>
-							</label>
-							<div class="col-sm-3 add-margin">
-								<form:input type="text" class="form-control patternvalidation" data-pattern="alphanumerichyphenbackslash"  maxlength="25"  path="advertisement.electricityServiceNumber" id="electricityServiceNumber"/>
-                              		<form:errors path="advertisement.electricityServiceNumber" cssClass="error-msg" />
-                          		</div>
-						</div>
-							
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.type"/>
-						<span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin dynamic-span capitalize">
-							<form:radiobuttons path="advertisement.type" element="span" />
-							<form:errors path="advertisement.type" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.advertisement.prop.type"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="advertisement.propertyType" id="propertyType" cssClass="form-control" cssErrorClass="form-control error" required="required">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${propertyType}"/>
-							</form:select>
-							<form:errors path="advertisement.propertyType" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="panel-heading custom_form_panel_heading">
-						<div class="panel-title">
-						<spring:message code="lbl.advertisement.permitDetail"/>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.application.no"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-						<form:hidden path="advertisement.legacy" id="legacy" value="${advertisementPermitDetail.advertisement.legacy}" />
-						<form:hidden path="advertisement.status" id="advStatus" value="${advertisement.status}" />
-						<%-- 
+		</c:if>
+		<form:form id="advertisementform" action="" method="post"
+			class="form-horizontal form-groups-bordered"
+			modelAttribute="advertisementPermitDetail"
+			commandName="advertisementPermitDetail" enctype="multipart/form-data">
+			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
+			<form:hidden path="" id="statuscode"
+				value="${advertisementPermitDetail.status.code}" />
+			<form:hidden path="" id="wfstate"
+				value="${advertisementPermitDetail.state.id}" />
+			<form:hidden path="" id="adtaxpermitId"
+				value="${advertisementPermitDetail.id}" />
+			<form:hidden path="" id="isReassignEnabled"
+				value="${isReassignEnabled}" />
+			<form:hidden path="" id="applicationType" value="${applicationType}" />
+			<form:hidden path="" id="nextAction"
+				value="${advertisementPermitDetail.state.nextAction}" />
+
+			<div class="panel panel-primary" data-collapsed="0"
+				id="adtaxdetailsbody">
+				<div class="panel-heading">
+					<ul class="nav nav-tabs" id="settingstab">
+						<li class="active"><a data-toggle="tab"
+							href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message
+									code="lbl.hoarding.details" /></a></li>
+					</ul>
+				</div>
+				<div class="panel-body custom-form">
+					<div class="tab-content">
+						<div class="tab-pane fade active in" id="hoardingdetails">
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.category" /> <span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="advertisement.category" id="category"
+										cssClass="form-control" cssErrorClass="form-control error"
+										required="required" disabled="true">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${hoardingCategories}" itemLabel="name"
+											itemValue="id" />
+									</form:select>
+									<form:errors path="advertisement.category" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.subcategory" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="advertisement.subCategory" id="subCategory"
+										cssClass="form-control" cssErrorClass="form-control error"
+										required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+									</form:select>
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.class" /> <span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="advertisement.rateClass" id="rateClass"
+										cssClass="form-control" cssErrorClass="form-control error"
+										required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${rateClasses}" itemLabel="description"
+											itemValue="id" />
+									</form:select>
+									<form:errors path="advertisement.rateClass"
+										cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.rev.inspector" /><span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="advertisement.revenueInspector"
+										id="revenueInspector" cssClass="form-control"
+										cssErrorClass="form-control error" required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${revenueInspectors}" itemLabel="name"
+											itemValue="id" />
+									</form:select>
+									<form:errors path="advertisement.revenueInspector"
+										cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.electricityservicenumber" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation"
+										data-pattern="alphanumerichyphenbackslash" maxlength="25"
+										path="advertisement.electricityServiceNumber"
+										id="electricityServiceNumber" />
+									<form:errors path="advertisement.electricityServiceNumber"
+										cssClass="error-msg" />
+								</div>
+							</div>
+
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.type" /> <span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin dynamic-span capitalize">
+									<form:radiobuttons path="advertisement.type" element="span" />
+									<form:errors path="advertisement.type" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.advertisement.prop.type" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="advertisement.propertyType"
+										id="propertyType" cssClass="form-control"
+										cssErrorClass="form-control error" required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${propertyType}" />
+									</form:select>
+									<form:errors path="advertisement.propertyType"
+										cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">
+									<spring:message code="lbl.advertisement.permitDetail" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.application.no" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:hidden path="advertisement.legacy" id="legacy"
+										value="${advertisementPermitDetail.advertisement.legacy}" />
+									<form:hidden path="advertisement.status" id="advStatus"
+										value="${advertisement.status}" />
+									<%-- 
 						<form:hidden path="status" id="status" value="${status.id}" /> 
 						 --%>
-						<form:input type="text"  cssClass="form-control patternvalidation" 
-                      	      data-pattern="alphanumerichyphenbackslash" path="applicationNumber" maxlength="25" id="applicationNumber" readonly="true"/>
-                        	<form:errors path="applicationNumber" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.application.date"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control" path="applicationDate" id="applicationDate" required="required" readonly="true"/>
-                            <form:errors path="applicationDate" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.permission.no"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control patternvalidation" 
-                      	      data-pattern="alphanumerichyphenbackslash" maxlength="25"  path="permissionNumber" id="permissionNumber" readonly="true"/>
-                             		<form:errors path="permissionNumber" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.advertisement.no"/></label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control patternvalidation" 
-                      	      data-pattern="username" maxlength="25"  path="advertisement.advertisementNumber" id="advertisementnumber" readonly="true"/>
-                             		<form:errors path="advertisement.advertisementNumber" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.agency"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<input type="text" id="agencyTypeAhead" class="form-control typeahead" autocomplete="off" value="${advertisementPermitDetail.agency.name}">
-							<form:hidden path="agency" id="agencyId" value="${advertisementPermitDetail.agency.id}" />
-							<form:errors path="agency" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.advertisement.adv"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:textarea path="advertiser" id="advertiser" cols="5" rows="2" class="form-control patternvalidation"  data-pattern="alphanumericwithspace"  minlength="5" maxlength="125"/>
-                            <form:errors path="advertiser" cssClass="error-msg" /> 
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.ad.particulars"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:textarea path="advertisementParticular" cols="5" rows="2" class="form-control patternvalidation" data-pattern="alphanumericwithspace"  required="required" minlength="5" maxlength="256"/>
-							<form:errors path="advertisementParticular" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.owner.detail"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:textarea path="ownerDetail" cols="5" rows="2" class="form-control patternvalidation" data-pattern="alphanumericwithspace" minlength="5" maxlength="125"/>
-                            <form:errors path="ownerDetail" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.permit.fromdate"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control datepicker" path="permissionstartdate" id="permissionstartdate" required="required"/>
-                            <form:errors path="permissionstartdate" cssClass="error-msg" />
-                           	</div>
-				     	<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.advertisement.permit.todate"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" cssClass="form-control datepicker" path="permissionenddate" id="permissionenddate" required="required"/>
-                            <form:errors path="permissionenddate" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-							<spring:message code="lbl.advertisement.duration"/> <span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="advertisementDuration" id="advertisementDuration" cssClass="form-control" cssErrorClass="form-control error" required="required">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${advertisementDuration}"/>
-							</form:select>
-							<form:errors path="advertisementDuration" cssClass="error-msg" />
-						</div>
-					</div>	
-								
-					<div id="locationDiv">
-						<jsp:include page="hoarding-location.jsp"></jsp:include>
-					</div>
-					<div class="panel-heading custom_form_panel_heading">
-						<div class="panel-title">
-						<spring:message code="lbl.advertisement.struct"/>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.measurement"/>
-						<span class="mandatory"></span>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15" path="measurement" id="measurement" required="required"/>
-                            <form:errors path="measurement" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.uom"/>
-						<span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<form:select path="unitOfMeasure" id="unitOfMeasure" cssClass="form-control" cssErrorClass="form-control error" required="required">
-								<form:option value=""><spring:message code="lbl.select" /></form:option>
-								<form:options items="${uom}" itemLabel="description" itemValue="id"/>
-							</form:select>
-							<form:errors path="unitOfMeasure" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.length"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15" path="length" id="length"/>
-                            <form:errors path="length" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.width"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="width" id="width"/>
-                            <form:errors path="width" cssClass="error-msg" />
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.total.height"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="totalHeight" id="totalHeight" />
-                            <form:errors path="totalHeight" cssClass="error-msg" />
-						</div>
-					</div>
-						
-					<div class="panel-heading custom_form_panel_heading">
-						<div class="panel-title">
-						<spring:message code="lbl.advertisement.tax.feeDetails"/>
-						</div>
-					</div>
-					<div class="form-group">
-						<label class="col-sm-3 control-label text-right">
-						<spring:message code="lbl.advertisement.currentYearTax"/>
-						<span class="mandatory"></span></label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="taxAmount" id="taxAmount" required="required"/>
-                            <form:errors path="taxAmount" cssClass="error-msg" />
-						</div>
-						<label class="col-sm-2 control-label text-right">
-						<spring:message code="lbl.advertisement.enc.fee"/>
-						</label>
-						<div class="col-sm-3 add-margin">
-							<form:input type="text" class="form-control patternvalidation" data-pattern="decimalvalue"  maxlength="15"  path="encroachmentFee" id="encroachmentFee"/>
-                            <form:errors path="encroachmentFee" cssClass="error-msg" />
-						</div>
+									<form:input type="text"
+										cssClass="form-control patternvalidation"
+										data-pattern="alphanumerichyphenbackslash"
+										path="applicationNumber" maxlength="25" id="applicationNumber"
+										readonly="true" />
+									<form:errors path="applicationNumber" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.application.date" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" cssClass="form-control"
+										path="applicationDate" id="applicationDate"
+										required="required" readonly="true" />
+									<form:errors path="applicationDate" cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.permission.no" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text"
+										cssClass="form-control patternvalidation"
+										data-pattern="alphanumerichyphenbackslash" maxlength="25"
+										path="permissionNumber" id="permissionNumber" readonly="true" />
+									<form:errors path="permissionNumber" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.advertisement.no" /></label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text"
+										cssClass="form-control patternvalidation"
+										data-pattern="username" maxlength="25"
+										path="advertisement.advertisementNumber"
+										id="advertisementnumber" readonly="true" />
+									<form:errors path="advertisement.advertisementNumber"
+										cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.agency" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<input type="text" id="agencyTypeAhead"
+										class="form-control typeahead" autocomplete="off"
+										value="${advertisementPermitDetail.agency.name}">
+									<form:hidden path="agency" id="agencyId"
+										value="${advertisementPermitDetail.agency.id}" />
+									<form:errors path="agency" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.advertisement.adv" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:textarea path="advertiser" id="advertiser" cols="5"
+										rows="2" class="form-control patternvalidation"
+										data-pattern="alphanumericwithspace" minlength="5"
+										maxlength="125" />
+									<form:errors path="advertiser" cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.ad.particulars" /> <span
+									class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:textarea path="advertisementParticular" cols="5" rows="2"
+										class="form-control patternvalidation"
+										data-pattern="alphanumericwithspace" required="required"
+										minlength="5" maxlength="256" />
+									<form:errors path="advertisementParticular"
+										cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.owner.detail" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:textarea path="ownerDetail" cols="5" rows="2"
+										class="form-control patternvalidation"
+										data-pattern="alphanumericwithspace" minlength="5"
+										maxlength="125" />
+									<form:errors path="ownerDetail" cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.permit.fromdate" /> <span
+									class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" cssClass="form-control datepicker"
+										path="permissionstartdate" id="permissionstartdate"
+										required="required" />
+									<form:errors path="permissionstartdate" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.advertisement.permit.todate" /> <span
+									class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" cssClass="form-control datepicker"
+										path="permissionenddate" id="permissionenddate"
+										required="required" />
+									<form:errors path="permissionenddate" cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.duration" /> <span class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="advertisementDuration"
+										id="advertisementDuration" cssClass="form-control"
+										cssErrorClass="form-control error" required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${advertisementDuration}" />
+									</form:select>
+									<form:errors path="advertisementDuration" cssClass="error-msg" />
+								</div>
+							</div>
+
+							<div id="locationDiv">
+								<jsp:include page="hoarding-location.jsp"></jsp:include>
+							</div>
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">
+									<spring:message code="lbl.advertisement.struct" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.measurement" /> <span
+									class="mandatory"></span>
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation"
+										data-pattern="decimalvalue" maxlength="15" path="measurement"
+										id="measurement" required="required" />
+									<form:errors path="measurement" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.uom" /> <span class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:select path="unitOfMeasure" id="unitOfMeasure"
+										cssClass="form-control" cssErrorClass="form-control error"
+										required="required">
+										<form:option value="">
+											<spring:message code="lbl.select" />
+										</form:option>
+										<form:options items="${uom}" itemLabel="description"
+											itemValue="id" />
+									</form:select>
+									<form:errors path="unitOfMeasure" cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.length" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation"
+										data-pattern="decimalvalue" maxlength="15" path="length"
+										id="length" />
+									<form:errors path="length" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.width" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation"
+										data-pattern="decimalvalue" maxlength="15" path="width"
+										id="width" />
+									<form:errors path="width" cssClass="error-msg" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.total.height" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation"
+										data-pattern="decimalvalue" maxlength="15" path="totalHeight"
+										id="totalHeight" />
+									<form:errors path="totalHeight" cssClass="error-msg" />
+								</div>
+							</div>
+
+							<div class="panel-heading custom_form_panel_heading">
+								<div class="panel-title">
+									<spring:message code="lbl.advertisement.tax.feeDetails" />
+								</div>
+							</div>
+							<div class="form-group">
+								<label class="col-sm-3 control-label text-right"> <spring:message
+										code="lbl.advertisement.currentYearTax" /> <span
+									class="mandatory"></span></label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation"
+										data-pattern="decimalvalue" maxlength="15" path="taxAmount"
+										id="taxAmount" required="required" />
+									<form:errors path="taxAmount" cssClass="error-msg" />
+								</div>
+								<label class="col-sm-2 control-label text-right"> <spring:message
+										code="lbl.advertisement.enc.fee" />
+								</label>
+								<div class="col-sm-3 add-margin">
+									<form:input type="text" class="form-control patternvalidation"
+										data-pattern="decimalvalue" maxlength="15"
+										path="encroachmentFee" id="encroachmentFee" />
+									<form:errors path="encroachmentFee" cssClass="error-msg" />
+								</div>
+							</div>
+						</div>						
+						<c:if test="${not empty advertisementPermitDetail.advertisement.documents}">
+							<jsp:include page="document-update.jsp"></jsp:include>
+						</c:if>						
 					</div>
 				</div>
-					<jsp:include page="document-update.jsp"></jsp:include>
 			</div>
-			</div>
-		</div>
-											<jsp:include page="../workflow/workflowhistory.jsp" />
-		
-		<c:if test="${isEmployee}">
-			<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
+			
+			<jsp:include page="../workflow/workflowhistory.jsp" />
+			
+			<c:if test="${isEmployee}">
+				<jsp:include page="../workflow/commonWorkflowMatrix.jsp" />
 			</c:if>
 			<div class="buttonbottom" align="center">
 				<jsp:include page="../workflow/commonWorkflowMatrix-button.jsp" />

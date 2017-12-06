@@ -68,9 +68,11 @@
 						<li class="active"><a data-toggle="tab"
 							href="#hoardingdetails" data-tabidx="0" aria-expanded="false"><spring:message
 									code="lbl.hoarding.details" /></a></li>
+					<c:if test="${not empty advertisementPermitDetail.advertisement.documents}">
 						<li class=""><a data-toggle="tab" href="#hoardingattachments"
 							data-tabidx="1" aria-expanded="false"><spring:message
 									code="lbl.hoarding.enclosure" /></a></li>
+					</c:if>
 					</ul>
 				</div>
 				<div class="panel-body custom-form">
@@ -379,6 +381,7 @@
 								</div>
 							</div>
 						</div>
+					
 						<div class="tab-pane fade" id="hoardingattachments">
 							<form:hidden path="advertisement.latitude" id="latitude" />
 							<form:hidden path="advertisement.longitude" id="longitude" />
@@ -396,7 +399,7 @@
 									<spring:message code="lbl.attachdocument" />
 								</div>
 							</div>
-
+							</br></br>
 							<c:forEach var="docs"
 								items="${advertisementPermitDetail.advertisement.documents}"
 								varStatus="status">
