@@ -114,6 +114,8 @@ public class QuartzSchedulerConfiguration {
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "AUTO");
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "ERP_APP_SCHEDULER");
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX, "false");
+        quartzProps.put(StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE, 10);
+        quartzProps.put(StdSchedulerFactory.PROP_SCHED_BATCH_TIME_WINDOW, 1000);
         quartzProps.put("org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer", "true");
 
         //Cluster job store config
