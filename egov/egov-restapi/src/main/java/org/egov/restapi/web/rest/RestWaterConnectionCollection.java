@@ -47,6 +47,18 @@
  */
 package org.egov.restapi.web.rest;
 
+import static java.math.RoundingMode.HALF_UP;
+import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
+import static org.springframework.web.bind.annotation.RequestMethod.POST;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.infra.validation.exception.ValidationError;
@@ -75,16 +87,6 @@ import org.springframework.validation.BindException;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
-
-import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
-import static org.springframework.web.bind.annotation.RequestMethod.POST;
 
 @RestController
 public class RestWaterConnectionCollection {
@@ -125,6 +127,7 @@ public class RestWaterConnectionCollection {
             else {
                 payWaterTaxDetails.setSource(request.getSession().getAttribute("source") != null
                         ? request.getSession().getAttribute("source").toString() : "");
+                payWaterTaxDetails.setPaymentAmount(payWaterTaxDetails.getPaymentAmount().setScale(0, HALF_UP));
                 waterReceiptDetails = waterTaxExternalService.payWaterTax(payWaterTaxDetails);
             }
         } catch (final ValidationException e) {
@@ -190,7 +193,7 @@ public class RestWaterConnectionCollection {
             if (!waterConnectionRequestDetails.getAssessmentNo().isEmpty()
                     && !waterConnectionRequestDetails.getConsumerNo().isEmpty()) {
                 ownerdetailsnotexists = true;
-                List<WaterConnection> waterconnectionList = waterConnectionService
+                final List<WaterConnection> waterconnectionList = waterConnectionService
                         .findByPropertyIdentifier(waterConnectionRequestDetails.getAssessmentNo());
                 for (final WaterConnection waterconnection : waterconnectionList)
                     if (waterconnection.getConsumerCode()
@@ -219,7 +222,7 @@ public class RestWaterConnectionCollection {
                 consumerCodesList.add(waterConnectionRequestDetails.getConsumerNo());
             else
                 for (final PropertyTaxDetails propertyTaxDetails : propertyTaxDetailsList) {
-                    List<WaterConnection> waterConnectionList = waterConnectionService
+                    final List<WaterConnection> waterConnectionList = waterConnectionService
                             .findByPropertyIdentifier(propertyTaxDetails.getAssessmentNo());
                     for (final WaterConnection waterconnection : waterConnectionList)
                         consumerCodesList.add(waterconnection.getConsumerCode());
@@ -228,7 +231,8 @@ public class RestWaterConnectionCollection {
                 return JsonConvertor.convert(isEmptyWaterTaxDetails());
             else {
                 for (final String consumerCode : consumerCodesList) {
-                    WaterTaxDetails watertaxdetails = waterTaxExternalService.getWaterTaxDemandDetByConsumerCode(consumerCode);
+                    final WaterTaxDetails watertaxdetails = waterTaxExternalService
+                            .getWaterTaxDemandDetByConsumerCode(consumerCode);
                     waterTaxDetailsList.add(getWaterTaxDetails(watertaxdetails));
                     if (watertaxdetails.getErrorDetails() == null) {
                         final ErrorDetails errordetails = new ErrorDetails();
@@ -379,7 +383,7 @@ public class RestWaterConnectionCollection {
             errorDetails.setErrorMessage(RestApiConstants.THIRD_PARTY_ERR_MSG_CONSUMER_NO_LEN);
         }
         if (!consumerCode.isEmpty()) {
-            WaterConnection waterConnection = waterConnectionService.findByConsumerCode(consumerCode);
+            final WaterConnection waterConnection = waterConnectionService.findByConsumerCode(consumerCode);
             if (waterConnection == null) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_CONSUMERCODE_NOT_EXIST);
@@ -387,8 +391,9 @@ public class RestWaterConnectionCollection {
             }
         }
         if (!consumerCode.isEmpty()) {
-            WaterConnectionDetails waterConnDetailsObj = waterConnectionDetailsService.findByConsumerCodeAndConnectionStatus(consumerCode,
-                    ConnectionStatus.INACTIVE);
+            final WaterConnectionDetails waterConnDetailsObj = waterConnectionDetailsService
+                    .findByConsumerCodeAndConnectionStatus(consumerCode,
+                            ConnectionStatus.INACTIVE);
             if (waterConnDetailsObj != null) {
                 errorDetails = new ErrorDetails();
                 errorDetails.setErrorCode(RestApiConstants.THIRD_PARTY_ERR_CODE_INACTIVE_CONSUMERNO);
@@ -435,7 +440,7 @@ public class RestWaterConnectionCollection {
             waterTaxDetails.setPropertyAddress("");
         if (waterTaxDetails.getTaxDetails() == null) {
             final RestPropertyTaxDetails ar = new RestPropertyTaxDetails();
-            final List<RestPropertyTaxDetails> taxDetails = new ArrayList<RestPropertyTaxDetails>(0);
+            final List<RestPropertyTaxDetails> taxDetails = new ArrayList<>(0);
             taxDetails.add(ar);
             waterTaxDetails.setTaxDetails(taxDetails);
         }

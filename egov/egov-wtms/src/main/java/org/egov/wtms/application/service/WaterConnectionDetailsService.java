@@ -47,6 +47,7 @@
  */
 package org.egov.wtms.application.service;
 
+import static java.math.RoundingMode.HALF_UP;
 import static org.apache.commons.lang.StringUtils.EMPTY;
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.apache.commons.lang.StringUtils.isNotBlank;
@@ -1144,7 +1145,7 @@ public class WaterConnectionDetailsService {
                 BigDecimal collAmt = BigDecimal.ZERO;
                 if (ddObject[2] != null)
                     collAmt = new BigDecimal((Double) ddObject[3]);
-                balance = balance.add(dmdAmt.subtract(collAmt));
+                balance = balance.add(dmdAmt.subtract(collAmt)).setScale(0, HALF_UP);
             }
         }
         return balance;
