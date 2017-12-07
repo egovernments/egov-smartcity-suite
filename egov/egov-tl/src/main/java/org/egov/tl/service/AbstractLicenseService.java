@@ -595,6 +595,7 @@ public abstract class AbstractLicenseService<T extends License> {
 
     @Transactional
     public void save(final License license) {
+        updateDemandForChangeTradeArea((T) license);
         licenseRepository.save(license);
     }
 
