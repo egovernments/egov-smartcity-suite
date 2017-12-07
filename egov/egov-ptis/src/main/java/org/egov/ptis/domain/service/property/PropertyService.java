@@ -3937,59 +3937,71 @@ public class PropertyService {
 	}
 
 	public void copyCollection(final PropertyImpl oldProperty, final PropertyImpl newProperty) {
-		BigDecimal totalColl = BigDecimal.ZERO;
+	    BigDecimal totalColl = BigDecimal.ZERO;
 
-		final Ptdemand ptDemandOld = getCurrrentDemand(oldProperty);
-		final Ptdemand ptDemandNew = getCurrrentDemand(newProperty);
+	    final Ptdemand ptDemandOld = getCurrrentDemand(oldProperty);
+	    final Ptdemand ptDemandNew = getCurrrentDemand(newProperty);
 
-		for (final EgDemandDetails demandDetails : ptDemandOld.getEgDemandDetails())
-			totalColl = totalColl.add(demandDetails.getAmtCollected());
+	    if (ptDemandOld != null) {
+	        for (final EgDemandDetails dmdDetails : ptDemandOld.getEgDemandDetails())
+	            totalColl = totalColl.add(dmdDetails.getAmtCollected());
+	    }
 
-		final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
-				DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
-				DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
+	    final Set<String> demandReasons = new LinkedHashSet<>(Arrays.asList(DEMANDRSN_CODE_PENALTY_FINES,
+		DEMANDRSN_CODE_GENERAL_TAX, DEMANDRSN_CODE_VACANT_TAX, DEMANDRSN_CODE_EDUCATIONAL_CESS,
+		DEMANDRSN_CODE_LIBRARY_CESS, DEMANDRSN_CODE_UNAUTHORIZED_PENALTY));
 
-		final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(
-				ptDemandNew.getEgDemandDetails());
-		final List<Installment> installments = new ArrayList<>(installmentWiseDemandDetails.keySet());
-		Collections.sort(installments);
-
-		for (final Installment installment : installments) {
-			for (final String demandReason : demandReasons) {
-				final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
-						installmentWiseDemandDetails.get(installment), demandReason);
-
-				if (newDemandDetail != null)
-					if (totalColl.compareTo(BigDecimal.ZERO) > 0)
-						if (totalColl.compareTo(newDemandDetail.getAmount()) <= 0) {
-							newDemandDetail.setAmtCollected(totalColl);
-							newDemandDetail.setModifiedDate(new Date());
-							totalColl = BigDecimal.ZERO;
-						} else {
-							newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
-							newDemandDetail.setModifiedDate(new Date());
-							totalColl = totalColl.subtract(newDemandDetail.getAmount());
-						}
-				if (totalColl.compareTo(BigDecimal.ZERO) == 0)
-					break;
-			}
-			if (totalColl.compareTo(BigDecimal.ZERO) == 0)
-				break;
-		}
-
-		if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
-			final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
-					.get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
-			final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
-					DEMANDRSN_CODE_ADVANCE);
-			if (advanceDemandDetails == null) {
-				final EgDemandDetails demandDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
-						totalColl, currSecondHalf);
-				ptDemandNew.getEgDemandDetails().add(demandDetails);
-			} else
-				advanceDemandDetails.getAmtCollected().add(totalColl);
-		}
+	    if (ptDemandNew != null) {
+	        final Map<Installment, Set<EgDemandDetails>> installmentWiseDemandDetails = getEgDemandDetailsSetByInstallment(
+	                ptDemandNew.getEgDemandDetails());
+	        final List<Installment> installments = new ArrayList<>(installmentWiseDemandDetails.keySet());
+	        Collections.sort(installments);
+        
+	        for (final Installment installment : installments) {
+	            for (final String demandReason : demandReasons) {
+	                final EgDemandDetails newDemandDetail = getEgDemandDetailsForReason(
+	                        installmentWiseDemandDetails.get(installment), demandReason);
+	                totalColl = updateCollection(totalColl, newDemandDetail);
+	            }
+	        }
+    		if (totalColl.compareTo(BigDecimal.ZERO) > 0) {
+                    final Installment currSecondHalf = propertyTaxUtil.getInstallmentsForCurrYear(new Date())
+                            .get(PropertyTaxConstants.CURRENTYEAR_SECOND_HALF);
+                    final EgDemandDetails advanceDemandDetails = ptBillServiceImpl.getDemandDetail(ptDemandNew, currSecondHalf,
+                            DEMANDRSN_CODE_ADVANCE);
+                    if (advanceDemandDetails == null) {
+                        final EgDemandDetails dmdDetails = ptBillServiceImpl.insertDemandDetails(DEMANDRSN_CODE_ADVANCE,
+                                totalColl, currSecondHalf);
+                        ptDemandNew.getEgDemandDetails().add(dmdDetails);
+                    } else
+                        advanceDemandDetails.getAmtCollected().add(totalColl);
+    		}
+	    }
 	}
+
+    /**
+     * @param totalColl
+     * @param newDemandDetail
+     * @return
+     */
+    private BigDecimal updateCollection(BigDecimal totalColl, final EgDemandDetails newDemandDetail) {
+        BigDecimal remaining = totalColl;
+        if (newDemandDetail != null) {
+            newDemandDetail.setAmtCollected(ZERO);
+            if (remaining.compareTo(BigDecimal.ZERO) > 0) {
+                if (remaining.compareTo(newDemandDetail.getAmount()) <= 0) {
+                	newDemandDetail.setAmtCollected(remaining);
+                	newDemandDetail.setModifiedDate(new Date());
+                	remaining = BigDecimal.ZERO;
+                } else {
+                	newDemandDetail.setAmtCollected(newDemandDetail.getAmount());
+                	newDemandDetail.setModifiedDate(new Date());
+                	remaining = remaining.subtract(newDemandDetail.getAmount());
+                }
+            }
+        }
+        return remaining;
+    }
 
 	/**
 	 * Method to push data for citizen portal inbox
