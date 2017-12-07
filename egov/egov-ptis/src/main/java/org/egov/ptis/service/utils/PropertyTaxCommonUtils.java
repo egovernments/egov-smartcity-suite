@@ -787,6 +787,8 @@ public class PropertyTaxCommonUtils {
                 reason = "New Assessment";
             else if ("ADD_OR_ALTER".equals(basicProperty.getProperty().getPropertyModifyReason()))
                 reason = "Addition/Alteration";
+            else if("BIFURCATE".equals(basicProperty.getProperty().getPropertyModifyReason()))
+            	reason = "Bifurcation";
             list.add(reason);
             list.add(DateUtils.getFormattedDate(basicProperty.getModifiedDate(), "dd/MM/yyyy"));
         }
