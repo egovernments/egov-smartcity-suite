@@ -47,6 +47,21 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
+
+import java.math.BigDecimal;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.commons.Installment;
 import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
@@ -69,20 +84,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.LinkedHashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -206,15 +207,13 @@ public class EditDemandForDataEntryController {
     }
 
     @RequestMapping(value = "/editDemand/{consumerCode}", method = RequestMethod.POST)
-    public String updateMeterEntry(@ModelAttribute WaterConnectionDetails waterConnectionDetails,
+    public String updateMeterEntry(@ModelAttribute final WaterConnectionDetails waterConnectionDetails,
             final BindingResult errors, final RedirectAttributes redirectAttrs, final Model model,
             final HttpServletRequest request) {
         final String sourceChannel = request.getParameter("Source");
-        waterConnectionDetails = connectionDemandService
+        final WaterConnectionDetails connectionDetails = connectionDemandService
                 .updateDemandForNonMeteredConnectionDataEntry(waterConnectionDetails, sourceChannel);
-        final WaterConnectionDetails savedWaterConnectionDetails = waterConnectionDetailsRepository
-                .save(waterConnectionDetails);
-        model.addAttribute("waterConnectionDetails", savedWaterConnectionDetails);
+        model.addAttribute("waterConnectionDetails", connectionDetails);
         return "editDemand-dataEntryAck";
     }
 
