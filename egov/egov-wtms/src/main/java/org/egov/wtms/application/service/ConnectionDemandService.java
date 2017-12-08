@@ -47,7 +47,6 @@
  */
 package org.egov.wtms.application.service;
 
-import static org.egov.ptis.constants.PropertyTaxConstants.CURRENTYEAR_SECOND_HALF;
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
@@ -86,7 +85,6 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
-import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -177,9 +175,6 @@ public class ConnectionDemandService {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
-
-    @Autowired
-    private PropertyTaxUtil propertyTaxUtil;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -526,15 +521,16 @@ public class ConnectionDemandService {
         EgDemand demandObj;
         Installment installObj;
         final List<String> installmentList = new ArrayList<>();
-        propertyTaxUtil.getInstallmentsForCurrYear(new Date()).get(CURRENTYEAR_SECOND_HALF);
-        if (waterConnectionDetails.getLegacy() && waterConnectionDetails.getConnectionReason() == null
-                && waterConnectionDetails.getState() == null)
-            waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand().setIsHistory("Y");
-        if (waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand() == null)
+        final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+        final List<WaterDemandConnection> demandList = waterConnectionDetails.getWaterDemandConnection();
+        if (!demandList.isEmpty() && waterConnectionDetails.getLegacy() && waterConnectionDetails.getConnectionReason() == null
+                && waterConnectionDetails.getState() == null && demand != null)
+            demand.setIsHistory("Y");
+        if (demand == null)
             demandObj = new EgDemand();
         else
 
-            demandObj = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
+            demandObj = demand;
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
