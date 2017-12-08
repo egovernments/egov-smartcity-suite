@@ -100,7 +100,7 @@
 				<s:iterator value="(basicProp.amalgamationsProxy.size).{#this}"
 					status="item">
 					<tr id="amalgamatedPropRow">
-					<s:if test="%{modelId != null}">
+					<s:if test="%{modelId != null && modelId!=''}">
 						<td><s:textfield
 								name="basicProp.amalgamationsProxy[%{#item.index}].assessmentNo"
 								id="assessmentNo" cssClass="form-control amlgpropassessmentno"

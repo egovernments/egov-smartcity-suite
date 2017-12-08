@@ -188,16 +188,20 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
 		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input').val('');
 		return;
 	}
-	var tableObj=document.getElementById('amalgamatedPropertiesTbl');
-	var lastRow = tableObj.rows.length;
+	var childProps = jQuery('#amalgamatedPropertiesTbl tbody tr').length;
 	var currentAssessment = jQuery(this).val();
-    for(var i=0;i<lastRow-2;i++){
-    	if(lastRow-1!=1 && currentAssessment == jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+i+')').find('.amlgpropassessmentno').val()){
+    for(var i=0;i<childProps-1;i++){
+    	if(currentAssessment == jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+i+')').find('.amlgpropassessmentno').val()){
     		bootbox.alert('This property is already added to Amalgamated Properties list! Please give other property which is not added');
     		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input').val('');
     		return;
     	}
 	}
+    var ownerTableLength = jQuery('#ownerInfoTbl tbody tr').length;
+    var ownerUserIds = [];
+    for(var owner=0;owner<ownerTableLength;owner++){
+    	ownerUserIds.push(jQuery('#ownerInfoTbl tbody tr:eq('+owner+')').find('*[name$="owner.username"]').val());
+    }
     jQuery.ajax({
         url: "/ptis/common/amalgamation/getamalgamatedpropdetails",
         type: "GET",
@@ -223,7 +227,15 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
 	    				.find('.amlgpropmobileno').val(property.mobileNo);
 	        		jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+')')
 	    				.find('.amlgpropaddress').val(property.propertyAddress);
-	        		for (i = 0; i < property.owners.length; i++) { 
+	        		var addOwnerList = true;
+	        		for (i = 0; i < property.owners.length; i++) {
+	        			for(var oldOwner=0;oldOwner<ownerUserIds.length;oldOwner++){
+	        				if(ownerUserIds[oldOwner]==property.owners[i].ownerUser){
+	        					addOwnerList = false;
+	        					break;
+	        				}
+	        			}
+	        			if(addOwnerList){
 	        			var tableObj=document.getElementById('ownerInfoTbl');
 	        			var tbody=tableObj.tBodies[0];
 	        			var lastRow = tableObj.rows.length;
@@ -251,6 +263,7 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
 	        				tbody.appendChild(rowObj);
 	        				jQuery('#ownerInfoTbl tbody tr:last').find('input').val('');
 	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].upicNo']").val(currentAssessment);
+	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.username']").val(property.owners[i].ownerUser);
 	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.aadhaarNumber']").val(property.owners[i].aadhaarNumber);
 	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.mobileNumber']").val(property.owners[i].mobileNumber);
 	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.name']").val(property.owners[i].ownerName);
@@ -259,6 +272,7 @@ jQuery(document).on('blur', ".amlgpropassessmentno", function () {
 	        				jQuery("select[name='amalgamationOwnersProxy["+ nextIdx +"].owner.guardianRelation']").val(property.owners[i].guardianRelation);
 	        				jQuery("input[name='amalgamationOwnersProxy["+ nextIdx +"].owner.guardian']").val(property.owners[i].guardian);
 	        			}
+        		}
         		} else {
         			bootbox.alert(property.validationMsg);
         			jQuery('#amalgamatedPropertiesTbl tbody tr:eq('+rowIdx+') input')

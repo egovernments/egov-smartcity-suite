@@ -147,6 +147,7 @@ public class AjaxCommonController {
         User user = propOwner.getOwner();
         Map<String, Object> owner = new HashMap<>();
         if (user != null) {
+            owner.put("ownerUser", user.getUsername());
             owner.put("upicNo", assessmentNo);
             owner.put("aadhaarNumber", user.getAadhaarNumber());
             owner.put("mobileNumber", user.getMobileNumber());
