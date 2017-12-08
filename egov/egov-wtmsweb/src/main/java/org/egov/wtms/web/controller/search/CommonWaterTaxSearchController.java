@@ -48,6 +48,28 @@
 
 package org.egov.wtms.web.controller.search;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DATAENTRYEDIT;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EDITCOLLECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EDITDEMAND;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.GENERATEBILL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MIGRATED_CONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_CLOSURE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_COLLECTTAX;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SEARCH_MENUTREE_APPLICATIONTYPE_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+
+import java.math.BigDecimal;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
@@ -67,11 +89,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import java.math.BigDecimal;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.*;
-
 @Controller
 @RequestMapping(value = "/search/waterSearch/")
 public class CommonWaterTaxSearchController {
@@ -84,6 +101,8 @@ public class CommonWaterTaxSearchController {
     private static final String CONNECTION_CLOSED = "connection.closed";
     private static final String MODE = "mode";
     private static final String APPLICATIONTYPE = "applicationType";
+    private static final String ERR_MIGRATED_CONN = "err.migratedconnection.modify.notallowed";
+    private static final String ERR_DATAENTRY_MODIFY = "err.modifynotallowed.collectiondone";
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -93,6 +112,9 @@ public class CommonWaterTaxSearchController {
 
     @Autowired
     private WaterTaxUtils waterTaxUtils;
+
+    @Autowired
+    private WaterConnectionDetailsService waterConnectionDtlsService;
 
     @ModelAttribute
     public ConnectionSearchRequest searchRequest() {
@@ -152,7 +174,7 @@ public class CommonWaterTaxSearchController {
         final String meesevaApplicationNumber = request.getParameter(APPLICATION_NUMBER);
         return commonSearchForm(model, GENERATEBILL, meesevaApplicationNumber);
     }
-    
+
     @RequestMapping(value = "commonSearch/editdemand", method = RequestMethod.GET)
     public String editDemand(final Model model, final HttpServletRequest request) {
         final String meesevaApplicationNumber = request.getParameter(APPLICATION_NUMBER);
@@ -282,10 +304,30 @@ public class CommonWaterTaxSearchController {
             if ((waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)
                     || waterConnectionDetails.getApplicationType().getCode().equals(ADDNLCONNECTION))
                     && waterConnectionDetails.getConnectionStatus().equals(ConnectionStatus.ACTIVE)
-                    && waterConnectionDetails.getLegacy())
+                    && waterConnectionDetails.getLegacy()) {
+                final WaterConnectionDetails connectionDetails = waterConnectionDtlsService
+                        .findByApplicationNumberOrConsumerCode(waterConnectionDetails.getConnection().getConsumerCode());
+                if (connectionDetails != null)
+                    if (MIGRATED_CONNECTION.equalsIgnoreCase(connectionDetails.getConnectionReason())) {
+                        model.addAttribute(MODE, ERROR_MODE);
+                        model.addAttribute(APPLICATIONTYPE, applicationType);
+                        resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_MIGRATED_CONN);
+                        return COMMON_FORM_SEARCH;
+                    } else {
+                        final BigDecimal demand = waterConnectionDetailsService
+                                .getTotalDemandTillCurrentFinYear(connectionDetails);
+                        final BigDecimal arrearBalance = waterConnectionDetailsService.getTotalAmount(connectionDetails);
+                        if (demand.compareTo(arrearBalance) > 0) {
+                            model.addAttribute(MODE, ERROR_MODE);
+                            model.addAttribute(APPLICATIONTYPE, applicationType);
+                            resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, ERR_DATAENTRY_MODIFY);
+                            return COMMON_FORM_SEARCH;
+                        }
+
+                    }
                 return "redirect:/application/newConnection-editExisting/"
                         + waterConnectionDetails.getConnection().getConsumerCode();
-            else {
+            } else {
                 model.addAttribute(MODE, ERROR_MODE);
                 model.addAttribute(APPLICATIONTYPE, applicationType);
                 resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, INVALID_CONSUMERNUMBER);
