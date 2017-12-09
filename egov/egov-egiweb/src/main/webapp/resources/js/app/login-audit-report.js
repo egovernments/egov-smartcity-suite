@@ -121,8 +121,8 @@ $(document).ready(function () {
                     "name": "logoutTime",
                     "sTitle": "Logout Time"
                 }, {
-                    "mData": "userAgentInfo",
-                    "name": "userAgentInfo",
+                    "mData": "userAgent",
+                    "name": "userAgent",
                     "sTitle": "Device Details"
                 }]
         });

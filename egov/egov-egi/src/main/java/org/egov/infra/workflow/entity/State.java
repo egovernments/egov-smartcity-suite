@@ -52,6 +52,8 @@ import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.persistence.entity.AbstractAuditable;
 import org.egov.infra.utils.JsonUtils;
 import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -89,11 +91,14 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @GeneratedValue(generator = SEQ_STATE, strategy = GenerationType.SEQUENCE)
     private Long id;
 
-    @NotNull
+    @NotBlank
+    @Length(max = 255)
+    @SafeHtml
     private String type;
 
-    @NotNull
-    @Length(min = 1)
+    @NotBlank
+    @Length(max = 255)
+    @SafeHtml
     private String value;
 
     @ManyToOne(targetEntity = OwnerGroup.class, fetch = FetchType.LAZY)
@@ -109,14 +114,24 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
     @OrderBy("id")
     private Set<StateHistory<T>> history = new HashSet<>();
 
+    @Length(max = 100)
+    @SafeHtml
     private String senderName;
 
+    @Length(max = 255)
+    @SafeHtml
     private String nextAction;
 
+    @Length(max = 1024)
+    @SafeHtml
     private String comments;
 
+    @Length(max = 100)
+    @SafeHtml
     private String natureOfTask;
 
+    @Length(max = 1024)
+    @SafeHtml
     private String extraInfo;
 
     private Date dateInfo;

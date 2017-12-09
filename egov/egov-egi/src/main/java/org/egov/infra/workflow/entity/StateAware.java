@@ -64,6 +64,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.MappedSuperclass;
 import javax.persistence.Transient;
+import javax.validation.Valid;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
@@ -78,6 +79,7 @@ public abstract class StateAware<T extends OwnerGroup> extends AbstractAuditable
 
     @ManyToOne(targetEntity = State.class, fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "STATE_ID")
+    @Valid
     private State<T> state;
 
     @Transient

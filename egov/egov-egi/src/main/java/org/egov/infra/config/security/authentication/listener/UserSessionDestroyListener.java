@@ -53,7 +53,9 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.service.LoginAuditService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
@@ -73,6 +75,10 @@ public class UserSessionDestroyListener implements HttpSessionListener {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    @Qualifier("entityValidator")
+    private LocalValidatorFactoryBean entityValidator;
 
     @Value("${master.server}")
     private boolean masterServer;
@@ -96,9 +102,10 @@ public class UserSessionDestroyListener implements HttpSessionListener {
                 loginAudit.setLoginTime((Date) session.getAttribute(LOGIN_TIME));
                 loginAudit.setUser(userService.getUserById((Long) session.getAttribute(USERID_KEY)));
                 loginAudit.setIpAddress((String) session.getAttribute(LOGIN_IP));
-                loginAudit.setUserAgentInfo((String) session.getAttribute(LOGIN_USER_AGENT));
+                loginAudit.setUserAgent((String) session.getAttribute(LOGIN_USER_AGENT));
                 loginAudit.setLogoutTime(new Date());
-                loginAuditService.auditLogin(loginAudit);
+                if (entityValidator.validate(loginAudit).isEmpty())
+                    loginAuditService.auditLogin(loginAudit);
             } finally {
                 ApplicationThreadLocals.clearValues();
             }
