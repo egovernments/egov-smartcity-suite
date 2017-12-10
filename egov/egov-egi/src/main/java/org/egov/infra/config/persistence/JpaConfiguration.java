@@ -159,7 +159,7 @@ public class JpaConfiguration {
         properties.put(ORDER_INSERTS, true);
         properties.put(ORDER_UPDATES, true);
         properties.put(AUTOCOMMIT, false);
-        properties.put(RELEASE_CONNECTIONS, "after_statement");
+        properties.put(RELEASE_CONNECTIONS, "after_transaction");
         properties.put("jadira.usertype.autoRegisterUserTypes", true);
         properties.put("jadira.usertype.databaseZone", "jvm");
 
