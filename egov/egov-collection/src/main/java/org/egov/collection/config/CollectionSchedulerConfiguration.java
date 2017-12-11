@@ -260,7 +260,7 @@ public class CollectionSchedulerConfiguration extends QuartzSchedulerConfigurati
         remittanceCron.setJobDetail(jobDetail.getObject());
         remittanceCron.setGroup("COLLECTION_TRIGGER_GROUP");
         remittanceCron.setName(String.format("COLLECTION_REMIT_INSTRMNT_%s%d_TRIGGER", instrumentType, modulo));
-        remittanceCron.setCronExpression("0 */15 * * * ?");
+        remittanceCron.setCronExpression("0 */30 * * * ?");
         remittanceCron.setMisfireInstruction(MISFIRE_INSTRUCTION_DO_NOTHING);
         return remittanceCron;
     }
