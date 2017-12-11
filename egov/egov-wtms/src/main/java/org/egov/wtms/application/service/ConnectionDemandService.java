@@ -524,13 +524,10 @@ public class ConnectionDemandService {
         final List<WaterDemandConnection> demandList = waterConnectionDetails.getWaterDemandConnection();
         if (!demandList.isEmpty() && waterConnectionDetails.getLegacy()
                 && StringUtils.isBlank(waterConnectionDetails.getConnectionReason())
-                && waterConnectionDetails.getState() == null)
+                && waterConnectionDetails.getState() == null && demand != null)
         {
-            if (demand != null)
-            {
-                demand.setIsHistory("Y");
-                demandObj = demand;
-            }
+            demand.setIsHistory("Y");
+            demandObj = demand;
         }
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
