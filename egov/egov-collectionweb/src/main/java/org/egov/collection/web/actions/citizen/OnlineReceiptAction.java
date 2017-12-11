@@ -47,6 +47,21 @@
  */
 package org.egov.collection.web.actions.citizen;
 
+import java.io.UnsupportedEncodingException;
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.Enumeration;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.apache.struts2.ServletActionContext;
@@ -83,26 +98,12 @@ import org.egov.infstr.models.ServiceDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Enumeration;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 @ParentPackage("egov")
-@Results({@Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
+@Results({ @Result(name = OnlineReceiptAction.NEW, location = "onlineReceipt-new.jsp"),
         @Result(name = OnlineReceiptAction.REDIRECT, location = "onlineReceipt-redirect.jsp"),
         @Result(name = OnlineReceiptAction.RESULT, location = "onlineReceipt-result.jsp"),
         @Result(name = OnlineReceiptAction.RECONRESULT, location = "onlineReceipt-reconresult.jsp"),
-        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp")})
+        @Result(name = CollectionConstants.REPORT, location = "onlineReceipt-report.jsp") })
 public class OnlineReceiptAction extends BaseFormAction {
 
     public static final String REDIRECT = "redirect";
@@ -175,8 +176,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     @Action(value = "/citizen/onlineReceipt-saveNew")
     public String saveNew() {
         /**
-         * initialise receipt info,persist receipt, create bill desk payment
-         * object and redirect to payment screen
+         * initialise receipt info,persist receipt, create bill desk payment object and redirect to payment screen
          */
         if (callbackForApportioning && !overrideAccountHeads)
             apportionBillAmount();
@@ -222,7 +222,10 @@ public class OnlineReceiptAction extends BaseFormAction {
                 processSuccessMsg();
             else if (paymentService.getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
                     && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE
-                    .equals(paymentResponse.getAuthStatus())) {
+                            .equals(paymentResponse.getAuthStatus())
+                    || (paymentService.getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
+                            CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                    .contains(paymentResponse.getAuthStatus()))) {
                 final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
                         CollectionConstants.MODULE_NAME_ONLINEPAYMENT,
                         CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
@@ -240,10 +243,9 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This method processes the failure message arriving from the payment
-     * gateway. The receipt and the online transaction are both cancelled. The
-     * authorisation status for reason of failure is also persisted. The reason
-     * for payment failure is displayed back to the user
+     * This method processes the failure message arriving from the payment gateway. The receipt and the online transaction are
+     * both cancelled. The authorisation status for reason of failure is also persisted. The reason for payment failure is
+     * displayed back to the user
      */
     private void processFailureMsg() {
         onlinePaymentReceiptHeader.setStatus(collectionsUtil
@@ -266,17 +268,12 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This method processes the success message arriving from the payment
-     * gateway. The receipt status is changed from PENDING to APPROVED and the
-     * online transaction status is changed from PENDING to SUCCCESS. The
-     * authorisation status for success(0300) for the online transaction is also
-     * persisted. An instrument of type 'ONLINE' is created with the transaction
-     * details and are persisted along with the receipt details. Voucher for the
-     * receipt is created and the Financial System is updated. The billing
-     * system is updated about the receipt creation. In case update to financial
-     * systems/billing system fails, the receipt creation is rolled back and the
-     * receipt/payment status continues to be in PENDING state ( and will be
-     * reconciled manually).
+     * This method processes the success message arriving from the payment gateway. The receipt status is changed from PENDING to
+     * APPROVED and the online transaction status is changed from PENDING to SUCCCESS. The authorisation status for success(0300)
+     * for the online transaction is also persisted. An instrument of type 'ONLINE' is created with the transaction details and
+     * are persisted along with the receipt details. Voucher for the receipt is created and the Financial System is updated. The
+     * billing system is updated about the receipt creation. In case update to financial systems/billing system fails, the receipt
+     * creation is rolled back and the receipt/payment status continues to be in PENDING state ( and will be reconciled manually).
      */
     private void processSuccessMsg() {
         errors.clear();
@@ -297,14 +294,11 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This method is invoked for manually reconciling online payments. If a
-     * payment is reconciled as a Success Payment, the receipt is created, the
-     * receipt is marked as APPROVED , the payment is marked as SUCCESS, and the
-     * voucher is created. If a payment is reconciled as To Be Refunded or
-     * Refunded, the transaction details are persisted, receipt is marked as
-     * FAILED and the payment is marked as TO BE REFUNDED/REFUNDED respectively.
-     * The billing system is updated about all the payments that have been
-     * successful.
+     * This method is invoked for manually reconciling online payments. If a payment is reconciled as a Success Payment, the
+     * receipt is created, the receipt is marked as APPROVED , the payment is marked as SUCCESS, and the voucher is created. If a
+     * payment is reconciled as To Be Refunded or Refunded, the transaction details are persisted, receipt is marked as FAILED and
+     * the payment is marked as TO BE REFUNDED/REFUNDED respectively. The billing system is updated about all the payments that
+     * have been successful.
      *
      * @return
      */
@@ -501,11 +495,9 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * Construct list of Payment Gateway to appear in the UI based on the
-     * configuration defined in AppConfig. Default is ALL, which means all
-     * payment gateway will appear for the billing service. Otherwise, only the
-     * payment gateway codes defined as comma separated values will appear for
-     * the Billing Service.
+     * Construct list of Payment Gateway to appear in the UI based on the configuration defined in AppConfig. Default is ALL,
+     * which means all payment gateway will appear for the billing service. Otherwise, only the payment gateway codes defined as
+     * comma separated values will appear for the Billing Service.
      */
     @SuppressWarnings("unchecked")
     private void constructServiceDetailsList() {
@@ -610,9 +602,8 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This getter will be invoked by framework from UI. It returns the total
-     * number of bill accounts that are present in the XML arriving from the
-     * billing system
+     * This getter will be invoked by framework from UI. It returns the total number of bill accounts that are present in the XML
+     * arriving from the billing system
      *
      * @return
      */
@@ -621,9 +612,8 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This getter will be invoked by framework from UI. It returns the total
-     * amount of bill accounts that are present in the XML arriving from the
-     * billing system
+     * This getter will be invoked by framework from UI. It returns the total amount of bill accounts that are present in the XML
+     * arriving from the billing system
      *
      * @return
      */
@@ -636,8 +626,7 @@ public class OnlineReceiptAction extends BaseFormAction {
     }
 
     /**
-     * This getter will be invoked by the framework from UI. It returns the
-     * amount payed by the citizen.
+     * This getter will be invoked by the framework from UI. It returns the amount payed by the citizen.
      *
      * @return the paymentAmount
      */

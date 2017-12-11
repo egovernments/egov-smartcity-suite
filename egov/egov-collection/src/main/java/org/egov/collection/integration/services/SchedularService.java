@@ -47,6 +47,13 @@
  */
 package org.egov.collection.integration.services;
 
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
+
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.constants.CollectionConstants;
 import org.egov.collection.entity.OnlinePayment;
@@ -55,6 +62,7 @@ import org.egov.collection.integration.pgi.AtomAdaptor;
 import org.egov.collection.integration.pgi.AxisAdaptor;
 import org.egov.collection.integration.pgi.PaymentResponse;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -63,13 +71,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
-
-import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @Service
 public class SchedularService {
@@ -140,13 +141,15 @@ public class SchedularService {
     @Transactional
     public void reconcileATOM() {
         LOGGER.debug("Inside reconcileATOM");
+        final Calendar fourDaysBackCalender = Calendar.getInstance();
+        fourDaysBackCalender.add(Calendar.DATE, -4);
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.MINUTE, -30);
         final Query qry = persistenceService
                 .getSession()
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
-                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate")
+                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate order by receipt.id desc ")
                 .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
@@ -181,7 +184,15 @@ public class SchedularService {
                                 ApplicationThreadLocals.getCityCode());
                     if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
-                    else
+                    else if ((DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fourDaysBackCalender.getTime()))
+                            &&
+                            (onlinePaymentReceiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
+                                    CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
+                                            .contains(paymentResponse.getAuthStatus()))) {
+                        onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
+                                paymentResponse.getAuthStatus());
+                        onlinePaymentReceiptHeader.getOnlinePayment().setRemarks(paymentResponse.getErrorDescription());
+                    } else
                         reconciliationService.processFailureMsg(onlinePaymentReceiptHeader, paymentResponse);
 
                     final long elapsedTimeInMillis = System.currentTimeMillis() - startTimeInMilis;
