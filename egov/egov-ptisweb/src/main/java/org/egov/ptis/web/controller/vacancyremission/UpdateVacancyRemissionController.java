@@ -139,6 +139,7 @@ public class UpdateVacancyRemissionController extends GenericWorkFlowController 
             final BasicProperty basicProperty = vacancyRemission.getBasicProperty();
             model.addAttribute("stateType", vacancyRemission.getClass().getSimpleName());
             model.addAttribute("currentState", vacancyRemission.getCurrentState().getValue());
+            model.addAttribute("detailsHistory", vacancyRemissionService.getMonthlyDetailsHistory(vacancyRemission));
             if (!vacancyRemission.getDocuments().isEmpty())
                 model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
             if (vacancyRemission.getStatus().equals(PropertyTaxConstants.VR_STATUS_APPROVED)) {

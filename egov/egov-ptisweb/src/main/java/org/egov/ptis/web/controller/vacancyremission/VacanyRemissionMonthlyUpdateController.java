@@ -123,6 +123,7 @@ public class VacanyRemissionMonthlyUpdateController {
         model.addAttribute("ownersName", vacancyRemission.getBasicProperty().getFullOwnerName());
         model.addAttribute("applicationNo", vacancyRemission.getApplicationNumber());
         model.addAttribute("endorsementNotices", propertyTaxCommonUtils.getEndorsementNotices(vacancyRemission.getApplicationNumber()));
+        model.addAttribute("detailsHistory", vacancyRemissionService.getMonthlyDetailsHistory(vacancyRemission));
         if (!vacancyRemission.getDocuments().isEmpty())
             model.addAttribute("attachedDocuments", vacancyRemission.getDocuments());
         vacancyRemissionService.addModelAttributes(model, vacancyRemission.getBasicProperty());

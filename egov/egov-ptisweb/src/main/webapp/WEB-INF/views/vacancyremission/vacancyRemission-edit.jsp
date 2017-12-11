@@ -110,6 +110,38 @@ jQuery(document).on('click', "#Forward", function () {
 							<div class="panel-heading" style="text-align: left">
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
+							<c:choose>
+							<c:when test="${!detailsHistory.isEmpty()}">
+							<div class="panel-heading">
+						<div class="panel-title">
+							VR Details History
+							<div class="panel-body history-slide">
+							<div class="row add-margin visible-sm visible-md visible-lg header-color">
+								<div class="col-xs-3 add-margin"><spring:message code="lbl.date"/></div>
+								<div class="col-xs-3 add-margin"><spring:message code="lbl.comments" /></div>
+							</div>
+							<c:choose>
+									<c:when test="${!detailsHistory.isEmpty()}">
+										<c:forEach items="${detailsHistory}" var="history">
+										<div class="row add-margin">
+											<div class="col-sm-2 col-xs-12 add-margin">
+												<fmt:formatDate value="${history.checkinDate}" var="historyDate"
+													pattern="dd/MM/yyyy" />
+												<c:out value="${historyDate}" />
+											</div>
+											<div class="col-sm-2 col-xs-12 add-margin">
+												<c:out value="${history.comments}" />&nbsp;
+											</div>
+										</div>
+										</c:forEach>
+									</c:when>
+								</c:choose>
+							
+						</div>
+						</div>
+					</div>
+							</c:when>
+							</c:choose>
 							<div class="panel-body custom-form">
 							<c:if test="${attachedDocuments.size() > 0}">
 								<div>

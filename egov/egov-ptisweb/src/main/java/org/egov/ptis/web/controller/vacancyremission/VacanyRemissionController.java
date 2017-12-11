@@ -315,6 +315,7 @@ public class VacanyRemissionController extends GenericWorkFlowController {
                     model.addAttribute(STATE_TYPE, vacancyRemission.getClass().getSimpleName());
                     vacancyRemissionService.addModelAttributes(model, basicProperty);
                 }
+            model.addAttribute("detailsHistory", new ArrayList<>());
             model.addAttribute("endorsementNotices", new ArrayList<>());
         }
         return VACANCYREMISSION_FORM;
