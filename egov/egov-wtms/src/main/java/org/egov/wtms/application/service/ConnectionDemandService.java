@@ -522,19 +522,23 @@ public class ConnectionDemandService {
     @Transactional
     public WaterConnectionDetails updateDemandForNonMeteredConnectionDataEntry(
             final WaterConnectionDetails waterConnectionDetails, final String sourceChannel) {
-        EgDemand demandObj;
+        EgDemand demandObj = null;
         Installment installObj;
         final List<String> installmentList = new ArrayList<>();
         final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         final List<WaterDemandConnection> demandList = waterConnectionDetails.getWaterDemandConnection();
         if (!demandList.isEmpty() && waterConnectionDetails.getLegacy() && waterConnectionDetails.getConnectionReason() == null
-                && waterConnectionDetails.getState() == null && demand != null)
+                && waterConnectionDetails.getState() == null)
+        {
+        if(demand != null)
+        {
             demand.setIsHistory("Y");
-        if (demand == null)
-            demandObj = new EgDemand();
-        else
-
             demandObj = demand;
+        }
+        else
+        
+            demandObj = new EgDemand();
+        }
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) == 1
