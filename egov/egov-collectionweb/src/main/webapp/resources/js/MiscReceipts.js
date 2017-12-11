@@ -235,7 +235,7 @@ function createAmountFieldFormatterRebate(prefix,suffix,onblurfunction,table){
 	}
 
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='13' class='form-control patternvalidation text-right' data-pattern='number' onblur='"+onblurfunction+";updatetotalAmount()'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+rec+"]"+suffix+"' name='"+prefix+"["+rec+"]"+suffix+"' style='text-align:right;width:80px;' maxlength='10' class='form-control patternvalidation text-right' data-pattern='number' onblur='"+onblurfunction+";updatetotalAmount()'/>";
 	}
 }
 
@@ -259,7 +259,7 @@ function createSLLongTextFieldFormatter(prefix,suffix){
 function createSLAmountFieldFormatter(prefix,suffix){
     return function(el, oRecord, oColumn, oData) {
 		var value = (YAHOO.lang.isValue(oData))?oData:"";
-		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='13' style='text-align:right;width:90px;' class='form-control patternvalidation text-right' data-pattern='number'/>";
+		el.innerHTML = "<input type='text' id='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' name='"+prefix+"["+slDetailTableIndex+"]"+suffix+"' tabindex='-1' maxlength='10' style='text-align:right;width:90px;' class='form-control patternvalidation text-right' data-pattern='number'/>";
 	}
 }
 function createTextFieldReadOnly(prefix,suffix){
