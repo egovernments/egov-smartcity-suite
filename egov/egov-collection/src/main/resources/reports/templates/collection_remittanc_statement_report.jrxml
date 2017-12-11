@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-02T15:52:20 -->
+<!-- 2017-12-11T15:25:53 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -645,7 +645,7 @@ $P!{Q_EGOV_BANKCOLL_BANKBRANCH_ID}) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "All Bank Branch" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT b.NAME||'-'||bb.BRANCHNAME as branchname  FROM bankbranch BR,BANK B WHERE B.ID= br.bankid AND br.id = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "All Bank Branch" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT b.NAME||'-'||br.BRANCHNAME as branchname  FROM bankbranch BR,BANK B WHERE B.ID= br.bankid AND br.id = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID})]]></textFieldExpression>
 			</textField>
 		</band>
 	</title>
@@ -1090,7 +1090,7 @@ $P!{Q_EGOV_BANKCOLL_BANKBRANCH_ID}) AS RESULT ORDER BY RECEIPT_NUMBER]]>
 				<textElement verticalAlignment="Middle">
 					<font fontName="Times New Roman" pdfFontName="Times-Roman"/>
 				</textElement>
-				<textFieldExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "All Bank Branch" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT b.NAME||'-'||bb.BRANCHNAME as branchname FROM bankbranch BR,BANK B WHERE B.ID= br.bankid AND br.id = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID})]]></textFieldExpression>
+				<textFieldExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKBRANCH_ID} == -1) ? "All Bank Branch" : ReportUtil.fetchFromDBSql($P{REPORT_CONNECTION}, "SELECT b.NAME||'-'||br.BRANCHNAME as branchname FROM bankbranch BR,BANK B WHERE B.ID= br.bankid AND br.id = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID})]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="52" y="151" width="112" height="20" uuid="4988575f-4009-4081-9baf-bba084552761"/>
