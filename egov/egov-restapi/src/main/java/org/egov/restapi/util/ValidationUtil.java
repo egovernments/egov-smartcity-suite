@@ -80,6 +80,7 @@ import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -863,7 +864,11 @@ public class ValidationUtil {
 				}
 			}
 		}
-
+                 if(paymentAmountHasDecimals(payPropTaxDetails.getPaymentAmount())){
+                     errorDetails = new ErrorDetails();
+                     errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_AMOUNT_HAVING_DECIMALS_CODE);
+                     errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG);
+                 }
 		if (isMutationFeePayment) {
 			if (!propertyExternalService.validateMutationFee(payPropTaxDetails.getAssessmentNo(),
 					payPropTaxDetails.getPaymentAmount())) {
@@ -937,6 +942,10 @@ public class ValidationUtil {
 				errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);
 			}
 		return errorDetails;
+	}
+	
+	public Boolean paymentAmountHasDecimals(BigDecimal amount){
+	    return amount.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0 ? false : true ;
 	}
 
 	/**
