@@ -65,7 +65,7 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     private static final Logger LOG = LoggerFactory.getLogger(MultiTenantSchemaConnectionProvider.class);
 
     @Autowired
-    private DataSource dataSource;
+    private transient DataSource dataSource;
 
     @Override
     public Connection getAnyConnection() throws SQLException {
@@ -78,7 +78,7 @@ public class MultiTenantSchemaConnectionProvider implements MultiTenantConnectio
     }
 
     @Override
-    public Connection getConnection(String tenantId) throws SQLException {
+    public Connection getConnection(String tenantId) {
         try {
             Connection connection = getAnyConnection();
             connection.setSchema(tenantId);
