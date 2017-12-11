@@ -363,7 +363,7 @@ public class WaterTaxSearchController {
         final SearchQuery countQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME).withQuery(query).build();
         final long count = elasticsearchTemplate.queryForPage(countQuery, WaterChargeDocument.class).getTotalElements();
         final SearchQuery searchQuery = new NativeSearchQueryBuilder().withIndices(WATER_TAX_INDEX_NAME)
-                .withQuery(query).withPageable(new PageRequest(0, (int) count)).build();
+                .withQuery(query).withPageable(new PageRequest(1, (int) count)).build();
 
         final Iterable<WaterChargeDocument> sampleEntities = waterChargeDocumentRepository.search(searchQuery);
         final List<WaterChargeDocument> sampleEntitiesTemp = new ArrayList<>();
