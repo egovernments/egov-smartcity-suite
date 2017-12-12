@@ -516,10 +516,10 @@ function submitButton()
  				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="8">Enter Meter Reading</option><option value="11">View DCB Screen</option></select>');
  			   }
  			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector=="")))  && full.status == 'ACTIVE' && full.closureType =='T' && full.waterTaxDue == 0) {
-					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="15">Download Reconnection Acknowledgement</option></select>');
+					   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="15">Download Reconnection Proceeding</option></select>');
 				   }
  			   else if(superUserRole!=null && superUserRole!="" && full.status == 'ACTIVE'){
-				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="15">Download Reconnection Acknowledgement</option></select>');
+				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option><option value="15">Download Reconnection Proceeding</option></select>');
 			   }
  			   else if(superUserRole!=null && superUserRole!=""){
  				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="11">View DCB Screen</option></select>');
@@ -537,16 +537,16 @@ function submitButton()
  				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option>option value="0">View water tap connection</option></select>');
  			   }
  			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector==""))) && full.status == 'CLOSED' && full.closureType =='P' ) {
- 				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="12">Download Closure Acknowledgment</option></select>');
+ 				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="12">Download Closure Proceeding</option></select>');
  			   }
  			   else if (superUserRole!=null && superUserRole!="" && full.status == 'CLOSED') {
- 				  return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option> <option value="12">Download Closure Acknowledgment</option></select>');
+ 				  return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option> <option value="12">Download Closure Proceeding</option></select>');
  			   }
  			   else if(superUserRole!=null && superUserRole!=""){
  				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option></select>');
  			   }
  			   else if (((ulbUserRole!=null &&  ulbUserRole!="" && billcollector!=null &&  billcollector!="") ||( ulbUserRole!=null &&  ulbUserRole!="" && ( billcollector==null ||  billcollector=="")))&& full.status == 'CLOSED' && full.closureType=='T' ) {
- 				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">Reconnection</option><option value="12">Download Closure Acknowledgment</option></select>');
+ 				   return ('<select class="dropchange" id="additionconn" ><option>Select from Below</option><option value="0">View water tap connection</option><option value="10">Reconnection</option><option value="12">Download Closure Proceeding</option></select>');
  			   }
  		   } 
  		   
