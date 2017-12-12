@@ -217,7 +217,7 @@
 <div class="form-group display-hide showfields" id="donationChargesDiv" style="display:none">
 	<label class="col-sm-3 control-label text-right"><spring:message code="lbl.donationorcontribution"/><span class="mandatory"/></label>
 	<div class="col-sm-3 add-margin">
-		<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="decimalvalue" id="donationChargesInput" value='${donationCharges}'/>
+		<form:input class="form-control patternvalidation" path="donationCharges" data-pattern="number" id="donationChargesInput" value='${donationCharges}'/>
 	</div>
 </div>
 
