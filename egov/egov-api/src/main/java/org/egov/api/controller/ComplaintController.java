@@ -97,6 +97,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -273,7 +274,7 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    @RequestMapping(value = ApiUrl.COMPLAINT_CREATE, method = RequestMethod.POST)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_CREATE, "/cross-city/complaint/create"}, method = RequestMethod.POST)
     public ResponseEntity<String> complaintCreate(
             @RequestParam(value = "json_complaint") final String complaintJSON,
             @RequestParam("files") final MultipartFile[] files) {
@@ -861,5 +862,11 @@ public class ComplaintController extends ApiController {
             ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyRoutedComplaintCount() {
         return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaintService.getActedUponComplaintCount().size());
+    }
+
+    @GetMapping("/cross-city/complaint/view")
+    public String viewComplaints(@RequestParam String mobileNumber) {
+        //Mock
+        return "SUCCESS";
     }
 }
