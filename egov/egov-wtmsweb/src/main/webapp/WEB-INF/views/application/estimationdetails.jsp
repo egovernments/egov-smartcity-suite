@@ -78,7 +78,7 @@
 							<td class="text-center"><textarea class="form-control table-input" name="estimationDetails[0].itemDescription" id="estimationDetails0itemDescription" required="required" maxlength="256" ></textarea></td>
 							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation quantity" data-pattern="decimalvalue" name="estimationDetails[0].quantity" id="estimationDetails0quantity" maxlength="8" onblur="calculateTotalAmount();" value="0" ></td>
 							<td class="text-right"><input type="text" class="form-control table-input patternvalidation" data-pattern="alphanumerichyphenbackslash" name="estimationDetails[0].unitOfMeasurement" id="estimationDetails0unitOfMeasurement" maxlength="50"></td>
-							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" name="estimationDetails[0].unitRate" id="estimationDetails0unitRate" maxlength="8" onblur="calculateTotalAmount();" value="0.00"></td>
+							<td class="text-right"><input type="text" class="form-control table-input text-right patternvalidation unitrate" data-pattern="decimalvalue" name="estimationDetails[0].unitRate" id="estimationDetails0unitRate" maxlength="8" onblur="calculateTotalAmount();" value="0"></td>
 							<td class="text-right"><input type="text" class="form-control table-input text-right" id="estimationDetails0amount" disabled></td>
 							<td class="text-center"><span style="cursor:pointer;" id="addRowId"><i class="fa fa-plus"></i></span></td>
 					      </tr>
@@ -135,12 +135,12 @@
 					<div class="row">
 						<label class="col-sm-3 control-label text-right "><spring:message code="lbl.securitydeposit" /></label>
 						<div class="col-sm-3 add-margin "> 
-							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="securityDeposit" path="fieldInspectionDetails.securityDeposit" value="0.00" />
+							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="securityDeposit" path="fieldInspectionDetails.securityDeposit" value="0" />
 							<form:errors path="fieldInspectionDetails.securityDeposit" cssClass="add-margin error-msg" />
 						</div>
 						<label class="col-sm-2 control-label text-right"><spring:message code="lbl.roadcuttingcharges" /></label>
 						<div class="col-sm-3 add-margin">
-							<form:input class="form-control patternvalidation text-right" data-pattern="number" maxlength="8" id="roadCuttingCharges" path="fieldInspectionDetails.roadCuttingCharges" value="0.00" />
+							<form:input class="form-control patternvalidation text-right" data-pattern="number" maxlength="8" id="roadCuttingCharges" path="fieldInspectionDetails.roadCuttingCharges" value="0" />
 							<form:errors path="fieldInspectionDetails.roadCuttingCharges" cssClass="add-margin error-msg" />		
 						</div>
 						
@@ -152,7 +152,7 @@
 					<div class="row">
 						<label class="col-sm-3 control-label text-right"><spring:message code="lbl.applicationfee" /></label>
 						<div class="col-sm-3 add-margin"> 
-							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="applicationFee" path="fieldInspectionDetails.applicationFee" value="0.00"  />
+							<form:input class="form-control text-right patternvalidation" data-pattern="number" maxlength="8" id="applicationFee" path="fieldInspectionDetails.applicationFee" value="0"  />
 							<form:errors path="fieldInspectionDetails.applicationFee" cssClass="add-margin error-msg" />
 						</div>
 					<label class="col-sm-2 control-label text-right"><spring:message code="lbl.attachdocument"/></label>
