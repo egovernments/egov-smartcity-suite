@@ -58,9 +58,8 @@
 	<input type="hidden" name="committeeType" id="committypeid" value="${councilMeeting.committeeType.id}"/>
 	<div class="panel-body">
 		<div class="form-group">
-			<div class="col-sm-3 control-label text-right">
-				<spring:message code="lbl.meeting.type" />
-			</div>
+				<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.meeting.type" /><span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="meetingType" id="meetingType"
 					cssClass="form-control" required="required"
