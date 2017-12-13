@@ -268,7 +268,7 @@ public class State<T extends OwnerGroup> extends AbstractAuditable {
         this.extraDateInfo = extraDateInfo;
     }
 
-    protected StateStatus getStatus() {
+    public StateStatus getStatus() {
         return status;
     }
 
