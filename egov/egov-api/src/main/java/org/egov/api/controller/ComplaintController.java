@@ -75,6 +75,8 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
+import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.entity.ComplaintStatus;
 import org.egov.pgr.entity.ComplaintType;
@@ -91,6 +93,8 @@ import org.egov.pgr.service.ComplaintTypeService;
 import org.egov.pgr.service.PriorityService;
 import org.egov.pgr.service.ReceivingModeService;
 import org.egov.pgr.utils.constants.PGRConstants;
+import org.elasticsearch.index.query.BoolQueryBuilder;
+import org.elasticsearch.index.query.QueryBuilders;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -128,6 +132,7 @@ import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.validation.regex.Constants.EMAIL;
+import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
@@ -187,6 +192,9 @@ public class ComplaintController extends ApiController {
 
     @Autowired
     private ComplaintProcessFlowService complaintProcessFlowService;
+
+    @Autowired
+    private ComplaintIndexService complaintIndexService;
 
     /**
      * This will returns all complaint types
@@ -865,8 +873,9 @@ public class ComplaintController extends ApiController {
     }
 
     @GetMapping("/cross-city/complaint/view")
-    public String viewComplaints(@RequestParam String mobileNumber) {
-        //Mock
-        return "SUCCESS";
+    public Iterable<ComplaintIndex> viewComplaints(@RequestParam String mobileNumber) {
+        BoolQueryBuilder searchQueryBuilder = QueryBuilders.boolQuery().filter(QueryBuilders.matchAllQuery());
+        searchQueryBuilder.filter(matchQuery("complainantMobile", mobileNumber));
+        return complaintIndexService.searchComplaintIndex(searchQueryBuilder);
     }
 }
