@@ -78,6 +78,7 @@
 						<s:hidden name="applicationType" value="%{applicationType}"/> 
 						<s:hidden name="actionNamespace" value="%{actionNamespace}"/>
 						<s:hidden name="applicationSource" value="%{applicationSource}"/>
+						<s:hidden name="mutationType" value="%{mutationType}"/>
 						<tr>
 							<td width="100%" colspan="4" class="headingbg">												
 								<div class="headingbg">					

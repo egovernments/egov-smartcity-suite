@@ -113,6 +113,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
         @Result(name = PropertyTransferAction.REDIRECT, location = "transfer/transferProperty-redirect.jsp"),
         @Result(name = TARGET_WORKFLOW_ERROR, location = "workflow/workflow-error.jsp"),
         @Result(name = PropertyTransferAction.ACK, location = "transfer/transferProperty-ack.jsp"),
+        @Result(name = PropertyTransferAction.ACK_FOR_REGISTRATION, location = "transfer/transferProperty-ackForRegistration.jsp"),
         @Result(name = PropertyTransferAction.REJECT_ON_TAXDUE, location = "transfer/transferProperty-balance.jsp"),
         @Result(name = PropertyTransferAction.PRINTACK, location = "transfer/transferProperty-printAck.jsp"),
         @Result(name = PropertyTransferAction.PRINTNOTICE, location = "transfer/transferProperty-printNotice.jsp"),
@@ -127,6 +128,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
         @Result(name = PropertyTransferAction.DIGITAL_SIGNATURE_REDIRECTION, location = "transfer/transferProperty-digitalSignatureRedirection.jsp")})
 @Namespace("/property/transfer")
 public class PropertyTransferAction extends GenericWorkFlowAction {
+    public static final String ACK_FOR_REGISTRATION = "ackForRegistration";
     public static final String ACK = "ack";
     public static final String ERROR = "error";
     public static final String SEARCH = "search";
@@ -297,21 +299,25 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 addActionError(getText("error.superstruc.prop.notallowed"));
                 return COMMON_FORM;
             }
-            if (StringUtils.isBlank(applicationSource) && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
-                    && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())
-                    && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser())) {
-                addActionError(getText("initiator.noteligible"));
-                return COMMON_FORM;
-            } else {
-                loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
-                if (loggedUserIsMeesevaUser)
-                    if (getMeesevaApplicationNumber() == null) {
-                        addActionMessage(getText("MEESEVA.005"));
-                        return ERROR;
-                    } else
-                        propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+            checkForMandatoryDocuments();
+            if(!ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())){
+                if (StringUtils.isBlank(applicationSource) && propertyService.isEmployee(transferOwnerService.getLoggedInUser())
+                        && !propertyTaxCommonUtils.isEligibleInitiator(transferOwnerService.getLoggedInUser().getId())
+                        && !propertyService.isCitizenPortalUser(transferOwnerService.getLoggedInUser())) {
+                    addActionError(getText("initiator.noteligible"));
+                    return COMMON_FORM;
+                } else {
+                    loggedUserIsMeesevaUser = propertyService.isMeesevaUser(transferOwnerService.getLoggedInUser());
+                    if (loggedUserIsMeesevaUser)
+                        if (getMeesevaApplicationNumber() == null) {
+                            addActionMessage(getText("MEESEVA.005"));
+                            return ERROR;
+                        } else
+                            propertyMutation.setMeesevaApplicationNumber(getMeesevaApplicationNumber());
+                    return NEW;
+                }
+            } else
                 return NEW;
-            }
         }
     }
 
@@ -337,13 +343,24 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         setAckMessage("Transfer of ownership data saved successfully in the system and forwarded to : ");
         setAssessmentNoMessage(" with assessment number : ");
 
-        if (!loggedUserIsMeesevaUser)
+        if (ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(propertyMutation.getType())){
+            propertyOwner = basicproperty.getFullOwnerName();
+            return ACK_FOR_REGISTRATION;
+        }
+        else if (!loggedUserIsMeesevaUser)
             return ACK;
         else
             return MEESEVA_RESULT_ACK;
-
     }
 
+    @SkipValidation
+    @Action(value = "/redirectForPayment")
+    public String redirectForPayment(){
+        assessmentNo = basicproperty.getUpicNo();
+        propertyOwner = basicproperty.getFullOwnerName();
+        return ACK_FOR_REGISTRATION;
+    }
+    
     @SkipValidation
     @Action(value = "/view")
     public String view() {
@@ -634,6 +651,13 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
         }
     }
 
+    private void checkForMandatoryDocuments(){
+        if(!MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())){
+            for(DocumentType docType : documentTypes)
+                docType.setMandatory(false);
+        }
+    }
+    
     @Override
     public void validate() {
         if (PropertyTaxConstants.MUTATION_TYPE_REGISTERED_TRANSFER.equalsIgnoreCase(propertyMutation.getType())) {

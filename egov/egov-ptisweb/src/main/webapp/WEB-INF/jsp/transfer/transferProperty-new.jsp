@@ -169,7 +169,7 @@
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+								<span class="bold"><s:text name="transferorDetails"></s:text></span>
 							</div>
 						</td>
 					</tr>
@@ -318,20 +318,35 @@
 					<s:if test="%{!documentTypes.isEmpty()}">
 						<%@ include file="../common/DocumentUploadForm.jsp"%>
 					</s:if>
-				<s:if test="%{propertyByEmployee == true && applicationSource != 'online' && !citizenPortalUser}">
-					<table width="100%" border="0" cellspacing="0" cellpadding="0">
-						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
-						</tr>
-						<tr>
-							<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-						</tr>
-					</table>
-				</s:if>
-				<s:else>
-					<tr align="center">
-						<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
-					</tr>
+					<s:if test="%{!(@org.egov.ptis.constants.PropertyTaxConstants@ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(type) 
+						&& applicationSource.equalsIgnoreCase('online'))}">
+
+						<s:if
+							test="%{propertyByEmployee == true && applicationSource != 'online' && !citizenPortalUser}">
+						<table width="100%" border="0" cellspacing="0" cellpadding="0">
+								<tr>
+									<%@ include file="../workflow/commonWorkflowMatrix.jsp"%>
+								</tr>
+								<tr>
+									<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+								</tr>
+							</table>
+						</s:if>
+						<s:else>
+							<tr align="center">
+								<%@ include file="../workflow/commonWorkflowMatrix-button.jsp"%>
+							</tr>
+						</s:else>
+					</s:if>
+					<s:else>
+						<s:hidden id="workFlowAction" name="workFlowAction" value="Forward" />
+						<div class="buttonbottom" align="center">
+							<s:submit type="submit" value="Proceed for Payment"
+								cssClass="buttonsubmit" id="fullTransferButton"
+								name="fullTransferButton" />
+						<input type="button" name="button2" id="button2" value="Close"
+							class="button" onclick="window.close();" />
+					</div>
 				</s:else>
 			</s:push>
 		</s:form>
@@ -397,14 +412,17 @@
 				bootbox.alert("Please enter valid values in Parties consideration value and Department guidelines value for Mutation Fee calculations");
 				return false;
 			}
-		var tosubmit = true;
-			jQuery(".validateDocs").each(function() {
-				if (jQuery(this).val() == '') {
-					bootbox.alert("attach the document");
-					tosubmit = false;
-					return false;
-				}
-			});
+			var tosubmit = true;
+			var mutationType = '<s:property value="%{model.type}"/>'; 
+			if(mutationType == 'REGISTERED TRANSFER'){
+				jQuery(".validateDocs").each(function() {
+					if (jQuery(this).val() == '') {
+						bootbox.alert("attach the document");
+						tosubmit = false;
+						return false;
+					}
+				});
+			}
 
 			if (tosubmit)
 				return true;

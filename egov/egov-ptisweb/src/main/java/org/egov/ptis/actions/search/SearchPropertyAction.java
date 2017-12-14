@@ -74,6 +74,7 @@ import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.dao.demand.PtDemandDao;
 import org.egov.ptis.domain.dao.property.BasicPropertyDAO;
+import org.egov.ptis.domain.dao.property.PropertyMutationDAO;
 import org.egov.ptis.domain.entity.demand.Ptdemand;
 import org.egov.ptis.domain.entity.property.BasicProperty;
 import org.egov.ptis.domain.entity.property.Property;
@@ -112,8 +113,16 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
         @Result(name = APPLICATION_TYPE_BIFURCATE_ASSESSENT, type = "redirectAction", location = "modifyProperty-modifyForm", params = {
                 "namespace", "/modify", "indexNumber", "${assessmentNum}", "modifyRsn", "BIFURCATE", "applicationType",
                 "${applicationType}" }),
-        @Result(name = APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
+        @Result(name = MUTATION_TYPE_REGISTERED_TRANSFER, type = "redirectAction", location = "new", params = {
                 "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
+                "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "type", MUTATION_TYPE_REGISTERED_TRANSFER }),
+        @Result(name = ADDTIONAL_RULE_FULL_TRANSFER, type = "redirectAction", location = "new", params = {
+                "namespace", "${actionNamespace}", "assessmentNo", "${assessmentNum}", "applicationType", "${applicationType}",
+                "applicationSource", "${applicationSource}", "meesevaApplicationNumber",
+                "${meesevaApplicationNumber}", "meesevaServiceCode", "${meesevaServiceCode}", "type", ADDTIONAL_RULE_FULL_TRANSFER }),
+        @Result(name = "ackForRegistration", type = "redirectAction", location = "redirectForPayment", params = {
+                "namespace", "${actionNamespace}", "mutationId", "${mutationId}", "applicationType", "${applicationType}",
                 "applicationSource", "${applicationSource}" }),
         @Result(name = APPLICATION_TYPE_MEESEVA_TRANSFER_OF_OWNERSHIP, type = "redirectAction", location = "redirect", params = {
                 "namespace", "/property/transfer", "assessmentNo", "${assessmentNum}", "meesevaApplicationNumber",
@@ -158,8 +167,6 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
                 "namespace", "/amalgamation", "indexNumber", "${assessmentNum}", "meesevaApplicationNumber",
                 "${meesevaApplicationNumber}", "applicationType", "${applicationType}",
                 "modifyRsn", "AMALG" }) })
-
-// @Result(name = APPLICATION_TYPE_AMALGAMATION, type = "redirect", location = "../amalgamation/new/${assessmentNum}")})
 
 public class SearchPropertyAction extends SearchFormAction {
     /**
@@ -212,6 +219,8 @@ public class SearchPropertyAction extends SearchFormAction {
     private Boolean loggedUserIsMeesevaUser = Boolean.FALSE;
     private String activePropertyId;
     private Map<String, Object> queryMap;
+    private String mutationType;
+    private Long mutationId;
 
     @Autowired
     private BoundaryService boundaryService;
@@ -236,6 +245,9 @@ public class SearchPropertyAction extends SearchFormAction {
 
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+    private transient PropertyMutationDAO propertyMutationDAO;
 
     @Override
     public Object getModel() {
@@ -449,7 +461,19 @@ public class SearchPropertyAction extends SearchFormAction {
                 return COMMON_FORM;
             } else
                 return APPLICATION_TYPE_EDIT_COLLECTION;
-        return applicationType;
+        if (APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP.equals(applicationType)){
+            if(SecurityUtils.userAnonymouslyAuthenticated() && ADDTIONAL_RULE_FULL_TRANSFER.equalsIgnoreCase(mutationType)){
+                PropertyMutation propertyMutation = propertyMutationDAO.getPropertyLatestMutationForAssessmentNo(assessmentNum);
+                if(propertyMutation != null && propertyMutation.getState() != null && basicProperty.isUnderWorkflow() 
+                        && !WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getState().getValue()) 
+                        && StringUtils.isBlank(propertyMutation.getReceiptNum())){
+                        mutationId = propertyMutation.getId();
+                        return "ackForRegistration";
+                }
+            }
+            return mutationType;
+        } else 
+            return applicationType;
 
     }
 
@@ -1056,13 +1080,28 @@ public class SearchPropertyAction extends SearchFormAction {
         return commonForm();
     }
 
-    @Action(value = "/search/searchproperty-transferownership")
-    public String transferOwnership() {
-            setActionNamespace("/property/transfer");
+    @Action(value = "/search/searchproperty-registeredtransfer")
+    public String registeredTransfer() {
+        setActionNamespace("/property/transfer");
         setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        setMutationType(MUTATION_TYPE_REGISTERED_TRANSFER);
         return commonForm();
     }
 
+    @Action(value = "/search/searchproperty-fulltransfer")
+    public String fullTransfer() {
+        setActionNamespace("/property/transfer");
+        setApplicationType(APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
+        setMutationType(ADDTIONAL_RULE_FULL_TRANSFER);
+        if(SecurityUtils.userAnonymouslyAuthenticated()){
+            if(loggedUserIsMeesevaUser)
+                setApplicationSource(SOURCE_MEESEVA);
+            else
+                setApplicationSource(SOURCE_ONLINE);
+        }
+        return commonForm();
+    }
+    
     @Action(value = "/search/searchproperty-collecttax")
     public String collectTax() {
         setApplicationType(APPLICATION_TYPE_COLLECT_TAX);
@@ -1409,5 +1448,21 @@ public class SearchPropertyAction extends SearchFormAction {
 
     public void setQueryMap(Map<String, Object> queryMap) {
         this.queryMap = queryMap;
+    }
+
+    public String getMutationType() {
+        return mutationType;
+    }
+
+    public void setMutationType(String mutationType) {
+        this.mutationType = mutationType;
+    }
+
+    public Long getMutationId() {
+        return mutationId;
+    }
+
+    public void setMutationId(Long mutationId) {
+        this.mutationId = mutationId;
     }
 }

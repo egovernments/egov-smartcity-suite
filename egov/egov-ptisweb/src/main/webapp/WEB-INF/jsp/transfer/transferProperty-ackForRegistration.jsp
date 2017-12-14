@@ -46,17 +46,38 @@
   ~
   --%>
 
+<%@ page language="java" pageEncoding="UTF-8"%>
 <%@ include file="/includes/taglibs.jsp"%>
-<%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-
-<div class="row printable">
-	<div class="col-md-12">
-		<div class="panel panel-primary" data-collapsed="0"
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html>
+	<head>
+		<title><s:text name='transOwnAck' />
+		</title>
+		<script type="text/javascript">
+		  function printAcknowledgement() {
+			  var mutationId = document.getElementById("mutationId").value;
+			  window.open('printAck.action?mutationId='+mutationId,
+						'_blank', 'width=650, height=500, scrollbars=yes', false);
+		  }
+          function payment() {
+        	  var applicationNo = '<s:property value="%{model.applicationNo}"/>';
+        	  window.open('collect-fee.action?applicationNo='+applicationNo,
+						'_blank', 'width=650, height=500, scrollbars=yes', false); 
+          }
+		</script>
+	</head>
+	<body onload=" refreshParentInbox(); ">
+		<s:form name="transPropAckForm" theme="simple">
+			<s:push value="model">
+			<s:hidden name="mutationId" id="mutationId" value="%{id}"></s:hidden>
+			<s:hidden name="applicationSource" value="%{applicationSource}" />
+			<s:token/>
+				<div class="col-md-12">	
+					<div class="panel panel-primary" data-collapsed="0"
 			style="text-align: left">
 			<div class="panel-heading">
 				<div class="panel-title">
-					<s:text name="tax.dues"/>
+					<s:text name="title.transfer.fee.payment"/>
 				</div>
 			</div>
 			<div class="panel-body">
@@ -67,72 +88,52 @@
 					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<span class="bold"><s:property default="N/A" value="%{assessmentNo}" /></span>
 					</div>
-				</div>	
-				<div class="row add-border">	
-					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="Owner Name" />
-					</div>
-					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:property default="N/A" value="%{propertyOwner}" /></span>
-					</div>				
 					<div class="col-md-3 col-xs-3 add-margin">
 						<s:text name="Door Number" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"> <s:property default="N/A" value="%{houseNo}" /></span>
+						<span class="bold"> <s:property default="N/A" value="%{model.basicProperty.address.houseNoBldgApt}" /></span>
 					</div>
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="CurrentTax" />
+						<s:text name="PropertyAddress" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold">
-						<s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTax}" /></span>
+						<span class="bold"> <s:property default="N/A" value="%{model.basicProperty.address.toString()}" /></span>
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="CurrentTaxDue" />
+						<s:text name="applNumber" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTaxDue}" /></span>
-					</div>
+						<span class="bold"> <s:property default="N/A" value="%{model.applicationNo}" /> </span>
+					</div>	
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="waterTaxDue"/>
+						<s:text name="applicant.name" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentWaterTaxDue}" /></span>
+						<span class="bold"> <s:property default="N/A" value="%{propertyOwner}" /> </span>
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="ArrearsDue" />
+						<s:text name="payablefee"/>
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{arrearPropertyTaxDue}" /></span>
-					</div>
+						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{model.mutationFee}" /></span>
+					</div>	
+				</div>	
+
+				<div class="buttonbottom" align="center">
+						<input type="button" name="button2" id="button2" value="Download Acknowledgement" class="buttonsubmit" onclick="printAcknowledgement()" />
+                        <input type="button" name="button2" id="button2" value="Pay Fee Online" class="buttonsubmit" onclick="payment()" />
+						<input type="button" name="button2" id="button2" value="Close" class="button" onclick="window.close();" />
 				</div>
-				<div class="mandatory">
-					<s:property value="%{taxDueErrorMsg}"/>
-				</div>
+					
 			</div>
 		</div>
-	</div>
-</div>
-<div colspan="3" align="center">
-				<input type="button" name="button2" id="button2" value="Pay Property Tax" class="buttonsubmit" onclick="propertyTaxPayment()" />
-				<input type="button" name="button2" id="button2" value="Pay Water Charges" class="buttonsubmit" onclick="propertyWaterCharges()" />
-				&nbsp;&nbsp;
-				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
-</div>
-<script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
-<script type="text/javascript">
-	function propertyTaxPayment() {
-		var assessmentNo = '<s:property value="%{assessmentNo}" />';
-		window.location = "/../ptis/citizen/collection/collection-generateBill.action?assessmentNumber="
-				+ assessmentNo;
-	}
-	function propertyWaterCharges() {
-		var assessmentNo = '<s:property default="N/A" value="%{assessmentNo}" />';
-		window.location = "/wtms/search/waterSearch/";
-	}
-</script>
+				</div>
+			</s:push>
+		</s:form>
+	</body>
+</html>

@@ -51,7 +51,7 @@
 <tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<span class="bold"><s:text name="transferDtls" /></span>
+								<span class="bold"><s:text name="transfereeDtls" /></span>
 							</div>
 						</td>
 					</tr>
