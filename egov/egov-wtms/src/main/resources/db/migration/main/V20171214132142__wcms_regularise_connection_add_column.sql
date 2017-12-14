@@ -1,0 +1,1 @@
+alter table egwtr_regularise_connection_detail add column applicationdate date;

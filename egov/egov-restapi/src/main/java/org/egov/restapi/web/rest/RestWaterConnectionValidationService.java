@@ -234,6 +234,7 @@ public class RestWaterConnectionValidationService {
         final WaterChargesRestApiResponse response = new WaterChargesRestApiResponse();
         final RegularisedConnection regularisedConnection = new RegularisedConnection();
         regularisedConnection.setApplicationNumber(applicationNumberGenerator.generate());
+        regularisedConnection.setApplicationDate(new Date());
         final WorkFlowMatrix wfmatrix = waterConnectionWorkflowService.getWfMatrix(regularisedConnection.getStateType(), null,
                 null, REGULARIZE_CONNECTION, "Created", null);
         final User user = securityUtils.getCurrentUser();
