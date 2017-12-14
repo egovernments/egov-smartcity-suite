@@ -65,15 +65,11 @@ import static org.egov.infra.security.utils.SecurityConstants.MAX_LOGIN_ATTEMPT_
 @Service
 public class LoginAttemptService {
 
-    private final LoginAttemptRepository loginAttemptRepository;
+    @Autowired
+    private LoginAttemptRepository loginAttemptRepository;
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    public LoginAttemptService(LoginAttemptRepository loginAttemptRepository) {
-        this.loginAttemptRepository = loginAttemptRepository;
-    }
 
     public Optional<LoginAttempt> updateFailedAttempt(String username) {
         User user = userService.getUserByUsername(username);

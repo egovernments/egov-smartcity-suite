@@ -48,9 +48,6 @@
 
 package org.egov.infra.config.security.authentication.handler;
 
-import org.egov.infra.config.security.authentication.userdetail.CurrentUser;
-import org.egov.infra.security.audit.service.LoginAttemptService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.web.authentication.SimpleUrlAuthenticationSuccessHandler;
 import org.springframework.security.web.savedrequest.HttpSessionRequestCache;
@@ -75,9 +72,6 @@ import static org.springframework.util.StringUtils.hasText;
 
 public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
-    @Autowired
-    private LoginAttemptService loginAttemptService;
-
     private RequestCache requestCache = new HttpSessionRequestCache();
 
     private Pattern excludedUrls;
@@ -94,7 +88,6 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
     public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
                                         Authentication authentication) throws ServletException, IOException {
         auditLoginDetails(request, authentication);
-        resetFailedLoginAttempt(authentication);
         redirectToSuccessPage(request, response, authentication);
     }
 
@@ -126,9 +119,5 @@ public class ApplicationAuthenticationSuccessHandler extends SimpleUrlAuthentica
         session.setAttribute(LOGIN_TIME, new Date());
         session.setAttribute(LOGIN_IP, credentials.get(IPADDR_FIELD));
         session.setAttribute(LOGIN_USER_AGENT, credentials.get(USERAGENT_FIELD));
-    }
-
-    private void resetFailedLoginAttempt(Authentication authentication) {
-        loginAttemptService.resetFailedAttempt(((CurrentUser) authentication.getPrincipal()).getUsername());
     }
 }
