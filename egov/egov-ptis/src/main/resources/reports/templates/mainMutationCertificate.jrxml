@@ -159,6 +159,9 @@
 				<subreportParameter name="newOwnerGuardianRelation">
 					<subreportParameterExpression><![CDATA[$F{newOwnerGuardianRelation}]]></subreportParameterExpression>
 				</subreportParameter>
+				<subreportParameter name="oldOwnerGuardianRelation">
+					<subreportParameterExpression><![CDATA[$F{oldOwnerGuardianRelation}]]></subreportParameterExpression>
+				</subreportParameter>
 				<subreportParameter name="approvedDate">
 					<subreportParameterExpression><![CDATA[$F{approvedDate}]]></subreportParameterExpression>
 				</subreportParameter>
