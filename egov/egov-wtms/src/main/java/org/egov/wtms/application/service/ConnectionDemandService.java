@@ -48,7 +48,6 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERTAXREASONCODE;
@@ -265,7 +264,7 @@ public class ConnectionDemandService {
             final String demandReason, final String installment, final DemandDetail demandTempObj,
             final WaterConnectionDetails waterConnectionDetails) {
         Installment installObj;
-        if (waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(NON_METERED))
+        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
             installObj = installmentDao
                     .getInsatllmentByModuleAndDescription(moduleService.getModuleByName(PROPERTY_MODULE_NAME), installment);
         else
@@ -524,8 +523,7 @@ public class ConnectionDemandService {
         final List<WaterDemandConnection> demandList = waterConnectionDetails.getWaterDemandConnection();
         if (!demandList.isEmpty() && waterConnectionDetails.getLegacy()
                 && StringUtils.isBlank(waterConnectionDetails.getConnectionReason())
-                && waterConnectionDetails.getState() == null && demand != null)
-        {
+                && waterConnectionDetails.getState() == null && demand != null) {
             demand.setIsHistory("Y");
             demandObj = demand;
         }
@@ -546,7 +544,7 @@ public class ConnectionDemandService {
         demandObj.getEgDemandDetails().clear();
         demandObj.getEgDemandDetails().addAll(dmdDetailSet);
         int listlength = demandObj.getEgDemandDetails().size() - 1;
-        if (waterConnectionDetails.getConnectionType().toString().equalsIgnoreCase(NON_METERED))
+        if (waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
             installObj = installmentDao.getInsatllmentByModuleAndDescription(
                     moduleService.getModuleByName(PROPERTY_MODULE_NAME),
                     waterConnectionDetails.getDemandDetailBeanList().get(listlength).getInstallment());
