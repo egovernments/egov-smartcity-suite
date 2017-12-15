@@ -98,10 +98,15 @@ import java.util.TreeMap;
         @Result(name = BankRemittanceAction.INDEX, location = "bankRemittance-index.jsp") })
 @ParentPackage("egov")
 public class BankRemittanceAction extends BaseFormAction {
-
+    protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
     private static final long serialVersionUID = 1L;
     private static final Logger LOGGER = Logger.getLogger(BankRemittanceAction.class);
-    private List<HashMap<String, Object>> paramList = null;
+    private static final String BANK_ACCOUNT_NUMBER_QUERY = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id =:accountNumberId";
+    private static final String SERVICE_FUND_QUERY = new StringBuilder()
+            .append("select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,")
+            .append("EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID ")
+            .append("and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and ba.id= :accountNumberId").toString();
+    private transient List<HashMap<String, Object>> paramList = null;
     private final ReceiptHeader receiptHeaderIntsance = new ReceiptHeader();
     private List<ReceiptHeader> voucherHeaderValues = new ArrayList<>(0);
     private String[] serviceNameArray;
@@ -113,7 +118,7 @@ public class BankRemittanceAction extends BaseFormAction {
     private String[] fundCodeArray;
     private String[] departmentCodeArray;
     private Integer accountNumberId;
-    private CollectionsUtil collectionsUtil;
+    private transient CollectionsUtil collectionsUtil;
     private Integer branchId;
     private static final String ACCOUNT_NUMBER_LIST = "accountNumberList";
     private Boolean isListData = false;
@@ -122,12 +127,12 @@ public class BankRemittanceAction extends BaseFormAction {
     private Integer designationId;
     private Date remittanceDate;
     @Autowired
-    private FinancialYearDAO financialYearDAO;
+    private transient FinancialYearDAO financialYearDAO;
     @Autowired
-    private EmployeeService employeeService;
+    private transient EmployeeService employeeService;
     @Autowired
-    private BankaccountHibernateDAO bankaccountHibernateDAO;
-    protected static final String PRINT_BANK_CHALLAN = "printBankChallan";
+    private transient BankaccountHibernateDAO bankaccountHibernateDAO;
+
     private Double totalCashAmount;
     private Double totalChequeAmount;
     private List<CollectionBankRemittanceReport> bankRemittanceList;
@@ -214,23 +219,21 @@ public class BankRemittanceAction extends BaseFormAction {
     @SkipValidation
     public String listData() {
         isListData = true;
-        final String bankAccountStr = "select distinct ba.accountnumber from BANKACCOUNT ba where ba.id ='" + accountNumberId
-                + "'";
+        remitAccountNumber = "";
+        if (accountNumberId != null) {
 
-        final Query bankAccountQry = persistenceService.getSession().createSQLQuery(bankAccountStr);
-
-        final Object bankAccountResult = bankAccountQry.uniqueResult();
-        remitAccountNumber = (String) bankAccountResult;
+            final Query bankAccountQry = persistenceService.getSession().createSQLQuery(BANK_ACCOUNT_NUMBER_QUERY);
+            bankAccountQry.setLong("accountNumberId", accountNumberId);
+            final Object bankAccountResult = bankAccountQry.uniqueResult();
+            remitAccountNumber = (String) bankAccountResult;
+        }
 
         populateRemittanceList();
         if (fromDate != null && toDate != null && toDate.before(fromDate))
             addActionError(getText("bankremittance.before.fromdate"));
-        if (!hasErrors()) {
-            final String serviceFundQueryStr = "select distinct sd.code as servicecode,fd.code as fundcode from BANKACCOUNT ba,"
-                    + "EGCL_BANKACCOUNTSERVICEMAPPING asm,EGCL_SERVICEDETAILS sd,FUND fd where asm.BANKACCOUNT=ba.ID and asm.servicedetails=sd.ID and fd.ID=ba.FUNDID and "
-                    + "ba.id=" + accountNumberId;
-
-            final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(serviceFundQueryStr);
+        if (!hasErrors() && accountNumberId != null) {
+            final Query serviceFundQuery = persistenceService.getSession().createSQLQuery(SERVICE_FUND_QUERY);
+            serviceFundQuery.setLong("accountNumberId", accountNumberId);
             final List<Object[]> queryResults = serviceFundQuery.list();
 
             final List<String> serviceCodeList = new ArrayList<>(0);
@@ -283,12 +286,12 @@ public class BankRemittanceAction extends BaseFormAction {
 
         isBankCollectionRemitter = collectionsUtil.isBankCollectionOperator(collectionsUtil.getLoggedInUser());
         addDropdownData("bankBranchList", Collections.emptyList());
-        addDropdownData("accountNumberList", Collections.emptyList());
+        addDropdownData(ACCOUNT_NUMBER_LIST, Collections.emptyList());
     }
 
     @Action(value = "/receipts/bankRemittance-create")
     @ValidationErrorPage(value = NEW)
-    public String create() throws InstantiationException, IllegalAccessException {
+    public String create() {
         final long startTimeMillis = System.currentTimeMillis();
         if (accountNumberId == null || accountNumberId == -1)
             throw new ValidationException(Arrays.asList(new ValidationError("Please select Account number",
