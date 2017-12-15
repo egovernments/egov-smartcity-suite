@@ -173,6 +173,8 @@ public class Complaint extends StateAware<Position> {
     @JoinColumn(name = "childLocation")
     private Boundary childLocation;
 
+    private boolean notifyComplainant = true;
+
     @Transient
     private String latlngAddress;
 
@@ -363,6 +365,14 @@ public class Complaint extends StateAware<Position> {
 
     public void setChildLocation(Boundary childLocation) {
         this.childLocation = childLocation;
+    }
+
+    public boolean isNotifyComplainant() {
+        return notifyComplainant;
+    }
+
+    public void setNotifyComplainant(boolean notifyComplainant) {
+        this.notifyComplainant = notifyComplainant;
     }
 
     public Long getCrossHierarchyId() {

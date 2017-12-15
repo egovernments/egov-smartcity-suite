@@ -70,6 +70,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -84,18 +85,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_RESOLVED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_UNRESOLVED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ALL;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_PENDING;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REJECTED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLETED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.PENDING_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.REJECTED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.RESOLVED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -140,7 +130,7 @@ public class ComplaintService {
     @Autowired
     private ComplaintEventPublisher complaintEventPublisher;
 
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Complaint createComplaint(Complaint complaint) {
 
         if (isBlank(complaint.getCrn()))
