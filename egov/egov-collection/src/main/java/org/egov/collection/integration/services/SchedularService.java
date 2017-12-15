@@ -186,7 +186,7 @@ public class SchedularService {
                         reconciliationService.processSuccessMsg(onlinePaymentReceiptHeader, paymentResponse);
                     else if ((DateUtils.compareDates(onlinePaymentReceiptHeader.getCreatedDate(), fourDaysBackCalender.getTime()))
                             &&
-                            (onlinePaymentReceiptHeader.getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
+                            (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
                                     CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
                                             .contains(paymentResponse.getAuthStatus()))) {
                         onlinePaymentReceiptHeader.getOnlinePayment().setAuthorisationStatusCode(
