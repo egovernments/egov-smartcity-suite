@@ -220,10 +220,10 @@ public class OnlineReceiptAction extends BaseFormAction {
         if (onlinePaymentReceiptHeader != null) {
             if (CollectionConstants.PGI_AUTHORISATION_CODE_SUCCESS.equals(paymentResponse.getAuthStatus()))
                 processSuccessMsg();
-            else if ((paymentService.getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
+            else if ((onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_PGI_BILLDESK)
                     && CollectionConstants.PGI_AUTHORISATION_CODE_WAITINGFOR_PAY_GATEWAY_RESPONSE
                             .equals(paymentResponse.getAuthStatus()))
-                    || (paymentService.getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
+                    || (onlinePaymentReceiptHeader.getOnlinePayment().getService().getCode().equals(CollectionConstants.SERVICECODE_ATOM) &&
                             CollectionConstants.ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE
                                     .contains(paymentResponse.getAuthStatus()))) {
                 final EgwStatus paymentStatus = collectionsUtil.getStatusForModuleAndCode(
