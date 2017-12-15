@@ -47,6 +47,14 @@
  */
 package org.egov.collection.web.actions.reports;
 
+import java.io.ByteArrayInputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.log4j.Logger;
 import org.apache.struts2.convention.annotation.Action;
 import org.apache.struts2.convention.annotation.ParentPackage;
@@ -63,13 +71,6 @@ import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.reporting.viewer.ReportViewerUtil;
 import org.egov.infra.web.struts.actions.BaseFormAction;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
 @ParentPackage("egov")
 @Results({ @Result(name = CashCollectionReportAction.INDEX, location = "cashCollectionReport-index.jsp"),
@@ -277,7 +278,7 @@ public class CashCollectionReportAction extends BaseFormAction {
      */
     @Action(value = "/reports/cashCollectionReport-report")
     public String report() {
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
+        critParams.put(CollectionConstants.LOGO_PATH, new ByteArrayInputStream(cityService.getCityLogoAsBytes()));
         final ReportRequest reportInput = new ReportRequest(CASH_COLLECTION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);

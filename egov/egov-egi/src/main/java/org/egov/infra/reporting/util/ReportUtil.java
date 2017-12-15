@@ -64,8 +64,6 @@ import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigDecimal;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -206,7 +204,4 @@ public final class ReportUtil {
                 .body(new InputStreamResource(reportOutput.asInputStream()));
     }
 
-    public static URL logoAsStream() throws MalformedURLException {
-        return new URL(logoBasePath());
-    }
 }
