@@ -59,12 +59,14 @@ import org.egov.tl.repository.LicenseRepository;
 import org.egov.tl.service.FeeTypeService;
 import org.egov.tl.service.LegacyLicenseService;
 import org.egov.tl.service.LicenseCategoryService;
+import org.egov.tl.service.NatureOfBusinessService;
 import org.egov.tl.service.TradeLicenseService;
 import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.ModelAttribute;
 
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
@@ -92,6 +94,9 @@ public class LegacyLicenseController extends GenericWorkFlowController {
     @Autowired
     protected LegacyLicenseService legacyService;
 
+    @Autowired
+    private NatureOfBusinessService natureOfBusinessService;
+
     @ModelAttribute("boundary")
     public List<Boundary> boundaries() {
         return boundaryService.getActiveBoundariesByBndryTypeNameAndHierarchyTypeName(
@@ -105,7 +110,7 @@ public class LegacyLicenseController extends GenericWorkFlowController {
 
     @ModelAttribute("natureOfBusiness")
     public List<NatureOfBusiness> natureOfBusiness() {
-        return tradeLicenseService.getAllNatureOfBusinesses();
+        return Arrays.asList(natureOfBusinessService.getPermanentBusinessNature());
     }
 
     @ModelAttribute("category")
