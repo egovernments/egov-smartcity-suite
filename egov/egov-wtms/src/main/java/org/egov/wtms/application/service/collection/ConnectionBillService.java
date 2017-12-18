@@ -47,6 +47,40 @@
  */
 package org.egov.wtms.application.service.collection;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.BILLTYPE_MANUAL;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.COLLECTION_STRING_SERVICE_CODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CURRENTYEAR_FIRST_HALF;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CURRENTYEAR_SECOND_HALF;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDISHISTORY;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_CODE_ADVANCE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMANDRSN_REASON_ADVANCE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DEMAND_REASON_ORDER_MAP;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.EGMODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.GLCODE_FOR_ADVANCE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MAX_ADVANCES_ALLOWED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODULETYPE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ORDERED_DEMAND_RSNS_LIST;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PROPERTY_MODULE_NAME;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.YEARLY;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
+import java.util.TreeSet;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.collection.integration.models.BillAccountDetails.PURPOSE;
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.Installment;
@@ -62,7 +96,6 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infstr.services.PersistenceService;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
@@ -76,27 +109,9 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-
-import static org.egov.wtms.utils.constants.WaterTaxConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -131,10 +146,6 @@ public class ConnectionBillService extends BillServiceInterface {
 
     @Autowired
     private PropertyTaxUtil propertyTaxUtil;
-
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
 
     public Session getCurrentSession() {
         return entityManager.unwrap(Session.class);
@@ -186,10 +197,10 @@ public class ConnectionBillService extends BillServiceInterface {
                     billdetail.setDrAmount(BigDecimal.ZERO);
                     billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
                 }
-                if(LOG.isInfoEnabled())
+                if (LOG.isInfoEnabled())
                     LOG.info("demandDetail.getEgDemandReason()"
-                        + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
-                        + demandDetail.getEgDemandReason().getGlcodeId());
+                            + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
+                            + demandDetail.getEgDemandReason().getGlcodeId());
                 billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
                 billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
                 billdetail.setAdditionalFlag(Integer.valueOf(1));
@@ -281,9 +292,9 @@ public class ConnectionBillService extends BillServiceInterface {
         if (currentInstallmentDemand.compareTo(BigDecimal.ZERO) > 0) {
             final Integer noOfAdvancesPaid = advanceCollection.subtract(partiallyCollectedAmount)
                     .divide(currentInstallmentDemand).intValue();
-            if(LOG.isDebugEnabled())
+            if (LOG.isDebugEnabled())
                 LOG.debug("getBilldetails - advanceCollection = " + advanceCollection + ", noOfAdvancesPaid="
-                    + noOfAdvancesPaid);
+                        + noOfAdvancesPaid);
 
             // DateTime installmentDate = null;
             Installment installment = null;
@@ -325,7 +336,7 @@ public class ConnectionBillService extends BillServiceInterface {
                         billDetails.add(billdetail);
                     }
                 }
-        } else if(LOG.isDebugEnabled())
+        } else if (LOG.isDebugEnabled())
             LOG.debug("getBillDetails - All advances are paid...");
     }
 
@@ -335,10 +346,10 @@ public class ConnectionBillService extends BillServiceInterface {
     }
 
     public EgBill updateBillWithLatest(final Long billId) {
-        if(LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled())
             LOG.debug("updateBillWithLatest billId " + billId);
         final EgBill bill = egBillDAO.findById(billId, false);
-        if(LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled())
             LOG.debug("updateBillWithLatest old bill " + bill);
         if (bill == null)
             throw new ApplicationRuntimeException("No bill found with bill reference no :" + billId);
@@ -354,9 +365,9 @@ public class ConnectionBillService extends BillServiceInterface {
             bill.addEgBillDetails(billDetail);
             billDetail.setEgBill(bill);
         }
-        if(LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled())
             LOG.debug("Bill update with bill details for water charges " + bill.getConsumerId() + " as billdetails "
-                + egBillDetails);
+                    + egBillDetails);
         return bill;
     }
 
@@ -367,7 +378,7 @@ public class ConnectionBillService extends BillServiceInterface {
      * @return List of Installment
      */
     public List<Installment> getAdvanceInstallmentsList(final Date startDate) {
-        List<Installment> advanceInstallments = new ArrayList<>();
+        List<Installment> advanceInstallments;
         final String query = "select inst from Installment inst where inst.module.name = '"
                 + PROPERTY_MODULE_NAME
                 + "' and inst.fromDate >= :startdate order by inst.fromDate asc ";
@@ -376,7 +387,7 @@ public class ConnectionBillService extends BillServiceInterface {
         return advanceInstallments;
     }
 
-    public HashMap<String, Integer> generateOrderForDemandDetails(final Set<EgDemandDetails> demandDetails,
+    public Map<String, Integer> generateOrderForDemandDetails(final Set<EgDemandDetails> demandDetails,
             final Billable billable, final List<Installment> advanceInstallments,
             final Map<String, Installment> currInstallments) {
 
@@ -444,7 +455,7 @@ public class ConnectionBillService extends BillServiceInterface {
                 .append(" and conn.consumerCode =:consumerCode ")
                 .append(" order by bill.id desc ");
 
-        final Query query = persistenceService.getSession().createQuery(queryString.toString())
+        final Query query = getCurrentSession().createQuery(queryString.toString())
                 .setString("consumerCode", consumerCode);
         final List<EgBill> egBilltemp = query.list();
         if (!egBilltemp.isEmpty())

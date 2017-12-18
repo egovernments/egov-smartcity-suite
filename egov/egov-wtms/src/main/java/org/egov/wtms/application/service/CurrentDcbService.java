@@ -95,6 +95,7 @@ public class CurrentDcbService {
 
     }
 
+    @ReadOnly
     public List<WaterChargesReceiptInfo> getMigratedReceipttDetails(final String consumerNumber) throws ParseException {
         final StringBuilder queryStr = new StringBuilder();
         queryStr.append(
@@ -182,9 +183,10 @@ public class CurrentDcbService {
         return sqlQuery.list();
     }
 
+    @ReadOnly
     public List<Object[]> getDonationDCBReportDetails(final DonationChargesDCBReportSearch chargesDCBReportSearch) {
         StringBuilder selectQuery = new StringBuilder();
-        StringBuilder fromQuery = new StringBuilder();
+        StringBuilder fromQuery;
         final StringBuilder whereQuery = new StringBuilder();
         selectQuery.append(
                 "select consumernumber, propertyid, username, mobileno, address, donation_demand, donation_coll, donation_balance");
