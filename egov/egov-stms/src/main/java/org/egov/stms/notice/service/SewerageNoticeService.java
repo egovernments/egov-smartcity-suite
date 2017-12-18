@@ -392,7 +392,7 @@ public class SewerageNoticeService {
             else
                 reportParams.put(IS_COMMISSIONER, false);
             reportParams.put("userSignature",
-                   null!= user.getSignature()? new ByteArrayInputStream(user.getSignature()) : "");
+                   user.getSignature() == null?"":new ByteArrayInputStream(user.getSignature()));
             reportParams.put("applicationtype", stmsMessageSource.getMessage("msg.new.sewerage.conn", null, null));
             reportParams.put("municipality", cityService.getMunicipalityName());
             reportParams.put("district", cityService.getDistrictName());
@@ -429,12 +429,12 @@ public class SewerageNoticeService {
             reportParams.put(TOTAL_CHARGES, donationCharges.add(sewerageCharges).add(estimationCharges));
 
             reportParams.put("assessmentNo", sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-            reportParams.put(NO_OF_SEATS_RESIDENTIAL, null!=sewerageApplicationDetails.getConnectionDetail()
-                    .getNoOfClosetsResidential()?sewerageApplicationDetails.getConnectionDetail()
-                            .getNoOfClosetsResidential():0);
-            reportParams.put(NO_OF_SEATS_NON_RESIDENTIAL,  null!=sewerageApplicationDetails.getConnectionDetail()
-                    .getNoOfClosetsNonResidential()?sewerageApplicationDetails.getConnectionDetail()
-                            .getNoOfClosetsResidential():0);
+            reportParams.put(NO_OF_SEATS_RESIDENTIAL,sewerageApplicationDetails.getConnectionDetail()
+                    .getNoOfClosetsResidential()== null?0:sewerageApplicationDetails.getConnectionDetail()
+                            .getNoOfClosetsResidential());
+            reportParams.put(NO_OF_SEATS_NON_RESIDENTIAL,  sewerageApplicationDetails.getConnectionDetail()
+                    .getNoOfClosetsNonResidential()== null? 0:sewerageApplicationDetails.getConnectionDetail()
+                            .getNoOfClosetsResidential());
             reportParams.put("revenueWardNo", assessmentDetails.getBoundaryDetails().getWardName());
             reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
 
