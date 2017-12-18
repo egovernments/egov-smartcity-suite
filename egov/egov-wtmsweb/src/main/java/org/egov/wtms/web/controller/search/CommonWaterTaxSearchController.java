@@ -70,7 +70,6 @@ import java.math.BigDecimal;
 
 import javax.servlet.http.HttpServletRequest;
 
-import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
 import org.egov.ptis.domain.service.property.PropertyExternalService;
@@ -103,6 +102,7 @@ public class CommonWaterTaxSearchController {
     private static final String APPLICATIONTYPE = "applicationType";
     private static final String ERR_MIGRATED_CONN = "err.migratedconnection.modify.notallowed";
     private static final String ERR_DATAENTRY_MODIFY = "err.modifynotallowed.collectiondone";
+    private static final String COLLECTION_ALREADY_DONE = "invalid.collecttax";
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -342,9 +342,12 @@ public class CommonWaterTaxSearchController {
                     waterConnectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
             if (assessmentDetails != null)
-                if (amoutToBeCollected.doubleValue() == 0)
-                    throw new ApplicationRuntimeException("invalid.collecttax");
-                else if ((amoutToBeCollected.doubleValue() > 0
+                if (amoutToBeCollected.doubleValue() == 0) {
+                    model.addAttribute(MODE, ERROR_MODE);
+                    model.addAttribute(APPLICATIONTYPE, applicationType);
+                    resultBinder.rejectValue(WATERCHARGES_CONSUMERCODE, COLLECTION_ALREADY_DONE);
+                    return COMMON_FORM_SEARCH;
+                } else if ((amoutToBeCollected.doubleValue() > 0
                         && waterConnectionDetails.getConnectionType().equals(ConnectionType.METERED)
                         || waterConnectionDetails.getConnectionType().equals(ConnectionType.NON_METERED))
                         && (waterConnectionDetails.getApplicationType().getCode()
