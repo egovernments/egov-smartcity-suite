@@ -189,7 +189,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 	private String propertyAddress;
 	private transient PersistenceService<Property, Long> propertyImplService;
 	private String propTypeObjId;
-	private String[] floorNoStr = new String[100];
+	private String[] floorNoStr = new String[275];
 	private Boolean loggedUserIsEmployee = Boolean.TRUE;
 	private transient PropertyService propService;
 	private PropertyStatusValues propStatVal;
