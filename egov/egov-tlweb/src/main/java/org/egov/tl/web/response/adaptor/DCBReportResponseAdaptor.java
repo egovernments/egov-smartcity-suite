@@ -72,7 +72,7 @@ public class DCBReportResponseAdaptor implements DataTableJsonAdapter<DCBReportR
         dCBReportResult.forEach(dCBReport -> {
             final JsonObject dCBReportResultJson = new JsonObject();
             dCBReportResultJson.addProperty("licenseid", dCBReport.getLicenseid());
-            dCBReportResultJson.addProperty("active", toYesOrNo(dCBReport.getActive()));
+            dCBReportResultJson.addProperty("active", toYesOrNo(dCBReport.isActive()));
             dCBReportResultJson.addProperty("licensenumber", defaultIfBlank(dCBReport.getLicensenumber()));
             dCBReportResultJson.addProperty("ward",dCBReport.getWardname());
             dCBReportResultJson.addProperty("username", dCBReport.getUsername());

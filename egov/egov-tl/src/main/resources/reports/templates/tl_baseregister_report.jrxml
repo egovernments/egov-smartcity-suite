@@ -49,7 +49,7 @@
 
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="BaseRegisterReport" language="groovy" pageWidth="1232" pageHeight="842" orientation="Landscape" columnWidth="1212" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="ecafdf1d-dc40-41ef-b8f0-2731838336cb">
 	<property name="ireport.zoom" value="1.5"/>
-	<property name="ireport.x" value="0"/>
+	<property name="ireport.x" value="643"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="pageHeader"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.2" value="pageFooter"/>
@@ -81,22 +81,22 @@
 	<field name="commencementdate" class="java.lang.String"/>
 	<field name="statusname" class="java.lang.String"/>
 	<field name="unitofmeasure" class="java.lang.String"/>
-	<field name="tradewt" class="java.math.BigInteger"/>
-	<field name="rateval" class="java.math.BigInteger"/>
-	<field name="arrearlicensefee" class="java.math.BigInteger"/>
-	<field name="arrearpenaltyfee" class="java.math.BigInteger"/>
-	<field name="curlicensefee" class="java.math.BigInteger"/>
-	<field name="curpenaltyfee" class="java.math.BigInteger"/>
-	<variable name="arrearlicensetotal" class="java.lang.Integer" calculation="Sum">
+	<field name="tradewt" class="java.math.BigDecimal"/>
+	<field name="rateval" class="java.math.BigDecimal"/>
+	<field name="arrearlicensefee" class="java.math.BigDecimal"/>
+	<field name="arrearpenaltyfee" class="java.math.BigDecimal"/>
+	<field name="curlicensefee" class="java.math.BigDecimal"/>
+	<field name="curpenaltyfee" class="java.math.BigDecimal"/>
+	<variable name="arrearlicensetotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{arrearlicensefee}]]></variableExpression>
 	</variable>
-	<variable name="arrearpenaltytotal" class="java.lang.Integer" calculation="Sum">
+	<variable name="arrearpenaltytotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{arrearpenaltyfee}]]></variableExpression>
 	</variable>
-	<variable name="curlicensefeetotal" class="java.lang.Integer" calculation="Sum">
+	<variable name="curlicensefeetotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{curlicensefee}]]></variableExpression>
 	</variable>
-	<variable name="curpenaltyfeetotal" class="java.lang.Integer" calculation="Sum">
+	<variable name="curpenaltyfeetotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{curpenaltyfee}]]></variableExpression>
 	</variable>
 	<background>
@@ -359,7 +359,7 @@ Date]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{unitofmeasure}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField isStretchWithOverflow="true" pattern="###0.00">
 					<reportElement stretchType="RelativeToTallestObject" x="1038" y="0" width="59" height="20" uuid="967c6d68-4916-4abf-ba3a-0dd4e13d2ede"/>
 					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 						<pen lineWidth="0.5"/>
@@ -403,7 +403,7 @@ Date]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{licensenumber}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField isStretchWithOverflow="true" pattern="###0.00">
 					<reportElement stretchType="RelativeToTallestObject" x="1097" y="0" width="56" height="20" uuid="3a5c4f62-c073-44b0-96c9-f0a5c915a2d3"/>
 					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 						<pen lineWidth="0.5"/>
@@ -513,7 +513,7 @@ Date]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{wardname}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField isStretchWithOverflow="true" pattern="###0.00">
 					<reportElement stretchType="RelativeToTallestObject" x="971" y="0" width="67" height="20" uuid="18e280e0-2560-4534-b778-dc546716cde6"/>
 					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 						<pen lineWidth="0.5"/>
@@ -535,7 +535,7 @@ Date]]></text>
 					</textElement>
 					<textFieldExpression><![CDATA[$F{owner}]]></textFieldExpression>
 				</textField>
-				<textField isStretchWithOverflow="true">
+				<textField isStretchWithOverflow="true" pattern="###0.00">
 					<reportElement stretchType="RelativeToTallestObject" x="1153" y="0" width="59" height="20" uuid="3750377e-ce34-49c5-8155-aef655c88a87"/>
 					<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 						<pen lineWidth="0.5"/>
@@ -578,7 +578,7 @@ Date]]></text>
 				</textElement>
 				<text><![CDATA[Total]]></text>
 			</staticText>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="971" y="0" width="67" height="20" uuid="f3783356-b046-4801-9580-c4123ef8debc"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -588,7 +588,7 @@ Date]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{arrearlicensetotal}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="1038" y="0" width="59" height="20" uuid="ac5d7ef7-4f02-462e-b57a-1a38ec360971"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -598,7 +598,7 @@ Date]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{arrearpenaltytotal}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="1097" y="0" width="56" height="20" uuid="e4d15a62-6d18-493b-a56e-f7ef6e76eb97"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -608,7 +608,7 @@ Date]]></text>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{curlicensefeetotal}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="1153" y="0" width="59" height="20" uuid="0abded16-a869-41b5-b8e3-98e6e4b4ba4b"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>

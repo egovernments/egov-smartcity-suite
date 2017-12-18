@@ -56,7 +56,7 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Transient;
-import java.math.BigInteger;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Entity
@@ -73,29 +73,29 @@ public class InstallmentWiseDCB {
     private Long locality;
 
     @Column(name = "curr_demand")
-    private BigInteger currentdemand;
+    private BigDecimal currentdemand;
 
     @Column(name = "curr_coll")
-    private BigInteger currentcollection;
+    private BigDecimal currentcollection;
 
     @Column(name = "curr_balance")
-    private BigInteger currentbalance;
+    private BigDecimal currentbalance;
 
     @Transient
-    private BigInteger arreardemand;
+    private BigDecimal arreardemand;
     @Transient
-    private BigInteger arrearcollection;
+    private BigDecimal arrearcollection;
     @Transient
-    private BigInteger arrearbalance;
+    private BigDecimal arrearbalance;
 
     @Type(type = "true_false")
     private Boolean active;
 
     private Date installment;
 
-    public InstallmentWiseDCB(long licenseid, String licensenumber, Boolean active, BigInteger currentdemand,
-                              BigInteger currentcollection, BigInteger currentbalance, BigInteger arreardemand,
-                              BigInteger arrearcollection, BigInteger arrearbalance) {
+    public InstallmentWiseDCB(long licenseid, String licensenumber, Boolean active, BigDecimal currentdemand,
+                              BigDecimal currentcollection, BigDecimal currentbalance, BigDecimal arreardemand,
+                              BigDecimal arrearcollection, BigDecimal arrearbalance) {
         this.licenseid = licenseid;
         this.licensenumber = licensenumber;
         this.active = active;
@@ -164,51 +164,51 @@ public class InstallmentWiseDCB {
         this.locality = locality;
     }
 
-    public BigInteger getCurrentdemand() {
+    public BigDecimal getCurrentdemand() {
         return currentdemand;
     }
 
-    public void setCurrentdemand(BigInteger currentdemand) {
+    public void setCurrentdemand(BigDecimal currentdemand) {
         this.currentdemand = currentdemand;
     }
 
-    public BigInteger getCurrentcollection() {
+    public BigDecimal getCurrentcollection() {
         return currentcollection;
     }
 
-    public void setCurrentcollection(BigInteger currentcollection) {
+    public void setCurrentcollection(BigDecimal currentcollection) {
         this.currentcollection = currentcollection;
     }
 
-    public BigInteger getCurrentbalance() {
+    public BigDecimal getCurrentbalance() {
         return currentbalance;
     }
 
-    public void setCurrentbalance(BigInteger currentbalance) {
+    public void setCurrentbalance(BigDecimal currentbalance) {
         this.currentbalance = currentbalance;
     }
 
-    public BigInteger getArreardemand() {
+    public BigDecimal getArreardemand() {
         return arreardemand;
     }
 
-    public void setArreardemand(BigInteger arreardemand) {
+    public void setArreardemand(BigDecimal arreardemand) {
         this.arreardemand = arreardemand;
     }
 
-    public BigInteger getArrearcollection() {
+    public BigDecimal getArrearcollection() {
         return arrearcollection;
     }
 
-    public void setArrearcollection(BigInteger arrearcollection) {
+    public void setArrearcollection(BigDecimal arrearcollection) {
         this.arrearcollection = arrearcollection;
     }
 
-    public BigInteger getArrearbalance() {
+    public BigDecimal getArrearbalance() {
         return arrearbalance;
     }
 
-    public void setArrearbalance(BigInteger arrearbalance) {
+    public void setArrearbalance(BigDecimal arrearbalance) {
         this.arrearbalance = arrearbalance;
     }
 
@@ -220,18 +220,18 @@ public class InstallmentWiseDCB {
         this.installment = installment;
     }
 
-    public BigInteger getTotaldemand() {
-        return (currentdemand == null ? BigInteger.ZERO : currentdemand).add(arreardemand == null ? BigInteger.ZERO
+    public BigDecimal getTotaldemand() {
+        return (currentdemand == null ? BigDecimal.ZERO : currentdemand).add(arreardemand == null ? BigDecimal.ZERO
                 : arreardemand);
     }
 
-    public BigInteger getTotalcollection() {
-        return (currentcollection == null ? BigInteger.ZERO : currentcollection)
-                .add(arrearcollection == null ? BigInteger.ZERO : arrearcollection);
+    public BigDecimal getTotalcollection() {
+        return (currentcollection == null ? BigDecimal.ZERO : currentcollection)
+                .add(arrearcollection == null ? BigDecimal.ZERO : arrearcollection);
     }
 
-    public BigInteger getTotalbalance() {
-        return (currentbalance == null ? BigInteger.ZERO : currentbalance).add(arrearbalance == null ? BigInteger.ZERO
+    public BigDecimal getTotalbalance() {
+        return (currentbalance == null ? BigDecimal.ZERO : currentbalance).add(arrearbalance == null ? BigDecimal.ZERO
                 : arrearbalance);
     }
 
