@@ -149,7 +149,7 @@ public class SchedularService {
                 .getSession()
                 .createQuery(
                         "select receipt from org.egov.collection.entity.OnlinePayment as receipt where receipt.status.code=:onlinestatuscode"
-                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate order by receipt.id desc ")
+                                + " and receipt.service.code=:paymentservicecode and receipt.createdDate<:thirtyminslesssysdate order by receipt.id asc")
                 .setMaxResults(50);
         qry.setString("onlinestatuscode", CollectionConstants.ONLINEPAYMENT_STATUS_CODE_PENDING);
         qry.setString("paymentservicecode", CollectionConstants.SERVICECODE_ATOM);
