@@ -47,6 +47,21 @@
  */
 package org.egov.wtms.web.controller.reports;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
+import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
+import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
+import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
+
+import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.ptis.constants.PropertyTaxConstants;
@@ -62,20 +77,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCALITY;
-import static org.egov.ptis.constants.PropertyTaxConstants.LOCATION_HIERARCHY_TYPE;
-import static org.egov.ptis.constants.PropertyTaxConstants.WARD;
-import static org.egov.ptis.constants.PropertyTaxConstants.ZONE;
-
 @Controller
 @RequestMapping(value = "/reports/arrear")
 public class ArrearRegisterReportController {
@@ -85,7 +86,6 @@ public class ArrearRegisterReportController {
 
     @Autowired
     private ArrearRegisterReportService arrearRegisterReportService;
-
 
     @ModelAttribute("zones")
     public List<Boundary> zones() {
@@ -115,37 +115,39 @@ public class ArrearRegisterReportController {
     @RequestMapping(method = RequestMethod.GET, value = "/arrearReportList")
     public String searchNoOfConnectionByBoundaryForm(final Model model) {
         model.addAttribute("currDate", new Date());
+        model.addAttribute("mode", "search");
         return "arrearRegister-report";
     }
+
     @RequestMapping(value = "/arrearReport", method = RequestMethod.POST)
-    public  String springPaginationDataTablesUpdate(final HttpServletRequest request,
-            final @ModelAttribute ArrearRegisterReport reportHealperObj, final HttpSession session,final Model model
-            ,final HttpServletResponse response) throws IOException {
-        final List<ArrearRegisterReport> propertyWiseInfoList = new ArrayList<ArrearRegisterReport>();
-        final List<ArrearReportInfo> arrearReportInfoList = new ArrayList<ArrearReportInfo>();
+    public String springPaginationDataTablesUpdate(final HttpServletRequest request,
+            final @ModelAttribute ArrearRegisterReport reportHealperObj, final HttpSession session, final Model model,
+            final HttpServletResponse response) throws IOException {
+        final List<ArrearRegisterReport> propertyWiseInfoList = new ArrayList<>();
+        final List<ArrearReportInfo> arrearReportInfoList = new ArrayList<>();
         new ArrearReportInfo();
         Long strZoneNum = null;
         Long strWardNum = null;
         Long strLocalityNum = null;
-        
-        if (reportHealperObj.getZone()!= null)
-        	strZoneNum =Long.valueOf(reportHealperObj.getZone());
-        
-        if (reportHealperObj.getWard() != null)
-            strWardNum =Long.valueOf(reportHealperObj.getWard());
-        if (reportHealperObj.getLocality() != null)
-        	strLocalityNum =Long.valueOf(reportHealperObj.getLocality());
-        
-        final List<WaterChargeMaterlizeView> propertyViewList = arrearRegisterReportService
-                .prepareQueryforArrearRegisterReport(strZoneNum,strWardNum,strLocalityNum);
 
-        for (final WaterChargeMaterlizeView propMatView : propertyViewList){
-        
-        	ArrearReportInfo arrearReportInfoObj=new ArrearReportInfo();
-        	arrearReportInfoObj.setBasicPropId(propMatView.getConnectiondetailsid());
-        	arrearReportInfoObj.setIndexNumber(propMatView.getHscno());
-        	arrearReportInfoObj.setOwnerName(propMatView.getUsername());
-        	arrearReportInfoObj.setHouseNo(propMatView.getHouseno());
+        if (reportHealperObj.getZone() != null)
+            strZoneNum = Long.valueOf(reportHealperObj.getZone());
+
+        if (reportHealperObj.getWard() != null)
+            strWardNum = Long.valueOf(reportHealperObj.getWard());
+        if (reportHealperObj.getLocality() != null)
+            strLocalityNum = Long.valueOf(reportHealperObj.getLocality());
+
+        final List<WaterChargeMaterlizeView> propertyViewList = arrearRegisterReportService
+                .prepareQueryforArrearRegisterReport(strZoneNum, strWardNum, strLocalityNum);
+
+        for (final WaterChargeMaterlizeView propMatView : propertyViewList) {
+
+            final ArrearReportInfo arrearReportInfoObj = new ArrearReportInfo();
+            arrearReportInfoObj.setBasicPropId(propMatView.getConnectiondetailsid());
+            arrearReportInfoObj.setIndexNumber(propMatView.getHscno());
+            arrearReportInfoObj.setOwnerName(propMatView.getUsername());
+            arrearReportInfoObj.setHouseNo(propMatView.getHouseno());
             // If there is only one Arrear Installment
             if (propMatView.getInstDmdColl().size() == 1) {
                 final InstDmdCollResponse currIDCMatView = propMatView.getInstDmdColl().iterator().next();
@@ -172,14 +174,14 @@ public class ArrearRegisterReportController {
                             propertyWiseInfoList.add(propertyWiseInfoTotal);
                             unitList.add(propertyWiseInfo.getArrearInstallmentDesc());
                             propertyWiseInfoTotal = propertyWiseInfo;
-                           
+
                         }
                     } // end of if - null condition
                     else
                         propertyWiseInfoList.add(propertyWiseInfoTotal);
                 }
             }
-            
+
             arrearReportInfoObj.getPropertyWiseArrearInfoList().addAll(propertyWiseInfoList);
             arrearReportInfoList.add(arrearReportInfoObj);
 
@@ -211,8 +213,7 @@ public class ArrearRegisterReportController {
      * @return
      */
     private ArrearRegisterReport preparePropertyWiseInfo(final InstDmdCollResponse currInstDmdColMatView) {
-         ArrearRegisterReport propertyWiseInfo = new ArrearRegisterReport();
-      //  propertyWiseInfo = preparePropInfo(currInstDmdColMatView.getWaterMatView());
+        final ArrearRegisterReport propertyWiseInfo = new ArrearRegisterReport();
         final Double totalTax = currInstDmdColMatView.getWaterCharge();
 
         propertyWiseInfo.setArrearInstallmentDesc(currInstDmdColMatView.getInstallment().getDescription());
@@ -223,20 +224,7 @@ public class ArrearRegisterReportController {
          * Total of Arrear Librarycess tax,general tax and penalty tax
          */
 
-        propertyWiseInfo.setTotalArrearTax(BigDecimal.valueOf(totalTax));
-        return propertyWiseInfo;
-    }
-
-    /**
-     * @param propMatView
-     * @return
-     */
-    private ArrearRegisterReport preparePropInfo(final WaterChargeMaterlizeView propMatView) {
-        final ArrearRegisterReport propertyWiseInfo = new ArrearRegisterReport();
-        propertyWiseInfo.setBasicPropId(propMatView.getConnectiondetailsid());
-        propertyWiseInfo.setIndexNumber(propMatView.getHscno());
-        propertyWiseInfo.setOwnerName(propMatView.getUsername());
-        propertyWiseInfo.setHouseNo(propMatView.getHouseno());
+        propertyWiseInfo.setTotalArrearTax(BigDecimal.valueOf(totalTax).subtract(propertyWiseInfo.getWaterChargeColl()));
         return propertyWiseInfo;
     }
 }

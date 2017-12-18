@@ -140,194 +140,171 @@
 								onclick="self.close()"> <spring:message code="lbl.close" /></a>
 						</div>
 					</div>
-			</div>
+				</div>
 			</form:form>
-				
-
-				<div class="col-md-12 form-group">
-					
-						
-      <table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
-                  <thead>
-					
-					<tr>
-						<th>
-							<div align="center">
-						IndexNumber
-						    </div>
-					
-							
-						</th>
-						<th>
-							<div align="center">
-						Applicant Name
-						    </div>
-					
-							
-						</th>
-						
-						<th>
-							<div align="center">
-						Door NUmber
-						    </div>
-					
-							
-						</th>
-						<th>
-						   <div align="center">
-					InstallmentDesc
-						    </div>
-							
-						</th>
-						<th>
-						   <div align="center">
-					ArrearDemand
-						    </div>
-							
-						</th>
-						
-						<th>
-						   <div align="center">
-					ArrearCollection
-						    </div>
-							
-						</th>
-						
-						<th>
-						   <div align="center">
-					TotaArrearDemand
-						    </div>
-							
-						</th>
-				
-					</tr>
-					</thead>
-					<tbody>
-					<c:forEach var="receipt" items="${arrearReportInfoList}" >
-					<tr>
-							<td >
-								<div align="center">
-								<c:out value="${receipt.indexNumber}" />
-								</div>
-							</td>
-							<td>
-								<div align="center">
-								<c:out value="${receipt.ownerName}" />
-								</div>
-							</td>
-							<td>
-								<div align="center">
-								<c:out value="${receipt.houseNo}" />
-								</div>
-							</td>
+	<c:if test="${mode!='search'}">
+	<div class="col-md-12 form-group">
+    	<table width="100%" border="1" align="center" cellpadding="0" cellspacing="0" class="table table-bordered">
+        	<thead>
+				<tr>
+					<th>
+						<div align="center">
+							HSC Number
+						</div>
+					</th>
+					<th>
+						<div align="center">
+							Applicant Name
+						</div>
+					</th>
+					<th>
+						<div align="center">
+							Door Number
+						</div>
+					</th>
+					<th>
+						<div align="center">
+							Installment
+						</div>
+					</th>
+					<th>
+						<div align="center">
+							Arrear Demand
+						</div>
+					</th>
+					<th>
+						<div align="center">
+							Arrear Collection
+						</div>
+					</th>
+					<th>
+						<div align="center">
+							Total Arrear Balance
+						</div>
+					</th>
+				</tr>
+			</thead>
+			<tbody>
+				<c:choose>
+						<c:when test="${not empty arrearReportInfoList}">
+							<c:forEach var="receipt" items="${arrearReportInfoList}" >
+								<tr>
+									<td>
+										<div align="center">
+											<c:out value="${receipt.indexNumber}" />
+										</div>
+									</td>
+									<td>
+										<div align="center">
+											<c:out value="${receipt.ownerName}" />
+										</div>
+									</td>
+									<td>
+										<div align="center">
+											<c:out value="${receipt.houseNo}" />
+										</div>
+									</td>
 							 
-							<c:forEach var="subreportdata" items="${receipt.propertyWiseArrearInfoList}" varStatus="loop">
-							
-							
-							<c:choose>
-							  <c:when test="${loop.index eq 0}">
-							    	<td>
-								<div align="center">
-								<c:out value="${subreportdata.arrearInstallmentDesc}" />
-								</div>
-								</td>
-								
-								<td>
-									<div align="center">
-								<c:out value="${subreportdata.waterCharge}" />
-								</div>
-								</td>
-								
-								<td>
-									<div align="center">
-								<c:out value="${subreportdata.waterChargeColl}" />
-								</div>
-								</td>
-								<td>
-									<div align="center">
-								<c:out value="${subreportdata.totalArrearTax}" />
-								</div>
-								</td>
-								
-								</tr>
-							  </c:when>
-							  
-							  <c:when test="${loop.index eq 0}">
-							    	<td>
-								<div align="center">
-								<c:out value="${subreportdata.arrearInstallmentDesc}" />
-								</div>
-								</td>
-								
-								<td>
-									<div align="center">
-								<c:out value="${subreportdata.waterCharge}" />
-								</div>
-								</td>
-								
-								<td>
-									<div align="center">
-								<c:out value="${subreportdata.waterChargeColl}" />
-								</div>
-								</td>
-								<td>
-									<div align="center">
-								<c:out value="${subreportdata.totalArrearTax}" />
-								</div>
-								</td>
-								
-								</tr>
-							  </c:when>
-							  
-							  <c:otherwise>
-							    
-							    <tr>
-							    
-							        <td colspan="3"></td>
-							    
-								    <td>
-									<div align="center">
-									<c:out value="${subreportdata.arrearInstallmentDesc}" />
-									</div>
-									</td>
-									
+									<c:forEach var="subreportdata" items="${receipt.propertyWiseArrearInfoList}" varStatus="loop">
+										<c:choose>
+										  <c:when test="${loop.index eq 0}">
+										    <td>
+												<div align="center">
+													<c:out value="${subreportdata.arrearInstallmentDesc}" />
+												</div>
+											</td>
+											<td>
+												<div align="center">
+													<c:out value="${subreportdata.waterCharge}" />
+												</div>
+											</td>
+											<td>
+												<div align="center">
+											<c:out value="${subreportdata.waterChargeColl}" />
+											</div>
+											</td>
+											<td>
+												<div align="center">
+													<c:out value="${subreportdata.totalArrearTax}" />
+												</div>
+											</td>
+											</tr>
+										  </c:when>
+										  
+										  <c:when test="${loop.index eq 0}">
+										    <td>
+												<div align="center">
+													<c:out value="${subreportdata.arrearInstallmentDesc}" />
+												</div>
+											</td>
+											<td>
+												<div align="center">
+													<c:out value="${subreportdata.waterCharge}" />
+												</div>
+											</td>
+											<td>
+												<div align="center">
+													<c:out value="${subreportdata.waterChargeColl}" />
+												</div>
+											</td>
+											<td>
+												<div align="center">
+													<c:out value="${subreportdata.totalArrearTax}" />
+												</div>
+											</td>
+											</tr>
+										  </c:when>
+										  <c:otherwise>
+										    <tr>
+										        <td colspan="3"></td>
+											    <td>
+													<div align="center">
+														<c:out value="${subreportdata.arrearInstallmentDesc}" />
+													</div>
+												</td>
+												<td>
+													<div align="center">
+														<c:out value="${subreportdata.waterCharge}" />
+													</div>
+												</td>
+												<td>
+													<div align="center">
+														<c:out value="${subreportdata.waterChargeColl}" />
+													</div>
+												</td>
+												<td>
+													<div align="center">
+														<c:out value="${subreportdata.totalArrearTax}" />
+													</div>
+												</td>
+											</tr>
+										  </c:otherwise>
+										</c:choose>
+									</c:forEach>
+								</c:forEach> 
+							</c:when>
+							<c:otherwise>
+								<tr>
 									<td>
-										<div align="center">
-									<c:out value="${subreportdata.waterCharge}" />
-									</div>
+									<c:out value="No data available"/>
 									</td>
-									
-									<td>
-										<div align="center">
-									<c:out value="${subreportdata.waterChargeColl}" />
-									</div>
-									</td>
-									<td>
-										<div align="center">
-									<c:out value="${subreportdata.totalArrearTax}" />
-									</div>
-									</td>
-								
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
+									<td></td>
 								</tr>
-							    
-							  </c:otherwise>
-							</c:choose>
-							
-							
-						
-							</c:forEach>
-							
-					
-						</c:forEach> 	
-						</tbody>
-					</table>
-    
-    
+							</c:otherwise>
+				</c:choose>
+			</tbody>
+		</table>
      </div>
+     </c:if>
      </div>
 	</div>
 </div>
-
+</div>
 <link rel="stylesheet"
 	href="<cdn:url value='/resources/global/js/jquery/plugins/datatables/responsive/css/datatables.responsive.css' context='/egi'/>">
 <link rel="stylesheet" href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>
