@@ -111,6 +111,9 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SewerageNoticeService {
 
+    private static final String TOTAL_CHARGES = "totalCharges";
+    private static final String NO_OF_SEATS_RESIDENTIAL = "noOfSeatsResidential";
+    private static final String NO_OF_SEATS_NON_RESIDENTIAL = "noOfSeatsNonResidential";
     public static final String ESTIMATION_NOTICE = "sewerageEstimationNotice";
     public static final String REJECTION_NOTICE = "sewerageRejectionNotice";
     public static final String SANCTION_NOTICE = "sewerageSanctionNotice";
@@ -301,7 +304,7 @@ public class SewerageNoticeService {
             final BigDecimal totalCharges =  estimationCharges.add(donationCharges);
             reportParams.put("estimationCharges", estimationCharges);
             reportParams.put("donationCharges", donationCharges);
-            reportParams.put("totalCharges", totalCharges);
+            reportParams.put(TOTAL_CHARGES, totalCharges);
             reportParams.put("amountInWords", getTotalAmountInWords(totalCharges));
             reportParams.put("applicationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
@@ -383,12 +386,13 @@ public class SewerageNoticeService {
                     sewerageApplicationDetails.getCurrentState().getOwnerPosition().getId(), user.getId(), new Date());
             loggedInUserDesignationForReg = !loggedInUserAssignmentForRegistration.isEmpty()
                     ? loggedInUserAssignmentForRegistration.get(0).getDesignation().getName() : null;
-            if (loggedInUserDesignationForReg != null &&  SewerageTaxConstants.DESIGNATION_COMMISSIONER.equalsIgnoreCase(loggedInUserDesignationForReg))
+            if (loggedInUserDesignationForReg != null
+                    && SewerageTaxConstants.DESIGNATION_COMMISSIONER.equalsIgnoreCase(loggedInUserDesignationForReg))
                 reportParams.put(IS_COMMISSIONER, true);
             else
                 reportParams.put(IS_COMMISSIONER, false);
             reportParams.put("userSignature",
-                    user.getSignature() != null ? new ByteArrayInputStream(user.getSignature()) : "");
+                   null!= user.getSignature()? new ByteArrayInputStream(user.getSignature()) : "");
             reportParams.put("applicationtype", stmsMessageSource.getMessage("msg.new.sewerage.conn", null, null));
             reportParams.put("municipality", cityService.getMunicipalityName());
             reportParams.put("district", cityService.getDistrictName());
@@ -422,13 +426,13 @@ public class SewerageNoticeService {
             reportParams.put("estimationCharges", estimationCharges);
             reportParams.put("donationCharges", donationCharges);
             reportParams.put("sewerageTax", sewerageCharges);
-            reportParams.put("totalCharges", donationCharges.add(sewerageCharges).add(estimationCharges));
+            reportParams.put(TOTAL_CHARGES, donationCharges.add(sewerageCharges).add(estimationCharges));
 
             reportParams.put("assessmentNo", sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-            reportParams.put("noOfSeatsResidential", null!=sewerageApplicationDetails.getConnectionDetail()
+            reportParams.put(NO_OF_SEATS_RESIDENTIAL, null!=sewerageApplicationDetails.getConnectionDetail()
                     .getNoOfClosetsResidential()?sewerageApplicationDetails.getConnectionDetail()
                             .getNoOfClosetsResidential():0);
-            reportParams.put("noOfSeatsNonResidential",  null!=sewerageApplicationDetails.getConnectionDetail()
+            reportParams.put(NO_OF_SEATS_NON_RESIDENTIAL,  null!=sewerageApplicationDetails.getConnectionDetail()
                     .getNoOfClosetsNonResidential()?sewerageApplicationDetails.getConnectionDetail()
                             .getNoOfClosetsResidential():0);
             reportParams.put("revenueWardNo", assessmentDetails.getBoundaryDetails().getWardName());
@@ -549,9 +553,9 @@ public class SewerageNoticeService {
                             .getEmployee().getName());
 
             reportParams.put("assessmentNo", sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
-            reportParams.put("noOfSeatsResidential", sewerageApplicationDetails.getConnectionDetail()
+            reportParams.put(NO_OF_SEATS_RESIDENTIAL, sewerageApplicationDetails.getConnectionDetail()
                     .getNoOfClosetsResidential());
-            reportParams.put("noOfSeatsNonResidential", sewerageApplicationDetails.getConnectionDetail()
+            reportParams.put(NO_OF_SEATS_NON_RESIDENTIAL, sewerageApplicationDetails.getConnectionDetail()
                     .getNoOfClosetsNonResidential());
             reportParams.put("revenueWardNo", assessmentDetails.getBoundaryDetails().getWardName());
             reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
