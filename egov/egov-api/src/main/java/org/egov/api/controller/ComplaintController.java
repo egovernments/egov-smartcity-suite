@@ -201,7 +201,8 @@ public class ComplaintController extends ApiController {
      *
      * @return ComplaintType
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_TYPES_BY_CATEGORIES, "/cross-city/complaint/getComplaintCategories"}, method = GET, produces = {MediaType.TEXT_PLAIN_VALUE})
+    @RequestMapping(value = {ApiUrl.COMPLAINT_TYPES_BY_CATEGORIES, "/cross-city/complaint/getComplaintCategories"},
+            method = GET, produces = {MediaType.TEXT_PLAIN_VALUE})
     public ResponseEntity<String> getAllComplaintCategories() {
         try {
 
@@ -530,7 +531,8 @@ public class ComplaintController extends ApiController {
      * @param locationName
      * @return
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_LOCATION, "/cross-city/complaint/getLocation"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_LOCATION, "/cross-city/complaint/getLocation"},
+            method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLocation(@RequestParam("locationName") final String locationName) {
         try {
             if (locationName == null || locationName.isEmpty() || locationName.length() < 3)
@@ -763,7 +765,8 @@ public class ComplaintController extends ApiController {
 
     }
 
-    @RequestMapping(value = {ApiUrl.COMPLAINT_HISTORY, "/cross-city/complaint/{complaintNo}/complaintHistory"}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_HISTORY, "/cross-city/complaint/{complaintNo}/complaintHistory"},
+            method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintHistory(@PathVariable final String complaintNo) {
         try {
             final HashMap<String, Object> container = new HashMap<>();
