@@ -573,7 +573,8 @@ public class ComplaintController extends ApiController {
      */
 
     @RequestMapping(value = {
-            ApiUrl.CITIZEN_COMPLAINT_COUNT}, method = GET, produces = TEXT_PLAIN_VALUE)
+            ApiUrl.CITIZEN_COMPLAINT_COUNT, "/cross-city/citizen/getMyComplaint/count"},
+            method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsCount() {
         try {
             return getResponseHandler().success(complaintService.getMyComplaintsCount());
