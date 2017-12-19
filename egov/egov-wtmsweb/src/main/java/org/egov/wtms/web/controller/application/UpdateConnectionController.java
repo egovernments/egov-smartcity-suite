@@ -121,6 +121,7 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
@@ -312,6 +313,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_FEEPAID)) {
             final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
             model.addAttribute("chairPerson", chairPerson);
+            model.addAttribute("sanctionDateLowerLimit", DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(), new Date()));
+
         }
 
         appendModeBasedOnApplicationCreator(model, request, waterConnectionDetails);
