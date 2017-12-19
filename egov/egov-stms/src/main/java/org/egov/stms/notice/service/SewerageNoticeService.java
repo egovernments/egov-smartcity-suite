@@ -69,6 +69,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.lang.WordUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.demand.model.EgDemand;
 import org.egov.demand.model.EgDemandDetails;
@@ -111,6 +112,16 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 public class SewerageNoticeService {
 
+    private static final String DISTRICT = "district";
+    private static final String ASSESSMENT_NO = "assessmentNo";
+    private static final String EXCEPTION_IN_ADD_FILES_TO_ZIP = "Exception in addFilesToZip : ";
+    private static final String PRESENT_COMMISSIONER = "presentCommissioner";
+    private static final String SEWERAGE_TAX = "sewerageTax";
+    private static final String APPLICATION_TYPE = "applicationType";
+    private static final String ESTIMATION_CHARGES = "estimationCharges";
+    private static final String DONATION_CHARGES = "donationCharges";
+    private static final String ADDRESS = "address";
+    private static final String APPLICATION_DATE = "applicationDate";
     private static final String TOTAL_CHARGES = "totalCharges";
     private static final String NO_OF_SEATS_RESIDENTIAL = "noOfSeatsResidential";
     private static final String NO_OF_SEATS_NON_RESIDENTIAL = "noOfSeatsNonResidential";
@@ -278,19 +289,16 @@ public class SewerageNoticeService {
                     break;
                 }
 
-            if (SewerageTaxConstants.NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
-                    .getApplicationType().getCode()))
-                reportParams.put("applicationType",
-                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
-            else
-                reportParams.put("applicationType",
+            if (sewerageApplicationDetails
+                    .getApplicationType() != null)
+                reportParams.put(APPLICATION_TYPE,
                         WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             reportParams.put("cityName", cityService.getMunicipalityName());
-            reportParams.put("district", cityService.getDistrictName());
+            reportParams.put(DISTRICT, cityService.getDistrictName());
             reportParams.put("estimationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("cityLogo", cityService.getCityLogoURL());
             reportParams.put("estimationNumber", sewerageApplicationDetails.getEstimationNumber());
-            reportParams.put("assessmentNo", sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+            reportParams.put(ASSESSMENT_NO, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             if (sewerageApplicationDetails.getCurrentDemand() != null)
                 for (final EgDemandDetails egDmdDetails : sewerageApplicationDetails.getCurrentDemand().getEgDemandDetails())
                     if (egDmdDetails.getEgDemandReason().getEgDemandReasonMaster().getCode()
@@ -298,17 +306,21 @@ public class SewerageNoticeService {
                         donationCharges = egDmdDetails.getAmount().subtract(egDmdDetails.getAmtCollected());
             // TODO: CHECK THIS LOGIC AGAIN. IF FEE TYPE IS ESTIMATION FEES,
             // THEN WE NEED TO GROUP ALL FEESES.
-            for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees())
+            for (final SewerageConnectionFee scf : sewerageApplicationDetails.getConnectionFees()){
                 if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE))
                     estimationCharges = BigDecimal.valueOf(scf.getAmount());
-            final BigDecimal totalCharges =  estimationCharges.add(donationCharges);
-            reportParams.put("estimationCharges", estimationCharges);
-            reportParams.put("donationCharges", donationCharges);
+                if (scf.getFeesDetail().getCode().equalsIgnoreCase(SewerageTaxConstants.FEES_SEWERAGETAX_CODE))
+                    sewerageCharges = BigDecimal.valueOf(scf.getAmount());
+            }
+            final BigDecimal totalCharges =  estimationCharges.add(donationCharges).add(sewerageCharges);
+            reportParams.put(ESTIMATION_CHARGES, estimationCharges);
+            reportParams.put(DONATION_CHARGES, donationCharges);
+            reportParams.put("sewerageCharges", sewerageCharges);
             reportParams.put(TOTAL_CHARGES, totalCharges);
             reportParams.put("amountInWords", getTotalAmountInWords(totalCharges));
-            reportParams.put("applicationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
+            reportParams.put(APPLICATION_DATE, getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportParams.put("applicantName", ownerName);
-            reportParams.put("address", assessmentDetails.getPropertyAddress());
+            reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
             reportParams.put("inspectionDetails", sewerageApplicationDetails.getFieldInspections().get(0)
                     .getFieldInspectionDetails());
             reportParams.put("houseNo", doorNo != null ? doorNo[0] : "");
@@ -321,6 +333,10 @@ public class SewerageNoticeService {
     public ReportOutput generateReportOutputDataForRejection(final SewerageApplicationDetails sewerageApplicationDetails,
             final HttpSession session,
             final HttpServletRequest request) {
+        final List<Assignment> assignList = assignmentService
+                .getAllActiveAssignments(
+                        designationService.getDesignationByName(
+                                SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId());
 
         ReportRequest reportInput = null;
         final Map<String, Object> reportParams = new HashMap<>();
@@ -335,22 +351,16 @@ public class SewerageNoticeService {
                     ownerName = names.getOwnerName();
                     break;
                 }
-            reportParams.put("applicationType",
+            reportParams.put(APPLICATION_TYPE,
                     WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
-
             reportParams.put("applicantName", ownerName);
             reportParams.put("cityName", session.getAttribute("citymunicipalityname"));
             reportParams.put("remarks", request.getParameter("approvalComent"));
             reportParams.put("rejectionDate", getDefaultFormattedDate(sewerageApplicationDetails.getRejectionDate()));
             reportParams.put("rejectionNumber", sewerageApplicationDetails.getRejectionNumber());
-            reportParams.put(
-                    "presentCommissioner",
-                    assignmentService
-                    .getAllActiveAssignments(
-                            designationService.getDesignationByName(
-                                    SewerageTaxConstants.DESIGNATION_COMMISSIONER).getId())
-                            .get(0)
-                            .getEmployee().getName());// FIXME: IF ASSIGNMENT NOT PRESENT THEN ?
+            reportParams.put(PRESENT_COMMISSIONER, assignList == null ? StringUtils.EMPTY: assignList
+                    .get(0)
+                    .getEmployee().getName());
             reportInput = new ReportRequest(REJECTION_NOTICE, sewerageApplicationDetails,
                     reportParams);
 
@@ -372,11 +382,8 @@ public class SewerageNoticeService {
                 break;
             }
 
-            if (SewerageTaxConstants.NEWSEWERAGECONNECTION.equalsIgnoreCase(sewerageApplicationDetails
-                    .getApplicationType().getCode()))
-                reportParams.put("conntitle",
-                        WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
-            else
+            if (sewerageApplicationDetails
+                    .getApplicationType() != null)
                 reportParams.put("conntitle",
                         WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             final User user = securityUtils.getCurrentUser();
@@ -395,10 +402,10 @@ public class SewerageNoticeService {
                    user.getSignature() == null?"":new ByteArrayInputStream(user.getSignature()));
             reportParams.put("applicationtype", stmsMessageSource.getMessage("msg.new.sewerage.conn", null, null));
             reportParams.put("municipality", cityService.getMunicipalityName());
-            reportParams.put("district", cityService.getDistrictName());
+            reportParams.put(DISTRICT, cityService.getDistrictName());
             reportParams.put("purpose", null);
             reportParams.put(
-                    "presentCommissioner",
+                    PRESENT_COMMISSIONER,
                     assignmentService
                             .getAllActiveAssignments(
                                     designationService.getDesignationByName(
@@ -418,17 +425,17 @@ public class SewerageNoticeService {
             } else if (sewerageApplicationDetails.getCurrentDemand() != null) {
                 final Map<String, BigDecimal> donationSewerageFeesDtls = getFeesForChangeInClosets(
                         sewerageApplicationDetails.getCurrentDemand());
-                estimationCharges = donationSewerageFeesDtls.get("estimationCharges");
-                donationCharges = donationSewerageFeesDtls.get("donationCharges");
-                sewerageCharges = donationSewerageFeesDtls.get("sewerageTax");
+                estimationCharges = donationSewerageFeesDtls.get(ESTIMATION_CHARGES);
+                donationCharges = donationSewerageFeesDtls.get(DONATION_CHARGES);
+                sewerageCharges = donationSewerageFeesDtls.get(SEWERAGE_TAX);
             }
             reportParams.put("cityLogo", cityService.getCityLogoURL());
-            reportParams.put("estimationCharges", estimationCharges);
-            reportParams.put("donationCharges", donationCharges);
-            reportParams.put("sewerageTax", sewerageCharges);
+            reportParams.put(ESTIMATION_CHARGES, estimationCharges);
+            reportParams.put(DONATION_CHARGES, donationCharges);
+            reportParams.put(SEWERAGE_TAX, sewerageCharges);
             reportParams.put(TOTAL_CHARGES, donationCharges.add(sewerageCharges).add(estimationCharges));
 
-            reportParams.put("assessmentNo", sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+            reportParams.put(ASSESSMENT_NO, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             reportParams.put(NO_OF_SEATS_RESIDENTIAL,sewerageApplicationDetails.getConnectionDetail()
                     .getNoOfClosetsResidential()== null?0:sewerageApplicationDetails.getConnectionDetail()
                             .getNoOfClosetsResidential());
@@ -444,9 +451,9 @@ public class SewerageNoticeService {
             if (sewerageApplicationDetails.getConnection().getShscNumber() != null)
                 reportParams.put("consumerNumber", sewerageApplicationDetails.getConnection().getShscNumber());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
-            reportParams.put("address", assessmentDetails.getPropertyAddress());
+            reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
-            reportParams.put("applicationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
+            reportParams.put(APPLICATION_DATE, getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportInput = new ReportRequest(SANCTION_NOTICE, sewerageApplicationDetails, reportParams);
         }
         return reportService.createReport(reportInput);
@@ -471,9 +478,9 @@ public class SewerageNoticeService {
                 else if (SewerageTaxConstants.FEES_ESTIMATIONCHARGES_CODE
                         .equalsIgnoreCase(dmdDtl.getEgDemandReason().getEgDemandReasonMaster().getCode()))
                     currentEstimationCharges = currentEstimationCharges.add(collectedReceipt.getReasonAmount());
-        donationSewerageFees.put("donationCharges", totalDontationCharge);
-        donationSewerageFees.put("sewerageTax", totalSewerageTax);
-        donationSewerageFees.put("estimationCharges", currentEstimationCharges);
+        donationSewerageFees.put(DONATION_CHARGES, totalDontationCharge);
+        donationSewerageFees.put(SEWERAGE_TAX, totalSewerageTax);
+        donationSewerageFees.put(ESTIMATION_CHARGES, currentEstimationCharges);
         return donationSewerageFees;
     }
 
@@ -496,13 +503,13 @@ public class SewerageNoticeService {
             inputStream.close();
 
         } catch (final IllegalArgumentException iae) {
-            LOGGER.error("Exception in addFilesToZip : ", iae);
+            LOGGER.error(EXCEPTION_IN_ADD_FILES_TO_ZIP, iae);
             throw new ValidationException(Arrays.asList(new ValidationError("error", iae.getMessage())));
         } catch (final FileNotFoundException fnfe) {
-            LOGGER.error("Exception in addFilesToZip : ", fnfe);
+            LOGGER.error(EXCEPTION_IN_ADD_FILES_TO_ZIP, fnfe);
             throw new ValidationException(Arrays.asList(new ValidationError("error", fnfe.getMessage())));
         } catch (final IOException ioe) {
-            LOGGER.error("Exception in addFilesToZip : ", ioe);
+            LOGGER.error(EXCEPTION_IN_ADD_FILES_TO_ZIP, ioe);
             throw new ValidationException(Arrays.asList(new ValidationError("error", ioe.getMessage())));
         }
         if (LOGGER.isDebugEnabled())
@@ -541,10 +548,10 @@ public class SewerageNoticeService {
             reportParams.put("conntitle",
                     WordUtils.capitalize(sewerageApplicationDetails.getApplicationType().getName()));
             reportParams.put("municipality", session.getAttribute("citymunicipalityname"));
-            reportParams.put("district", session.getAttribute("districtName"));
+            reportParams.put(DISTRICT, session.getAttribute("districtName"));
 
             reportParams.put(
-                    "presentCommissioner",
+                    PRESENT_COMMISSIONER,
                     assignmentService
                     .getAllActiveAssignments(
                             designationService.getDesignationByName(
@@ -552,7 +559,7 @@ public class SewerageNoticeService {
                             .get(0)
                             .getEmployee().getName());
 
-            reportParams.put("assessmentNo", sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
+            reportParams.put(ASSESSMENT_NO, sewerageApplicationDetails.getConnectionDetail().getPropertyIdentifier());
             reportParams.put(NO_OF_SEATS_RESIDENTIAL, sewerageApplicationDetails.getConnectionDetail()
                     .getNoOfClosetsResidential());
             reportParams.put(NO_OF_SEATS_NON_RESIDENTIAL, sewerageApplicationDetails.getConnectionDetail()
@@ -563,9 +570,9 @@ public class SewerageNoticeService {
             reportParams.put("eeApprovalDate", getDefaultFormattedDate(sewerageApplicationDetails.getLastModifiedDate()));
             reportParams.put("consumerNumber", sewerageApplicationDetails.getConnection().getShscNumber());
             reportParams.put("applicantname", WordUtils.capitalize(ownerName));
-            reportParams.put("address", assessmentDetails.getPropertyAddress());
+            reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
             reportParams.put("doorno", doorno[0]);
-            reportParams.put("applicationDate", getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
+            reportParams.put(APPLICATION_DATE, getDefaultFormattedDate(sewerageApplicationDetails.getApplicationDate()));
             reportInput = new ReportRequest(CLOSECONNECTIONNOTICE, sewerageApplicationDetails, reportParams);
         }
         return reportService.createReport(reportInput);
