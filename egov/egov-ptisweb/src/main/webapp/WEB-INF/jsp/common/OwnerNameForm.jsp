@@ -114,7 +114,7 @@
 			  <td class="blueborderfortd" align="center">
         			+91 <s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.mobileNumber" maxlength="10" size="20" id="mobileNumber" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.mobileNumber}" 
         				onblur="getUserDetailsForMobileNo(this);validNumber(this);checkZero(this,'Mobile Number');" data-idx="%{#ownerStatus.index}" data-optional="0" data-errormsg="Mobile no is mandatory!" />
-        			<s:checkbox name="editMobileno[%{#ownerStatus.index}]" class="mobilecheckbox" id="editMobileno[%{#ownerStatus.index}]" onclick="enableMobileNumber(this);" data-idx="%{#ownerStatus.index}" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" /></div>
+        			<s:checkbox name="editMobileno[%{#ownerStatus.index}]" class="mobilecheckbox" id="editMobileno[%{#ownerStatus.index}]" onclick="enableMobileNumber(this);" data-idx="%{#ownerStatus.index}" data-toggle="tooltip" data-placement="top" title="Citizen confirmed that his/her mobile no is changed" />
         		</td>
         		<td class="blueborderfortd" align="center">
         			<s:textfield name="basicProperty.propertyOwnerInfoProxy[%{#ownerStatus.index}].owner.name" maxlength="74" size="20" id="ownerName" value="%{basicProperty.propertyOwnerInfoProxy[#ownerStatus.index].owner.name}" 
