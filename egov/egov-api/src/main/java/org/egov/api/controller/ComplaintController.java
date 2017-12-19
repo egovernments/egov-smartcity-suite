@@ -99,7 +99,6 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -133,6 +132,7 @@ import static org.apache.commons.lang3.StringUtils.isEmpty;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.validation.regex.Constants.EMAIL;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @org.springframework.web.bind.annotation.RestController
@@ -202,7 +202,7 @@ public class ComplaintController extends ApiController {
      * @return ComplaintType
      */
     @RequestMapping(value = {ApiUrl.COMPLAINT_TYPES_BY_CATEGORIES, "/cross-city/complaint/getComplaintCategories"},
-            method = GET, produces = {MediaType.TEXT_PLAIN_VALUE})
+            method = GET, produces = {TEXT_PLAIN_VALUE})
     public ResponseEntity<String> getAllComplaintCategories() {
         try {
 
@@ -253,7 +253,7 @@ public class ComplaintController extends ApiController {
      *
      * @return ComplaintType
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_TYPES}, method = GET, produces = {MediaType.TEXT_PLAIN_VALUE})
+    @RequestMapping(value = {ApiUrl.COMPLAINT_GET_TYPES}, method = GET, produces = {TEXT_PLAIN_VALUE})
     public ResponseEntity<String> getAllTypes() {
         try {
             final List<ComplaintType> complaintTypes = complaintTypeService.findActiveComplaintTypes();
@@ -272,7 +272,7 @@ public class ComplaintController extends ApiController {
      * @return ComplaintType
      */
     @RequestMapping(value = {ApiUrl.COMPLAINT_GET_FREQUENTLY_FILED_TYPES}, method = GET, produces = {
-            MediaType.TEXT_PLAIN_VALUE})
+            TEXT_PLAIN_VALUE})
     public ResponseEntity<String> getFrequentTypes() {
         try {
             final List<ComplaintType> complaintTypes = complaintTypeService.getFrequentlyFiledComplaints();
@@ -446,7 +446,7 @@ public class ComplaintController extends ApiController {
      * @param complaintNo
      * @return Complaint
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_DETAIL}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_DETAIL}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getDetail(@PathVariable final String complaintNo) {
         try {
             if (complaintNo == null)
@@ -477,7 +477,7 @@ public class ComplaintController extends ApiController {
      * @param complaintNo
      * @return Complaint
      */
-    @RequestMapping(value = {ApiUrl.COMPLAINT_STATUS}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_STATUS}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getStatus(@PathVariable final String complaintNo) {
         try {
             if (complaintNo == null)
@@ -506,7 +506,7 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = {ApiUrl.COMPLAINT_LATEST}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = {ApiUrl.COMPLAINT_LATEST}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLatest(@PathVariable("page") final int page, @PathVariable("pageSize") final int pageSize) {
 
         if (page < 1)
@@ -532,7 +532,7 @@ public class ComplaintController extends ApiController {
      * @return
      */
     @RequestMapping(value = {ApiUrl.COMPLAINT_GET_LOCATION, "/cross-city/complaint/getLocation"},
-            method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getLocation(@RequestParam("locationName") final String locationName) {
         try {
             if (locationName == null || locationName.isEmpty() || locationName.length() < 3)
@@ -554,7 +554,7 @@ public class ComplaintController extends ApiController {
      */
 
     @RequestMapping(value = {
-            ApiUrl.COMPLAINT_RESOLVED_UNRESOLVED_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.COMPLAINT_RESOLVED_UNRESOLVED_COUNT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsTotalCount() {
         try {
             return getResponseHandler().success(complaintService.getComplaintsTotalCount());
@@ -573,7 +573,7 @@ public class ComplaintController extends ApiController {
      */
 
     @RequestMapping(value = {
-            ApiUrl.CITIZEN_COMPLAINT_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.CITIZEN_COMPLAINT_COUNT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsCount() {
         try {
             return getResponseHandler().success(complaintService.getMyComplaintsCount());
@@ -594,7 +594,7 @@ public class ComplaintController extends ApiController {
      */
 
     @RequestMapping(value = {
-            ApiUrl.CITIZEN_GET_MY_COMPLAINT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.CITIZEN_GET_MY_COMPLAINT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyComplaint(@PathVariable("page") final int page,
                                                  @PathVariable("pageSize") final int pageSize,
                                                  @RequestParam(value = "complaintStatus", required = false) final String complaintStatus) {
@@ -645,7 +645,7 @@ public class ComplaintController extends ApiController {
      * @param distance
      * @return Complaint
      */
-    @RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.COMPLAINT_NEARBY, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getNearByComplaint(@PathVariable("page") final int page, @RequestParam("lat") final float lat,
                                                      @RequestParam("lng") final float lng, @RequestParam("distance") final long distance,
                                                      @PathVariable("pageSize") final int pageSize) {
@@ -678,7 +678,7 @@ public class ComplaintController extends ApiController {
      * @return file
      */
 
-    @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = RequestMethod.GET)
+    @RequestMapping(value = ApiUrl.COMPLAINT_DOWNLOAD_SUPPORT_DOCUMENT, method = GET)
     public void getComplaintDoc(@PathVariable final String complaintNo,
                                 @RequestParam(value = "fileNo", required = false) Integer fileNo,
                                 @RequestParam(value = "isThumbnail", required = false, defaultValue = "false") final boolean isThumbnail,
@@ -712,7 +712,6 @@ public class ComplaintController extends ApiController {
                     final OutputStream out = response.getOutputStream();
                     IOUtils.write(isThumbnail ? thumbImg.toByteArray() : FileUtils.readFileToByteArray(downloadFile),
                             out);
-                    IOUtils.closeQuietly(out);
                     break;
                 }
                 i++;
@@ -737,7 +736,7 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = ApiUrl.COMPLAINT_UPDATE_STATUS, method = RequestMethod.PUT, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.COMPLAINT_UPDATE_STATUS, method = RequestMethod.PUT, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateComplaintStatus(
             @PathVariable final String complaintNo, @RequestBody final JSONObject jsonData) {
 
@@ -766,7 +765,7 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = {ApiUrl.COMPLAINT_HISTORY, "/cross-city/complaint/{complaintNo}/complaintHistory"},
-            method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintHistory(@PathVariable final String complaintNo) {
         try {
             final HashMap<String, Object> container = new HashMap<>();
@@ -782,7 +781,7 @@ public class ComplaintController extends ApiController {
     /* EMPLOYEE RELATED COMPLAINT OPERATIONS START */
 
     // get complaint available status and forward departments
-    @RequestMapping(value = ApiUrl.EMPLOYEE_COMPLAINT_ACTIONS, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.EMPLOYEE_COMPLAINT_ACTIONS, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintActions(@PathVariable final String complaintNo) {
         try {
 
@@ -802,7 +801,7 @@ public class ComplaintController extends ApiController {
         }
     }
 
-    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = MediaType.TEXT_PLAIN_VALUE)
+    @RequestMapping(value = ApiUrl.EMPLOYEE_UPDATE_COMPLAINT, method = RequestMethod.POST, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> updateComplaintFromEmployee(@PathVariable final String complaintNo,
                                                               @RequestParam(value = "jsonParams", required = false) final String complaintJsonStr,
                                                               @RequestParam("files") final MultipartFile[] files) {
@@ -841,7 +840,7 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = {
-            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getRoutedComplaints(@PathVariable("page") final int page,
                                                       @PathVariable("pageSize") final int pageSize) {
         if (page < 0)
@@ -870,7 +869,7 @@ public class ComplaintController extends ApiController {
     }
 
     @RequestMapping(value = {
-            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT}, method = RequestMethod.GET, produces = MediaType.TEXT_PLAIN_VALUE)
+            ApiUrl.EMPLOYEE_GET_ROUTED_COMPLAINT_COUNT}, method = GET, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getMyRoutedComplaintCount() {
         return getResponseHandler().setDataAdapter(new ComplaintAdapter()).success(complaintService.getActedUponComplaintCount().size());
     }
