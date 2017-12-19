@@ -348,7 +348,7 @@ public class CollectionCommon {
         LOGGER.info(" template name : " + templateName);
         final Map<String, Object> reportParams = new HashMap<>(0);
         reportParams.put(CollectionConstants.REPORT_PARAM_COLLECTIONS_UTIL, collectionsUtil);
-        reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
+        reportParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         if (receiptType == CollectionConstants.RECEIPT_TYPE_CHALLAN) {
             reportParams.put(CollectionConstants.REPORT_PARAM_EGOV_COMMON, egovCommon);
             for (final ReceiptHeader receiptHeader : receipts) {

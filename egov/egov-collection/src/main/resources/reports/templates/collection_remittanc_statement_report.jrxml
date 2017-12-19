@@ -124,7 +124,7 @@
 		<parameterDescription><![CDATA[where clause query for bank collection bank branch id]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_BANKCOLL_BANKBRANCH_ID} == null || $P{EGOV_BANKCOLL_BANKBRANCH_ID} == -1) ? "" : "AND CHMIS.depositedbranch = " + $P{EGOV_BANKCOLL_BANKBRANCH_ID}]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH"  class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[select * from (select distinct CH.receiptnumber as RECEIPT_NUMBER ,to_char(date(CH.receiptdate),'DD/mm/YYYY')as RECEIPT_DATE,
  (CASE WHEN EGF_INSTRUMENTTYPE.TYPE ='cash' THEN 'cash' WHEN EGF_INSTRUMENTTYPE.TYPE='bank' THEN 'bank' WHEN EGF_INSTRUMENTTYPE.TYPE='online' THEN 'online' WHEN  EGF_INSTRUMENTTYPE.TYPE='card' THEN 'card' WHEN  EGF_INSTRUMENTTYPE.TYPE='cheque' THEN 'cheque' WHEN EGF_INSTRUMENTTYPE.TYPE='dd' THEN 'dd' END) as PAY_MODE,

@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-02T17:53:07 -->
+<!-- 2017-12-18T15:32:29 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_summary" language="groovy" pageWidth="842" pageHeight="800" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="db7eaa32-622d-4fd8-a432-187d94fbaded">
 	<property name="ireport.zoom" value="0.9090909090909093"/>
 	<property name="ireport.x" value="0"/>
@@ -101,7 +101,7 @@
 	<parameter name="EGOV_CLASSIFICATION" class="java.lang.String">
 		<defaultValueExpression><![CDATA["All "]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<field name="aggrCollectionSummaryReportList" class="java.util.List"/>
 	<field name="collectionSummaryReportList" class="java.util.List"/>
 	<background>

@@ -46,9 +46,8 @@
   ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
   ~
   -->
-
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-02T16:32:18 -->
+<!-- 2017-12-18T15:25:46 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<import value="java.lang.*"/>
 	<import value="org.egov.infra.reporting.util.*"/>
@@ -77,7 +76,7 @@
 		<parameterDescription><![CDATA[REMITTANCE VOUCHER]]></parameterDescription>
 	</parameter>
 	<parameter name="EGOV_REMITTANCE_DATE" class="java.util.Date"/>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<field name="collectionBankRemittanceReportList" class="java.util.List"/>
 	<background>
 		<band height="555" splitType="Stretch">

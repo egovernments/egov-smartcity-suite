@@ -278,7 +278,7 @@ public class CashCollectionReportAction extends BaseFormAction {
      */
     @Action(value = "/reports/cashCollectionReport-report")
     public String report() {
-        critParams.put(CollectionConstants.LOGO_PATH, new ByteArrayInputStream(cityService.getCityLogoAsBytes()));
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         final ReportRequest reportInput = new ReportRequest(CASH_COLLECTION_TEMPLATE, critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);

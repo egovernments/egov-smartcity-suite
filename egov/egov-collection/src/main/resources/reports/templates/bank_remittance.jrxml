@@ -82,7 +82,7 @@
 	<parameter name="Q_DEPT_ID" class="java.lang.String">
 		<defaultValueExpression><![CDATA[($P{EGOV_DEPT_ID} == null || $P{EGOV_DEPT_ID} == -1) ? "" : "AND cm.department = " + $P{EGOV_DEPT_ID}]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[SELECT * FROM 
     egf_InstrumentHeader ih,
