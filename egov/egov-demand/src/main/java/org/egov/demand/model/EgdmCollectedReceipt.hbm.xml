@@ -58,6 +58,7 @@
             </generator>
         </id>
         <version name="version" type="long"/>
+
         <many-to-one name="egdemandDetail" class="org.egov.demand.model.EgDemandDetails" update="false">
             <column name="ID_DEMAND_DETAIL" not-null="true"/>
         </many-to-one>

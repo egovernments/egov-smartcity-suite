@@ -58,7 +58,6 @@ public class EgdmCollectedReceipt implements Cloneable {
     private BigDecimal amount;
     private BigDecimal reasonAmount;
     private Character status;
-    private Date updatedTime;
     private EgDemandDetails egdemandDetail;
     private Long version;
 
@@ -133,14 +132,6 @@ public class EgdmCollectedReceipt implements Cloneable {
         this.status = status;
     }
 
-    public Date getUpdatedTime() {
-        return updatedTime;
-    }
-
-    public void setUpdatedTime(Date updatedTime) {
-        this.updatedTime = updatedTime;
-    }
-
     public BigDecimal getReasonAmount() {
         return reasonAmount;
     }
@@ -159,5 +150,9 @@ public class EgdmCollectedReceipt implements Cloneable {
 
     public Long getVersion() {
         return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }
