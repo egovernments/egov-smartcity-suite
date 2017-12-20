@@ -198,9 +198,9 @@ public class ConnectionBillService extends BillServiceInterface {
                     billdetail.setCrAmount(demandDetail.getAmount().subtract(demandDetail.getAmtCollected()));
                 }
                 if (LOG.isInfoEnabled())
-                    LOG.info("demandDetail.getEgDemandReason()"
-                            + demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster() + " glcodeerror"
-                            + demandDetail.getEgDemandReason().getGlcodeId());
+                    LOG.info("demandDetail.getEgDemandReason() {}, glcodeerror {}",
+                            demandDetail.getEgDemandReason().getEgDemandReasonMaster().getReasonMaster(),
+                            demandDetail.getEgDemandReason().getGlcodeId());
                 billdetail.setGlcode(demandDetail.getEgDemandReason().getGlcodeId().getGlcode());
                 billdetail.setEgDemandReason(demandDetail.getEgDemandReason());
                 billdetail.setAdditionalFlag(Integer.valueOf(1));
@@ -293,17 +293,13 @@ public class ConnectionBillService extends BillServiceInterface {
             final Integer noOfAdvancesPaid = advanceCollection.subtract(partiallyCollectedAmount)
                     .divide(currentInstallmentDemand).intValue();
             if (LOG.isDebugEnabled())
-                LOG.debug("getBilldetails - advanceCollection = " + advanceCollection + ", noOfAdvancesPaid="
-                        + noOfAdvancesPaid);
+                LOG.debug("getBilldetails - advanceCollection = {}, noOfAdvancesPaid={}", advanceCollection, noOfAdvancesPaid);
 
-            // DateTime installmentDate = null;
             Installment installment = null;
-            int j = billDetails.size() + 1;
+            int j;
             if (noOfAdvancesPaid < MAX_ADVANCES_ALLOWED)
                 for (int i = noOfAdvancesPaid; i < advanceInstallments.size(); i++) {
                     installment = advanceInstallments.get(i);
-                    // installmentDate = new
-                    // DateTime(installment.getInstallmentYear().getTime());
                     final EgDemandReason reasonmaster = connectionDemandService
                             .getDemandReasonByCodeAndInstallment(DEMANDRSN_CODE_ADVANCE, installment);
                     if (reasonmaster != null) {
@@ -366,8 +362,8 @@ public class ConnectionBillService extends BillServiceInterface {
             billDetail.setEgBill(bill);
         }
         if (LOG.isDebugEnabled())
-            LOG.debug("Bill update with bill details for water charges " + bill.getConsumerId() + " as billdetails "
-                    + egBillDetails);
+            LOG.debug("Bill update with bill details for water charges {} as billdetails {}", bill.getConsumerId(),
+                    egBillDetails);
         return bill;
     }
 
@@ -377,6 +373,7 @@ public class ConnectionBillService extends BillServiceInterface {
      * @param startDate
      * @return List of Installment
      */
+    @SuppressWarnings("unchecked")
     public List<Installment> getAdvanceInstallmentsList(final Date startDate) {
         List<Installment> advanceInstallments;
         final String query = "select inst from Installment inst where inst.module.name = '"
@@ -432,31 +429,41 @@ public class ConnectionBillService extends BillServiceInterface {
         return calendar.getTime();
     }
 
+    @SuppressWarnings("unchecked")
     public EgBill getBillByConsumerCode(final String consumerCode) {
         EgBill egBill = null;
         final StringBuilder queryString = new StringBuilder();
 
         queryString.append(
                 " select distinct bill From EgBill bill,EgBillType billtype,WaterConnection conn,WaterConnectionDetails connDet,EgwStatus status,WaterDemandConnection conndem  , EgDemand demd ")
-                .append("where billtype.id=bill.egBillType and billtype.code= '" + BILLTYPE_MANUAL + "'")
+                .append("where billtype.id=bill.egBillType and billtype.code=:billType")
                 .append(" and bill.consumerId = conn.consumerCode ")
                 .append(" and conn.id=connDet.connection ")
                 .append(" and connDet.id=conndem.waterConnectionDetails ")
                 .append(" and demd.id=bill.egDemand ")
                 .append(" and demd.id=conndem.demand ")
-                .append(" and connDet.connectionType='" + NON_METERED + "'")
-                .append(" and demd.isHistory = '" + DEMANDISHISTORY + "'")
-                .append(" and bill.is_Cancelled='" + DEMANDISHISTORY + "'")
-                .append(" and bill.serviceCode='" + COLLECTION_STRING_SERVICE_CODE + "'")
-                .append(" and connDet.connectionStatus='" + ACTIVE + "'")
+                .append(" and connDet.connectionType=:connectionType")
+                .append(" and demd.isHistory =:isDemandHistory")
+                .append(" and bill.is_Cancelled=:isCancelled")
+                .append(" and bill.serviceCode=:serviceCode")
+                .append(" and connDet.connectionStatus=:connectionStatus")
                 .append(" and connDet.status=status.id ")
-                .append(" and status.moduletype='" + MODULETYPE + "'")
-                .append(" and status.code='" + APPLICATION_STATUS_SANCTIONED + "'")
+                .append(" and status.moduletype=:moduleType")
+                .append(" and status.code=:statusCode")
                 .append(" and conn.consumerCode =:consumerCode ")
                 .append(" order by bill.id desc ");
 
         final Query query = getCurrentSession().createQuery(queryString.toString())
-                .setString("consumerCode", consumerCode);
+                .setString("consumerCode", consumerCode)
+                .setString("billType", BILLTYPE_MANUAL)
+                .setString("connectionType", NON_METERED)
+                .setString("isDemandHistory", DEMANDISHISTORY)
+                .setString("isCancelled", DEMANDISHISTORY)
+                .setString("serviceCode", COLLECTION_STRING_SERVICE_CODE)
+                .setString("moduleType", MODULETYPE)
+                .setString("connectionStatus", ACTIVE)
+                .setString("statusCode", APPLICATION_STATUS_SANCTIONED);
+
         final List<EgBill> egBilltemp = query.list();
         if (!egBilltemp.isEmpty())
             egBill = egBilltemp.get(0);

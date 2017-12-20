@@ -48,8 +48,8 @@
 
 package org.egov.wtms.web.controller.reports;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
+import javax.servlet.http.HttpServletResponse;
+
 import org.egov.wtms.application.entity.DonationChargesDCBReportSearch;
 import org.egov.wtms.application.service.CurrentDcbService;
 import org.egov.wtms.reports.entity.DonationChargeDCBReportAdaptor;
@@ -62,11 +62,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 @Controller
 @RequestMapping(value = "/reports")
@@ -86,43 +83,17 @@ public class ViewWaterTaxDonationController {
     @PostMapping(value = "/view-donation", produces = MediaType.TEXT_PLAIN_VALUE)
     @ResponseBody
     public String getDonationResult(@ModelAttribute final DonationChargesDCBReportSearch donationChargesDCBReportSearch,
-            final HttpServletResponse response) throws IOException {
-        final List<DonationChargesDCBReportSearch> resultList = new ArrayList<>();
-        List<Object[]> dcbList = new ArrayList<>();
-        dcbList = currentDcbService.getDonationDCBReportDetails(donationChargesDCBReportSearch);
-
-        for (final Object[] object : dcbList) {
-            final DonationChargesDCBReportSearch dcbObject = new DonationChargesDCBReportSearch();
-            if (object[0] != null)
-                dcbObject.setConsumerCode(object[0].toString());
-            if (object[1] != null)
-                dcbObject.setAssessmentNumber(object[1].toString());
-            if (object[2] != null)
-                dcbObject.setOwnerName(object[2].toString());
-            if (object[3] != null)
-                dcbObject.setMobileNumber(object[3].toString());
-            if (object[4] != null)
-                dcbObject.setPropertyAddress(object[4].toString());
-            if (object[5] != null)
-                dcbObject.setTotalDonationAmount(new BigDecimal(object[5].toString()));
-            if (object[6] != null)
-                dcbObject.setPaidDonationAmount(new BigDecimal(object[6].toString()));
-            if (object[7] != null)
-                dcbObject.setBalanceDonationAmount(new BigDecimal(object[7].toString()));
-            resultList.add(dcbObject);
-        }
-
-        final String result = new StringBuilder("{ \"data\":")
-                .append(toSearchLineEstimatesToCancelJson(resultList))
+            final HttpServletResponse response) {
+        return new StringBuilder("{ \"data\":")
+                .append(toSearchLineEstimatesToCancelJson(
+                        currentDcbService.getDonationDCBReportDetails(donationChargesDCBReportSearch)))
                 .append("}").toString();
-        return result;
     }
 
     public Object toSearchLineEstimatesToCancelJson(final Object object) {
         final GsonBuilder gsonBuilder = new GsonBuilder();
         final Gson gson = gsonBuilder.registerTypeAdapter(DonationChargesDCBReportSearch.class, donationChargeDCBReportAdaptor)
                 .create();
-        final String json = gson.toJson(object);
-        return json;
+        return gson.toJson(object);
     }
 }

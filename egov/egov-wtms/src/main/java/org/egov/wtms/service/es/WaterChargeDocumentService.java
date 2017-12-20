@@ -265,7 +265,7 @@ public class WaterChargeDocumentService {
                                 ? assessmentDetails.getBoundaryDetails().getLocalityName() : "")
                         .withPropertyid(waterConnectionDetails.getConnection().getPropertyIdentifier())
                         .withApplicationcode(waterConnectionDetails.getApplicationType().getCode())
-                        .withCreatedDate(createdDateStr != "" ? dateFormatter.parse(createdDateStr) : new Date())
+                        .withCreatedDate(createdDateStr.isEmpty()? new Date():dateFormatter.parse(createdDateStr) )
                         .withMobileNumber(mobilNumber)
                         .withStatus(waterConnectionDetails.getConnectionStatus().name())
                         .withDistrictName(defaultString((String) cityInfo.get(CITY_DIST_NAME_KEY)))
