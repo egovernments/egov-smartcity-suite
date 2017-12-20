@@ -77,6 +77,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
     private transient Set<EgdmCollectedReceipt> egdmCollectedReceipts = new HashSet<>();
     private BigDecimal amtRebate = BigDecimal.ZERO;
     private EgDemand egDemand;
+    private Long version;
 
     /**
      * Factory method for convenient creation.
@@ -119,10 +120,7 @@ public class EgDemandDetails implements Serializable, Cloneable {
         if (other.id == null) {
             return false;
         }
-        if (id.equals(other.id)) {
-            return true;
-        }
-        return false;
+        return id.equals(other.id);
     }
 
     /**
@@ -319,5 +317,9 @@ public class EgDemandDetails implements Serializable, Cloneable {
 
     public String getReasonCategory() {
         return getEgDemandReason().getEgDemandReasonMaster().getEgReasonCategory().getCode();
+    }
+
+    public Long getVersion() {
+        return version;
     }
 }
