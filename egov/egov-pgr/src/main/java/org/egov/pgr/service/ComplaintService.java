@@ -77,6 +77,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -85,7 +86,18 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.pgr.utils.constants.PGRConstants.*;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_RESOLVED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_UNRESOLVED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ALL;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_PENDING;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REJECTED;
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLETED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.PENDING_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.REJECTED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.RESOLVED_STATUS;
 
 @Service
 @Transactional(readOnly = true)
@@ -206,12 +218,18 @@ public class ComplaintService {
 
     @ReadOnly
     public List<Complaint> getPendingGrievances() {
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
-                .createAlias("complaint.status", "status");
-        criteria.add(Restrictions.in("status.name", PENDING_STATUS));
-        criteria.add(
-                Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(getUserId(), new Date())));
-        return criteria.list();
+        List<Position> assignee = positionMasterService.getPositionsForEmployee(getUserId(), new Date());
+        if (assignee.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
+                    .createAlias("complaint.status", "status");
+            criteria.add(Restrictions.in("status.name", PENDING_STATUS));
+            criteria.add(
+                    Restrictions.in("complaint.assignee", assignee));
+            return criteria.list();
+        }
+
     }
 
     @ReadOnly
