@@ -230,7 +230,6 @@ public class CurrentDcbService {
 
     public List<DonationChargesDCBReportSearch> getResultList(final List<Object[]> objectList) {
         final List<DonationChargesDCBReportSearch> resultList = new ArrayList<>();
-        ;
         for (final Object[] object : objectList) {
             final DonationChargesDCBReportSearch dcbObject = new DonationChargesDCBReportSearch();
             if (object[0] != null)
