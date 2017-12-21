@@ -62,6 +62,7 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_DIGIS
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -183,6 +184,9 @@ public class RegistrationWorkflowService {
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             Assignment approverAssign = assignmentService
                     .getPrimaryAssignmentForPositon(workflowContainer.getApproverPositionId());
+            if (approverAssign == null)
+                approverAssign = assignmentService.getAssignmentsForPosition(workflowContainer.getApproverPositionId()).get(0);
+            
             if (CMO_DESIG.equals(approverAssign.getDesignation().getName()))
                 workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
                         null,
@@ -195,11 +199,15 @@ public class RegistrationWorkflowService {
                 workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
                         null,
                         REGISTRATION_ADDNL_RULE, STATE_NEW, workflowContainer.getPendingActions());
+            else if (WFSTATE_APPROVER_REJECTED.equals(registration.getCurrentState().getValue()))
+                workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
+                        null,
+                        REGISTRATION_ADDNL_RULE, STATE_NEW, null);
             else
                 workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null,
                         null,
                         REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(),
-                        null);
+                        workflowContainer.getPendingActions());
             nextState = workflowMatrix.getNextState();
             nextAction = workflowMatrix.getNextAction();
 
@@ -221,7 +229,7 @@ public class RegistrationWorkflowService {
             // On Approve, pick workflow matrix based on digital signature configuration
             if (workflowContainer.getPendingActions()
                     .equalsIgnoreCase(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)){
-                nextStateOwner = assignmentService.getPrimaryAssignmentForUser(user.getId()).getPosition();
+                nextStateOwner = registration.getCurrentState().getOwnerPosition();
                 workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.MarriageRegistration.name(), null, null,
                         REGISTRATION_ADDNL_RULE, registration.getCurrentState().getValue(),
                         workflowContainer.getPendingActions());
@@ -291,6 +299,8 @@ public class RegistrationWorkflowService {
             nextStateOwner = positionMasterService.getPositionById(workflowContainer.getApproverPositionId());
             Assignment approverAssign = assignmentService
                     .getPrimaryAssignmentForPositon(workflowContainer.getApproverPositionId());
+            if (approverAssign == null)
+                approverAssign = assignmentService.getAssignmentsForPosition(workflowContainer.getApproverPositionId()).get(0);
             if (CMO_DESIG.equals(approverAssign.getDesignation().getName()))
                 workflowMatrix = marriageRegistrationWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null,
                         null,
@@ -326,7 +336,7 @@ public class RegistrationWorkflowService {
             // On Approve, pick workflow matrix based on digital signature configuration
             if (workflowContainer.getPendingActions()
                     .equalsIgnoreCase(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN)) {
-                nextStateOwner = assignmentService.getPrimaryAssignmentForUser(user.getId()).getPosition();
+                nextStateOwner = reIssue.getCurrentState().getOwnerPosition();
                 workflowMatrix = reIssueWorkflowService.getWfMatrix(WorkflowType.ReIssue.name(), null, null,
                         REGISTRATION_ADDNL_RULE, reIssue.getCurrentState().getValue(), workflowContainer.getPendingActions());
 

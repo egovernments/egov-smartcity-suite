@@ -65,11 +65,12 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_REJEC
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT;
-import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING;
-import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_CMOH_APPROVED;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
 
 import java.io.IOException;
@@ -115,7 +116,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
 /**
- * Controller to correct the registration data
+ * Controller to correct the reIssue data
  *
  * @author nayeem
  *
@@ -185,6 +186,8 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
 
     private void prepareWorkFlowForReIssue(final ReIssue reIssue, final Model model) {
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setPendingActions(reIssue.getState().getNextAction());
+        model.addAttribute(PENDING_ACTIONS, reIssue.getState().getNextAction());
 
         // Set pending actions based on digitalsignature configuration value
         if (reIssue.getStatus().getCode().equalsIgnoreCase(APPROVED))
@@ -196,15 +199,17 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                 workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_PRINTCERTIFICATE);
             }
         workFlowContainer.setAdditionalRule(ADDITIONAL_RULE_REGISTRATION);
-        if (WFSTATE_REV_CLRK_APPROVED.equals(reIssue.getState().getValue())
+        if ((WFSTATE_REV_CLRK_APPROVED.equals(reIssue.getState().getValue())
+                || WFSTATE_MHO_APPROVED.equals(reIssue.getState().getValue())
+                || WFSTATE_CMOH_APPROVED.equals(reIssue.getState().getValue()))
                 && WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING.equals(reIssue.getState().getNextAction())) {
-            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
-        } else if (WFSTATE_REV_CLRK_APPROVED.equals(reIssue.getState().getValue())
-                && (WFLOW_PENDINGACTION_MHO_APPRVLPENDING.equals(reIssue.getState().getNextAction())
-                        || WFLOW_PENDINGACTION_CMO_APPRVLPENDING.equals(reIssue.getState().getNextAction()))) {
-            workFlowContainer.setPendingActions(reIssue.getState().getNextAction());
+            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
+            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
+        } else if (WFSTATE_APPROVER_REJECTED.equals(reIssue.getCurrentState().getValue())) {
+            workFlowContainer.setPendingActions(null);
+            model.addAttribute(PENDING_ACTIONS, null);
         }
-        
+
         prepareWorkflow(model, reIssue, workFlowContainer);
         model.addAttribute("additionalRule", ADDITIONAL_RULE_REGISTRATION);
         model.addAttribute("stateType", reIssue.getClass().getSimpleName());
@@ -219,7 +224,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         } else {
             model.addAttribute("nextActn", reIssue.getState().getNextAction());
         }
-          
+
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
@@ -236,6 +241,9 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
         if (isNotBlank(request.getParameter(APPROVAL_POSITION)))
             approverAssign = assignmentService
                     .getPrimaryAssignmentForPositon(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
+        if (isNotBlank(request.getParameter(APPROVAL_POSITION)) && approverAssign == null)
+            approverAssign = assignmentService.getAssignmentsForPosition(Long.valueOf(request.getParameter(APPROVAL_POSITION)))
+                    .get(0);
         if (errors.hasErrors() || (approverAssign != null
                 && !EmployeeStatus.EMPLOYED.equals(approverAssign.getEmployee().getEmployeeStatus()))) {
 
@@ -325,7 +333,7 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
                         new String[] { approverName.concat("~").concat(nextDesignation), reIssue.getApplicationNo() }, null);
             }
         }
-        // On print certificate, output registration certificate
+        // On print certificate, output reIssue certificate
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_PRINTCERTIFICATE))
             return "redirect:/certificate/reissue?id="

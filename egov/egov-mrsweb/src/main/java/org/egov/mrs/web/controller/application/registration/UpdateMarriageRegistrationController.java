@@ -68,11 +68,12 @@ import static org.egov.mrs.application.MarriageConstants.WFLOW_ACTION_STEP_REJEC
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT;
-import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_CMO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_DIGISIGNPENDING;
-import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_MHO_APPRVLPENDING;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_PRINTCERTIFICATE;
 import static org.egov.mrs.application.MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_APPROVER_REJECTED;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_CMOH_APPROVED;
+import static org.egov.mrs.application.MarriageConstants.WFSTATE_MHO_APPROVED;
 import static org.egov.mrs.application.MarriageConstants.WFSTATE_REV_CLRK_APPROVED;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
 import static org.springframework.web.bind.annotation.RequestMethod.GET;
@@ -216,6 +217,8 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
 
     private void prepareWorkFlowForNewMarriageRegistration(final MarriageRegistration registration, final Model model) {
         final WorkflowContainer workFlowContainer = new WorkflowContainer();
+        workFlowContainer.setPendingActions(registration.getState().getNextAction());
+        model.addAttribute(PENDING_ACTIONS, registration.getState().getNextAction());
         // Set pending actions based on digitalsignature configuration value
         if (registration.getStatus().getCode().equalsIgnoreCase(APPROVED))
             if (marriageUtils.isDigitalSignEnabled()) {
@@ -225,16 +228,18 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
                 model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_PRINTCERTIFICATE);
                 workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_PRINTCERTIFICATE);
             }
-        
-        if (WFSTATE_REV_CLRK_APPROVED.equals(registration.getState().getValue())
+
+        if ((WFSTATE_REV_CLRK_APPROVED.equals(registration.getState().getValue())
+                || WFSTATE_MHO_APPROVED.equals(registration.getState().getValue())
+                || WFSTATE_CMOH_APPROVED.equals(registration.getState().getValue()))
                 && WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING.equals(registration.getState().getNextAction())) {
-            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_PRINTCERT);
-        } else if(WFSTATE_REV_CLRK_APPROVED.equals(registration.getState().getValue())
-                && (WFLOW_PENDINGACTION_MHO_APPRVLPENDING.equals(registration.getState().getNextAction())
-                || WFLOW_PENDINGACTION_CMO_APPRVLPENDING.equals(registration.getState().getNextAction()))) {
-            workFlowContainer.setPendingActions(registration.getState().getNextAction());
+            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
+            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_APPRVLPENDING_DIGISIGN);
+        } else if (WFSTATE_APPROVER_REJECTED.equals(registration.getCurrentState().getValue())) {
+            workFlowContainer.setPendingActions(null);
+            model.addAttribute(PENDING_ACTIONS, null);
         }
-        
+
         workFlowContainer.setAdditionalRule(ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, registration, workFlowContainer);
         model.addAttribute("additionalRule", ADDITIONAL_RULE_REGISTRATION);
@@ -269,7 +274,9 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (isNotBlank(request.getParameter(APPROVAL_POSITION)))
             approverAssign = assignmentService
                     .getPrimaryAssignmentForPositon(Long.valueOf(request.getParameter(APPROVAL_POSITION)));
-
+        if (isNotBlank(request.getParameter(APPROVAL_POSITION)) && approverAssign == null)
+            approverAssign = assignmentService.getAssignmentsForPosition(Long.valueOf(request.getParameter(APPROVAL_POSITION)))
+                    .get(0);
         if (errors.hasErrors() || (approverAssign != null
                 && !EmployeeStatus.EMPLOYED.equals(approverAssign.getEmployee().getEmployeeStatus()))) {
             if (approverAssign != null && !EmployeeStatus.EMPLOYED.equals(approverAssign.getEmployee().getEmployeeStatus()))

@@ -83,6 +83,9 @@ public class MarriageConstants {
     public static final String WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING = "Revenue Clerk Approval Pending";
     public static final String WFLOW_PENDINGACTION_APPROVAL_APPROVEPENDING ="Approver Approval Pending";
     public static final String WFSTATE_REV_CLRK_APPROVED="Revenue Clerk Approved";
+    public static final String WFSTATE_APPROVER_REJECTED ="Approver Rejected Application";
+    public static final String WFSTATE_MHO_APPROVED="Municipal Health Officer Approved";
+    public static final String WFSTATE_CMOH_APPROVED="Chief Medical Officer of Health Approved";
     
 
     public static final String APPROVED = "APPROVED";
@@ -126,7 +129,7 @@ public class MarriageConstants {
     public static final String ROLE_CITIZEN = "CITIZEN";
     
     //Designations
-    public static final String CMO_DESIG = "Chief Medical Officer";
+    public static final String CMO_DESIG = "Chief Medical Officer of Health";
     public static final String MHO_DESIG = "Municipal Health Officer";
 
     public static final String MARRIAGE_DEPARTMENT_CODE = "MARRIAGE_DEPARTMENT_CODE";
