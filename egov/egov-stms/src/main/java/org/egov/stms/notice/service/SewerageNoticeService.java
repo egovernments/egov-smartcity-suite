@@ -441,7 +441,7 @@ public class SewerageNoticeService {
                             .getNoOfClosetsResidential());
             reportParams.put(NO_OF_SEATS_NON_RESIDENTIAL,  sewerageApplicationDetails.getConnectionDetail()
                     .getNoOfClosetsNonResidential()== null? 0:sewerageApplicationDetails.getConnectionDetail()
-                            .getNoOfClosetsResidential());
+                            .getNoOfClosetsNonResidential());
             reportParams.put("revenueWardNo", assessmentDetails.getBoundaryDetails().getWardName());
             reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
 
