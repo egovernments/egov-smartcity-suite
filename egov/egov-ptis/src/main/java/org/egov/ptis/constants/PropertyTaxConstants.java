@@ -288,7 +288,7 @@ public interface PropertyTaxConstants {
     public static final String OWNERSHIP_TYPE_VAC_LAND = "VAC_LAND";
     public static final String OWNERSHIP_TYPE_PRIVATE = "PRIVATE";
     public static final String OWNERSHIP_TYPE_STATE_GOVT = "STATE_GOVT";
-    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_335 = "CENTRAL_GOVT_33.5";
+    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_333 = "CENTRAL_GOVT_33.33";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_50 = "CENTRAL_GOVT_50";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_75 = "CENTRAL_GOVT_75";
     public static final String OWNERSHIP_TYPE_EWSHS = "EWSHS";
@@ -297,7 +297,7 @@ public interface PropertyTaxConstants {
     public static final String OWNERSHIP_TYPE_VAC_LAND_STR = "Vacant Land";
     public static final String OWNERSHIP_TYPE_PRIVATE_STR = "Private";
     public static final String OWNERSHIP_TYPE_STATE_GOVT_STR = "State Government";
-    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR = "Central Government 33.5%";
+    public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR = "Central Government 33.33%";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR = "Central Government 50%";
     public static final String OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR = "Central Government 75%";
 
@@ -1649,7 +1649,7 @@ public interface PropertyTaxConstants {
     @SuppressWarnings("serial")
     public static final List<String> DASHBOARD_PROPERTY_TYPE_CENTRAL_GOVT_LIST = new ArrayList<String>() {
         {
-            add(OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR);
         }
@@ -1661,7 +1661,7 @@ public interface PropertyTaxConstants {
             
             add(OWNERSHIP_TYPE_PRIVATE_STR);
             add(OWNERSHIP_TYPE_STATE_GOVT_STR);
-            add(OWNERSHIP_TYPE_CENTRAL_GOVT_335_STR);
+            add(OWNERSHIP_TYPE_CENTRAL_GOVT_333_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_50_STR);
             add(OWNERSHIP_TYPE_CENTRAL_GOVT_75_STR);
             add(OWNERSHIP_TYPE_EWSHS);
@@ -1758,6 +1758,6 @@ public interface PropertyTaxConstants {
     public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
             
 	public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
-			OWNERSHIP_TYPE_CENTRAL_GOVT_335, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
+			OWNERSHIP_TYPE_CENTRAL_GOVT_333, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
 
 }
