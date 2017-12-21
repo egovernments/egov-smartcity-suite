@@ -60,6 +60,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.event.ComplaintEventPublisher;
+import org.egov.pgr.event.ComplaintRegisterEventPublisher;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
@@ -142,6 +143,9 @@ public class ComplaintService {
     @Autowired
     private ComplaintEventPublisher complaintEventPublisher;
 
+    @Autowired
+    private ComplaintRegisterEventPublisher complaintRegisterEventPublisher;
+
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Complaint createComplaint(Complaint complaint) {
 
@@ -170,6 +174,7 @@ public class ComplaintService {
             complaint.setPriority(configurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
+        complaintRegisterEventPublisher.publishEvent(complaint);
         if (securityUtils.currentUserIsCitizen())
             citizenComplaintDataPublisher.onRegistration(complaint);
         complaintNotificationService.sendRegistrationMessage(complaint);
