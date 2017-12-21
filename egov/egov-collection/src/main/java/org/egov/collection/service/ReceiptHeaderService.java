@@ -1344,7 +1344,7 @@ public class ReceiptHeaderService extends PersistenceService<ReceiptHeader, Long
         ReceiptCancellationInfo receiptCancellationInfo = billingService.validateCancelReceipt(receiptNumber,consumerCode);
         if (!receiptCancellationInfo.getCancellationAllowed()) {
             String validationMsg = receiptCancellationInfo.getValidationMessage();
-            throw new ValidationException(new ValidationError(validationMsg, validationMsg));
+            throw new ValidationException(new ValidationError("validationMsg", validationMsg));
         }
     }
 }
