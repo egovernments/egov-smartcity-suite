@@ -51,10 +51,13 @@ import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
 import org.egov.collection.integration.models.ReceiptAmountInfo;
+import org.egov.collection.integration.models.ReceiptCancellationInfo;
 import org.egov.demand.dao.EgBillDao;
 import org.egov.demand.integration.TaxCollection;
 import org.egov.demand.model.EgBill;
+import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Module;
+import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infra.workflow.matrix.entity.WorkFlowMatrix;
@@ -75,6 +78,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_T
 import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
 import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
 import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLOSED_MUTATION_RECEIPT;
 
 public class MutationFeeCollection extends TaxCollection {
 
@@ -96,6 +100,9 @@ public class MutationFeeCollection extends TaxCollection {
     
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
+    
+    @Autowired
+	private AppConfigValueService appConfigValuesService;
     
     private static final Logger LOGGER = Logger.getLogger(MutationFeeCollection.class);
 
@@ -121,16 +128,10 @@ public class MutationFeeCollection extends TaxCollection {
                 throw new ValidationException();
             }
         }
-        if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
-            updateTransitionForFullTransfer(bri, propertyMutation);
-        } else {
-            LOGGER.error("Mutation workflow is already closed for the receipt : " + propertyMutation.getReceiptNum()
-                    + " payed for assessment : "
-                    + propertyMutation.getBasicProperty().getUpicNo());
-            throw new ValidationException();
-        }
-        propertyMutationService.persist(propertyMutation);
-        propertyMutationService.getSession().flush();
+		if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue()))
+			updateTransitionForFullTransfer(bri, propertyMutation);
+		propertyMutationService.persist(propertyMutation);
+		propertyMutationService.getSession().flush();
     }
 
     private void updateTransitionForFullTransfer(final BillReceiptInfo bri, final PropertyMutation propertyMutation) {
@@ -173,5 +174,20 @@ public class MutationFeeCollection extends TaxCollection {
     public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
         return new ReceiptAmountInfo();
     }
+    
+    @Override
+	public ReceiptCancellationInfo validateCancelReceipt(String receiptNumber, String consumerCode) {
+		ReceiptCancellationInfo receiptCancellationInfo = new ReceiptCancellationInfo();
+		final PropertyMutation propertyMutation = propertyTransferService
+				.getPropertyMutationByApplicationNo(consumerCode);
+		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+				APPCONFIG_CLOSED_MUTATION_RECEIPT);
+		if (!Boolean.valueOf(appConfigValue.get(0).getValue())
+				&& WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
+			receiptCancellationInfo.setCancellationAllowed(false);
+			receiptCancellationInfo.setValidationMessage("Mutation workflow is already closed for the receipt");
+		}
+		return receiptCancellationInfo;
+	}
 
 }

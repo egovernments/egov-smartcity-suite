@@ -82,6 +82,7 @@ public interface PropertyTaxConstants {
     public static final String APPCONFIG_ISCORPORATION = "IS_CORPORATION";
     public static final String APPCONFIG_ISSEASHORE_ULB = "IS_SEASHORE_ULB";
     public static final String APPCONFIG_IS_PRIMARY_SERVICECHARGES_APPLICABLE = "IS_PRIMARYSERVICECHARGES_APPLICABLE";
+    public static final String APPCONFIG_CLOSED_MUTATION_RECEIPT = "CANCEL_RECEIPT_FOR_CLOSED_MUTATION";
     public static final String EDIT_COLL_FOR_CURRYEAR = "EDIT_COLLECTION_FOR_CURRENTYEAR";
     public static final Float SQUARE_YARD_TO_SQUARE_METER_VALUE = 0.836127f;
     
