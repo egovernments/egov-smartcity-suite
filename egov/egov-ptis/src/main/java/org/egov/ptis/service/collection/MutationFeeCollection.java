@@ -47,6 +47,16 @@
  */
 package org.egov.ptis.service.collection;
 
+import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
+import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLOSED_MUTATION_RECEIPT;
+import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
+import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
+import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
+
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.List;
+
 import org.apache.log4j.Logger;
 import org.egov.collection.entity.ReceiptDetail;
 import org.egov.collection.integration.models.BillReceiptInfo;
@@ -70,16 +80,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.math.BigDecimal;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.ptis.constants.PropertyTaxConstants.ADDTIONAL_RULE_FULL_TRANSFER;
-import static org.egov.ptis.constants.PropertyTaxConstants.PTMODULENAME;
-import static org.egov.ptis.constants.PropertyTaxConstants.TRANSFER_FEE_COLLECTED;
-import static org.egov.ptis.constants.PropertyTaxConstants.WF_STATE_CLOSED;
-import static org.egov.ptis.constants.PropertyTaxConstants.APPCONFIG_CLOSED_MUTATION_RECEIPT;
-
 public class MutationFeeCollection extends TaxCollection {
 
     @Autowired
@@ -97,13 +97,13 @@ public class MutationFeeCollection extends TaxCollection {
     @Autowired
     @Qualifier("workflowService")
     private SimpleWorkflowService<PropertyMutation> transferWorkflowService;
-    
+
     @Autowired
     private PropertyTaxCommonUtils propertyTaxCommonUtils;
-    
+
     @Autowired
-	private AppConfigValueService appConfigValuesService;
-    
+    private AppConfigValueService appConfigValuesService;
+
     private static final Logger LOGGER = Logger.getLogger(MutationFeeCollection.class);
 
     @Override
@@ -111,7 +111,7 @@ public class MutationFeeCollection extends TaxCollection {
     public void updateDemandDetails(final BillReceiptInfo bri) {
         final PropertyMutation propertyMutation = propertyTransferService.getPropertyMutationByApplicationNo(getEgBill(
                 bri.getBillReferenceNum()).getConsumerId());
-        if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)) {
+        if (bri.getEvent().equals(EVENT_RECEIPT_CREATED))
             if (propertyMutation != null && propertyMutation.getReceiptDate() == null
                     && propertyMutation.getReceiptNum() == null) {
                 propertyMutation.setReceiptDate(bri.getReceiptDate());
@@ -127,17 +127,16 @@ public class MutationFeeCollection extends TaxCollection {
                                 + propertyMutation.getBasicProperty().getUpicNo());
                 throw new ValidationException();
             }
-        }
-		if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue()))
-			updateTransitionForFullTransfer(bri, propertyMutation);
-		propertyMutationService.persist(propertyMutation);
-		propertyMutationService.getSession().flush();
+        if (!WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue()))
+            updateTransitionForFullTransfer(bri, propertyMutation);
+        propertyMutationService.persist(propertyMutation);
+        propertyMutationService.getSession().flush();
     }
 
     private void updateTransitionForFullTransfer(final BillReceiptInfo bri, final PropertyMutation propertyMutation) {
         if (bri.getEvent().equals(EVENT_RECEIPT_CREATED)
                 && propertyMutation.getType().equalsIgnoreCase(ADDTIONAL_RULE_FULL_TRANSFER)
-                && !(TRANSFER_FEE_COLLECTED).equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
+                && !TRANSFER_FEE_COLLECTED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
             final WorkFlowMatrix wFMatrix = transferWorkflowService.getWfMatrix(propertyMutation.getStateType(),
                     null, null, propertyMutation.getType(), propertyMutation.getCurrentState().getValue(), null);
             propertyMutation.transition().progressWithStateCopy().withSenderName(propertyMutation.getState().getSenderName())
@@ -174,20 +173,20 @@ public class MutationFeeCollection extends TaxCollection {
     public ReceiptAmountInfo receiptAmountBifurcation(final BillReceiptInfo billReceiptInfo) {
         return new ReceiptAmountInfo();
     }
-    
+
     @Override
-	public ReceiptCancellationInfo validateCancelReceipt(String receiptNumber, String consumerCode) {
-		ReceiptCancellationInfo receiptCancellationInfo = new ReceiptCancellationInfo();
-		final PropertyMutation propertyMutation = propertyTransferService
-				.getPropertyMutationByApplicationNo(consumerCode);
-		final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
-				APPCONFIG_CLOSED_MUTATION_RECEIPT);
-		if (!Boolean.valueOf(appConfigValue.get(0).getValue())
-				&& WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
-			receiptCancellationInfo.setCancellationAllowed(false);
-			receiptCancellationInfo.setValidationMessage("Mutation workflow is already closed for the receipt");
-		}
-		return receiptCancellationInfo;
-	}
+    public ReceiptCancellationInfo validateCancelReceipt(final String receiptNumber, final String consumerCode) {
+        final ReceiptCancellationInfo receiptCancellationInfo = new ReceiptCancellationInfo();
+        final PropertyMutation propertyMutation = propertyTransferService
+                .getPropertyMutationByApplicationNo(consumerCode);
+        final List<AppConfigValues> appConfigValue = appConfigValuesService.getConfigValuesByModuleAndKey(PTMODULENAME,
+                APPCONFIG_CLOSED_MUTATION_RECEIPT);
+        if (!Boolean.valueOf(appConfigValue.get(0).getValue())
+                && WF_STATE_CLOSED.equalsIgnoreCase(propertyMutation.getCurrentState().getValue())) {
+            receiptCancellationInfo.setCancellationAllowed(false);
+            receiptCancellationInfo.setValidationMessage("Mutation workflow is already closed for the receipt");
+        }
+        return receiptCancellationInfo;
+    }
 
 }
