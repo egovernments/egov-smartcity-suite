@@ -74,6 +74,7 @@
 					<form:errors path="status" cssClass="error-msg" />
 					<form:hidden path="latlngAddress" id="latlngaddress"/>
 					<form:hidden path="currentOwner" id="currentOwner"/>
+					<form:hidden path="statusUpdate" id="statusUpdate"/>
 				</div>
 				<div class="col-md-3 col-xs-6 add-margin">
 					<spring:message code="lbl.change.complaint.type" />
@@ -203,6 +204,15 @@
 </div>
 <script>
 	var currentOwner = '${complaint.currentOwner.id}';
+	var complaintStatus='${complaintStatus}';
+    $("#status").change(function () {
+        var status = $("#status option:selected").text();
+        if (status != complaintStatus) {
+            $("#statusUpdate").val(true);
+        }
+        else
+            $("#statusUpdate").val(false);
+    })
 </script>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/exif.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/js/app/fileuploadndmaps.js?rnd=${app_release_no}'/>"></script>

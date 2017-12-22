@@ -55,6 +55,9 @@ public class ComplaintEvent extends ApplicationEvent {
 
     private Complaint complaint;
     private String cityCode;
+    private String cityName;
+    private String domainURL;
+    private String tenant;
 
     public ComplaintEvent(final Object source, Complaint complaint) {
         super(source);
@@ -71,5 +74,29 @@ public class ComplaintEvent extends ApplicationEvent {
 
     public void setCityCode(String cityCode) {
         this.cityCode = cityCode;
+    }
+
+    public String getCityName() {
+        return cityName;
+    }
+
+    public void setCityName(String cityName) {
+        this.cityName = cityName;
+    }
+
+    public String getDomainURL() {
+        return domainURL;
+    }
+
+    public void setDomainURL(String domainURL) {
+        this.domainURL = domainURL;
+    }
+
+    public String getTenant() {
+        return tenant;
+    }
+
+    public void setTenant(String tenant) {
+        this.tenant = tenant;
     }
 }

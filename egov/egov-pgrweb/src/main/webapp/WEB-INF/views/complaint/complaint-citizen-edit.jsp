@@ -73,6 +73,7 @@
 					    <textarea class="form-control" id="inc_messge" placeholder="" required="required"
                               maxlength="400" name="approvalComent"></textarea>
                         <input type="hidden" id="currentstatus" value="${complaint.status.id}">
+                        <form:hidden path="statusUpdate" id="statusUpdate" value="true"/>
                         <form:errors path="" cssClass="error-msg"/>
                     </div>
                 </div>
@@ -91,7 +92,7 @@
                     <div class="text-center">
                         <c:forEach items="${status}" var="validStatus">
                             <spring:message code="btn.status.${validStatus.name}" var="btnname"/>
-                            <button type="submit" class="btn btn-primary" title="<spring:message code='btn.status.title' arguments="${btnname}"/>">
+                            <button type="submit" class="btn btn-primary" title="<spring:message code='btn.status.title'  arguments="${btnname}"/>">
                                 ${btnname}
                                 <form:hidden path="status" id="status" value="${validStatus.id}"/>
                             </button>
@@ -130,6 +131,7 @@
         $("#citizenRating").val(feedback);
 
         $("#submitbtn").click(function () {
+            $("#statusUpdate").val(false);
             $("#status").val($("#currentstatus").val());
             $("#complaintUpdate").submit();
         });

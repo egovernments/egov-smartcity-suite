@@ -55,6 +55,9 @@ import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 
 import static org.egov.infra.config.core.ApplicationThreadLocals.getCityCode;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getCityName;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getDomainURL;
+import static org.egov.infra.config.core.ApplicationThreadLocals.getTenantID;
 
 @Service
 public class ComplaintEventPublisher {
@@ -65,6 +68,9 @@ public class ComplaintEventPublisher {
     public void publishEvent(Complaint complaint) {
         ComplaintEvent event = new ComplaintEvent(this, complaint);
         event.setCityCode(getCityCode());
+        event.setCityName(getCityName());
+        event.setDomainURL(getDomainURL());
+        event.setTenant(getTenantID());
         applicationEventPublisher.publishEvent(event);
     }
 }
