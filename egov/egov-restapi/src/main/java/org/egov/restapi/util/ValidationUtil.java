@@ -1154,6 +1154,25 @@ public class ValidationUtil {
                     errorDetails.setErrorMessage(CONSTRUCTION_DATE_REQ_MSG);
                     return errorDetails;
                 }
+                if (!floorDetails.getUnstructuredLand()) {
+                    if (floorDetails.getPlinthLength() == null && floorDetails.getPlinthBreadth() == null) {
+                        errorDetails.setErrorCode(PLINTH_LENGTH_REQ_CODE + " And " + PLINTH_BREADTH_REQ_CODE);
+                        errorDetails.setErrorMessage(PLINTH_LENGTH_REQ_MSG + " And " + PLINTH_BREADTH_REQ_MSG);
+                    } else if (floorDetails.getPlinthLength() == null) {
+                        errorDetails.setErrorCode(PLINTH_LENGTH_REQ_CODE);
+                        errorDetails.setErrorMessage(PLINTH_LENGTH_REQ_MSG);
+                    } else {
+                        errorDetails.setErrorCode(PLINTH_BREADTH_REQ_CODE);
+                        errorDetails.setErrorMessage(PLINTH_BREADTH_REQ_MSG);
+                    }
+
+                } else {
+                    if (floorDetails.getPlinthArea() == null) {
+                        errorDetails.setErrorCode(UNSTR_LAND_PLINTH_AREA_REQ);
+                        errorDetails.setErrorMessage(UNSTR_LAND_PLINTH_AREA_MSG);
+                    }
+                }
+
             }
         }
         return errorDetails;

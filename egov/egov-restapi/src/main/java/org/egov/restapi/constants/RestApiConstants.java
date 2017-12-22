@@ -661,4 +661,7 @@ public class RestApiConstants {
 
     public static final String CATEGORY_CANT_BE_VACANT = "123";
     public static final String CATEGORY_CANT_BE_VACANT_MSG = "Ownership type is State/Central Govt, Hence Property Category can't be Vacant Land";
+    
+    public static final String UNSTR_LAND_PLINTH_AREA_REQ="124";
+    public static final String UNSTR_LAND_PLINTH_AREA_MSG="Plinth area is required for unstructure land";
 }

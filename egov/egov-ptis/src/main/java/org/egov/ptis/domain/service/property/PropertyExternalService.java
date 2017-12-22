@@ -2895,7 +2895,7 @@ public class PropertyExternalService {
 
         if (propertyImpl != null) {
             Map<String, BigDecimal> calculationsMap = getARVAndTaxDetails(propertyImpl,
-                    currYearInstMap.get(CURRENTYEAR_FIRST_HALF), false);
+                    currYearInstMap.get(CURRENTYEAR_SECOND_HALF), false);
             taxCalculatorResponse.setExistingARV(calculationsMap.get(ARV));
             taxCalculatorResponse.setExistingHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
             Date effectiveDate = DateUtils.getDate(TAX_CALCULATIONS_EFFECTIVE_DATE, DATE_FORMAT_DDMMYYY);
@@ -2907,7 +2907,7 @@ public class PropertyExternalService {
             } catch (TaxCalculatorExeption e) {
                 LOGGER.error("create : There are no Unit rates defined for chosen combinations", e);
             }
-            calculationsMap = getARVAndTaxDetails(propertyImpl, currYearInstMap.get(CURRENTYEAR_FIRST_HALF), true);
+            calculationsMap = getARVAndTaxDetails(propertyImpl, currYearInstMap.get(CURRENTYEAR_SECOND_HALF), true);
             taxCalculatorResponse.setCalculatedARV(calculationsMap.get(ARV));
             taxCalculatorResponse.setNewHalfYearlyTax(calculationsMap.get(HALF_YEARLY_TAX));
 
