@@ -122,7 +122,6 @@ public class QuartzSchedulerConfiguration {
         quartzProps.put("org.quartz.jobStore.isClustered", env.getProperty("scheduler.clustered"));
         quartzProps.put("org.quartz.jobStore.clusterCheckinInterval", "60000");
         quartzProps.put("org.quartz.jobStore.acquireTriggersWithinLock", "false");
-        quartzProps.put("org.quartz.jobStore.txIsolationLevelReadCommitted", "true");
         quartzProps.put("org.quartz.jobStore.driverDelegateClass", "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
         quartzProps.put("org.quartz.jobStore.useProperties", "true");
         quartzProps.put("org.quartz.jobStore.dataSource", "quartzDS");
