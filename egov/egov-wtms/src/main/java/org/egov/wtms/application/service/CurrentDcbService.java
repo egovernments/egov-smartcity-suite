@@ -99,7 +99,7 @@ public class CurrentDcbService {
 
     @ReadOnly
     public List<WaterChargesReceiptInfo> getMigratedReceiptDetails(String consumerNumber) {
-        StringBuilder queryStr = new StringBuilder()
+        StringBuilder queryStr = new StringBuilder(310)
                 .append("select distinct(i_bookno) as \"bookNumber\", cast(i_ctrrcptno as varchar) as \"receiptNumber\", ")
                 .append("dt_ctrrcptdt as \"receiptDate\",dt_paidfrmprddt as \"fromDate\",dt_paidtoprddt as \"toDate\", ")
                 .append("d_crr+d_arr as \"receiptAmount\" from wt_wtchrgrcpt_tbl where i_csmrno =:consumerNumber ")
@@ -111,7 +111,7 @@ public class CurrentDcbService {
     }
 
     public List<WaterChargesReceiptInfo> getMigratedReceiptDetails(final Long connectiondetails) {
-        final StringBuilder queryStr = new StringBuilder()
+        final StringBuilder queryStr = new StringBuilder(300)
                 .append("select distinct(booknumber) as \"bookNumber\", receiptnumber as \"receiptNumber\",receiptdate ")
                 .append("as \"receiptDate\",fromdate as \"fromDate\",todate as \"toDate\", cast(amount as numeric(18,2)) ")
                 .append("as \"receiptAmount\" from egwtr_legacy_receipts where connectiondetails =:connectiondetails");
