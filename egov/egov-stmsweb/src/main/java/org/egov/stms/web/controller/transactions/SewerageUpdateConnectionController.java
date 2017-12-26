@@ -523,7 +523,7 @@ public class SewerageUpdateConnectionController extends GenericWorkFlowControlle
             } else if (assignObj == null && approvalPosition != null)
                 asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
 
-            nextDesign = !asignList.isEmpty() ? asignList.get(0).getDesignation().getName() : "";
+            nextDesign = asignList.isEmpty() ? StringUtils.EMPTY : asignList.get(0).getDesignation().getName();
 
             final String pathVars = sewerageApplicationDetails.getApplicationNumber() + ","
                     + sewerageTaxUtils.getApproverName(approvalPosition) + ","

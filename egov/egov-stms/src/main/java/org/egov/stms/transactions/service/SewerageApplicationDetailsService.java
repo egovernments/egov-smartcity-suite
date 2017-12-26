@@ -123,6 +123,7 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.workflow.entity.State;
 import org.egov.infra.workflow.entity.StateHistory;
@@ -1041,8 +1042,9 @@ public class SewerageApplicationDetailsService {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
                     historyMap
                             .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
-                            .getDepartment().getName() : "");
+                    historyMap.put(DEPARTMENT,
+                            owner.getDeptDesig().getDepartment() == null ? StringUtils.EMPTY : owner.getDeptDesig()
+                                    .getDepartment().getName());
                 }
                 historyTable.add(historyMap);
             }
