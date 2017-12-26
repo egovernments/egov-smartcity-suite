@@ -118,12 +118,7 @@ public class ChangeOfUseService {
         else if (assessmentDetails.getErrorDetails() != null
                 && assessmentDetails.getErrorDetails().getErrorCode() != null)
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (inWorkflow != null )
-            validationMessage = wcmsMessageSource.getMessage("err.validate.changeofUse.application.inprocess",
-                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
-                            inWorkflow.getApplicationNumber() },
-                    null);
-        else {
+        else if (inWorkflow == null) {
             if (assessmentDetails.getPropertyDetails() != null
                     && assessmentDetails.getPropertyDetails().getTaxDue() != null
                     && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0
@@ -134,7 +129,11 @@ public class ChangeOfUseService {
                                 "changeOfUsage" },
                         null);
             validateChangeOfApplicationDue(parentWaterConnectionDetail);
-        }
+        } else
+            validationMessage = wcmsMessageSource.getMessage("err.validate.changeofUse.application.inprocess",
+                    new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
+                            inWorkflow.getApplicationNumber() },
+                    null);
         return validationMessage;
     }
 

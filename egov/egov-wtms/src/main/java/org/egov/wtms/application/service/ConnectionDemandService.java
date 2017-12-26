@@ -329,7 +329,7 @@ public class ConnectionDemandService {
 
     @SuppressWarnings("unchecked")
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
-        final StringBuilder queryBuilder = new StringBuilder(500);
+        final StringBuilder queryBuilder = new StringBuilder(600);
         queryBuilder
                 .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
                 .append("sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")

@@ -47,6 +47,8 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
@@ -93,19 +95,18 @@ public class WorkOrderController {
             final HttpSession session) {
         String workFlowAction;
         String errorMessage = "";
-        ReportOutput reportOutput;
         final WaterConnectionDetails connectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         workFlowAction = (String) session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
         final Boolean isDigSignPending = Boolean.parseBoolean(request.getParameter("isDigSignPending"));
         if (isDigSignPending)
             workFlowAction = request.getParameter("workFlowAction");
-        if (null != workFlowAction && !workFlowAction.isEmpty()
+        if (isNotBlank(workFlowAction)
                 && workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON))
             errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
             return redirect(errorMessage);
-        reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, workFlowAction);
+        final ReportOutput reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, workFlowAction);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=Work Order.pdf");
