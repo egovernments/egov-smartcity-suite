@@ -47,6 +47,21 @@
  */
 package org.egov.wtms.web.controller.application;
 
+import static org.egov.commons.entity.Source.MEESEVA;
+import static org.egov.commons.entity.Source.ONLINE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
+
+import java.math.BigDecimal;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -82,21 +97,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.math.BigDecimal;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-
-import static org.egov.commons.entity.Source.MEESEVA;
-import static org.egov.commons.entity.Source.ONLINE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.MODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSECODE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 
 @Controller
 @RequestMapping(value = "/application")
@@ -279,7 +279,6 @@ public class CloserConnectionController extends GenericConnectionController {
             waterConnectionDetails.setCloseConnectionType(ClosureType.Permanent.getName());
         else
             waterConnectionDetails.setCloseConnectionType(ClosureType.Temporary.getName());
-        final String addrule = request.getParameter("additionalRule");
         waterConnectionDetails.setConnectionStatus(ConnectionStatus.CLOSED);
         waterConnectionDetails
                 .setApplicationType(applicationTypeService.findByCode(WaterTaxConstants.CLOSINGCONNECTION));
@@ -291,20 +290,13 @@ public class CloserConnectionController extends GenericConnectionController {
         if (citizenPortalUser && (waterConnectionDetails.getSource() == null
                 || StringUtils.isBlank(waterConnectionDetails.getSource().toString())))
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
-        WaterConnectionDetails savedWaterConnectionDetails = null;
         if (loggedUserIsMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
             waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
             waterConnectionDetails.setSource(MEESEVA);
-            savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
-                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, meesevaParams,
-                    sourceChannel);
-            model.addAttribute(WATERCONNECTIONDETAILS, savedWaterConnectionDetails);
-        } else
-            savedWaterConnectionDetails = closerConnectionService.updatecloserConnection(
-                    waterConnectionDetails, approvalPosition, approvalComent, addrule, workFlowAction, sourceChannel);
-        model.addAttribute(WATERCONNECTIONDETAILS, savedWaterConnectionDetails);
+        }
+        closerConnectionService.updatecloserConnection(
+                waterConnectionDetails, approvalPosition, approvalComent, workFlowAction, sourceChannel);
+        model.addAttribute(WATERCONNECTIONDETAILS, waterConnectionDetails);
         model.addAttribute(MODE, "ack");
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="

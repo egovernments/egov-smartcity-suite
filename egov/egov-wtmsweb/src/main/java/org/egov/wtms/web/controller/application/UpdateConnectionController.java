@@ -121,10 +121,10 @@ import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.wtms.application.entity.ApplicationDocuments;
 import org.egov.wtms.application.entity.ConnectionEstimationDetails;
@@ -139,6 +139,7 @@ import org.egov.wtms.masters.entity.ConnectionCategory;
 import org.egov.wtms.masters.entity.enums.ClosureType;
 import org.egov.wtms.masters.service.MeterCostService;
 import org.egov.wtms.masters.service.RoadCategoryService;
+import org.egov.wtms.utils.WaterTaxNumberGenerator;
 import org.egov.wtms.utils.WaterTaxUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -171,7 +172,7 @@ public class UpdateConnectionController extends GenericConnectionController {
     private static final String FIELDINSPECTION = "fieldInspection";
     private static final String MODE = "mode";
     private static final String APP_DOCUMENT_LIST = "appforDocumentList";
-
+    private static final String DONATION_AMOUNT = "donationCharges";
     @Autowired
     private WaterTaxUtils waterTaxUtils;
 
@@ -206,6 +207,9 @@ public class UpdateConnectionController extends GenericConnectionController {
     private CityService cityService;
 
     @Autowired
+    private WaterTaxNumberGenerator waterTaxNumberGenerator;
+
+    @Autowired
     public UpdateConnectionController(final DepartmentService departmentService,
             final ConnectionDemandService connectionDemandService, final SmartValidator validator) {
         this.departmentService = departmentService;
@@ -231,6 +235,7 @@ public class UpdateConnectionController extends GenericConnectionController {
         Boolean isCommissionerLoggedIn = Boolean.FALSE;
         Boolean isSanctionedDetailEnable = isCommissionerLoggedIn;
         final String loggedInUserDesignation = waterTaxUtils.loggedInUserDesignation(waterConnectionDetails);
+
         if (waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
                 || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_DIGITALSIGNPENDING)
                 || waterConnectionDetails.getStatus().getCode().equals(APPLICATION_STATUS_CLOSERDIGSIGNPENDING)
@@ -313,7 +318,8 @@ public class UpdateConnectionController extends GenericConnectionController {
                 && waterConnectionDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_FEEPAID)) {
             final ChairPerson chairPerson = chairPersonService.getActiveChairPersonAsOnCurrentDate();
             model.addAttribute("chairPerson", chairPerson);
-            model.addAttribute("sanctionDateLowerLimit", DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(), new Date()));
+            model.addAttribute("sanctionDateLowerLimit",
+                    DateUtils.daysBetween(waterConnectionDetails.getApplicationDate(), new Date()));
 
         }
 
@@ -467,8 +473,8 @@ public class UpdateConnectionController extends GenericConnectionController {
         Double donationCharges = 0d;
         final String sourceChannel = request.getParameter("Source");
 
-        if (request.getParameter("donationCharges") != null)
-            donationCharges = Double.valueOf(request.getParameter("donationCharges"));
+        if (request.getParameter(DONATION_AMOUNT) != null)
+            donationCharges = Double.valueOf(request.getParameter(DONATION_AMOUNT));
         if (request.getParameter(MODE) != null)
             mode = request.getParameter(MODE);
 
@@ -569,6 +575,11 @@ public class UpdateConnectionController extends GenericConnectionController {
 
                 if (workFlowAction != null)
                     if (APPROVEWORKFLOWACTION.equalsIgnoreCase(workFlowAction)) {
+
+                        if (waterConnectionDetails.getConnection().getConsumerCode() == null)
+                            waterConnectionDetails.getConnection()
+                                    .setConsumerCode(waterTaxNumberGenerator.getNextConsumerNumber());
+
                         final WorkOrderNumberGenerator workOrderGen = beanResolver
                                 .getAutoNumberServiceFor(WorkOrderNumberGenerator.class);
                         if (waterConnectionDetails.getApplicationType().getCode().equals(NEWCONNECTION)

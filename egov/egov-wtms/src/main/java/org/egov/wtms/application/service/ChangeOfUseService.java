@@ -47,6 +47,8 @@
  */
 package org.egov.wtms.application.service;
 
+import java.math.BigDecimal;
+
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.utils.ApplicationNumberGenerator;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -64,9 +66,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
 
 @Service
 @Transactional(readOnly = true)
@@ -116,8 +115,8 @@ public class ChangeOfUseService {
         else if (parentWaterConnectionDetail.getConnectionStatus().equals(ConnectionStatus.DISCONNECTED))
             validationMessage = wcmsMessageSource.getMessage("err.validate.primary.connection.disconnected",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(), propertyID }, null);
-        else if (null != assessmentDetails.getErrorDetails()
-                && null != assessmentDetails.getErrorDetails().getErrorCode())
+        else if (assessmentDetails.getErrorDetails() != null
+                && assessmentDetails.getErrorDetails().getErrorCode() != null)
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
         else if (null != inWorkflow)
             validationMessage = wcmsMessageSource.getMessage("err.validate.changeofUse.application.inprocess",
@@ -125,35 +124,16 @@ public class ChangeOfUseService {
                             inWorkflow.getApplicationNumber() },
                     null);
         else {
-            if (null != assessmentDetails.getPropertyDetails()
-                    && null != assessmentDetails.getPropertyDetails().getTaxDue()
-                    && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0)
-                if (!waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
-                    validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue",
-                            new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(),
-                                    parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
-                                    "changeOfUsage" },
-                            null);
-
-            if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
-                final BigDecimal waterTaxDueforParent = waterConnectionDetailsService
-                        .getCurrentDue(parentWaterConnectionDetail);
-                if (waterTaxDueforParent.doubleValue() > 0)
-                    if (validationMessage.equalsIgnoreCase(""))
-                        validationMessage = wcmsMessageSource
-                                .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
-                    else
-                        validationMessage = validationMessage + " and " + wcmsMessageSource
-                                .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
-                if (parentWaterConnectionDetail.getConnection().getId() != null)
-                    if (waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
-                        if (validationMessage.equalsIgnoreCase(""))
-                            validationMessage = wcmsMessageSource
-                                    .getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null);
-                        else
-                            validationMessage = validationMessage + " and " + wcmsMessageSource
-                                    .getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null);
-            }
+            if (assessmentDetails.getPropertyDetails() != null
+                    && assessmentDetails.getPropertyDetails().getTaxDue() != null
+                    && assessmentDetails.getPropertyDetails().getTaxDue().doubleValue() > 0
+                    && !waterTaxUtils.isNewConnectionAllowedIfPTDuePresent())
+                validationMessage = wcmsMessageSource.getMessage("err.validate.property.taxdue",
+                        new String[] { assessmentDetails.getPropertyDetails().getTaxDue().toString(),
+                                parentWaterConnectionDetail.getConnection().getPropertyIdentifier(),
+                                "changeOfUsage" },
+                        null);
+            validateChangeOfApplicationDue(parentWaterConnectionDetail);
         }
         return validationMessage;
     }
@@ -191,10 +171,28 @@ public class ChangeOfUseService {
         return savedChangeOfUse;
     }
 
-    public WaterConnectionDetails createChangeOfUseApplication(final WaterConnectionDetails changeOfUse,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final HashMap<String, String> meesevaParams, final String sourceChannel) {
-        return createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, additionalRule, workFlowAction,
-                sourceChannel);
+    public String validateChangeOfApplicationDue(final WaterConnectionDetails parentWaterConnectionDetail) {
+        String validationMsg = "";
+        if (!waterTaxUtils.isConnectionAllowedIfWTDuePresent(CHANGEOFUSEALLOWEDIFWTDUE)) {
+            final BigDecimal waterTaxDueforParent = waterConnectionDetailsService
+                    .getCurrentDue(parentWaterConnectionDetail);
+            if (waterTaxDueforParent.doubleValue() > 0)
+                if (validationMsg.isEmpty())
+                    validationMsg = wcmsMessageSource
+                            .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
+                else
+                    validationMsg = validationMsg + " and " + wcmsMessageSource
+                            .getMessage("err.validate.primary.connection.wtdue.forchangeofuse", null, null);
+            if (parentWaterConnectionDetail.getConnection().getId() != null
+                    && waterTaxUtils.waterConnectionDue(parentWaterConnectionDetail.getConnection().getId()) > 0)
+                if (validationMsg.isEmpty())
+                    validationMsg = wcmsMessageSource
+                            .getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null);
+                else
+                    validationMsg = validationMsg + " and " + wcmsMessageSource
+                            .getMessage("err.validate.additional.connection.wtdue.forchangeofuse", null, null);
+        }
+        return validationMsg;
     }
+
 }

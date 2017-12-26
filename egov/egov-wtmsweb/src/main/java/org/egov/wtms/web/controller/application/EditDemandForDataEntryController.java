@@ -105,10 +105,8 @@ public class EditDemandForDataEntryController {
 
     @ModelAttribute
     public WaterConnectionDetails getWaterConnectionDetails(@PathVariable final String consumerCode) {
-        final WaterConnectionDetails waterConnectionDetails = waterConnectionDetailsService
+        return waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
-
-        return waterConnectionDetails;
     }
 
     @RequestMapping(value = "/editDemand/{consumerCode}", method = GET)

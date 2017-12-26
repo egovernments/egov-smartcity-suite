@@ -54,7 +54,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLI
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -91,6 +90,9 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @RequestMapping(value = "/application")
 public class ChangeOfUseController extends GenericConnectionController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
+    private static final String CHANGEOFUSE_FORM = "changeOfUse-form";
+
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
@@ -115,31 +117,30 @@ public class ChangeOfUseController extends GenericConnectionController {
     }
 
     @RequestMapping(value = "/changeOfUse/{consumerCode}", method = RequestMethod.GET)
-    public String showForm(WaterConnectionDetails parentConnectionDetails,
+    public String showForm(final WaterConnectionDetails parentConnectionDetails,
             @ModelAttribute final WaterConnectionDetails changeOfUse, final Model model,
             @PathVariable final String consumerCode, final HttpServletRequest request) {
         final String meesevaApplicationNumber = request.getParameter("meesevaApplicationNumber");
-
+        WaterConnectionDetails connectionDetails = null;
         final WaterConnectionDetails connectionUnderChange = waterConnectionDetailsService
                 .findByConsumerCodeAndConnectionStatus(consumerCode, ConnectionStatus.ACTIVE);
         if (null != connectionUnderChange.getConnection().getParentConnection())
-            parentConnectionDetails = waterConnectionDetailsService
+            connectionDetails = waterConnectionDetailsService
                     .getParentConnectionDetailsForParentConnectionNotNull(consumerCode, ConnectionStatus.ACTIVE);
 
         else
-            parentConnectionDetails = waterConnectionDetailsService.getParentConnectionDetails(connectionUnderChange
+            connectionDetails = waterConnectionDetailsService.getParentConnectionDetails(connectionUnderChange
                     .getConnection().getPropertyIdentifier(), ConnectionStatus.ACTIVE);
-        if (parentConnectionDetails == null) {
-            // TODO - error handling
-        } else
-            loadBasicData(model, parentConnectionDetails, changeOfUse, connectionUnderChange, meesevaApplicationNumber);
+        if (connectionDetails == null)
+            throw new ValidationException("err.connection.not.exist");
+        else
+            loadBasicData(model, connectionDetails, changeOfUse, connectionUnderChange, meesevaApplicationNumber);
         final WorkflowContainer workflowContainer = new WorkflowContainer();
         workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
         prepareWorkflow(model, changeOfUse, workflowContainer);
-        return "changeOfUse-form";
+        return CHANGEOFUSE_FORM;
     }
 
-    // TODO - Basic save. Still working on
     @RequestMapping(value = "/changeOfUse/changeOfUse-create", method = RequestMethod.POST)
     public String create(@Valid @ModelAttribute final WaterConnectionDetails changeOfUse,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
@@ -199,14 +200,14 @@ public class ChangeOfUseController extends GenericConnectionController {
             final WorkflowContainer workflowContainer = new WorkflowContainer();
             workflowContainer.setAdditionalRule(changeOfUse.getApplicationType().getCode());
             prepareWorkflow(model, changeOfUse, workflowContainer);
-            model.addAttribute("approvalPosOnValidate", request.getParameter("approvalPosition"));
+            model.addAttribute("approvalPosOnValidate", request.getParameter(APPROVAL_POSITION));
             model.addAttribute("additionalRule", changeOfUse.getApplicationType().getCode());
             model.addAttribute("validationmessage", resultBinder.getFieldErrors().get(0).getField() + " = "
                     + resultBinder.getFieldErrors().get(0).getDefaultMessage());
             model.addAttribute("stateType", changeOfUse.getClass().getSimpleName());
             model.addAttribute("currentUser", waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
 
-            return "changeOfUse-form";
+            return CHANGEOFUSE_FORM;
 
         }
         if (changeOfUse.getState() == null)
@@ -224,8 +225,8 @@ public class ChangeOfUseController extends GenericConnectionController {
         if (request.getParameter("approvalComent") != null)
             approvalComent = request.getParameter("approvalComent");
 
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
         final Boolean applicationByOthers = waterTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser());
 
         if (applicationByOthers != null && applicationByOthers.equals(true) || citizenPortalUser || isAnonymousUser) {
@@ -246,7 +247,7 @@ public class ChangeOfUseController extends GenericConnectionController {
                 errors.rejectValue("connection.propertyIdentifier", "err.validate.connection.user.mapping",
                         "err.validate.connection.user.mapping");
                 model.addAttribute("noJAORSAMessage", "No JA/SA exists to forward the application.");
-                return "changeOfUse-form";
+                return CHANGEOFUSE_FORM;
             }
         }
         changeOfUse.setApplicationDate(new Date());
@@ -258,17 +259,12 @@ public class ChangeOfUseController extends GenericConnectionController {
             changeOfUse.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
 
         if (loggedInMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("APPLICATIONNUMBER", changeOfUse.getMeesevaApplicationNumber());
-            if (changeOfUse.getApplicationNumber() == null) {
+            changeOfUse.setSource(MEESEVA);
+            if (changeOfUse.getMeesevaApplicationNumber() != null)
                 changeOfUse.setApplicationNumber(changeOfUse.getMeesevaApplicationNumber());
-                changeOfUse.setSource(MEESEVA);
-            }
-            changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
-                    .getApplicationType().getCode(), workFlowAction, meesevaParams, sourceChannel);
-        } else
-            changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
-                    .getApplicationType().getCode(), workFlowAction, sourceChannel);
+        }
+        changeOfUseService.createChangeOfUseApplication(changeOfUse, approvalPosition, approvalComent, changeOfUse
+                .getApplicationType().getCode(), workFlowAction, sourceChannel);
 
         if (loggedInMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber=" + changeOfUse.getApplicationNumber();
