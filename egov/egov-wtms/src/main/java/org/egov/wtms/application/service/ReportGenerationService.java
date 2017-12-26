@@ -48,10 +48,20 @@
 package org.egov.wtms.application.service;
 
 import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.ADDNLCONNECTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURECONN;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSURE_ESTIMATION_NOTICE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTION_WORK_ORDER;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.DESG_COMM_NAME;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.NEWCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.PERMENENTCLOSE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONWITHSLASH;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTION_ESTIMATION_NOTICE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TEMPERARYCLOSE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.WATERCHARGES_CONSUMERCODE;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WF_SIGN_BUTTON;
 
 import java.io.ByteArrayInputStream;
 import java.io.File;
@@ -91,7 +101,6 @@ import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.masters.service.ApplicationProcessTimeService;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -114,13 +123,14 @@ public class ReportGenerationService {
     private static final String WORK_FLOW_ACTION = "workFlowAction";
     private static final String HOUSE_NO = "houseNo";
     private static final String CITY_NAME = "cityName";
-    public static final String ESTIMATION_NOTICE = "estimationNotice";
-    public static final String CITIZEN_ACKNOWLDGEMENT = "citizenAcknowledgement";
+    private static final String ESTIMATION_NOTICE = "estimationNotice";
+    private static final String CITIZEN_ACKNOWLDGEMENT = "citizenAcknowledgement";
     private static final String CONNTITLE = "conntitle";
     private static final String APPLICATION_TYPE = "applicationType";
     private static final String WORK_ORDER_NO = "workOrderNo";
     private static final String WORK_ORDER_DATE = "workOrderDate";
-    public static final String CONNECTIONWORKORDER = "connectionWorkOrder";
+    private static final String CONNECTIONWORKORDER = "connectionWorkOrder";
+    private static final String WORKORDER_GENERATE_EXCEPTION = "Exception in generating work order notice";
 
     @Autowired
     @Qualifier("parentMessageSource")
@@ -158,10 +168,6 @@ public class ReportGenerationService {
     private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
-    @Qualifier("messageSource")
-    private MessageSource messageSource;
-
-    @Autowired
     private DesignationService designationService;
 
     public ReportOutput getReportOutput(final WaterConnectionDetails connectionDetails, final String workFlowAction,
@@ -169,12 +175,12 @@ public class ReportGenerationService {
         final Map<String, Object> reportParams = new HashMap<>(0);
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
-        if (null != connectionDetails) {
+        if (connectionDetails != null) {
             final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                     connectionDetails.getConnection().getPropertyIdentifier(),
                     PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
             final String propAddress = assessmentDetails.getPropertyAddress();
-            String doorno[] = null;
+            String[] doorno = null;
             double total = 0;
             if (null != propAddress && !propAddress.isEmpty())
                 doorno = propAddress.split(",");
@@ -185,13 +191,13 @@ public class ReportGenerationService {
             if (iterator != null && iterator.hasNext())
                 ownerName = iterator.next().getOwnerName();
             final List<Assignment> assignList = assignmentService
-                    .findPrimaryAssignmentForDesignationName(WaterTaxConstants.DESG_COMM_NAME);
+                    .findPrimaryAssignmentForDesignationName(DESG_COMM_NAME);
             String commissionerName = "";
             if (!assignList.isEmpty())
                 commissionerName = assignList.get(0).getEmployee().getName();
-            if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
+            if (NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put(APPLICATIONTYPE, wcmsMessageSource.getMessage("msg.new.watertap.conn", null, null));
-            else if (WaterTaxConstants.ADDNLCONNECTION
+            else if (ADDNLCONNECTION
                     .equalsIgnoreCase(connectionDetails.getApplicationType().getCode()))
                 reportParams.put(APPLICATIONTYPE, wcmsMessageSource.getMessage("msg.add.watertap.conn", null, null));
             else
@@ -202,22 +208,12 @@ public class ReportGenerationService {
             reportParams.put("municipality", cityMunicipalityName);
             reportParams.put(DISTRICT, districtName);
             reportParams.put("purpose", connectionDetails.getUsageType().getName());
-            if (null != workFlowAction) {
-                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)
-                        || workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
+            if (workFlowAction != null)
+                if (workFlowAction.equalsIgnoreCase(APPROVEWORKFLOWACTION)) {
                     reportParams.put(WORK_ORDER_DATE, toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
                     reportParams.put(WORK_ORDER_NO, connectionDetails.getWorkOrderNumber());
-                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                        final User user = securityUtils.getCurrentUser();
-                        reportParams.put(USER_ID, user.getId());
-                    }
-                }
-                if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
-                    reportParams.put(WORK_ORDER_DATE, "");
-                    reportParams.put(WORK_ORDER_NO, "");
-                }
-
-            }
+                } else if (workFlowAction.equalsIgnoreCase(WF_SIGN_BUTTON))
+                    reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
 
             final User user = securityUtils.getCurrentUser();
             Assignment assignment = assignmentService.getPrimaryAssignmentForUser(user.getId());
@@ -227,7 +223,7 @@ public class ReportGenerationService {
                     assignment = assignmentList.get(0);
             }
             String userDesignation = null;
-            if (assignment != null && assignment.getDesignation().getName().equals(WaterTaxConstants.DESG_COMM_NAME))
+            if (assignment != null && assignment.getDesignation().getName().equals(DESG_COMM_NAME))
                 userDesignation = assignment.getDesignation().getName();
             else
                 userDesignation = null;
@@ -254,7 +250,7 @@ public class ReportGenerationService {
             reportParams.put("total", total);
             reportParams.put(COMMISSIONER_NAME, commissionerName);
             reportParams.put("designation", userDesignation);
-            reportInput = new ReportRequest(WaterTaxConstants.CONNECTION_WORK_ORDER, connectionDetails, reportParams);
+            reportInput = new ReportRequest(CONNECTION_WORK_ORDER, connectionDetails, reportParams);
         }
         reportOutput = reportService.createReport(reportInput);
         return reportOutput;
@@ -266,17 +262,7 @@ public class ReportGenerationService {
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
         if (waterConnectionDetails != null)
-            if (waterConnectionDetails.getReconnectionFileStore() != null) {
-                final FileStoreMapper fmp = waterConnectionDetails.getReconnectionFileStore();
-                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
-                reportOutput = new ReportOutput();
-                try {
-                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
-                    reportOutput.setReportFormat(ReportFormat.PDF);
-                } catch (final IOException e) {
-                    throw new ApplicationRuntimeException("Exception in generating work order notice" + e);
-                }
-            } else {
+            if (waterConnectionDetails.getReconnectionFileStore() == null) {
                 Assignment assignment = null;
                 User user = null;
                 final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
@@ -302,7 +288,7 @@ public class ReportGenerationService {
                     if (!asignList.isEmpty())
                         user = userService.getUserById(asignList.get(0).getEmployee().getId());
                 }
-                reportParams.put(APPLICATION_TYPE, WordUtils.capitalize(WaterTaxConstants.RECONNECTIONWITHSLASH));
+                reportParams.put(APPLICATION_TYPE, WordUtils.capitalize(RECONNECTIONWITHSLASH));
                 reportParams.put(CITY_NAME, cityMunicipalityName);
                 reportParams.put(DISTRICT, districtName);
                 reportParams.put(APPLICATION_DATE, toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
@@ -317,12 +303,22 @@ public class ReportGenerationService {
                 reportParams.put(HOUSE_NO, doorNo[0]);
                 reportParams.put("usersignature", securityUtils.getCurrentUser().getSignature() != null
                         ? new ByteArrayInputStream(securityUtils.getCurrentUser().getSignature()) : null);
-                user = securityUtils.getCurrentUser();
-                reportParams.put(USER_ID, user.getId());
+                reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
                 reportParams.put(WORK_FLOW_ACTION, workFlowAction);
-                reportInput = new ReportRequest(WaterTaxConstants.RECONNECTION_ESTIMATION_NOTICE,
+                reportInput = new ReportRequest(RECONNECTION_ESTIMATION_NOTICE,
                         waterConnectionDetails, reportParams);
                 reportOutput = reportService.createReport(reportInput);
+
+            } else {
+                final FileStoreMapper fmp = waterConnectionDetails.getReconnectionFileStore();
+                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
+                reportOutput = new ReportOutput();
+                try {
+                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+                    reportOutput.setReportFormat(ReportFormat.PDF);
+                } catch (final IOException e) {
+                    throw new ApplicationRuntimeException(WORKORDER_GENERATE_EXCEPTION + e);
+                }
             }
 
         return reportOutput;
@@ -334,18 +330,7 @@ public class ReportGenerationService {
         ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
         if (waterConnectionDetails != null)
-            if (waterConnectionDetails.getClosureFileStore() != null) {
-                final FileStoreMapper fmp = waterConnectionDetails.getClosureFileStore();
-                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
-                reportOutput = new ReportOutput();
-                try {
-                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
-                    reportOutput.setReportFormat(ReportFormat.PDF);
-                } catch (final IOException e) {
-                    throw new ApplicationRuntimeException("Exception in generating work order notice" + e);
-                }
-            } else {
-
+            if (waterConnectionDetails.getClosureFileStore() == null) {
                 final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                         waterConnectionDetails.getConnection().getPropertyIdentifier(),
                         PropertyExternalService.FLAG_FULL_DETAILS, BasicPropertyStatus.ALL);
@@ -356,8 +341,7 @@ public class ReportGenerationService {
                         ownerName.append(", ");
                     ownerName.append(names.getOwnerName());
                 }
-
-                reportParams.put(APPLICATION_TYPE, WordUtils.capitalize(WaterTaxConstants.CLOSURECONN));
+                reportParams.put(APPLICATION_TYPE, WordUtils.capitalize(CLOSURECONN));
                 reportParams.put(CITY_NAME, cityMunicipalityName);
                 reportParams.put(DISTRICT, districtName);
                 reportParams.put(APPLICATION_DATE, toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
@@ -371,12 +355,23 @@ public class ReportGenerationService {
                         ? waterConnectionDetails.getCloseApprovalDate() : new Date()));
                 reportParams.put("closeConnectionType",
                         waterConnectionDetails.getCloseConnectionType().equals("T") ? "Temporary" : "Permanent");
-                final User user = securityUtils.getCurrentUser();
-                reportParams.put(USER_ID, user.getId());
+                reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
                 reportParams.put(WORK_FLOW_ACTION, workFlowAction);
-                reportInput = new ReportRequest(WaterTaxConstants.CLOSURE_ESTIMATION_NOTICE,
+                reportInput = new ReportRequest(CLOSURE_ESTIMATION_NOTICE,
                         waterConnectionDetails.getEstimationDetails(), reportParams);
                 reportOutput = reportService.createReport(reportInput);
+
+            } else {
+
+                final FileStoreMapper fmp = waterConnectionDetails.getClosureFileStore();
+                final File file = fileStoreService.fetch(fmp, FILESTORE_MODULECODE);
+                reportOutput = new ReportOutput();
+                try {
+                    reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
+                    reportOutput.setReportFormat(ReportFormat.PDF);
+                } catch (final IOException e) {
+                    throw new ApplicationRuntimeException(WORKORDER_GENERATE_EXCEPTION + e);
+                }
             }
         return reportOutput;
     }
@@ -511,26 +506,26 @@ public class ReportGenerationService {
                 if (iterator != null && iterator.hasNext())
                     ownerName = iterator.next().getOwnerName();
                 reportParams.put(APPLICANT_NAME, WordUtils.capitalize(ownerName));
-                final Designation designation = designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
+                final Designation designation = designationService.getDesignationByName(DESG_COMM_NAME);
                 if (designation != null) {
                     final List<Assignment> assignList = assignmentService.getAllActiveAssignments(designation.getId());
                     commissionerName = assignList.isEmpty() ? "" : assignList.get(0).getEmployee().getName();
                 }
 
-                if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
+                if (NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
                     reportParams.put(CONNTITLE,
                             WordUtils.capitalize(connectionDetails.getApplicationType().getName()));
-                    reportParams.put(APPLICATION_TYPE, messageSource.getMessage("msg.new.watertap.conn", null, null));
-                } else if (WaterTaxConstants.ADDNLCONNECTION
+                    reportParams.put(APPLICATION_TYPE, wcmsMessageSource.getMessage("msg.new.watertap.conn", null, null));
+                } else if (ADDNLCONNECTION
                         .equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
                     reportParams.put(CONNTITLE,
                             WordUtils.capitalize(connectionDetails.getApplicationType().getName()));
-                    reportParams.put(APPLICATION_TYPE, messageSource.getMessage("msg.add.watertap.conn", null, null));
+                    reportParams.put(APPLICATION_TYPE, wcmsMessageSource.getMessage("msg.add.watertap.conn", null, null));
                 } else {
                     reportParams.put(CONNTITLE,
                             WordUtils.capitalize(connectionDetails.getApplicationType().getName()));
                     reportParams.put(APPLICATION_TYPE,
-                            messageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
+                            wcmsMessageSource.getMessage("msg.changeofuse.watertap.conn", null, null));
                 }
                 reportParams.put("municipality", cityService.getMunicipalityName());
                 reportParams.put(DISTRICT, cityService.getDistrictName());
@@ -544,26 +539,17 @@ public class ReportGenerationService {
                         assignment = assignmentList.get(0);
                 }
                 String userDesignation = null;
-                if (assignment != null && assignment.getDesignation().getName().equals(WaterTaxConstants.DESG_COMM_NAME))
+                if (assignment != null && assignment.getDesignation().getName().equals(DESG_COMM_NAME))
                     userDesignation = assignment.getDesignation().getName();
                 else
                     userDesignation = null;
                 reportParams.put("designation", userDesignation);
-                if (workFlowAction != null) {
-                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_WORKORDER_BUTTON)) {
+                if (workFlowAction != null)
+                    if (workFlowAction.equalsIgnoreCase(APPROVEWORKFLOWACTION)) {
                         reportParams.put(WORK_ORDER_DATE, toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
                         reportParams.put(WORK_ORDER_NO, connectionDetails.getWorkOrderNumber());
-                    }
-                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_PREVIEW_BUTTON)) {
-                        reportParams.put(WORK_ORDER_DATE, "");
-                        reportParams.put(WORK_ORDER_NO, "");
-                    }
-                    if (workFlowAction.equalsIgnoreCase(WaterTaxConstants.WF_SIGN_BUTTON)) {
-                        reportParams.put(WORK_ORDER_DATE, toDefaultDateFormat(connectionDetails.getWorkOrderDate()));
-                        reportParams.put(WORK_ORDER_NO, connectionDetails.getWorkOrderNumber());
-                        reportParams.put(USER_ID, user.getId());
-                    }
-                }
+                    } else if (workFlowAction.equalsIgnoreCase(WF_SIGN_BUTTON))
+                        reportParams.put(USER_ID, securityUtils.getCurrentUser().getId());
                 reportParams.put(WORK_FLOW_ACTION, workFlowAction);
                 reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
                 reportParams.put("locality", assessmentDetails.getBoundaryDetails().getLocalityName());
@@ -586,7 +572,7 @@ public class ReportGenerationService {
             reportOutput.setReportOutputData(FileUtils.readFileToByteArray(file));
             reportOutput.setReportFormat(ReportFormat.PDF);
         } catch (final IOException e) {
-            throw new ApplicationRuntimeException("Exception in generating work order notice" + e);
+            throw new ApplicationRuntimeException(WORKORDER_GENERATE_EXCEPTION + e);
         }
         return reportOutput;
     }
