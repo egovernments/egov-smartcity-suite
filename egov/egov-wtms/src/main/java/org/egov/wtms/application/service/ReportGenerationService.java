@@ -80,7 +80,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.reporting.engine.ReportRequest;
 import org.egov.infra.reporting.engine.ReportService;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.NumberToWordConverter;
 import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
@@ -308,8 +307,8 @@ public class ReportGenerationService {
                 reportParams.put(DISTRICT, districtName);
                 reportParams.put(APPLICATION_DATE, toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
                 reportParams.put("reconnApprovalDate",
-                        toDefaultDateFormat(waterConnectionDetails.getReconnectionApprovalDate() != null
-                                ? waterConnectionDetails.getReconnectionApprovalDate() : new Date()));
+                        toDefaultDateFormat(waterConnectionDetails.getReconnectionApprovalDate() == null
+                                ? new Date() : waterConnectionDetails.getReconnectionApprovalDate()));
                 reportParams.put(APPLICANT_NAME, ownerName);
                 reportParams.put(WATERCHARGES_CONSUMERCODE, waterConnectionDetails.getConnection().getConsumerCode());
                 reportParams.put(COMMISSIONER_NAME,
@@ -404,7 +403,7 @@ public class ReportGenerationService {
             reportParams.put(CITY_NAME, cityMunicipalityName);
             reportParams.put(DISTRICT, districtName);
             reportParams.put("estimationDate",
-                    DateUtils.toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
+                    toDefaultDateFormat(waterConnectionDetails.getFieldInspectionDetails().getCreatedDate()));
             reportParams.put("estimationNumber", waterConnectionDetails.getEstimationNumber());
             reportParams.put(DONATION_CHARGES, waterConnectionDetails.getDonationCharges());
             final double totalCharges = waterConnectionDetails.getDonationCharges()
@@ -412,7 +411,7 @@ public class ReportGenerationService {
                     + waterConnectionDetails.getFieldInspectionDetails().getRoadCuttingCharges()
                     + waterConnectionDetails.getFieldInspectionDetails().getSecurityDeposit();
             reportParams.put("totalCharges", totalCharges);
-            reportParams.put(APPLICATION_DATE, DateUtils.toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
+            reportParams.put(APPLICATION_DATE, toDefaultDateFormat(waterConnectionDetails.getApplicationDate()));
             reportParams.put(APPLICANT_NAME, ownerName.toString());
             reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
             reportParams.put(HOUSE_NO, doorNo[0]);
@@ -453,12 +452,12 @@ public class ReportGenerationService {
             reportParams.put(APPLICANT_NAME, ownerName);
             final Integer appProcessTime = applicationProcessTimeService.getApplicationProcessTime(
                     waterConnectionDetails.getApplicationType(), waterConnectionDetails.getCategory());
-            if (appProcessTime != null)
+            if (appProcessTime == null)
+                reportParams.put("applicationDueDate", null);
+            else
                 reportParams.put("applicationDueDate",
                         toDefaultDateFormat(
                                 waterConnectionDetailsService.getDisposalDate(waterConnectionDetails, appProcessTime)));
-            else
-                reportParams.put("applicationDueDate", null);
             reportParams.put(ADDRESS, assessmentDetails.getPropertyAddress());
             reportParams.put("electionWard", assessmentDetails.getBoundaryDetails().getAdminWardName());
             reportInput = setReportParameters(reportParams, waterConnectionDetails);
@@ -469,8 +468,8 @@ public class ReportGenerationService {
     public ReportRequest setReportParameters(final Map<String, Object> reportParams,
             final WaterConnectionDetails waterConnectionDetails) {
         final String districtName = cityService.getDistrictName();
-        reportParams.put("cityUrl", (!cityService.findAll().isEmpty() ? cityService.findAll().get(0).getName().toLowerCase()
-                : districtName.toLowerCase()) + ".cdma.ap.gov.in");
+        reportParams.put("cityUrl", (cityService.findAll().isEmpty() ? districtName.toLowerCase()
+                : cityService.findAll().get(0).getName().toLowerCase()) + ".cdma.ap.gov.in");
         reportParams.put(APPLICATION_TYPE,
                 WordUtils.capitalize(waterConnectionDetails.getApplicationType().getName()));
         reportParams.put(CITY_NAME, cityService.getMunicipalityName());
@@ -497,9 +496,7 @@ public class ReportGenerationService {
         final ReportRequest reportInput = null;
         ReportOutput reportOutput = null;
         if (connectionDetails != null)
-            if (connectionDetails.getFileStore() != null)
-                reportOutput = getWorkOrderNotice(connectionDetails);
-            else {
+            if (connectionDetails.getFileStore() == null) {
                 final Map<String, Object> reportParams = new HashMap<>();
                 final AssessmentDetails assessmentDetails = propertyExtnUtils.getAssessmentDetailsForFlag(
                         connectionDetails.getConnection().getPropertyIdentifier(),
@@ -517,7 +514,7 @@ public class ReportGenerationService {
                 final Designation designation = designationService.getDesignationByName(WaterTaxConstants.DESG_COMM_NAME);
                 if (designation != null) {
                     final List<Assignment> assignList = assignmentService.getAllActiveAssignments(designation.getId());
-                    commissionerName = !assignList.isEmpty() ? assignList.get(0).getEmployee().getName() : "";
+                    commissionerName = assignList.isEmpty() ? "" : assignList.get(0).getEmployee().getName();
                 }
 
                 if (WaterTaxConstants.NEWCONNECTION.equalsIgnoreCase(connectionDetails.getApplicationType().getCode())) {
@@ -574,8 +571,8 @@ public class ReportGenerationService {
                 setReportParameters(reportParams, connectionDetails);
 
                 reportOutput = reportService.createReport(reportInput);
-            }
-
+            } else
+                reportOutput = getWorkOrderNotice(connectionDetails);
         return reportOutput;
 
     }

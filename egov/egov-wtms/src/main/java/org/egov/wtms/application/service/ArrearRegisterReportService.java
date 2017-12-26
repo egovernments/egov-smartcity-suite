@@ -85,7 +85,7 @@ public class ArrearRegisterReportService {
             final Long locality) {
         final Installment currentInst = connectionDemandService
                 .getCurrentInstallment(WATER_RATES_NONMETERED_PTMODULE, null, new Date());
-        final StringBuilder queryString = new StringBuilder();
+        final StringBuilder queryString = new StringBuilder(500);
 
         queryString.append(
                 "select distinct pmv  from WaterChargeMaterlizeView pmv,InstDmdCollResponse idc where ")

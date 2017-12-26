@@ -55,7 +55,6 @@ import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.wtms.application.entity.WaterConnectionDetails;
 import org.egov.wtms.application.service.ReportGenerationService;
 import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -79,10 +78,7 @@ public class WorkOrderController {
     private MessageSource messageSource;
 
     @Autowired
-    private PropertyExtnUtils propertyExtnUtils;
-
-    @Autowired
-    private WaterConnectionDetailsService wcdService;
+    private WaterConnectionDetailsService waterConnectionDetailsService;
 
     @Autowired
     @Qualifier("fileStoreService")
@@ -97,8 +93,8 @@ public class WorkOrderController {
             final HttpSession session) {
         String workFlowAction;
         String errorMessage = "";
-        ReportOutput reportOutput = null;
-        final WaterConnectionDetails connectionDetails = wcdService
+        ReportOutput reportOutput;
+        final WaterConnectionDetails connectionDetails = waterConnectionDetailsService
                 .findByApplicationNumber(request.getParameter("pathVar"));
         workFlowAction = (String) session.getAttribute(WaterTaxConstants.WORKFLOW_ACTION);
         final Boolean isDigSignPending = Boolean.parseBoolean(request.getParameter("isDigSignPending"));
@@ -135,12 +131,11 @@ public class WorkOrderController {
     @ResponseBody
     public ResponseEntity<byte[]> viewReport(@PathVariable final String applicationNumber,
             final HttpSession session) {
-        ReportOutput reportOutput = null;
-        final WaterConnectionDetails connectionDetails = wcdService.findByApplicationNumber(applicationNumber);
+        final WaterConnectionDetails connectionDetails = waterConnectionDetailsService.findByApplicationNumber(applicationNumber);
         final String errorMessage = validateWorkOrder(connectionDetails, true);
         if (!errorMessage.isEmpty())
             return redirect(errorMessage);
-        reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, null);
+        final ReportOutput reportOutput = reportGenerationService.generateWorkOrderNotice(connectionDetails, null);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=Work Order.pdf");

@@ -329,7 +329,7 @@ public class ConnectionDemandService {
 
     @SuppressWarnings("unchecked")
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
-        final StringBuilder queryBuilder = new StringBuilder();
+        final StringBuilder queryBuilder = new StringBuilder(500);
         queryBuilder
                 .append("select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
                 .append("sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
@@ -350,7 +350,7 @@ public class ConnectionDemandService {
         else
             currInstallment = getCurrentInstallment(WaterTaxConstants.EGMODULE_NAME, WaterTaxConstants.MONTHLY,
                     new Date());
-        final StringBuilder queryBuilder = new StringBuilder();
+        final StringBuilder queryBuilder = new StringBuilder(500);
         queryBuilder
                 .append(
                         "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
@@ -368,7 +368,7 @@ public class ConnectionDemandService {
     public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentFinYear(final EgDemand egDemand) {
         final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
 
-        final StringBuilder queryBuilder = new StringBuilder();
+        final StringBuilder queryBuilder = new StringBuilder(500);
         queryBuilder
                 .append(
                         "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
@@ -774,7 +774,7 @@ public class ConnectionDemandService {
     public List<Object> getDmdCollAmtInstallmentWiseUptoPreviousFinYear(final EgDemand egDemand) {
         final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
 
-        final StringBuilder stringBuilder = new StringBuilder();
+        final StringBuilder stringBuilder = new StringBuilder(600);
         stringBuilder.append(
                 "select dmdRes.id,dmdRes.id_installment, sum(dmdDet.amount) as amount, sum(dmdDet.amt_collected) as amt_collected, ")
                 .append(" sum(dmdDet.amt_rebate) as amt_rebate, inst.start_date from eg_demand_details dmdDet,eg_demand_reason dmdRes, ")
@@ -785,6 +785,19 @@ public class ConnectionDemandService {
                 .setParameter("dmdId", egDemand.getId())
                 .setParameter("currFinStartDate", financialyear.getStartingDate());
         return query.list();
+    }
+
+    @SuppressWarnings("unchecked")
+    public Map<String, Installment> getInstallmentsForPreviousYear(final Date currDate) {
+        final Map<String, Installment> currYearInstMap = new HashMap<>();
+        final StringBuilder queryString = new StringBuilder(500);
+        queryString.append(
+                "select installment from Installment installment,CFinancialYear finYear where installment.module.name =:moduleName")
+                .append("  and cast(installment.toDate as date) <= cast(finYear.startingDate as date) order by installment.id desc ");
+        final Query qry = getCurrentSession().createQuery(queryString.toString()).setString("moduleName", PTMODULENAME);
+        final List<Installment> installments = qry.list();
+        currYearInstMap.put(WaterTaxConstants.PREVIOUS_SECOND_HALF, installments.get(0));
+        return currYearInstMap;
     }
 
 }

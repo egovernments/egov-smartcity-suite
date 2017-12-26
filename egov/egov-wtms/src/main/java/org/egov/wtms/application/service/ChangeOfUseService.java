@@ -118,7 +118,7 @@ public class ChangeOfUseService {
         else if (assessmentDetails.getErrorDetails() != null
                 && assessmentDetails.getErrorDetails().getErrorCode() != null)
             validationMessage = assessmentDetails.getErrorDetails().getErrorMessage();
-        else if (null != inWorkflow)
+        else if (inWorkflow != null )
             validationMessage = wcmsMessageSource.getMessage("err.validate.changeofUse.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() },
