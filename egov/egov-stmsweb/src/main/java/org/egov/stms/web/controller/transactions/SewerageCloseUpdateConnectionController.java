@@ -47,13 +47,26 @@
  */
 package org.egov.stms.web.controller.transactions;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
+import javax.validation.Valid;
+import javax.validation.ValidationException;
+
 import org.apache.commons.io.FileUtils;
 import org.apache.log4j.Logger;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportFormat;
@@ -88,32 +101,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-import javax.validation.Valid;
-import javax.validation.ValidationException;
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
-import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_CLOSER_NOTICE;
-
-;
-
 @Controller
 @RequestMapping(value = "/transactions")
 public class SewerageCloseUpdateConnectionController extends GenericWorkFlowController {
+
+    private static final String SEWERAGE_APPLICATION_DETAILS = "sewerageApplicationDetails";
+
+    private static final String WORK_FLOW_ACTION = "workFlowAction";
+
+    private static final String APPROVAL_COMENT = "approvalComent";
+
+    private static final String APPROVAL_POSITION = "approvalPosition";
 
     private static final Logger LOGGER = Logger.getLogger(SewerageCloseUpdateConnectionController.class);
 
     @Autowired
     private SewerageApplicationDetailsService sewerageApplicationDetailsService;
-
-    @Autowired
-    private DepartmentService departmentService;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -140,11 +143,10 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     @Autowired
     private SewerageApplicationValidator sewerageApplicationValidator;
 
-    @ModelAttribute("sewerageApplicationDetails")
+    @ModelAttribute(SEWERAGE_APPLICATION_DETAILS)
     public SewerageApplicationDetails getSewerageApplicationDetails(@PathVariable final String applicationNumber) {
-        final SewerageApplicationDetails sewerageApplicationDetails = sewerageApplicationDetailsService
+        return sewerageApplicationDetailsService
                 .findByApplicationNumber(applicationNumber);
-        return sewerageApplicationDetails;
     }
 
     @RequestMapping(value = "/closeSewerageConnection-update/{applicationNumber}", method = RequestMethod.GET)
@@ -159,7 +161,7 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
             model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
 
         model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
-        model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
+        model.addAttribute(SEWERAGE_APPLICATION_DETAILS, sewerageApplicationDetails);
         model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
         model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
         model.addAttribute("currentState", sewerageApplicationDetails.getCurrentState().getValue());
@@ -178,31 +180,31 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
     public String update(@Valid @ModelAttribute final SewerageApplicationDetails sewerageApplicationDetails,
             final BindingResult resultBinder, final RedirectAttributes redirectAttributes,
             final HttpServletRequest request, final HttpSession session, final Model model, @RequestParam String workFlowAction,
-            @RequestParam("files") final MultipartFile[] files, final HttpServletResponse response) throws Exception {
+            @RequestParam("files") final MultipartFile[] files, final HttpServletResponse response) {
         Long approvalPosition = 0l;
         String approvalComment = "";
 
-        if (request.getParameter("approvalComent") != null)
-            approvalComment = request.getParameter("approvalComent");
+        if (request.getParameter(APPROVAL_COMENT) != null)
+            approvalComment = request.getParameter(APPROVAL_COMENT);
 
-        if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-            approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+        if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+            approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
 
-        if (request.getParameter("workFlowAction") != null)
-            workFlowAction = request.getParameter("workFlowAction");
+        if (request.getParameter(WORK_FLOW_ACTION) != null)
+            workFlowAction = request.getParameter(WORK_FLOW_ACTION);
 
         sewerageApplicationValidator.validateUpdateClosureApplication(sewerageApplicationDetails, resultBinder, workFlowAction);
 
         if (resultBinder.hasErrors()) {
             final WorkflowContainer container = new WorkflowContainer();
-            model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
+            model.addAttribute(SEWERAGE_APPLICATION_DETAILS, sewerageApplicationDetails);
 
             final AssessmentDetails propertyOwnerDetails = sewerageThirdPartyServices
                     .getPropertyDetails(sewerageApplicationDetails.getConnection().getShscNumber(), request);
             if (propertyOwnerDetails != null)
                 model.addAttribute("propertyOwnerDetails", propertyOwnerDetails);
             model.addAttribute("stateType", sewerageApplicationDetails.getClass().getSimpleName());
-            model.addAttribute("sewerageApplicationDetails", sewerageApplicationDetails);
+            model.addAttribute(SEWERAGE_APPLICATION_DETAILS, sewerageApplicationDetails);
             model.addAttribute("approvalDepartmentList", departmentService.getAllDepartments());
             model.addAttribute("currentUser", sewerageTaxUtils.getCurrentUserRole(securityUtils.getCurrentUser()));
             model.addAttribute("currentState", sewerageApplicationDetails.getCurrentState().getValue());
@@ -234,7 +236,6 @@ public class SewerageCloseUpdateConnectionController extends GenericWorkFlowCont
             throw new ValidationException(e.getMessage());
         }
 
-        // TODO : show closer notice from sewerage tax notice object.
         if (workFlowAction != null && !workFlowAction.isEmpty()
                 && workFlowAction.equalsIgnoreCase(SewerageTaxConstants.WF_STATE_CONNECTION_CLOSE_BUTTON)
                 && sewerageApplicationDetails.getClosureNoticeNumber() != null)

@@ -139,9 +139,19 @@
 	<c:if test="${!isCitizenPortalUser}">
 		<jsp:include page="../common/commonWorkflowMatrix.jsp" />
 	</c:if>
-	<c:if test="${isInspectionFeePaid || isInspectionFeePaid==null}">
-		<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
-	</c:if>
+	<c:choose>
+		<c:when
+			test="${(isInspectionFeePaid==null && sewerageApplicationDetails.status.code !='ESTIMATIONNOTICEGENERATED') || isInspectionFeePaid }">
+			<jsp:include page="../common/commonWorkflowMatrix-button.jsp" />
+		</c:when>
+		<c:otherwise>
+
+			<div class="buttonbottom" align="center">
+				<input type="button" name="button2" id="button2" value="Close"
+					class="btn btn-default" onclick="window.close();" />
+			</div>
+		</c:otherwise>
+	</c:choose>
 	<div class="row text-center">
 		<div class="add-margin">
 			<c:if

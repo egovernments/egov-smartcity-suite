@@ -47,6 +47,60 @@
  */
 package org.egov.stms.transactions.service;
 
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CANCELLED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CLOSERSANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_COLLECTINSPECTIONFEE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_CREATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_DEEAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_ESTIMATENOTICEGEN;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_FINALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INITIALAPPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_INSPECTIONFEEPAID;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_REJECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_SANCTIONED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPLICATION_STATUS_WOGENERATED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPL_INDEX_MODULE_NAME;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.APPROVEWORKFLOWACTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CHANGEINCLOSETS_NOCOLLECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.CLOSESEWERAGECONNECTION;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.DOCTYPE_OTHERS;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.EXECUTIVE_ENGINEER_APPROVAL_PENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.FEES_DONATIONCHARGE_CODE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.MODULETYPE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.NOTICE_TYPE_WORK_ORDER_NOTICE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_CANCEL;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WFLOW_ACTION_STEP_REJECT;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_ASSISTANT_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_CLERK_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_DEPUTY_EXE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_EE_APPROVED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_COLLECTED;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_INSPECTIONFEE_PENDING;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_PAYMENTDONE;
+import static org.egov.stms.utils.constants.SewerageTaxConstants.WF_STATE_REJECTED;
+
+import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpSession;
+
 import org.apache.commons.lang.WordUtils;
 import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
@@ -112,31 +166,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpSession;
-import java.math.BigDecimal;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Set;
-
-import static org.egov.stms.utils.constants.SewerageTaxConstants.*;
-
 @Service
 @Transactional(readOnly = true)
 public class SewerageApplicationDetailsService {
 
+    private static final String SHOW_APPROVAL_DTLS = "showApprovalDtls";
+    private static final String MODE = "mode";
     private static final String ELECTION_WARD = "electionWard";
     private static final String APPLICATION_CENTRE = "ApplicationCentre";
     private static final String DUE_DATE = "dueDate";
@@ -633,23 +668,26 @@ public class SewerageApplicationDetailsService {
         if (sewerageApplicationDetails.getState() != null) {
             final String currentState = sewerageApplicationDetails.getState().getValue();
             if (currentState.equalsIgnoreCase(WF_STATE_INSPECTIONFEE_PENDING)
-                    || currentState.equalsIgnoreCase(WF_STATE_ASSISTANT_APPROVED)
-                    || currentState.equalsIgnoreCase(WF_STATE_DEPUTY_EXE_APPROVED)
-                    || currentState.equalsIgnoreCase(WF_STATE_PAYMENTDONE))
-                modelParams.put("showApprovalDtls", "no");
+                    || (currentState.equalsIgnoreCase(WF_STATE_DEPUTY_EXE_APPROVED) && !sewerageApplicationDetails.getState()
+                            .getNextAction().equalsIgnoreCase(EXECUTIVE_ENGINEER_APPROVAL_PENDING))
+                    || currentState.equalsIgnoreCase(WF_STATE_EE_APPROVED))
+                modelParams.put(SHOW_APPROVAL_DTLS, "no");
             else
-                modelParams.put("showApprovalDtls", "yes");
+                modelParams.put(SHOW_APPROVAL_DTLS, "yes");
             if (currentState.equalsIgnoreCase(WF_STATE_INSPECTIONFEE_COLLECTED)
+                    || currentState.equalsIgnoreCase(WF_STATE_ASSISTANT_APPROVED)
+                    || (currentState.equalsIgnoreCase(WF_STATE_DEPUTY_EXE_APPROVED) && !sewerageApplicationDetails.getState()
+                            .getNextAction().equalsIgnoreCase(EXECUTIVE_ENGINEER_APPROVAL_PENDING))
                     || currentState.equalsIgnoreCase(WF_STATE_CLERK_APPROVED))
-                modelParams.put("mode", "edit");
+                modelParams.put(MODE, "edit");
             else if (currentState.equalsIgnoreCase(WF_STATE_REJECTED))
-                modelParams.put("mode", "editOnReject");
+                modelParams.put(MODE, "editOnReject");
             else if ("NEW".equalsIgnoreCase(currentState) && (SewerageTaxConstants.APPLICATION_STATUS_CSCCREATED
                     .equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                     || SewerageTaxConstants.APPLICATION_STATUS_ANONYMOUSCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode()) || SewerageTaxConstants.APPLICATION_STATUS_CITIZENCREATED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())))
-                modelParams.put("mode", "closetview");
+                modelParams.put(MODE, "closetview");
             else
-                modelParams.put("mode", "view");
+                modelParams.put(MODE, "view");
         }
         return modelParams;
     }
@@ -670,8 +708,9 @@ public class SewerageApplicationDetailsService {
         // also generate workorder notice no for dee approved applications
         if (sewerageApplicationDetails.getStatus().getCode()
                 .equalsIgnoreCase(APPLICATION_STATUS_FEEPAID)
-                && sewerageApplicationDetails.getState().getValue()
-                .equalsIgnoreCase(WF_STATE_PAYMENTDONE)
+                && (sewerageApplicationDetails.getState().getValue()
+                .equalsIgnoreCase(WF_STATE_PAYMENTDONE)|| sewerageApplicationDetails.getState().getValue()
+                .equalsIgnoreCase(WF_STATE_EE_APPROVED)) && workFlowAction.equals(APPROVEWORKFLOWACTION)
                 || sewerageApplicationDetails.getStatus().getCode()
                 .equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED)
                 && additionalRule != null && additionalRule.equalsIgnoreCase(CHANGEINCLOSETS_NOCOLLECTION)) {
@@ -778,7 +817,7 @@ public class SewerageApplicationDetailsService {
                 .getStatus().getCode())
                 || APPLICATION_STATUS_DEEAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
                 || APPLICATION_STATUS_CREATED.equalsIgnoreCase(sewerageApplicationDetails
-                .getStatus().getCode())) {
+                        .getStatus().getCode())) {
             sewerageApplicationDetails.setApprovalComent(approvalComent);
             sewerageConnectionSmsAndEmailService.sendSmsAndEmail(sewerageApplicationDetails, request);
         } else if (APPLICATION_STATUS_FINALAPPROVED.equalsIgnoreCase(sewerageApplicationDetails.getStatus().getCode())
@@ -863,7 +902,10 @@ public class SewerageApplicationDetailsService {
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FEEPAID, MODULETYPE));
             else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_FEEPAID)
-                    && sewerageApplicationDetails.getState().getValue().equalsIgnoreCase(WF_STATE_PAYMENTDONE))
+                    && (sewerageApplicationDetails.getState().getValue().equalsIgnoreCase(WF_STATE_PAYMENTDONE)||
+                            sewerageApplicationDetails.getState().getValue().equalsIgnoreCase(WF_STATE_EE_APPROVED))
+                    && workFlowAction.equals(APPROVEWORKFLOWACTION)
+                    )
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_FINALAPPROVED, MODULETYPE));
             else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_FINALAPPROVED))
@@ -925,7 +967,9 @@ public class SewerageApplicationDetailsService {
             else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_INITIALAPPROVED))
                 sewerageApplicationDetails
                         .setStatus(sewerageTaxUtils.getStatusByCodeAndModuleType(APPLICATION_STATUS_DEEAPPROVED, MODULETYPE));
-            else if (sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_DEEAPPROVED)) {
+            else if ((sewerageApplicationDetails.getStatus().getCode().equals(APPLICATION_STATUS_DEEAPPROVED) ||
+                    sewerageApplicationDetails.getState().getValue().equalsIgnoreCase(WF_STATE_EE_APPROVED))
+                    && workFlowAction.equals(APPROVEWORKFLOWACTION)) {
                 // Make Connection status closed on EE approval
                 sewerageApplicationDetails.getConnection().setStatus(SewerageConnectionStatus.CLOSED);
                 sewerageApplicationDetails.setActive(true);
@@ -980,27 +1024,27 @@ public class SewerageApplicationDetailsService {
                     && sewerageApplicationDetails.getStateHistory() != null)
                 Collections.reverse(sewerageApplicationDetails.getStateHistory());
             for (final StateHistory<Position> stateHistory : sewerageApplicationDetails.getStateHistory()) {
-                final HashMap<String, Object> HistoryMap = new HashMap<>();
-                HistoryMap.put("date", stateHistory.getDateInfo());
-                HistoryMap.put("comments", stateHistory.getComments());
-                HistoryMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                final HashMap<String, Object> historyMap = new HashMap<>();
+                historyMap.put("date", stateHistory.getDateInfo());
+                historyMap.put("comments", stateHistory.getComments());
+                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
                         + stateHistory.getLastModifiedBy().getName());
-                HistoryMap.put("status", stateHistory.getValue());
+                historyMap.put("status", stateHistory.getValue());
                 final Position owner = stateHistory.getOwnerPosition();
                 user = stateHistory.getOwnerUser();
                 if (null != user && !user.getType().toString().equals("CITIZEN")) {
-                    HistoryMap.put("user", user.getUsername() + "::" + user.getName());
-                    HistoryMap.put(DEPARTMENT,
+                    historyMap.put("user", user.getUsername() + "::" + user.getName());
+                    historyMap.put(DEPARTMENT,
                             null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
                                     .getDepartmentForUser(user.getId()).getName() : "");
                 } else if (null != owner && null != owner.getDeptDesig()) {
                     user = eisCommonService.getUserForPosition(owner.getId(), new Date());
-                    HistoryMap
+                    historyMap
                             .put("user", null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
-                    HistoryMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
                             .getDepartment().getName() : "");
                 }
-                historyTable.add(HistoryMap);
+                historyTable.add(historyMap);
             }
 
             map.put("date", state.getDateInfo());
