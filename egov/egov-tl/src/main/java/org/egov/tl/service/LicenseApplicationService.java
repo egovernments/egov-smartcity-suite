@@ -58,6 +58,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -154,7 +155,10 @@ public class LicenseApplicationService extends TradeLicenseService {
     @Transactional
     @Override
     public void updateTradeLicense(final TradeLicense license, final WorkflowBean workflowBean) {
-        updateDemandForChangeTradeArea(license);
+        final BigDecimal currentDemandAmount = recalculateLicenseFee(license.getCurrentDemand());
+        final BigDecimal feematrixDmdAmt = calculateFeeAmount(license);
+        if (feematrixDmdAmt.compareTo(currentDemandAmount) >= 0)
+            updateDemandForChangeTradeArea(license);
         if (!license.isPaid())
             license.setCollectionPending(true);
         else
