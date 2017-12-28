@@ -1651,7 +1651,7 @@ public class PropertyExternalService {
 			}
                         assessmentDetails.setRevenueWard(basicProperty.getPropertyID().getWard().getName());
                         assessmentDetails.setDoorNo(
-                                basicProperty.getPropertyID().getDoorNum() == null ? "N/A" : basicProperty.getPropertyID().getDoorNum());
+                                basicProperty.getAddress().getHouseNoBldgApt() == null ? "N/A" : basicProperty.getAddress().getHouseNoBldgApt());
                         AssessmentDetails assmtDetails = getDuesForProperty(request, assessmentNo, "");
                         assessmentDetails.setTotalPropTaxDue(assmtDetails.getPropertyDue());
                         assessmentDetails.setWaterChargesDue(assmtDetails.getWaterTaxDue());
