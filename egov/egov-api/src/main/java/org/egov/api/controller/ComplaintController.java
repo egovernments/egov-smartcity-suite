@@ -65,7 +65,6 @@ import org.egov.api.controller.core.ApiResponse;
 import org.egov.api.controller.core.ApiUrl;
 import org.egov.api.model.ComplaintAction;
 import org.egov.infra.admin.master.entity.CrossHierarchy;
-import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.admin.master.service.CrossHierarchyService;
 import org.egov.infra.admin.master.service.DepartmentService;
@@ -293,34 +292,25 @@ public class ComplaintController extends ApiController {
 
             final Complaint complaint = new Complaint();
 
-            if (securityUtils.currentUserType().equals(UserType.EMPLOYEE))
-                if (complaintRequest.containsKey(COMPLAINANT_NAME) &&
-                        complaintRequest.containsKey(COMPLAINANT_MOBILE_NO)) {
+            if (complaintRequest.containsKey(COMPLAINANT_NAME) && complaintRequest.containsKey(COMPLAINANT_MOBILE_NO)) {
 
-                    if (isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
-                            || isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
-                        return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
-
-                    complaint.getComplainant().setName(complaintRequest.get(COMPLAINANT_NAME).toString());
-                    complaint.getComplainant().setMobile(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString());
-
-                    if (complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
-                        final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString().trim();
-                        if (!email.matches(EMAIL))
-                            return getResponseHandler().error(getMessage("msg.invalid.mail"));
-                        complaint.getComplainant().setEmail(email);
-                    }
-
-                } else if (!complaintRequest.containsKey(COMPLAINANT_NAME) &&
-                        !complaintRequest.containsKey(COMPLAINANT_MOBILE_NO) &&
-                        !complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
-                    final User currentUser = securityUtils.getCurrentUser();
-                    complaint.getComplainant().setName(currentUser.getName());
-                    complaint.getComplainant().setMobile(currentUser.getMobileNumber());
-                    if (!isEmpty(currentUser.getEmailId()))
-                        complaint.getComplainant().setEmail(currentUser.getEmailId().trim());
-                } else
+                if (isEmpty(complaintRequest.get(COMPLAINANT_NAME).toString())
+                        || isEmpty(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString()))
                     return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+
+                complaint.getComplainant().setName(complaintRequest.get(COMPLAINANT_NAME).toString());
+                complaint.getComplainant().setMobile(complaintRequest.get(COMPLAINANT_MOBILE_NO).toString());
+
+                if (complaintRequest.containsKey(COMPLAINANT_EMAIL)) {
+                    final String email = complaintRequest.get(COMPLAINANT_EMAIL).toString().trim();
+                    if (!email.matches(EMAIL))
+                        return getResponseHandler().error(getMessage("msg.invalid.mail"));
+                    complaint.getComplainant().setEmail(email);
+                }
+
+            } else if (!securityUtils.currentUserIsCitizen()) {
+                return getResponseHandler().error(getMessage("msg.complaint.reg.failed.user"));
+            }
 
             if (!complaintRequest.containsKey(COMPLAINT_TYPE_ID))
                 return getResponseHandler().error(getMessage("msg.complaint.type.required"));
