@@ -735,11 +735,14 @@ public class SewerageApplicationDetailsService {
 
         if (sewerageApplicationDetails.getStatus().getCode() != null
                 && sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED)
+                        .equalsIgnoreCase(APPLICATION_STATUS_INITIALAPPROVED)
+                ||
+                sewerageApplicationDetails.getStatus().getCode()
+                        .equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED)
                 || sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID)
+                        .equalsIgnoreCase(APPLICATION_STATUS_INSPECTIONFEEPAID)
                 || sewerageApplicationDetails.getStatus().getCode()
-                .equalsIgnoreCase(APPLICATION_STATUS_CREATED))
+                        .equalsIgnoreCase(APPLICATION_STATUS_CREATED)){
             if (sewerageApplicationDetails != null && sewerageApplicationDetails.getCurrentDemand() == null) {
                 final EgDemand demand = sewerageDemandService.createDemandOnNewConnection(
                         sewerageApplicationDetails.getConnectionFees(), sewerageApplicationDetails);
@@ -765,7 +768,7 @@ public class SewerageApplicationDetailsService {
             } else
                 sewerageDemandService.updateDemand(sewerageApplicationDetails.getConnectionFees(),
                         sewerageApplicationDetails.getCurrentDemand());
-
+        }
         if (sewerageApplicationDetails.getStatus().getCode().equalsIgnoreCase(APPLICATION_STATUS_DEEAPPROVED) &&
                 sewerageApplicationDetails.getState().getValue().equalsIgnoreCase(WF_STATE_DEPUTY_EXE_APPROVED) &&
                 additionalRule != null && !additionalRule.equalsIgnoreCase(CHANGEINCLOSETS_NOCOLLECTION))
