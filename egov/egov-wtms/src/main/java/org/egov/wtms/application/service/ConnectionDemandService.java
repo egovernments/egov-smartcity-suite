@@ -523,11 +523,8 @@ public class ConnectionDemandService {
         final EgDemand demand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         final List<WaterDemandConnection> demandList = waterConnectionDetails.getWaterDemandConnection();
         if (!demandList.isEmpty() && waterConnectionDetails.getLegacy()
-                && StringUtils.isBlank(waterConnectionDetails.getConnectionReason())
-                && waterConnectionDetails.getState() == null && demand != null) {
-            demand.setIsHistory("Y");
+                && waterConnectionDetails.getState() == null && demand != null)
             demandObj = demand;
-        }
         final Set<EgDemandDetails> dmdDetailSet = new HashSet<>();
         for (final DemandDetail demanddetailBean : waterConnectionDetails.getDemandDetailBeanList())
             if (demanddetailBean.getActualAmount().compareTo(BigDecimal.ZERO) > 0
@@ -641,7 +638,7 @@ public class ConnectionDemandService {
 
     public WaterConnectionDetails updateDemandForNonmeteredConnection(
             final WaterConnectionDetails waterConnectionDetails, Installment installment,
-            final Boolean reconnInSameInstallment, final String workFlowAction){
+            final Boolean reconnInSameInstallment, final String workFlowAction) {
         Date installemntStartDate;
         EgDemandDetails existingDemandDtlObject = null;
         int numberOfMonths;
