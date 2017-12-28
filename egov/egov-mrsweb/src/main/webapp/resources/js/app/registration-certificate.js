@@ -129,7 +129,7 @@ $(document)
 													    "render": function ( data, type, row, meta ) {
 													    	if(row.showprintcertificate)
 													    	{
-														        return '<button type="button" class="btn btn-xs btn-secondary print" value='+printcertificateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Print Certificate</button>';
+														        return '<button type="button" class="btn btn-xs btn-secondary print" value='+printcertificateurl+row.id +'><span class="glyphicon glyphicon-edit"></span>&nbsp;Download Certificate</button>';
 													    	}
 													    }
 													

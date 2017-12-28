@@ -260,6 +260,6 @@ public class SearchRegistrationController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> download(@PathVariable final long id) {
         final MarriageCertificate certificate = marriageCertificateService.findById(id);
-        return fileStoreUtils.fileAsResponseEntity(certificate.getFileStore().getFileStoreId(), FILESTORE_MODULECODE, false);
+        return fileStoreUtils.fileAsResponseEntity(certificate.getFileStore().getFileStoreId(), FILESTORE_MODULECODE, true);
     }
 }
