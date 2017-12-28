@@ -48,6 +48,8 @@
 
 package org.egov.restapi.model;
 
+import java.math.BigDecimal;
+
 public class AssessmentRequest {
 
     private String assessmentNo;
@@ -62,6 +64,8 @@ public class AssessmentRequest {
     private String fromDate;
     private String toDate;
     private String oldAssessmentNo;
+    private BigDecimal registrationValue;
+    private BigDecimal marketValue;
 
     public String getAssessmentNo() {
         return assessmentNo;
@@ -73,9 +77,8 @@ public class AssessmentRequest {
 
     @Override
     public String toString() {
-        return "AssessmentRequest [assessmentNo=" + assessmentNo + "oldAssessmentNo=" + oldAssessmentNo + "ownerName=" + ownerName + "mobileNumber=" + mobileNumber
-                + "category=" + category
-                + "]";
+        return "AssessmentRequest [assessmentNo=" + assessmentNo + " oldAssessmentNo=" + oldAssessmentNo + " ownerName=" + ownerName + " mobileNumber=" + mobileNumber
+                + ", category=" + category + ", registrationValue=" + registrationValue +",  marketValue=" + marketValue +" ]";
     }
 
     public String getUlbCode() {
@@ -164,5 +167,21 @@ public class AssessmentRequest {
 
     public void setOldAssessmentNo(String oldAssessmentNo) {
         this.oldAssessmentNo = oldAssessmentNo;
+    }
+
+    public BigDecimal getRegistrationValue() {
+        return registrationValue;
+    }
+
+    public void setRegistrationValue(BigDecimal registrationValue) {
+        this.registrationValue = registrationValue;
+    }
+
+    public BigDecimal getMarketValue() {
+        return marketValue;
+    }
+
+    public void setMarketValue(BigDecimal marketValue) {
+        this.marketValue = marketValue;
     }
 }

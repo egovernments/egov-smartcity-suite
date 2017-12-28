@@ -162,7 +162,7 @@ public class PropertyTitleTransferService {
      * @throws IOException
      */
     @RequestMapping(value = "/property/assessmentdetails", method = RequestMethod.POST, consumes = APPLICATION_JSON_VALUE, produces = APPLICATION_JSON_VALUE)
-    public String fetchAssessmentDetails(@RequestBody String assessmentRequest)
+    public String fetchAssessmentDetails(@RequestBody String assessmentRequest,final HttpServletRequest request)
             throws IOException {
         AssessmentRequest assessmentReq = (AssessmentRequest) getObjectFromJSONRequest(assessmentRequest,
                 AssessmentRequest.class);
@@ -173,7 +173,7 @@ public class PropertyTitleTransferService {
             responseJson = getJSONResponse(errorDetails);
         } else {
             RestAssessmentDetails assessmentDetails = propertyExternalService
-                    .fetchAssessmentDetails(assessmentReq.getAssessmentNo());
+                    .fetchAssessmentDetails(assessmentReq.getAssessmentNo(),assessmentReq.getMarketValue(),assessmentReq.getRegistrationValue(),request);
             responseJson = getJSONResponse(assessmentDetails);
         }
         return responseJson;

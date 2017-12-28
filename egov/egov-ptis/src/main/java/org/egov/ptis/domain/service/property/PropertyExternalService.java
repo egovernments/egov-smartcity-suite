@@ -105,6 +105,7 @@ import org.egov.ptis.domain.entity.document.DocumentTypeDetails;
 import org.egov.ptis.domain.entity.property.*;
 import org.egov.ptis.domain.model.*;
 import org.egov.ptis.domain.model.enums.BasicPropertyStatus;
+import org.egov.ptis.domain.service.transfer.PropertyTransferService;
 import org.egov.ptis.exceptions.TaxCalculatorExeption;
 import org.egov.ptis.master.service.FloorTypeService;
 import org.egov.ptis.master.service.PropertyUsageService;
@@ -219,6 +220,9 @@ public class PropertyExternalService {
 
 	@Autowired
 	private SimpleRestClient simpleRestClient;
+	
+	@Autowired
+	private PropertyTransferService propertyTransferService;
 
 	private PropertyImpl propty = new PropertyImpl();
 
@@ -1630,7 +1634,7 @@ public class PropertyExternalService {
 	 * @param assessmentNo
 	 * @return
 	 */
-	public RestAssessmentDetails fetchAssessmentDetails(final String assessmentNo) {
+	public RestAssessmentDetails fetchAssessmentDetails(final String assessmentNo,BigDecimal marketValue,BigDecimal regValue,final HttpServletRequest request) {
 		PropertyImpl property;
 		RestAssessmentDetails assessmentDetails = new RestAssessmentDetails();
 		BasicProperty basicProperty = basicPropertyDAO.getAllBasicPropertyByPropertyID(assessmentNo);
@@ -1644,43 +1648,48 @@ public class PropertyExternalService {
 				if (property.getPropertyDetail().getTotalBuiltupArea() != null
 						&& property.getPropertyDetail().getTotalBuiltupArea().getArea() != null)
 					assessmentDetails.setPlinthArea(property.getPropertyDetail().getTotalBuiltupArea().getArea());
-				Ptdemand currentPtdemand = ptDemandDAO.getNonHistoryCurrDmdForProperty(property);
-				BigDecimal totalTaxDue = BigDecimal.ZERO;
-				if (currentPtdemand != null) {
-					for (EgDemandDetails demandDetails : currentPtdemand.getEgDemandDetails()) {
-						if (demandDetails.getAmount().compareTo(demandDetails.getAmtCollected()) > 0) {
-							totalTaxDue = totalTaxDue
-									.add(demandDetails.getAmount().subtract(demandDetails.getAmtCollected()));
-						}
-					}
-				}
-				assessmentDetails.setTotalTaxDue(totalTaxDue);
 			}
-		}
-		PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
-		if (propertyMutation != null) {
-			assessmentDetails.setMutationFee(propertyMutation.getMutationFee());
-			if (StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
-				assessmentDetails.setIsMutationFeePaid("Y");
-				assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
-				Date receiptDate = null;
-				final Query qry = entityManager
-						.createQuery("select receiptdate from ReceiptHeader where receiptnumber = :receiptNum");
-				qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
-				receiptDate = (Date) qry.getSingleResult();
-				assessmentDetails.setFeeReceiptDate(new SimpleDateFormat("dd/MM/yyyy").format(receiptDate));
-			} else
-				assessmentDetails.setIsMutationFeePaid("N");
+                        assessmentDetails.setRevenueWard(basicProperty.getPropertyID().getWard().getName());
+                        assessmentDetails.setDoorNo(
+                                basicProperty.getPropertyID().getDoorNum() == null ? "N/A" : basicProperty.getPropertyID().getDoorNum());
+                        AssessmentDetails assmtDetails = getDuesForProperty(request, assessmentNo, "");
+                        assessmentDetails.setTotalPropTaxDue(assmtDetails.getPropertyDue());
+                        assessmentDetails.setWaterChargesDue(assmtDetails.getWaterTaxDue());
+                        assessmentDetails.setSwerageDue(assmtDetails.getSewerageDue());
+                        assessmentDetails.setTotalTaxDue(assessmentDetails.getTotalPropTaxDue()
+                                 .add(assessmentDetails.getWaterChargesDue().add(assessmentDetails.getSwerageDue())));
 
-			assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
-		} else {
-			assessmentDetails.setIsMutationFeePaid("N");
-			assessmentDetails.setFeeReceipt("");
-			assessmentDetails.setFeeReceiptDate("");
-			assessmentDetails.setApplicationNo("");
 		}
+	        getMutationDetails(assessmentNo, marketValue, regValue, assessmentDetails);
+			
 		return assessmentDetails;
 	}
+	private void getMutationDetails(String assessmentNo, BigDecimal marketValue, BigDecimal regValue,
+	            RestAssessmentDetails assessmentDetails) {
+	        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
+	        if (propertyMutation != null) {
+	            assessmentDetails.setMarketValue(marketValue == null ? BigDecimal.ZERO : marketValue);
+	            assessmentDetails.setRegistrationValue(regValue == null ? BigDecimal.ZERO : regValue);
+	            assessmentDetails.setMutationFee(propertyTransferService.calculateMutationFee(assessmentDetails.getMarketValue(),
+	                    assessmentDetails.getRegistrationValue()));
+	            if (StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
+	                assessmentDetails.setIsMutationFeePaid("Y");
+	                assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
+	                assessmentDetails.setFeeReceiptAmount(propertyMutation.getMutationFee());
+	                final Query qry = entityManager
+	                        .createQuery("select receiptdate from ReceiptHeader where receiptnumber = :receiptNum");
+	                qry.setParameter("receiptNum", propertyMutation.getReceiptNum());
+	                assessmentDetails.setFeeReceiptDate(DateUtils.getDefaultFormattedDate((Date) qry.getSingleResult()));
+	            }
+
+	            assessmentDetails.setApplicationNo(propertyMutation.getApplicationNo());
+	        } else {
+	            assessmentDetails.setIsMutationFeePaid("N");
+	            assessmentDetails.setFeeReceipt("");
+	            assessmentDetails.setFeeReceiptDate("");
+	            assessmentDetails.setApplicationNo("");
+	        }
+	    }
 
 	/**
 	 * Fetches Assessment Details - owner details, tax dues, plinth area,
