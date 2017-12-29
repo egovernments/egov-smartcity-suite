@@ -462,9 +462,11 @@ public class PropertyExternalService {
         if (propertyOwners != null && !propertyOwners.isEmpty())
             for (final PropertyOwnerInfo propertyOwner : propertyOwners) {
                 final OwnerName ownerName = new OwnerName();
-                ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber());
+                ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber()
+                        .replace(propertyOwner.getOwner().getAadhaarNumber().substring(0, 8), "XXXXXXXX"));
                 ownerName.setOwnerName(propertyOwner.getOwner().getName());
-                ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber());
+                ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber()
+                        .replace(propertyOwner.getOwner().getMobileNumber().substring(0, 8), "XXXXXXXX"));
                 ownerName.setEmailId(propertyOwner.getOwner().getEmailId());
                 ownerNames.add(ownerName);
             }
@@ -1704,21 +1706,19 @@ public class PropertyExternalService {
             assessmentDetails.setSwerageDue(assmtDetails.getSewerageDue());
             assessmentDetails.setTotalTaxDue(assessmentDetails.getTotalPropTaxDue()
                     .add(assessmentDetails.getWaterChargesDue().add(assessmentDetails.getSwerageDue())));
-
-        }
-        getMutationDetails(assessmentNo, marketValue, regValue, assessmentDetails);
-
-        return assessmentDetails;
-    }
-
-    private void getMutationDetails(String assessmentNo, BigDecimal marketValue, BigDecimal regValue,
-            RestAssessmentDetails assessmentDetails) {
-        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
-        if (propertyMutation != null) {
             assessmentDetails.setMarketValue(marketValue == null ? BigDecimal.ZERO : marketValue);
             assessmentDetails.setRegistrationValue(regValue == null ? BigDecimal.ZERO : regValue);
             assessmentDetails.setMutationFee(propertyTransferService.calculateMutationFee(assessmentDetails.getMarketValue(),
                     assessmentDetails.getRegistrationValue()));
+        }
+        getMutationDetails(assessmentNo, assessmentDetails);
+
+        return assessmentDetails;
+    }
+
+    private void getMutationDetails(String assessmentNo, RestAssessmentDetails assessmentDetails) {
+        PropertyMutation propertyMutation = getLatestPropertyMutationByAssesmentNo(assessmentNo);
+        if (propertyMutation != null) {
             if (StringUtils.isNotBlank(propertyMutation.getReceiptNum())) {
                 assessmentDetails.setIsMutationFeePaid("Y");
                 assessmentDetails.setFeeReceipt(propertyMutation.getReceiptNum());
