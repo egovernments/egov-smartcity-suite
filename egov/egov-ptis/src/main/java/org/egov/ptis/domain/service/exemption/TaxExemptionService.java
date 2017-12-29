@@ -94,7 +94,10 @@ import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
+import org.springframework.web.multipart.MultipartFile;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.servlet.http.HttpServletRequest;
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -113,7 +116,9 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(TaxExemptionService.class);
-
+    @PersistenceContext
+    private EntityManager entityManager;
+    
     @Autowired
     private PropertyService propertyService;
 
@@ -212,8 +217,9 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
             floor.setPropertyDetail(propertyModel.getPropertyDetail());
         }
         if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-            taxExemptionReason = (TaxExemptionReason) propertyPerService.find(
-                    "From TaxExemptionReason where id = ?", Long.valueOf(taxExemptedReason));
+            final javax.persistence.Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
+            qry.setParameter("id", Long.valueOf(taxExemptedReason));
+            taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
             propertyModel.setTaxExemptedReason(taxExemptionReason);
             propertyModel.setIsExemptedFromTax(Boolean.TRUE);
         } else {
@@ -225,9 +231,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
         final Set<Ptdemand> newPtdemandSet = propertyModel.getPtDemandSet();
         final Set<EgDemandDetails> demandDetailSet = new HashSet<EgDemandDetails>();
 
-        if (StringUtils.isNotBlank(taxExemptedReason) && !taxExemptedReason.equals("-1")) {
-            // Do not do anything
-        } else // Remove all the previous demands until the current installment
         if (StringUtils.isNotBlank(workFlowAction) && !workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             for (final Ptdemand ptdemand : newPtdemandSet)
                 if (ptdemand.getEgInstallmentMaster().equals(installmentFirstHalf)) {
@@ -241,8 +244,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
 
         for (final Ptdemand ptdemand : newPtdemandSet)
             propertyPerService.applyAuditing(ptdemand.getDmdCalculations());
-        if (taxExemptionReason != null)
-            processAndStoreApplicationDocuments(propertyModel, taxExemptionReason.getCode());
         propertyModel.setBasicProperty(basicProperty);
         basicProperty.addProperty(propertyModel);
         transitionWorkFlow(propertyModel, approvalComment, workFlowAction, approvalPosition, additionalRule,
@@ -372,8 +373,6 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                         .withDateInfo(new Date()).withOwner(pos).withNextAction(wfmatrix.getNextAction())
                         .withNatureOfTask(NATURE_TAX_EXEMPTION)
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
-                // to be enabled once acknowledgement feature is developed
-                // buildSMS(property, workFlowAction);
             } else if (property.getCurrentState().getNextAction().equalsIgnoreCase("END"))
                 property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
                         .withComments(approvarComments).withDateInfo(currentDate.toDate()).withNextAction(null);
@@ -535,12 +534,18 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
     }
 
     @Transactional
-    public void processAndStoreApplicationDocuments(final PropertyImpl property, final String exemptionCode) {
-        final TransactionType transactionType = getTransactionTypeByExemptionCode(exemptionCode);
-        for (final Document applicationDocument : property.getTaxExemptionDocumentsProxy())
-            if (applicationDocument.getFile() != null)
-                property.getTaxExemptionDocuments().clear();
-        if (!property.getTaxExemptionDocumentsProxy().isEmpty())
+    public void processAndStoreApplicationDocuments(final PropertyImpl property, final String taxExemptedReason,
+            final String previousExemptionReason) {
+        final javax.persistence.Query qry = entityManager.createNamedQuery("EXEMPTIOREASON_BYID");
+        qry.setParameter("id", Long.valueOf(taxExemptedReason));
+        TaxExemptionReason taxExemptionReason = (TaxExemptionReason) qry.getSingleResult();
+        final TransactionType transactionType = getTransactionTypeByExemptionCode(taxExemptionReason.getCode());
+        if (previousExemptionReason != null && !taxExemptionReason.getCode().equalsIgnoreCase(previousExemptionReason))
+            property.getTaxExemptionDocuments().clear();
+        else
+            updateDocuments(property);
+        if (!property.getTaxExemptionDocumentsProxy().isEmpty()
+                && property.getTaxExemptionDocuments().isEmpty())
             for (final Document applicationDocument : property.getTaxExemptionDocumentsProxy())
                 if (applicationDocument.getFile() != null) {
                     applicationDocument.setType(vacancyRemissionRepository.findDocumentTypeByNameAndTransactionType(
@@ -548,6 +553,25 @@ public class TaxExemptionService extends PersistenceService<PropertyImpl, Long> 
                     applicationDocument.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
                     property.addTaxExemptionDocuments(applicationDocument);
                 }
+    }
+
+    private void updateDocuments(final PropertyImpl property) {
+        for (final Document applicationDocument : property.getTaxExemptionDocumentsProxy())
+            if (!property.getTaxExemptionDocuments().isEmpty()) {
+                replaceDoc(property, applicationDocument);
+            }
+    }
+
+    private void replaceDoc(final PropertyImpl property, final Document applicationDocument) {
+        for (MultipartFile mp : applicationDocument.getFile()) {
+            if (mp.getSize() != 0) {
+                for (Document document : property.getTaxExemptionDocuments()) {
+                    if (document.getType().getName().equals(applicationDocument.getType().getName())) {
+                        document.setFiles(propertyService.addToFileStore(applicationDocument.getFile()));
+                    }
+                }
+            }
+        }
     }
 
     public TransactionType getTransactionTypeByExemptionCode(final String exemptionCode) {

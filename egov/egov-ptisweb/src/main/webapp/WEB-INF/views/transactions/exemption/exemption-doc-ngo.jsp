@@ -133,29 +133,25 @@
 											</c:choose>
 										</c:when>
 										<c:otherwise>
-											<c:forEach items="${ngoDocs[index].files}" var="file">
-												<%-- <c:choose> --%>
+											<c:choose>
+												<c:when test="${!ngoDocs[index].files.isEmpty()}">
+													<c:forEach items="${ngoDocs[index].files}" var="file">
 
-												<%-- <c:when test="${docs.mandatory}">
-														<input type="file" id="file${index}" data-idx="${index}"
+														<input type="file" id="file${index}"
 															name="taxExemptionDocumentsProxy[${index}].file"
-															class="file-ellipsis upload-file" required="true">
+															class="file-ellipsis upload-file">
 														<a
 															href="javascript:viewDocument('<c:out value="${file.fileStoreId}"/>')">
 															<c:out value="${file.fileName}" />
 														</a>
-													</c:when>
-													<c:otherwise>
-														<input type="file" id="file${index}"
-															name="taxExemptionDocumentsProxy[${index}].file"
-															class="file-ellipsis upload-file"> --%>
-												<a
-													href="javascript:viewDocument('<c:out value="${file.fileStoreId}"/>')">
-													<c:out value="${file.fileName}" />
-												</a>
-												<%-- </c:otherwise> --%>
-												<%-- </c:choose> --%>
-											</c:forEach>
+													</c:forEach>
+												</c:when>
+												<c:otherwise>
+													<input type="file" id="file${index}"
+														name="taxExemptionDocumentsProxy[${index}].file"
+														class="file-ellipsis upload-file">
+												</c:otherwise>
+											</c:choose>
 										</c:otherwise>
 									</c:choose>
 									<form:errors path="taxExemptionDocumentsProxy[${index}].file"

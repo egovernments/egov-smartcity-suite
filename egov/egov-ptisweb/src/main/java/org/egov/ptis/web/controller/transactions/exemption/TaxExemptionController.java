@@ -108,6 +108,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @RequestMapping(value = { "/exemption" })
 public class TaxExemptionController extends GenericWorkFlowController {
 
+    private static final String APPROVAL_POSITION = "approvalPosition";
     private static final String APPLICATION_SOURCE = "applicationSource";
     private static final String TAX_EXEMPTION = "TAX_EXEMPTION";
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
@@ -313,8 +314,8 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 approvalComent = request.getParameter("approvalComent");
             if (request.getParameter("workFlowAction") != null)
                 workFlowAction = request.getParameter("workFlowAction");
-            if (request.getParameter("approvalPosition") != null && !request.getParameter("approvalPosition").isEmpty())
-                approvalPosition = Long.valueOf(request.getParameter("approvalPosition"));
+            if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
+                approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
             if (property.getTaxExemptedReason() != null && checkCommercialProperty((PropertyImpl)property)) {
                 model.addAttribute(ERROR_MSG, "error.commercial.prop.notallowed");
                 return PROPERTY_VALIDATION;
@@ -323,12 +324,14 @@ public class TaxExemptionController extends GenericWorkFlowController {
                 model.addAttribute(ERROR_MSG, "error.tenant.exists");
                 return PROPERTY_VALIDATION;
             }
+            if (StringUtils.isNotBlank(taxExemptedReason))
+                taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason, null);
             if (loggedUserIsMeesevaUser) {
                 final HashMap<String, String> meesevaParams = new HashMap<>();
-                meesevaParams.put("APPLICATIONNUMBER", ((PropertyImpl) property).getMeesevaApplicationNumber());
+                meesevaParams.put("APPLICATIONNUMBER", (property.getMeesevaApplicationNumber()));
 
                 if (StringUtils.isBlank(property.getApplicationNo())) {
-                    property.setApplicationNo(((PropertyImpl) property).getMeesevaApplicationNumber());
+                    property.setApplicationNo(property.getMeesevaApplicationNumber());
                     property.setSource(PropertyTaxConstants.SOURCE_MEESEVA);
                 }
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAction,
@@ -342,14 +345,14 @@ public class TaxExemptionController extends GenericWorkFlowController {
             model.addAttribute(
                     "successMessage",
                     "Property exemption data saved successfully in the system and forwarded to "
-                            + propertyTaxUtil.getApproverUserName(((PropertyImpl) property).getState()
+                            + propertyTaxUtil.getApproverUserName(property.getState()
                                     .getOwnerPosition().getId())
                             + " with application number "
                             + property.getApplicationNo());
             if (loggedUserIsMeesevaUser)
                 target = "redirect:/exemption/generate-meesevareceipt/"
-                        + ((PropertyImpl) property).getBasicProperty().getUpicNo() + "?transactionServiceNumber="
-                        + ((PropertyImpl) property).getApplicationNo();
+                        + property.getBasicProperty().getUpicNo() + "?transactionServiceNumber="
+                        + property.getApplicationNo();
             else
 
                 target = TAX_EXEMPTION_SUCCESS;

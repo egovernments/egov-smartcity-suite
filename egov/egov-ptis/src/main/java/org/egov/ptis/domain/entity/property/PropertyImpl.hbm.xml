@@ -186,5 +186,8 @@
         
     <query name="WORKFLOW_PROPERTYIMPL_BYID">
         <![CDATA[from PropertyImpl where id=? and status = 'W']]></query>
-
+        
+    <query name="EXEMPTIOREASON_BYID">
+        <![CDATA[From TaxExemptionReason where id = :id]]></query> 
+        
 </hibernate-mapping>
