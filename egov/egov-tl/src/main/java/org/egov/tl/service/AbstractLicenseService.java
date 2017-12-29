@@ -459,7 +459,7 @@ public abstract class AbstractLicenseService<T extends License> {
         }
     }
 
-    private Position getCommissionerPosition() {
+    public Position getCommissionerPosition() {
         return positionMasterService.getPositionsForEmployee(securityUtils.getCurrentUser().getId())
                 .stream()
                 .filter(position -> position.getDeptDesig().getDesignation().getName().equals(COMMISSIONER_DESGN))
@@ -716,20 +716,6 @@ public abstract class AbstractLicenseService<T extends License> {
                     .withComments(workflowBean.getApproverComments())
                     .withStateValue(wfmatrix.getNextState()).withDateInfo(new DateTime().toDate()).withOwner(owner)
                     .withNextAction(wfmatrix.getNextAction());
-        } else if ("SI/SS Approved".equals(license.getState().getValue())) {
-            licenseUtils.applicationStatusChange(license, APPLICATION_STATUS_CANCELLED);
-            license.setStatus(licenseStatusService.getLicenseStatusByName(LICENSE_STATUS_CANCELLED));
-            license.setActive(false);
-            owner = getCommissionerPosition();
-            final WorkFlowMatrix commWfmatrix = this.licenseWorkflowService.getWfMatrix(license.getStateType(), null,
-                    null, workflowBean.getAdditionaRule(), license.getCurrentState().getValue(), null);
-            license.transition().end()
-                    .withSenderName(currentUser.getUsername() + DELIMITER_COLON + currentUser.getName())
-                    .withComments(workflowBean.getApproverComments())
-                    .withStateValue(commWfmatrix.getNextState()).withDateInfo(new DateTime().toDate())
-                    .withOwner(owner)
-                    .withNextAction(commWfmatrix.getNextAction());
-            tradeLicenseSmsAndEmailService.sendSMsAndEmailOnClosure(license, workflowBean.getWorkFlowAction());
         }
 
         this.licenseRepository.save(license);

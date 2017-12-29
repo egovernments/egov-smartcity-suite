@@ -246,6 +246,8 @@ public class License extends StateAware<Position> {
 
     private boolean collectionPending;
 
+    private boolean closed;
+
     @Override
     public Long getId() {
         return id;
@@ -593,6 +595,14 @@ public class License extends StateAware<Position> {
 
     public void setCollectionPending(boolean collectionPending) {
         this.collectionPending = collectionPending;
+    }
+
+    public boolean isClosed() {
+        return closed;
+    }
+
+    public void setClosed(boolean closed) {
+        this.closed = closed;
     }
 
     public LicenseStateInfo extraInfo() {

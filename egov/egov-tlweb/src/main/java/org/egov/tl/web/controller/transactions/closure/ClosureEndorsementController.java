@@ -45,78 +45,65 @@
  *   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
  *
  */
-package org.egov.tl.web.controller.transactions.digisign;
+package org.egov.tl.web.controller.transactions.closure;
 
-import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.reporting.engine.ReportDisposition;
+import org.egov.infra.reporting.engine.ReportOutput;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.tl.entity.License;
-import org.egov.tl.service.LicenseCertificateDigiSignService;
+import org.egov.tl.service.LicenseClosureService;
+import org.egov.tl.service.TradeLicenseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.stream.Collectors;
-
+import static org.egov.infra.reporting.util.ReportUtil.reportAsResponseEntity;
 import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
 
 @Controller
-@RequestMapping(value = "/tradelicense")
-public class LicenseCertificateDigiSignController {
+@RequestMapping(value = "/license/closure")
+public class ClosureEndorsementController {
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
 
     @Autowired
-    private LicenseCertificateDigiSignService licenseCertificateDigiSignService;
+    private LicenseClosureService licenseClosureService;
+
+    @Autowired
+    private TradeLicenseService tradeLicenseService;
 
     @GetMapping("/digisign-transition")
-    public String licenseDigiSignTransition(@RequestParam String[] fileStoreIds,
-                                            @RequestParam String[] applicationNumbers,
-                                            Model model) {
-        licenseCertificateDigiSignService.digitalSignTransition(Arrays.asList(applicationNumbers));
-        model.addAttribute("successMessage", "Digitally Signed Successfully");
-        model.addAttribute("fileStoreId", fileStoreIds.length == 1 ? fileStoreIds[0] : "");
-        model.addAttribute("applnum", applicationNumbers.length == 1 ? applicationNumbers[0] : "");
-
-        return "digitalSignature-success";
+    public String approvedClosureWithDigiSign(@RequestParam String fileStoreIds,
+                                              @RequestParam String applicationNumbers,
+                                              Model model) {
+        License license = licenseClosureService.approveClosure(applicationNumbers);
+        model.addAttribute("fileStoreId", fileStoreIds);
+        model.addAttribute("license", license);
+        return "closure-endorsement-success";
     }
 
-    @GetMapping("/download/digisign-certificate")
+    @GetMapping("/endorsementnotice/{licenseId}")
     @ResponseBody
-    public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file,
-                                                                                @RequestParam String applnum) {
-        return fileStoreUtils.fileAsPDFResponse(file, applnum, FILESTORE_MODULECODE);
+    public ResponseEntity<InputStreamResource> closureEndorsementNotice(@PathVariable Long licenseId) {
+        License license = tradeLicenseService.getLicenseById(licenseId);
+        ReportOutput reportOutput = licenseClosureService.generateClosureEndorsementNotice(license);
+        reportOutput.setReportDisposition(ReportDisposition.ATTACHMENT);
+        reportOutput.setReportName("Closure_Endorsement_Notice");
+        return reportAsResponseEntity(reportOutput);
     }
 
-    @GetMapping(value = "/bulk-digisign")
-    public String showLicenseBulkDigiSignForm(Model model) {
-        model.addAttribute("licenses",
-                licenseCertificateDigiSignService.getLicensePendingForDigiSign());
-        return "license-bulk-digisign-form";
+    @GetMapping("/download-endorsementnotice")
+    @ResponseBody
+    public ResponseEntity<InputStreamResource> downloadSignedEndorsementNotice(@RequestParam String fileStoreId,
+                                                                               @RequestParam String applicationNumber) {
+        return fileStoreUtils.fileAsPDFResponse(fileStoreId, applicationNumber, FILESTORE_MODULECODE);
     }
-
-    @PostMapping(value = "/bulk-digisign")
-    public String bulkDigitalSignature(@RequestParam List<Long> licenseIds, Model model) {
-
-        List<License> licenses = licenseCertificateDigiSignService.generateLicenseCertificateForDigiSign(licenseIds);
-        List<String> fileStoreIds = licenses.parallelStream()
-                .map(License::getDigiSignedCertFileStoreId).collect(Collectors.toList());
-        List<String> applicaitonNumbers = licenses.parallelStream()
-                .map(License::getApplicationNumber).collect(Collectors.toList());
-
-        model.addAttribute("fileStoreIds", String.join(",", fileStoreIds));
-        model.addAttribute("applicationNo", String.join(",", applicaitonNumbers));
-        model.addAttribute("ulbCode", ApplicationThreadLocals.getCityCode());
-        return "license-bulk-digisign-forward";
-    }
-
 }
