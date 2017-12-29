@@ -57,7 +57,7 @@
 				<param name="sequence_name">SEQ_EGCL_COLLECTIONHEADER</param>
 			</generator>
 		</id>
-		<!-- version name="version" column="VERSION" type="long" /-->
+		<version name="version" column="VERSION" type="long" />
 		<many-to-one name="receiptHeader" class="org.egov.collection.entity.ReceiptHeader" fetch="select">
             <column name="REFERENCE_CH_ID" precision="22" scale="0" />
         </many-to-one>
