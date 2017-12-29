@@ -52,6 +52,8 @@ import org.egov.tl.entity.License;
 
 import java.util.Date;
 
+import static org.apache.commons.lang.StringUtils.EMPTY;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
 
 public class TradeLicenseDetailResponse {
@@ -67,7 +69,7 @@ public class TradeLicenseDetailResponse {
 
     public TradeLicenseDetailResponse(License license) {
         this.tin = license.getLicenseNumber();
-        this.assessmentNo = license.getAssessmentNo();
+        this.assessmentNo = isBlank(license.getAssessmentNo()) ? EMPTY : license.getAssessmentNo();
         this.ownerName = license.getLicensee().getApplicantName();
         this.mobileNumber = license.getLicensee().getMobilePhoneNumber();
         this.expiryDate = getDefaultFormattedDate(license.getDateOfExpiry() == null ? new Date() : license.getDateOfExpiry());
