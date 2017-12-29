@@ -47,14 +47,7 @@
  */
 package org.egov.collection.entity;
 
-import org.egov.collection.constants.CollectionConstants;
-import org.egov.commons.EgwStatus;
-import org.egov.infra.admin.master.entity.Location;
-import org.egov.infra.persistence.entity.Auditable;
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.infstr.models.ServiceDetails;
-import org.egov.model.instrument.InstrumentHeader;
-import org.egov.pims.commons.Position;
+import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -65,7 +58,14 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
 
-import static org.egov.infra.utils.DateUtils.toDefaultDateFormat;
+import org.egov.collection.constants.CollectionConstants;
+import org.egov.commons.EgwStatus;
+import org.egov.infra.admin.master.entity.Location;
+import org.egov.infra.persistence.entity.Auditable;
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.infstr.models.ServiceDetails;
+import org.egov.model.instrument.InstrumentHeader;
+import org.egov.pims.commons.Position;
 
 public class ReceiptHeader extends StateAware<Position> implements Auditable {
     private static final long serialVersionUID = 1L;
@@ -117,16 +117,17 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
     private String remittanceReferenceNumber;
     private String payeeEmail;
     private String consumerType;
+    private Long version;
 
     public ReceiptHeader() {
     }
 
     public ReceiptHeader(final String referencenumber, final Date referencedate, final String consumerCode,
-                         final String referenceDesc, final BigDecimal totalAmount, final BigDecimal minimumAmount,
-                         final Boolean partPaymentAllowed, final Boolean overrideAccountHeadsAllowed,
-                         final Boolean callbackForApportioning, final String displayMsg, final ServiceDetails service,
-                         final String collModesNotAllwd, final String payeeName, final String payeeAddress,
-                         final String payeeEmail, final String consumerType) {
+            final String referenceDesc, final BigDecimal totalAmount, final BigDecimal minimumAmount,
+            final Boolean partPaymentAllowed, final Boolean overrideAccountHeadsAllowed,
+            final Boolean callbackForApportioning, final String displayMsg, final ServiceDetails service,
+            final String collModesNotAllwd, final String payeeName, final String payeeAddress,
+            final String payeeEmail, final String consumerType) {
         this.referencenumber = referencenumber;
         this.referencedate = referencedate;
         this.consumerCode = consumerCode;
@@ -146,8 +147,8 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
     }
 
     public ReceiptHeader(final Boolean isReconciled, final Boolean isModifiable, final char receiptType,
-                         final Character collectionType, final String paidBy, final ServiceDetails serviceDetails,
-                         final String referencenumber, final String referenceDesc, final BigDecimal totalAmount) {
+            final Character collectionType, final String paidBy, final ServiceDetails serviceDetails,
+            final String referencenumber, final String referenceDesc, final BigDecimal totalAmount) {
         this.isReconciled = isReconciled;
         this.isModifiable = isModifiable;
         receipttype = receiptType;
@@ -270,10 +271,8 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
     }
 
     /**
-     * Returns instrument type of receipts associated with the receipt. Since
-     * multiple modes of payment for a receipt are not allowed (as of now), this
-     * method will return the type of the first instrument associated with this
-     * receipt.
+     * Returns instrument type of receipts associated with the receipt. Since multiple modes of payment for a receipt are not
+     * allowed (as of now), this method will return the type of the first instrument associated with this receipt.
      *
      * @return instrument type of instruments associated with the receipt
      */
@@ -304,8 +303,7 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
 
     /**
      * @param type - the Instrument type
-     * @return Returns list of instruments of this instrument type. Useful to
-     * get all cheque instruments or all bank instruments.
+     * @return Returns list of instruments of this instrument type. Useful to get all cheque instruments or all bank instruments.
      */
     public List<InstrumentHeader> getInstruments(final String type) {
         final ArrayList<InstrumentHeader> instrumentList = new ArrayList<>();
@@ -613,10 +611,9 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
     }
 
     /**
-     * This method returns Challan Number associated with the receipt In case of
-     * Cancelled receipts, get the receipt object created in liu of old receipt
-     * object and returns the challan number associated with the new receipt
-     * object. this method is invoked from serach receipt UI screen
+     * This method returns Challan Number associated with the receipt In case of Cancelled receipts, get the receipt object
+     * created in liu of old receipt object and returns the challan number associated with the new receipt object. this method is
+     * invoked from serach receipt UI screen
      *
      * @return String
      */
@@ -759,5 +756,13 @@ public class ReceiptHeader extends StateAware<Position> implements Auditable {
 
     public void setConsumerType(String consumerType) {
         this.consumerType = consumerType;
+    }
+
+    public Long getVersion() {
+        return version;
+    }
+
+    public void setVersion(Long version) {
+        this.version = version;
     }
 }
