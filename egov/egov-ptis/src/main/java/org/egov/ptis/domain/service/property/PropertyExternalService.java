@@ -73,6 +73,7 @@ import org.egov.infra.admin.master.service.BoundaryTypeService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
@@ -1882,6 +1883,8 @@ public class PropertyExternalService {
 	 * @param wardNum
 	 * @return List
 	 */
+	
+	@ReadOnly
 	public List<AssessmentInfo> getPropertyDetailsForWard(String ulbCode, String wardNum, String assessmentNo,
 			String doorNo, String oldAssessmentNo) {
 		Long wardId = null;
@@ -2157,6 +2160,8 @@ public class PropertyExternalService {
 	 * @return
 	 * @throws ParseException
 	 */
+	
+	@ReadOnly
 	public Long getPropertiesCount(String transactionType, String fromDate, String toDate) throws ParseException {
 		StringBuilder queryString = new StringBuilder();
 		queryString.append(
@@ -2184,6 +2189,8 @@ public class PropertyExternalService {
 	 * @return
 	 * @throws ParseException
 	 */
+	
+	@ReadOnly
 	public List<SurveyAssessmentDetails> getPropertyDetailsForSurvey(String transactionType, String fromDate,
 			String toDate) throws ParseException {
 		StringBuilder queryString = new StringBuilder();
