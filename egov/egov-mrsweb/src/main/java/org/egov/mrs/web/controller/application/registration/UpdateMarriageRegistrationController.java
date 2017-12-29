@@ -239,7 +239,19 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
             workFlowContainer.setPendingActions(null);
             model.addAttribute(PENDING_ACTIONS, null);
         }
-
+        
+        if (registration.getStatus().getCode().equalsIgnoreCase(CREATED)
+                && (JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING.equalsIgnoreCase(registration.getState().getNextAction())
+                        || WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
+                                .equalsIgnoreCase(registration.getState().getNextAction()))) {
+            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+            model.addAttribute("nextActn", WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+            model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
+        } else {
+            model.addAttribute("nextActn", registration.getState().getNextAction());
+        }
+        
         workFlowContainer.setAdditionalRule(ADDITIONAL_RULE_REGISTRATION);
         prepareWorkflow(model, registration, workFlowContainer);
         model.addAttribute("additionalRule", ADDITIONAL_RULE_REGISTRATION);
@@ -247,16 +259,6 @@ public class UpdateMarriageRegistrationController extends MarriageRegistrationCo
         if (registration.getCurrentState() != null)
             model.addAttribute("currentState", registration.getCurrentState().getValue());
         model.addAttribute("isDigitalSignEnabled", marriageUtils.isDigitalSignEnabled());
-
-        if (registration.getStatus().getCode().equalsIgnoreCase(CREATED)
-                && JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING.equalsIgnoreCase(registration.getState().getNextAction())
-                || WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING.equalsIgnoreCase(registration.getState().getNextAction())) {
-            model.addAttribute("nextActn", registration.getState().getNextAction());
-            model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
-        } else {
-            model.addAttribute("nextActn", registration.getState().getNextAction());
-        }
-
     }
 
     @RequestMapping(value = "/update", method = POST)

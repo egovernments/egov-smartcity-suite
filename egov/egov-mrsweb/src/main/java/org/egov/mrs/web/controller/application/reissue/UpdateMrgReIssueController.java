@@ -209,21 +209,25 @@ public class UpdateMrgReIssueController extends GenericWorkFlowController {
             workFlowContainer.setPendingActions(null);
             model.addAttribute(PENDING_ACTIONS, null);
         }
-
+        
+        if (reIssue.getStatus().getCode().equalsIgnoreCase(CREATED)
+                && (JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                        .equalsIgnoreCase(reIssue.getState().getNextAction())
+                        || WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING.equalsIgnoreCase(reIssue.getState().getNextAction()))) {
+            workFlowContainer.setPendingActions(WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+            model.addAttribute(PENDING_ACTIONS, WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+            model.addAttribute("nextActn", WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING);
+            model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
+        } else {
+            model.addAttribute("nextActn", reIssue.getState().getNextAction());
+        }
+        
         prepareWorkflow(model, reIssue, workFlowContainer);
         model.addAttribute("additionalRule", ADDITIONAL_RULE_REGISTRATION);
         model.addAttribute("stateType", reIssue.getClass().getSimpleName());
         if (reIssue.getCurrentState() != null)
             model.addAttribute("currentState", reIssue.getCurrentState().getValue());
-        if (reIssue.getStatus().getCode().equalsIgnoreCase(CREATED)
-                && JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
-                        .equalsIgnoreCase(reIssue.getState().getNextAction())
-                || WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING.equalsIgnoreCase(reIssue.getState().getNextAction())) {
-            model.addAttribute("nextActn", reIssue.getState().getNextAction());
-            model.addAttribute("isReassignEnabled", marriageUtils.isReassignEnabled());
-        } else {
-            model.addAttribute("nextActn", reIssue.getState().getNextAction());
-        }
+       
 
     }
 
