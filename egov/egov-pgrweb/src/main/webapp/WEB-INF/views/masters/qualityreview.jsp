@@ -70,26 +70,30 @@
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.feedback.reason"/>
                             <span class="mandatory"></span>
                         </label>
-                        <div class="col-sm-6 add-margin" style="margin-bottom: 15px;">
-                            <form:select path="feedbackReason" id="feedbackReason" cssClass="form-control"
-                                         cssErrorClass="form-control error" required="required">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                                <form:options items="${feedbackReasons}" itemValue="id" itemLabel="name"/>
-                            </form:select>
+                        <div class="col-sm-3 add-margin">
+                            <c:forEach items="${feedbackReasons}" var="feedback">
+                                <div class="radio">
+                                    <label>
+                                        <input type="radio" name="feedbackReason" id="feedbackReason"
+                                               value="${feedback.id}"
+                                                <c:if test="${feedback eq qualityReview.feedbackReason}"> checked="checked" </c:if>/>
+                                            ${feedback.name}
+                                    </label>
+                                </div>
+                            </c:forEach>
                         </div>
                     </div>
                     <input type="hidden" id="checkexisting" value="${qualityReview.id}"/>
                     <form:hidden path="rating" value="${complaint.citizenFeedback}"/>
                     <form:hidden path="complaint" value="${complaint.id}"/>
                     <form:hidden path="existing" id="isexisting"/>
-                    <div class="form-group display-hide feedback">
+                    <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.feedBack"/>
                             <span class="mandatory"></span>
                         </label>
                         <div class="col-sm-6 add-margin" style="margin-bottom: 15px;">
-                            <form:textarea path="detail" id="detail" maxlength="250" class="form-control"/>
+                            <form:textarea path="detail" id="detail" maxlength="250" class="form-control"
+                                           required="required" value="${qualityReview.detail}"/>
                             <form:errors path="detail" cssClass="error-msg"/>
                         </div>
                     </div>

@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-02T12:49:43 -->
+<!-- 2017-12-18T15:17:56 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="chequeCollectionReport" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="edf8ecb0-894a-4bde-87bd-9e2e05b2dc29">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="184"/>
@@ -105,7 +105,7 @@
 		<parameterDescription><![CDATA[Where clause for receipt header ids]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_RECEIPT_IDS} == null || $P{EGOV_RECEIPT_IDS}.size() == 0) ? "" : "AND $X{IN, CH.ID, EGOV_RECEIPT_IDS}"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[SELECT CH.ID AS COLLECTIONHEADER_ID,
 	CH.RECEIPTNUMBER AS RECEIPT_NUMBER,

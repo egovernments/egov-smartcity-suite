@@ -97,7 +97,7 @@ public class Assignment extends AbstractAuditable {
     @Audited
     private Long id;
     @NotNull
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "position")
     @Audited(targetAuditMode = RelationTargetAuditMode.NOT_AUDITED)
     private Position position;

@@ -60,6 +60,7 @@ import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
 import org.egov.pgr.event.ComplaintEventPublisher;
+import org.egov.pgr.event.ComplaintRegisterEventPublisher;
 import org.egov.pgr.repository.ComplaintRepository;
 import org.egov.pims.commons.Position;
 import org.hibernate.Criteria;
@@ -70,12 +71,14 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
@@ -140,7 +143,10 @@ public class ComplaintService {
     @Autowired
     private ComplaintEventPublisher complaintEventPublisher;
 
-    @Transactional
+    @Autowired
+    private ComplaintRegisterEventPublisher complaintRegisterEventPublisher;
+
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public Complaint createComplaint(Complaint complaint) {
 
         if (isBlank(complaint.getCrn()))
@@ -168,6 +174,7 @@ public class ComplaintService {
             complaint.setPriority(configurationService.getDefaultComplaintPriority());
 
         complaintRepository.saveAndFlush(complaint);
+        complaintRegisterEventPublisher.publishEvent(complaint);
         if (securityUtils.currentUserIsCitizen())
             citizenComplaintDataPublisher.onRegistration(complaint);
         complaintNotificationService.sendRegistrationMessage(complaint);
@@ -216,12 +223,18 @@ public class ComplaintService {
 
     @ReadOnly
     public List<Complaint> getPendingGrievances() {
-        Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
-                .createAlias("complaint.status", "status");
-        criteria.add(Restrictions.in("status.name", PENDING_STATUS));
-        criteria.add(
-                Restrictions.in("complaint.assignee", positionMasterService.getPositionsForEmployee(getUserId(), new Date())));
-        return criteria.list();
+        List<Position> assignee = positionMasterService.getPositionsForEmployee(getUserId(), new Date());
+        if (assignee.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            Criteria criteria = entityManager.unwrap(Session.class).createCriteria(Complaint.class, "complaint")
+                    .createAlias("complaint.status", "status");
+            criteria.add(Restrictions.in("status.name", PENDING_STATUS));
+            criteria.add(
+                    Restrictions.in("complaint.assignee", assignee));
+            return criteria.list();
+        }
+
     }
 
     @ReadOnly

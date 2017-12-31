@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-03T15:47:03 -->
+<!-- 2017-12-18T15:23:03 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="receipt_register" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="45cae798-aa6d-4b62-a802-37fd9ecaa359">
 	<property name="ireport.zoom" value="1.0000000000000009"/>
 	<property name="ireport.x" value="0"/>
@@ -125,7 +125,7 @@
 		<defaultValueExpression><![CDATA[($P{EGOV_PAYMENT_MODE} == "ALL" ? "" :(
 $P{EGOV_PAYMENT_MODE} == "cheque/dd" ? " AND EGF_INSTRUMENTTYPE.TYPE IN ('cheque', 'dd')" : " AND EGF_INSTRUMENTTYPE.TYPE = '"+$P{EGOV_PAYMENT_MODE}+"'"))]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[SELECT RECEIPT_NUMBER,RECEIPT_DATE,DEPARTMENT_NAME,INSTRUMENT_TYPE,SOURCE,STATUS_DESCRIPTION,
 		SERVICE_NAME,CASH_AMOUNT,sum(CHEQUEDD_AMOUNT) AS CHEQUEDD_AMOUNT ,CARD_AMOUNT,BANK_AMOUNT, ONLINE_AMOUNT,CARD_AMOUNT,

@@ -55,11 +55,13 @@ public final class SecurityConstants {
     public static final String USERAGENT_FIELD = "userAgentInfo";
     public static final String SESSION_COOKIE_PATH = "/";
     public static final String SESSION_COOKIE_NAME = "SESSIONID";
-    public static final String PWD_FIELD = "j_password";
+    public static final String LOGIN_PASS_FIELD = "j_password";
     public static final String USERNAME_FIELD = "j_username";
-    public static final String LOGIN_LOG_ID = "loginLogId";
     public static final String LOGIN_URI = "/login";
     public static final String PUBLIC_URI = "/public";
+    public static final String LOGIN_TIME = "login_time";
+    public static final String LOGIN_IP = "login_ip";
+    public static final String LOGIN_USER_AGENT = "login_user_agent";
     public static final int MAX_LOGIN_ATTEMPT_ALLOWED = 5;
 
     private SecurityConstants() {

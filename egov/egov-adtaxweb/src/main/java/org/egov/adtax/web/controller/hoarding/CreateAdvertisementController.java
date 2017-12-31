@@ -47,6 +47,10 @@
  */
 package org.egov.adtax.web.controller.hoarding;
 
+import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.adtax.entity.SubCategory;
 import org.egov.adtax.entity.enums.AdvertisementApplicationType;
@@ -54,14 +58,12 @@ import org.egov.adtax.entity.enums.AdvertisementStatus;
 import org.egov.adtax.utils.constants.AdvertisementTaxConstants;
 import org.egov.adtax.web.controller.common.HoardingControllerSupport;
 import org.egov.adtax.workflow.AdvertisementWorkFlowService;
-import org.egov.commons.Installment;
 import org.egov.commons.entity.Source;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
-import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
@@ -79,10 +81,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.List;
 
 import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ANONYMOUS_USER;
 import static org.springframework.http.MediaType.APPLICATION_JSON_VALUE;
@@ -159,7 +157,6 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
                 && advertisementWorkFlowService.isEmployee(securityUtils.getCurrentUser());
         validateAssignmentForCscUser(advertisementPermitDetail, isEmployee, resultBinder);
         validateHoardingDocs(advertisementPermitDetail, resultBinder);
-        validateApplicationDate(advertisementPermitDetail, resultBinder);
         validateAdvertisementDetails(advertisementPermitDetail, resultBinder);
         if (advertisementPermitDetail != null) {
             if (advertisementPermitDetail.getState() == null) {
@@ -224,20 +221,7 @@ public class CreateAdvertisementController extends HoardingControllerSupport {
             return "redirect:/hoarding/success/" + advertisementPermitDetail.getId();
         }
     }
-
-    private void validateApplicationDate(final AdvertisementPermitDetail advertisementPermitDetail,
-            final BindingResult resultBinder) {
-        if (advertisementPermitDetail != null && advertisementPermitDetail.getApplicationDate() != null) {
-            final Installment installmentObj = advertisementDemandService.getCurrentInstallment();
-            if (installmentObj != null && installmentObj.getFromDate() != null)
-                if (advertisementPermitDetail.getApplicationDate().after(DateUtils.endOfDay(installmentObj.getToDate())) ||
-                        advertisementPermitDetail.getApplicationDate().before(DateUtils.startOfDay(installmentObj.getFromDate())))
-                    resultBinder.rejectValue("applicationDate", "invalid.applicationDate");
-
-        }
-
-    }
-
+    
     @RequestMapping(value = "/success/{id}", method = GET)
     public ModelAndView successView(@PathVariable("id") final String id,
             @ModelAttribute final AdvertisementPermitDetail advertisementPermitDetail) {

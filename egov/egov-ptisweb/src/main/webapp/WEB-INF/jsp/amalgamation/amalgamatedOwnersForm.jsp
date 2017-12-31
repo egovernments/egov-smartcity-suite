@@ -88,6 +88,10 @@
 							name="amalgamationOwnersProxy[%{#ownerStatus.index}].ownerOfParent"
 							id="amalgamationOwnersProxy[%{#ownerStatus.index}].ownerOfParent"
 							value="%{amalgamationOwnersProxy[#ownerStatus.index].ownerOfParent}" cssClass="ownerofparent"></s:hidden>
+						<s:hidden
+							name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.username"
+							id="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.username"
+							value="%{amalgamationOwnersProxy[#ownerStatus.index].owner.username}"></s:hidden>
 						<td><s:textfield
 								name="amalgamationOwnersProxy[%{#ownerStatus.index}].owner.aadhaarNumber"
 								id="aadharNo" size="12" maxlength="12" data-optional="1"

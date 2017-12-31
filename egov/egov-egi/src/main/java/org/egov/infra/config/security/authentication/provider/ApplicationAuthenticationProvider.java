@@ -68,8 +68,8 @@ import java.util.Optional;
 
 import static java.lang.String.format;
 import static org.apache.commons.lang3.StringUtils.isNotBlank;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_PASS_FIELD;
 import static org.egov.infra.security.utils.SecurityConstants.MAX_LOGIN_ATTEMPT_ALLOWED;
-import static org.egov.infra.security.utils.SecurityConstants.PWD_FIELD;
 
 public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider {
 
@@ -133,7 +133,7 @@ public class ApplicationAuthenticationProvider extends DaoAuthenticationProvider
     protected void additionalAuthenticationChecks(UserDetails userDetails, UsernamePasswordAuthenticationToken authentication) {
         HashMap<String, String> authenticationCredentials = (HashMap<String, String>) authentication.getCredentials();
         if (authenticationCredentials == null ||
-                !passwordEncoder.matches(authenticationCredentials.get(PWD_FIELD), userDetails.getPassword())) {
+                !passwordEncoder.matches(authenticationCredentials.get(LOGIN_PASS_FIELD), userDetails.getPassword())) {
             throw new BadCredentialsException(messages.getMessage(BAD_CRED_MSG_KEY, BAD_CRED_DEFAULT_MSG));
         }
     }

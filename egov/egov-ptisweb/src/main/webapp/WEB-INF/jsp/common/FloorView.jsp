@@ -138,8 +138,13 @@
 	    </td>
 	     
 	    <td class="blueborderfortd" style="padding: 2px 2px">
-			<span class="bold"><div align="center"><s:property default="N/A" value="%{buildingPermissionNo}" /></div></span>
-	    </td>
+	    	<div align="center">
+		    	<span class="bold">
+		    		<s:if test="%{buildingPermissionNo == ''}">N/A</s:if>
+		    		<s:else><s:property default="N/A" value="%{buildingPermissionNo}" /></s:else>
+		    	</span>
+	        </div>
+        </td>
 	    
 	    <td class="blueborderfortd" style="padding: 2px 2px">
 			<s:date name="buildingPermissionDate" var="bpdate" format="dd/MM/yyyy"/>

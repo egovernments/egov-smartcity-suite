@@ -47,6 +47,10 @@
  */
 package org.egov.wtms.application.service;
 
+import static org.egov.wtms.utils.constants.WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
+
+import java.math.BigDecimal;
+
 import org.egov.commons.entity.Source;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.ptis.domain.model.AssessmentDetails;
@@ -58,15 +62,11 @@ import org.egov.wtms.application.workflow.ApplicationWorkflowCustomDefaultImpl;
 import org.egov.wtms.masters.entity.enums.ConnectionStatus;
 import org.egov.wtms.utils.PropertyExtnUtils;
 import org.egov.wtms.utils.WaterTaxUtils;
-import org.egov.wtms.utils.constants.WaterTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.MessageSource;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.math.BigDecimal;
-import java.util.HashMap;
 
 @Service
 @Transactional(readOnly = true)
@@ -124,7 +124,7 @@ public class CloserConnectionService {
                     .getCurrentDue(parentWaterConnectionDetail);
             if (waterTaxDueforParent.doubleValue() > 0)
                 validationMessage = wcmsMessageSource.getMessage("err.closure.connection.watertaxdue", null, null);
-        } else if (null != inWorkflow)
+        } else if (inWorkflow != null)
             validationMessage = wcmsMessageSource.getMessage("err.validate.closeconnection.application.inprocess",
                     new String[] { parentWaterConnectionDetail.getConnection().getConsumerCode(),
                             inWorkflow.getApplicationNumber() },
@@ -143,7 +143,7 @@ public class CloserConnectionService {
      */
     @Transactional
     public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails waterConnectionDetails,
-            final Long approvalPosition, final String approvalComent, String additionalRule,
+            final Long approvalPosition, final String approvalComent,
             final String workFlowAction, final String sourceChannel) {
 
         waterConnectionDetailsService.applicationStatusChange(waterConnectionDetails, workFlowAction, "");
@@ -152,9 +152,8 @@ public class CloserConnectionService {
 
         final ApplicationWorkflowCustomDefaultImpl applicationWorkflowCustomDefaultImpl = waterConnectionDetailsService
                 .getInitialisedWorkFlowBean();
-        additionalRule = WaterTaxConstants.WORKFLOW_CLOSUREADDITIONALRULE;
         applicationWorkflowCustomDefaultImpl.createCommonWorkflowTransition(savedwaterConnectionDetails,
-                approvalPosition, approvalComent, additionalRule, workFlowAction);
+                approvalPosition, approvalComent, WORKFLOW_CLOSUREADDITIONALRULE, workFlowAction);
 
         if (waterConnectionDetails.getSource() != null
                 && Source.CITIZENPORTAL.toString().equalsIgnoreCase(waterConnectionDetails.getSource().toString())
@@ -164,12 +163,5 @@ public class CloserConnectionService {
             waterConnectionDetailsService.pushPortalMessage(savedwaterConnectionDetails);
         waterConnectionDetailsService.updateIndexes(savedwaterConnectionDetails, sourceChannel);
         return savedwaterConnectionDetails;
-    }
-
-    public WaterConnectionDetails updatecloserConnection(final WaterConnectionDetails closeConnection,
-            final Long approvalPosition, final String approvalComent, final String additionalRule,
-            final String workFlowAction, final HashMap<String, String> meesevaParams, final String sourceChannel) {
-        return updatecloserConnection(closeConnection, approvalPosition, approvalComent, additionalRule, workFlowAction,
-                sourceChannel);
     }
 }

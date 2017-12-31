@@ -201,7 +201,7 @@ public class GenericMasterAjaxController {
     public void blockByLocality(@RequestParam Long locality, HttpServletResponse response) throws IOException {
         BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
         final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
-        List<Boundary> streets = boundaryService.getChildBoundariesByBoundaryId(locality);
+        List<Boundary> streets = boundaryService.getActiveChildBoundariesByBoundaryId(locality);
         final List<JsonObject> wardJsonObjs = new ArrayList<>();
         final List<Long> boundaries = new ArrayList<>();
         for (final Boundary block : blocks) {

@@ -52,38 +52,45 @@
 <%@ taglib uri="http://www.springframework.org/tags/form" prefix="form"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 
-<form:form  id="registrationsuccess-form" method ="post" class="form-horizontal form-groups-bordered">
+<form:form id="registrationsuccess-form" method="post"
+	class="form-horizontal form-groups-bordered">
 	<div class="panel panel-primary" data-collapsed="0">
-		<div class="panel-heading">
-			<div class="panel-title text-center">
-			</div>
-		</div>
 		<div class="row">
 			<div class="col-md-12 text-center">
 				<c:choose>
 					<c:when test="${not empty message}">
-	                    <c:out value="${message}"/>
-	                </c:when>
-	                <c:otherwise>
-	                	<c:choose>
-							<c:when test="${ackNumber != 'null'}">
-								Your Re-Issue application no is <strong><c:out value="${ackNumber}"></c:out></strong>, <br /> Please use this for your any future references.
+						<div class="panel-heading">
+							<div class="panel-title text-center">
+								<c:out value="${message}" />
+							</div>
+						</div>
+					</c:when>
+					<c:otherwise>
+						<div class="panel-heading">
+							<div class="panel-title text-center">
+								<c:choose>
+									<c:when test="${ackNumber != 'null'}">
+								Marriage Certificate Re-Issue application registered with application no is <strong><c:out
+												value="${ackNumber}"></c:out></strong>, <br /> Please use this for your any future references.
 							</c:when>
-							<c:otherwise>
+									<c:otherwise>
 								Marriage Registratio Re-Issue is successful...!!
 							</c:otherwise>
-						</c:choose>
-	                </c:otherwise>
+								</c:choose>
+							</div>
+						</div>
+					</c:otherwise>
 				</c:choose>
 			</div>
 		</div>
 	</div>
 </form:form>
 <div class="buttonbottom" align="center">
-<c:if test="${reIssue.status.code == 'CERTIFICATEREISSUED'}">
-		<input type="button" name="printbutton" id="printbutton" value="print" class="btn btn-default" onclick="window.open('/mrs/certificate/reissue?id=${reIssue.id}','_blank');" />
-
-</c:if>
-
-		<input type="button" name="button2" id="button2" value="Close" class="btn btn-default" onclick="window.close();" />
+	<c:if test="${reIssue.status.code == 'CERTIFICATEREISSUED'}">
+		<input type="button" name="printbutton" id="printbutton" value="Print"
+			class="btn btn-primary"
+			onclick="window.open('/mrs/certificate/reissue?id=${reIssue.id}','_blank');" />
+	</c:if>
+	<input type="button" name="button2" id="button2" value="Close"
+		class="btn btn-default" onclick="window.close();" />
 </div>

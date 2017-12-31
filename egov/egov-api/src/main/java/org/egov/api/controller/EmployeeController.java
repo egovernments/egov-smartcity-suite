@@ -229,24 +229,28 @@ public class EmployeeController extends ApiController {
     public List<StateAware> getWorkflowItemsByUserAndWFType(final Long userId, final List<Long> owners, final String workFlowType,
                                                             final int resultsFrom, final int resultsTo, String priority) throws ClassNotFoundException {
 
-        Criterion criterion = Restrictions
-                .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("createdBy.id", userId)));
+        if (!owners.isEmpty()) {
+            Criterion criterion = Restrictions
+                    .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                            .add(Restrictions.eq("createdBy.id", userId)));
 
-        criterion = addPriorityCondition(criterion, priority);
+            criterion = addPriorityCondition(criterion, priority);
 
-        return entityQueryService.getSession()
-                .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
-                .setFirstResult(resultsFrom)
-                .setMaxResults(resultsTo)
-                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
-                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
-                .add(Restrictions.eq("state.type", workFlowType))
-                .add(Restrictions.in("state.ownerPosition.id", owners))
-                .add(Restrictions.ne("state.status", StateStatus.ENDED))
-                .add(criterion)
-                .addOrder(Order.desc("state.createdDate"))
-                .list();
+            return entityQueryService.getSession()
+                    .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
+                    .setFirstResult(resultsFrom)
+                    .setMaxResults(resultsTo)
+                    .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
+                    .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                    .add(Restrictions.eq("state.type", workFlowType))
+                    .add(Restrictions.in("state.ownerPosition.id", owners))
+                    .add(Restrictions.ne("state.status", StateStatus.ENDED))
+                    .add(criterion)
+                    .addOrder(Order.desc("state.createdDate"))
+                    .list();
+        }
+
+        return Collections.emptyList();
 
     }
 
@@ -255,21 +259,24 @@ public class EmployeeController extends ApiController {
                                                 final String priority)
             throws ClassNotFoundException {
 
-        Criterion criterion = Restrictions
-                .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
-                        .add(Restrictions.eq("createdBy.id", userId)));
-        criterion = addPriorityCondition(criterion, priority);
+        if (!owners.isEmpty()) {
+            Criterion criterion = Restrictions
+                    .not(Restrictions.conjunction().add(Restrictions.eq("state.status", StateStatus.STARTED))
+                            .add(Restrictions.eq("createdBy.id", userId)));
+            criterion = addPriorityCondition(criterion, priority);
 
-        return (Number) entityQueryService.getSession()
-                .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
-                .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
-                .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
-                .setProjection(Projections.rowCount())
-                .add(Restrictions.eq("state.type", workFlowType))
-                .add(Restrictions.in("state.ownerPosition.id", owners))
-                .add(Restrictions.ne("state.status", StateStatus.ENDED))
-                .add(criterion)
-                .uniqueResult();
+            return (Number) entityQueryService.getSession()
+                    .createCriteria(Class.forName(workflowTypeService.getEnabledWorkflowTypeByType(workFlowType).getTypeFQN()))
+                    .setFetchMode("state", FetchMode.JOIN).createAlias("state", "state")
+                    .setFlushMode(FlushMode.MANUAL).setReadOnly(true).setCacheable(true)
+                    .setProjection(Projections.rowCount())
+                    .add(Restrictions.eq("state.type", workFlowType))
+                    .add(Restrictions.in("state.ownerPosition.id", owners))
+                    .add(Restrictions.ne("state.status", StateStatus.ENDED))
+                    .add(criterion)
+                    .uniqueResult();
+        }
+        return 0;
     }
 
     public List<HashMap<String, Object>> getWorkflowTypesWithCount(final Long userId, final List<Long> ownerPostitions)

@@ -84,7 +84,7 @@
         <!-- <anonymous enabled="false" /> -->
         <!-- <intercept-url pattern="/api/test/**" access="isAuthenticated()" /> -->
         <intercept-url pattern="/v*/test/**" access="isAuthenticated()"/>
-
+        <intercept-url pattern="/v*/cross-city/complaint/**" access="permitAll()"/>
         <intercept-url pattern="/v*/complaint/**" access="hasAnyRole('ROLE_CITIZEN','ROLE_EMPLOYEE')"/>
         <intercept-url pattern="/v*/citizen/**" access="hasAnyRole('ROLE_CITIZEN','ROLE_EMPLOYEE')"/>
         <intercept-url pattern="/v*/employee/**" access="hasAnyRole('ROLE_EMPLOYEE')"/>

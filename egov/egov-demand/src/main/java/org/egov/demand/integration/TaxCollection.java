@@ -599,7 +599,6 @@ public abstract class TaxCollection implements BillingIntegrationService {
         if (egdmCollectedReceipts != null && !egdmCollectedReceipts.isEmpty())
             for (final EgdmCollectedReceipt egDmCollectedReceipt : egdmCollectedReceipts) {
                 egDmCollectedReceipt.setStatus(DemandConstants.CANCELLED_RECEIPT);
-                egDmCollectedReceipt.setUpdatedTime(new Date());
                 egdmCollectedReceiptDAO.update(egDmCollectedReceipt);
             }
     }

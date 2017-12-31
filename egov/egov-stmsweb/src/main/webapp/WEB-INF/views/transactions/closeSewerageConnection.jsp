@@ -142,7 +142,7 @@
 $(document).ready(function()
 {
 	var appStatus = $('#appStatus').val(); 
-	if(appStatus == 'DEEAPPROVED'){ 
+	if(appStatus == 'CLOSERSANCTIONED'){ 
 		$(".show-row").hide(); 
 		$('#approverDetailHeading').hide();
 		$('#approvalDepartment').removeAttr('required');

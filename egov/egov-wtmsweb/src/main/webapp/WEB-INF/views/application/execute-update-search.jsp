@@ -92,7 +92,7 @@
   								<spring:message code="lbl.application.no"/>
   							</label>
   							<div class="col-sm-3 add-margin">
-  								<form:input path="applicationNumber" id="applicationNumber" cssClass="form-control" maxlength="15"/>
+  								<form:input path="applicationNumber" id="applicationNumber" cssClass="form-control patternvalidation" data-pattern="alphanumericwithhyphen" maxlength="15"/>
   								<form:errors path="applicationNumber" cssClass="add-margin error-msg"/>
   							</div>
   							
@@ -100,7 +100,7 @@
   								<spring:message code="lbl1.consumer.number"/>
   							</label>
   							<div class="col-sm-3 add-margin">
-  								<form:input path="consumerNumber" id="consumerNumber" cssClass="form-control" maxlength="15"/>
+  								<form:input path="consumerNumber" id="consumerNumber" cssClass="form-control patternvalidation" data-pattern="number" maxlength="15"/>
   								<form:errors path="consumerNumber" cssClass="add-margin error-msg"/>
   							</div>
   						</div>

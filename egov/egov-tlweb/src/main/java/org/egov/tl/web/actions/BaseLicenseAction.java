@@ -160,8 +160,8 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     protected transient FileStoreService fileStoreService;
     @Autowired
     protected transient ReportViewerUtil reportViewerUtil;
-    private transient String fileStoreIds;
-    private transient String ulbCode;
+    protected transient String fileStoreIds;
+    protected transient String ulbCode;
     private transient String signedFileStoreId;
     private transient Long feeTypeId;
     private transient boolean hasCscOperatorRole;
@@ -258,7 +258,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     private String digitalSignRedirection() {
-        ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license(), false);
+        ReportOutput  reportOutput = tradeLicenseService.generateLicenseCertificate(license(), false);
         if (reportOutput != null) {
             String fileName = SIGNED_DOCUMENT_PREFIX + license().getApplicationNumber() + ".pdf";
             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

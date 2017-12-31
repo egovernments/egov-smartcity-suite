@@ -62,13 +62,41 @@ body
 </style>
 <script type="text/javascript" src="<cdn:url value='/resources/javascript/validations.js'/>"></script>
 <script type="text/javascript" src="<cdn:url value='/resources/javascript/dateValidation.js'/>"></script>
-
+<script type="text/javascript">
+function addMonths(dateObj) {
+	var stringDate = dateObj.value;
+	var pattern = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/;
+	if(!pattern.test(stringDate)){
+		return;
+	}
+	var arrayDate = stringDate.match(pattern);
+	var fromDate = new Date(arrayDate[3], arrayDate[2] - 1, arrayDate[1]);
+    var temp = new Date(fromDate.getFullYear(), fromDate.getMonth(), 1);
+    temp.setMonth(temp.getMonth() + (7));
+    temp.setDate(temp.getDate() - 1); 
+    if (fromDate.getDate() < temp.getDate()) { 
+        temp.setDate(fromDate.getDate()); 
+    }
+    temp.setDate(temp.getDate() - 1); 
+    var todate = temp.getDate() + '/' + (temp.getMonth() + 1) + '/' + temp.getFullYear();
+    jQuery('#toDate').val(todate);
+    
+};
+jQuery(document).on('click', "#Forward", function () {
+	jQuery('#toDate').removeAttr('disabled');
+	return true;
+});
+</script>
 <form:form id="editVacancyRemissionForm" method="post"
 	class="form-horizontal form-groups-bordered" modelAttribute="vacancyRemission">
 	<div class="page-container" id="page-container">
 			<form:hidden path="" id="workFlowAction" name="workFlowAction" />
-			
-			<c:if test="${updated==true}">
+			<c:if test="${allowUpdate}">
+			<div class="add-margin error-msg"  style="text-align: center">
+			  <font size="5">   <spring:message code="lbl.validate.first.monthly.update" /></font> 
+			</div>
+			</c:if>
+			<c:if test="${!allowUpdate && updated==true}">
 			<div class="add-margin error-msg"  style="text-align: center">
 			  <font size="5">   <spring:message code="lbl.vr.monthlyupdate.validation" /></font> 
 			</div>
@@ -82,6 +110,38 @@ body
 							<div class="panel-heading" style="text-align: left">
 								<div class="panel-title"><spring:message code="lbl.vacancyremission.details" /></div>
 							</div>
+							<c:choose>
+							<c:when test="${!detailsHistory.isEmpty()}">
+							<div class="panel-heading">
+						<div class="panel-title">
+							VR Details History
+							<div class="panel-body history-slide">
+							<div class="row add-margin visible-sm visible-md visible-lg header-color">
+								<div class="col-xs-3 add-margin"><spring:message code="lbl.date"/></div>
+								<div class="col-xs-3 add-margin"><spring:message code="lbl.comments" /></div>
+							</div>
+							<c:choose>
+									<c:when test="${!detailsHistory.isEmpty()}">
+										<c:forEach items="${detailsHistory}" var="history">
+										<div class="row add-margin">
+											<div class="col-sm-2 col-xs-12 add-margin">
+												<fmt:formatDate value="${history.checkinDate}" var="historyDate"
+													pattern="dd/MM/yyyy" />
+												<c:out value="${historyDate}" />
+											</div>
+											<div class="col-sm-2 col-xs-12 add-margin">
+												<c:out value="${history.comments}" />&nbsp;
+											</div>
+										</div>
+										</c:forEach>
+									</c:when>
+								</c:choose>
+							
+						</div>
+						</div>
+					</div>
+							</c:when>
+							</c:choose>
 							<div class="panel-body custom-form">
 							<c:if test="${attachedDocuments.size() > 0}">
 								<div>
@@ -93,10 +153,20 @@ body
 									<label class="col-sm-3 control-label text-right">
 										<spring:message code="lbl.fromDate" /> <span class="mandatory"></span>
 									</label>
+									<c:choose>	
+								<c:when test="${(currentState.endsWith('NEW'))}">
+									<div class="col-sm-3 add-margin">
+										<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" onChange="addMonths(this);"/>
+										<form:errors path="vacancyFromDate" cssClass="add-margin error-msg"/>
+									</div>
+									</c:when>
+									<c:otherwise>
 									<div class="col-sm-3 add-margin">
 										<form:input path="vacancyFromDate" id="fromDate" type="text" class="form-control datepicker" data-date-start-date="0d" required="required" readonly="true" disabled="true"/>
 										<form:errors path="vacancyFromDate" cssClass="add-margin error-msg"/>
 									</div>
+									</c:otherwise>
+									</c:choose>
                                     <label class="col-sm-2 control-label text-right">
                                     	<spring:message code="lbl.toDate" /> <span class="mandatory"></span>
 									</label>

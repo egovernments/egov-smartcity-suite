@@ -54,6 +54,8 @@ import org.springframework.data.jpa.domain.Specification;
 
 import javax.persistence.criteria.Predicate;
 
+import static org.apache.commons.lang.StringUtils.isNotBlank;
+
 public final class QualityReviewSearchSpec {
 
     private QualityReviewSearchSpec() {
@@ -67,15 +69,19 @@ public final class QualityReviewSearchSpec {
             if (qualityReviewSearchRequest.getComplaintId() != null)
                 predicate.getExpressions().add(builder.equal(root.get("complaintType").get("id"),
                         qualityReviewSearchRequest.getComplaintId()));
-            if (qualityReviewSearchRequest.getDepartmentId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("department").get("id"),
-                        qualityReviewSearchRequest.getDepartmentId()));
+            if (isNotBlank(qualityReviewSearchRequest.getCrn()))
+                predicate.getExpressions().add(builder.equal(root.get("crn"),
+                        qualityReviewSearchRequest.getCrn()));
             if (qualityReviewSearchRequest.getToDate() != null)
                 predicate.getExpressions().add(builder.lessThanOrEqualTo(root.get("createdDate"), qualityReviewSearchRequest.getToDate()));
             if (qualityReviewSearchRequest.getFromDate() != null)
                 predicate.getExpressions().add(builder.greaterThanOrEqualTo(root.get("createdDate"), qualityReviewSearchRequest.getFromDate()));
-            if (qualityReviewSearchRequest.getRating() != null)
-                predicate.getExpressions().add(builder.equal(root.get("citizenFeedback"), qualityReviewSearchRequest.getRating().ordinal()));
+            if (qualityReviewSearchRequest.getLocationId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("location").get("id"), qualityReviewSearchRequest.getLocationId()));
+            if (qualityReviewSearchRequest.getChildLocationId() != null)
+                predicate.getExpressions().add(builder.equal(root.get("childLocation").get("id"), qualityReviewSearchRequest.getChildLocationId()));
+            predicate.getExpressions().add(builder.or(root.get("citizenFeedback").in(0, 1, 2),
+                    root.get("citizenFeedback").isNull()));
             return predicate;
         };
     }

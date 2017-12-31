@@ -370,20 +370,10 @@ $(document)
 												if (applicationDate != ''
 														&& approvalDate != '') {
 													if ($('form').valid()) {
-														if (!validateDateRange(
-																applicationDate,
-																approvalDate)) {
-															bootbox
-																	.alert("The Approval Date can not be less than the Date of Application.");
-															$('#approvalDate')
-																	.val('');
-															return false;
-														} else {
-															validateWorkFlowApprover(action);
-															document.forms[0]
-																	.submit();
-														}
-													}
+														validateWorkFlowApprover(action);
+														document.forms[0]
+																.submit();
+																											}
 												}
 											} else if (action=='' && (status=='CREATED' || status=='CLOSERINITIATED' || status=='RECONNECTIONINITIATED')) {
 												return false;

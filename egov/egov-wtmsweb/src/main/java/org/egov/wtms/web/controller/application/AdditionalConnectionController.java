@@ -54,7 +54,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLI
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -282,18 +281,13 @@ public class AdditionalConnectionController extends GenericConnectionController 
             addConnection.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
 
         if (loggedUserIsMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("APPLICATIONNUMBER", addConnection.getMeesevaApplicationNumber());
-            if (addConnection.getApplicationNumber() == null) {
+            addConnection.setSource(MEESEVA);
+            if (addConnection.getMeesevaApplicationNumber() != null)
                 addConnection.setApplicationNumber(addConnection.getMeesevaApplicationNumber());
-                addConnection.setSource(MEESEVA);
+        }
 
-                waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
-                        addConnection.getApplicationType().getCode(), workFlowActionValue, meesevaParams, sourceChannel);
-            }
-        } else
-            waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
-                    addConnection.getApplicationType().getCode(), workFlowActionValue, sourceChannel);
+        waterConnectionDetailsService.createNewWaterConnection(addConnection, approvalPosition, approvalComment,
+                addConnection.getApplicationType().getCode(), workFlowActionValue, sourceChannel);
 
         if (loggedUserIsMeesevaUser)
             return "redirect:/application/generate-meesevareceipt?transactionServiceNumber="

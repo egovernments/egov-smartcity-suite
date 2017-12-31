@@ -144,7 +144,7 @@ public interface BillingIntegrationService {
      * @param receiptNumber
      * @return
      */
-    default ReceiptCancellationInfo validateCancelReceipt(String receiptNumber) {
+    default ReceiptCancellationInfo validateCancelReceipt(String receiptNumber,String consumerCode) {
         return new ReceiptCancellationInfo();
     }
 }

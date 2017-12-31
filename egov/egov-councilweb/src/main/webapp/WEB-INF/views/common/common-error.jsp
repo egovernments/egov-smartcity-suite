@@ -61,6 +61,9 @@
 							<c:if test="${not empty message}">
                     			<strong><spring:message code="${message}"/></strong>
                 			</c:if>
+                			<c:if test="${not empty errormessage}">
+                    			<strong><c:out value="${errormessage}"></c:out></strong>
+                			</c:if>
 				</div>
 			</div>
 		</div>

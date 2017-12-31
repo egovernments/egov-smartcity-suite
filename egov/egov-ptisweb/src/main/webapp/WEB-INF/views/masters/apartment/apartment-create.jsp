@@ -100,6 +100,9 @@
 
 							<form:select path="type" id="type" cssClass="form-control"
 								cssErrorClass="form-control error">
+								<form:option value="Select">
+													Select
+												</form:option>
 								<form:option value="Residential">
 													Residential
 												</form:option>

@@ -543,7 +543,6 @@ public class LicenseBillService extends BillServiceInterface implements BillingI
         if (egdmCollectedReceipts != null && !egdmCollectedReceipts.isEmpty())
             for (final EgdmCollectedReceipt egDmCollectedReceipt : egdmCollectedReceipts) {
                 egDmCollectedReceipt.setStatus(DemandConstants.CANCELLED_RECEIPT);
-                egDmCollectedReceipt.setUpdatedTime(new Date());
             }
     }
 

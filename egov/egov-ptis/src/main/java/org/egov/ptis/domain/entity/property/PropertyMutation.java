@@ -327,22 +327,21 @@ public class PropertyMutation extends StateAware<Position> {
 		final StringBuilder ownerGuardianRelation = new StringBuilder();
 		String relation = "";
 		for (final User owner : userInfo) {
-			if (StringUtils.isNotBlank(owner.getGuardian())) {
-				ownerGuardianRelation.append(owner.getName());
-				if (owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Father.toString())
-						|| owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Mother.toString())) {
-					if (owner.getGender().equals(Gender.FEMALE))
-						relation = " D/O ";
-					else if (owner.getGender().equals(Gender.MALE))
-						relation = " S/O ";
-				} else if (owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Husband.toString()))
-					relation = " W/O ";
-				else if (owner.getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_WIFE))
-					relation = " H/O ";
-				else
-					relation = " C/O ";
-				ownerGuardianRelation.append(relation).append(owner.getGuardian()).append(", ");
-			}
+			ownerGuardianRelation.append(owner.getName());
+			if (owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Father.toString())
+					|| owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Mother.toString())) {
+				if (owner.getGender().equals(Gender.FEMALE))
+					relation = " D/O ";
+				else if (owner.getGender().equals(Gender.MALE))
+					relation = " S/O ";
+			} else if (owner.getGuardianRelation().equalsIgnoreCase(GuardianRelation.Husband.toString()))
+				relation = " W/O ";
+			else if (owner.getGuardianRelation().equalsIgnoreCase(GUARDIAN_RELATION_WIFE))
+				relation = " H/O ";
+			else
+				relation = " C/O ";
+			ownerGuardianRelation.append(relation)
+					.append(StringUtils.isNotBlank(owner.getGuardian()) ? owner.getGuardian() : " ").append(", ");
 		}
         if (ownerGuardianRelation.length() > 0)
             ownerGuardianRelation.deleteCharAt(ownerGuardianRelation.length() - 2);

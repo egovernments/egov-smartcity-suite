@@ -170,7 +170,7 @@
         <postgres-version>42.1.4</postgres-version>
 
         <!-- Other application dependency versions -->
-        <struts2-version>2.5.13</struts2-version>
+        <struts2-version>2.5.14.1</struts2-version>
         <struts2-jquery-version>4.0.2</struts2-jquery-version>
         <xstream-version>1.4.10</xstream-version>
         <spring-version>4.3.11.RELEASE</spring-version>

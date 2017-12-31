@@ -194,7 +194,7 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
          * .getBankbranch().getBank().getName() + "-" + bankAccountHibernateDAO.findById(bankAcctId, false).getAccountnumber() :
          * null); critParams.put(EGOV_CREATED_BY_NAME, createdId != -1 ? userservice.getUserById(createdId).getName() : null);
          */
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         final CollectionRemittanceReportResult collReportResult = new CollectionRemittanceReportResult();
         collReportResult.setCollectionBankRemittanceReportList(reportList);
         final ReportRequest reportInput = new ReportRequest(RECIEPT_DETAILS_TEMPLATE, collReportResult, critParams);
@@ -205,7 +205,7 @@ public class RemittanceVoucherReportAction extends ReportFormAction {
 
     @Action(value = "/reports/remittanceVoucherReport-report")
     public String report() {
-        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoURL());
+        critParams.put(CollectionConstants.LOGO_PATH, cityService.getCityLogoAsStream());
         final ReportRequest reportInput = new ReportRequest(getReportTemplateName(), critParams,
                 ReportDataSourceType.SQL);
         final ReportOutput reportOutput = reportService.createReport(reportInput);

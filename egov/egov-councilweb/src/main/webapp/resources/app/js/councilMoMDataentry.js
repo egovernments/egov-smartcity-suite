@@ -63,7 +63,7 @@ var table = tbody.length ? tbody : $('#preambleTable');
 
 
 var row = '<tr>'+
-'<td><input type="text" class="form-control text-left patternvalidation" required="required" name="meeting.meetingMOMs[{{idx}}].itemNumber" {{readonly}}  value="{{itemNumberTextBoxValue}}"/></td>'+
+'<td><input type="text" class="form-control text-left patternvalidation validserial" required="required" name="meeting.meetingMOMs[{{idx}}].itemNumber" {{readonly}}  value="{{itemNumberTextBoxValue}}"/></td>'+
  '<td><select name="meeting.meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+
  '<td><input type="text" class="form-control text-left patternvalidation numberval" required="required" name="meeting.meetingMOMs[{{idx}}].preamble.preambleNumber" id="meetingMOMs[{{idx}}].preambleNumber" {{readonly}}  value="{{preamblenumberTextBoxValue}}"/></td>'+
  '<td><div class="input-group"><textarea class="form-control textarea-content" required="required" name="meeting.meetingMOMs[{{idx}}].preamble.gistOfPreamble" maxlength="10000"  value="{{gistTextBoxValue}}" /><span class="input-group-addon" id="showModal" data-header="Preamble - GIST of Preamble"><span class="glyphicon glyphicon-pencil" style="cursor:pointer"></span></span></div></td>'+
@@ -124,6 +124,34 @@ function validateUniquePreambleNumber(idx, preambleNo) {
 						});
 	}
 }
+
+//validate Serial number
+$("#preambleTable tbody").on('blur','tr .validserial',function(event) {
+	var rowObj = $(this).closest('tr');
+	validateSerialNumber(rowObj.index(), $(rowObj).find('.validserial').val());
+});
+
+
+function validateSerialNumber(idx, sNo) {
+	if (sNo) {
+		$('#preambleTable tbody tr')
+				.each(
+						function(index) {
+							if (idx === index)
+								return;
+							var serialNumber = $(this).find(
+									'*[name$="itemNumber"]').val();
+
+							if (serialNumber && serialNumber === sNo) {
+								$('#preambleTable tbody tr:eq(' + idx + ')')
+										.find('.validserial').val('');
+								bootbox.alert("Duplicate Serial Number.Please enter different Serial number");
+								return false;
+							}
+						});
+	}
+}
+
 
 $("#preambleTable tbody").on('blur','tr .validnum',function(event) {
 	var rowObj = $(this).closest('tr');

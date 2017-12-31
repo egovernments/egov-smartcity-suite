@@ -54,6 +54,7 @@ import org.egov.eis.web.contract.WorkflowContainer;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.security.utils.SecurityUtils;
+import org.egov.infra.utils.StringUtils;
 import org.egov.ptis.client.util.PropertyTaxUtil;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.egov.ptis.domain.entity.enums.TransactionType;
@@ -88,6 +89,7 @@ import static org.egov.ptis.constants.PropertyTaxConstants.*;
 @RequestMapping(value = "/exemption/update/{id}")
 public class UpdateTaxExemptionController extends GenericWorkFlowController {
 
+    private static final String EXEMPTION_REASON = "exemptionReason";
     private static final String APPROVAL_POSITION = "approvalPosition";
     protected static final String TAX_EXEMPTION_FORM = "taxExemption-form";
     protected static final String TAX_EXEMPTION_SUCCESS = "taxExemption-success";
@@ -212,7 +214,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         model.addAttribute("userDesignation", currentDesignation);
         if (!(currState.endsWith(STATUS_REJECTED) || currState.endsWith(WFLOW_ACTION_NEW)))
             model.addAttribute("currentDesignation", currentDesignation);
-
+        if(property.getTaxExemptedReason() != null)
+            model.addAttribute(EXEMPTION_REASON, property.getTaxExemptedReason().getCode());
         taxExemptionService.addModelAttributes(model, property.getBasicProperty());
         if(property.getTaxExemptedReason() == null)
             property.getTaxExemptionDocuments().clear();
@@ -258,6 +261,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
         Long approvalPosition = 0l;
         String approvalComent = "";
         String workFlowAct = workFlowAction;
+        String exemptionReason="";
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
 
         if (request.getParameter("approvalComent") != null)
@@ -266,6 +270,8 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             workFlowAct = request.getParameter("workFlowAction");
         if (request.getParameter(APPROVAL_POSITION) != null && !request.getParameter(APPROVAL_POSITION).isEmpty())
             approvalPosition = Long.valueOf(request.getParameter(APPROVAL_POSITION));
+        if (StringUtils.isNotBlank(request.getParameter(EXEMPTION_REASON)))
+            exemptionReason = request.getParameter(EXEMPTION_REASON);
 
         if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_APPROVE)) {
             property.setStatus(STATUS_ISACTIVE);
@@ -285,11 +291,11 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                         + NOTICE_TYPE_EXEMPTION + "&actionType=" + workFlowAct;
         else
             return wfApproveReject(property, request, model, status, approvalPosition, approvalComent,
-                    workFlowAct);
+                    workFlowAct, exemptionReason);
     }
 
     private String wfApproveReject(final Property property, final HttpServletRequest request, final Model model,
-            final Character status, final Long approvalPosition, final String approvalComent, final String workFlowAct) {
+            final Character status, final Long approvalPosition, final String approvalComent, final String workFlowAct, String previousExemptionReason) {
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         String taxExemptedReason;
@@ -300,6 +306,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
             else if (request.getParameter(TAXEXEMPTIONREASON) != null) {
 
                 taxExemptedReason = request.getParameter(TAXEXEMPTIONREASON);
+                if (StringUtils.isNotBlank(taxExemptedReason))
+                    taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
+                            previousExemptionReason);
                 taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
                         approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             }
@@ -313,7 +322,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                     + property.getBasicProperty().getUpicNo();
         else if (workFlowAct.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT))
             successMessage = wFReject(property, request, status, approvalPosition, approvalComent,
-                    workFlowAct);
+                    workFlowAct, previousExemptionReason);
         else
             successMessage = "Successfully forwarded to " + propertyTaxUtil.getApproverUserName(approvalPosition)
                     + " with application number " + property.getApplicationNo();
@@ -323,7 +332,7 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
     }
 
     private String wFReject(final Property property, final HttpServletRequest request, final Character status,
-            final Long approvalPosition, final String approvalComent, final String workFlowAct) {
+            final Long approvalPosition, final String approvalComent, final String workFlowAct, String exemptionReason) {
         final Boolean propertyByEmployee = Boolean.valueOf(request.getParameter("propertyByEmployee"));
         String taxExemptedReason = null;
         final Property oldProperty = property.getBasicProperty().getActiveProperty();
@@ -344,6 +353,9 @@ public class UpdateTaxExemptionController extends GenericWorkFlowController {
                         propertyByEmployee, EXEMPTION);
             else{
                 taxExemptedReason = request.getParameter(TAXEXEMPTIONREASON);
+                if (StringUtils.isNotBlank(taxExemptedReason))
+                    taxExemptionService.processAndStoreApplicationDocuments((PropertyImpl) property, taxExemptedReason,
+                            exemptionReason);
             taxExemptionService.saveProperty(property, oldProperty, status, approvalComent, workFlowAct,
                     approvalPosition, taxExemptedReason, propertyByEmployee, EXEMPTION);
             }

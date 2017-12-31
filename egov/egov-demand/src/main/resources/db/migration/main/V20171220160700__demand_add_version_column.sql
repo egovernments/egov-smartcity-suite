@@ -1,0 +1,2 @@
+ALTER TABLE EG_DEMAND_DETAILS ADD COLUMN version numeric default 0;
+ALTER TABLE EGDM_COLLECTED_RECEIPTS ADD COLUMN version numeric default 0;

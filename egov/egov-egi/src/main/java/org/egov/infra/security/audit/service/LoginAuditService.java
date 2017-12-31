@@ -59,8 +59,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-
 @Service
 @Transactional(readOnly = true)
 public class LoginAuditService {
@@ -71,20 +69,6 @@ public class LoginAuditService {
     @Transactional
     public LoginAudit auditLogin(LoginAudit loginAudit) {
         return loginAuditRepository.saveAndFlush(loginAudit);
-    }
-
-    @Transactional
-    public LoginAudit auditLogout(Long loginAuditId) {
-        LoginAudit loginAudit = getLoginAuditById(loginAuditId);
-        if (loginAudit.getLogoutTime() == null) {
-            loginAudit.setLogoutTime(new Date());
-            loginAudit = loginAuditRepository.saveAndFlush(loginAudit);
-        }
-        return loginAudit;
-    }
-
-    public LoginAudit getLoginAuditById(Long id) {
-        return loginAuditRepository.findOne(id);
     }
 
     public Page<LoginAudit> getLoginAudits(LoginAuditReportRequest loginAuditReportRequest) {

@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-02T18:08:08 -->
+<!-- 2017-12-18T15:38:35 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="online_transaction" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="6c32d2bb-93b0-4b77-9de8-d1cb8d0afd9f">
 	<import value="org.egov.infra.reporting.util.*"/>
 	<style name="eGov Basic" isDefault="true" forecolor="#000000" backcolor="#FFFFFF" fill="Solid" hTextAlign="Left" hImageAlign="Left" vTextAlign="Middle" vImageAlign="Middle" rotation="None" fontName="Times New Roman" fontSize="10" isBold="false" isItalic="false" isUnderline="false" isStrikeThrough="false" pdfFontName="Times-Roman">
@@ -129,7 +129,7 @@
 	<parameter name="Q_COLLECTION_TYPE" class="java.lang.String">
 		<defaultValueExpression><![CDATA[($P{EGOV_COLLECTION_TYPE} == null || $P{EGOV_COLLECTION_TYPE} == "-1") ? "AND EGCL_COLLECTIONHEADER.collectiontype in ('C','O')" : "AND EGCL_COLLECTIONHEADER.collectiontype = '" + $P{EGOV_COLLECTION_TYPE} + "'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[SELECT EGCL_COLLECTIONHEADER.REFERENCENUMBER as referencenumber, EGCL_COLLECTIONHEADER.CONSUMERCODE as consumerCode, EGCL_COLLECTIONHEADER.RECEIPTNUMBER as receiptnumber, EGCL_COLLECTIONHEADER.CREATEDDATE as createdDate, EGCL_COLLECTIONHEADER.TOTALAMOUNT as totalAmount,
 		EGCL_SERVICEDETAILS.NAME as service, EGW_STATUS.description as status,EGCL_ONLINEPAYMENTS.transactionnumber as transactionNumber, EGCL_ONLINEPAYMENTS.transactiondate, (CASE WHEN EG_USER.name  in ('Anonymous','999999999') THEN 'NA' ELSE (select name from EG_USER where id=EGCL_ONLINEPAYMENTS.CREATEDBY) END) AS userName

@@ -76,7 +76,7 @@ public class Document extends AbstractAuditable {
     @Temporal(TemporalType.DATE)
     private Date docDate;
     private boolean enclosed;
-    @OneToMany(fetch = FetchType.LAZY, orphanRemoval = true, cascade = CascadeType.ALL)
+    @OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinTable(name = "egpt_document_files", joinColumns = @JoinColumn(name = "document"), inverseJoinColumns = @JoinColumn(name = "filestore"))
     private Set<FileStoreMapper> files = new HashSet<>();
 

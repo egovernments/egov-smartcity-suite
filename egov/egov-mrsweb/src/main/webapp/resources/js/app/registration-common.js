@@ -53,6 +53,10 @@ $(document)
 					if ($('#serialNoExists').val()) {
 						bootbox.alert($('#serialNoExists').val());
 					}
+					if ($('#employeeAssgnNotValid').val()) {
+						$('#approvalDepartment').val('');
+						bootbox.alert($('#employeeAssgnNotValid').val());
+					}
 					// remove mandatory (*) on form load for serial no and page
 					// no
 					$('.validate-madatory').find("span").removeClass(
@@ -162,25 +166,14 @@ $(document)
 
 						$(inputPhoto).trigger('click');
 					});
-
-					if ($('#registrationStatus').val() != ''
-							&& $('#registrationStatus').val() != 'REJECTED') {
-						$(".show-row").hide();
-						$('#approverDetailHeading').hide();
-						$('#approvalDepartment').removeAttr('required');
-						$('#approvalDesignation').removeAttr('required');
-						$('#approvalPosition').removeAttr('required');
-					} else {
-						$(".show-row").show();
-						$('#approverDetailHeading').show();
-						$('#approvalDepartment').attr('required', 'required');
-						$('#approvalDesignation').attr('required', 'required');
-						$('#approvalPosition').attr('required', 'required');
-					}
-					if ($('#registrationStatus').val() != ''
-							&& ($('#registrationStatus').val() == 'CREATED' && $(
-									'#nextActn').val() != 'Junior/Senior Assistance approval pending')
-							&& $('#registrationStatus').val() != 'REJECTED') {
+					
+					 if (($('#registrationStatus').val() != '' && $('#registrationStatus').val() == 'CREATED' && $(
+									'#nextActn').val() != 'Junior/Senior Assistance approval pending' && $(
+									'#nextActn').val() != 'Revenue Clerk Approval Pending' && $(
+									'#nextActn').val() != 'Chief Medical Officer of Health Approval Pending' && $(
+									'#nextActn').val() != 'Municipal Health Officer Approval Pending')&& $(
+									'#registrationStatus').val() != 'REJECTED' || ($('#currentState').val() =='Revenue Clerk Approved'
+								&& $("#feeCollected").val() == 'false')) {
 						$(".show-row").hide();
 						$('#approverDetailHeading').hide();
 						$('#approvalDepartment').removeAttr('required');

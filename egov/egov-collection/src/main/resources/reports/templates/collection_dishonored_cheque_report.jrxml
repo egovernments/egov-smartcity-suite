@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-11-02T15:14:03 -->
+<!-- 2017-12-18T15:22:14 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="collection_dishonored_cheque_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" whenNoDataType="NoDataSection" columnWidth="802" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="749560f5-966f-4c9c-9c04-ed0be706f118">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -138,7 +138,7 @@ $P{EGOV_PAYMENT_MODE} == "dd" ? "AND INSTP.TYPE = 'dd'" :
 		<parameterDescription><![CDATA[Where clause for To Date]]></parameterDescription>
 		<defaultValueExpression><![CDATA[($P{EGOV_TO_DATE} == null ) ? "" : " AND INS.INSTRUMENTDATE <= '" + $P{EGOV_FORMATED_TODATE} + "'"]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<queryString>
 		<![CDATA[SELECT
 CH.RECEIPTNUMBER AS RECEIPT_NUMBER ,CH.TOTALAMOUNT as RECEIPT_AMOUNT,

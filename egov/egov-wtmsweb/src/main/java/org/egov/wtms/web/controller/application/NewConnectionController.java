@@ -292,19 +292,14 @@ public class NewConnectionController extends GenericConnectionController {
             waterConnectionDetails.setSource(waterTaxUtils.setSourceOfConnection(securityUtils.getCurrentUser()));
 
         if (loggedUserIsMeesevaUser) {
-            final HashMap<String, String> meesevaParams = new HashMap<>();
-            meesevaParams.put("APPLICATIONNUMBER", waterConnectionDetails.getMeesevaApplicationNumber());
-            if (waterConnectionDetails.getApplicationNumber() == null) {
+            waterConnectionDetails.setSource(MEESEVA);
+            if (waterConnectionDetails.getMeesevaApplicationNumber() != null)
                 waterConnectionDetails.setApplicationNumber(waterConnectionDetails.getMeesevaApplicationNumber());
-                waterConnectionDetails.setSource(MEESEVA);
-                waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                        approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                        meesevaParams, sourceChannel);
-            }
-        } else
-            waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
-                    approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
-                    sourceChannel);
+        }
+
+        waterConnectionDtlsService.createNewWaterConnection(waterConnectionDetails, approvalPosition,
+                approvalComent, waterConnectionDetails.getApplicationType().getCode(), workFlowAction,
+                sourceChannel);
 
         if (LOG.isDebugEnabled())
             LOG.debug("createNewWaterConnection is completed ");

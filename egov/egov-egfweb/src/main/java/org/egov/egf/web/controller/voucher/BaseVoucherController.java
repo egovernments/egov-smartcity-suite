@@ -57,6 +57,8 @@ import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infstr.utils.EgovMasterDataCaching;
 import org.egov.utils.FinancialConstants;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Controller;
@@ -74,14 +76,12 @@ import java.util.List;
 
 /**
  * @author venki
- *
  */
 
 @Controller
 public abstract class BaseVoucherController extends GenericWorkFlowController {
 
-    protected List<String> headerFields = new ArrayList<String>();
-    protected List<String> mandatoryFields = new ArrayList<String>();
+    private static final Logger LOGGER = LoggerFactory.getLogger(BaseVoucherController.class);
 
     @Autowired
     protected AppConfigValueService appConfigValuesService;
@@ -90,7 +90,6 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
     @Qualifier("chartOfAccountsService")
     private ChartOfAccountsService chartOfAccountsService;
 
-    @SuppressWarnings("deprecation")
     @Autowired
     private EgovMasterDataCaching masterDataCache;
 
@@ -100,28 +99,26 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
     @Autowired
     public BaseVoucherController(final AppConfigValueService appConfigValuesService) {
         this.appConfigValuesService = appConfigValuesService;
-        getHeaderMandateFields();
     }
 
-    protected void getHeaderMandateFields() {
+
+    @SuppressWarnings("deprecation")
+    protected void setDropDownValues(final Model model) {
+        List<String> headerFields = new ArrayList<>();
+        List<String> mandatoryFields = new ArrayList<>();
         final List<AppConfigValues> appConfigList = appConfigValuesService
                 .getConfigValuesByModuleAndKey(FinancialConstants.MODULE_NAME_APPCONFIG,
                         FinancialConstants.KEY_DEFAULTTXNMISATTRRIBUTES);
 
         for (final AppConfigValues appConfigVal : appConfigList) {
             final String value = appConfigVal.getValue();
-            final String header = value.substring(0, value.indexOf("|"));
+            final String header = value.substring(0, value.indexOf('|'));
             headerFields.add(header);
-            final String mandate = value.substring(value.indexOf("|") + 1);
+            final String mandate = value.substring(value.indexOf('|') + 1);
             if ("M".equals(mandate))
                 mandatoryFields.add(header);
         }
         mandatoryFields.add("voucherdate");
-    }
-
-    @SuppressWarnings("deprecation")
-    protected void setDropDownValues(final Model model) {
-
         if (headerFields.contains("department"))
             model.addAttribute("departments", masterDataCache.get("egi-department"));
         if (headerFields.contains("functionary"))
@@ -156,12 +153,12 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
                 model.addAttribute("cutOffDate",
                         DateUtils.getDefaultFormattedDate(df.parse(cutOffDateconfigValue.get(0).getValue())));
             } catch (final ParseException e) {
-                e.printStackTrace();
+                LOGGER.warn("Could not parse cutoff date passed {} ", cutOffDateconfigValue.get(0).getValue());
             }
         }
     }
 
-    protected Boolean isVoucherNumberGenerationAuto(final CVoucherHeader voucherHeader) {
+    protected Boolean isVoucherNumberGenerationAuto(final CVoucherHeader voucherHeader, Model model) {
         String vNumGenMode;
         if (voucherHeader.getType() != null
                 && FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL.equalsIgnoreCase(voucherHeader.getType()))
@@ -169,7 +166,7 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
         else
             vNumGenMode = voucherTypeForULB.readVoucherTypes(voucherHeader.getType());
         if (!FinancialConstants.AUTO.equalsIgnoreCase(vNumGenMode)) {
-            mandatoryFields.add("vouchernumber");
+            ((List) model.asMap().get("mandatoryFields")).add("vouchernumber");
             return true;
         } else
             return false;
@@ -201,42 +198,42 @@ public abstract class BaseVoucherController extends GenericWorkFlowController {
     protected void populateVoucherName(final CVoucherHeader voucherHeader) {
 
         switch (voucherHeader.getVoucherSubType()) {
-        case FinancialConstants.JOURNALVOUCHER_NAME_GENERAL:
-            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_JOURNAL);
-            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL);
-            break;
+            case FinancialConstants.JOURNALVOUCHER_NAME_GENERAL:
+                voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_JOURNAL);
+                voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_GENERAL);
+                break;
 
-        case FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS:
-            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_WORKS);
-            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL);
-            break;
+            case FinancialConstants.STANDARD_EXPENDITURETYPE_WORKS:
+                voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_WORKS);
+                voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_CONTRACTORJOURNAL);
+                break;
 
-        case FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE:
-            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_PURCHASE);
-            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL);
-            break;
+            case FinancialConstants.STANDARD_EXPENDITURETYPE_PURCHASE:
+                voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_PURCHASE);
+                voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL);
+                break;
 
-        case FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY:
-            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_SALARY);
-            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL);
-            break;
+            case FinancialConstants.STANDARD_EXPENDITURETYPE_SALARY:
+                voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_SALARY);
+                voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SALARYJOURNAL);
+                break;
 
-        case FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT:
-            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_CONTINGENT);
-            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_EXPENSEJOURNAL);
-            break;
+            case FinancialConstants.STANDARD_EXPENDITURETYPE_CONTINGENT:
+                voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_CONTINGENT);
+                voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_EXPENSEJOURNAL);
+                break;
 
-        case FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET:
-            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_FIXEDASSET);
-            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL);
-            break;
+            case FinancialConstants.STANDARD_SUBTYPE_FIXED_ASSET:
+                voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_FIXEDASSET);
+                voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_SUPPLIERJOURNAL);
+                break;
 
-        case FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION:
-            voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_PENSION);
-            voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_PENSIONJOURNAL);
-            break;
-        default:
-            break;
+            case FinancialConstants.STANDARD_EXPENDITURETYPE_PENSION:
+                voucherHeader.setVoucherNumType(FinancialConstants.VOUCHER_TYPE_PENSION);
+                voucherHeader.setName(FinancialConstants.JOURNALVOUCHER_NAME_PENSIONJOURNAL);
+                break;
+            default:
+                break;
         }
 
     }

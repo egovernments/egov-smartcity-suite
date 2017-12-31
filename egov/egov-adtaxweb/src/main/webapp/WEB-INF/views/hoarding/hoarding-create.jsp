@@ -71,12 +71,14 @@
 			<div class="tab-content">
 				<div class="tab-pane fade active in" id="hoardingdetails">	
 					<jsp:include page="createLegacyAdvertisement.jsp"></jsp:include>
+					<c:if test="${not empty advertisementPermitDetail.advertisement.documents}">
 					<jsp:include page="document-create.jsp"></jsp:include>
+					</c:if>
 				
 				</div>
 			</div>
 		</div>
-		
+		</div>
 		<c:if test="${isEmployee}">
 				<jsp:include page="../workflow/commonWorkflowMatrix.jsp"/>
 			</c:if>

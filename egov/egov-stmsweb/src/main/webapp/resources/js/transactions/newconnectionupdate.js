@@ -94,6 +94,12 @@ $(document).ready(function()
 				}
 		 }
 		 
+		 if(action=='Approve'){
+			 	$('#approvalDepartment').removeAttr('required');
+				$('#approvalDesignation').removeAttr('required');
+				$('#approvalPosition').removeAttr('required');			 
+		 }
+		 
 		 if(action == 'Reject' && (status=='INITIALAPPROVED' || status=='INSPECTIONFEEPAID' || status=='CREATED')) { 
 			 $('#Reject').attr('formnovalidate','true');
 			 bootbox.confirm("Do you really want to Reject the application?", function(result){
@@ -113,7 +119,7 @@ $(document).ready(function()
 			 });
 			 return false;
 		}  
-		 
+
 		 if(action == 'Cancel') { 
 			 $('#Cancel').attr('formnovalidate','true');
 			 bootbox.confirm("Do you really want to Cancel the application?", function(result){
@@ -156,8 +162,8 @@ $(document).ready(function()
 			var stsplit = fromDate.split("/");
 			var ensplit = toDate.split("/");
 			
-			startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2]);
-			endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2]);
+			var startDate = Date.parse(stsplit[1] + "/" + stsplit[0] + "/" + stsplit[2]);
+			var endDate = Date.parse(ensplit[1] + "/" + ensplit[0] + "/" + ensplit[2]);
 			
 	        // Check the date range, 86400000 is the number of milliseconds in one day
 	        var difference = (endDate - startDate) / (86400000 * 7);

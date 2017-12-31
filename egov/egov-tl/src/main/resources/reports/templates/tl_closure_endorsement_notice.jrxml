@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
+
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="tl_closure_endorsement" language="groovy" pageWidth="595" pageHeight="842" orientation="Landscape" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="a70ec4c5-a5b7-4b85-9811-69574723fbe2">
+	<property name="ireport.zoom" value="1.0"/>
+	<property name="ireport.x" value="0"/>
+	<property name="ireport.y" value="96"/>
+	<parameter name="License" class="java.lang.Object" isForPrompting="false"/>
+	<parameter name="municipality" class="java.lang.String"/>
+	<parameter name="currentDate" class="java.lang.String">
+		<parameterDescription><![CDATA[]]></parameterDescription>
+	</parameter>
+	<field name="licensee" class="java.lang.Object"/>
+	<field name="boundary" class="java.lang.Object"/>
+	<field name="tradeName" class="java.lang.Object"/>
+	<field name="licenseNumber" class="java.lang.String"/>
+	<field name="assessmentNo" class="java.lang.String"/>
+	<field name="applicationNumber" class="java.lang.String"/>
+	<background>
+		<band height="802">
+			<rectangle>
+				<reportElement x="0" y="0" width="555" height="802" uuid="113c06ab-af78-4c8c-8872-6fe284a565af"/>
+				<graphicElement>
+					<pen lineWidth="1.25"/>
+				</graphicElement>
+			</rectangle>
+		</band>
+	</background>
+	<title>
+		<band splitType="Stretch"/>
+	</title>
+	<pageHeader>
+		<band height="85" splitType="Stretch">
+			<staticText>
+				<reportElement x="78" y="33" width="398" height="20" uuid="857b4ffc-a988-4ee3-9e67-7d434b2c36bc"/>
+				<textElement textAlignment="Center">
+					<font size="16" isBold="true"/>
+				</textElement>
+				<text><![CDATA[MUNICIPAL ADMINISTRTION DEPARTMENT]]></text>
+			</staticText>
+		</band>
+	</pageHeader>
+	<columnHeader>
+		<band splitType="Stretch"/>
+	</columnHeader>
+	<detail>
+		<band height="565" splitType="Stretch">
+			<rectangle>
+				<reportElement x="33" y="7" width="494" height="80" uuid="848a846e-97f7-417e-8508-04b553d3a274"/>
+			</rectangle>
+			<line>
+				<reportElement x="248" y="7" width="1" height="80" uuid="5fafe140-223c-4760-97d7-03da7503e323"/>
+			</line>
+			<staticText>
+				<reportElement x="39" y="18" width="66" height="20" uuid="e25f470f-6276-463a-9f80-6b0abf0f20d6"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Roc.No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="39" y="57" width="66" height="20" uuid="e1635e51-01a7-44f8-95da-25f7911dc281"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Date :]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="105" y="18" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="6862d978-d11d-4e5b-8fc9-5e62efeb6278"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{applicationNumber}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="dd/MM/yyyy">
+				<reportElement stretchType="RelativeToTallestObject" x="105" y="57" width="100" height="20" isPrintWhenDetailOverflows="true" uuid="d29234d7-f3f3-4f0d-baaf-4bc5ae31b298"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{currentDate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="262" y="18" width="246" height="20" isPrintWhenDetailOverflows="true" uuid="301be5d5-9f7c-4029-8a5c-f950fec17db6"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="84" y="109" width="386" height="20" uuid="6bc26bf9-d8bc-4ede-86e3-e30e5e4d716d"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="15" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[TRADE CLOSURE ENDORSEMENT]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="66" y="152" width="49" height="20" uuid="45636df3-c2fe-4faf-b56a-c09eebc24bdd"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sub: ]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="115" y="152" width="393" height="20" isPrintWhenDetailOverflows="true" uuid="e22e3b3a-3c08-4562-8c40-a15b59406752"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}+ " Closure of Trade – Endorsement – Issued"]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="66" y="176" width="49" height="20" uuid="64582c43-95bb-4b95-b7f0-3855fc4a24d9"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Ref:]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="115" y="176" width="393" height="20" isPrintWhenDetailOverflows="true" uuid="822f26ff-5106-4fc5-a7c7-427342c79634"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA["Your Application No. "+$F{applicationNumber}+"  dt. " +new SimpleDateFormat("dd/MM/yyyy").format($P{License}.getCreatedDate())]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement x="33" y="239" width="475" height="100" isPrintWhenDetailOverflows="true" uuid="25a7f3f8-9b67-460c-bed4-0c4e2e9c7870"/>
+				<textElement>
+					<font size="12"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="2.0"/>
+				</textElement>
+				<textFieldExpression><![CDATA["          With reference to your Application cited, requesting for closure of your Trade bearing TIN No. "+$F{licenseNumber} +" , situated in the premises bearing Property Tax PTIN No. "+($F{assessmentNo}.isEmpty()?"NA":$F{assessmentNo})+" where the trade is carrying out, has been inspected by this office and found that the Trade in question is closed and no business is being running in the said premises."]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="340" width="475" height="69" uuid="96988beb-1ee0-43a1-a303-e5fca16b72ba"/>
+				<textElement>
+					<font size="12"/>
+					<paragraph lineSpacing="Proportional" lineSpacingSize="2.0"/>
+				</textElement>
+				<text><![CDATA[            In view of the above, this endorsement is issued as per your request and you are hereby informed that the relevant entries regarding the closure of the Trade is made in the records of the Municipal Office. ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="363" y="448" width="164" height="20" uuid="2941057f-6c7e-4bcf-9468-8e4ae22849cf"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[for Commissioner]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="363" y="468" width="164" height="20" isPrintWhenDetailOverflows="true" uuid="86f999a2-734f-4f33-ba98-4375da875e81"/>
+				<textElement textAlignment="Left" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$P{municipality}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="33" y="468" width="100" height="20" uuid="88e13bb3-d2bd-49aa-838f-23a5bc482106"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[To,]]></text>
+			</staticText>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="33" y="488" width="247" height="20" isPrintWhenDetailOverflows="true" uuid="63c5203f-026a-4c0f-8732-651e87ca0bf6"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{licensee}.getApplicantName()+" ,"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="33" y="508" width="247" height="20" isPrintWhenDetailOverflows="true" uuid="c9884e25-3eb2-415c-a145-dcc529d3b776"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{tradeName}.getName()+" ,"]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true">
+				<reportElement stretchType="RelativeToTallestObject" x="33" y="528" width="247" height="20" isPrintWhenDetailOverflows="true" uuid="ab8661e3-7824-42dc-b7ce-39b1cac8f3fa"/>
+				<textElement verticalAlignment="Middle">
+					<font size="12"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{licensee}.getAddress()+", "+$F{boundary}.getName()]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="221" y="205" width="100" height="20" uuid="bbcbfb62-8a3d-4cee-b14d-49884af648ba"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font size="12" isBold="true"/>
+				</textElement>
+				<text><![CDATA[* * * *]]></text>
+			</staticText>
+		</band>
+	</detail>
+</jasperReport>

@@ -135,7 +135,7 @@ public class UpdateHoardingController extends HoardingControllerSupport {
             model.addAttribute("advertisementDocuments", advertisementPermitDetail.getAdvertisement().getDocuments());
             model.addAttribute("isReassignEnabled", reassignAdvertisementService.isReassignEnabled());
             model.addAttribute("applicationType", advertisementPermitDetail.getApplicationtype().name());
-
+            model.addAttribute("applicationHistory", advertisementWorkFlowService.getHistory(advertisementPermitDetail));
             prepareWorkflow(model, advertisementPermitDetail, workFlowContainer);
         }
         return HOARDING_UPDATE;

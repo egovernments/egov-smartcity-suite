@@ -173,6 +173,8 @@ public class Complaint extends StateAware<Position> {
     @JoinColumn(name = "childLocation")
     private Boundary childLocation;
 
+    private boolean notifyComplainant = true;
+
     @Transient
     private String latlngAddress;
 
@@ -187,6 +189,9 @@ public class Complaint extends StateAware<Position> {
 
     @Transient
     private boolean sendToPreviousOwner;
+
+    @Transient
+    private boolean statusUpdate;
 
     @Override
     public Long getId() {
@@ -365,6 +370,14 @@ public class Complaint extends StateAware<Position> {
         this.childLocation = childLocation;
     }
 
+    public boolean isNotifyComplainant() {
+        return notifyComplainant;
+    }
+
+    public void setNotifyComplainant(boolean notifyComplainant) {
+        this.notifyComplainant = notifyComplainant;
+    }
+
     public Long getCrossHierarchyId() {
         return this.crossHierarchyId;
     }
@@ -403,6 +416,14 @@ public class Complaint extends StateAware<Position> {
 
     public void sendToPreviousOwner(boolean sendToPreviousOwner) {
         this.sendToPreviousOwner = sendToPreviousOwner;
+    }
+
+    public boolean isStatusUpdate() {
+        return statusUpdate;
+    }
+
+    public void setStatusUpdate(boolean statusUpdate) {
+        this.statusUpdate = statusUpdate;
     }
 
     public boolean completed() {

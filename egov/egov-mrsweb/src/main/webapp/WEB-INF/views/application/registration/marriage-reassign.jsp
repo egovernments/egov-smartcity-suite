@@ -96,38 +96,18 @@ accountability and the service delivery of the government  organizations.
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c"%>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn"%>
 
-<script>
-	var isSubmitForm = false;
 
-	window.onbeforeunload = function() {
-		if (!isSubmitForm) {
-			window.opener.closeChildWindow();
-		} else {
-			isSubmitForm = false;
-		}
-	};
-
-	jQuery(document).ready(function(e) {
-		jQuery('form').submit(function(e) {
-			isSubmitForm = true;
-		});
-
-	});
-	//this will close the child window when the parent window is closed
-	window.opener.onbeforeunload = function() {
-		window.opener.closeChildWindow();
-	}
-</script>
-
-	<div class="text-right"  style="color:#ff0000 "><strong>${message}</strong>	</div>
+<div class="text-right" style="color: #ff0000">
+	<strong>${message}</strong>
+</div>
 
 <div class="panel-heading">
 	<div class="panel-title">
 		<spring:message code="lbl.reassign.title" />
 	</div>
-	
+
 </div>
-<div class="panel-body">		
+<div class="panel-body">
 
 
 	<form:form name="reassign" id="reassign" modelAttribute="reassign">
@@ -153,7 +133,7 @@ accountability and the service delivery of the government  organizations.
 			</div>
 		</div>
 		<div class="buttonbottom" align="center">
-			<form:button type="submit" disabled="false" id="ReassignSubmit"
+			<form:button disabled="false" id="ReassignSubmit"
 				align="center" class="btn btn-primary" value="ReassignSubmit">
 				<c:out value="Reassign" />
 			</form:button>
@@ -166,3 +146,4 @@ accountability and the service delivery of the government  organizations.
 
 <script
 	src="<cdn:url value='/resources/global/js/egov/inbox.js?rnd=${app_release_no}' context='/egi'/>"></script>
+<script src="<cdn:url value='/resources/js/app/reassign.js?rnd=${app_release_no}'/> "></script>

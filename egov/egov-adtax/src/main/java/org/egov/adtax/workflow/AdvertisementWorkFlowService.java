@@ -48,34 +48,45 @@
 
 package org.egov.adtax.workflow;
 
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_ROLEFORNONEMPLOYEE;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.DEPARTMENT;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.STATUS;
+import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.USER;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+
 import org.egov.adtax.entity.AdvertisementPermitDetail;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
 import org.egov.eis.service.DesignationService;
+import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.DepartmentService;
+import org.egov.infra.workflow.entity.State;
+import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pims.commons.Position;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
 
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_ROLEFORNONEMPLOYEE;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDEPARTEMENT_FOR_CSCOPERATOR;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.ADTAX_WORKFLOWDESIGNATION_FOR_CSCOPERATOR;
-import static org.egov.adtax.utils.constants.AdvertisementTaxConstants.MODULE_NAME;
 
 @Service
 @Transactional(readOnly = true)
@@ -89,6 +100,8 @@ public class AdvertisementWorkFlowService {
     private DepartmentService departmentService;
     @Autowired
     protected AssignmentService assignmentService;
+    @Autowired
+    private EisCommonService eisCommonService;
 
     @PersistenceContext
     private EntityManager entityManager;
@@ -342,4 +355,64 @@ public class AdvertisementWorkFlowService {
             asignList = assignmentService.getAssignmentsForPosition(approvalPosition, new Date());
         return !asignList.isEmpty() ? asignList.get(0).getEmployee().getName() : "";
     }
+    
+
+    /**
+     * @param advertisementPermitDetail
+     * @return
+     */
+    public List<Map<String, Object>> getHistory(final AdvertisementPermitDetail advertisementPermitDetail) {
+        User user;
+        final List<Map<String, Object>> historyTable = new ArrayList<>();
+        final State<Position> state = advertisementPermitDetail.getState();
+        final Map<String, Object> map = new HashMap<>(0);
+        if (null != state) {
+            if (!advertisementPermitDetail.getStateHistory().isEmpty()
+                    && advertisementPermitDetail.getStateHistory() != null)
+                Collections.reverse(advertisementPermitDetail.getStateHistory());
+            Map<String, Object> historyMap;
+            for (final StateHistory<Position> stateHistory : advertisementPermitDetail.getStateHistory()) {
+                historyMap = new HashMap<>(0);
+                historyMap.put("date", stateHistory.getDateInfo());
+                historyMap.put("comments", stateHistory.getComments() != null ? stateHistory.getComments() : "");
+                historyMap.put("updatedBy", stateHistory.getLastModifiedBy().getUsername() + "::"
+                        + stateHistory.getLastModifiedBy().getName());
+                historyMap.put(STATUS, stateHistory.getValue());
+                final Position owner = stateHistory.getOwnerPosition();
+                user = stateHistory.getOwnerUser();
+                if (null != user) {
+                    historyMap.put(USER, user.getUsername() + "::" + user.getName());
+                    historyMap.put(DEPARTMENT,
+                            null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                                    .getDepartmentForUser(user.getId()).getName() : "");
+                } else if (null != owner && null != owner.getDeptDesig()) {
+                    user = eisCommonService.getUserForPosition(owner.getId(), new Date());
+                    historyMap
+                            .put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                    historyMap.put(DEPARTMENT, null != owner.getDeptDesig().getDepartment() ? owner.getDeptDesig()
+                            .getDepartment().getName() : "");
+                }
+                historyTable.add(historyMap);
+            }
+            map.put("date", state.getDateInfo());
+            map.put("comments", state.getComments() != null ? state.getComments() : "");
+            map.put("updatedBy", state.getLastModifiedBy().getUsername() + "::" + state.getLastModifiedBy().getName());
+            map.put(STATUS, state.getValue());
+            final Position ownerPosition = state.getOwnerPosition();
+            user = state.getOwnerUser();
+            if (null != user) {
+                map.put(USER, user.getUsername() + "::" + user.getName());
+                map.put(DEPARTMENT, null != eisCommonService.getDepartmentForUser(user.getId()) ? eisCommonService
+                        .getDepartmentForUser(user.getId()).getName() : "");
+            } else if (null != ownerPosition && null != ownerPosition.getDeptDesig()) {
+                user = eisCommonService.getUserForPosition(ownerPosition.getId(), new Date());
+                map.put(USER, null != user.getUsername() ? user.getUsername() + "::" + user.getName() : "");
+                map.put(DEPARTMENT, null != ownerPosition.getDeptDesig().getDepartment() ? ownerPosition
+                        .getDeptDesig().getDepartment().getName() : "");
+            }
+            historyTable.add(map);
+        }
+        return historyTable;
+    }
+
 }

@@ -47,18 +47,12 @@
  */
 package org.egov.tl.web.controller.transactions.digisign;
 
-import org.apache.commons.io.FileUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.infra.utils.FileStoreUtils;
 import org.egov.tl.entity.License;
 import org.egov.tl.service.LicenseCertificateDigiSignService;
-import org.egov.tl.utils.Constants;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.io.InputStreamResource;
-import org.springframework.http.CacheControl;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -68,22 +62,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
-import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
+import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
 
 @Controller
 @RequestMapping(value = "/tradelicense")
 public class LicenseCertificateDigiSignController {
 
-    @Qualifier("fileStoreService")
     @Autowired
-    private FileStoreService fileStoreService;
+    private FileStoreUtils fileStoreUtils;
 
     @Autowired
     private LicenseCertificateDigiSignService licenseCertificateDigiSignService;
@@ -104,20 +94,7 @@ public class LicenseCertificateDigiSignController {
     @ResponseBody
     public ResponseEntity<InputStreamResource> downloadSignedLicenseCertificate(@RequestParam String file,
                                                                                 @RequestParam String applnum) {
-        try {
-            File signedFile = fileStoreService.fetch(file, Constants.FILESTORE_MODULECODE);
-            byte[] bytes = FileUtils.readFileToByteArray(signedFile);
-
-            return ResponseEntity.
-                    ok().
-                    contentType(MediaType.parseMediaType(APPLICATION_PDF_VALUE)).
-                    cacheControl(CacheControl.noCache()).
-                    contentLength(bytes.length).
-                    header("content-disposition", "inline;filename=\"" + applnum + ".pdf\"").
-                    body(new InputStreamResource(new ByteArrayInputStream(bytes)));
-        } catch (IOException e) {
-            throw new ApplicationRuntimeException("Error while reading file", e);
-        }
+        return fileStoreUtils.fileAsPDFResponse(file, applnum, FILESTORE_MODULECODE);
     }
 
     @GetMapping(value = "/bulk-digisign")

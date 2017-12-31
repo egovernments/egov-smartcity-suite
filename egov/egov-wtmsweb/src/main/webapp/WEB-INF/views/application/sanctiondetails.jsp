@@ -71,7 +71,7 @@
 							<spring:message code="lbl.sanctiondate"/><span class="mandatory"></span>
 						</div>
 						<div class="col-md-3 col-xs-6 add-margin">
-							<form:input id="approvalDate" path="approvalDate" class="form-control datepicker today" data-date-end-date="0d" required="required" />
+							<form:input id="approvalDate" path="approvalDate" class="form-control datepicker today" data-date-end-date="0d" data-date-start-date="-${sanctionDateLowerLimit}d" required="required" />
 							<form:errors path="approvalDate" cssClass="add-margin error-msg" />
 						</div>
 					</div>

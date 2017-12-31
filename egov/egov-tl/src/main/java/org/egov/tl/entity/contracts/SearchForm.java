@@ -113,6 +113,8 @@ public class SearchForm extends DataTableSearchRequest {
             licenseActions.add("Print Acknowledgment");
         if (license.isClosureApplicable())
             licenseActions.add("Closure");
+        if (license.isClosed())
+            licenseActions.add("Closure Endorsement Notice");
         if (!userRoles.contains(CSCOPERATOR)) {
             licenseActions.add("Generate Demand Notice");
             if (license.isLegacyWithNoState())

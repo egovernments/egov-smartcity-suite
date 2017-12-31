@@ -59,6 +59,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.annotation.Resource;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.util.List;
 import java.util.Map;
 
@@ -172,6 +174,10 @@ public class CityService {
             cityLogoCache.put(cityLogoCacheKey(), CITY_LOGO_HASH_KEY, cityLogo);
         }
         return cityLogo;
+    }
+
+    public InputStream getCityLogoAsStream() {
+        return new ByteArrayInputStream(getCityLogoAsBytes());
     }
 
     public String getCityLogoFileStoreId() {

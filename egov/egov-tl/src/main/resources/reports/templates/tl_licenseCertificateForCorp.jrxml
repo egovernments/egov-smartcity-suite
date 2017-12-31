@@ -57,7 +57,7 @@
 	<parameter name="wardName" class="java.lang.String"/>
 	<parameter name="applicationdate" class="java.lang.String"/>
 	<parameter name="installMentYear" class="java.lang.String"/>
-	<parameter name="demandTotalamt" class="java.lang.String"/>
+	<parameter name="demandTotalamt" class="java.math.BigDecimal"/>
 	<parameter name="licenceAddress" class="java.lang.String"/>
 	<parameter name="nameOfEstablishment" class="java.lang.String"/>
 	<parameter name="municipality" class="java.lang.String"/>

@@ -66,7 +66,6 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.util.Date;
 
 /**
@@ -114,14 +113,13 @@ public class CreateJournalVoucherController extends BaseVoucherController {
         prepareWorkflow(model, voucherHeader, new WorkflowContainer());
         prepareValidActionListByCutOffDate(model);
         voucherHeader.setVoucherDate(new Date());
-        model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
+        model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader, model));
         return JOURNALVOUCHER_FORM;
     }
 
     @RequestMapping(value = "/create", method = RequestMethod.POST)
     public String create(@ModelAttribute("voucherHeader") final CVoucherHeader voucherHeader, final Model model,
-            final BindingResult resultBinder, final HttpServletRequest request, @RequestParam final String workFlowAction)
-            throws IOException {
+            final BindingResult resultBinder, final HttpServletRequest request, @RequestParam final String workFlowAction) {
 
         voucherHeader.setType(FinancialConstants.STANDARD_VOUCHER_TYPE_JOURNAL);
         voucherHeader.setEffectiveDate(voucherHeader.getVoucherDate());
@@ -135,7 +133,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
             prepareWorkflow(model, voucherHeader, new WorkflowContainer());
             prepareValidActionListByCutOffDate(model);
             voucherHeader.setVoucherDate(new Date());
-            model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
+            model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader, model));
 
             return JOURNALVOUCHER_FORM;
         } else {
@@ -155,7 +153,7 @@ public class CreateJournalVoucherController extends BaseVoucherController {
                 prepareWorkflow(model, voucherHeader, new WorkflowContainer());
                 prepareValidActionListByCutOffDate(model);
                 voucherHeader.setVoucherDate(new Date());
-                model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader));
+                model.addAttribute(VOUCHER_NUMBER_GENERATION_AUTO, isVoucherNumberGenerationAuto(voucherHeader, model));
                 resultBinder.reject("", e.getErrors().get(0).getMessage());
                 return JOURNALVOUCHER_FORM;
             }

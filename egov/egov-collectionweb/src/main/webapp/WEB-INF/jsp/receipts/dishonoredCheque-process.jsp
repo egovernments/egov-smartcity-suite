@@ -94,7 +94,8 @@
 			showGlDebitAmount[i].innerHTML = amount[i].value;
 		}
 		dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
-		dom.get("showGlCreditTotalAmount").innerHTML = dom.get("showRemittanceGlCreditAmount").innerHTML;
+		dom.get("showGlCreditTotalAmount").innerHTML = dom
+				.get("showRemittanceGlCreditAmount").innerHTML;
 		var instHeaderIds = dom.get("instHeaderIds").value;
 		var receiptGLDetails = "";
 		var remittanceGLDetails = "";
@@ -189,7 +190,8 @@
 				showGlDebitAmount[i].innerHTML = amount[i].value;
 			}
 			dom.get("showGlDebitTotalAmount").innerHTML = showGlTotalAmount;
-			dom.get("showGlCreditTotalAmount").innerHTML = dom.get("showRemittanceGlCreditAmount").innerHTML;
+			dom.get("showGlCreditTotalAmount").innerHTML = dom
+					.get("showRemittanceGlCreditAmount").innerHTML;
 			/* var gLTable = dom.get("gLEntry");
 			jQuery(gLTable).addClass("display-hide"); */
 		}
@@ -301,7 +303,8 @@
 									name="dishonorcheque.reversalamount" />:</td>
 							<td class="greybox"><s:textfield name="reversalAmount"
 									style="width: 200px;" id="reversalAmount"
-									value="%{reversalAmount}" readonly="true" /></td>
+									cssClass="patternvalidation text-right form-control"
+									data-pattern="number" value="%{reversalAmount}" readonly="true" /></td>
 						</tr>
 
 						<tr>
@@ -346,17 +349,17 @@
 										<s:property value="%{creditAmount}" />
 									</div></td>
 								<td class="blueborderfortd" align="right"><s:textfield
-										name="amount" id="amount" value="0.00" onblur="updateTotal()"
+										name="amount" id="amount" value="0" onblur="updateTotal()"
 										cssClass="patternvalidation text-right form-control"
-										data-pattern="decimalvalue" /></td>
+										data-pattern="number" /></td>
 							</tr>
 						</s:iterator>
 						<tr>
 							<td class="blueborderfortd text-right" align="right" colspan="4">Total</td>
 							<td class="blueborderfortd "><s:textfield name="totalAmount"
-									id="totalAmount" value="0.00" readonly="true"
+									id="totalAmount" value="0" readonly="true"
 									cssClass="patternvalidation text-right form-control"
-									data-pattern="decimalvalue" /></td>
+									data-pattern="number" /></td>
 						</tr>
 					</table>
 					<div class="buttonbottom">
@@ -443,7 +446,7 @@
 				value="%{instHeaderIds}" />
 			<s:hidden name="voucherHeaderIds" id="voucherHeaderIds"
 				value="%{voucherHeaderIds}" />
-				<s:hidden name="receiptHeaderIds" id="receiptHeaderIds"
+			<s:hidden name="receiptHeaderIds" id="receiptHeaderIds"
 				value="%{receiptHeaderIds}" />
 			<s:hidden name="receiptGLDetails" id="receiptGLDetails"
 				value="%{receiptGLDetails}" />

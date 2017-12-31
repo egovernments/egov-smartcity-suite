@@ -1,0 +1,1 @@
+INSERT INTO EG_ROLEACTION (roleid, actionid) values((select id from eg_role where name = 'Sewerage Tax Approver'), (select id from eg_action where name ='SewerageTaxEstimationNotice' and contextroot = 'stms'));

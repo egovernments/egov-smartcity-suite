@@ -48,21 +48,40 @@
 
 package org.egov.infra.config.security.authentication.listener;
 
+import org.egov.infra.admin.master.service.UserService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
+import org.egov.infra.security.audit.entity.LoginAudit;
 import org.egov.infra.security.audit.service.LoginAuditService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.validation.beanvalidation.LocalValidatorFactoryBean;
 
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
+import java.util.Date;
 
-import static org.egov.infra.security.utils.SecurityConstants.LOGIN_LOG_ID;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_IP;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_TIME;
+import static org.egov.infra.security.utils.SecurityConstants.LOGIN_USER_AGENT;
 import static org.egov.infra.utils.ApplicationConstant.TENANTID_KEY;
+import static org.egov.infra.utils.ApplicationConstant.USERID_KEY;
 
 public class UserSessionDestroyListener implements HttpSessionListener {
 
     @Autowired
     private LoginAuditService loginAuditService;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    @Qualifier("entityValidator")
+    private LocalValidatorFactoryBean entityValidator;
+
+    @Value("${master.server}")
+    private boolean masterServer;
 
     @Override
     public void sessionCreated(HttpSessionEvent se) {
@@ -71,15 +90,25 @@ public class UserSessionDestroyListener implements HttpSessionListener {
 
     @Override
     public void sessionDestroyed(HttpSessionEvent event) {
-        HttpSession session = event.getSession();
-        if (session.getAttribute(LOGIN_LOG_ID) != null) {
+        if (masterServer)
+            auditUserLogin(event.getSession());
+    }
+
+    private void auditUserLogin(final HttpSession session) {
+        if (session.getAttribute(LOGIN_IP) != null) {
             try {
                 ApplicationThreadLocals.setTenantID((String) session.getAttribute(TENANTID_KEY));
-                loginAuditService.auditLogout((Long) session.getAttribute(LOGIN_LOG_ID));
+                LoginAudit loginAudit = new LoginAudit();
+                loginAudit.setLoginTime((Date) session.getAttribute(LOGIN_TIME));
+                loginAudit.setUser(userService.getUserById((Long) session.getAttribute(USERID_KEY)));
+                loginAudit.setIpAddress((String) session.getAttribute(LOGIN_IP));
+                loginAudit.setUserAgent((String) session.getAttribute(LOGIN_USER_AGENT));
+                loginAudit.setLogoutTime(new Date());
+                if (entityValidator.validate(loginAudit).isEmpty())
+                    loginAuditService.auditLogin(loginAudit);
             } finally {
                 ApplicationThreadLocals.clearValues();
             }
         }
-
     }
 }

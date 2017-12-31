@@ -84,6 +84,7 @@ import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_ATTACH;
 import static org.egov.infra.utils.ApplicationConstant.CONTENT_DISPOSITION_INLINE;
 import static org.egov.infra.utils.ImageUtils.compressImage;
+import static org.springframework.http.MediaType.APPLICATION_PDF_VALUE;
 
 @Service
 public class FileStoreUtils {
@@ -185,6 +186,22 @@ public class FileStoreUtils {
         } catch (IOException ioe) {
             LOGGER.error("Error occurred while converting file to byte array", ioe);
             return new byte[0];
+        }
+    }
+
+    public ResponseEntity<InputStreamResource> fileAsPDFResponse(String fileStoreId, String fileName, String moduleName) {
+        try {
+            File signedFile = fileStoreService.fetch(fileStoreId, moduleName);
+            byte[] signFileBytes = FileUtils.readFileToByteArray(signedFile);
+            return ResponseEntity.
+                    ok().
+                    contentType(MediaType.parseMediaType(APPLICATION_PDF_VALUE)).
+                    cacheControl(CacheControl.noCache()).
+                    contentLength(signFileBytes.length).
+                    header("content-disposition", "inline;filename=" + fileName + ".pdf").
+                    body(new InputStreamResource(new ByteArrayInputStream(signFileBytes)));
+        } catch (IOException e) {
+            throw new ApplicationRuntimeException("Error while reading file", e);
         }
     }
 }

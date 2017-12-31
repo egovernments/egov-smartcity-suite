@@ -446,8 +446,8 @@ public class APTaxCalculator implements PropertyTaxCalculator {
 
     private BigDecimal taxIfGovtProperty(final String propTypeCode, final BigDecimal tax) {
         BigDecimal amount = BigDecimal.ZERO;
-        if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_335))
-            amount = tax.multiply(BigDecimal.valueOf(0.335));
+        if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_333))
+            amount = tax.multiply(BigDecimal.valueOf(0.333));
         if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_50))
             amount = tax.multiply(BigDecimal.valueOf(0.5));
         if (propTypeCode.equals(PropertyTaxConstants.OWNERSHIP_TYPE_CENTRAL_GOVT_75))

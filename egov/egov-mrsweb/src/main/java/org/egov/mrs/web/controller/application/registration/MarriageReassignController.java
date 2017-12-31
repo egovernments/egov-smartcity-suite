@@ -47,19 +47,18 @@
  */
 package org.egov.mrs.web.controller.application.registration;
 
+import java.util.Map;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
+
 import org.apache.commons.lang3.StringUtils;
 import org.egov.eis.entity.Assignment;
 import org.egov.eis.service.AssignmentService;
-import org.egov.eis.service.DesignationService;
 import org.egov.eis.service.PositionMasterService;
 import org.egov.eis.web.controller.workflow.GenericWorkFlowController;
-import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.service.DepartmentService;
-import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.mrs.application.service.workflow.RegistrationWorkflowService;
 import org.egov.mrs.domain.entity.MarriageReassignInfo;
 import org.egov.mrs.domain.service.MarriageReassignService;
-import org.egov.pims.commons.Designation;
 import org.egov.pims.commons.Position;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.support.ResourceBundleMessageSource;
@@ -70,14 +69,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.validation.Valid;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @Controller
 @RequestMapping(value = "/reassignmrs/{appId}/{applicationtype}")
@@ -93,20 +84,11 @@ public class MarriageReassignController extends GenericWorkFlowController {
     private AssignmentService assignmentService;
 
     @Autowired
-    private DepartmentService departmentService;
-
-    @Autowired
-    private DesignationService designationService;
-
-    @Autowired
     private MarriageReassignService marriageReassignService;
 
     @Autowired
     private PositionMasterService positionMasterService;
-    
-    @Autowired
-    private RegistrationWorkflowService registrationWorkFlowService;
-    
+
     @Autowired
     protected ResourceBundleMessageSource messageSource;
 
@@ -115,53 +97,17 @@ public class MarriageReassignController extends GenericWorkFlowController {
         return new MarriageReassignInfo();
     }
 
-    public Long getLoggedInPositiontionId() {
-        Position position = null;
-        Long userId = ApplicationThreadLocals.getUserId();
-        if (userId != null && userId.intValue() != 0) {
-            position = positionMasterService.getPositionByUserId(userId);
-        }
-        return position.getId();
-    }
-
     @RequestMapping(method = RequestMethod.GET)
     public String getReassign(@ModelAttribute("reassign") final MarriageReassignInfo reassignInfo, final Model model,
             @PathVariable final String applicationtype, @PathVariable final Long appId, final HttpServletRequest request) {
 
-        final String designationStr = registrationWorkFlowService.getDesignationForCscOperatorWorkFlow();
-        final String departmentStr = registrationWorkFlowService.getDepartmentForCscOperatorWorkFlow();
-        final String[] departments = departmentStr.split(",");
-        final String[] designations = designationStr.split(",");
-        Department dept = null;
-        Map<Long, String> employeeWithPosition = new HashMap<>();
-
-        for (String department : departments) {
-            dept = departmentService.getDepartmentByName(department);
-            for (String designationName : Arrays.asList(designations)) {
-                List<Designation> desig = designationService.getDesignationsByName(designationName);
-                for (Designation designation : desig) {
-                    List<Assignment> assignments = assignmentService.findAllAssignmentsByDeptDesigAndDates(dept.getId(),
-                            designation.getId(), new Date());
-                    if (!assignments.isEmpty()) {
-                        for (Assignment assignment : assignments) {
-                            if (assignment != null && assignment.getPosition() != null) {
-                                if (!(getLoggedInPositiontionId()).equals(assignment.getPosition().getId())) {
-                                    employeeWithPosition.put(assignment.getPosition().getId(),
-                                            assignment.getEmployee().getName().concat("/")
-                                                    .concat(assignment.getPosition().getName()));
-                                    model.addAttribute("assignments", employeeWithPosition);
-                                }
-                            }
-                        }
-                    }
-                }
-            }
+        Map<String, String> employeeWithPosition = marriageReassignService.employeePositionMap();
+        if (employeeWithPosition.isEmpty()) {
+            model.addAttribute("message", messageSource.getMessage("notexists.position",
+                    new String[] {}, null));
+        } else {
+            model.addAttribute("assignments", employeeWithPosition);
         }
-        if(employeeWithPosition.isEmpty()){
-        model.addAttribute("message", messageSource.getMessage("notexists.position",
-                new String[] {}, null));
-        }
-
         reassignInfo.setApplicationId(appId);
         reassignInfo.setStateType(applicationtype);
         return MARRIAGE_REASSIGN;
@@ -177,7 +123,8 @@ public class MarriageReassignController extends GenericWorkFlowController {
         String appNo = marriageReassignService.getStateObject(marriageReassignInfo, position);
         if (StringUtils.isNotEmpty(appNo)) {
             successMessage = "Marriage application with reference number : " + appNo + " successfully re-assigned to "
-                    + assignment.getEmployee().getName()+"~"+assignment.getDesignation().getName()+":"+assignment.getDepartment().getCode();
+                    + assignment.getEmployee().getName() + "~" + assignment.getDesignation().getName() + ":"
+                    + assignment.getDepartment().getCode();
             model.addAttribute(SUCCESSMESSAGE, successMessage);
         } else {
             model.addAttribute(SUCCESSMESSAGE, "Reassign Failed!");

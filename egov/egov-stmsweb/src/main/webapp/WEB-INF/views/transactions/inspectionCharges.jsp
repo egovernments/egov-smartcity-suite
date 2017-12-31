@@ -88,6 +88,13 @@
 							       <c:when test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'INSPECTIONCHARGE' }">
 							        	<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
 									</c:when>  
+									
+									<c:when test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'SEWERAGETAX' }">
+							        	<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+									</c:when>
+									<c:when test="${sewerageApplicationDetails.connectionFees[counter.index].feesDetail.code == 'DONATIONCHARGE' }">
+							        	<form:input type="text" class="form-control table-input text-right patternvalidation" data-pattern="decimalvalue" path="connectionFees[${counter.index}].amount" id="feesDetail${counter.index}amount"  value="${fm.amount}" readonly="true" /> 
+									</c:when>
 						          	<c:otherwise>  
 						          	   <c:choose> 
 							           	<c:when test="${fm.feesDetail.isMandatory == 'true'}">

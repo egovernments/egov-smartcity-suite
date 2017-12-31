@@ -80,6 +80,7 @@ import org.egov.restapi.model.VacantLandDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -863,7 +864,11 @@ public class ValidationUtil {
 				}
 			}
 		}
-
+                 if(paymentAmountHasDecimals(payPropTaxDetails.getPaymentAmount())){
+                     errorDetails = new ErrorDetails();
+                     errorDetails.setErrorCode(PropertyTaxConstants.THIRD_PARTY_AMOUNT_HAVING_DECIMALS_CODE);
+                     errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_AMOUNT_HAVING_DECIMALS_MSG);
+                 }
 		if (isMutationFeePayment) {
 			if (!propertyExternalService.validateMutationFee(payPropTaxDetails.getAssessmentNo(),
 					payPropTaxDetails.getPaymentAmount())) {
@@ -937,6 +942,10 @@ public class ValidationUtil {
 				errorDetails.setErrorMessage(PropertyTaxConstants.THIRD_PARTY_ERR_MSG_BRANCHNAME_REQUIRED);
 			}
 		return errorDetails;
+	}
+	
+	public Boolean paymentAmountHasDecimals(BigDecimal amount){
+	    return amount.remainder(BigDecimal.ONE).compareTo(BigDecimal.ZERO) == 0 ? false : true ;
 	}
 
 	/**
@@ -1144,6 +1153,23 @@ public class ValidationUtil {
                     errorDetails.setErrorCode(CONSTRUCTION_DATE_REQ_CODE);
                     errorDetails.setErrorMessage(CONSTRUCTION_DATE_REQ_MSG);
                     return errorDetails;
+                }
+                if (floorDetails.getUnstructuredLand()) {
+                    if (floorDetails.getPlinthArea() == null) {
+                        errorDetails.setErrorCode(UNSTR_LAND_PLINTH_AREA_REQ);
+                        errorDetails.setErrorMessage(UNSTR_LAND_PLINTH_AREA_MSG);
+                    }
+                } else {
+                    if (floorDetails.getPlinthLength() == null && floorDetails.getPlinthBreadth() == null) {
+                        errorDetails.setErrorCode(PLINTH_LENGTH_REQ_CODE + " And " + PLINTH_BREADTH_REQ_CODE);
+                        errorDetails.setErrorMessage(PLINTH_LENGTH_REQ_MSG + " And " + PLINTH_BREADTH_REQ_MSG);
+                    } else if (floorDetails.getPlinthLength() == null) {
+                        errorDetails.setErrorCode(PLINTH_LENGTH_REQ_CODE);
+                        errorDetails.setErrorMessage(PLINTH_LENGTH_REQ_MSG);
+                    } else {
+                        errorDetails.setErrorCode(PLINTH_BREADTH_REQ_CODE);
+                        errorDetails.setErrorMessage(PLINTH_BREADTH_REQ_MSG);
+                    }
                 }
             }
         }

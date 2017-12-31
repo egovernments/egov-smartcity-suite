@@ -204,6 +204,12 @@
             </table>
         </div>
     </c:if>
+    </br></br>
+    <div class="text-center">
+        <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+            <spring:message code="lbl.close"/>
+        </button>
+    </div>
 </div>
 <link rel="stylesheet"
       href="<cdn:url value='/resources/global/css/jquery/plugins/datatables/jquery.dataTables.min.css' context='/egi'/>"/>

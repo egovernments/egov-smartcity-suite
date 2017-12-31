@@ -93,10 +93,11 @@ public class TradeLicenseDetailRequest {
             license.setLicenseNumber(tin);
         Boundary ward = new Boundary();
         ward.setBoundaryNum(wardNo);
+        ward.setActive(true);
         license.setParentBoundary(ward);
         license.setIsActive(true);
         ExampleMatcher matcher = ExampleMatcher.matching()
-                .withIgnorePaths("legacy");
+                .withIgnorePaths("legacy", "newWorkflow", "collectionPending");
         return Example.of(license, matcher);
     }
 }

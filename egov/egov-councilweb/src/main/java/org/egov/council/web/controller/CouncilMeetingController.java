@@ -197,6 +197,11 @@ public class CouncilMeetingController {
         if (councilAgenda != null && AGENDAUSEDINMEETING.equals(councilAgenda.getStatus().getCode())) {
             model.addAttribute(MESSAGE, "msg.agenda.exist");
             return COMMONERRORPAGE;
+        } else if (councilAgenda != null && councilAgenda.getCommitteeType() != null
+                && councilAgenda.getCommitteeType().getCommiteemembers().isEmpty()) {
+            model.addAttribute("errormessage", messageSource.getMessage("msg.committee.members.notadded",
+                    new String[] { councilAgenda.getCommitteeType().getName() }, null));
+            return COMMONERRORPAGE;
         } else if (councilAgenda != null) {
             councilMeeting.setCommitteeType(councilAgenda.getCommitteeType());
             buildMeetingMomByUsingAgendaDetails(councilMeeting, councilAgenda);

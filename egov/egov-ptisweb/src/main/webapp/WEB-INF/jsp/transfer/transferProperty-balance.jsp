@@ -119,8 +119,20 @@
 	</div>
 </div>
 <div colspan="3" align="center">
-				<input type="button" id="print" class="button printbtn" value="Print" class="print" />
+				<input type="button" name="button2" id="button2" value="Pay Property Tax" class="buttonsubmit" onclick="propertyTaxPayment()" />
+				<input type="button" name="button2" id="button2" value="Pay Water Charges" class="buttonsubmit" onclick="propertyWaterCharges()" />
 				&nbsp;&nbsp;
 				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
 </div>
 <script src="<cdn:url  value='/resources/global/js/jquery/plugins/jQuery.print.js' context='/egi'/>"></script>
+<script type="text/javascript">
+	function propertyTaxPayment() {
+		var assessmentNo = '<s:property value="%{assessmentNo}" />';
+		window.location = "/../ptis/citizen/collection/collection-generateBill.action?assessmentNumber="
+				+ assessmentNo;
+	}
+	function propertyWaterCharges() {
+		var assessmentNo = '<s:property default="N/A" value="%{assessmentNo}" />';
+		window.location = "/wtms/search/waterSearch/";
+	}
+</script>

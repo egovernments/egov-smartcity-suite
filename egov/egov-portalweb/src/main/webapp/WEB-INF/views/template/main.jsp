@@ -48,6 +48,7 @@
 
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%@ taglib uri="http://tiles.apache.org/tags-tiles" prefix="tiles" %>
+<%@ taglib uri="http://www.springframework.org/tags" prefix="spring" %>
 <%@ taglib uri="/WEB-INF/taglib/cdn.tld" prefix="cdn" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -90,6 +91,7 @@
     </script>
 </head>
 <body>
+<spring:htmlEscape defaultHtmlEscape="true" />
 <tiles:insertAttribute name="body"/>
 
 <div class="modal fade change-password" data-backdrop="static">

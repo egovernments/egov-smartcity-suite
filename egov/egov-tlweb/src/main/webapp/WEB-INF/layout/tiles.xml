@@ -288,4 +288,9 @@
         <put-attribute name="page-title" value="title.search.closure" cascade="true"/>
         <put-attribute name="body" value="/WEB-INF/views/transactions/closurenotice/search-closure-notice.jsp"/>
     </definition>
+    <definition name="closure-endorsement-success" extends="base_layout">
+        <put-attribute name="page-title" value="title.closure.completed" cascade="true"/>
+        <put-attribute name="body" value="/WEB-INF/views/transactions/closurenotice/closure-endorsementnotice-digisign-success.jsp"/>
+    </definition>
+
 </tiles-definitions>

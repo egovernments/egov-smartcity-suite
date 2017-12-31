@@ -49,6 +49,7 @@ package org.egov.ptis.bean.dashboard;
 
 public class WeeklyDCB {
     private String boundaryName;
+    private String billCollectorName;
     private DemandCollectionMIS week1DCB;
     private DemandCollectionMIS week2DCB;
     private DemandCollectionMIS week3DCB;
@@ -61,6 +62,14 @@ public class WeeklyDCB {
 
     public void setBoundaryName(String boundaryName) {
         this.boundaryName = boundaryName;
+    }
+
+    public String getBillCollectorName() {
+        return billCollectorName;
+    }
+
+    public void setBillCollectorName(String billCollectorName) {
+        this.billCollectorName = billCollectorName;
     }
 
     public DemandCollectionMIS getWeek1DCB() {

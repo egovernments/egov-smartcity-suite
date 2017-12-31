@@ -66,7 +66,7 @@ jQuery(document)
 								}
 							});
 					$("#type")
-							.blur(
+							.change(
 									function() {
 										if ($("#type option:selected").val() == "Mixed") {
 											$('#totalResidentialProperties')

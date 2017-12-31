@@ -76,6 +76,7 @@
 						</div>
 						<form:errors path="consumerCode" cssClass="add-margin error-msg" />
 					</div>
+					<br/>
 					<div class="form-group">
 						<div class="text-center">
 							<button type="submit" class="btn btn-primary" id="submitButtonId">

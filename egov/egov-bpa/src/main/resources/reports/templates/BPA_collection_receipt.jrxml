@@ -65,7 +65,7 @@
 		<parameterDescription><![CDATA[Current Date]]></parameterDescription>
 		<defaultValueExpression><![CDATA[new Date()]]></defaultValueExpression>
 	</parameter>
-	<parameter name="CITY_LOGO_PATH" class="java.lang.String"/>
+	<parameter name="CITY_LOGO_PATH" class="java.io.InputStream"/>
 	<field name="payeeName" class="java.lang.String">
 		<fieldDescription><![CDATA[Payee Name]]></fieldDescription>
 	</field>

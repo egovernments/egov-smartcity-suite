@@ -57,6 +57,7 @@ import org.egov.commons.entity.Source;
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.model.instrument.InstrumentHeader;
 import org.egov.services.instrument.InstrumentService;
 import org.egov.wtms.application.entity.DailyWTCollectionReport;
@@ -126,6 +127,7 @@ public class DailyWTCollectionReportService {
         return egwStatusHibernateDAO.getStatusByModule(CollectionConstants.MODULE_NAME_RECEIPTHEADER);
     }
 
+    @ReadOnly
     public List<DailyWTCollectionReport> getCollectionDetails(final Date fromDate, final Date toDate,
             final String collectionMode, final String collectionOperator, final String status) throws ParseException {
         final StringBuilder queryStr = new StringBuilder(500);

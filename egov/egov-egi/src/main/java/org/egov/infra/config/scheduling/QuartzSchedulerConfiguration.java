@@ -114,13 +114,14 @@ public class QuartzSchedulerConfiguration {
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_ID, "AUTO");
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, "ERP_APP_SCHEDULER");
         quartzProps.put(StdSchedulerFactory.PROP_SCHED_WRAP_JOB_IN_USER_TX, "false");
+        quartzProps.put(StdSchedulerFactory.PROP_SCHED_MAX_BATCH_SIZE, 10);
+        quartzProps.put(StdSchedulerFactory.PROP_SCHED_BATCH_TIME_WINDOW, 1000);
         quartzProps.put("org.quartz.scheduler.threadsInheritContextClassLoaderOfInitializer", "true");
 
         //Cluster job store config
         quartzProps.put("org.quartz.jobStore.isClustered", env.getProperty("scheduler.clustered"));
         quartzProps.put("org.quartz.jobStore.clusterCheckinInterval", "60000");
         quartzProps.put("org.quartz.jobStore.acquireTriggersWithinLock", "false");
-        quartzProps.put("org.quartz.jobStore.txIsolationLevelReadCommitted", "true");
         quartzProps.put("org.quartz.jobStore.driverDelegateClass", "org.quartz.impl.jdbcjobstore.PostgreSQLDelegate");
         quartzProps.put("org.quartz.jobStore.useProperties", "true");
         quartzProps.put("org.quartz.jobStore.dataSource", "quartzDS");

@@ -323,8 +323,10 @@ public class TradeLicenseSmsAndEmailService {
                     locale);
             emailBody = licenseMessageSource.getMessage(
                     "msg.newTradeLicenseclosureapproval.email.body",
-                    new String[]{license.getLicensee().getApplicantName(), license.getNameOfEstablishment(),
-                            license.getLicenseNumber(),
+                    new String[]{license.getLicensee().getApplicantName(),
+                            license.getNameOfEstablishment(),
+                            license.getLicenseNumber(), ApplicationThreadLocals.getDomainURL(),
+                            license.getApplicationNumber(),license.getDigiSignedCertFileStoreId(),
                             getMunicipalityName()},
                     locale);
             emailSubject = licenseMessageSource.getMessage("msg.newTradeLicenseclosureapproval.email.subject",

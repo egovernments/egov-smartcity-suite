@@ -183,7 +183,7 @@
 					<tr>
 						<td colspan="5">
 							<div class="headingsmallbg">
-								<span class="bold"><s:text name="ownerdetails.title"></s:text></span>
+								<span class="bold"><s:text name="transferorDetails"></s:text></span>
 							</div>
 						</td>
 					</tr>

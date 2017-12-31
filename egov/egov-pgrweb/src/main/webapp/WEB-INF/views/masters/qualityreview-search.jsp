@@ -67,17 +67,13 @@
                 </div>
                 <div class="panel-body custom-form">
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.department"/>
+                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.complaint.number"/>
                         </label>
                         <div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
-                            <form:select path="departmentId" id="departmentId" cssClass="form-control"
-                                         cssErrorClass="form-control error">
-                                <form:option value="">
-                                    <spring:message code="lbl.select"/>
-                                </form:option>
-                                <form:options items="${departments}" itemValue="id" itemLabel="name"/>
-                            </form:select>
-                            <form:errors path="departmentId" cssClass="error-msg"/>
+                            <input type="text" name="crn" id="complaintNumber" class="form-control patternvalidation"
+                                   data-pattern="alphanumericwithhyphen"
+                                   placeholder="<spring:message code='lbl.complaint.number'/>"/>
+                            <form:errors path="crn" cssClass="error-msg"/>
                         </div>
                         <label class="col-sm-2 control-label text-right">
                             <spring:message code="title.complaintType"/><span class="mandatory"></span>
@@ -112,17 +108,30 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label class="col-sm-3 control-label text-right"><spring:message code="lbl.rating"/>
+                        <label class="col-sm-3 control-label text-right">
+                            <spring:message code='lbl.routerescaltion.ward'/>
                         </label>
-                        <div class="col-sm-3 add-margin" style="margin-bottom: 15px;">
-                            <form:select path="rating" id="rating" cssClass="form-control"
-                                         cssErrorClass="form-control error">
+                        <div class="col-md-3 add-margin" style="margin-bottom:15px;">
+                            <form:select path="locationId" id="location"
+                                         class="form-control">
                                 <form:option value="">
                                     <spring:message code="lbl.select"/>
                                 </form:option>
-                                <form:options items="${rating}"/>
+                                <form:options items="${ward}" itemValue="id"
+                                              itemLabel="name"/>
                             </form:select>
-                            <form:errors path="rating" cssClass="error-msg"/>
+
+                        </div>
+                        <label class="col-sm-2 control-label text-right">
+                            <spring:message code='lbl.locality'/>
+                        </label>
+                        <div class="col-md-3 add-margin" style="margin-bottom:15px;">
+                            <form:select path="childLocationId"
+                                         id="childLocation" cssClass="form-control">
+                                <form:option value="">
+                                    <spring:message code="lbl.select"/>
+                                </form:option>
+                            </form:select>
                         </div>
                     </div>
                 </div>

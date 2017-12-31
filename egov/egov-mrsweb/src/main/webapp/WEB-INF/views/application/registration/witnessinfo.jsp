@@ -203,7 +203,7 @@
 
 			<c:choose>
 				<c:when
-					test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending') || (currentState != 'NEW' && currentState != 'DATAENTRY')}">
+					test="${(currentState eq 'NEW' && nextActn eq 'Junior/Senior Assistance approval pending'  || nextActn eq 'Revenue Clerk Approval Pending') || (currentState != 'NEW' && currentState != 'DATAENTRY')}">
 					<form:hidden path="${witness}.photoFileStore" />
 					<form:hidden class="encodedPhoto" path="${witness}.encodedPhoto" />
 					<img id="${witness}.photo" class="add-margin marriage-img"

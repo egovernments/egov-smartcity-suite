@@ -104,10 +104,17 @@ public class MarriageFormValidator implements Validator {
                 NOTEMPTY_MRG_RESIDENCE_ADDRESS);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.officeAddress", NOTEMPTY_MRG_OFFICE_ADDRESS);
         ValidationUtils.rejectIfEmptyOrWhitespace(errors, "applicant.contactInfo.mobileNo", "Notempty.mrg.mobile.no");
-
+        
+        if (reIssue.getStatus() != null && "CREATED".equals(reIssue.getStatus().getCode())
+                && !reIssue.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                        .equalsIgnoreCase(reIssue.getState().getNextAction())
+                && !MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
+                        .equalsIgnoreCase(reIssue.getState().getNextAction()))
+            errors.reject("validate.collect.reissueFee", null);
+        
         if (reIssue.getFeePaid() == null)
             errors.reject("Notempty.reissue.fee", null);
-        // ValidationUtils.rejectIfEmptyOrWhitespace(errors, "feePaid", "Notempty.reissue.fee");
+       
         if (reIssue.getApplicant() != null && reIssue.getApplicant().getContactInfo() != null
                 && reIssue.getApplicant().getContactInfo().getMobileNo() != null) {
             pattern = Pattern.compile(MOBILE_PATTERN);
@@ -205,6 +212,8 @@ public class MarriageFormValidator implements Validator {
 
             if (registration.getStatus() != null && "CREATED".equals(registration.getStatus().getCode())
                     && !registration.isFeeCollected() && !MarriageConstants.JUNIOR_SENIOR_ASSISTANCE_APPROVAL_PENDING
+                            .equalsIgnoreCase(registration.getState().getNextAction())
+                    && !MarriageConstants.WFLOW_PENDINGACTION_REV_CLERK_APPRVLPENDING
                             .equalsIgnoreCase(registration.getState().getNextAction()))
                 errors.reject("validate.collect.marriageFee", null);
 

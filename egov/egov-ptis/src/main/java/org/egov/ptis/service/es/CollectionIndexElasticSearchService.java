@@ -2215,6 +2215,7 @@ public class CollectionIndexElasticSearchService {
         String aggregationField = StringUtils.EMPTY;
         Map<String, Object[]> weekwiseColl;
         final Map<String, Map<String, Object[]>> weeklyCollMap = new LinkedHashMap<>();
+        Map<String, BillCollectorIndex> wardWiseBillCollectors=new HashMap<>();
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
@@ -2224,6 +2225,8 @@ public class CollectionIndexElasticSearchService {
         }
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType())) 
             aggregationField = getAggregrationField(collectionDetailsRequest);
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            wardWiseBillCollectors = getWardWiseBillCollectors(collectionDetailsRequest);
         
         final Map<String, BigDecimal> totalDemandMap = getCollectionAndDemandValues(collectionDetailsRequest, fromDate,
                 toDate, PROPERTY_TAX_INDEX_NAME, TOTAL_DEMAND,aggregationField);
@@ -2262,7 +2265,7 @@ public class CollectionIndexElasticSearchService {
             }
             weeklyCollMap.put(ulbName, weekwiseColl);
         }
-        setWeeklyDCBValues(ulbWiseDetails, weeklyCollMap);
+        setWeeklyDCBValues(ulbWiseDetails, weeklyCollMap,wardWiseBillCollectors);
         return ulbWiseDetails;
 
     }
@@ -2273,7 +2276,7 @@ public class CollectionIndexElasticSearchService {
      * @param weeklyCollMap
      */
     private void setWeeklyDCBValues(final List<WeeklyDCB> ulbWiseDetails,
-            final Map<String, Map<String, Object[]>> weeklyCollMap) {
+            final Map<String, Map<String, Object[]>> weeklyCollMap,Map<String, BillCollectorIndex> wardWiseBillCollectors) {
         WeeklyDCB weeklyDCB;
         DemandCollectionMIS demandCollectionMIS;
         int count;
@@ -2281,6 +2284,8 @@ public class CollectionIndexElasticSearchService {
             weeklyDCB = new WeeklyDCB();
             count=1;
             weeklyDCB.setBoundaryName(entry.getKey());
+            weeklyDCB.setBillCollectorName(wardWiseBillCollectors.get(entry.getKey()) == null ? StringUtils.EMPTY
+                    : wardWiseBillCollectors.get(entry.getKey()).getBillCollector());
             for (final Map.Entry<String, Object[]> weeklyMap : entry.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 demandCollectionMIS.setCollection(new BigDecimal(weeklyMap.getValue()[0].toString()));
@@ -2321,10 +2326,13 @@ public class CollectionIndexElasticSearchService {
         String aggregationField = StringUtils.EMPTY;
         Map<String, Object[]> monthwiseColl;
         Map<Integer, String> monthValuesMap = DateUtils.getAllMonthsWithFullNames();
+        Map<String, BillCollectorIndex> wardWiseBillCollectors=new HashMap<>();
         if (StringUtils.isNotBlank(collectionDetailsRequest.getType()))
             aggregationField = getAggregrationField(collectionDetailsRequest);
         
-        final Map<String, Map<String, Object[]>> ulbwiseMonthlyCollMap = new HashMap<>();
+        if (DASHBOARD_GROUPING_WARDWISE.equalsIgnoreCase(collectionDetailsRequest.getType()))
+            wardWiseBillCollectors = getWardWiseBillCollectors(collectionDetailsRequest);
+       final Map<String, Map<String, Object[]>> ulbwiseMonthlyCollMap = new HashMap<>();
         if (StringUtils.isNotBlank(collectionDetailsRequest.getFromDate())
                 && StringUtils.isNotBlank(collectionDetailsRequest.getToDate())) {
             fromDate = DateUtils.getDate(collectionDetailsRequest.getFromDate(), DATE_FORMAT_YYYYMMDD);
@@ -2373,7 +2381,7 @@ public class CollectionIndexElasticSearchService {
             }
             ulbwiseMonthlyCollMap.put(ulbName, monthwiseColl);
         }
-        setMonthlyDCBValues(ulbWiseDetails, ulbwiseMonthlyCollMap);
+        setMonthlyDCBValues(ulbWiseDetails, ulbwiseMonthlyCollMap,wardWiseBillCollectors);
         return ulbWiseDetails;
     }
     
@@ -2383,13 +2391,15 @@ public class CollectionIndexElasticSearchService {
      * @param monthlyCollMap
      */
     private void setMonthlyDCBValues(final List<MonthlyDCB> ulbWiseDetails,
-            final Map<String, Map<String, Object[]>> yearwiseMonthlyCollMap) {
+            final Map<String, Map<String, Object[]>> yearwiseMonthlyCollMap,Map<String, BillCollectorIndex> wardWiseBillCollectors) {
         MonthlyDCB monthlyDCB;
         DemandCollectionMIS demandCollectionMIS;
         String month;
         for (final Map.Entry<String, Map<String, Object[]>> entry : yearwiseMonthlyCollMap.entrySet()) {
             monthlyDCB = new MonthlyDCB();
             monthlyDCB.setBoundaryName(entry.getKey());
+            monthlyDCB.setBillCollectorName(wardWiseBillCollectors.get(entry.getKey()) == null ? StringUtils.EMPTY
+                    : wardWiseBillCollectors.get(entry.getKey()).getBillCollector());
             for (final Map.Entry<String, Object[]> monthMap : entry.getValue().entrySet()) {
                 demandCollectionMIS = new DemandCollectionMIS();
                 month = monthMap.getKey();

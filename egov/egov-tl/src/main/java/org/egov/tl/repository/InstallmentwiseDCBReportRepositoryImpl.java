@@ -233,7 +233,7 @@ public class InstallmentwiseDCBReportRepositoryImpl implements InstallmentwiseDC
                         .toArray(new Predicate[]{}))
                 .groupBy(root.get(LICENSEID), root.get(LICENSENUMBER), root.get(ACTIVE));
         if (fuzzyLogic) {
-            if (installmentWiseDCBRequest.orderBy().equals(LICENSENUMBER))
+            if (installmentWiseDCBRequest.orderBy().equals(LICENSENUMBER) || installmentWiseDCBRequest.orderBy().equals(ACTIVE))
                 criteriaQuery.orderBy(installmentWiseDCBRequest.orderDir().equals(Direction.ASC)
                         ? criteriaBuilder.asc(root.get(installmentWiseDCBRequest.orderBy()))
                         : criteriaBuilder.desc(root.get(installmentWiseDCBRequest.orderBy())));

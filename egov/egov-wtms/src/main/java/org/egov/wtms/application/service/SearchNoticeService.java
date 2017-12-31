@@ -197,9 +197,9 @@ public class SearchNoticeService {
         if (propertyType != null && !propertyType.isEmpty())
             queryString.append(" and dcbinfo.propertytype =:propertyType");
         if (formattedFromDate != null && !formattedFromDate.isEmpty())
-            queryString.append(" and dcbinfo.workorderdate >=:formattedFromDate");
+            queryString.append(" and dcbinfo.workorderdate >=(cast(:formattedFromDate as date))");
         if (formattedToDate != null && !formattedToDate.isEmpty())
-            queryString.append(" and dcbinfo.workorderdate <=:formattedToDate");
+            queryString.append(" and dcbinfo.workorderdate <=(cast(:formattedToDate as date))");
 
         final Query query = entityManager.unwrap(Session.class).createSQLQuery(queryString.toString());
         if (isNotBlank(ward))

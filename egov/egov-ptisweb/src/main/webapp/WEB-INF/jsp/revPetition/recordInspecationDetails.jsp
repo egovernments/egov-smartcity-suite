@@ -72,12 +72,13 @@
 					<td class="bluebox" width="25%"><s:text
 							name="objection.actualhearingdate" /><span class="mandatory1">*</span>
 						&nbsp;</td>
-					<td class="bluebox" width="25%"><s:hidden name="objection.hearings[0].id"
-							id="objection.hearings[0].id" /> <s:textfield
+					<td class="bluebox" width="25%"><s:date
+							name="%{objection.hearings[0].actualHearingDt}"
+							var="actualHearingDt" format="dd/MM/yyyy" /> <s:textfield
+							cssClass="datepicker"
 							name="objection.hearings[0].actualHearingDt"
-							cssClass="datepicker" value="%{#actualHearingDtId}"
-							autocomplete="off" id="actualHearingDtId" size="12"
-							maxlength="12"></s:textfield></td>
+							value="%{#actualHearingDt}" autocomplete="off"
+							id="actualHearingDtId" size="12" maxlength="12"></s:textfield></td>
 				</tr>
 				<tr>
 				<td class="bluebox" width="25%">

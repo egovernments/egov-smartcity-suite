@@ -48,7 +48,7 @@
   -->
 
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="dcbReport" pageWidth="973" pageHeight="595" orientation="Landscape" columnWidth="933" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="4214ab10-a92b-4b7c-af63-0a719a4be2d7">
-	<property name="ireport.zoom" value="2.0"/>
+	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
 	<property name="ireport.y" value="0"/>
 	<property name="net.sf.jasperreports.export.xls.exclude.origin.band.1" value="pageHeader"/>
@@ -68,52 +68,52 @@
 	<parameter name="year" class="java.lang.String"/>
 	<field name="licensenumber" class="java.lang.String"/>
 	<field name="active" class="java.lang.Boolean"/>
-	<field name="arreardemand" class="java.math.BigInteger"/>
-	<field name="currentdemand" class="java.math.BigInteger"/>
-	<field name="arrearcollection" class="java.math.BigInteger"/>
-	<field name="currentcollection" class="java.math.BigInteger"/>
-	<field name="arrearbalance" class="java.math.BigInteger"/>
-	<field name="currentbalance" class="java.math.BigInteger"/>
-	<field name="totaldemand" class="java.math.BigInteger"/>
-	<field name="totalcollection" class="java.math.BigInteger"/>
-	<field name="totalbalance" class="java.math.BigInteger"/>
+	<field name="arreardemand" class="java.math.BigDecimal"/>
+	<field name="currentdemand" class="java.math.BigDecimal"/>
+	<field name="arrearcollection" class="java.math.BigDecimal"/>
+	<field name="currentcollection" class="java.math.BigDecimal"/>
+	<field name="arrearbalance" class="java.math.BigDecimal"/>
+	<field name="currentbalance" class="java.math.BigDecimal"/>
+	<field name="totaldemand" class="java.math.BigDecimal"/>
+	<field name="totalcollection" class="java.math.BigDecimal"/>
+	<field name="totalbalance" class="java.math.BigDecimal"/>
 	<field name="wardname" class="java.lang.String"/>
-	<variable name="total_arrdemand" class="java.lang.Integer" calculation="Sum">
+	<variable name="total_arrdemand" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{arreardemand}]]></variableExpression>
 	</variable>
-	<variable name="total_currdemand" class="java.lang.Integer" calculation="Sum">
+	<variable name="total_currdemand" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{currentdemand}]]></variableExpression>
 	</variable>
-	<variable name="total_arrcollection" class="java.lang.Integer" calculation="Sum">
+	<variable name="total_arrcollection" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{arrearcollection}]]></variableExpression>
 	</variable>
-	<variable name="total_currcollection" class="java.lang.Integer" calculation="Sum">
+	<variable name="total_currcollection" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{currentcollection}]]></variableExpression>
 	</variable>
-	<variable name="total_arrbalance" class="java.lang.Integer" calculation="Sum">
+	<variable name="total_arrbalance" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{arrearbalance}]]></variableExpression>
 	</variable>
-	<variable name="total_currbalance" class="java.lang.Integer" calculation="Sum">
+	<variable name="total_currbalance" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{currentbalance}]]></variableExpression>
 	</variable>
-	<variable name="demandtotal" class="java.lang.Integer" calculation="Sum">
+	<variable name="demandtotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{totaldemand}]]></variableExpression>
 	</variable>
-	<variable name="coll_total" class="java.lang.Integer" calculation="Sum">
+	<variable name="coll_total" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalcollection}]]></variableExpression>
 	</variable>
-	<variable name="balancetotal" class="java.lang.Integer" calculation="Sum">
+	<variable name="balancetotal" class="java.math.BigDecimal" calculation="Sum">
 		<variableExpression><![CDATA[$F{totalbalance}]]></variableExpression>
 	</variable>
 	<background>
 		<band splitType="Stretch"/>
 	</background>
 	<title>
-		<band height="21" splitType="Stretch">
+		<band height="51" splitType="Stretch">
 			<textField>
-				<reportElement x="210" y="0" width="400" height="20" uuid="e53cf9f3-bb65-4b30-8647-c4ef19774b6e"/>
+				<reportElement x="210" y="8" width="480" height="20" uuid="e53cf9f3-bb65-4b30-8647-c4ef19774b6e"/>
 				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="Times New Roman" size="12" isBold="true"/>
+					<font fontName="Times New Roman" size="17" isBold="true"/>
 				</textElement>
 				<textFieldExpression><![CDATA["DCB Report"]]></textFieldExpression>
 			</textField>
@@ -318,7 +318,7 @@
 				<textElement verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{licensenumber}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="210" y="0" width="80" height="20" uuid="644e84ac-4736-40f2-97a5-f97aaa813b7e"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -326,7 +326,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{arreardemand}== null ? BigInteger.ZERO :$F{arreardemand}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="290" y="0" width="80" height="20" uuid="e6c1e8c3-5f90-4a3b-9ad8-0548cb8e001e"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -334,7 +334,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{currentdemand}== null ? BigInteger.ZERO :$F{currentdemand}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="370" y="0" width="80" height="20" uuid="f4b495bc-e40a-472d-9610-1060b41c3f9c"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -342,7 +342,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{totaldemand}== null ? BigInteger.ZERO :$F{totaldemand}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="450" y="0" width="80" height="20" uuid="48aaa2f7-f830-46f0-8226-d29ac2f237ce"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -350,7 +350,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{arrearcollection}== null ? BigInteger.ZERO :$F{arrearcollection}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="530" y="0" width="80" height="20" uuid="7ecd6108-9497-4595-924a-b3f9944f21a9"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -358,7 +358,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{currentcollection}== null ? BigInteger.ZERO :$F{currentcollection}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="610" y="0" width="80" height="20" uuid="656f3fd2-5f62-40ef-9880-4d981802f61f"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -366,7 +366,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{totalcollection}== null ? BigInteger.ZERO :$F{totalcollection}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="690" y="0" width="80" height="20" uuid="6baa58f5-f9c9-41ff-b376-edd59767a46e"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -374,7 +374,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{arrearbalance}== null ? BigInteger.ZERO :$F{arrearbalance}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="770" y="0" width="80" height="20" uuid="5fe5f08c-cadd-4dd6-85c7-c1499aac1a37"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -382,7 +382,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$F{currentbalance}== null ? BigInteger.ZERO :$F{currentbalance}]]></textFieldExpression>
 			</textField>
-			<textField isStretchWithOverflow="true">
+			<textField isStretchWithOverflow="true" pattern="###0.00">
 				<reportElement stretchType="RelativeToTallestObject" x="850" y="0" width="80" height="20" uuid="dbd0699c-dc6f-46c1-a6ef-efec6e8a2cb4"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -415,7 +415,7 @@
 	</pageFooter>
 	<summary>
 		<band height="20" splitType="Prevent">
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="210" y="0" width="80" height="20" uuid="ef9bf957-3a24-4b6e-9337-1490f924bd17"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -423,7 +423,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{total_arrdemand}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="290" y="0" width="80" height="20" uuid="e031866d-18d3-4d49-a7f7-f41def3579b4"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -431,7 +431,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{total_currdemand}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="370" y="0" width="80" height="20" uuid="2e69a139-9a39-45c9-aa77-e641de115332"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -439,7 +439,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{demandtotal}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="450" y="0" width="80" height="20" uuid="9615d86f-1702-49fa-b768-580319b82cb0"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -447,7 +447,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{total_arrcollection}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="530" y="0" width="80" height="20" uuid="4e56b18c-8c76-414f-92f8-14fb75bdae43"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -455,7 +455,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{total_currcollection}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="610" y="0" width="80" height="20" uuid="6810af0c-d3c3-480e-a826-5c212aca29b4"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -463,7 +463,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{coll_total}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="690" y="0" width="80" height="20" uuid="1765d8d5-f9f4-4a42-923f-0cd396a220b7"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -471,7 +471,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{total_arrbalance}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="770" y="0" width="80" height="20" uuid="103a99c7-4283-4a3b-8d19-3d4064c486ad"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>
@@ -479,7 +479,7 @@
 				<textElement textAlignment="Right" verticalAlignment="Middle"/>
 				<textFieldExpression><![CDATA[$V{total_currbalance}]]></textFieldExpression>
 			</textField>
-			<textField>
+			<textField pattern="###0.00">
 				<reportElement x="850" y="0" width="80" height="20" uuid="d1f1b4ad-6108-4899-be4b-045a497df1ac"/>
 				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="3">
 					<pen lineWidth="0.5"/>

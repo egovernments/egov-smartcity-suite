@@ -47,12 +47,13 @@
  */
 package org.egov.collection.constants;
 
-import org.egov.services.instrument.InstrumentService;
-import org.egov.utils.FinancialConstants;
-
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.TreeMap;
+
+import org.egov.services.instrument.InstrumentService;
+import org.egov.utils.FinancialConstants;
 
 public final class CollectionConstants {
     // General messages/words like YES/NO/ALL
@@ -592,7 +593,7 @@ public final class CollectionConstants {
     public static final String REMITTANCE_STATUS_CODE_NEW = "NEW";
     public static final String REMITTANCE_STATUS_CODE_APPROVED = "APPROVED";
 
-    public static final String LOGO_PATH ="CITY_LOGO_PATH";
+    public static final String LOGO_PATH = "CITY_LOGO_PATH";
     public static final String REMITTANCE_BY_VOUCHER_NUMBER = "getRemitanceByVoucherNumber";
     public static final TreeMap<String, String> SERVICE_TYPE_CLASSIFICATION = new TreeMap<String, String>() {
         {
@@ -647,11 +648,20 @@ public final class CollectionConstants {
     public static final String ATOM_TEMPTXNID = "tempTxnId";
     public static final String ATOM_TOKEN = "token";
     public static final String ATOM_TXNSTAGE = "txnStage";
-    public static final String ATOM_F_CODE =  "f_code";
+    public static final String ATOM_F_CODE = "f_code";
     public static final String ATOM_MER_TXN = "mer_txn";
     public static final String ATOM_MMP_TXN = "mmp_txn";
     public static final String ATOM_MERCHANTID = "merchantid";
     public static final String ATOM_MERCHANT_TXNID = "merchanttxnid";
-    public static final String ATOM_TDATE  = "tdate";
+    public static final String ATOM_TDATE = "tdate";
+    public static final ArrayList<String> ATOM_AUTHORISATION_CODES_WAITINGFOR_PAY_GATEWAY_RESPONSE = new ArrayList<String>() {
+        {
+            add("Pending From Bank");
+            add("Failure");
+            add("INITIALIZED");
+            add("INITIATED");
+            add("C");
+        }
+    };
 
 }

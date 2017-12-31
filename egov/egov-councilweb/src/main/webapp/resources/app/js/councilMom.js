@@ -130,7 +130,7 @@ String.prototype.compose = (function (){
 var tbody = $('#sumotoTable').children('tbody');
 var table = tbody.length ? tbody : $('#sumotoTable');
 var row;
-if($('#autoResolutionNoGenEnabled').val()==true) {
+if($('#autoResolutionNoGenEnabled').val()=="true") {
 	  row = 
 		  '<tr>'+
 				 '<td><select name="meetingMOMs[{{idx}}].preamble.department" class="form-control" required="required" > <option value="" >Loading...</option></select></td>'+

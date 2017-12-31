@@ -107,7 +107,7 @@ public class ComplaintNotificationService {
     private AssignmentService assignmentService;
 
     public void sendRegistrationMessage(Complaint complaint) {
-        if (COMPLAINT_REGISTERED.equals(complaint.getStatus().getName())) {
+        if (complaint.isNotifyComplainant() && COMPLAINT_REGISTERED.equals(complaint.getStatus().getName())) {
             notificationService.sendEmail(complaint.getComplainant().getEmail(),
                     getMessage(COMPLAINT_REGISTERED_EMAIL_SUBJECT_MEG_KEY),
                     getMessageForRegistration(COMPLAINT_REGISTERED_EMAIL_BODY_MSG_KEY, complaint));
@@ -137,39 +137,40 @@ public class ComplaintNotificationService {
     }
 
     public void sendUpdateMessage(Complaint complaint) {
-        switch (complaint.getStatus().getName()) {
-            case COMPLAINT_COMPLETED:
-                notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_COMPLETED_EMAIL_SUBJECT_MSG_KEY),
-                        getMessageForProcessing(COMPLAINT_COMPLETED_EMAIL_BODY_MSG_KEY, complaint));
-                notificationService.sendSMS(complaint.getComplainant().getMobile(),
-                        getMessageForProcessing(COMPLAINT_COMPLETED_SMS_MSG_KEY, complaint));
-                break;
-            case COMPLAINT_REJECTED:
-                notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_REJECTED_EMAIL_SUBJECT_MSG_KEY),
-                        getMessageForProcessing(COMPLAINT_REJECTED_EMAIL_BODY_MSG_KEY, complaint));
-                notificationService.sendSMS(complaint.getComplainant().getMobile(),
-                        getMessageForProcessing(COMPLAINT_REJECTED_SMS_MSG_KEY, complaint));
-                break;
-            case COMPLAINT_REOPENED:
-                notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_REOPENED_EMAIL_SUBJECT_MSG_KEY),
-                        getMessageForReopening(COMPLAINT_REOPENED_EMAIL_BODY_MSG_KEY, complaint));
-                notificationService.sendSMS(complaint.getComplainant().getMobile(),
-                        getMessageForReopening(COMPLAINT_REOPENED_SMS_MSG_KEY, complaint));
-                break;
-            case COMPLAINT_WITHDRAWN:
-                notificationService.sendEmail(complaint.getComplainant().getEmail(),
-                        getMessage(COMPLAINT_WITHDRAWN_EMAIL_SUBJECT_MSG_KEY),
-                        getMessageForWithdrawn(COMPLAINT_WITHDRAWN_EMAIL_BODY_MSG_KEY, complaint));
-                notificationService.sendSMS(complaint.getComplainant().getMobile(),
-                        getMessageForWithdrawn(COMPLAINT_WITHDRAWN_SMS_MSG_KEY, complaint));
-                break;
-            default:
-                break;
+        if (complaint.isNotifyComplainant()) {
+            switch (complaint.getStatus().getName()) {
+                case COMPLAINT_COMPLETED:
+                    notificationService.sendEmail(complaint.getComplainant().getEmail(),
+                            getMessage(COMPLAINT_COMPLETED_EMAIL_SUBJECT_MSG_KEY),
+                            getMessageForProcessing(COMPLAINT_COMPLETED_EMAIL_BODY_MSG_KEY, complaint));
+                    notificationService.sendSMS(complaint.getComplainant().getMobile(),
+                            getMessageForProcessing(COMPLAINT_COMPLETED_SMS_MSG_KEY, complaint));
+                    break;
+                case COMPLAINT_REJECTED:
+                    notificationService.sendEmail(complaint.getComplainant().getEmail(),
+                            getMessage(COMPLAINT_REJECTED_EMAIL_SUBJECT_MSG_KEY),
+                            getMessageForProcessing(COMPLAINT_REJECTED_EMAIL_BODY_MSG_KEY, complaint));
+                    notificationService.sendSMS(complaint.getComplainant().getMobile(),
+                            getMessageForProcessing(COMPLAINT_REJECTED_SMS_MSG_KEY, complaint));
+                    break;
+                case COMPLAINT_REOPENED:
+                    notificationService.sendEmail(complaint.getComplainant().getEmail(),
+                            getMessage(COMPLAINT_REOPENED_EMAIL_SUBJECT_MSG_KEY),
+                            getMessageForReopening(COMPLAINT_REOPENED_EMAIL_BODY_MSG_KEY, complaint));
+                    notificationService.sendSMS(complaint.getComplainant().getMobile(),
+                            getMessageForReopening(COMPLAINT_REOPENED_SMS_MSG_KEY, complaint));
+                    break;
+                case COMPLAINT_WITHDRAWN:
+                    notificationService.sendEmail(complaint.getComplainant().getEmail(),
+                            getMessage(COMPLAINT_WITHDRAWN_EMAIL_SUBJECT_MSG_KEY),
+                            getMessageForWithdrawn(COMPLAINT_WITHDRAWN_EMAIL_BODY_MSG_KEY, complaint));
+                    notificationService.sendSMS(complaint.getComplainant().getMobile(),
+                            getMessageForWithdrawn(COMPLAINT_WITHDRAWN_SMS_MSG_KEY, complaint));
+                    break;
+                default:
+                    break;
+            }
         }
-
     }
 
     public void sendEscalationMessage(Complaint complaint, User nextOwner, Position previousAssignee) {

@@ -48,37 +48,10 @@
  */
 package org.egov.wtms.web.controller.reports;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
-import org.apache.commons.io.FileUtils;
-import org.egov.demand.model.EgBill;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.filestore.entity.FileStoreMapper;
-import org.egov.infra.filestore.repository.FileStoreMapperRepository;
-import org.egov.infra.filestore.service.FileStoreService;
-import org.egov.infstr.services.PersistenceService;
-import org.egov.wtms.application.service.SearchNoticeService;
-import org.egov.wtms.application.service.WaterConnectionDetailsService;
-import org.egov.wtms.application.service.collection.ConnectionBillService;
-import org.egov.wtms.masters.entity.enums.ConnectionStatus;
-import org.egov.wtms.service.bill.WaterConnectionBillService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.NoSuchBeanDefinitionException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.CONTENT_DISPOSITION;
+import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
+import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.validation.ValidationException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -89,17 +62,40 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CONTENT_DISPOSITION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.FILESTORE_MODULECODE;
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.ValidationException;
+
+import org.apache.commons.io.FileUtils;
+import org.egov.demand.model.EgBill;
+import org.egov.infra.exception.ApplicationRuntimeException;
+import org.egov.infra.filestore.entity.FileStoreMapper;
+import org.egov.infra.filestore.repository.FileStoreMapperRepository;
+import org.egov.infra.filestore.service.FileStoreService;
+import org.egov.wtms.application.service.SearchNoticeService;
+import org.egov.wtms.application.service.WaterConnectionDetailsService;
+import org.egov.wtms.application.service.collection.ConnectionBillService;
+import org.egov.wtms.masters.entity.enums.ConnectionStatus;
+import org.egov.wtms.service.bill.WaterConnectionBillService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.NoSuchBeanDefinitionException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+import com.lowagie.text.Document;
+import com.lowagie.text.pdf.PdfContentByte;
+import com.lowagie.text.pdf.PdfImportedPage;
+import com.lowagie.text.pdf.PdfReader;
+import com.lowagie.text.pdf.PdfWriter;
 
 @Controller
 @RequestMapping(value = "/report")
 public class GenerateBillForConsumerCodeController {
-
-    @Autowired
-    @Qualifier("persistenceService")
-    private PersistenceService persistenceService;
 
     @Autowired
     private WaterConnectionDetailsService waterConnectionDetailsService;
@@ -115,7 +111,7 @@ public class GenerateBillForConsumerCodeController {
 
     @Autowired
     private FileStoreService fileStoreService;
-    
+
     @Autowired
     private ConnectionBillService connectionBillService;
 
@@ -245,5 +241,4 @@ public class GenerateBillForConsumerCodeController {
         return outputStream.toByteArray();
     }
 
-    
 }

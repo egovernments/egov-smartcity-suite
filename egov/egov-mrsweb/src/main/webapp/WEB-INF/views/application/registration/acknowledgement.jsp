@@ -103,12 +103,12 @@
 <div class="buttonbottom" align="center">
 		<c:if test="${applnType=='NEW'}">
 		<input type="button" value="Print" name="PrintAck" id="PrintAck"
-				class="button"				
+				class="btn btn-primary"			
 				onclick="window.open('/mrs/registration/printmarriageregistrationack?applnNo=${applicationNo}','_self');">			 
 		</c:if>
 		<c:if test="${applnType=='REISSUE'}">
 		<input type="button" value="Print" name="PrintAck" id="PrintAck"
-				class="button"
+				class="btn btn-primary"
 				onclick="window.open('/mrs/reissue/printreissuecertificateack?applnNo=${applicationNo}','_self');" >
 				
 		</c:if>

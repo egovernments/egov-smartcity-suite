@@ -162,6 +162,13 @@ function checkcancelforselectedrecord()
 					window.scroll(0,0);
 					return false;
 				}
+
+				if(receiptstatus[m].value=="Instrument Bounced")
+				{
+					dom.get("instrumentbouncedreceiptcancellationerror").style.display="block";
+					window.scroll(0,0);
+					return false;
+				}
 				
 			}
 		}
@@ -312,6 +319,11 @@ function onChangeServiceClass(obj)
 <span align="center" style="display: none" id="pendingreceiptcancellationerror">
   <li>
      <font size="2" color="red"><b><s:text name="error.pendingreceipt.cancellation"/></b></font>
+  </li>
+</span>
+<span align="center" style="display: none" id="instrumentbouncedreceiptcancellationerror">
+  <li>
+     <font size="2" color="red"><b><s:text name="error.instrumentbouncedreceipt.cancellation"/></b></font>
   </li>
 </span>
 <span align="center" style="display: none" id="selectprinterror">

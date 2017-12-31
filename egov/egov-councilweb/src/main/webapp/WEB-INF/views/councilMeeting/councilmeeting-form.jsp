@@ -58,9 +58,8 @@
 	<input type="hidden" name="committeeType" id="committypeid" value="${councilMeeting.committeeType.id}"/>
 	<div class="panel-body">
 		<div class="form-group">
-			<div class="col-sm-3 control-label text-right">
-				<spring:message code="lbl.meeting.type" />
-			</div>
+				<label class="col-sm-3 control-label text-right"><spring:message
+						code="lbl.meeting.type" /><span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
 				<form:select path="meetingType" id="meetingType"
 					cssClass="form-control" required="required"
@@ -76,8 +75,8 @@
 			<label class="col-sm-2 control-label text-right"><spring:message
 					code="lbl.meeting.date" /> <span class="mandatory"></span> </label>
 			<div class="col-sm-3 add-margin">
-				<form:input type="text" cssClass="form-control datepicker"
-					path="meetingDate" id="meetingDate" data-date-start-date="0d"
+				<form:input type="text" cssClass="form-control datepicker" pattern="\d{1,2}/\d{1,2}/\d{4}" data-inputmask="'mask': 'd/m/y'"
+					path="meetingDate" id="meetingDate" data-date-start-date="0d" 
 					required="required" />
 				<form:errors path="meetingDate" cssClass="error-msg" />
 			</div>

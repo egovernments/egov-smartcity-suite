@@ -48,8 +48,9 @@
 
 package org.egov.wtms.application.entity;
 
-import org.egov.infra.workflow.entity.StateAware;
-import org.egov.pims.commons.Position;
+import static org.egov.infra.utils.DateUtils.getDefaultFormattedDate;
+
+import java.util.Date;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -57,7 +58,12 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 import javax.validation.constraints.NotNull;
+
+import org.egov.infra.workflow.entity.StateAware;
+import org.egov.pims.commons.Position;
 
 @Entity
 @Table(name = "egwtr_regularise_connection_detail")
@@ -79,10 +85,14 @@ public class RegularisedConnection extends StateAware<Position> {
 
     private String applicationNumber;
 
+    @Temporal(value = TemporalType.DATE)
+    private Date applicationDate;
+
     @Override
     public String getStateDetails() {
-        // TODO Auto-generated method stub
-        return null;
+        return String.format(" Application Number %s with application date %s ",
+                applicationNumber != null ? applicationNumber : propertyIdentifier,
+                applicationDate != null ? getDefaultFormattedDate(applicationDate) : getDefaultFormattedDate(new Date()));
     }
 
     @Override
@@ -119,4 +129,11 @@ public class RegularisedConnection extends StateAware<Position> {
         this.applicationNumber = applicationNumber;
     }
 
+    public Date getApplicationDate() {
+        return applicationDate;
+    }
+
+    public void setApplicationDate(final Date applicationDate) {
+        this.applicationDate = applicationDate;
+    }
 }

@@ -115,9 +115,11 @@
 							<th width="30%"><spring:message code="lbl.gistofpreamble" /></th>
 							<th width="7%"><spring:message code="lbl.agenda.number" /></th>
 							<th><spring:message code="lbl.preamble.number" /></th>
-							<th width="12%"><spring:message code="lbl.resolution" /></th>
+							<th width="12%"><spring:message code="lbl.resolution" /><span
+								class="mandatory"></span></th>
 							<c:if test="${!autoResolutionNoGenEnabled}">
-								<th><spring:message code="lbl.resolutionNumber" /></th>
+								<th><spring:message code="lbl.resolutionNumber" /><span
+								class="mandatory"></span></th>
 							</c:if>
 							<th width="24%"><spring:message code="lbl.comments" /></th>
 						</tr>
