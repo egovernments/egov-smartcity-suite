@@ -5558,7 +5558,7 @@
       <rtexprvalue>false</rtexprvalue>
     </attribute>
     <attribute>
-      <description><![CDATA[The rounding mode to use - not implemented yet as this required Java 1.6]]></description>
+      <description><![CDATA[The rounding mode to use, possible values: ceiling, down, floor, half-down, half-even, half-up, unnecessary, up]]></description>
       <name>roundingMode</name>
       <required>false</required>
       <rtexprvalue>false</rtexprvalue>
@@ -7975,6 +7975,30 @@
     <name>text</name>
     <tag-class>org.apache.struts2.views.jsp.TextTag</tag-class>
     <body-content>JSP</body-content>
+    <attribute>
+      <description><![CDATA[Whether to escape CSV (useful to escape a value for a column)]]></description>
+      <name>escapeCsv</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Whether to escape HTML]]></description>
+      <name>escapeHtml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Whether to escape Javascript]]></description>
+      <name>escapeJavaScript</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
+    <attribute>
+      <description><![CDATA[Whether to escape XML]]></description>
+      <name>escapeXml</name>
+      <required>false</required>
+      <rtexprvalue>false</rtexprvalue>
+    </attribute>
     <attribute>
       <description><![CDATA[Name of resource property to fetch]]></description>
       <name>name</name>
