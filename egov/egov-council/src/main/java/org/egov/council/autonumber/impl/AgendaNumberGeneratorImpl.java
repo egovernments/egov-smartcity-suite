@@ -49,28 +49,22 @@ package org.egov.council.autonumber.impl;
 
 import org.egov.council.autonumber.AgendaNumberGenerator;
 import org.egov.council.entity.CouncilAgenda;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class AgendaNumberGeneratorImpl implements AgendaNumberGenerator {
 
-	private static final String AGENDA_NUMBER_SEQ = "SEQ_EGCNCL_AGENDA_NUMBER";
+    private static final String AGENDA_NUMBER_SEQ = "SEQ_EGCNCL_AGENDA_NUMBER";
 
-	@Autowired
-	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
-	@Override
-	public String getNextNumber(CouncilAgenda councilAgenda) {
-		final String sequenceName = AGENDA_NUMBER_SEQ;
-		Serializable sequenceNumber = applicationSequenceNumberGenerator
-				.getNextSequence(sequenceName);
-		final String result = String.format("%d", sequenceNumber);
-		return result;
-
-	}
+    @Override
+    public String getNextNumber(CouncilAgenda councilAgenda) {
+        return String.format("%d", genericSequenceNumberGenerator
+                .getNextSequence(AGENDA_NUMBER_SEQ));
+    }
 
 }

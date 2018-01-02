@@ -48,7 +48,6 @@
 
 package org.egov.adtax.service.collection;
 
-import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.math.BigDecimal;
 import java.net.URLEncoder;
@@ -82,7 +81,7 @@ import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.hibernate.Session;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -106,7 +105,7 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     @Autowired
     private AdvertisementBillable advertisementBillable;
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
     @Autowired
     private AdtaxExternalService adtaxExternalService;
 
@@ -298,9 +297,8 @@ public class AdvertisementBillServiceImpl extends BillServiceInterface {
     public BillInfoImpl getBillInfo(final BigDecimal amountToBePaid, final Advertisement advertisement) {
         advertisementBillable.setAdvertisement(advertisement);
         ApplicationThreadLocals.setUserId(2L);
-        final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(ADVERTISEMENT_BILLNUMBER);
         advertisementBillable.setReferenceNumber(AdvertisementTaxConstants.SERVICE_CODE.concat(String.format(
-                "%s%06d", "", referenceNumber)));
+                "%s%06d", "", databaseSequenceProvider.getNextSequence(ADVERTISEMENT_BILLNUMBER))));
         final EgBill egBill = generateBill(advertisementBillable);
         return prepareBillForCollection(amountToBePaid, egBill, null);
     }

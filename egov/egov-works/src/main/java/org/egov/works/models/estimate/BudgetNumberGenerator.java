@@ -48,8 +48,8 @@
 package org.egov.works.models.estimate;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.works.abstractestimate.entity.AbstractEstimate;
@@ -60,16 +60,16 @@ import javax.script.ScriptContext;
 public class BudgetNumberGenerator {
 
     @Autowired
-    private SequenceNumberGenerator sequenceGenerator;
+    private DatabaseSequenceProvider sequenceGenerator;
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
     @Autowired
     private ScriptService scriptService;
 
     public String getBudgetApprNo(final AbstractEstimate estimate, final CFinancialYear financialYear) {
         try {
             final ScriptContext scriptContext = ScriptService.createContext("estimate", estimate, "finYear",
-                    financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
+                    financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator", databaseSequenceCreator);
             return scriptService.executeScript("works.budgetappno.generator", scriptContext).toString();
         } catch (final ValidationException sequenceException) {
             throw sequenceException;

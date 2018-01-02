@@ -48,6 +48,7 @@
 
 package org.egov.infra.utils;
 
+import com.google.common.collect.ImmutableMap;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.joda.time.DateTime;
 import org.joda.time.Days;
@@ -61,7 +62,6 @@ import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -85,11 +85,29 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
             "Twenty seventh", "Twenty eighth", "Twenty ninth", "Thirtieth", "Thirty first"
     };
 
+    private static final Map<Integer, String> MONTH_SHORT_NAMES = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "Jan").put(2, "Feb").put(3, "Mar")
+            .put(4, "Apr").put(5, "May").put(6, "Jun")
+            .put(7, "Jul").put(8, "Aug").put(9, "Sep")
+            .put(10, "Oct").put(11, "Nov").put(12, "Dec").build();
+
+    private static final Map<Integer, String> MONTH_FULL_NAMES = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "January").put(2, "February").put(3, "March")
+            .put(4, "April").put(5, "May").put(6, "June")
+            .put(7, "July").put(8, "August").put(9, "September")
+            .put(10, "October").put(11, "November").put(12, "December").build();
+
+    private static final Map<Integer, String> FIN_MONTH_NAMES = new ImmutableMap.Builder<Integer, String>()
+            .put(1, "April").put(2, "May").put(3, "June")
+            .put(4, "July").put(5, "August").put(6, "September")
+            .put(7, "October").put(8, "November").put(9, "December")
+            .put(10, "January").put(11, "February").put(12, "March").build();
+
     private DateUtils() {
         //Should not be initialized
     }
 
-    public static String currentDateToYearFormat() {
+    public static String currentYear() {
         return toYearFormat(new LocalDate());
     }
 
@@ -145,6 +163,10 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return dateTime.millisOfDay().withMaximumValue();
     }
 
+    public static DateTime startOfToday() {
+        return startOfGivenDate(new DateTime());
+    }
+
     public static DateTime startOfGivenDate(DateTime dateTime) {
         return dateTime.withTimeAtStartOfDay();
     }
@@ -184,65 +206,12 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
         return firstDate == null || secondDate == null || !firstDate.before(secondDate);
     }
 
-    public static Date[] constructDateRange(Date fromDate, Date toDate) {
-        Date[] dates = new Date[2];
-        Calendar calfrom = Calendar.getInstance();
-        calfrom.setTime(fromDate);
-        calfrom.set(Calendar.HOUR, 0);
-        calfrom.set(Calendar.MINUTE, 0);
-        calfrom.set(Calendar.SECOND, 0);
-        calfrom.set(Calendar.AM_PM, Calendar.AM);
-        dates[0] = calfrom.getTime();
-        Calendar calto = Calendar.getInstance();
-        calto.setTime(toDate);
-        calto.set(Calendar.HOUR, 0);
-        calto.set(Calendar.MINUTE, 0);
-        calto.set(Calendar.SECOND, 0);
-        calto.add(Calendar.DAY_OF_MONTH, 1);
-        dates[1] = calto.getTime();
-        return dates;
-    }
-
-    public static Date createDate(int year) {
-        Calendar date = Calendar.getInstance();
-        date.set(Calendar.YEAR, year);
-        date.set(Calendar.MONTH, 0);
-        date.set(Calendar.DATE, 1);
-        return date.getTime();
-    }
-
     public static Map<Integer, String> getAllMonths() {
-        Map<Integer, String> monthMap = new HashMap<>();
-        monthMap.put(1, "Jan");
-        monthMap.put(2, "Feb");
-        monthMap.put(3, "Mar");
-        monthMap.put(4, "Apr");
-        monthMap.put(5, "May");
-        monthMap.put(6, "Jun");
-        monthMap.put(7, "July");
-        monthMap.put(8, "Aug");
-        monthMap.put(9, "Sep");
-        monthMap.put(10, "Oct");
-        monthMap.put(11, "Nov");
-        monthMap.put(12, "Dec");
-        return monthMap;
+        return MONTH_SHORT_NAMES;
     }
 
     public static Map<Integer, String> getAllMonthsWithFullNames() {
-        Map<Integer, String> monthMap = new HashMap<>();
-        monthMap.put(1, "January");
-        monthMap.put(2, "Feburary");
-        monthMap.put(3, "March");
-        monthMap.put(4, "April");
-        monthMap.put(5, "May");
-        monthMap.put(6, "June");
-        monthMap.put(7, "July");
-        monthMap.put(8, "August");
-        monthMap.put(9, "September");
-        monthMap.put(10, "October");
-        monthMap.put(11, "November");
-        monthMap.put(12, "December");
-        return monthMap;
+        return MONTH_FULL_NAMES;
     }
 
     public static Date getDate(String date, String pattern) {
@@ -295,20 +264,7 @@ public final class DateUtils extends org.apache.commons.lang3.time.DateUtils {
     }
 
     public static Map<Integer, String> getAllFinancialYearMonthsWithFullNames() {
-        Map<Integer, String> monthMap = new HashMap<>();
-        monthMap.put(1, "April");
-        monthMap.put(2, "May");
-        monthMap.put(3, "June");
-        monthMap.put(4, "July");
-        monthMap.put(5, "August");
-        monthMap.put(6, "September");
-        monthMap.put(7, "October");
-        monthMap.put(8, "November");
-        monthMap.put(9, "December");
-        monthMap.put(10, "January");
-        monthMap.put(11, "Feburary");
-        monthMap.put(12, "March");
-        return monthMap;
+        return FIN_MONTH_NAMES;
     }
 
     public static SimpleDateFormat getDateFormatter(String pattern) {

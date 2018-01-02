@@ -58,8 +58,8 @@ import com.exilant.exility.updateservice.PrimaryKeyGenerator;
 import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.egov.commons.CFiscalPeriod;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.validation.exception.ValidationError;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -102,9 +102,9 @@ public class EGovernCommon extends AbstractTask {
 	private PersistenceService persistenceService;
 	
 	@Autowired
-	private DBSequenceGenerator dbSequenceGenerator;
+	private DatabaseSequenceCreator databaseSequenceCreator;
 	@Autowired
-	private SequenceNumberGenerator sequenceNumberGenerator;
+	private DatabaseSequenceProvider databaseSequenceProvider;
 	
 
 	@Override
@@ -218,13 +218,14 @@ public class EGovernCommon extends AbstractTask {
 		// Sequence name will be SQ_U_DBP_CGVN_FP7 for vouType U/DBP/CGVN and fiscalPeriodIdStr 7
 		try {
 			sequenceName   = VoucherHelper.sequenceNameFor(vouType, fiscalPeriod.getName());
-			cgvn = (BigInteger)sequenceNumberGenerator.getNextSequence(sequenceName);
+			cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
 			if (LOGGER.isDebugEnabled())
 				LOGGER.debug("----- CGVN : " + cgvn);
 
 		} catch (final SQLGrammarException e)
 		{
-			cgvn = (BigInteger)dbSequenceGenerator.createAndGetNextSequence(sequenceName);
+			databaseSequenceCreator.createSequence(sequenceName);
+			cgvn = (BigInteger) databaseSequenceProvider.getNextSequence(sequenceName);
 			LOGGER.error("Error in generating CGVN" + e);
 			throw new ValidationException(Arrays.asList(new ValidationError(e.getMessage(), e.getMessage())));
 		} catch (final Exception e)

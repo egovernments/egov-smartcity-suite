@@ -47,7 +47,7 @@
  */
 package org.egov.stms.autonumber.impl;
 
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.stms.autonumber.SewerageDemandBillNumberGenerator;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.utils.SewerageTaxUtils;
@@ -55,14 +55,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.Serializable;
-
 @Service
 public class SewerageDemandBillNumberGeneratorImpl implements SewerageDemandBillNumberGenerator {
     private static final String DEMANDBILL_NUMBER_SEQ_PREFIX = "SEQ_EGSWTAX_DEMANDBILL_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
@@ -70,8 +68,7 @@ public class SewerageDemandBillNumberGeneratorImpl implements SewerageDemandBill
     @Override
     @Transactional
     public String generateSewerageDemandBillNumber(SewerageApplicationDetails sewerageApplicationDetails) {
-        final String sequenceName = DEMANDBILL_NUMBER_SEQ_PREFIX;
-        final Serializable nextsequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d", sewerageTaxUtils.getCityCode(), nextsequence);
+        return String.format("%s%06d", sewerageTaxUtils.getCityCode(),
+                genericSequenceNumberGenerator.getNextSequence(DEMANDBILL_NUMBER_SEQ_PREFIX));
     }
 }

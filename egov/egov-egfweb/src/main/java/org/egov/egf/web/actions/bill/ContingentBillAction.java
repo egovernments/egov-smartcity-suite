@@ -70,7 +70,6 @@ import org.egov.infra.admin.master.entity.AppConfigValues;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.NumberToWord;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -163,8 +162,6 @@ public class ContingentBillAction extends BaseBillAction {
     private PersistenceService persistenceService;
     @Autowired
     private EgovMasterDataCaching masterDataCache;
-    @Autowired
-    private ApplicationSequenceNumberGenerator sequenceGenerator;
 
     @Autowired
     private AutonumberServiceBeanResolver beanResolver;

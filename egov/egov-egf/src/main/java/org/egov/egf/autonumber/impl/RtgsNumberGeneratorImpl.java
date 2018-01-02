@@ -47,35 +47,23 @@
  */
 package org.egov.egf.autonumber.impl;
 
-import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.egf.autonumber.RtgsNumberGenerator;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class RtgsNumberGeneratorImpl implements RtgsNumberGenerator {
 
     @Autowired
-    private FinancialYearDAO financialYearDAO;
-    @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     /**
-     * 
      * Format seqnumber
-     *
      */
     public String getNextNumber(String sequenceName) {
-        String rtgsNumber = "";
-        Serializable nextSequence = applicationSequenceNumberGenerator
-                .getNextSequence(sequenceName);
-
-        rtgsNumber = String.format("%06d", nextSequence);
-
-        return rtgsNumber;
+        return String.format("%06d", genericSequenceNumberGenerator
+                .getNextSequence(sequenceName));
     }
 
 }

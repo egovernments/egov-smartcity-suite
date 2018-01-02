@@ -48,7 +48,7 @@
 
 package org.egov.stms.web.controller.collection;
 
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.transactions.entity.SewerageApplicationDetails;
 import org.egov.stms.transactions.service.SewerageApplicationDetailsService;
@@ -79,7 +79,7 @@ public class SewerageBillGeneratorController {
     private SewerageBillServiceImpl sewerageBillServiceImpl;
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
 
     @Autowired
     private SewerageDemandService sewerageDemandService;
@@ -107,7 +107,7 @@ public class SewerageBillGeneratorController {
             if (sewerageApplicationDetails.getCurrentDemand() != null && assessmentnumber != null) {
                 final AssessmentDetails assessmentDetails = sewerageThirdPartyServices.getPropertyDetails(
                         assessmentnumber, request);
-                final Serializable referenceNumber = sequenceNumberGenerator.getNextSequence(SewerageTaxConstants.SEWERAGE_BILLNUMBER);
+                final Serializable referenceNumber = databaseSequenceProvider.getNextSequence(SewerageTaxConstants.SEWERAGE_BILLNUMBER);
 
                 sewerageBillable.setSewerageApplicationDetails(sewerageApplicationDetails);
                 sewerageBillable.setAssessmentDetails(assessmentDetails);

@@ -50,7 +50,7 @@ package org.egov.adtax.autonumber.impl;
 import org.egov.adtax.autonumber.AdvertisementNumberGenerator;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -59,13 +59,13 @@ public class AdvertisementNumberGeneratorImpl implements AdvertisementNumberGene
     private static final String ADVERTISEMENT_NUMBER_SEQ_PREFIX = "SEQ_ADVERTISEMENT_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String getNextAdvertisementNumber(Advertisement advertisement) {
 
         return String.format("%s%06d", ApplicationThreadLocals.getCityCode(),
-                applicationSequenceNumberGenerator.getNextSequence(ADVERTISEMENT_NUMBER_SEQ_PREFIX));
+                genericSequenceNumberGenerator.getNextSequence(ADVERTISEMENT_NUMBER_SEQ_PREFIX));
 
     }
 

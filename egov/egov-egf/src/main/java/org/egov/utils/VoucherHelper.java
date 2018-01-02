@@ -64,9 +64,9 @@ import org.egov.eis.entity.EmployeeView;
 import org.egov.eis.service.EisCommonService;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
@@ -84,6 +84,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static org.egov.infra.utils.ApplicationConstant.UNDERSCORE;
+
 /**
  * @author msahoo
  *
@@ -93,7 +95,7 @@ public class VoucherHelper {
     public static final String DEFAULT_SEQUENCE_PREFIX = "SQ_";
     @SuppressWarnings("unchecked")
     private PersistenceService persistenceService;
-    @Autowired 
+    @Autowired
     private EisCommonService eisCommonService;
     @Autowired
     private FundHibernateDAO fundDAO;
@@ -103,18 +105,15 @@ public class VoucherHelper {
     private EGovernCommon eGovernCommon;
     @Autowired
     private FiscalPeriodHibernateDAO fiscalPeriodHibernateDAO;
-    
+
     @Autowired
     private FinancialYearHibernateDAO financialYearDAO;
-    
-    @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
 
-   @Autowired
-   ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @SuppressWarnings("unchecked")
     public PersistenceService getPersistenceService() {
@@ -241,7 +240,7 @@ public class VoucherHelper {
         return new StringBuilder()
         .append(DEFAULT_SEQUENCE_PREFIX)
         .append(voucherType)
-        .append(ApplicationSequenceNumberGenerator.WORD_SEPARATOR_FOR_NAME)
+        .append(UNDERSCORE)
         .append(fiscalPeriodName)
         .toString();
     }
@@ -277,7 +276,7 @@ public class VoucherHelper {
         Serializable sequenceNumber;
         String sequenceName;
         sequenceName = sequenceNameFor(vouType, fc.get(0).toString());
-        sequenceNumber=   applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        sequenceNumber=   genericSequenceNumberGenerator.getNextSequence(sequenceName);
         return sequenceNumber.toString();
 
     }
@@ -324,8 +323,8 @@ public class VoucherHelper {
                     voucherType,
                      "transNumber",
                      transNumber, "vNumGenMode", vNumGenMode, "date", voucherDate, "month", month, "commonsService",
-                     financialYearDAO, "dbSequenceGenerator", dbSequenceGenerator, "sequenceNumberGenerator",
-                     applicationSequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
+                     financialYearDAO, "dbSequenceGenerator", databaseSequenceCreator, "sequenceNumberGenerator",
+                     genericSequenceNumberGenerator, "voucherNumber", voucherNumber, "sequenceName", sequenceName);
              fVoucherNumber = (String) scriptService.executeScript(scriptName, scriptContext);
 
         } else

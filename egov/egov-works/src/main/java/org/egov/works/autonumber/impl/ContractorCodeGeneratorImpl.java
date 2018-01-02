@@ -47,7 +47,7 @@
  */
 package org.egov.works.autonumber.impl;
 
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.StringUtils;
 import org.egov.works.autonumber.ContractorCodeGenerator;
 import org.egov.works.master.service.ContractorService;
@@ -63,7 +63,7 @@ import java.io.Serializable;
 public class ContractorCodeGeneratorImpl implements ContractorCodeGenerator {
     private static final String CONTRACTOR_CODE_SEQ_PREFIX = "SEQ_CONTRACTOR_CODE";
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private ContractorService contractorService;
@@ -72,7 +72,7 @@ public class ContractorCodeGeneratorImpl implements ContractorCodeGenerator {
     @Transactional(readOnly = true)
     public String getNextNumber(final Contractor contractor) {
         final ContractorDetail contractorDetail = contractor.getContractorDetails().get(0);
-        final Serializable sequenceNumber = applicationSequenceNumberGenerator
+        final Serializable sequenceNumber = genericSequenceNumberGenerator
                 .getNextSequence(CONTRACTOR_CODE_SEQ_PREFIX);
         if (validateGrade(contractorDetail) && !StringUtils.isBlank(contractorDetail.getCategory())
                 && !StringUtils.isBlank(contractor.getName()) && contractor.getName().length() >= 4) {

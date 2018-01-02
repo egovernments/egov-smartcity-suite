@@ -48,8 +48,8 @@
 package org.egov.works.models.workorder;
 
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.validation.exception.ValidationException;
 import org.egov.infstr.services.PersistenceService;
@@ -62,9 +62,9 @@ import javax.script.ScriptContext;
 public class WorkOrderNumberGenerator {
 
     @Autowired
-    private SequenceNumberGenerator sequenceGenerator;
+    private DatabaseSequenceProvider sequenceGenerator;
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
     @Autowired
     private ScriptService scriptService;
 
@@ -74,7 +74,7 @@ public class WorkOrderNumberGenerator {
         try {
             final ScriptContext scriptContext = ScriptService.createContext("worksPackage", worksPackage, "estimate",
                     abstractEstimate, "finYear", financialYear, "sequenceGenerator", sequenceGenerator, "dbSequenceGenerator",
-                    dbSequenceGenerator, "workOrder",
+                    databaseSequenceCreator, "workOrder",
                     workOrder, "persistenceService", persistenceService);
             if (worksPackage == null)
                 return scriptService.executeScript("works.workOrderNumber.generator", scriptContext).toString();

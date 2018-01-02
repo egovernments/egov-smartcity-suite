@@ -47,8 +47,8 @@
  */
 package org.egov.assets.model;
 
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -57,15 +57,17 @@ import javax.script.ScriptContext;
 public class AssetNumberGenrator {
 
     @Autowired
-    private SequenceNumberGenerator squenceGenerator;
+    private DatabaseSequenceProvider squenceGenerator;
+
     @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private DatabaseSequenceCreator databaseSequenceCreator;
+
     @Autowired
     private ScriptService scriptService;
 
     public String getAssetNumber(final Asset asset, final String year) {
         final ScriptContext scriptContext = ScriptService.createContext("asset", asset, "year", year,
-                "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", dbSequenceGenerator);
+                "sequenceGenerator", squenceGenerator, "dbSequenceGenerator", databaseSequenceCreator);
         return scriptService.executeScript("assets.assetnumber.generator", scriptContext).toString();
     }
 

@@ -49,7 +49,7 @@ package org.egov.works.autonumber.impl;
 
 import org.egov.commons.CFinancialYear;
 import org.egov.commons.dao.FinancialYearHibernateDAO;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.works.autonumber.LineEstimateNumberGenerator;
 import org.egov.works.lineestimate.entity.LineEstimate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,7 +66,7 @@ public class LineEstimateNumberGeneratorImpl implements LineEstimateNumberGenera
     private static final String LINEESTIMATE_NUMBER_SEQ_PREFIX = "SEQ_LINEESTIMATE_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Autowired
     private FinancialYearHibernateDAO financialYearHibernateDAO;
@@ -77,8 +77,7 @@ public class LineEstimateNumberGeneratorImpl implements LineEstimateNumberGenera
                 .getFinYearByDate(lineEstimate.getLineEstimateDate());
         final String finYearRange[] = financialYear.getFinYearRange().split("-");
         final String sequenceName = LINEESTIMATE_NUMBER_SEQ_PREFIX + "_" + finYearRange[0] + "_" + finYearRange[1];
-        Serializable sequenceNumber;
-        sequenceNumber = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
+        Serializable sequenceNumber = genericSequenceNumberGenerator.getNextSequence(sequenceName);
         return String.format("LE/%s/%05d/%02d/%s", lineEstimate.getExecutingDepartment().getCode(), sequenceNumber,
                 getMonthOfTransaction(lineEstimate.getLineEstimateDate()), financialYear.getFinYearRange());
     }

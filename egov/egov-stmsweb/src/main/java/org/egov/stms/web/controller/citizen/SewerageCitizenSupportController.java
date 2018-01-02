@@ -50,7 +50,7 @@ package org.egov.stms.web.controller.citizen;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.ptis.domain.model.AssessmentDetails;
 import org.egov.stms.elasticsearch.entity.SewerageConnSearchRequest;
@@ -109,7 +109,7 @@ public class SewerageCitizenSupportController {
     @Autowired
     private SewerageThirdPartyServices sewerageThirdPartyServices;
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
     @Autowired
     private SewerageBillServiceImpl sewerageBillServiceImpl;
     @Autowired
@@ -179,7 +179,7 @@ public class SewerageCitizenSupportController {
             if (sewerageApplicationDetails.getCurrentDemand() != null && assessmentno != null) {
                 final AssessmentDetails assessmentDetails = sewerageThirdPartyServices.getPropertyDetails(
                         assessmentno, request);
-                final Serializable referenceNumber = sequenceNumberGenerator
+                final Serializable referenceNumber = databaseSequenceProvider
                         .getNextSequence(SewerageTaxConstants.SEWERAGE_BILLNUMBER);
 
                 sewerageBillable.setSewerageApplicationDetails(sewerageApplicationDetails);

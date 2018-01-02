@@ -50,49 +50,29 @@ package org.egov.collection.autonumber.impl;
 import org.egov.collection.autonumber.ChallanNumberGenerator;
 import org.egov.collection.entity.Challan;
 import org.egov.commons.CFinancialYear;
-import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.DBSequenceGenerator;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.utils.DateUtils;
-import org.hibernate.exception.SQLGrammarException;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-import java.sql.SQLException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static java.lang.String.format;
+import static org.egov.infra.utils.ApplicationConstant.SLASH;
 
 @Service
 public class ChallanNumberGeneratorImpl implements ChallanNumberGenerator {
+    private static final String APP_NUMBER_SEQ_PREFIX = "SQ_CHALLAN%s";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
-
-    @Autowired
-    private DBSequenceGenerator dbSequenceGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateChallanNumber(final Challan challan, final CFinancialYear financialYear) {
-        final String APP_NUMBER_SEQ_PREFIX = "SQ_CHALLAN%s";
-        final SimpleDateFormat sdf = new SimpleDateFormat("MM");
-        final String formattedDate = sdf.format(new Date());
-
-        final String currentYear = DateUtils.currentDateToYearFormat();
-        final String sequenceName = String.format(APP_NUMBER_SEQ_PREFIX, currentYear);
-        Serializable sequenceNumber;
-        try {
-            try {
-                sequenceNumber = sequenceNumberGenerator.getNextSequence(sequenceName);
-            } catch (final SQLGrammarException e) {
-                sequenceNumber = dbSequenceGenerator.createAndGetNextSequence(sequenceName);
-            }
-        } catch (final SQLException e) {
-            throw new ApplicationRuntimeException("Error occurred while generating Application Number", e);
-        }
-
-        final String result = formattedDate + "/" + financialYear.getFinYearRange() + "/" + sequenceNumber;
-        return result;
+        return new StringBuilder()
+                .append(new DateTime().toString("MM")).append(SLASH)
+                .append(financialYear.getFinYearRange()).append(SLASH)
+                .append(genericSequenceNumberGenerator
+                        .getNextSequence(format(APP_NUMBER_SEQ_PREFIX, DateUtils.currentYear())))
+                .toString();
     }
-
 }

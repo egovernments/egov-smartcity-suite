@@ -50,20 +50,21 @@ package org.egov.adtax.autonumber.impl;
 import org.egov.adtax.autonumber.AdvertisementPermitNumberGenerator;
 import org.egov.adtax.entity.Advertisement;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AdvertisementPermitNumberGeneratorImpl implements AdvertisementPermitNumberGenerator {
-    @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
     private static final String PERMIT_NUMBER_SEQ_PREFIX = "SEQ_PERMIT_NUMBER";
+
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String getNextAdvertisementPermitNumber(Advertisement advertisement) {
         return String.format("%s%06d", ApplicationThreadLocals.getCityCode(),
-                applicationSequenceNumberGenerator.getNextSequence(PERMIT_NUMBER_SEQ_PREFIX));
+                genericSequenceNumberGenerator.getNextSequence(PERMIT_NUMBER_SEQ_PREFIX));
     }
 
 }

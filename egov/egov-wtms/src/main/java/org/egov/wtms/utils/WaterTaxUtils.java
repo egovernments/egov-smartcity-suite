@@ -64,7 +64,6 @@ import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.admin.master.service.UserService;
@@ -123,9 +122,6 @@ public class WaterTaxUtils {
     protected FileStoreService fileStoreService;
     @Autowired
     private AppConfigValueService appConfigValuesService;
-
-    @Autowired
-    private CityService cityService;
 
     @Autowired
     private SecurityUtils securityUtils;
@@ -344,7 +340,7 @@ public class WaterTaxUtils {
     }
 
     public String getCityCode() {
-        return cityService.getCityByURL(ApplicationThreadLocals.getDomainName()).getCode();
+        return ApplicationThreadLocals.getCityCode();
     }
 
     public String smsAndEmailBodyByCodeAndArgsForRejection(final String code, final String approvalComment,

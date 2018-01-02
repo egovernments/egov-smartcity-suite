@@ -49,23 +49,20 @@ package org.egov.assets.autonumber.impl;
 
 import org.egov.assets.autonumber.AssetCodeGenerator;
 import org.egov.assets.model.Asset;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class AssetCodeGeneratorImpl implements AssetCodeGenerator {
 
-	@Autowired
-	private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
-	
-	public String getNextNumber(Asset asset)
-	{
-		String sequenceName = "seq_asset_code";
-		Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-		return String.format("%05d", nextSequence);
-	}
-	
+    private static final String SEQ_ASSET_CODE = "seq_asset_code";
+
+    @Autowired
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+
+    public String getNextNumber(Asset asset) {
+        return String.format("%05d", genericSequenceNumberGenerator.getNextSequence(SEQ_ASSET_CODE));
+    }
+
 }

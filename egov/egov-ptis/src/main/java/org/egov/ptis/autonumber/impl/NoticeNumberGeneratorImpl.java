@@ -49,13 +49,11 @@ package org.egov.ptis.autonumber.impl;
 
 import org.apache.commons.lang3.StringUtils;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.ptis.autonumber.NoticeNumberGenerator;
 import org.egov.ptis.constants.PropertyTaxConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
@@ -63,7 +61,7 @@ public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
     private static final String SEQ_EGPT_NOTICE_NUMBER = "SEQ_EGPT_NOTICE_NUMBER";
 
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
 
     @Override
     public String generateNoticeNumber(final String noticeType) {
@@ -98,9 +96,8 @@ public class NoticeNumberGeneratorImpl implements NoticeNumberGenerator {
                 noticeTypeCode = "ON";
             else if (PropertyTaxConstants.NOTICE_TYPE_ENDORSEMENT.equalsIgnoreCase(noticeType))
                 noticeTypeCode = "EN";
-            final String sequenceName = SEQ_EGPT_NOTICE_NUMBER;
-            final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-            noticeNumber = String.format("%s/%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(), nextSequence);
+            noticeNumber = String.format("%s/%s%06d", noticeTypeCode, ApplicationThreadLocals.getCityCode(),
+                    genericSequenceNumberGenerator.getNextSequence(SEQ_EGPT_NOTICE_NUMBER));
         }
         return noticeNumber;
     }

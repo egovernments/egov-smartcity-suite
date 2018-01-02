@@ -48,12 +48,10 @@
 
 package org.egov.tl.service;
 
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.utils.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.io.Serializable;
 
 @Service
 public class TradeLicenseNumberGenerator implements LicenseNumberGenerator {
@@ -62,12 +60,12 @@ public class TradeLicenseNumberGenerator implements LicenseNumberGenerator {
     private static final String LICENSE_NUMBER_FORMAT = "TL/%05d/%s";
 
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
 
     @Override
     public String generateLicenseNumber() {
-        Serializable nextSequence = this.sequenceNumberGenerator.getNextSequence(LICENSE_NUMBER_SEQ_NAME);
-        return String.format(LICENSE_NUMBER_FORMAT, nextSequence, DateUtils.currentDateToYearFormat());
+        return String.format(LICENSE_NUMBER_FORMAT,
+                databaseSequenceProvider.getNextSequence(LICENSE_NUMBER_SEQ_NAME), DateUtils.currentYear());
     }
 
 }

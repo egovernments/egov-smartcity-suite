@@ -48,28 +48,25 @@
 
 package org.egov.stms.autonumber.impl;
 
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.stms.autonumber.SewerageEstimationNumberGenerator;
 import org.egov.stms.utils.SewerageTaxUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.io.Serializable;
-
 @Service
 public class SewerageEstimationNumberGeneratorImpl implements SewerageEstimationNumberGenerator {
     private static final String ESTIMATION_NUMBER_SEQ_PREFIX = "SEQ_EGSWTAX_ESTIMATION_NUMBER";
-    
+
     @Autowired
-    private ApplicationSequenceNumberGenerator applicationSequenceNumberGenerator;
-    
+    private GenericSequenceNumberGenerator genericSequenceNumberGenerator;
+
     @Autowired
     private SewerageTaxUtils sewerageTaxUtils;
-    
-    @Override 
-    public String generateEstimationNumber(){
-        final String sequenceName = ESTIMATION_NUMBER_SEQ_PREFIX;
-        final Serializable nextSequence = applicationSequenceNumberGenerator.getNextSequence(sequenceName);
-        return String.format("%s%06d", sewerageTaxUtils.getCityCode(),nextSequence);
+
+    @Override
+    public String generateEstimationNumber() {
+        return String.format("%s%06d", sewerageTaxUtils.getCityCode(),
+                genericSequenceNumberGenerator.getNextSequence(ESTIMATION_NUMBER_SEQ_PREFIX));
     }
 }

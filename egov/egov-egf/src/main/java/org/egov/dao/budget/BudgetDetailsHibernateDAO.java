@@ -72,7 +72,7 @@ import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.admin.master.service.AppConfigValueService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.persistence.utils.ApplicationSequenceNumberGenerator;
+import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.infra.validation.exception.ValidationError;
@@ -162,7 +162,7 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
     @Autowired
     protected ScriptService scriptService;
     @Autowired
-    protected ApplicationSequenceNumberGenerator sequenceGenerator;
+    protected GenericSequenceNumberGenerator sequenceGenerator;
     @Autowired
     @Qualifier("budgetService")
     private BudgetService budgetService;
@@ -2690,11 +2690,11 @@ public class BudgetDetailsHibernateDAO implements BudgetDetailsDAO {
             return false;
     }
 
-    public ApplicationSequenceNumberGenerator getSequenceGenerator() {
+    public GenericSequenceNumberGenerator getSequenceGenerator() {
         return sequenceGenerator;
     }
 
-    public void setSequenceGenerator(final ApplicationSequenceNumberGenerator sequenceGenerator) {
+    public void setSequenceGenerator(final GenericSequenceNumberGenerator sequenceGenerator) {
         this.sequenceGenerator = sequenceGenerator;
     }
 

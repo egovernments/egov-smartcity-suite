@@ -52,7 +52,7 @@ import org.egov.infra.admin.master.entity.Module;
 import org.egov.infra.admin.master.service.CityService;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.exception.ApplicationRuntimeException;
-import org.egov.infra.persistence.utils.SequenceNumberGenerator;
+import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
 import org.egov.ptis.autonumber.AssessmentNumberGenerator;
 import org.egov.ptis.autonumber.NoticeNumberGenerator;
@@ -69,7 +69,7 @@ import java.util.Date;
 public class PropertyTaxNumberGenerator {
     private static final String SEQ_EG_BILL = "SEQ_EG_BILL";
     @Autowired
-    private SequenceNumberGenerator sequenceNumberGenerator;
+    private DatabaseSequenceProvider databaseSequenceProvider;
     @Autowired
     private ModuleService moduleDao;
     @Autowired
@@ -112,7 +112,7 @@ public class PropertyTaxNumberGenerator {
             billNo.append("B").append("/");
             final String cityCode = cityService.findAll().get(0).getCode();
             billNo.append(cityCode);
-            final String bill = sequenceNumberGenerator.getNextSequence(SEQ_EG_BILL).toString();
+            final String bill = databaseSequenceProvider.getNextSequence(SEQ_EG_BILL).toString();
             billNo.append(org.apache.commons.lang.StringUtils.leftPad(bill, 6, "0"));
         } catch (final Exception e) {
             throw new ApplicationRuntimeException("Exception : " + e.getMessage(), e);
@@ -146,8 +146,8 @@ public class PropertyTaxNumberGenerator {
         return null;
     }
 
-    public void setSequenceNumberGenerator(final SequenceNumberGenerator sequenceNumberGenerator) {
-        this.sequenceNumberGenerator = sequenceNumberGenerator;
+    public void setDatabaseSequenceProvider(final DatabaseSequenceProvider databaseSequenceProvider) {
+        this.databaseSequenceProvider = databaseSequenceProvider;
     }
 
 }
