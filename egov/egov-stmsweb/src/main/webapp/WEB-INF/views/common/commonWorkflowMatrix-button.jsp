@@ -114,9 +114,8 @@
 					test="${sewerageApplicationDetails.currentState.value == 'NEW'}">
 					<c:if test="${isReassignEnabled}">
 						<input type="hidden" id="applicationNumber" value="${sewerageApplicationDetails.applicationNumber}"/>  
-						<input type="hidden" id="appType" value="${sewerageApplicationDetails.applicationType.code}"/>  
-						
-						<input type="button" value="Reassign" class="btn btn-primary"
+						<input type="hidden" id="appType" value="${sewerageApplicationDetails.applicationType.code}"/>  		
+						<input type="button" value="Reassign" style=" color: #fff;background-color: #6b4f2c; " class="btn "
 							id="Reassign" name="Reassign"
 							onclick="return openReassignWindow();" />
 					</c:if>
