@@ -82,7 +82,7 @@ public class DemandGenerationController {
 
     @GetMapping("generate")
     public String newForm(Model model) {
-        CFinancialYear financialYear = financialYearService.getCurrentFinancialYear();
+        CFinancialYear financialYear = financialYearService.getLatestFinancialYear();
         model.addAttribute("demandGenerationLogDetails",
                 toJSON(demandGenerationService.getDemandGenerationLog(financialYear).getDetails(),
                         DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class));
@@ -96,7 +96,7 @@ public class DemandGenerationController {
     public String generateDemand(DemandGenerationRequest demandGenerationRequest) {
         String demandGenerationLogJSON = toJSON(demandGenerationService.generateDemand(demandGenerationRequest),
                 DemandGenerationLogDetail.class, DemandGenerationResponseAdaptor.class);
-        demandGenerationService.updateDemandGenerationLog(financialYearService.getCurrentFinancialYear());
+        demandGenerationService.updateDemandGenerationLog(financialYearService.getLatestFinancialYear());
         return demandGenerationLogJSON;
     }
 
