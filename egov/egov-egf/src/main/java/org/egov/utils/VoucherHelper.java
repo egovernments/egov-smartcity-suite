@@ -66,7 +66,6 @@ import org.egov.infra.admin.master.entity.Department;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.persistence.utils.GenericSequenceNumberGenerator;
 import org.egov.infra.persistence.utils.DatabaseSequenceCreator;
-import org.egov.infra.persistence.utils.DatabaseSequenceProvider;
 import org.egov.infra.script.service.ScriptService;
 import org.egov.infstr.services.PersistenceService;
 import org.egov.model.bills.EgBillregister;
