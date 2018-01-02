@@ -105,7 +105,7 @@
 						 	<select name="noticeType" id="noticetype" class="form-control" data-first-option="false"><span class="mandatory"></span>
 								<option value="">Select</option>
                                 <option value="EM">Estimation Notice</option>
-                                <option value="WO">WorkOrder Notice</option>
+                                <option value="WO">Sanction order Notice</option>
                                 <option value="CC">Close Connection Notice</option>
                                 <option value="RN">Rejection Notice</option>
 					     	</select>
