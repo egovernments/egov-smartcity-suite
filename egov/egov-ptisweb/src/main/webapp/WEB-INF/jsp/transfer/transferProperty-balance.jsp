@@ -84,18 +84,14 @@
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="CurrentTax" />
+						<s:text name="Property Tax Due" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold">
-						<s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTax}" /></span>
+						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTaxDue+arrearPropertyTaxDue}" /></span>
 					</div>
-					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="CurrentTaxDue" />
-					</div>
-					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTaxDue}" /></span>
-					</div>
+					<div colspan="3" align="center">
+				        <input type="button" name="button2" id="button2" value="Pay" class="buttonsubmit" onclick="propertyTaxPayment()" />
+				    </div>
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
@@ -104,11 +100,8 @@
 					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentWaterTaxDue}" /></span>
 					</div>
-					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="ArrearsDue" />
-					</div>
-					<div class="col-md-3 col-xs-3 add-margin view-content">
-						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{arrearPropertyTaxDue}" /></span>
+					<div colspan="3" align="center">
+					    <input type="button" name="button2" id="button2" value="Pay" class="buttonsubmit" onclick="propertyWaterCharges()" />
 					</div>
 				</div>
 				<div class="mandatory">
@@ -119,8 +112,8 @@
 	</div>
 </div>
 <div colspan="3" align="center">
-				<input type="button" name="button2" id="button2" value="Pay Property Tax" class="buttonsubmit" onclick="propertyTaxPayment()" />
-				<input type="button" name="button2" id="button2" value="Pay Water Charges" class="buttonsubmit" onclick="propertyWaterCharges()" />
+				<input type="button" name="btnPrint" id="btnPrint" value="Print Dues"
+							class="buttonsubmit" onclick="window.print();" />
 				&nbsp;&nbsp;
 				<input type="button" id="close" value="Close" class="button" onclick="javascript:window.close();" />
 </div>
