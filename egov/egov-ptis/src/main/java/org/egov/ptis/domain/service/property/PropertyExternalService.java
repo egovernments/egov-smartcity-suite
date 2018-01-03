@@ -2928,13 +2928,20 @@ public class PropertyExternalService {
             assessmentDetails.setOldAssessmentNo(basicProperty.getOldMuncipalNum());
             assessmentDetails.setPropertyAddress(basicProperty.getAddress().toString());
             assessmentDetails.setOwners(basicProperty.getFullOwnerName());
-            Map<String, BigDecimal> dmdCollMap = ptDemandDAO.getDemandIncludingPenaltyCollMap(basicProperty.getProperty());
-            if (!dmdCollMap.isEmpty()) {
-                BigDecimal totalDemand = dmdCollMap.get(ARR_DMD_STR).add(dmdCollMap.get(CURR_FIRSTHALF_DMD_STR))
-                        .add(dmdCollMap.get(CURR_SECONDHALF_DMD_STR));
-                BigDecimal totalColl = dmdCollMap.get(ARR_COLL_STR).add(dmdCollMap.get(CURR_FIRSTHALF_COLL_STR))
-                        .add(dmdCollMap.get(CURR_SECONDHALF_COLL_STR));
-                assessmentDetails.setPropertyDue(totalDemand.subtract(totalColl));
+            assessmentDetails.setStatus(basicProperty.getActive());
+            Property property = basicProperty.getProperty();
+            if(property != null){
+                assessmentDetails.setExempted(property.getIsExemptedFromTax());
+                if(!property.getIsExemptedFromTax()){
+                    Map<String, BigDecimal> dmdCollMap = ptDemandDAO.getDemandIncludingPenaltyCollMap(property);
+                    if (!dmdCollMap.isEmpty()) {
+                        BigDecimal totalDemand = dmdCollMap.get(ARR_DMD_STR).add(dmdCollMap.get(CURR_FIRSTHALF_DMD_STR))
+                                .add(dmdCollMap.get(CURR_SECONDHALF_DMD_STR));
+                        BigDecimal totalColl = dmdCollMap.get(ARR_COLL_STR).add(dmdCollMap.get(CURR_FIRSTHALF_COLL_STR))
+                                .add(dmdCollMap.get(CURR_SECONDHALF_COLL_STR));
+                        assessmentDetails.setPropertyDue(totalDemand.subtract(totalColl));
+                    }
+                }
             }
             String restURL = format(PropertyTaxConstants.WTMS_TAXDUE_RESTURL,
                     WebUtils.extractRequestDomainURL(request, false), basicProperty.getUpicNo());
