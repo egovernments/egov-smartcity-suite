@@ -67,15 +67,15 @@ $('#metercurrentReadingDate').on('change', function(){
 		$.ajax({
 				url: "/wtms/ajax-meterReadingEntryExist",     
 					type: "GET",
-					cache: true,
 					data: {
 						givenDate : $('#metercurrentReadingDate').val() ,
 						requestConsumerCode : $('#consumerCode').val() 
 					},
 					dataType: "json",
+					async : false,
 			}).done(function(value) {
 				 if(value) {
-					 bootbox.alert('Entered Metered Reading Date Allready Exist');
+					 bootbox.alert('Meter Reading for entered Date already exists');
 					 $('#metercurrentReadingDate').val('');
 					 return false;
 				 } else {
@@ -83,7 +83,6 @@ $('#metercurrentReadingDate').on('change', function(){
 					 return true; 
 				 }
 			});
-		
 	});
 
 	var currentInstallmentExist = $('#currentInstallmentExist').val();
