@@ -462,9 +462,11 @@ public class PropertyExternalService {
         if (propertyOwners != null && !propertyOwners.isEmpty())
             for (final PropertyOwnerInfo propertyOwner : propertyOwners) {
                 final OwnerName ownerName = new OwnerName();
+                if(propertyOwner.getOwner().getAadhaarNumber() != null && !propertyOwner.getOwner().getAadhaarNumber().isEmpty())
                 ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber()
                         .replace(propertyOwner.getOwner().getAadhaarNumber().substring(0, 8), "XXXXXXXX"));
                 ownerName.setOwnerName(propertyOwner.getOwner().getName());
+                if(propertyOwner.getOwner().getMobileNumber() != null && !propertyOwner.getOwner().getMobileNumber().isEmpty())
                 ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber()
                         .replace(propertyOwner.getOwner().getMobileNumber().substring(0, 8), "XXXXXXXX"));
                 ownerName.setEmailId(propertyOwner.getOwner().getEmailId());
