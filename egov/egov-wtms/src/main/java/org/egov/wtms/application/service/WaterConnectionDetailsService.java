@@ -1059,7 +1059,9 @@ public class WaterConnectionDetailsService {
                 if (LOG.isDebugEnabled())
                     LOG.debug(" updating Application Index creation Started... ");
                 String channel = "";
-                if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
+                if(waterConnectionDetails.getSource()!=null)
+                    channel = waterConnectionDetails.getSource().toString(); 
+                else if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
                         && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                     channel = Source.CSC.toString();
                 else if (sourceChannel != null && SOURCECHANNEL_ONLINE.equalsIgnoreCase(sourceChannel))
