@@ -3255,7 +3255,11 @@ public class PropertyService {
 	public Map<String, BigDecimal> getCurrentPropertyTaxDetails(final Property propertyImpl) {
 		return ptDemandDAO.getDemandCollMap(propertyImpl);
 	}
-
+	
+	public Map<String, BigDecimal> getCurrentPropertyTaxDetailsIncludingPenalty(final Property propertyImpl) {
+            return ptDemandDAO.getDemandCollMapIncludingPenaltyAndAdvance(propertyImpl);
+	}
+    
 	/**
 	 * Returns a map of current tax and balance, based on passed date being in
 	 * first half or second half of the installments for current year
@@ -3283,6 +3287,26 @@ public class PropertyService {
 							.subtract(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)));
 		}
 		return taxValues;
+	}
+	
+	public Map<String, BigDecimal> getCurrentTaxAndBalanceIncludingPenalty(final Map<String, BigDecimal> propertyTaxDetails,final Date currDate) {
+            final Map<String, BigDecimal> taxValues = new HashMap<>();
+            final Map<String, Installment> currYearInstMap = propertyTaxUtil.getInstallmentsForCurrYear(currDate);
+            final Installment currInstFirstHalf = currYearInstMap.get(PropertyTaxConstants.CURRENTYEAR_FIRST_HALF);
+            if (DateUtils.between(new Date(), currInstFirstHalf.getFromDate(), currInstFirstHalf.getToDate())) {
+                    taxValues.put(PropertyTaxConstants.CURR_DMD_STR,
+                                    propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR));
+                    taxValues.put(PropertyTaxConstants.CURR_BAL_STR,
+                                    (propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR)))
+                                                .subtract((propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR))));
+            } else {
+                    taxValues.put(PropertyTaxConstants.CURR_DMD_STR,
+                                    propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR));
+                    taxValues.put(PropertyTaxConstants.CURR_BAL_STR,
+                            (propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_DMD_STR).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_DMD_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_DMD_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_DMD_STR)))
+                                                .subtract((propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_SECONDHALF_PENALTY_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_COLL_STR)).add(propertyTaxDetails.get(PropertyTaxConstants.CURR_FIRSTHALF_PENALTY_COLL_STR))));
+            }
+            return taxValues;
 	}
 
 	/**

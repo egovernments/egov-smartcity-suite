@@ -84,7 +84,7 @@
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="Property Tax Due" />
+						<s:text name="property.tax.due" />
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentPropertyTaxDue+arrearPropertyTaxDue}" /></span>
@@ -95,7 +95,7 @@
 				</div>	
 				<div class="row add-border">	
 					<div class="col-md-3 col-xs-3 add-margin">
-						<s:text name="waterTaxDue"/>
+						<s:text name="water.charges.due"/>
 					</div>
 					<div class="col-md-3 col-xs-3 add-margin view-content">
 						<span class="bold"><s:text name="rs"/> <s:property default="N/A" value="%{currentWaterTaxDue}" /></span>

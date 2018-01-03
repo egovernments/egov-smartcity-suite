@@ -281,8 +281,8 @@ public class PropertyTransferAction extends GenericWorkFlowAction {
                 return TARGET_WORKFLOW_ERROR;
             }
             final Map<String, BigDecimal> propertyTaxDetails = propertyService
-                    .getCurrentPropertyTaxDetails(basicproperty.getActiveProperty());
-            final Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalance(propertyTaxDetails,
+                    .getCurrentPropertyTaxDetailsIncludingPenalty(basicproperty.getActiveProperty());
+            final Map<String, BigDecimal> currentTaxAndDue = propertyService.getCurrentTaxAndBalanceIncludingPenalty(propertyTaxDetails,
                     new Date());
             currentPropertyTax = currentTaxAndDue.get(CURR_DMD_STR);
             propertyOwner = basicproperty.getFullOwnerName();
