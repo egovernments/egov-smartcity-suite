@@ -3,7 +3,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -173,7 +173,7 @@
 					<font size="12"/>
 					<paragraph lineSpacing="Proportional" lineSpacingSize="2.0"/>
 				</textElement>
-				<textFieldExpression><![CDATA["          With reference to your Application cited, requesting for closure of your Trade bearing TIN No. "+$F{licenseNumber} +" , situated in the premises bearing Property Tax PTIN No. "+($F{assessmentNo}.isEmpty()?"NA":$F{assessmentNo})+" where the trade is carrying out, has been inspected by this office and found that the Trade in question is closed and no business is being running in the said premises."]]></textFieldExpression>
+				<textFieldExpression><![CDATA["          With reference to your Application cited, requesting for closure of your Trade bearing TIN No. "+$F{licenseNumber} +" , situated in the premises bearing Property Tax PTIN No. "+($F{assessmentNo}.equals( null ) || $F{assessmentNo}.isEmpty()?"NA":$F{assessmentNo})+" where the trade is carrying out, has been inspected by this office and found that the Trade in question is closed and no business is being running in the said premises."]]></textFieldExpression>
 			</textField>
 			<staticText>
 				<reportElement x="33" y="340" width="475" height="69" uuid="96988beb-1ee0-43a1-a303-e5fca16b72ba"/>
