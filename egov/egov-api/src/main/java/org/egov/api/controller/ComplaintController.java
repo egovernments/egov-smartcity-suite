@@ -562,12 +562,20 @@ public class ComplaintController extends ApiController {
      * @return Complaint
      */
 
-    @RequestMapping(value = {
-            ApiUrl.CITIZEN_COMPLAINT_COUNT, "/cross-city/citizen/getMyComplaint/count"},
-            method = GET, produces = TEXT_PLAIN_VALUE)
+    @GetMapping(value = ApiUrl.CITIZEN_COMPLAINT_COUNT, produces = TEXT_PLAIN_VALUE)
     public ResponseEntity<String> getComplaintsCount() {
         try {
             return getResponseHandler().success(complaintService.getMyComplaintsCount());
+        } catch (final Exception e) {
+            LOGGER.error(EGOV_API_ERROR, e);
+            return getResponseHandler().error(getMessage(SERVER_ERROR));
+        }
+    }
+
+    @GetMapping(value = "/cross-city/complaint/count/{mobileNumber}", produces = TEXT_PLAIN_VALUE)
+    public ResponseEntity<String> getComplaintsCount(@PathVariable String mobileNumber) {
+        try {
+            return getResponseHandler().success(complaintIndexService.getCrossCityComplaintsCount(mobileNumber));
         } catch (final Exception e) {
             LOGGER.error(EGOV_API_ERROR, e);
             return getResponseHandler().error(getMessage(SERVER_ERROR));

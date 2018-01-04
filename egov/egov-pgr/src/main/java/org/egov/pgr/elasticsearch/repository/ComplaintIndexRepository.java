@@ -52,9 +52,13 @@ import org.egov.pgr.elasticsearch.entity.ComplaintIndex;
 import org.springframework.data.elasticsearch.repository.ElasticsearchRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface ComplaintIndexRepository extends ElasticsearchRepository<ComplaintIndex, String>, ComplaintIndexCustomRepository {
 
     ComplaintIndex findByCrnAndCityCode(String crn, String cityCode);
+
+    long countByComplainantMobileAndComplaintStatusNameIn(String mobileNumber, List<String> statusName);
 
 }
