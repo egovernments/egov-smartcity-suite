@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -51,6 +51,7 @@ import org.egov.infra.config.core.ApplicationThreadLocals;
 import org.egov.infra.utils.FileStoreUtils;
 import org.egov.tl.entity.License;
 import org.egov.tl.service.LicenseCertificateDigiSignService;
+import org.egov.tl.utils.LicenseUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.http.ResponseEntity;
@@ -71,6 +72,9 @@ import static org.egov.tl.utils.Constants.FILESTORE_MODULECODE;
 @Controller
 @RequestMapping(value = "/tradelicense")
 public class LicenseCertificateDigiSignController {
+
+    @Autowired
+    private LicenseUtils licenseUtils;
 
     @Autowired
     private FileStoreUtils fileStoreUtils;
@@ -99,8 +103,10 @@ public class LicenseCertificateDigiSignController {
 
     @GetMapping(value = "/bulk-digisign")
     public String showLicenseBulkDigiSignForm(Model model) {
-        model.addAttribute("licenses",
-                licenseCertificateDigiSignService.getLicensePendingForDigiSign());
+        if (licenseUtils.isDigitalSignEnabled())
+            model.addAttribute("licenses", licenseCertificateDigiSignService.getLicensePendingForDigiSign());
+        else
+            model.addAttribute("message", "msg.digisign.enabled");
         return "license-bulk-digisign-form";
     }
 

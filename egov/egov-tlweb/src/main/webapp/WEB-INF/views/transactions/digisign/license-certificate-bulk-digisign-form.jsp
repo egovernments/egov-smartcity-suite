@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -56,89 +56,103 @@
     <div class="col-md-12">
         <form:form role="form" class="form-horizontal form-groups-bordered" id="bulkdigisignform"
                    method="POST">
-            <input type="hidden" id="licenseIds" name="licenseIds">
-            <div class="panel panel-primary" data-collapsed="0">
-                <div class="panel-heading">
-                    <div class="panel-title">
-                        <strong><spring:message code="lbl.digitalSignature"/></strong>
+            <c:choose>
+                <c:when test="${not empty message}">
+                    <div class="alert alert-info view-content">
+                        <spring:message code="${message}"/>
                     </div>
-                </div>
-                <div class="panel-body">
-                    <div class="main-content">
-                        <div class="row">
-                            <div class="col-md-12">
-                                <table class="table table-bordered datatable" id="digSignDetailsTab"
-                                       name="digSignDetailsTab">
-                                    <thead>
-                                    <tr>
-                                        <th><spring:message code="lbl.digitalSignature.type"/></th>
-                                        <th><spring:message code="search.licensee.no"/></th>
-                                        <th><spring:message code="license.applicationnumber"/></th>
-                                        <th><spring:message code="license.category.lbl"/></th>
-                                        <th><spring:message code="license.subCategory.lbl"/></th>
-                                        <th><spring:message code="lbl.amount"/></th>
-                                        <th style="text-align: center"><input type="checkbox"
-                                                                              id="selectAll"/><spring:message
-                                                code="lbl.digitalSignature.select"/></th>
-                                    </tr>
-                                    </thead>
-                                    <c:choose>
-                                        <c:when test="${!licenses.isEmpty()}">
-                                            <c:forEach items="${licenses}" var="license"
-                                                       varStatus="counter">
-                                                <tr>
-                                                    <td class="col-md-2" style="cursor: pointer"
-                                                        onclick=openLicenseForDigitalSign(${license.id})>
-                                                        <c:out value="${license.state.natureOfTask}"/>
-                                                    </td>
-                                                    <td style="cursor: pointer"
-                                                        onclick=openLicenseForDigitalSign(${license.id})>
-                                                        <c:out value="${license.licenseNumber}"/>
-                                                    </td>
-                                                    <td style="cursor: pointer"
-                                                        onclick=openLicenseForDigitalSign(${license.id})>
-                                                        <c:out value="${license.applicationNumber}"/>
-                                                    </td>
-                                                    <td>
-                                                        <c:out value="${license.category.name}"/>
-                                                    </td>
-                                                    <td style="cursor: pointer"
-                                                        onclick=openLicenseForDigitalSign(${license.id})>
-                                                        <c:out value="${license.tradeName.name}"/>
-                                                    </td>
-                                                    <td style="cursor: pointer"
-                                                        onclick=openLicenseForDigitalSign(${license.id})>
-                                                        <c:out value="${license.getLatestAmountPaid()}"/>
-                                                    </td>
-                                                    <td style="text-align: center">
-                                                        <input type="checkbox" class="check-box"
-                                                               id="${license.id}" name="rowCheckBox"/>
-                                                    </td>
-                                                </tr>
-                                            </c:forEach>
-                                        </c:when>
-                                        <c:otherwise>
-                                            <tr><spring:message code="lbl.norecord.found"/></tr>
-                                        </c:otherwise>
-                                    </c:choose>
-                                </table>
-                                <div class="text-center">
-                                    <c:choose>
-                                        <c:when test="${!licenses.isEmpty()}">
-                                            <button type="submit" onclick="return submitform();" class="btn btn-primary"
-                                                    id="submitButton">
-                                                <spring:message code="lbl.sign"/>
-                                            </button>
-                                        </c:when>
-                                    </c:choose>
-                                    <a href="javascript:void(0)" class="btn btn-default"
-                                       onclick="self.close()"><spring:message code="lbl.close"/></a>
+                    <div class="text-center">
+                        <a href="javascript:void(0)" class="btn btn-default"
+                           onclick="self.close()"><spring:message code="lbl.close"/></a>
+                    </div>
+                </c:when>
+                <c:otherwise>
+                    <input type="hidden" id="licenseIds" name="licenseIds">
+                    <div class="panel panel-primary" data-collapsed="0">
+                        <div class="panel-heading">
+                            <div class="panel-title">
+                                <strong><spring:message code="lbl.digitalSignature"/></strong>
+                            </div>
+                        </div>
+                        <div class="panel-body">
+                            <div class="main-content">
+                                <div class="row">
+                                    <div class="col-md-12">
+                                        <table class="table table-bordered datatable" id="digSignDetailsTab"
+                                               name="digSignDetailsTab">
+                                            <thead>
+                                            <tr>
+                                                <th><spring:message code="lbl.digitalSignature.type"/></th>
+                                                <th><spring:message code="search.licensee.no"/></th>
+                                                <th><spring:message code="license.applicationnumber"/></th>
+                                                <th><spring:message code="license.category.lbl"/></th>
+                                                <th><spring:message code="license.subCategory.lbl"/></th>
+                                                <th><spring:message code="lbl.amount"/></th>
+                                                <th style="text-align: center"><input type="checkbox"
+                                                                                      id="selectAll"/><spring:message
+                                                        code="lbl.digitalSignature.select"/></th>
+                                            </tr>
+                                            </thead>
+                                            <c:choose>
+                                                <c:when test="${!licenses.isEmpty()}">
+                                                    <c:forEach items="${licenses}" var="license"
+                                                               varStatus="counter">
+                                                        <tr>
+                                                            <td class="col-md-2" style="cursor: pointer"
+                                                                onclick=openLicenseForDigitalSign(${license.id})>
+                                                                <c:out value="${license.state.natureOfTask}"/>
+                                                            </td>
+                                                            <td style="cursor: pointer"
+                                                                onclick=openLicenseForDigitalSign(${license.id})>
+                                                                <c:out value="${license.licenseNumber}"/>
+                                                            </td>
+                                                            <td style="cursor: pointer"
+                                                                onclick=openLicenseForDigitalSign(${license.id})>
+                                                                <c:out value="${license.applicationNumber}"/>
+                                                            </td>
+                                                            <td>
+                                                                <c:out value="${license.category.name}"/>
+                                                            </td>
+                                                            <td style="cursor: pointer"
+                                                                onclick=openLicenseForDigitalSign(${license.id})>
+                                                                <c:out value="${license.tradeName.name}"/>
+                                                            </td>
+                                                            <td style="cursor: pointer"
+                                                                onclick=openLicenseForDigitalSign(${license.id})>
+                                                                <c:out value="${license.getLatestAmountPaid()}"/>
+                                                            </td>
+                                                            <td style="text-align: center">
+                                                                <input type="checkbox" class="check-box"
+                                                                       id="${license.id}" name="rowCheckBox"/>
+                                                            </td>
+                                                        </tr>
+                                                    </c:forEach>
+                                                </c:when>
+                                                <c:otherwise>
+                                                    <tr><spring:message code="lbl.norecord.found"/></tr>
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </table>
+                                        <div class="text-center">
+                                            <c:choose>
+                                                <c:when test="${!licenses.isEmpty()}">
+                                                    <button type="submit" onclick="return submitform();"
+                                                            class="btn btn-primary"
+                                                            id="submitButton">
+                                                        <spring:message code="lbl.sign"/>
+                                                    </button>
+                                                </c:when>
+                                            </c:choose>
+                                            <a href="javascript:void(0)" class="btn btn-default"
+                                               onclick="self.close()"><spring:message code="lbl.close"/></a>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-            </div>
+                </c:otherwise>
+            </c:choose>
         </form:form>
     </div>
 </div>
