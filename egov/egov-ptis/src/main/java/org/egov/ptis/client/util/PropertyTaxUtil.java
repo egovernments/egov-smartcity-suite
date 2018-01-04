@@ -1972,50 +1972,7 @@ public class PropertyTaxUtil {
         return qry;
     }
 
-    /**
-     * @param zoneId
-     * @param wardId
-     * @param areaId
-     * @param localityId
-     * @return
-     */
-    public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
-            final Long areaId, final Long localityId) {
-        // Get current installment
-        final Installment currentInst = propertyTaxCommonUtils.getCurrentInstallment();
-        final StringBuffer query = new StringBuffer(300);
-
-        // Query that retrieves all the properties that has arrears.
-        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
-                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
-                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
-
-        if (isWard(localityId))
-            query.append(" and pmv.locality.id= :localityId ");
-        if (isWard(zoneId))
-            query.append(" and pmv.zone.id= :zoneId ");
-        if (isWard(wardId))
-            query.append("  and pmv.ward.id= :wardId ");
-        if (isWard(areaId))
-            query.append("  and pmv.block.id= :areaId ");
-
-        query.append(" order by pmv.basicPropertyID ");
-        final Query qry = persistenceService.getSession().createQuery(query.toString());
-
-        if (isWard(localityId))
-            qry.setParameter("localityId", localityId);
-        if (isWard(zoneId))
-            qry.setParameter("zoneId", zoneId);
-        if (isWard(wardId))
-            qry.setParameter("wardId", wardId);
-        if (isWard(areaId))
-            qry.setParameter("areaId", areaId);
-        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
-                CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
-        return propertyViewList;
-    }
-
-    /**
+     /**
      * @param zoneId
      * @param wardId
      * @param areaId
@@ -2333,7 +2290,7 @@ public class PropertyTaxUtil {
         return StringUtils.isNotBlank(ownerShipType);
     }
 
-    private boolean isWard(final Long wardId) {
+    public boolean isWard(final Long wardId) {
         return wardId != null && wardId != -1;
     }
 

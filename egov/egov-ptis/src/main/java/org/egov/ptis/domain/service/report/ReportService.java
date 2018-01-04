@@ -77,6 +77,7 @@ import org.egov.ptis.domain.entity.property.PropertyTypeMaster;
 import org.egov.ptis.service.utils.PropertyTaxCommonUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
+import org.hibernate.criterion.CriteriaSpecification;
 import org.hibernate.transform.AliasToBeanResultTransformer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -1079,7 +1080,7 @@ public class ReportService {
      * @return list
      */
     @ReadOnly
-    public List<DefaultersInfo> getDefaultersInformation(List<PropertyMaterlizeView> propertyViewList,final String noofyrs,final Integer limit) {
+    public List<DefaultersInfo> getDefaultersInformation(Query query,final String noofyrs,final Integer limit) {
         List<DefaultersInfo> defaultersList = new ArrayList<>();
         List<DefaultersInfo> defaultersListForYrs = new ArrayList<>();
         DefaultersInfo defaultersInfo;
@@ -1089,7 +1090,7 @@ public class ReportService {
         int count = 1;
 
         int reqyr = 0;
-       
+        List<PropertyMaterlizeView> propertyViewList = query.list();
         
         for (final PropertyMaterlizeView propView : propertyViewList) {
             
@@ -1185,6 +1186,48 @@ public class ReportService {
         }
         return defaultersInfo;
     }
+    
+    /**
+     * @param zoneId
+     * @param wardId
+     * @param areaId
+     * @param localityId
+     * @return
+     */
+    @ReadOnly
+    public List<PropertyMaterlizeView> prepareQueryforArrearRegisterReport(final Long zoneId, final Long wardId,
+            final Long areaId, final Long localityId) {
+        // Get current installment
+        final Installment currentInst = propertyTaxCommonUtils.getCurrentInstallment();
+        final StringBuffer query = new StringBuffer(300);
+        // Query that retrieves all the properties that has arrears.
+        query.append("select distinct pmv from PropertyMaterlizeView pmv,InstDmdCollMaterializeView idc where "
+                + "pmv.basicPropertyID = idc.propMatView.basicPropertyID and pmv.isActive = true and idc.installment.fromDate not between  ('"
+                + currentInst.getFromDate() + "') and ('" + currentInst.getToDate() + "') ");
+        if (propertyTaxUtil.isWard(localityId))
+            query.append(" and pmv.locality.id= :localityId ");
+        if (propertyTaxUtil.isWard(zoneId))
+            query.append(" and pmv.zone.id= :zoneId ");
+        if (propertyTaxUtil.isWard(wardId))
+            query.append("  and pmv.ward.id= :wardId ");
+        if (propertyTaxUtil.isWard(areaId))
+            query.append("  and pmv.block.id= :areaId ");
+        query.append(" order by pmv.basicPropertyID ");
+        final Query qry = propPerServ.getSession().createQuery(query.toString());
+        if (propertyTaxUtil.isWard(localityId))
+            qry.setParameter("localityId", localityId);
+        if (propertyTaxUtil.isWard(zoneId))
+            qry.setParameter("zoneId", zoneId);
+        if (propertyTaxUtil.isWard(wardId))
+            qry.setParameter("wardId", wardId);
+        if (propertyTaxUtil.isWard(areaId))
+            qry.setParameter("areaId", areaId);
+        @SuppressWarnings("unchecked")
+        final List<PropertyMaterlizeView> propertyViewList = qry.setResultTransformer(
+                CriteriaSpecification.DISTINCT_ROOT_ENTITY).list();
+        return propertyViewList;
+    }
+    
     private BigDecimal getAggCurrSecHalfPenColl(final PropertyMaterlizeView propView) {
         return propView.getAggrCurrSecondHalfPenalyColl() != null ? propView
                 .getAggrCurrSecondHalfPenalyColl() : ZERO;
