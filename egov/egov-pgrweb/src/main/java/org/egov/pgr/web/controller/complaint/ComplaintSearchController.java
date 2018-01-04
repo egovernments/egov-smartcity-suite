@@ -129,7 +129,8 @@ public class ComplaintSearchController {
 
     @ModelAttribute("isGrievanceOfficer")
     public Boolean validateForGo() {
-        return securityUtils.getCurrentUser().hasRole(GO_ROLE_NAME);
+        User currentUser = securityUtils.getCurrentUser();
+        return currentUser != null && currentUser.hasRole(GO_ROLE_NAME);
     }
 
     @ModelAttribute("employeeposition")
