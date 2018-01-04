@@ -1059,17 +1059,19 @@ public class WaterConnectionDetailsService {
                 if (LOG.isDebugEnabled())
                     LOG.debug(" updating Application Index creation Started... ");
                 String channel = "";
-                if(waterConnectionDetails.getSource()!=null)
-                    channel = waterConnectionDetails.getSource().toString(); 
-                else if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
-                        && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
-                    channel = Source.CSC.toString();
-                else if (sourceChannel != null && SOURCECHANNEL_ONLINE.equalsIgnoreCase(sourceChannel))
-                    channel = SOURCECHANNEL_ONLINE;
-                else if (sourceChannel != null && CITIZENPORTAL.equalsIgnoreCase(sourceChannel))
-                    channel = CITIZENPORTAL;
-                else
-                    channel = SYSTEM;
+                if (waterConnectionDetails.getSource() == null) {
+                    if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
+                            && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
+                        channel = Source.CSC.toString();
+                    else if (sourceChannel != null && SOURCECHANNEL_ONLINE.equalsIgnoreCase(sourceChannel))
+                        channel = SOURCECHANNEL_ONLINE;
+                    else if (sourceChannel != null && CITIZENPORTAL.equalsIgnoreCase(sourceChannel))
+                        channel = CITIZENPORTAL;
+                    else
+                        channel = SYSTEM;
+                } else
+                    channel = waterConnectionDetails.getSource().toString();
+
                 applicationIndex = ApplicationIndex.builder().withModuleName(((EgModules) hql.uniqueResult()).getName())
                         .withApplicationNumber(waterConnectionDetails.getApplicationNumber())
                         .withApplicationDate(new DateTime(waterConnectionDetails.getApplicationDate()).toDate())
@@ -1467,6 +1469,7 @@ public class WaterConnectionDetailsService {
         return status;
     }
 
+    @Transactional
     public Boolean updateStatus(final List<WaterConnectionDetails> connectionDetailsList) {
         if (!connectionDetailsList.isEmpty()) {
             for (WaterConnectionDetails waterConnectionDetails : connectionDetailsList) {
@@ -1477,7 +1480,8 @@ public class WaterConnectionDetailsService {
                     connectionDemandService.updateDemandForNonmeteredConnection(waterConnectionDetails, null, null,
                             WF_STATE_TAP_EXECUTION_DATE_BUTTON);
 
-                waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+                waterConnectionDetailsRepository.save(waterConnectionDetails);
+                waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
                 updatePortalMessage(waterConnectionDetails);
                 updateIndexes(waterConnectionDetails,
                         waterConnectionDetails.getSource() != null ? waterConnectionDetails.getSource().toString() : null);
@@ -1571,12 +1575,14 @@ public class WaterConnectionDetailsService {
         return status;
     }
 
+    @Transactional
     public Boolean updateMeterDetails(final List<WaterConnectionDetails> detailList) {
         WaterConnectionDetails waterConnectionDetails = null;
         if (!detailList.isEmpty()) {
             waterConnectionDetails = detailList.get(0);
             waterConnectionDetails = updateApplicationStatus(waterConnectionDetails);
             waterConnectionDetailsRepository.saveAndFlush(waterConnectionDetails);
+            waterConnectionSmsAndEmailService.sendSmsAndEmail(waterConnectionDetails, null);
             updatePortalMessage(waterConnectionDetails);
             updateIndexes(waterConnectionDetails,
                     waterConnectionDetails.getSource() != null ? waterConnectionDetails.getSource().toString() : null);
