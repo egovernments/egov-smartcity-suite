@@ -244,4 +244,19 @@ public class GenericMasterAjaxController {
         }
         IOUtils.write(jsonObjects.toString(), response.getWriter());
     }
+
+    @RequestMapping(value = "/boundary/ward-bylocality", method = RequestMethod.GET)
+    public void wardsByLocality(@RequestParam Long locality, HttpServletResponse response) throws IOException {
+        BoundaryType wardBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName("Ward", "ADMINISTRATION");
+        List<Boundary> wards = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, wardBoundaryType.getId());
+        final List<JsonObject> jsonObjects = new ArrayList<>();
+        for (final Boundary block : wards) {
+            final JsonObject jsonObj = new JsonObject();
+            jsonObj.addProperty("wardId", block.getId());
+            jsonObj.addProperty("wardName", block.getName());
+            jsonObjects.add(jsonObj);
+        }
+        IOUtils.write(jsonObjects.toString(), response.getWriter());
+    }
+
 }

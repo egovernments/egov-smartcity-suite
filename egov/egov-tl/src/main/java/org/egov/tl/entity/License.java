@@ -206,6 +206,10 @@ public class License extends StateAware<Position> {
     protected Boundary parentBoundary;
 
     @ManyToOne
+    @JoinColumn(name = "adminward")
+    protected Boundary adminWard;
+
+    @ManyToOne
     @JoinColumn(name = "NATUREOFBUSINESS")
     protected NatureOfBusiness natureOfBusiness;
 
@@ -612,5 +616,13 @@ public class License extends StateAware<Position> {
     public boolean canCollectLicenseFee() {
         return this.isNewWorkflow() && !isNatureOfTaskClosure() &&
                 (STATUS_ACKNOWLEDGED.equals(this.getStatus().getStatusCode()) || STATUS_COLLECTIONPENDING.equals(this.getStatus().getStatusCode()));
+    }
+
+    public Boundary getAdminWard() {
+        return adminWard;
+    }
+
+    public void setAdminWard(Boundary adminWard) {
+        this.adminWard = adminWard;
     }
 }

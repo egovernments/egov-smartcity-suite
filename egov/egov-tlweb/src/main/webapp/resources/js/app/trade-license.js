@@ -49,9 +49,11 @@
 $(document).ready(function () {
     $('#boundary').change(function () {
         parentBoundary = '';
+        adminWard='';
     });
     $('#boundary').blur(function () {
         $('#parentBoundary').find('option:gt(0)').remove();
+        $('#adminWard').find('option:gt(0)').remove();
         if (this.value !== '') {
             $.ajax({
                 type: "GET",
@@ -71,6 +73,26 @@ $(document).ready(function () {
 
                 if (parentBoundary != "") {
                     $("#parentBoundary").val(parentBoundary);
+                }
+            });
+            $.ajax({
+                type: "GET",
+                url: "/egi/boundary/ward-bylocality",
+                cache: true,
+                dataType: "json",
+                data: {'locality': this.value}
+            }).done(function (response) {
+                if (response.length < 1) {
+                    bootbox.alert("Could not find ward for Locality : " + $('#boundary').find(":selected").text());
+                    $('#boundary').val('');
+                    return;
+                }
+                $.each(response, function (key, boundary) {
+                    $('#adminWard').append('<option value="' + boundary.wardId + '">' + boundary.wardName + '</option>');
+                });
+
+                if (adminWard != "") {
+                    $("#adminWard").val(adminWard);
                 }
             });
         }
@@ -123,14 +145,17 @@ function getPropertyDetails() {
                     $('#propertyNo').val('');
                     $("#boundary").val('');
                     $("#parentBoundary").find('option:gt(0)').remove();
+                    $("#adminWard").find('option:gt(0)').remove();
                     $("#address").val("");
                 } else {
                     if (data.boundaryDetails != null) {
                         $("#boundary").val(data.boundaryDetails.localityId);
                         parentBoundary = data.boundaryDetails.wardId;
+                        adminWard = data.boundaryDetails.adminWardId;
                         var boundaryChanged = $("#boundary").triggerHandler('blur');
                         boundaryChanged && boundaryChanged.done(function () {
-                            $("#parentBoundary").val(data.boundaryDetails.wardId)
+                            $("#parentBoundary").val(data.boundaryDetails.wardId);
+                            $("#adminWard").val(data.boundaryDetails.adminWardId)
                         });
                         $("#address").val(data.propertyAddress);
                     }
@@ -140,6 +165,7 @@ function getPropertyDetails() {
                 $('#propertyNo').val('');
                 $("#boundary").val('');
                 $("#parentBoundary").find('option:gt(0)').remove();
+                $("#adminWard").find('option:gt(0)').remove();
                 bootbox.alert("Error getting property details");
             }
         });

@@ -47,79 +47,89 @@
   --%>
 
 <div class="panel-heading custom_form_panel_heading">
-	<div class="panel-title">
-		<spring:message code='license.location.lbl' />
-	</div>
+    <div class="panel-title">
+        <spring:message code='license.location.lbl'/>
+    </div>
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right"><spring:message
-			code='license.propertyNo.lbl' /></label>
-	<div class="col-sm-3 add-margin">
-		<form:input path="assessmentNo" id="propertyNo"
-			value="${tradeLicense.assessmentNo}" class="form-control"
-			onblur="getPropertyDetails();" maxlength="15" placeholder=""
-			autocomplete="off" />
-	</div>
+    <label class="col-sm-3 control-label text-right"><spring:message
+            code='license.propertyNo.lbl'/></label>
+    <div class="col-sm-3 add-margin">
+        <form:input path="assessmentNo" id="propertyNo"
+                    value="${tradeLicense.assessmentNo}" class="form-control"
+                    onblur="getPropertyDetails();" maxlength="15" placeholder=""
+                    autocomplete="off"/>
+    </div>
 
-	<label class="col-sm-2 control-label text-right"><spring:message
-			code='lbl.locality' /> <span class="mandatory"></span></label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="boundary" id="boundary" class="form-control"
-			required="true">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${boundary}" itemValue="id" itemLabel="name" />
-		</form:select>
-		<form:errors path="boundary" cssClass="error-msg" />
-	</div>
+    <label class="col-sm-2 control-label text-right"><spring:message
+            code='lbl.locality'/> <span class="mandatory"></span></label>
+    <div class="col-sm-3 add-margin">
+        <form:select path="boundary" id="boundary" class="form-control"
+                     required="true">
+            <form:option value="">
+                <spring:message code="lbl.select"/>
+            </form:option>
+            <form:options items="${boundary}" itemValue="id" itemLabel="name"/>
+        </form:select>
+        <form:errors path="boundary" cssClass="error-msg"/>
+    </div>
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">
-		<spring:message code='baseregister.ward' />
-		<span class="mandatory"></span>
-	</label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="parentBoundary" id="parentBoundary"
-			class="form-control" required="true" data-selected-id="${tradeLicense.parentBoundary.id}">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${parentBoundary}" itemValue="id" itemLabel="name" />
-		</form:select>
-		<form:errors path="parentBoundary" cssClass="error-msg" />
-	</div>
+    <label class="col-sm-3 control-label text-right">
+        <spring:message code='baseregister.ward'/>
+        <span class="mandatory"></span>
+    </label>
+    <div class="col-sm-3 add-margin">
+        <form:select path="parentBoundary" id="parentBoundary"
+                     class="form-control" required="true" data-selected-id="${tradeLicense.parentBoundary.id}">
+            <form:option value="">
+                <spring:message code="lbl.select"/>
+            </form:option>
+            <form:options items="${parentBoundary}" itemValue="id" itemLabel="name"/>
+        </form:select>
+        <form:errors path="parentBoundary" cssClass="error-msg"/>
+    </div>
+    <label class="col-sm-2 control-label text-right">
+        <spring:message code='lbl.admin.ward'/>
+    </label>
+    <div class="col-sm-3 add-margin">
+        <form:select path="adminWard" id="adminWard"
+                     class="form-control" data-selected-id="${tradeLicense.adminWard.id}">
+            <form:option value="">
+                <spring:message code="lbl.select"/>
+            </form:option>
+            <form:options items="${adminWard}" itemValue="id" itemLabel="name"/>
+        </form:select>
+        <form:errors path="adminWard" cssClass="error-msg"/>
+    </div>
 </div>
 <div class="form-group">
-	<label class="col-sm-3 control-label text-right">
-		<spring:message code='license.ownerShipType.lbl' /> 
-		<span class="mandatory"></span>
-	</label>
-	<div class="col-sm-3 add-margin">
-		<form:select path="ownershipType" id="ownershipType"
-			class="form-control " required="true">
-			<form:option value="">
-				<spring:message code="lbl.select" />
-			</form:option>
-			<form:options items="${ownershipType}" />
-		</form:select>
-		<form:errors path="ownershipType" cssClass="error-msg" />
-	</div>
-
-	<label class="col-sm-2 control-label text-right">
-	 	<spring:message code='license.address' />
-	 	<span class="mandatory"></span>
-	</label>
-	<div class="col-sm-3 add-margin">
-
-		<form:textarea path="address" id="address" maxlength="250"
-			onblur="checkLength(this,250)" class="form-control"
-			required="required" />
-		<form:errors path="address" cssClass="error-msg" />
-
-	</div>
+    <label class="col-sm-3 control-label text-right">
+        <spring:message code='license.ownerShipType.lbl'/>
+        <span class="mandatory"></span>
+    </label>
+    <div class="col-sm-3 add-margin">
+        <form:select path="ownershipType" id="ownershipType"
+                     class="form-control " required="true">
+            <form:option value="">
+                <spring:message code="lbl.select"/>
+            </form:option>
+            <form:options items="${ownershipType}"/>
+        </form:select>
+        <form:errors path="ownershipType" cssClass="error-msg"/>
+    </div>
+    <label class="col-sm-2 control-label text-right">
+        <spring:message code='license.address'/>
+        <span class="mandatory"></span>
+    </label>
+    <div class="col-sm-3 add-margin">
+        <form:textarea path="address" id="address" maxlength="250"
+                       onblur="checkLength(this,250)" class="form-control"
+                       required="required"/>
+        <form:errors path="address" cssClass="error-msg"/>
+    </div>
 </div>
 <script>
     var parentBoundary = '${parentBoundary.id}';
-   
+    var adminWard = '${adminWard.id}';
 </script>

@@ -180,6 +180,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     public BaseLicenseAction() {
         this.addRelatedEntity("boundary", Boundary.class);
         this.addRelatedEntity("parentBoundary", Boundary.class);
+        this.addRelatedEntity("adminWard", Boundary.class);
         this.addRelatedEntity("licensee.boundary", Boundary.class);
         this.addRelatedEntity("natureOfBusiness", NatureOfBusiness.class);
         this.addRelatedEntity("category", LicenseCategory.class);
@@ -258,7 +259,7 @@ public abstract class BaseLicenseAction<T extends License> extends GenericWorkFl
     }
 
     private String digitalSignRedirection() {
-        ReportOutput  reportOutput = tradeLicenseService.generateLicenseCertificate(license(), false);
+        ReportOutput reportOutput = tradeLicenseService.generateLicenseCertificate(license(), false);
         if (reportOutput != null) {
             String fileName = SIGNED_DOCUMENT_PREFIX + license().getApplicationNumber() + ".pdf";
             final InputStream fileStream = new ByteArrayInputStream(reportOutput.getReportOutputData());

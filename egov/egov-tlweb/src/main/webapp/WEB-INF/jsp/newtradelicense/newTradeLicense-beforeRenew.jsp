@@ -122,6 +122,15 @@
                                 </div>
                                 <div class="form-group">
                                     <label class="col-sm-3 control-label text-right"><s:text
+                                            name='lbl.admin.ward'/></label>
+                                    <div class="col-sm-3 add-margin">
+                                        <select name="adminWard" id="adminWard" class="form-control">
+                                            <option value=""><s:text name='default.select'/></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="col-sm-3 control-label text-right"><s:text
                                             name='license.category.lbl'/><span class="mandatory"></span></label>
                                     <div class="col-sm-3 add-margin">
                                         <s:select name="category" id="category" list="dropdownData.categoryList"
