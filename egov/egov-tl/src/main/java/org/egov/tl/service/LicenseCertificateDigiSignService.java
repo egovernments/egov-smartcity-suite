@@ -49,6 +49,7 @@
 package org.egov.tl.service;
 
 import org.egov.eis.service.PositionMasterService;
+import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.filestore.entity.FileStoreMapper;
 import org.egov.infra.filestore.service.FileStoreService;
 import org.egov.infra.reporting.engine.ReportOutput;
@@ -95,6 +96,7 @@ public class LicenseCertificateDigiSignService {
         }
     }
 
+    @ReadOnly
     public List<License> getLicensePendingForDigiSign() {
         return licenseRepository.findByStateNextActionAndStateOwnerPositionIn("Digital Signature Pending",
                 positionMasterService.getCurrentUserPositions());

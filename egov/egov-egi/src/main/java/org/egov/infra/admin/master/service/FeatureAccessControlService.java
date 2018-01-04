@@ -65,7 +65,6 @@ public class FeatureAccessControlService {
     @Autowired
     private ActionService actionService;
 
-    @Transactional
     public void grantAccess(Feature feature, Role role) {
         for (Action action : feature.getActions()) {
             action.addRole(role);
@@ -75,7 +74,6 @@ public class FeatureAccessControlService {
         featureService.saveFeature(feature);
     }
 
-    @Transactional
     public void revokeAccess(Feature feature, Role role) {
         for (Action action : feature.getActions()) {
             if (featureService.getNumberOfFeatureByRoleAction(role, action) == 1) {

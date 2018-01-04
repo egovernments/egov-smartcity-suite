@@ -64,8 +64,7 @@ import org.egov.infra.persistence.entity.enums.UserType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 
@@ -76,8 +75,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import static org.springframework.web.bind.annotation.RequestMethod.GET;
 
 @Controller
 public class GenericMasterAjaxController {
@@ -99,7 +96,7 @@ public class GenericMasterAjaxController {
     @Autowired
     private CrossHierarchyService crossHierarchyService;
 
-    @RequestMapping(value = "/boundarytype/ajax/boundarytypelist-for-hierarchy", method = RequestMethod.GET)
+    @GetMapping("/boundarytype/ajax/boundarytypelist-for-hierarchy")
     @ResponseBody
     public void getBoundaryTypeByHierarchyType(@RequestParam Long hierarchyTypeId, HttpServletResponse response)
             throws IOException {
@@ -108,7 +105,7 @@ public class GenericMasterAjaxController {
         IOUtils.write(buildJSONString(boundaryTypes), response.getWriter());
     }
 
-    @RequestMapping(value = "/boundaries-by-boundaryType", method = RequestMethod.GET)
+    @GetMapping("/boundaries-by-boundaryType")
     @ResponseBody
     public void getBoundariesByBoundaryType(@RequestParam Long boundaryTypeId, HttpServletResponse response)
             throws IOException {
@@ -125,7 +122,7 @@ public class GenericMasterAjaxController {
         IOUtils.write(jsonArray.toString(), response.getWriter());
     }
 
-    @RequestMapping(value = "/check-is-root", method = RequestMethod.GET)
+    @GetMapping("/check-is-root")
     @ResponseBody
     public boolean isRootBoundary(@RequestParam Long boundaryTypeId, @RequestParam Long hierarchyTypeId) {
         final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByIdAndHierarchyType(boundaryTypeId,
@@ -149,14 +146,13 @@ public class GenericMasterAjaxController {
      * Used in ajax validation to check if child exists for a boundary type -
      * Add child screen
      */
-    @RequestMapping(value = "/boundarytype/ajax/checkchild", method = RequestMethod.GET)
+    @GetMapping("/boundarytype/ajax/checkchild")
     @ResponseBody
     public boolean isChildBoundaryTypePresent(@RequestParam Long parentId) {
-        final BoundaryType boundaryType = boundaryTypeService.getBoundaryTypeByParent(parentId);
-        return boundaryType != null;
+        return boundaryTypeService.getBoundaryTypeByParent(parentId) != null;
     }
 
-    @RequestMapping(value = "/userRole/ajax/rolelist-for-user", method = RequestMethod.GET)
+    @GetMapping("/userRole/ajax/rolelist-for-user")
     @ResponseBody
     public void getRolesByUserName(@RequestParam String username, HttpServletResponse response) throws IOException {
         if (username != null) {
@@ -178,7 +174,7 @@ public class GenericMasterAjaxController {
         return jsonArray.toString();
     }
 
-    @RequestMapping(value = {"/userRole/ajax/userlist"}, method = GET, produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "/userRole/ajax/userlist", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public void getAllActiveUserByNameLike(@RequestParam String userName, HttpServletResponse response) throws IOException {
         final List<User> userList = userService.findAllByMatchingUserNameForType(userName, UserType.EMPLOYEE);
@@ -197,10 +193,10 @@ public class GenericMasterAjaxController {
         return jsonArray.toString();
     }
 
-    @RequestMapping(value = {"/boundary/ajaxBoundary-blockByLocality", "/public/boundary/ajaxBoundary-blockByLocality"}, method = RequestMethod.GET)
+    @GetMapping({"/boundary/ajaxBoundary-blockByLocality", "/public/boundary/ajaxBoundary-blockByLocality"})
     public void blockByLocality(@RequestParam Long locality, HttpServletResponse response) throws IOException {
         BoundaryType blockType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName(BLOCK, REVENUE_HIERARCHY_TYPE);
-        final List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
+        List<Boundary> blocks = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, blockType.getId());
         List<Boundary> streets = boundaryService.getActiveChildBoundariesByBoundaryId(locality);
         final List<JsonObject> wardJsonObjs = new ArrayList<>();
         final List<Long> boundaries = new ArrayList<>();
@@ -232,7 +228,7 @@ public class GenericMasterAjaxController {
         IOUtils.write(bj.toString(), response.getWriter());
     }
 
-    @RequestMapping(value = {"/boundary/ajaxBoundary-blockByWard", "/public/boundary/ajaxBoundary-blockByWard"}, method = RequestMethod.GET)
+    @GetMapping({"/boundary/ajaxBoundary-blockByWard", "/public/boundary/ajaxBoundary-blockByWard"})
     public void blockByWard(@RequestParam Long wardId, HttpServletResponse response) throws IOException {
         List<Boundary> blocks = boundaryService.getActiveChildBoundariesByBoundaryId(wardId);
         final List<JsonObject> jsonObjects = new ArrayList<>();
@@ -245,7 +241,7 @@ public class GenericMasterAjaxController {
         IOUtils.write(jsonObjects.toString(), response.getWriter());
     }
 
-    @RequestMapping(value = "/boundary/ward-bylocality", method = RequestMethod.GET)
+    @GetMapping("/boundary/ward-bylocality")
     public void wardsByLocality(@RequestParam Long locality, HttpServletResponse response) throws IOException {
         BoundaryType wardBoundaryType = boundaryTypeService.getBoundaryTypeByNameAndHierarchyTypeName("Ward", "ADMINISTRATION");
         List<Boundary> wards = crossHierarchyService.getParentBoundaryByChildBoundaryAndParentBoundaryType(locality, wardBoundaryType.getId());

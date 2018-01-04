@@ -48,7 +48,7 @@
 
 package org.egov.infra.admin.master.service;
 
-import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.text.similarity.LevenshteinDistance;
 import org.egov.infra.admin.master.entity.Action;
 import org.egov.infra.admin.master.repository.ActionRepository;
 import org.egov.infra.web.utils.WebUtils;
@@ -65,11 +65,11 @@ public class ActionService {
     @Autowired
     private ActionRepository actionRepository;
 
-    public Action getActionByName(final String name) {
+    public Action getActionByName(String name) {
         return actionRepository.findByName(name);
     }
 
-    public Action getActionById(final Long id) {
+    public Action getActionById(Long id) {
         return actionRepository.findOne(id);
     }
 
@@ -78,11 +78,11 @@ public class ActionService {
         return actionRepository.save(action);
     }
 
-    public Action getActionByUrlAndContextRoot(final String url, final String contextRoot) {
-        Action action = null;
+    public Action getActionByUrlAndContextRoot(String url, String contextRoot) {
+        Action action;
         if (url.contains("?")) {
-            final String queryParams = WebUtils.extractQueryParamsFromUrl(url);
-            final String urlPart = WebUtils.extractURLWithoutQueryParams(url);
+            String queryParams = WebUtils.extractQueryParamsFromUrl(url);
+            String urlPart = WebUtils.extractURLWithoutQueryParams(url);
             action = actionRepository.findByUrlAndContextRootAndQueryParams(urlPart, contextRoot, queryParams);
             if (action == null)
                 action = findNearestMatchingAction(urlPart,
@@ -95,12 +95,13 @@ public class ActionService {
         return action;
     }
 
-    private Action findNearestMatchingAction(final String url, final List<Action> actions) {
-        // This is to avoid vertical escalation wrt to REST URL as much as
-        // possible. TODO This required to be reworked.
-        return actions.isEmpty() ? null
-                : actions.parallelStream().filter(action -> StringUtils.getLevenshteinDistance(url, action.getUrl()) < 1)
-                        .findFirst().orElse(actions.get(0));
+    private Action findNearestMatchingAction(String url, List<Action> actions) {
+        return actions.isEmpty()
+                ? null : actions
+                .parallelStream()
+                .filter(action -> LevenshteinDistance.getDefaultInstance().apply(url, action.getUrl()) < 1)
+                .findFirst()
+                .orElse(actions.get(0));
     }
 
 }

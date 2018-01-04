@@ -50,7 +50,6 @@ package org.egov.pgr.web.controller.complaint;
 
 import org.egov.eis.service.AssignmentService;
 import org.egov.infra.admin.master.entity.Department;
-import org.egov.infra.admin.master.entity.Role;
 import org.egov.infra.admin.master.entity.User;
 import org.egov.infra.admin.master.service.DepartmentService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
@@ -130,12 +129,7 @@ public class ComplaintSearchController {
 
     @ModelAttribute("isGrievanceOfficer")
     public Boolean validateForGo() {
-        User user = securityUtils.getCurrentUser();
-        if (user != null)
-            for (Role role : user.getRoles())
-                if (GO_ROLE_NAME.equalsIgnoreCase(role.getName()))
-                    return Boolean.TRUE;
-        return Boolean.FALSE;
+        return securityUtils.getCurrentUser().hasRole(GO_ROLE_NAME);
     }
 
     @ModelAttribute("employeeposition")
