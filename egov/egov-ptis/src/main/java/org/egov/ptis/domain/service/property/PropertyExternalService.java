@@ -464,11 +464,11 @@ public class PropertyExternalService {
                 final OwnerName ownerName = new OwnerName();
                 if(StringUtils.isNotBlank(propertyOwner.getOwner().getAadhaarNumber()))
                 ownerName.setAadhaarNumber(propertyOwner.getOwner().getAadhaarNumber()
-                        .replace(propertyOwner.getOwner().getAadhaarNumber().substring(0, 8), "XXXXXXXX"));
+                        .replaceAll("\\w(?=\\w{4})", "*"));
                 ownerName.setOwnerName(propertyOwner.getOwner().getName());
                 if(StringUtils.isNotBlank(propertyOwner.getOwner().getMobileNumber()))
                 ownerName.setMobileNumber(propertyOwner.getOwner().getMobileNumber()
-                        .replace(propertyOwner.getOwner().getMobileNumber().substring(0, 8), "XXXXXXXX"));
+                        .replaceAll("\\w(?=\\w{2})", "*"));
                 ownerName.setEmailId(propertyOwner.getOwner().getEmailId());
                 ownerNames.add(ownerName);
             }
