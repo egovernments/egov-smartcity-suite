@@ -2439,7 +2439,7 @@ public class PropertyTaxUtil {
         reportParams.put(AS_ON_DATE, sdf.format(new Date()));
         reportParams.put(ULB_NAME, city.getPreferences().getMunicipalityName());
         reportParams.put(CITY_NAME, city.getName());
-        if (!(Arrays.asList(REVISION_PETETION, VACANCY_REMISSION)).contains(applicationType))
+        if (!(Arrays.asList(REVISION_PETETION, VACANCY_REMISSION, GENERAL_REVISION_PETETION_APPTYPE)).contains(applicationType))
             reportParams.put(ACK_NO, basicProperty.getWFProperty().getApplicationNo());
         else
             reportParams.put(ACK_NO, applicationNo);
