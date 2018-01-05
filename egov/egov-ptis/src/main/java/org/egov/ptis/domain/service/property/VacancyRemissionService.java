@@ -213,6 +213,11 @@ public class VacancyRemissionService {
     public VacancyRemission getRejectedVacancyRemissionForProperty(final String upicNo) {
         return vacancyRemissionRepository.findRejectedByUpicNo(upicNo);
     }
+    
+    public VacancyRemission getVRUnderWFByUpicNo(final String upicNo) {
+        return vacancyRemissionRepository.getVRUnderWorkflowByUpicNo(upicNo);
+    }
+
 
     @Transactional
     public VacancyRemission saveVacancyRemission(final VacancyRemission vacancyRemission, Long approvalPosition,

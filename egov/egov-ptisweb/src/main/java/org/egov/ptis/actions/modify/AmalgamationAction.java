@@ -1022,7 +1022,7 @@ public class AmalgamationAction extends PropertyTaxBaseAction {
     @Action(value = "/amalgamation-printAck")
     public String printAck() {
         final ReportOutput reportOutput = propertyTaxUtil
-                .generateCitizenCharterAcknowledgement(indexNumber, AMALGAMATION, APPLICATION_TYPE_AMALGAMATION);
+                .generateCitizenCharterAcknowledgement(indexNumber, AMALGAMATION, APPLICATION_TYPE_AMALGAMATION, null);
         reportId = reportViewerUtil.addReportToTempCache(reportOutput);
         return NOTICE;
     }

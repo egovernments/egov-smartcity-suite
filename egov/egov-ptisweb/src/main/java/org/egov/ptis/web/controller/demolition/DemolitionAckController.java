@@ -78,7 +78,7 @@ public class DemolitionAckController {
     public @ResponseBody ResponseEntity<byte[]> printAck(final HttpServletRequest request, final Model model,
             @PathVariable("assessmentNo") final String assessmentNo) {
         ReportOutput reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(assessmentNo, DEMOLITION,
-                PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION);
+                PropertyTaxConstants.WFLOW_ACTION_NAME_DEMOLITION, null);
         final HttpHeaders headers = new HttpHeaders();
         headers.setContentType(MediaType.parseMediaType("application/pdf"));
         headers.add("content-disposition", "inline;filename=CitizenCharterAcknowledgement.pdf");

@@ -488,6 +488,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 				propService.pushRevisionPetitionPortalMessage(objection, APPLICATION_TYPE_GRP);
 		currentStatus = REVISION_PETITION_CREATED;
 		sendEmailandSms(objection, REVISION_PETITION_CREATED);
+		applicationNumber =  objection.getObjectionNumber();
 		if (logger.isDebugEnabled())
 			logger.debug("ObjectionAction | Create | End " + objection);
 		return isMeesevaUser ? MEESEVA_RESULT_ACK : STRUTS_RESULT_MESSAGE;
@@ -1693,7 +1694,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 		}
 		if (ANONYMOUS_USER.equalsIgnoreCase(securityUtils.getCurrentUser().getName()))
 			setApplicationSource(SOURCE_ONLINE.toLowerCase());
-		reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(propertyId, applicationType, serviceType);
+		reportOutput = propertyTaxUtil.generateCitizenCharterAcknowledgement(propertyId, applicationType, serviceType, applicationNumber);
 		reportId = reportViewerUtil.addReportToTempCache(reportOutput);
 		return NOTICE;
 	}

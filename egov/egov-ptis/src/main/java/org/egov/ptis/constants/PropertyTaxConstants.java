@@ -1756,7 +1756,8 @@ public interface PropertyTaxConstants {
     public static final List<String> SERVICE_TYPES=ImmutableList.of("New_Assessment","Alter_Assessment","General_Revision_Petition","Revision_Petition");
 
     public static final String NOTARY_DOCUMENT_OWNER = "The Holder Of The Premises";
-            
+    public static final String REVISION_PETETION = "REVISION_PETETION";
+    public static final String VACANCY_REMISSION = "VACANCY_REMISSION";        
 	public static final List<String> PROPERTY_TYPE_GOVT_LIST = ImmutableList.of(OWNERSHIP_TYPE_STATE_GOVT,
 			OWNERSHIP_TYPE_CENTRAL_GOVT_333, OWNERSHIP_TYPE_CENTRAL_GOVT_50, OWNERSHIP_TYPE_CENTRAL_GOVT_75);
 

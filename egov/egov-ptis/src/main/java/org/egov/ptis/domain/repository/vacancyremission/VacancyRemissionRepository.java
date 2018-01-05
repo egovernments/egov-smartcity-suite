@@ -80,5 +80,7 @@ public interface VacancyRemissionRepository extends JpaRepository<VacancyRemissi
     
     @Query("select dt from DocumentType dt where dt.name= :name and dt.transactionType= :transactionType")
     DocumentType findDocumentTypeByNameAndTransactionType(@Param("name") String name, @Param("transactionType") TransactionType transactionType);
-
+    
+    @Query("select vr from VacancyRemission vr where vr.basicProperty.upicNo=:upicNo and vr.status = 'IN_WORKFLOW'")
+    VacancyRemission getVRUnderWorkflowByUpicNo(@Param("upicNo") String name);
 }
