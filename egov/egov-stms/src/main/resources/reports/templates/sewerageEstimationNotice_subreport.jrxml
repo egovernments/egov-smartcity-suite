@@ -1,0 +1,410 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
+  ~    accountability and the service delivery of the government  organizations.
+  ~
+  ~     Copyright (C) 2017  eGovernments Foundation
+  ~
+  ~     The updated version of eGov suite of products as by eGovernments Foundation
+  ~     is available at http://www.egovernments.org
+  ~
+  ~     This program is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     any later version.
+  ~
+  ~     This program is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with this program. If not, see http://www.gnu.org/licenses/ or
+  ~     http://www.gnu.org/licenses/gpl.html .
+  ~
+  ~     In addition to the terms of the GPL license to be adhered to in using this
+  ~     program, the following additional terms are to be complied with:
+  ~
+  ~         1) All versions of this program, verbatim or modified must carry this
+  ~            Legal Notice.
+  ~            Further, all user interfaces, including but not limited to citizen facing interfaces,
+  ~            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+  ~            derived works should carry eGovernments Foundation logo on the top right corner.
+  ~
+  ~            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
+  ~            For any further queries on attribution, including queries on brand guidelines,
+  ~            please contact contact@egovernments.org
+  ~
+  ~         2) Any misrepresentation of the origin of the material is prohibited. It
+  ~            is required that all modified versions of this material be marked in
+  ~            reasonable ways as different from the original version.
+  ~
+  ~         3) This license does not grant any rights to any user of the program
+  ~            with regards to rights under trademark law for use of the trade names
+  ~            or trademarks of eGovernments Foundation.
+  ~
+  ~   In case of any queries, you can reach eGovernments Foundation at contact@egovernments.org.
+  ~
+  -->
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2018-01-05T09:31:39 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
+	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
+	<property name="com.jaspersoft.studio.unit." value="pixel"/>
+	<property name="ireport.zoom" value="1.9487171000000016"/>
+	<property name="ireport.x" value="313"/>
+	<property name="ireport.y" value="0"/>
+	<import value="java.lang.*"/>
+	<import value="org.egov.infra.reporting.util.*"/>
+	<import value="java.util.*"/>
+	<import value="java.math.*"/>
+	<style name="Title" fontName="Arial" fontSize="26" isBold="true" pdfFontName="Helvetica-Bold"/>
+	<style name="SubTitle" forecolor="#666666" fontName="Arial" fontSize="18"/>
+	<style name="Column header" forecolor="#666666" fontName="Arial" fontSize="12" isBold="true"/>
+	<style name="Detail" fontName="Arial" fontSize="12"/>
+	<parameter name="estimationCharges" class="java.math.BigDecimal"/>
+	<parameter name="donationCharges" class="java.math.BigDecimal"/>
+	<parameter name="sewerageCharges" class="java.math.BigDecimal"/>
+	<parameter name="totalCharges" class="java.math.BigDecimal"/>
+	<parameter name="amountInWords" class="java.lang.String"/>
+	<field name="id" class="java.lang.Long"/>
+	<field name="quantity" class="java.lang.Double"/>
+	<field name="unitRate" class="java.lang.Double"/>
+	<field name="itemDescription" class="java.lang.String"/>
+	<field name="unitOfMeasurement" class="org.egov.common.entity.UOM"/>
+	<variable name="serialnumber" class="java.lang.Integer" resetType="Group" resetGroup="sewerageestimationgroup" calculation="Count">
+		<initialValueExpression><![CDATA[new java.lang.Integer(1)]]></initialValueExpression>
+	</variable>
+	<variable name="total" class="java.lang.Double">
+		<variableExpression><![CDATA[$F{unitRate}*$F{quantity}]]></variableExpression>
+	</variable>
+	<variable name="totalAmount" class="java.lang.Double" calculation="Sum">
+		<variableExpression><![CDATA[$V{total}]]></variableExpression>
+	</variable>
+	<group name="sewerageestimationgroup">
+		<groupExpression><![CDATA[]]></groupExpression>
+		<groupFooter>
+			<band height="190">
+				<staticText>
+					<reportElement x="143" y="120" width="202" height="19" uuid="71c0dc64-db9f-428d-90ce-87dccecb0a95"/>
+					<textElement textAlignment="Justified">
+						<font size="12"/>
+					</textElement>
+					<text><![CDATA[                      "Approved"]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="-7" y="170" width="165" height="20" uuid="5c092cfa-c0e5-41be-8e3d-f29a17e69d9c"/>
+					<text><![CDATA[Assistant Engineer]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="203" y="170" width="100" height="20" uuid="277a972a-e1be-4e66-b619-8d77f7fb9df0"/>
+					<text><![CDATA[Dy.E.E]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="413" y="170" width="100" height="20" uuid="65d76e69-1cc5-488d-be69-08c06f2de5c3"/>
+					<text><![CDATA[E.E.]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="460" y="34" width="6" height="9" uuid="c91e4eec-8b0e-42a4-b418-21bb287def40"/>
+					<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="23" y="0" width="227" height="20" uuid="829cb170-2a42-44e7-8493-5aff4fb39d1f"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Estimation Charge]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="-7" y="20" width="30" height="20" uuid="33904a1a-814d-4830-80ce-d8ea2414a849"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[(+)]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="-7" y="60" width="30" height="20" uuid="60eed0db-3554-469d-acc4-8ac94e16ee9f"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="-7" y="80" width="30" height="20" uuid="098d7ca4-0053-4f60-9381-ae9e7523bf0f"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="23" y="60" width="227" height="20" uuid="35f2b239-aeac-442f-847f-74fb473f81ff"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Grand Total]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="23" y="20" width="227" height="20" uuid="e9d87faf-bbfc-4563-9e7c-12379dca9c40"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Donation Charge]]></text>
+				</staticText>
+				<textField pattern="###0.00">
+					<reportElement x="250" y="60" width="280" height="20" uuid="417f099d-38de-4d1d-89d0-ccb9640d8846"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{totalCharges}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.00">
+					<reportElement x="250" y="20" width="280" height="20" uuid="9cee6b72-6b35-4634-b6d0-9255a586daa8"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{donationCharges}]]></textFieldExpression>
+				</textField>
+				<textField pattern="###0.00">
+					<reportElement x="250" y="0" width="280" height="20" uuid="253bf4bf-21cf-4dff-be46-fa2f67252041"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{estimationCharges}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="-7" y="0" width="30" height="20" uuid="106257ad-a327-4ba0-81d1-62139aaea750"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<text><![CDATA[]]></text>
+				</staticText>
+				<textField>
+					<reportElement x="23" y="80" width="507" height="20" uuid="650c321b-383f-43e1-a9a6-881e7cbec3ee"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textFieldExpression><![CDATA[$P{amountInWords}]]></textFieldExpression>
+				</textField>
+				<staticText>
+					<reportElement x="23" y="40" width="227" height="20" uuid="20628106-3634-4f87-bd30-0cb8a13c12e8"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Left" verticalAlignment="Middle"/>
+					<text><![CDATA[Sewerage Tax]]></text>
+				</staticText>
+				<staticText>
+					<reportElement x="-7" y="40" width="30" height="20" uuid="2cf7ce7b-ee8b-4c2a-9ccb-156556a8b80a"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Center"/>
+					<text><![CDATA[(+)]]></text>
+				</staticText>
+				<textField pattern="###0.00">
+					<reportElement x="250" y="40" width="280" height="20" uuid="38bb1164-def6-4f8d-af1e-ecc8b9e6539e"/>
+					<box padding="1">
+						<pen lineWidth="1.0"/>
+					</box>
+					<textElement textAlignment="Right" verticalAlignment="Middle"/>
+					<textFieldExpression><![CDATA[$P{sewerageCharges}]]></textFieldExpression>
+				</textField>
+			</band>
+		</groupFooter>
+	</group>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<columnHeader>
+		<band height="81">
+			<staticText>
+				<reportElement x="327" y="51" width="93" height="30" uuid="092aef42-2ebd-4a9d-aa8b-9e06b1c0cb05"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[UOM]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="420" y="51" width="53" height="30" uuid="d8a5421b-35f7-4b5b-a971-312913d60129"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Rate]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="23" y="51" width="227" height="30" uuid="6c2a69db-56d8-477c-896b-50a72259bc7f"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Material]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="473" y="51" width="57" height="30" uuid="d87dea66-f0cd-41d6-92d4-45ec3dafcc1b"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Amount]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="250" y="51" width="77" height="30" uuid="21eee3fa-2713-4259-a5db-7869a8b9cc10"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Quantity]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="-7" y="51" width="30" height="30" uuid="cbccc299-bf8d-456c-b342-8b080da08a46"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10" isBold="true"/>
+				</textElement>
+				<text><![CDATA[Sl No.]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="120" y="11" width="355" height="28" uuid="58fcd6b9-1ed7-4e13-98f4-83815726ce63">
+					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
+				</reportElement>
+				<textElement textAlignment="Justified" verticalAlignment="Middle">
+					<font size="12" isBold="true" isUnderline="true"/>
+				</textElement>
+				<text><![CDATA[Estimation Details for Sewerage Connection]]></text>
+			</staticText>
+		</band>
+	</columnHeader>
+	<detail>
+		<band height="20" splitType="Stretch">
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="327" y="0" width="93" height="20" uuid="a10c2d93-a7b9-4d17-a18c-a226a0b82f82"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unitOfMeasurement}.getUom()]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="420" y="0" width="53" height="20" uuid="dfdc59f6-16ee-40ae-934d-f27474470f31"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{unitRate}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="473" y="0" width="57" height="20" uuid="9efcb937-6e6e-4c1d-b280-e269d4928b48"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="250" y="0" width="77" height="20" uuid="c53239b1-f972-4e90-af85-8cc8caf0da96"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Right" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="23" y="0" width="227" height="20" uuid="de813d0b-2bb9-4f0e-addf-4fc76b01237e"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Left" verticalAlignment="Bottom">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$F{itemDescription}]]></textFieldExpression>
+			</textField>
+			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
+				<reportElement stretchType="RelativeToTallestObject" x="-7" y="0" width="30" height="20" uuid="cbe7527f-c2f5-4f80-bf85-8d7cf5a2104f"/>
+				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
+					<pen lineWidth="1.0"/>
+					<topPen lineWidth="1.0"/>
+					<leftPen lineWidth="1.0"/>
+					<bottomPen lineWidth="1.0"/>
+					<rightPen lineWidth="1.0"/>
+				</box>
+				<textElement textAlignment="Center" verticalAlignment="Middle">
+					<font fontName="SansSerif" size="10"/>
+				</textElement>
+				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

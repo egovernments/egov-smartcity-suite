@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2017-12-19T16:45:47 -->
+<!-- 2018-01-05T12:38:08 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sewerageEstimationNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -75,30 +75,20 @@
 	<parameter name="SUBREPORT_DIR" class="java.lang.String" isForPrompting="false">
 		<defaultValueExpression><![CDATA["/home/malathi/OpenSource/github checkout/develop/eGov/egov/egov-stms/src/main/resources/reports/templates/"]]></defaultValueExpression>
 	</parameter>
+	<parameter name="estimationDetails" class="java.util.List"/>
 	<parameter name="inspectionDetails" class="java.util.List"/>
-	<field name="id" class="java.lang.Long"/>
-	<field name="quantity" class="java.lang.Double"/>
-	<field name="unitRate" class="java.lang.Double"/>
-	<field name="itemDescription" class="java.lang.String"/>
-	<field name="unitOfMeasurement" class="org.egov.common.entity.UOM"/>
-	<variable name="total" class="java.lang.Double">
-		<variableExpression><![CDATA[$F{unitRate}*$F{quantity}]]></variableExpression>
-	</variable>
-	<variable name="totalAmount" class="java.lang.Double" calculation="Sum">
-		<variableExpression><![CDATA[$V{total}]]></variableExpression>
-	</variable>
 	<group name="Dummy Detail1">
 		<groupExpression><![CDATA[$V{PAGE_COUNT}]]></groupExpression>
 	</group>
 	<background>
-		<band height="780" splitType="Stretch">
+		<band height="800" splitType="Stretch">
 			<rectangle>
-				<reportElement x="0" y="0" width="555" height="780" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
+				<reportElement x="0" y="0" width="555" height="800" uuid="0e6d2994-c285-439a-bbb6-836a2e4ff230"/>
 			</rectangle>
 		</band>
 	</background>
 	<title>
-		<band height="274" splitType="Stretch">
+		<band height="202" splitType="Stretch">
 			<textField>
 				<reportElement x="10" y="80" width="261" height="20" uuid="8f804c3d-f0c0-4945-a853-f424381bd1d3"/>
 				<box padding="1">
@@ -160,15 +150,6 @@
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 			</textField>
-			<staticText>
-				<reportElement x="140" y="246" width="355" height="28" uuid="5e46de93-e5a3-450a-8c1c-8d16d0c1cda9">
-					<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
-				</reportElement>
-				<textElement textAlignment="Justified" verticalAlignment="Middle">
-					<font size="12" isBold="true" isUnderline="true"/>
-				</textElement>
-				<text><![CDATA[Estimation Details for Sewerage Connection]]></text>
-			</staticText>
 			<textField>
 				<reportElement x="131" y="119" width="136" height="53" uuid="8a825c53-4816-4d4d-918c-567595fb5141"/>
 				<textElement verticalAlignment="Top"/>
@@ -206,322 +187,38 @@
 			</textField>
 		</band>
 	</title>
-	<columnHeader>
-		<band height="36" splitType="Stretch">
-			<printWhenExpression><![CDATA[$F{id}!=null]]></printWhenExpression>
-			<staticText>
-				<reportElement x="334" y="6" width="93" height="30" isRemoveLineWhenBlank="true" uuid="0b106184-5310-4e3b-a9f1-7e85ddc9247e"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[UOM]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="427" y="6" width="53" height="30" isRemoveLineWhenBlank="true" uuid="15a2e7c2-6c6b-4da8-b176-493b59e86bd0"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Rate]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="480" y="6" width="65" height="30" isRemoveLineWhenBlank="true" uuid="aedf0432-8896-44c5-b69e-afee8f057072"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Amount]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="267" y="6" width="67" height="30" isRemoveLineWhenBlank="true" uuid="d408caaf-328e-4e26-8354-dd8ed5685cff"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Quantity]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="40" y="6" width="227" height="30" isRemoveLineWhenBlank="true" uuid="ff546fe8-46fc-44cb-871d-b96f80a6eaa6"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Material]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="6" width="30" height="30" isRemoveLineWhenBlank="true" uuid="c80bf3ba-b31b-49a1-acd5-ace230cefdfe"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10" isBold="true"/>
-				</textElement>
-				<text><![CDATA[Sl No.]]></text>
-			</staticText>
-		</band>
-	</columnHeader>
 	<detail>
-		<band height="20" splitType="Stretch">
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="334" y="0" width="93" height="20" uuid="06a52c3a-7c74-4cfe-89f5-58be07664a65"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{unitOfMeasurement}.getUom()]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="427" y="0" width="53" height="20" uuid="f1352f1b-55be-44db-a6c8-9ca069786cb6"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{unitRate}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="480" y="0" width="65" height="20" uuid="f558e07a-e52c-423f-81f8-837b5a064c8c"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" pattern="###0.00" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="267" y="0" width="67" height="20" uuid="a9a73bd8-5f17-4458-9b41-dc669ecc4eb3"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="40" y="0" width="227" height="20" uuid="6609419d-06f1-4d47-bf3d-61e8088a7b97"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$F{itemDescription}]]></textFieldExpression>
-			</textField>
-			<textField isStretchWithOverflow="true" isBlankWhenNull="true">
-				<reportElement stretchType="RelativeToTallestObject" x="10" y="0" width="30" height="20" uuid="6b69942f-d63f-4c20-ace3-17e1edd1b8fb"/>
-				<box topPadding="1" leftPadding="1" bottomPadding="1" rightPadding="1">
-					<pen lineWidth="1.0"/>
-					<topPen lineWidth="1.0"/>
-					<leftPen lineWidth="1.0"/>
-					<bottomPen lineWidth="1.0"/>
-					<rightPen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Center" verticalAlignment="Middle">
-					<font fontName="SansSerif" size="10"/>
-				</textElement>
-				<textFieldExpression><![CDATA[$V{REPORT_COUNT}]]></textFieldExpression>
-			</textField>
+		<band height="61" splitType="Prevent">
+			<subreport>
+				<reportElement x="10" y="4" width="529" height="56" uuid="39916a99-b21f-4362-b57f-6514d8abdcc9"/>
+				<subreportParameter name="estimationCharges">
+					<subreportParameterExpression><![CDATA[$P{estimationCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="donationCharges">
+					<subreportParameterExpression><![CDATA[$P{donationCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="sewerageCharges">
+					<subreportParameterExpression><![CDATA[$P{sewerageCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="totalCharges">
+					<subreportParameterExpression><![CDATA[$P{totalCharges}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="estimationNumber">
+					<subreportParameterExpression><![CDATA[$P{estimationNumber}]]></subreportParameterExpression>
+				</subreportParameter>
+				<subreportParameter name="amountInWords">
+					<subreportParameterExpression><![CDATA[$P{amountInWords}]]></subreportParameterExpression>
+				</subreportParameter>
+				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{estimationDetails}, false)]]></dataSourceExpression>
+				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("sewerageEstimationNotice_subreport.jasper")]]></subreportExpression>
+			</subreport>
 		</band>
 	</detail>
-	<columnFooter>
-		<band height="212" splitType="Stretch">
-			<printWhenExpression><![CDATA[$V{PAGE_NUMBER} == 1]]></printWhenExpression>
-			<staticText>
-				<reportElement x="160" y="120" width="202" height="19" uuid="229fd247-6a1b-431c-80dc-f2950bd40786"/>
-				<textElement textAlignment="Justified">
-					<font size="12"/>
-				</textElement>
-				<text><![CDATA[                      "Approved"]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="170" width="165" height="20" uuid="9f22ed8b-f828-45d8-b740-e2df2eb22cba"/>
-				<text><![CDATA[Assistant Engineer]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="220" y="170" width="100" height="20" uuid="7e100aaa-b2b9-411b-8034-e4ccf1dde1f1"/>
-				<text><![CDATA[Dy.E.E]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="430" y="170" width="100" height="20" uuid="8970c00b-b51f-43d3-b3e6-b193d4335979"/>
-				<text><![CDATA[E.E.]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="477" y="44" width="6" height="9" uuid="4008a9f1-8cbc-4536-9469-49c58ce7cdfa"/>
-				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="40" y="10" width="227" height="20" uuid="d28e9a8b-f671-4b2b-a71a-86b71972d401"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Estimation Charge]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="30" width="30" height="20" uuid="84c7e644-a2a1-431f-b4c6-4992033d7db8"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="70" width="30" height="20" uuid="091b1006-3cfd-41c5-acb7-4072b88984ea"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="90" width="30" height="20" uuid="a3970bbd-aec0-4ce8-9138-1ad6a9a9cc9d"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="40" y="70" width="227" height="20" uuid="bba46095-9487-4a6a-8004-dc2b6874018c"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Grand Total]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="40" y="30" width="227" height="20" uuid="bbc72a1b-1eb3-41f5-8f9a-a2e403acc12c"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Donation Charge]]></text>
-			</staticText>
-			<textField pattern="###0.00">
-				<reportElement x="267" y="70" width="277" height="20" uuid="41d97451-217a-4511-a87f-e66e90dd9408"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{totalCharges}]]></textFieldExpression>
-			</textField>
-			<textField pattern="###0.00">
-				<reportElement x="267" y="30" width="277" height="20" uuid="542dde64-1c1c-44c6-b46a-778637edabf0"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{donationCharges}]]></textFieldExpression>
-			</textField>
-			<textField pattern="###0.00">
-				<reportElement x="267" y="10" width="277" height="20" uuid="6473d3cb-b9f2-44a6-a102-39b702d7d7bd"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{estimationCharges}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="10" y="10" width="30" height="20" uuid="a223cfff-bc7f-409a-954f-3424936cf39b"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<textField>
-				<reportElement x="40" y="90" width="504" height="20" uuid="79b15c63-44ca-4108-b5d9-11af09553079"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textFieldExpression><![CDATA[$P{amountInWords}]]></textFieldExpression>
-			</textField>
-			<staticText>
-				<reportElement x="40" y="50" width="227" height="20" uuid="9f2be374-80b7-4b56-ab7d-ed9626b6198d"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Left" verticalAlignment="Middle"/>
-				<text><![CDATA[Sewerage Tax]]></text>
-			</staticText>
-			<staticText>
-				<reportElement x="10" y="50" width="30" height="20" uuid="6bbd80a5-53cf-444f-bfbe-1080fcce25be"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<text><![CDATA[]]></text>
-			</staticText>
-			<textField pattern="###0.00">
-				<reportElement x="267" y="50" width="277" height="20" uuid="76f5f49a-2183-48dc-bcb1-494412f70403"/>
-				<box padding="1">
-					<pen lineWidth="1.0"/>
-				</box>
-				<textElement textAlignment="Right" verticalAlignment="Middle"/>
-				<textFieldExpression><![CDATA[$P{sewerageCharges}]]></textFieldExpression>
-			</textField>
-		</band>
-	</columnFooter>
 	<summary>
-		<band height="189">
+		<band height="189" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
 			<subreport>
-				<reportElement x="10" y="0" width="535" height="120" uuid="ccd9465e-3883-4428-b16b-7fb9f5327db5"/>
+				<reportElement x="10" y="30" width="535" height="120" uuid="ccd9465e-3883-4428-b16b-7fb9f5327db5"/>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{inspectionDetails}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("sewerageFieldInspectionDetails.jasper")]]></subreportExpression>
 			</subreport>
