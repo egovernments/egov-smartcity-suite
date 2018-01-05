@@ -82,7 +82,6 @@ import org.egov.demand.model.EgDemandDetails;
 import org.egov.demand.model.EgDemandReason;
 import org.egov.infra.admin.master.service.ModuleService;
 import org.egov.infra.config.core.ApplicationThreadLocals;
-import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.exception.ApplicationRuntimeException;
 import org.egov.infra.utils.DateUtils;
 import org.egov.infra.utils.autonumber.AutonumberServiceBeanResolver;
@@ -329,7 +328,6 @@ public class ConnectionDemandService {
     }
 
     @SuppressWarnings("unchecked")
-    @ReadOnly
     public List<Object> getDmdCollAmtInstallmentWise(final EgDemand egDemand) {
         final StringBuilder queryBuilder = new StringBuilder(600);
         queryBuilder
@@ -343,7 +341,6 @@ public class ConnectionDemandService {
     }
 
     @SuppressWarnings("unchecked")
-    @ReadOnly
     public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentInstallmemt(final EgDemand egDemand,
             final WaterConnectionDetails waterConnectionDetails) {
         Installment currInstallment;
@@ -368,7 +365,6 @@ public class ConnectionDemandService {
     }
 
     @SuppressWarnings("unchecked")
-    @ReadOnly
     public List<Object> getDmdCollAmtInstallmentWiseUptoCurrentFinYear(final EgDemand egDemand) {
         final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
 
@@ -739,7 +735,6 @@ public class ConnectionDemandService {
     }
 
     @SuppressWarnings("unchecked")
-    @ReadOnly
     public List<Object> getDmdCollAmtInstallmentWiseWithIsDmdTrue(final EgDemand egDemand) {
         final StringBuilder stringBuilder = new StringBuilder(2000);
         stringBuilder.append(
@@ -773,7 +768,6 @@ public class ConnectionDemandService {
     }
 
     @SuppressWarnings("unchecked")
-    @ReadOnly
     public List<Object> getDmdCollAmtInstallmentWiseUptoPreviousFinYear(final EgDemand egDemand) {
         final CFinancialYear financialyear = financialYearDAO.getFinancialYearByDate(new Date());
 
