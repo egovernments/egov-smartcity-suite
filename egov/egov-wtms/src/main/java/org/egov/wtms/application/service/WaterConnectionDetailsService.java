@@ -75,7 +75,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.APPROVEWORKFLOWACT
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.ASSISTANT_EXECUTIVE_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CHANGEOFUSE;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.CITIZENPORTAL;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CLOSINGCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.COMMISSIONER_DESGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.CONNECTIONTYPE_METERED;
@@ -94,7 +93,6 @@ import static org.egov.wtms.utils.constants.WaterTaxConstants.NON_METERED_CODE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.RECONNECTIONCONNECTION;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNED_DOCUMENT_PREFIX;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SIGNWORKFLOWACTION;
-import static org.egov.wtms.utils.constants.WaterTaxConstants.SOURCECHANNEL_ONLINE;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SUPERIENTEND_ENGINEER_DESIGN;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.SYSTEM;
 import static org.egov.wtms.utils.constants.WaterTaxConstants.TAP_INSPPECTOR_DESIGN;
@@ -131,6 +129,7 @@ import javax.validation.ValidationException;
 
 import org.egov.commons.EgModules;
 import org.egov.commons.Installment;
+import org.egov.commons.dao.FinancialYearDAO;
 import org.egov.commons.entity.Source;
 import org.egov.demand.model.EgDemand;
 import org.egov.eis.entity.Assignment;
@@ -304,6 +303,9 @@ public class WaterConnectionDetailsService {
 
     @Autowired
     private MeterCostService meterCostService;
+
+    @Autowired
+    private FinancialYearDAO financialYearDAO;
 
     @Autowired
     public WaterConnectionDetailsService(final WaterConnectionDetailsRepository waterConnectionDetailsRepository) {
@@ -562,10 +564,14 @@ public class WaterConnectionDetailsService {
                     final Installment nonMeterCurrentInstallment = connectionDemandService.getCurrentInstallment(
                             WATER_RATES_NONMETERED_PTMODULE, null,
                             waterConnectionDetails.getReconnectionApprovalDate());
-                    final Calendar cal = Calendar.getInstance();
-                    cal.setTime(nonMeterCurrentInstallment.getToDate());
-                    cal.add(Calendar.DATE, 1);
-                    final Date newDateForNextInstall = cal.getTime();
+                    Date newDateForNextInstall = null;
+                    if (DateUtils.noOfMonthsBetween(waterConnectionDetails.getReconnectionApprovalDate(),
+                            financialYearDAO.getFinancialYearByDate(new Date()).getEndingDate()) >= 6)
+                        newDateForNextInstall = DateUtils
+                                .addDays(nonMeterCurrentInstallment.getToDate(), 1);
+                    else
+                        newDateForNextInstall = waterConnectionDetails.getReconnectionApprovalDate();
+
                     nonMeterReconnInstallment = connectionDemandService.getCurrentInstallment(
                             WATER_RATES_NONMETERED_PTMODULE, null, newDateForNextInstall);
                     reconnInSameInstallment = Boolean.TRUE;
@@ -1063,10 +1069,8 @@ public class WaterConnectionDetailsService {
                     if (waterTaxUtils.isCSCoperator(waterConnectionDetails.getCreatedBy())
                             && UserType.BUSINESS.equals(waterConnectionDetails.getCreatedBy().getType()))
                         channel = Source.CSC.toString();
-                    else if (sourceChannel != null && SOURCECHANNEL_ONLINE.equalsIgnoreCase(sourceChannel))
-                        channel = SOURCECHANNEL_ONLINE;
-                    else if (sourceChannel != null && CITIZENPORTAL.equalsIgnoreCase(sourceChannel))
-                        channel = CITIZENPORTAL;
+                    else if (sourceChannel != null)
+                        channel = sourceChannel;
                     else
                         channel = SYSTEM;
                 } else

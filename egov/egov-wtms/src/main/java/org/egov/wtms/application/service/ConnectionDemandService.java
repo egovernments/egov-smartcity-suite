@@ -670,42 +670,43 @@ public class ConnectionDemandService {
         final EgDemand currentDemand = waterTaxUtils.getCurrentDemand(waterConnectionDetails).getDemand();
         final WaterDemandConnection demandConnection = waterDemandConnectionService
                 .findByWaterConnectionDetailsAndDemand(waterConnectionDetails, currentDemand);
-        for (final Installment instlment : installmentList) {
-            for (final EgDemandDetails demandDtls : currentDemand.getEgDemandDetails())
-                if (WATERTAXREASONCODE.equalsIgnoreCase(demandDtls.getEgDemandReason().getEgDemandReasonMaster().getCode()) &&
-                        instlment.getDescription()
-                                .equalsIgnoreCase(demandDtls.getEgDemandReason().getEgInstallmentMaster().getDescription()))
-                    existingDemandDtlObject = demandDtls;
+        for (final Installment instlment : installmentList)
+            if (instlment.getToDate().compareTo(finYear.getEndingDate()) <= 1) {
+                for (final EgDemandDetails demandDtls : currentDemand.getEgDemandDetails())
+                    if (WATERTAXREASONCODE.equalsIgnoreCase(demandDtls.getEgDemandReason().getEgDemandReasonMaster().getCode()) &&
+                            instlment.getDescription()
+                                    .equalsIgnoreCase(demandDtls.getEgDemandReason().getEgInstallmentMaster().getDescription()))
+                        existingDemandDtlObject = demandDtls;
 
-            final Integer noofmonths = DateUtils.noOfMonthsBetween(installemntStartDate, instlment.getToDate());
-            if (existingDemandDtlObject == null) {
-                if (null != waterRatesDetails) {
-                    if (noofmonths > 0)
-                        totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
-                    else
-                        totalWaterRate = waterRatesDetails.getMonthlyRate();
+                final Integer noofmonths = DateUtils.noOfMonthsBetween(installemntStartDate, instlment.getToDate());
+                if (existingDemandDtlObject == null) {
+                    if (waterRatesDetails == null)
+                        throw new ValidationException("err.water.rate.not.found");
+                    else {
+                        if (noofmonths > 0)
+                            totalWaterRate = waterRatesDetails.getMonthlyRate() * (noofmonths + 1);
+                        else
+                            totalWaterRate = waterRatesDetails.getMonthlyRate();
 
-                    demandDetails = createDemandDetails(totalWaterRate,
-                            WATERTAXREASONCODE, instlment);
+                        demandDetails = createDemandDetails(totalWaterRate,
+                                WATERTAXREASONCODE, instlment);
 
-                    currentDemand.setBaseDemand(currentDemand.getBaseDemand().add(BigDecimal.valueOf(totalWaterRate)));
-                    currentDemand.setEgInstallmentMaster(instlment);
-                    currentDemand.getEgDemandDetails().add(demandDetails);
-                    currentDemand.setModifiedDate(new Date());
-                    if (currentDemand.getId() != null && demandConnection == null) {
-                        final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
-                        waterdemandConnection.setDemand(currentDemand);
-                        waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
-                        waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
-                        waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
+                        currentDemand.setBaseDemand(currentDemand.getBaseDemand().add(BigDecimal.valueOf(totalWaterRate)));
+                        currentDemand.setEgInstallmentMaster(instlment);
+                        currentDemand.getEgDemandDetails().add(demandDetails);
+                        currentDemand.setModifiedDate(new Date());
+                        if (currentDemand.getId() != null && demandConnection == null) {
+                            final WaterDemandConnection waterdemandConnection = new WaterDemandConnection();
+                            waterdemandConnection.setDemand(currentDemand);
+                            waterdemandConnection.setWaterConnectionDetails(waterConnectionDetails);
+                            waterConnectionDetails.addWaterDemandConnection(waterdemandConnection);
+                            waterDemandConnectionService.createWaterDemandConnection(waterdemandConnection);
+                        }
                     }
-                } else
-                    throw new ValidationException("err.water.rate.not.found");
+                    installemntStartDate = new DateTime(instlment.getToDate()).plusDays(1).toDate();
+                }
 
-                installemntStartDate = new DateTime(instlment.getToDate()).plusDays(1).toDate();
             }
-
-        }
         return waterConnectionDetails;
     }
 
