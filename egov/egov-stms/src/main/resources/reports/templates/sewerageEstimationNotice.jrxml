@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2018-01-05T12:38:08 -->
+<!-- 2018-01-08T12:24:37 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="sewerageEstimationNotice" pageWidth="595" pageHeight="842" whenNoDataType="AllSectionsNoDetail" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" isFloatColumnFooter="true" uuid="cee583e3-a0f8-4d29-92e7-b2c0afa5f324">
 	<property name="ireport.zoom" value="1.0"/>
 	<property name="ireport.x" value="0"/>
@@ -188,9 +188,9 @@
 		</band>
 	</title>
 	<detail>
-		<band height="61" splitType="Prevent">
+		<band height="67" splitType="Stretch">
 			<subreport>
-				<reportElement x="10" y="4" width="529" height="56" uuid="39916a99-b21f-4362-b57f-6514d8abdcc9"/>
+				<reportElement positionType="Float" x="10" y="8" width="529" height="56" isRemoveLineWhenBlank="true" uuid="3574ac62-75cb-44fb-b1f9-3941f4978b59"/>
 				<subreportParameter name="estimationCharges">
 					<subreportParameterExpression><![CDATA[$P{estimationCharges}]]></subreportParameterExpression>
 				</subreportParameter>
@@ -213,12 +213,39 @@
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("sewerageEstimationNotice_subreport.jasper")]]></subreportExpression>
 			</subreport>
 		</band>
+		<band height="79">
+			<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==true]]></printWhenExpression>
+			<staticText>
+				<reportElement positionType="Float" x="160" y="10" width="202" height="19" uuid="a5aeaad2-7b13-4fd1-8c1c-8a58ccc6cd35"/>
+				<textElement textAlignment="Justified">
+					<font size="12"/>
+				</textElement>
+				<text><![CDATA[                      "Approved"]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="0" y="50" width="165" height="20" uuid="22921cc3-b2f8-4a28-ad2b-101eb835f900"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Assistant Engineer]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="220" y="50" width="100" height="20" uuid="54bf44e4-3cc2-458b-9603-3d920f9cf197"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[Dy.E.E]]></text>
+			</staticText>
+			<staticText>
+				<reportElement positionType="Float" x="410" y="50" width="100" height="20" uuid="aa45ff86-ed41-4550-84e7-57b5358fa4e4"/>
+				<textElement textAlignment="Center" verticalAlignment="Middle"/>
+				<text><![CDATA[E.E.]]></text>
+			</staticText>
+		</band>
 	</detail>
 	<summary>
-		<band height="189" splitType="Stretch">
+		<band height="54" splitType="Stretch">
 			<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
 			<subreport>
-				<reportElement x="10" y="30" width="535" height="120" uuid="ccd9465e-3883-4428-b16b-7fb9f5327db5"/>
+				<reportElement stretchType="RelativeToBandHeight" x="10" y="0" width="535" height="54" isRemoveLineWhenBlank="true" uuid="59b0b226-ad86-4f42-a2eb-a51ac482b600">
+					<printWhenExpression><![CDATA[$P{inspectionDetails}.isEmpty()==false]]></printWhenExpression>
+				</reportElement>
 				<dataSourceExpression><![CDATA[new net.sf.jasperreports.engine.data.JRBeanCollectionDataSource($P{inspectionDetails}, false)]]></dataSourceExpression>
 				<subreportExpression><![CDATA[ReportUtil.getTemplateAsStream("sewerageFieldInspectionDetails.jasper")]]></subreportExpression>
 			</subreport>

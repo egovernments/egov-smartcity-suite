@@ -47,7 +47,7 @@
   ~
   -->
 <!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
-<!-- 2018-01-05T09:31:39 -->
+<!-- 2018-01-08T11:52:09 -->
 <jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="remittance_statement_report" language="groovy" pageWidth="842" pageHeight="595" orientation="Landscape" columnWidth="822" leftMargin="10" rightMargin="10" topMargin="20" bottomMargin="20" uuid="66091296-e2fe-4748-baa1-34b0b8cbb97b">
 	<property name="com.jaspersoft.studio.data.defaultdataadapter" value="One Empty Record"/>
 	<property name="com.jaspersoft.studio.unit." value="pixel"/>
@@ -84,26 +84,7 @@
 	<group name="sewerageestimationgroup">
 		<groupExpression><![CDATA[]]></groupExpression>
 		<groupFooter>
-			<band height="190">
-				<staticText>
-					<reportElement x="143" y="120" width="202" height="19" uuid="71c0dc64-db9f-428d-90ce-87dccecb0a95"/>
-					<textElement textAlignment="Justified">
-						<font size="12"/>
-					</textElement>
-					<text><![CDATA[                      "Approved"]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="-7" y="170" width="165" height="20" uuid="5c092cfa-c0e5-41be-8e3d-f29a17e69d9c"/>
-					<text><![CDATA[Assistant Engineer]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="203" y="170" width="100" height="20" uuid="277a972a-e1be-4e66-b619-8d77f7fb9df0"/>
-					<text><![CDATA[Dy.E.E]]></text>
-				</staticText>
-				<staticText>
-					<reportElement x="413" y="170" width="100" height="20" uuid="65d76e69-1cc5-488d-be69-08c06f2de5c3"/>
-					<text><![CDATA[E.E.]]></text>
-				</staticText>
+			<band height="104">
 				<textField>
 					<reportElement x="460" y="34" width="6" height="9" uuid="c91e4eec-8b0e-42a4-b418-21bb287def40"/>
 					<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
@@ -330,7 +311,7 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Center" verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unitOfMeasurement}.getUom()]]></textFieldExpression>
@@ -344,7 +325,7 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{unitRate}]]></textFieldExpression>
@@ -358,7 +339,7 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
+				<textElement textAlignment="Right" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$V{total}]]></textFieldExpression>
@@ -372,7 +353,7 @@
 					<bottomPen lineWidth="1.0"/>
 					<rightPen lineWidth="1.0"/>
 				</box>
-				<textElement textAlignment="Right" verticalAlignment="Bottom">
+				<textElement textAlignment="Center" verticalAlignment="Middle">
 					<font fontName="SansSerif" size="10"/>
 				</textElement>
 				<textFieldExpression><![CDATA[$F{quantity}]]></textFieldExpression>
