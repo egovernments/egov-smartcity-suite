@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -55,7 +55,6 @@ import org.egov.infra.admin.master.service.BoundaryService;
 import org.egov.infra.config.persistence.datasource.routing.annotation.ReadOnly;
 import org.egov.infra.security.utils.SecurityUtils;
 import org.egov.infra.utils.ApplicationNumberGenerator;
-import org.egov.infra.web.support.search.DataTableSearchRequest;
 import org.egov.infra.workflow.entity.StateHistory;
 import org.egov.pgr.elasticsearch.service.ComplaintIndexService;
 import org.egov.pgr.entity.Complaint;
@@ -69,7 +68,6 @@ import org.hibernate.criterion.Restrictions;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,18 +85,7 @@ import java.util.Map;
 
 import static org.apache.commons.lang.StringUtils.isBlank;
 import static org.egov.infra.config.core.ApplicationThreadLocals.getUserId;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_FILED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_RESOLVED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINTS_UNRESOLVED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_ALL;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_COMPLETED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_PENDING;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REGISTERED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REJECTED;
-import static org.egov.pgr.utils.constants.PGRConstants.COMPLETED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.PENDING_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.REJECTED_STATUS;
-import static org.egov.pgr.utils.constants.PGRConstants.RESOLVED_STATUS;
+import static org.egov.pgr.utils.constants.PGRConstants.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -311,9 +298,4 @@ public class ComplaintService {
         return complaintList;
     }
 
-    @ReadOnly
-    public Page<Complaint> getComplaints(Specification<Complaint> spec, DataTableSearchRequest searchRequest) {
-        return complaintRepository.findAll(spec,
-                new PageRequest(searchRequest.pageNumber(), searchRequest.pageSize()));
-    }
 }

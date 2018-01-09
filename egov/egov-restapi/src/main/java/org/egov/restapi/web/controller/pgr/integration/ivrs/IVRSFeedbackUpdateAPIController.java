@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,33 +46,54 @@
  *
  */
 
-package org.egov.pgr.service;
+package org.egov.restapi.web.controller.pgr.integration.ivrs;
 
-import org.egov.pgr.entity.FeedbackReason;
-import org.egov.pgr.repository.FeedbackReasonRepository;
+import org.egov.pgr.integration.ivrs.entiry.contract.IVRSFeedbackUpdateRequest;
+import org.egov.pgr.integration.ivrs.entiry.contract.IVRSFeedbackUpdateResponse;
+import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.List;
+import java.util.stream.Collectors;
 
-@Service
-@Transactional(readOnly = true)
-public class FeedbackReasonService {
+@RestController
+public class IVRSFeedbackUpdateAPIController {
 
     @Autowired
-    private FeedbackReasonRepository feedbackReasonRepository;
+    private IVRSFeedbackService ivrsFeedbackService;
 
-    @Transactional
-    public FeedbackReason createFeedbackReason(FeedbackReason feedbackReason) {
-        return feedbackReasonRepository.save(feedbackReason);
+    @Autowired
+    private IVRSFeedbackUpdateAPIValidator ivrsFeedbackUpdateAPIValidator;
+
+    @PostMapping("complaint/ivrs/feedback/update")
+    public IVRSFeedbackUpdateResponse updateComplaint(@Valid @RequestBody IVRSFeedbackUpdateRequest updateRequest,
+                                                      BindingResult binding) {
+        ivrsFeedbackUpdateAPIValidator.validate(updateRequest, binding);
+        if (binding.hasErrors()) {
+            List<String> complaintResponse = binding.getFieldErrors()
+                    .stream()
+                    .map(FieldError::getDefaultMessage)
+                    .collect(Collectors.toList());
+            return new IVRSFeedbackUpdateResponse(false, updateRequest.getCrn(), HttpStatus.BAD_REQUEST.toString(),
+                    complaintResponse.toString());
+        } else {
+            return new IVRSFeedbackUpdateResponse(true, ivrsFeedbackService.createFeedback(updateRequest).getComplaint().getCrn(),
+                    HttpStatus.OK.toString(), "Complaint Feedback Rating Updated Successfully");
+        }
     }
 
-    public List<FeedbackReason> getAllFeedbackReason() {
-        return feedbackReasonRepository.findAll();
-    }
-
-    public String nextFeedbackReasonCode() {
-        return String.format("%05d", feedbackReasonRepository.findTopByOrderByIdDesc().getId() + 1);
+    @ExceptionHandler(Exception.class)
+    public ResponseEntity<Object> restErrors() {
+        return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(new IVRSFeedbackUpdateResponse(false, HttpStatus.INTERNAL_SERVER_ERROR.toString(), "Server Error"));
     }
 }

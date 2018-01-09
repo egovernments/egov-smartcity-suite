@@ -54,37 +54,41 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonSerializationContext;
 import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
 import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.enums.CitizenFeedback;
-import org.egov.pgr.report.entity.view.DrilldownReportView;
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedback;
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReview;
+import org.egov.pgr.integration.ivrs.repository.IVRSFeedbackReviewRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import java.lang.reflect.Type;
 import java.util.List;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
 import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
 
-public class DrilldownAdaptor implements DataTableJsonAdapter<DrilldownReportView> {
+@Component
+public class IVRSFeedbackSearchResponseAdaptor implements DataTableJsonAdapter<IVRSFeedback> {
 
-    @Override
-    public JsonElement serialize(final DataTable<DrilldownReportView> reportResponse, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final List<DrilldownReportView> functionarywiseResult = reportResponse.getData();
-        final JsonArray drilldownReportData = new JsonArray();
-        functionarywiseResult.forEach(reportObject -> {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("crn", reportObject.getCrn());
-            jsonObject.addProperty("createddate", toDefaultDateTimeFormat(reportObject.getCreatedDate()));
-            jsonObject.addProperty("complainantname", defaultIfBlank(reportObject.getComplainantName()));
-            jsonObject.addProperty("details", defaultIfBlank(reportObject.getComplaintDetail()));
-            jsonObject.addProperty("boundaryname", defaultIfBlank(reportObject.getBoundaryName()));
-            jsonObject.addProperty("status", reportObject.getStatus());
-            jsonObject.addProperty("complaintId", reportObject.getComplainantId());
-            jsonObject.addProperty("feedback", reportObject.getFeedback() != null
-                    ? CitizenFeedback.value(reportObject.getFeedback()).toString() : NA);
-            jsonObject.addProperty("issla", defaultIfBlank(reportObject.getIsSLA()));
-            drilldownReportData.add(jsonObject);
+    @Autowired
+    private IVRSFeedbackReviewRepository ivrsFeedbackReviewRepository;
+
+    public JsonElement serialize(DataTable<IVRSFeedback> searchResponse, Type type,
+                                 JsonSerializationContext jsc) {
+        List<IVRSFeedback> searchResult = searchResponse.getData();
+        JsonArray searchFormData = new JsonArray();
+        searchResult.forEach(searchObject -> {
+            JsonObject jsonObject = new JsonObject();
+            jsonObject.addProperty("crn", searchObject.getComplaint().getCrn());
+            jsonObject.addProperty("grievanceType", searchObject.getComplaint().getComplaintType().getName());
+            jsonObject.addProperty("owner", searchObject.getComplaint().getComplainant().getName());
+            jsonObject.addProperty("location", searchObject.getComplaint().getLocation().getName());
+            jsonObject.addProperty("status", searchObject.getComplaint().getStatus().getName());
+            if (searchObject.getComplaint().getDepartment() != null)
+                jsonObject.addProperty("department", searchObject.getComplaint().getDepartment().getName());
+            jsonObject.addProperty("date", toDefaultDateTimeFormat(searchObject.getCreatedDate()));
+            IVRSFeedbackReview ivrsFeedbackReview = ivrsFeedbackReviewRepository.findByComplaintCrn(searchObject.getComplaint().getCrn());
+            jsonObject.addProperty("reviewCount", ivrsFeedbackReview != null ? ivrsFeedbackReview.getReviewCount() : 0);
+            searchFormData.add(jsonObject);
         });
-        return enhance(drilldownReportData, reportResponse);
+        return enhance(searchFormData, searchResponse);
     }
 }

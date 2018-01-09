@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,71 +46,88 @@
  *
  */
 
-package org.egov.pgr.entity.contract;
+package org.egov.pgr.integration.ivrs.entiry;
 
-import org.egov.infra.web.support.search.DataTableSearchRequest;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import java.util.Date;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
-public class QualityReviewSearchRequest extends DataTableSearchRequest {
+import static org.egov.pgr.integration.ivrs.entiry.IVRSRating.SEQ_IVRS_RATING;
 
-    private String crn;
+@Entity
+@Table(name = "EGPGR_IVRS_RATING")
+@SequenceGenerator(name = SEQ_IVRS_RATING, sequenceName = SEQ_IVRS_RATING, allocationSize = 1)
+@Unique(fields = "name", enableDfltMsg = true)
+public class IVRSRating extends AbstractPersistable<Long> {
 
-    private Long complaintId;
+    protected static final String SEQ_IVRS_RATING = "SEQ_EGPGR_IVRS_RATING";
+    private static final long serialVersionUID = 5284597197319506583L;
 
-    private Date fromDate;
+    @Id
+    @GeneratedValue(generator = SEQ_IVRS_RATING, strategy = GenerationType.SEQUENCE)
+    private Long id;
 
-    private Date toDate;
+    @SafeHtml
+    @Length(min = 1, max = 64)
+    private String name;
 
-    private Long locationId;
+    @NotNull
+    private Integer weight;
 
-    private Long childLocationId;
+    @SafeHtml
+    @Length(max = 100)
+    private String discription;
 
-    public String getCrn() {
-        return crn;
+    private boolean requiredReview;
+
+    @Override
+    public Long getId() {
+        return this.id;
     }
 
-    public void setCrn(String crn) {
-        this.crn = crn;
+    @Override
+    protected void setId(final Long id) {
+        this.id = id;
     }
 
-    public Long getComplaintId() {
-        return complaintId;
+    public String getName() {
+        return name;
     }
 
-    public void setComplaintId(Long complaintId) {
-        this.complaintId = complaintId;
+    public void setName(String name) {
+        this.name = name;
     }
 
-    public Date getFromDate() {
-        return fromDate;
+    public Integer getWeight() {
+        return weight;
     }
 
-    public void setFromDate(Date fromDate) {
-        this.fromDate = fromDate;
+    public void setWeight(Integer weight) {
+        this.weight = weight;
     }
 
-    public Date getToDate() {
-        return toDate;
+    public String getDiscription() {
+        return discription;
     }
 
-    public void setToDate(Date toDate) {
-        this.toDate = toDate;
+    public void setDiscription(String discription) {
+        this.discription = discription;
     }
 
-    public Long getLocationId() {
-        return locationId;
+    public boolean isRequiredReview() {
+        return requiredReview;
     }
 
-    public void setLocationId(Long locationId) {
-        this.locationId = locationId;
-    }
-
-    public Long getChildLocationId() {
-        return childLocationId;
-    }
-
-    public void setChildLocationId(Long childLocationId) {
-        this.childLocationId = childLocationId;
+    public void setRequiredReview(boolean requiredReview) {
+        this.requiredReview = requiredReview;
     }
 }

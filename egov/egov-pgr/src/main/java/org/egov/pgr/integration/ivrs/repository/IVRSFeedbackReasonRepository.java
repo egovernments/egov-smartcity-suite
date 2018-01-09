@@ -46,45 +46,14 @@
  *
  */
 
-package org.egov.pgr.report.entity.contract;
+package org.egov.pgr.integration.ivrs.repository;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.enums.CitizenFeedback;
-import org.egov.pgr.report.entity.view.DrilldownReportView;
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReason;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.lang.reflect.Type;
-import java.util.List;
+@Repository
+public interface IVRSFeedbackReasonRepository extends JpaRepository<IVRSFeedbackReason, Long> {
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
-
-public class DrilldownAdaptor implements DataTableJsonAdapter<DrilldownReportView> {
-
-    @Override
-    public JsonElement serialize(final DataTable<DrilldownReportView> reportResponse, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final List<DrilldownReportView> functionarywiseResult = reportResponse.getData();
-        final JsonArray drilldownReportData = new JsonArray();
-        functionarywiseResult.forEach(reportObject -> {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("crn", reportObject.getCrn());
-            jsonObject.addProperty("createddate", toDefaultDateTimeFormat(reportObject.getCreatedDate()));
-            jsonObject.addProperty("complainantname", defaultIfBlank(reportObject.getComplainantName()));
-            jsonObject.addProperty("details", defaultIfBlank(reportObject.getComplaintDetail()));
-            jsonObject.addProperty("boundaryname", defaultIfBlank(reportObject.getBoundaryName()));
-            jsonObject.addProperty("status", reportObject.getStatus());
-            jsonObject.addProperty("complaintId", reportObject.getComplainantId());
-            jsonObject.addProperty("feedback", reportObject.getFeedback() != null
-                    ? CitizenFeedback.value(reportObject.getFeedback()).toString() : NA);
-            jsonObject.addProperty("issla", defaultIfBlank(reportObject.getIsSLA()));
-            drilldownReportData.add(jsonObject);
-        });
-        return enhance(drilldownReportData, reportResponse);
-    }
+    IVRSFeedbackReason findTopByOrderByIdDesc();
 }

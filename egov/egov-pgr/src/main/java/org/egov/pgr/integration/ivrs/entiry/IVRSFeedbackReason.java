@@ -46,45 +46,91 @@
  *
  */
 
-package org.egov.pgr.report.entity.contract;
+package org.egov.pgr.integration.ivrs.entiry;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.enums.CitizenFeedback;
-import org.egov.pgr.report.entity.view.DrilldownReportView;
+import org.egov.infra.persistence.entity.AbstractPersistable;
+import org.egov.infra.persistence.validator.annotation.Unique;
+import org.hibernate.validator.constraints.Length;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import java.lang.reflect.Type;
-import java.util.List;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.SequenceGenerator;
+import javax.persistence.Table;
 
-import static org.egov.infra.utils.ApplicationConstant.NA;
-import static org.egov.infra.utils.DateUtils.toDefaultDateTimeFormat;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
+import static org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReason.SEQ_IVRS_FEEDBACKREASON;
 
-public class DrilldownAdaptor implements DataTableJsonAdapter<DrilldownReportView> {
+@Entity
+@Table(name = "EGPGR_IVRS_FEEDBACK_REASON")
+@SequenceGenerator(name = SEQ_IVRS_FEEDBACKREASON, sequenceName = SEQ_IVRS_FEEDBACKREASON, allocationSize = 1)
+@Unique(fields = {"code", "name"}, enableDfltMsg = true)
+public class IVRSFeedbackReason extends AbstractPersistable<Long> {
+
+    protected static final String SEQ_IVRS_FEEDBACKREASON = "SEQ_EGPGR_IVRS_FEEDBACK_REASON";
+    private static final long serialVersionUID = -2138876792685904697L;
+
+    @Id
+    @GeneratedValue(generator = SEQ_IVRS_FEEDBACKREASON, strategy = GenerationType.SEQUENCE)
+    private Long id;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 128)
+    private String name;
+
+    @NotBlank
+    @SafeHtml
+    @Length(max = 5)
+    private String code;
+
+    @SafeHtml
+    @Length(max = 256)
+    private String description;
+
+    private boolean toBeReopened;
 
     @Override
-    public JsonElement serialize(final DataTable<DrilldownReportView> reportResponse, final Type type,
-                                 final JsonSerializationContext jsc) {
-        final List<DrilldownReportView> functionarywiseResult = reportResponse.getData();
-        final JsonArray drilldownReportData = new JsonArray();
-        functionarywiseResult.forEach(reportObject -> {
-            final JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("crn", reportObject.getCrn());
-            jsonObject.addProperty("createddate", toDefaultDateTimeFormat(reportObject.getCreatedDate()));
-            jsonObject.addProperty("complainantname", defaultIfBlank(reportObject.getComplainantName()));
-            jsonObject.addProperty("details", defaultIfBlank(reportObject.getComplaintDetail()));
-            jsonObject.addProperty("boundaryname", defaultIfBlank(reportObject.getBoundaryName()));
-            jsonObject.addProperty("status", reportObject.getStatus());
-            jsonObject.addProperty("complaintId", reportObject.getComplainantId());
-            jsonObject.addProperty("feedback", reportObject.getFeedback() != null
-                    ? CitizenFeedback.value(reportObject.getFeedback()).toString() : NA);
-            jsonObject.addProperty("issla", defaultIfBlank(reportObject.getIsSLA()));
-            drilldownReportData.add(jsonObject);
-        });
-        return enhance(drilldownReportData, reportResponse);
+    public Long getId() {
+        return this.id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public boolean isToBeReopened() {
+        return toBeReopened;
+    }
+
+    public void setToBeReopened(boolean toBeReopened) {
+        this.toBeReopened = toBeReopened;
     }
 }

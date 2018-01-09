@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,36 +46,15 @@
  *
  */
 
+package org.egov.pgr.integration.ivrs.repository;
 
-$(document).ready(function (e) {
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedback;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
+import org.springframework.stereotype.Repository;
 
-    $("#clsdiv").hide();
-});
+@Repository
+public interface IVRSFeedbackRepository extends JpaRepository<IVRSFeedback, Long>, JpaSpecificationExecutor<IVRSFeedback> {
 
-$('#btnsubmit').click(function (e) {
-    if ($('#searchform').valid()) {
-        if ($("#checkexisting").val()) {
-            bootbox.confirm({
-                message: "Feedback already exist, do you want to override ?",
-                buttons: {
-                    'cancel': {
-                        label: 'No',
-                        className: 'btn-default'
-                    },
-                    'confirm': {
-                        label: 'Yes',
-                        className: 'btn-danger'
-                    }
-                },
-                callback: function (result) {
-                    if (result) {
-                        $("#isexisting").val(true);
-                        $("#searchform").submit();
-                    }
-                }
-            });
-        }
-        else
-            $("#searchform").submit();
-    }
-});
+    IVRSFeedback findByComplaintCrn(String crn);
+}

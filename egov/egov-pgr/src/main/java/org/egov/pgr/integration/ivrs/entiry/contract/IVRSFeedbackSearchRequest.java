@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,81 +46,71 @@
  *
  */
 
-package org.egov.pgr.entity;
+package org.egov.pgr.integration.ivrs.entiry.contract;
 
-import org.egov.infra.persistence.entity.AbstractPersistable;
-import org.egov.infra.persistence.validator.annotation.Unique;
-import org.hibernate.validator.constraints.Length;
-import org.hibernate.validator.constraints.NotBlank;
-import org.hibernate.validator.constraints.SafeHtml;
+import org.egov.infra.web.support.search.DataTableSearchRequest;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
+import java.util.Date;
 
-import static org.egov.pgr.entity.FeedbackReason.SEQ_FEEDBACKREASON;
+public class IVRSFeedbackSearchRequest extends DataTableSearchRequest {
 
-@Entity
-@Table(name = "EGPGR_FEEDBACK_REASON")
-@SequenceGenerator(name = SEQ_FEEDBACKREASON, sequenceName = SEQ_FEEDBACKREASON, allocationSize = 1)
-@Unique(fields = {"code", "name"}, enableDfltMsg = true)
-public class FeedbackReason extends AbstractPersistable<Long> {
+    private String crn;
 
-    public static final String SEQ_FEEDBACKREASON = "SEQ_EGPGR_FEEDBACK_REASON";
-    private static final long serialVersionUID = -2138876792685904697L;
+    private Long complaintId;
 
-    @Id
-    @GeneratedValue(generator = SEQ_FEEDBACKREASON, strategy = GenerationType.SEQUENCE)
-    private Long id;
+    private Date fromDate;
 
-    @NotBlank
-    @SafeHtml
-    @Length(max = 128)
-    private String name;
+    private Date toDate;
 
-    @NotBlank
-    @SafeHtml
-    @Length(max = 5)
-    private String code;
+    private Long locationId;
 
-    @SafeHtml
-    @Length(max = 256)
-    private String description;
+    private Long childLocationId;
 
-    @Override
-    public Long getId() {
-        return this.id;
+    public String getCrn() {
+        return crn;
     }
 
-    @Override
-    public void setId(Long id) {
-        this.id = id;
+    public void setCrn(String crn) {
+        this.crn = crn;
     }
 
-    public String getName() {
-        return name;
+    public Long getComplaintId() {
+        return complaintId;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public void setComplaintId(Long complaintId) {
+        this.complaintId = complaintId;
     }
 
-    public String getCode() {
-        return code;
+    public Date getFromDate() {
+        return fromDate;
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public void setFromDate(Date fromDate) {
+        this.fromDate = fromDate;
     }
 
-    public String getDescription() {
-        return description;
+    public Date getToDate() {
+        return toDate;
     }
 
-    public void setDescription(String description) {
-        this.description = description;
+    public void setToDate(Date toDate) {
+        this.toDate = toDate;
+    }
+
+    public Long getLocationId() {
+        return locationId;
+    }
+
+    public void setLocationId(Long locationId) {
+        this.locationId = locationId;
+    }
+
+    public Long getChildLocationId() {
+        return childLocationId;
+    }
+
+    public void setChildLocationId(Long childLocationId) {
+        this.childLocationId = childLocationId;
     }
 }

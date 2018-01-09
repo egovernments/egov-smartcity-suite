@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -54,11 +54,18 @@
 
 <div class="row">
     <div class="col-md-12">
-        <c:if test="${not empty message}">
-            <div class="alert alert-warning" role="alert"><spring:message code="${message}"/></div>
+        <c:if test="${not empty successMessage}">
+            <div class="panel panel-primary" data-collapsed="0">
+            <div class="alert alert-info view-content" role="alert"><spring:message code="${successMessage}" arguments="${complaint.crn}"/></div>
+            <div class="text-center">
+                <button type="button" class="btn btn-default" data-dismiss="modal" onclick="window.close();">
+                    <spring:message code="lbl.close"/>
+                </button>
+            </div>
+            </div>
         </c:if>
         <form:form class="form-horizontal form-groups-bordered" action=""
-                   id="searchform" modelAttribute="qualityReview" method="post">
+                   id="searchform" modelAttribute="ivrsFeedbackReview" method="post">
             <%@  include file='/WEB-INF/views/complaint/view-complaint.jsp' %>
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
@@ -76,16 +83,16 @@
                                     <label>
                                         <input type="radio" name="feedbackReason" id="feedbackReason"
                                                value="${feedback.id}"
-                                                <c:if test="${feedback eq qualityReview.feedbackReason}"> checked="checked" </c:if>/>
+                                                <c:if test="${feedback eq ivrsFeedbackReview.feedbackReason}"> checked="checked" </c:if>/>
                                             ${feedback.name}
                                     </label>
                                 </div>
                             </c:forEach>
                         </div>
                     </div>
-                    <input type="hidden" id="checkexisting" value="${qualityReview.id}"/>
-                    <form:hidden path="rating" value="${complaint.citizenFeedback}"/>
-                    <form:hidden path="complaint" value="${complaint.id}"/>
+                    <form:hidden path="id" id="checkexisting"/>
+                    <form:hidden path="rating" id="rating" value="${rating.id}"/>
+                    <form:hidden path="complaint" id="complaint" value="${complaint.id}"/>
                     <form:hidden path="existing" id="isexisting"/>
                     <div class="form-group">
                         <label class="col-sm-3 control-label text-right"><spring:message code="lbl.feedBack"/>
@@ -93,7 +100,7 @@
                         </label>
                         <div class="col-sm-6 add-margin" style="margin-bottom: 15px;">
                             <form:textarea path="detail" id="detail" maxlength="250" class="form-control"
-                                           required="required" value="${qualityReview.detail}"/>
+                                           required="required"/>
                             <form:errors path="detail" cssClass="error-msg"/>
                         </div>
                     </div>
@@ -113,4 +120,4 @@
         </form:form>
     </div>
 </div>
-<script src="<cdn:url  value='/resources/js/app/qualityreview.js?rnd=${app_release_no}'/>"></script>
+<script src="<cdn:url  value='/resources/js/app/ivrs-feedbackreview.js?rnd=${app_release_no}'/>"></script>

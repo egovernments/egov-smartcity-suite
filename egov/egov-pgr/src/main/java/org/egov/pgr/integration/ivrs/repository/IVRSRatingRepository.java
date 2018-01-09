@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,49 +46,14 @@
  *
  */
 
-package org.egov.pgr.web.controller.masters.feedback;
+package org.egov.pgr.integration.ivrs.repository;
 
-import org.egov.pgr.entity.FeedbackReason;
-import org.egov.pgr.service.FeedbackReasonService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.egov.pgr.integration.ivrs.entiry.IVRSRating;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import javax.validation.Valid;
+@Repository
+public interface IVRSRatingRepository extends JpaRepository<IVRSRating, Long> {
 
-@Controller
-@RequestMapping("/complaint/feedbackreason/create")
-public class CreateFeedbackReasonController {
-
-    private static final String FEEDBACKREASON = "feedbackreason-create";
-
-    @Autowired
-    private FeedbackReasonService feedbackReasonService;
-
-    @ModelAttribute
-    public FeedbackReason feedbackReason() {
-        return new FeedbackReason();
-    }
-
-    @GetMapping
-    public String showFeedbackReasonForm(Model model) {
-        model.addAttribute("code", feedbackReasonService.nextFeedbackReasonCode());
-        return FEEDBACKREASON;
-    }
-
-    @PostMapping
-    public String createFeedbackReason(@Valid FeedbackReason feedbackReason,
-                                                BindingResult bindingResult, RedirectAttributes responseAttrbs) {
-        if (bindingResult.hasErrors())
-            return FEEDBACKREASON;
-        feedbackReasonService.createFeedbackReason(feedbackReason);
-        responseAttrbs.addFlashAttribute("message", "msg.feedbackreason.success");
-        return "redirect:/complaint/feedbackreason/create";
-    }
+    IVRSRating findByName(String rating);
 }

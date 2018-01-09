@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,49 +46,79 @@
  *
  */
 
-package org.egov.pgr.service;
+package org.egov.pgr.integration.ivrs.service;
 
 import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.entity.QualityReview;
-import org.egov.pgr.entity.contract.QualityReviewSearchRequest;
-import org.egov.pgr.repository.QualityReviewRepository;
-import org.egov.pgr.repository.specs.QualityReviewSearchSpec;
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReview;
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReviewHistory;
+import org.egov.pgr.integration.ivrs.repository.IVRSFeedbackReviewRepository;
+import org.egov.pgr.service.ComplaintService;
+import org.egov.pgr.service.ComplaintStatusService;
+import org.egov.pgr.service.ConfigurationService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.Optional;
+
+import static org.egov.pgr.utils.constants.PGRConstants.COMPLAINT_REOPENED;
 
 @Service
 @Transactional(readOnly = true)
-public class QualityReviewService {
+public class IVRSFeedbackReviewService {
 
     @Autowired
     private ComplaintService complaintService;
 
     @Autowired
-    private QualityReviewRepository qualityReviewRepository;
+    private ComplaintStatusService complaintStatusService;
+
+    @Autowired
+    private ConfigurationService configurationService;
+
+    @Autowired
+    private IVRSFeedbackReviewRepository ivrsFeedbackReviewRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Transactional
-    public void createQualityReview(QualityReview qualityReview) {
-        qualityReview.setFeedbackDate(new Date());
-        qualityReviewRepository.save(qualityReview);
+    public void createFeedbackReview(IVRSFeedbackReview feedbackReview) {
+        if (feedbackReview.getFeedbackReason().isToBeReopened()) {
+            reopenComplaintOnFeedbackReview(feedbackReview);
+            feedbackReview.setReopenCount(1);
+        }
+        feedbackReview.setReviewCount(1);
+        ivrsFeedbackReviewRepository.save(feedbackReview);
     }
 
     @Transactional
-    public void updateQualityReview(QualityReview qualityReview) {
-        qualityReview.setFeedbackDate(new Date());
-        qualityReviewRepository.save(qualityReview);
+    public void updateFeedbackReview(IVRSFeedbackReview feedbackReview) {
+        if (feedbackReview.getFeedbackReason().isToBeReopened()
+                && feedbackReview.getReopenCount() < Long.valueOf(configurationService.getValueByKey("IVRS_REOPEN_COUNT"))) {
+            reopenComplaintOnFeedbackReview(feedbackReview);
+            feedbackReview.setReopenCount(feedbackReview.getReopenCount() + 1);
+        }
+        feedbackReview.setReviewCount(feedbackReview.getReviewCount() + 1);
+        entityManager.detach(feedbackReview);
+        IVRSFeedbackReviewHistory history = new IVRSFeedbackReviewHistory(ivrsFeedbackReviewRepository
+                .findByComplaintCrn(feedbackReview.getComplaint().getCrn()));
+        feedbackReview = entityManager.merge(feedbackReview);
+        feedbackReview.getHistory().add(history);
+        ivrsFeedbackReviewRepository.save(feedbackReview);
     }
 
-    public Optional<QualityReview> getExistingQualityReviewByCRN(String crn) {
+    public void reopenComplaintOnFeedbackReview(IVRSFeedbackReview feedbackReview) {
+        Complaint complaint = feedbackReview.getComplaint();
+        complaint.setStatus(complaintStatusService.getByName(COMPLAINT_REOPENED));
+        complaintService.updateComplaint(complaint);
+    }
+
+    public Optional<IVRSFeedbackReview> getExistingFeedbackReviewByCRN(String crn) {
         return Optional.
-                ofNullable(qualityReviewRepository.findByComplaint(complaintService.getComplaintByCRN(crn)));
+                ofNullable(ivrsFeedbackReviewRepository.findByComplaintCrn(crn));
     }
 
-    public Page<Complaint> getGrievancesForReview(QualityReviewSearchRequest searchRequest) {
-        return complaintService.getComplaints(QualityReviewSearchSpec.search(searchRequest), searchRequest);
-    }
 }

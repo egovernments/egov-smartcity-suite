@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -59,7 +59,7 @@
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
         <form:form class="form-horizontal form-groups-bordered" action=""
-                   id="searchform" modelAttribute="qualityReviewSearchRequest" method="get">
+                   id="searchform" modelAttribute="ivrsFeedbackSearchRequest" method="get">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title"><spring:message code="title.searchrated.grievance"/>
@@ -111,7 +111,7 @@
                         <label class="col-sm-3 control-label text-right">
                             <spring:message code='lbl.routerescaltion.ward'/>
                         </label>
-                        <div class="col-md-3 add-margin" style="margin-bottom:15px;">
+                        <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
                             <form:select path="locationId" id="location"
                                          class="form-control">
                                 <form:option value="">
@@ -125,7 +125,7 @@
                         <label class="col-sm-2 control-label text-right">
                             <spring:message code='lbl.locality'/>
                         </label>
-                        <div class="col-md-3 add-margin" style="margin-bottom:15px;">
+                        <div class="col-sm-3 add-margin" style="margin-bottom:15px;">
                             <form:select path="childLocationId"
                                          id="childLocation" cssClass="form-control">
                                 <form:option value="">
@@ -158,6 +158,7 @@
                     <td></td>
                     <td></td>
                     <td></td>
+                    <td></td>
                 </tr>
                 </tbody>
             </table>
@@ -182,4 +183,4 @@
         src="<cdn:url value='/resources/global/js/jquery/plugins/jquery.inputmask.bundle.min.js' context='/egi'/>"></script>
 <script src="<cdn:url  value='/resources/global/js/bootstrap/bootstrap-datepicker.js' context='/egi'/>"></script>
 <script type="text/javascript"
-        src="<cdn:url value='/resources/js/app/qualityreview-search.js?rnd=${app_release_no}'/>"></script>
+        src="<cdn:url value='/resources/js/app/ivrs-feedbackreview-search.js?rnd=${app_release_no}'/>"></script>

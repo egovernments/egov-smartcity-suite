@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -56,7 +56,7 @@
         <c:if test="${not empty message}">
             <div class="alert alert-success" role="alert"><spring:message code="${message}"/></div>
         </c:if>
-        <form:form method="post" class="form-horizontal form-groups-bordered"	modelAttribute="feedbackReason">
+        <form:form method="post" class="form-horizontal form-groups-bordered"	modelAttribute="ivrsFeedbackReason">
             <div class="panel panel-primary" data-collapsed="0">
                 <div class="panel-heading">
                     <div class="panel-title"><spring:message code="lbl.feedback.reason"/>
@@ -91,6 +91,14 @@
                                            cssClass="form-control is_valid_alphabet"
                                            cssErrorClass="form-control error" maxlength="250"/>
                             <div class="text-left"><small><spring:message code="lbl.max.length" arguments="250"/></small></div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label class="col-sm-3 control-label">
+                            <spring:message code="lbl.reopen.required"/>
+                        </label>
+                        <div class="col-sm-3 add-margin">
+                            <form:checkbox path="toBeReopened" id="toBeReopened" />
                         </div>
                     </div>
                 </div>

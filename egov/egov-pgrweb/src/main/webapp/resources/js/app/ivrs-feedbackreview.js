@@ -26,12 +26,12 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
  *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
  *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
+ *            For any further queries on attribution, including queries on brand guidelines, 
  *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
@@ -46,20 +46,36 @@
  *
  */
 
-package org.egov.pgr.entity.enums;
 
-import org.apache.commons.lang3.StringUtils;
+$(document).ready(function (e) {
 
+    $("#clsdiv").hide();
+});
 
-public enum CitizenFeedback {
-    UNSPECIFIED, ONE, TWO, THREE, FOUR, FIVE;
-
-    public static CitizenFeedback value(Integer ordinal) {
-        return values()[ordinal];
+$('#btnsubmit').click(function (e) {
+    if ($('#searchform').valid()) {
+        if ($("#checkexisting").val()) {
+            bootbox.confirm({
+                message: "Feedback already exist, do you want to update with this ?",
+                buttons: {
+                    'cancel': {
+                        label: 'No',
+                        className: 'btn-default'
+                    },
+                    'confirm': {
+                        label: 'Yes',
+                        className: 'btn-danger'
+                    }
+                },
+                callback: function (result) {
+                    if (result) {
+                        $("#isexisting").val(true);
+                        $("#searchform").submit();
+                    }
+                }
+            });
+        }
+        else
+            $("#searchform").submit();
     }
-
-    @Override
-    public String toString() {
-        return StringUtils.capitalize(name());
-    }
-}
+});

@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,69 +46,14 @@
  *
  */
 
-package org.egov.pgr.web.controller.qualityreview;
+package org.egov.pgr.integration.ivrs.repository;
 
-import org.egov.infra.admin.master.entity.Boundary;
-import org.egov.infra.admin.master.service.BoundaryService;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.ComplaintType;
-import org.egov.pgr.entity.contract.QualityReviewSearchRequest;
-import org.egov.pgr.report.entity.contract.QualityReviewAdaptor;
-import org.egov.pgr.service.ComplaintTypeService;
-import org.egov.pgr.service.QualityReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReview;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
+@Repository
+public interface IVRSFeedbackReviewRepository extends JpaRepository<IVRSFeedbackReview, Long> {
 
-import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
-
-@Controller
-@RequestMapping("/qualityreview/search")
-public class QualityReviewSearchController {
-
-    private static final String QUALITYREVIEWSEARCH = "qualityreview-search";
-
-    @Autowired
-    private ComplaintTypeService complaintTypeService;
-
-    @Autowired
-    private QualityReviewService qualityReviewService;
-
-    @Autowired
-    private QualityReviewAdaptor qualityReviewAdaptor;
-
-    @Autowired
-    private BoundaryService boundaryService;
-
-    @ModelAttribute("complaintType")
-    public List<ComplaintType> categories() {
-        return complaintTypeService.findAll();
-    }
-
-    @ModelAttribute("ward")
-    public List<Boundary> boundary() {
-        return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "Administration");
-    }
-
-    @ModelAttribute
-    public QualityReviewSearchRequest qualityReviewSearchRequest() {
-        return new QualityReviewSearchRequest();
-    }
-
-    @GetMapping
-    public String showQualityReviewSearchForm() {
-        return QUALITYREVIEWSEARCH;
-    }
-
-    @GetMapping(value = "/", produces = TEXT_PLAIN_VALUE)
-    @ResponseBody
-    public String searchGrievanceForQualityReview(QualityReviewSearchRequest qualityReviewSearchRequest) {
-        return new DataTable<>(qualityReviewService.getGrievancesForReview(qualityReviewSearchRequest), qualityReviewSearchRequest.draw())
-                .toJson(qualityReviewAdaptor);
-    }
+    IVRSFeedbackReview findByComplaintCrn(String crn);
 }

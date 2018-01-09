@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,43 +46,49 @@
  *
  */
 
-package org.egov.pgr.repository.specs;
+package org.egov.pgr.web.controller.integration.ivrs.master;
 
-import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.entity.contract.QualityReviewSearchRequest;
-import org.springframework.data.jpa.domain.Specification;
+import org.egov.pgr.integration.ivrs.entiry.IVRSFeedbackReason;
+import org.egov.pgr.integration.ivrs.service.IVRSFeedbackReasonService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.persistence.criteria.Predicate;
+import javax.validation.Valid;
 
-import static org.apache.commons.lang.StringUtils.isNotBlank;
+@Controller
+@RequestMapping("/complaint/ivrs/feedbackreason/create")
+public class CreateIVRSFeedbackReasonController {
 
-public final class QualityReviewSearchSpec {
+    private static final String FEEDBACKREASON = "feedbackreason-create";
 
-    private QualityReviewSearchSpec() {
-        // Due to static method
+    @Autowired
+    private IVRSFeedbackReasonService ivrsFeedbackReasonService;
+
+    @ModelAttribute("ivrsFeedbackReason")
+    public IVRSFeedbackReason ivrsfeedbackReason() {
+        return new IVRSFeedbackReason();
     }
 
-    public static Specification<Complaint> search(
-            QualityReviewSearchRequest qualityReviewSearchRequest) {
-        return (root, query, builder) -> {
-            final Predicate predicate = builder.conjunction();
-            if (qualityReviewSearchRequest.getComplaintId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("complaintType").get("id"),
-                        qualityReviewSearchRequest.getComplaintId()));
-            if (isNotBlank(qualityReviewSearchRequest.getCrn()))
-                predicate.getExpressions().add(builder.equal(root.get("crn"),
-                        qualityReviewSearchRequest.getCrn()));
-            if (qualityReviewSearchRequest.getToDate() != null)
-                predicate.getExpressions().add(builder.lessThanOrEqualTo(root.get("createdDate"), qualityReviewSearchRequest.getToDate()));
-            if (qualityReviewSearchRequest.getFromDate() != null)
-                predicate.getExpressions().add(builder.greaterThanOrEqualTo(root.get("createdDate"), qualityReviewSearchRequest.getFromDate()));
-            if (qualityReviewSearchRequest.getLocationId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("location").get("id"), qualityReviewSearchRequest.getLocationId()));
-            if (qualityReviewSearchRequest.getChildLocationId() != null)
-                predicate.getExpressions().add(builder.equal(root.get("childLocation").get("id"), qualityReviewSearchRequest.getChildLocationId()));
-            predicate.getExpressions().add(builder.or(root.get("citizenFeedback").in(0, 1, 2),
-                    root.get("citizenFeedback").isNull()));
-            return predicate;
-        };
+    @GetMapping
+    public String showFeedbackReasonForm(Model model) {
+        model.addAttribute("code", ivrsFeedbackReasonService.nextFeedbackReasonCode());
+        return FEEDBACKREASON;
+    }
+
+    @PostMapping
+    public String createFeedbackReason(@Valid IVRSFeedbackReason feedbackReason,
+                                       BindingResult bindingResult, RedirectAttributes responseAttrbs) {
+        if (bindingResult.hasErrors())
+            return FEEDBACKREASON;
+        ivrsFeedbackReasonService.createFeedbackReason(feedbackReason);
+        responseAttrbs.addFlashAttribute("message", "msg.feedbackreason.success");
+        return "redirect:/complaint/ivrs/feedbackreason/create";
     }
 }

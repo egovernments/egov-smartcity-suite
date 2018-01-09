@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,50 +46,45 @@
  *
  */
 
-package org.egov.pgr.report.entity.contract;
+package org.egov.pgr.integration.ivrs.entiry.contract;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonSerializationContext;
-import org.egov.infra.web.support.json.adapter.DataTableJsonAdapter;
-import org.egov.infra.web.support.ui.DataTable;
-import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.service.QualityReviewService;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.hibernate.validator.constraints.NotBlank;
+import org.hibernate.validator.constraints.SafeHtml;
 
-import java.lang.reflect.Type;
-import java.util.List;
+public class IVRSFeedbackUpdateRequest {
 
-import static org.egov.infra.utils.DateUtils.getFormattedDate;
-import static org.egov.infra.utils.StringUtils.defaultIfBlank;
-import static org.egov.infra.utils.StringUtils.toYesOrNo;
+    @SafeHtml
+    @NotBlank(message = "ULB code must be present")
+    private String ulbCode;
 
-@Component
-public class QualityReviewAdaptor implements DataTableJsonAdapter<Complaint> {
+    @SafeHtml
+    private String crn;
 
-    @Autowired
-    private QualityReviewService qualityReviewService;
+    @SafeHtml
+    private String rating;
 
-    public JsonElement serialize(DataTable<Complaint> searchResponse, Type type,
-                                 JsonSerializationContext jsc) {
-        List<Complaint> searchResult = searchResponse.getData();
-        JsonArray searchFormData = new JsonArray();
-        searchResult.forEach(searchObject -> {
-            JsonObject jsonObject = new JsonObject();
-            jsonObject.addProperty("crn", defaultIfBlank(searchObject.getCrn()));
-            jsonObject.addProperty("grievanceType", defaultIfBlank(searchObject.getComplaintType().getName()));
-            jsonObject.addProperty("owner", defaultIfBlank(searchObject.getComplainant().getName()));
-            jsonObject.addProperty("location", defaultIfBlank(searchObject.getLocation().getName()));
-            jsonObject.addProperty("status", defaultIfBlank(searchObject.getStatus().getName()));
-            jsonObject.addProperty("department", defaultIfBlank(searchObject.getDepartment().getName()));
-            jsonObject.addProperty("date", getFormattedDate(searchObject.getCreatedDate(), "dd/MM/yyyy hh:mm a").toString());
-            jsonObject.addProperty("reviewed", toYesOrNo(qualityReviewService.getExistingQualityReviewByCRN(searchObject.getCrn()).isPresent()));
-            searchFormData.add(jsonObject);
-        });
-        return enhance(searchFormData, searchResponse);
+    public String getUlbCode() {
+        return ulbCode;
     }
 
+    public void setUlbCode(String ulbCode) {
+        this.ulbCode = ulbCode;
+    }
 
+    public String getCrn() {
+        return crn;
+    }
+
+    public void setCrn(String crn) {
+        this.crn = crn;
+    }
+
+    public String getRating() {
+        return rating;
+    }
+
+    public void setRating(String rating) {
+        this.rating = rating;
+    }
 }
+

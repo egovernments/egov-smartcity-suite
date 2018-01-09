@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,14 +46,44 @@
  *
  */
 
-package org.egov.pgr.repository;
+package org.egov.pgr.integration.ivrs.entiry.contract;
 
-import org.egov.pgr.entity.FeedbackReason;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+public class IVRSFeedbackUpdateResponse {
 
-@Repository
-public interface FeedbackReasonRepository extends JpaRepository<FeedbackReason, Long> {
+    private String crn = "";
 
-    FeedbackReason findTopByOrderByIdDesc();
+    private String status;
+
+    private String message;
+
+    private boolean success;
+
+    public IVRSFeedbackUpdateResponse(boolean success, String status, String message) {
+        this.success = success;
+        this.status = status;
+        this.message = message;
+    }
+
+    public IVRSFeedbackUpdateResponse(boolean success, String crn, String status, String message) {
+        this.success = success;
+        this.crn = crn;
+        this.status = status;
+        this.message = message;
+    }
+
+    public String getCrn() {
+        return crn;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public boolean isSuccess() {
+        return success;
+    }
 }

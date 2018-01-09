@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -26,12 +26,12 @@
  *
  *         1) All versions of this program, verbatim or modified must carry this
  *            Legal Notice.
- *            Further, all user interfaces, including but not limited to citizen facing interfaces,
- *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any
+ *            Further, all user interfaces, including but not limited to citizen facing interfaces, 
+ *            Urban Local Bodies interfaces, dashboards, mobile applications, of the program and any 
  *            derived works should carry eGovernments Foundation logo on the top right corner.
  *
  *            For the logo, please refer http://egovernments.org/html/logo/egov_logo.png.
- *            For any further queries on attribution, including queries on brand guidelines,
+ *            For any further queries on attribution, including queries on brand guidelines, 
  *            please contact contact@egovernments.org
  *
  *         2) Any misrepresentation of the origin of the material is prohibited. It
@@ -92,7 +92,7 @@ function onSubmitEvent(event) {
         "autoWidth": false,
         "bDestroy": true,
         ajax: {
-            url: "/pgr/qualityreview/search/",
+            url: "/pgr/complaint/ivrs/feedbackreview/search/",
             type: 'GET',
             data: function (args) {
                 return {
@@ -102,8 +102,8 @@ function onSubmitEvent(event) {
                     "fromDate": $("#fromDate").val(),
                     "toDate": $("#toDate").val(),
                     "rating": $("#rating").val(),
-                    "locationId":$("#location").val(),
-                    "childLocationId":$("#childLocation").val()
+                    "locationId": $("#location").val(),
+                    "childLocationId": $("#childLocation").val()
                 };
             }
         },
@@ -112,8 +112,9 @@ function onSubmitEvent(event) {
                 "data": "crn",
                 "sTitle": "CRN"
             }, {
-                "data": "reviewed",
-                "sTitle": "Reviewed"
+                "data": "reviewCount",
+                "className": "dt-center",
+                "sTitle": "No. of Reviewes"
             }, {
                 "data": "grievanceType",
                 "sTitle": "Grievance Type"
@@ -132,11 +133,16 @@ function onSubmitEvent(event) {
             }, {
                 "data": "date",
                 "sTitle": "Registration Date"
+            }, {
+                "targets": -1,
+                "data": null,
+                "defaultContent": "<a target='_blank' href='javascript:void(0);' class='rvwbtn btn btn-primary'>Review</a>",
+                "sTitle": " "
             }]
     });
 
-    $('#searchGrievance tbody').on('click', 'tr', function () {
-        var data = table.row(this).data();
-        window.open("/pgr/complaint/qualityreview/" + data.crn);
+    $('#searchGrievance  tbody').on('click', '.rvwbtn', function () {
+        var data = table.row($(this).parents('tr')).data();
+        window.open("/pgr/complaint/ivrs/feedbackreview/" + data.crn, data.crn, '_blank');
     });
 }

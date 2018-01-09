@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,16 +46,40 @@
  *
  */
 
-package org.egov.pgr.repository;
+package org.egov.restapi.web.controller.pgr.integration.ivrs;
 
-import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.entity.QualityReview;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
+import org.egov.pgr.integration.ivrs.entiry.contract.IVRSFeedbackUpdateRequest;
+import org.egov.pgr.integration.ivrs.repository.IVRSRatingRepository;
+import org.egov.pgr.service.ComplaintService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import org.springframework.validation.Errors;
+import org.springframework.validation.Validator;
 
-@Repository
-public interface QualityReviewRepository extends JpaRepository<QualityReview, Long> {
+@Component
+public class IVRSFeedbackUpdateAPIValidator implements Validator {
 
-    QualityReview findByComplaint(Complaint compalint);
+    @Autowired
+    private ComplaintService complaintService;
 
+    @Autowired
+    private IVRSRatingRepository feedbackRatingRepository;
+
+    @Override
+    public boolean supports(Class<?> clazz) {
+        return IVRSFeedbackUpdateRequest.class.equals(clazz);
+    }
+
+    @Override
+    public void validate(Object target, Errors errors) {
+
+        IVRSFeedbackUpdateRequest request = (IVRSFeedbackUpdateRequest) target;
+
+        if (request.getCrn().isEmpty() || complaintService.getComplaintByCRN(request.getCrn()) == null)
+            errors.rejectValue("crn", "Invalid CRN", "Invalid CRN");
+
+        if (request.getRating().isEmpty() || feedbackRatingRepository.findByName(request.getRating()) == null)
+            errors.rejectValue("rating", "Invalid Rating", "Invalid Rating");
+
+    }
 }

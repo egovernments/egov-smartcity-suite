@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -46,79 +46,69 @@
  *
  */
 
-package org.egov.pgr.web.controller.qualityreview;
+package org.egov.pgr.web.controller.integration.ivrs;
 
-import org.egov.pgr.entity.Complaint;
-import org.egov.pgr.entity.QualityReview;
-import org.egov.pgr.entity.FeedbackReason;
-import org.egov.pgr.service.FeedbackReasonService;
-import org.egov.pgr.service.QualityReviewService;
-import org.egov.pgr.service.ComplaintHistoryService;
-import org.egov.pgr.service.ComplaintService;
+import org.egov.infra.admin.master.entity.Boundary;
+import org.egov.infra.admin.master.service.BoundaryService;
+import org.egov.infra.web.support.ui.DataTable;
+import org.egov.pgr.entity.ComplaintType;
+import org.egov.pgr.integration.ivrs.entiry.contract.IVRSFeedbackSearchRequest;
+import org.egov.pgr.integration.ivrs.service.IVRSFeedbackService;
+import org.egov.pgr.report.entity.contract.IVRSFeedbackSearchResponseAdaptor;
+import org.egov.pgr.service.ComplaintTypeService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
-import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.servlet.mvc.support.RedirectAttributes;
+import org.springframework.web.bind.annotation.ResponseBody;
 
-import javax.validation.Valid;
-import java.util.HashMap;
 import java.util.List;
 
+import static org.springframework.http.MediaType.TEXT_PLAIN_VALUE;
+
 @Controller
-@RequestMapping("/complaint/qualityreview/{crn}")
-public class QualityReviewController {
+@RequestMapping("/complaint/ivrs/feedbackreview/search")
+public class IVRSFeedbackSearchController {
 
-    private static final String QUALITYREVIEW = "qualityreview";
-
-    @Autowired
-    private ComplaintService complaintService;
+    private static final String FEEDBACKREVIEWSEARCH = "feedbackreview-search";
 
     @Autowired
-    private ComplaintHistoryService complaintHistoryService;
+    private ComplaintTypeService complaintTypeService;
 
     @Autowired
-    private QualityReviewService qualityReviewService;
+    private IVRSFeedbackService ivrsFeedbackService;
 
     @Autowired
-    private FeedbackReasonService feedbackReasonService;
+    private IVRSFeedbackSearchResponseAdaptor ivrsFeedbackSearchResponseAdaptor;
 
-    @ModelAttribute
-    public QualityReview qualityReview(@PathVariable String crn) {
-        return qualityReviewService.getExistingQualityReviewByCRN(crn).orElse(new QualityReview());
+    @Autowired
+    private BoundaryService boundaryService;
+
+    @ModelAttribute("complaintType")
+    public List<ComplaintType> complaintType() {
+        return complaintTypeService.findAll();
     }
 
-    @ModelAttribute("feedbackReasons")
-    public List<FeedbackReason> feedbackReasons() {
-        return feedbackReasonService.getAllFeedbackReason();
+    @ModelAttribute("ward")
+    public List<Boundary> boundary() {
+        return boundaryService.getBoundariesByBndryTypeNameAndHierarchyTypeName("Ward", "Administration");
+    }
+
+    @ModelAttribute("ivrsFeedbackSearchRequest")
+    public IVRSFeedbackSearchRequest ivrsFeedbackReviewSearchRequest() {
+        return new IVRSFeedbackSearchRequest();
     }
 
     @GetMapping
-    public String showQualityReviewForm(@PathVariable String crn,
-                                        @ModelAttribute QualityReview qualityReview, Model model) {
-        Complaint complaint = complaintService.getComplaintByCRN(crn);
-        List<HashMap<String, Object>> historyTable = complaintHistoryService.getHistory(complaint);
-        model.addAttribute("complaintHistory", historyTable);
-        model.addAttribute("complaint", complaint);
-        return QUALITYREVIEW;
+    public String showFeedbackReviewSearchForm() {
+        return FEEDBACKREVIEWSEARCH;
     }
 
-    @PostMapping
-    public String createQualityReview(@PathVariable String crn, @Valid @ModelAttribute QualityReview qualityReview,
-                                        BindingResult bindingResult, RedirectAttributes responseAttrbs) {
-        if (bindingResult.hasErrors()) {
-            return "/complaint/qualityreview/" + crn;
-        }
-        if (qualityReview.isExisting())
-            qualityReviewService.updateQualityReview(qualityReview);
-        else
-            qualityReviewService.createQualityReview(qualityReview);
-        responseAttrbs.addFlashAttribute("message", "msg.feedback.success");
-        return "redirect:/qualityreview/search";
+    @GetMapping(value = "/", produces = TEXT_PLAIN_VALUE)
+    @ResponseBody
+    public String searchComplaintForFeedbackReview(IVRSFeedbackSearchRequest request) {
+        return new DataTable<>(ivrsFeedbackService.getComplaintForReview(request), request.draw())
+                .toJson(ivrsFeedbackSearchResponseAdaptor);
     }
 }
