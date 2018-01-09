@@ -90,6 +90,12 @@
                                 <div class="col-sm-3 col-xs-6 add-margin view-content">
                                     <s:property value="tradeName.name"/>
                                 </div>
+                                <div class="col-sm-3 col-xs-6 add-margin">
+                                    <s:text name="lbl.admin.ward"/>
+                                </div>
+                                <div class="col-sm-3 col-xs-6 add-margin view-content">
+                                    <s:property value="adminWard.name"/>
+                                </div>
                             </div>
                             <div class="row add-border">
                                 <div class="col-sm-3 col-xs-6 add-margin">

@@ -158,6 +158,11 @@ function getPropertyDetails() {
                             $("#adminWard").val(data.boundaryDetails.adminWardId)
                         });
                         $("#address").val(data.propertyAddress);
+                        $("#boundary").attr("disabled","disabled");
+                        $("#parentBoundary").attr("disabled","disabled");
+                        $("#adminWard").attr("disabled","disabled");
+                        $("#address").attr("disabled","disabled");
+
                     }
                 }
             },
@@ -170,6 +175,10 @@ function getPropertyDetails() {
             }
         });
     }
+    $("#boundary").removeAttr("disabled");
+    $("#parentBoundary").removeAttr("disabled");
+    $("#adminWard").removeAttr("disabled");
+    $("#address").removeAttr("disabled");
 }
 
 function checkLength(obj, val) {
