@@ -47,6 +47,12 @@
  */
 package org.egov.stms.report.service;
 
+import static org.apache.commons.lang3.StringUtils.EMPTY;
+
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.egov.infra.admin.master.entity.Boundary;
 import org.egov.infra.admin.master.entity.City;
 import org.egov.infra.admin.master.service.BoundaryService;
@@ -60,10 +66,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import org.springframework.ui.Model;
-
-import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.List;
 
 @Service
 public class SewerageBaseRegisterReportService {
@@ -110,25 +112,35 @@ public class SewerageBaseRegisterReportService {
             searchResult.setResidentialClosets(sewerageIndex.getNoOfClosets_residential());
             searchResult.setNonResidentialClosets(sewerageIndex.getNoOfClosets_nonResidential());
             searchResult.setPeriod(
-                    sewerageIndex.getPeriod() != null ? sewerageIndex.getPeriod()
-                            : org.apache.commons.lang.StringUtils.EMPTY);
-            searchResult.setArrears(sewerageIndex.getArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setCurrentDemand(
-                    sewerageIndex.getDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setAdvanceAmount(
-                    sewerageIndex.getExtraAdvanceAmount() != null
-                            ? sewerageIndex.getExtraAdvanceAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN)
-                            : BigDecimal.ZERO);
-            searchResult.setArrearsCollected(sewerageIndex.getCollectedArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setCurrentTaxCollected(sewerageIndex.getCollectedDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setTotalTaxCollected(sewerageIndex.getCollectedArrearAmount() == null ? BigDecimal.ZERO
-                    : sewerageIndex.getCollectedArrearAmount().add(sewerageIndex.getCollectedDemandAmount()).setScale(0,
-                            BigDecimal.ROUND_HALF_EVEN));
-            searchResult.setTotalDemand(sewerageIndex.getTotalAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+                    sewerageIndex.getPeriod() == null ? EMPTY : sewerageIndex.getPeriod());
+            setDemandDetails(sewerageIndex, searchResult);
             baseRegisterResultList.add(searchResult);
         }
         return baseRegisterResultList;
+    }
 
+    private void setDemandDetails(final SewerageIndex sewerageIndex, final SewerageBaseRegisterResult searchResult) {
+        searchResult.setArrears(sewerageIndex.getArrearAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setCurrentDemand(
+                sewerageIndex.getDemandAmount() == null ? BigDecimal.ZERO
+                        : sewerageIndex.getDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setAdvanceAmount(
+                sewerageIndex.getExtraAdvanceAmount() == null ? BigDecimal.ZERO
+                        : sewerageIndex.getExtraAdvanceAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setArrearsCollected(sewerageIndex.getCollectedArrearAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getCollectedArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setCurrentTaxCollected(getCollectedDemandAmount(sewerageIndex).setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setTotalTaxCollected(sewerageIndex.getCollectedArrearAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getCollectedArrearAmount().add(getCollectedDemandAmount(sewerageIndex))
+                        .setScale(0, BigDecimal.ROUND_HALF_EVEN));
+        searchResult.setTotalDemand(sewerageIndex.getTotalAmount() == null ? BigDecimal.ZERO
+                : sewerageIndex.getTotalAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
+    }
+
+    private BigDecimal getCollectedDemandAmount(final SewerageIndex sewerageIndex) {
+        return sewerageIndex.getCollectedDemandAmount() == null
+                ? BigDecimal.ZERO : sewerageIndex.getCollectedDemandAmount();
     }
 
     public List<String> getWardNames(final SewerageBaseRegisterResult sewerageBaseRegisterResult, final Model model) {
@@ -160,9 +172,7 @@ public class SewerageBaseRegisterReportService {
     public List<BigDecimal> baseRegisterGrandTotal(final SewerageBaseRegisterResult sewerageBaseRegisterResult,
             final Model model) {
         final City cityWebsite = cityService.getCityByURL(ApplicationThreadLocals.getDomainName());
-
         return sewerageIndexService.getGrandTotal(cityWebsite.getName(), getWardNames(sewerageBaseRegisterResult, model));
-
     }
 
 }
