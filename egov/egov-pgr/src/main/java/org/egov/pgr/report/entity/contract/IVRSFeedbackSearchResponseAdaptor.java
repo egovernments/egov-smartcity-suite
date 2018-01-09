@@ -86,7 +86,7 @@ public class IVRSFeedbackSearchResponseAdaptor implements DataTableJsonAdapter<I
                 jsonObject.addProperty("department", searchObject.getComplaint().getDepartment().getName());
             jsonObject.addProperty("date", toDefaultDateTimeFormat(searchObject.getCreatedDate()));
             IVRSFeedbackReview ivrsFeedbackReview = ivrsFeedbackReviewRepository.findByComplaintCrn(searchObject.getComplaint().getCrn());
-            jsonObject.addProperty("reviewCount", ivrsFeedbackReview != null ? ivrsFeedbackReview.getReviewCount() : 0);
+            jsonObject.addProperty("reviewCount", ivrsFeedbackReview == null ? 0 : ivrsFeedbackReview.getReviewCount());
             searchFormData.add(jsonObject);
         });
         return enhance(searchFormData, searchResponse);

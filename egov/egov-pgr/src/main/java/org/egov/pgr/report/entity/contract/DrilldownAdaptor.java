@@ -80,8 +80,8 @@ public class DrilldownAdaptor implements DataTableJsonAdapter<DrilldownReportVie
             jsonObject.addProperty("boundaryname", defaultIfBlank(reportObject.getBoundaryName()));
             jsonObject.addProperty("status", reportObject.getStatus());
             jsonObject.addProperty("complaintId", reportObject.getComplainantId());
-            jsonObject.addProperty("feedback", reportObject.getFeedback() != null
-                    ? CitizenFeedback.value(reportObject.getFeedback()).toString() : NA);
+            jsonObject.addProperty("feedback", reportObject.getFeedback() == null
+                    ?  NA : CitizenFeedback.value(reportObject.getFeedback()).toString());
             jsonObject.addProperty("issla", defaultIfBlank(reportObject.getIsSLA()));
             drilldownReportData.add(jsonObject);
         });
