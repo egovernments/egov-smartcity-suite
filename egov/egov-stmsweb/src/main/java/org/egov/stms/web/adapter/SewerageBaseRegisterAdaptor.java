@@ -56,6 +56,7 @@ import org.egov.infra.web.support.ui.DataTable;
 import org.egov.stms.entity.es.SewerageIndex;
 
 import java.lang.reflect.Type;
+import java.math.BigDecimal;
 import java.util.List;
 
 public class SewerageBaseRegisterAdaptor implements DataTableJsonAdapter<SewerageIndex> {
@@ -82,7 +83,8 @@ public class SewerageBaseRegisterAdaptor implements DataTableJsonAdapter<Sewerag
             baseRegisterJson.addProperty("arrearsCollected", baseForm.getCollectedArrearAmount());
             baseRegisterJson.addProperty("currentTaxCollected", baseForm.getCollectedDemandAmount());
             baseRegisterJson.addProperty("totalTaxCollected",
-                    baseForm.getCollectedArrearAmount().add(baseForm.getCollectedDemandAmount()));
+                    baseForm.getCollectedArrearAmount() == null ? BigDecimal.ZERO
+                            : baseForm.getCollectedArrearAmount().add(baseForm.getCollectedDemandAmount()));
             baseRegisterJson.addProperty("advanceAmount", baseForm.getExtraAdvanceAmount());
 
             baseRegisterResultData.add(baseRegisterJson);

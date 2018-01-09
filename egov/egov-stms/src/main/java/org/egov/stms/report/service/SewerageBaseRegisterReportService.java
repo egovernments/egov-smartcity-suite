@@ -121,10 +121,9 @@ public class SewerageBaseRegisterReportService {
                             : BigDecimal.ZERO);
             searchResult.setArrearsCollected(sewerageIndex.getCollectedArrearAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
             searchResult.setCurrentTaxCollected(sewerageIndex.getCollectedDemandAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
-            searchResult
-                    .setTotalTaxCollected(
-                            sewerageIndex.getCollectedArrearAmount().add(sewerageIndex.getCollectedDemandAmount()).setScale(0,
-                                    BigDecimal.ROUND_HALF_EVEN));
+            searchResult.setTotalTaxCollected(sewerageIndex.getCollectedArrearAmount() == null ? BigDecimal.ZERO
+                    : sewerageIndex.getCollectedArrearAmount().add(sewerageIndex.getCollectedDemandAmount()).setScale(0,
+                            BigDecimal.ROUND_HALF_EVEN));
             searchResult.setTotalDemand(sewerageIndex.getTotalAmount().setScale(0, BigDecimal.ROUND_HALF_EVEN));
             baseRegisterResultList.add(searchResult);
         }
