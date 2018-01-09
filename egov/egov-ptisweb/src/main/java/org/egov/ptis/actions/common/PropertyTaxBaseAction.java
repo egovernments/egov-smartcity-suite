@@ -671,7 +671,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
                     .withNatureOfTask(nature).withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
         } else if (property.getCurrentState().getNextAction().equalsIgnoreCase(END))
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null);
+                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)
+                    .withOwner(property.getCurrentState().getOwnerPosition());
         else {
             final String nextAction = getNextAction(property, approverDesignation);
             wfmatrix = propertyWorkflowService.getWfMatrix(property.getStateType(), null,
@@ -711,7 +712,8 @@ public abstract class PropertyTaxBaseAction extends GenericWorkFlowAction {
         Position owner = null;
         if (wfInitiator.getPosition().equals(property.getState().getOwnerPosition())) {
             property.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position)null);
+                    .withComments(approverComments).withDateInfo(currentDate.toDate()).withNextAction(null)
+                    .withOwner(property.getState().getOwnerPosition());
             property.setStatus(STATUS_CANCELLED);
             property.getBasicProperty().setUnderWorkflow(FALSE);
         } else {

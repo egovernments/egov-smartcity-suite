@@ -2089,7 +2089,7 @@ public class PropertyService {
 
 	private User getOwnerName(final StateAware<Position> stateAwareObject) {
 		User user = null;
-		final Position position = stateAwareObject.getState().getOwnerPosition();
+	        final Position position = stateAwareObject.getState().getOwnerPosition() != null ? stateAwareObject.getState().getOwnerPosition() : stateAwareObject.getState().getPreviousOwner();
 		if (position != null)
 			user = assignmentService.getAssignmentsForPosition(position.getId(), new Date()).get(0).getEmployee();
 		return user;
@@ -2125,8 +2125,7 @@ public class PropertyService {
 				.withStatus(vacancyRemissionApproval.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
 				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-				.withOwnername(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2144,8 +2143,7 @@ public class PropertyService {
 			final VacancyRemissionApproval vacancyRemissionApproval) {
 		applicationIndex.setStatus(vacancyRemissionApproval.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemissionApproval.getState().getValue().contains(WF_STATE_CLOSED)
@@ -2186,8 +2184,7 @@ public class PropertyService {
 				.withStatus(propertyMutation.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, propertyMutation.getApplicationNo(), applictionType))
 				.withApplicantAddress(propertyMutation.getBasicProperty().getAddress().toString())
-				.withOwnername(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(propertyMutation.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2204,8 +2201,7 @@ public class PropertyService {
 			final ApplicationIndex applicationIndex, final User owner) {
 		applicationIndex.setStatus(propertyMutation.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(propertyMutation.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES
@@ -2245,8 +2241,7 @@ public class PropertyService {
 				.withStatus(revisionPetition.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, revisionPetition.getObjectionNumber(), applictionType))
 				.withApplicantAddress(revisionPetition.getBasicProperty().getAddress().toString())
-				.withOwnername(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(revisionPetition.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -2264,8 +2259,7 @@ public class PropertyService {
 		applicationIndex.setStatus(revisionPetition.getState().getValue());
 		if (applictionType.equalsIgnoreCase(APPLICATION_TYPE_REVISION_PETITION)
 				|| applictionType.equalsIgnoreCase(APPLICATION_TYPE_GRP)) {
-			applicationIndex.setOwnerName(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED) ? null
-					: stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setClosed(revisionPetition.getState().getValue().contains(WF_STATE_CLOSED)
 					? ClosureStatus.YES : ClosureStatus.NO);
 			if (!ApprovalStatus.APPROVED.equals(applicationIndex.getApproved()))
@@ -2312,8 +2306,7 @@ public class PropertyService {
 				.withStatus(property.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, property.getApplicationNo(), applictionType))
 				.withApplicantAddress(property.getBasicProperty().getAddress().toString())
-				.withOwnername(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber()).withConsumerCode(property.getBasicProperty().getUpicNo())
 				.withClosed(closureStatus)
@@ -2340,8 +2333,7 @@ public class PropertyService {
 		if (propertyApplicationTypes().contains(applictionType)) {
 			applicationIndex.setConsumerCode(property.getBasicProperty().getUpicNo());
 			applicationIndex.setApplicantName(owner.getName());
-			applicationIndex.setOwnerName(property.getState().getValue().contains(WF_STATE_CLOSED) ? null
-					: stateOwner.getUsername() + "::" + stateOwner.getName());
+			applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 			applicationIndex.setMobileNumber(owner.getMobileNumber());
 			applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 			applicationIndex.setClosed(
@@ -4273,8 +4265,7 @@ public class PropertyService {
 				.withStatus(vacancyRemission.getState().getValue())
 				.withUrl(format(APPLICATION_VIEW_URL, vacancyRemission.getApplicationNumber(), applictionType))
 				.withApplicantAddress(vacancyRemission.getBasicProperty().getAddress().toString())
-				.withOwnername(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
-						: stateOwner.getUsername() + "::" + stateOwner.getName())
+				.withOwnername(stateOwner.getUsername() + "::" + stateOwner.getName())
 				.withChannel(source).withMobileNumber(owner.getMobileNumber())
 				.withAadharNumber(owner.getAadhaarNumber())
 				.withConsumerCode(vacancyRemission.getBasicProperty().getUpicNo()).withClosed(closureStatus)
@@ -4291,8 +4282,7 @@ public class PropertyService {
 			final User owner, final VacancyRemission vacancyRemission) {
 		applicationIndex.setStatus(vacancyRemission.getState().getValue());
 		applicationIndex.setApplicantName(owner.getName());
-		applicationIndex.setOwnerName(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? null
-				: stateOwner.getUsername() + "::" + stateOwner.getName());
+		applicationIndex.setOwnerName(stateOwner.getUsername() + "::" + stateOwner.getName());
 		applicationIndex.setMobileNumber(owner.getMobileNumber());
 		applicationIndex.setAadharNumber(owner.getAadhaarNumber());
 		applicationIndex.setClosed(vacancyRemission.getState().getValue().contains(WF_STATE_CLOSED) ? ClosureStatus.YES

@@ -420,7 +420,8 @@ public class PropertyTransferService {
             }
             reportOutput.setReportOutputData(bFile);
             reportOutput.setReportFormat(ReportFormat.PDF);
-            propertyMutation.transition().end().withNextAction(null);
+            propertyMutation.transition().end().withNextAction(null)
+                    .withOwner(propertyMutation.getCurrentState().getOwnerPosition());
             basicProperty.setUnderWorkflow(false);
             propertyService.updateIndexes(propertyMutation, APPLICATION_TYPE_TRANSFER_OF_OWNERSHIP);
         } else {

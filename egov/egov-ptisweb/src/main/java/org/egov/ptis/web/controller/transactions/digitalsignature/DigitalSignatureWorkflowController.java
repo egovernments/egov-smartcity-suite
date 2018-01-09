@@ -288,7 +288,7 @@ public class DigitalSignatureWorkflowController {
         if (applicationType.equalsIgnoreCase(AMALG))
             for (final Amalgamation amalProp : property.getBasicProperty().getAmalgamations())
                 amalProp.getAmalgamatedProperty().setUnderWorkflow(false);
-        property.transition().end().withOwner((Position) null).withNextAction(null);
+        property.transition().end().withOwner(property.getCurrentState().getOwnerPosition()).withNextAction(null);
         property.getBasicProperty().setUnderWorkflow(false);
         return applicationType;
     }
@@ -299,17 +299,18 @@ public class DigitalSignatureWorkflowController {
         revPetition.getBasicProperty().getProperty().setStatus(STATUS_ISHISTORY);
         revPetition.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
         revPetition.getProperty().setStatus(STATUS_ISACTIVE);
-        revPetition.transition().end().withOwner((Position) null).withNextAction(null);
+        revPetition.transition().end().withOwner(revPetition.getCurrentState().getOwnerPosition()).withNextAction(null);
     }
 
     public void transition(final PropertyMutation propertyMutation) {
-        propertyMutation.transition().end().withOwner((Position) null).withNextAction(null);
+        propertyMutation.transition().end().withOwner(propertyMutation.getCurrentState().getOwnerPosition()).withNextAction(null);
         propertyMutation.getBasicProperty().setUnderWorkflow(false);
     }
 
     private void transition(final VacancyRemission vacancyRemission) {
         final VacancyRemissionApproval vacancyRemissionApproval = vacancyRemission.getVacancyRemissionApproval().get(0);
-        vacancyRemissionApproval.transition().end().withOwner((Position) null).withNextAction(null);
+        vacancyRemissionApproval.transition().end().withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition())
+                .withNextAction(null);
         vacancyRemission.getBasicProperty().setUnderWorkflow(false);
     }
 

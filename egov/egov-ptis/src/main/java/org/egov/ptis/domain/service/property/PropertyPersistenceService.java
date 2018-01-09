@@ -134,6 +134,7 @@ public class PropertyPersistenceService extends PersistenceService<BasicProperty
                     ownerInfo.setOwner(user);
                     ownerInfo.setOrderNo(orderNo);
                     ownerInfo.setBasicProperty(basicProperty);
+                    ownerInfo.getOwner().addAddress(ownerAddress);
                 }
             }
 

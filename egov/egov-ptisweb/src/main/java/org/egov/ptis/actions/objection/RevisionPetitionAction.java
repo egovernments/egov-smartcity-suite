@@ -942,7 +942,7 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
                 objection.getBasicProperty().setUnderWorkflow(Boolean.FALSE);
 
                 objection.transition().end().withOwner(securityUtils.getCurrentUser()).withComments(approverComments)
-                        .withNextAction(null).withOwner((Position) null);
+                        .withNextAction(null).withOwner(objection.getCurrentState().getOwnerPosition());
             } else if (!WFLOW_ACTION_STEP_SIGN.equals(actionType))
                 updateStateAndStatus(objection);
 
@@ -1405,11 +1405,12 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 					.withComments(approverComments);
 
 			if (wfmatrix.getNextAction() != null && wfmatrix.getNextAction().equalsIgnoreCase("END"))
-				objection.transition().end().withStateValue(wfmatrix.getNextState())
-						.withOwner(objection.getCurrentState().getOwnerPosition())
-						.withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
-						.withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
-						.withComments(approverComments).withNextAction(null);
+                objection.transition().end().withStateValue(wfmatrix.getNextState())
+                        .withOwner(objection.getCurrentState().getOwnerPosition())
+                        .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
+                        .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
+                        .withComments(approverComments).withNextAction(null)
+                        .withOwner(objection.getCurrentState().getOwnerPosition());
 
 			if (wfmatrix.getNextStatus() != null)
 				updateRevisionPetitionStatus(wfmatrix, objection, null);
@@ -1456,10 +1457,11 @@ public class RevisionPetitionAction extends PropertyTaxBaseAction {
 			if (objection.getCurrentState() != null
 					&& (objection.getCurrentState().getValue().equalsIgnoreCase(REJECTED) || objection.getCurrentState()
 							.getValue().equalsIgnoreCase(PropertyTaxConstants.RP_CREATED))) {
-				objection.transition().end().withStateValue(wfmatrix.getNextState()).withOwner(position)
-						.withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
-						.withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
-						.withComments(approverComments).withNextAction(null).withOwner((Position)null);
+                objection.transition().end().withStateValue(wfmatrix.getNextState()).withOwner(position)
+                        .withSenderName(loggedInUser.getUsername() + "::" + loggedInUser.getName())
+                        .withNextAction(wfmatrix.getNextAction()).withDateInfo(new DateTime().toDate())
+                        .withComments(approverComments).withNextAction(null)
+                        .withOwner(objection.getCurrentState().getOwnerPosition());
 
 				updateRevisionPetitionStatus(wfmatrix, objection, REJECTED);
 

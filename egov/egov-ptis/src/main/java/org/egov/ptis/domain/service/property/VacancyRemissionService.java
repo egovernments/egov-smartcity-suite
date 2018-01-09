@@ -287,7 +287,8 @@ public class VacancyRemissionService {
             if (wfInitiator.getPosition().equals(vacancyRemission.getState().getOwnerPosition())) {
                 vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
                 vacancyRemission.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null).withOwner((Position) null);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemission.getCurrentState().getOwnerPosition());
                 vacancyRemission.getBasicProperty().setUnderWorkflow(false);
             }
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
@@ -586,20 +587,25 @@ public class VacancyRemissionService {
         if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_NOTICE_GENERATE)) {
             if (VR_STATUS_APPROVED.equalsIgnoreCase(vacancyRemissionApproval.getStatus())) {
                 vacancyRemissionApproval.setStatus(VR_STATUS_NOTICE_GENERATED);
-                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                        .withDateInfo(currentDate.toDate()).withNextAction(null);
+                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
 
             } else {
                 vacancyRemissionApproval.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
-                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName()).withComments(approvalComent)
-                        .withDateInfo(currentDate.toDate()).withNextAction(null);
+                vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
+                        .withComments(approvalComent)
+                        .withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
             }
 
         } else if (workFlowAction.equalsIgnoreCase(WFLOW_ACTION_STEP_REJECT)) {
             if (wfInitiator != null)
                 if (wfInitiator.getPosition().equals(vacancyRemissionApproval.getCurrentState().getOwnerPosition())) {
                     vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                            .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null);
+                            .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
+                            .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
                     vacancyRemissionApproval.setStatus(VR_STATUS_REJECTED);
                     vacancyRemissionApproval.getVacancyRemission().getBasicProperty().setUnderWorkflow(FALSE);
                 } else {
@@ -632,7 +638,8 @@ public class VacancyRemissionService {
                         .withInitiator(wfInitiator != null ? wfInitiator.getPosition() : null);
             } else if ("END".equalsIgnoreCase(vacancyRemissionApproval.getCurrentState().getNextAction()))
                 vacancyRemissionApproval.transition().end().withSenderName(user.getUsername() + "::" + user.getName())
-                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null);
+                        .withComments(approvalComent).withDateInfo(currentDate.toDate()).withNextAction(null)
+                        .withOwner(vacancyRemissionApproval.getCurrentState().getOwnerPosition());
             else {
                 wfmatrix = vacancyRemissionWorkflowService.getWfMatrix(vacancyRemissionApproval.getStateType(), null,
                         null, additionalRule, vacancyRemissionApproval.getCurrentState().getValue(),
@@ -907,7 +914,8 @@ public class VacancyRemissionService {
     @Transactional
     public void closeVacancyRemission(final VacancyRemission vacancyRemission) {
         final User user = securityUtils.getCurrentUser();
-        vacancyRemission.transition().end().withSenderName(user.getName()).withDateInfo(new Date()).withNextAction(null);
+        vacancyRemission.transition().end().withSenderName(user.getName()).withDateInfo(new Date()).withNextAction(null)
+                .withOwner(vacancyRemission.getCurrentState().getOwnerPosition());
         if (!VR_STATUS_APPROVED.equals(vacancyRemission.getStatus())) {
             vacancyRemission.setStatus(VR_STATUS_REJECTION_ACK_GENERATED);
             vacancyRemission.getBasicProperty().setUnderWorkflow(false);
