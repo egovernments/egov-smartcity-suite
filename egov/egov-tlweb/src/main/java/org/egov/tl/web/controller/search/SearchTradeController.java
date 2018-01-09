@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -50,6 +50,7 @@ package org.egov.tl.web.controller.search;
 
 import org.egov.infra.web.support.ui.DataTable;
 import org.egov.tl.entity.contracts.SearchForm;
+import org.egov.tl.service.LicenseAppTypeService;
 import org.egov.tl.service.LicenseCategoryService;
 import org.egov.tl.service.LicenseStatusService;
 import org.egov.tl.service.TradeLicenseService;
@@ -83,6 +84,9 @@ public class SearchTradeController {
     @Autowired
     private LicenseStatusService licenseStatusService;
 
+    @Autowired
+    private LicenseAppTypeService licenseAppTypeService;
+
     @ModelAttribute("searchForm")
     public SearchForm searchForm() {
         return new SearchForm();
@@ -93,6 +97,7 @@ public class SearchTradeController {
         model.addAttribute("categoryList", licenseCategoryService.getCategories());
         model.addAttribute("subCategoryList", Collections.emptyList());
         model.addAttribute("statusList", licenseStatusService.findAll());
+        model.addAttribute("applicationType", licenseAppTypeService.findByDisplayTrue());
         return "searchtrade-license";
     }
 

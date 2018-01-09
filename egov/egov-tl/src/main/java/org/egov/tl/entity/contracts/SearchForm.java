@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -82,6 +82,7 @@ public class SearchForm extends DataTableSearchRequest {
     private List<String> actions;
     private String active;
     private Boolean inactive;
+    private Long applicationTypeId;
 
     public SearchForm() {
         // For form binding
@@ -103,6 +104,7 @@ public class SearchForm extends DataTableSearchRequest {
         setOwnerName(ownerName);
         setExpiryYear(expiryYear);
         setDateOfExpiry(license.getDateOfExpiry());
+        setApplicationTypeId(license.getLicenseAppType().getId());
         addActions(license, userRoles);
     }
 
@@ -310,5 +312,13 @@ public class SearchForm extends DataTableSearchRequest {
 
     public void setInactive(final Boolean inactive) {
         this.inactive = inactive;
+    }
+
+    public Long getApplicationTypeId() {
+        return applicationTypeId;
+    }
+
+    public void setApplicationTypeId(Long applicationTypeId) {
+        this.applicationTypeId = applicationTypeId;
     }
 }

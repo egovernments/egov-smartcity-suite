@@ -2,7 +2,7 @@
  *    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
  *    accountability and the service delivery of the government  organizations.
  *
- *     Copyright (C) 2017  eGovernments Foundation
+ *     Copyright (C) 2018  eGovernments Foundation
  *
  *     The updated version of eGov suite of products as by eGovernments Foundation
  *     is available at http://www.egovernments.org
@@ -113,6 +113,7 @@ import java.util.Optional;
 import static org.apache.commons.lang3.StringUtils.EMPTY;
 import static org.apache.commons.lang3.StringUtils.defaultString;
 import static org.apache.commons.lang3.StringUtils.isEmpty;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 import static org.egov.infra.config.core.LocalizationSettings.currencySymbolUtf8;
 import static org.egov.infra.security.utils.SecureCodeUtils.generatePDF417Code;
 import static org.egov.infra.utils.DateUtils.currentDateToDefaultDateFormat;
@@ -132,6 +133,7 @@ import static org.egov.tl.utils.Constants.LICENSE_FEE_TYPE;
 import static org.egov.tl.utils.Constants.NEW_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.RENEWAL_LIC_APPTYPE;
 import static org.egov.tl.utils.Constants.TRADE_LICENSE;
+import static org.hibernate.criterion.MatchMode.ANYWHERE;
 
 @Transactional(readOnly = true)
 public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
@@ -375,17 +377,23 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat")
                 .createAlias("tradeName", "subcat").createAlias("status", "licstatus");
-        if (StringUtils.isNotBlank(searchForm.getApplicationNumber()))
+        if (isNotBlank(searchForm.getApplicationNumber()))
             searchCriteria.add(Restrictions.eq("applicationNumber", searchForm.getApplicationNumber()).ignoreCase());
-        if (StringUtils.isNotBlank(searchForm.getLicenseNumber()))
+        if (isNotBlank(searchForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", searchForm.getLicenseNumber()).ignoreCase());
+        if (isNotBlank(searchForm.getMobileNo()))
+            searchCriteria.add(Restrictions.eq("licc.mobilePhoneNumber", searchForm.getMobileNo()));
+        if (isNotBlank(searchForm.getTradeOwnerName()))
+            searchCriteria.add(Restrictions.like("licc.applicantName", searchForm.getTradeOwnerName(), ANYWHERE));
+
 
         searchCriteria.add(Restrictions.isNotNull("applicationNumber"));
         searchCriteria.addOrder(Order.asc("id"));
         List<OnlineSearchForm> searchResult = new ArrayList<>();
-        License license = (License) searchCriteria.uniqueResult();
-        if (license != null)
-            searchResult.add(new OnlineSearchForm(license, getDemandColl(license)));
+        for (License license : (List<License>) searchCriteria.list()) {
+            if (license != null)
+                searchResult.add(new OnlineSearchForm(license, getDemandColl(license)));
+        }
         return searchResult;
     }
 
@@ -410,9 +418,9 @@ public class TradeLicenseService extends AbstractLicenseService<TradeLicense> {
         final Criteria searchCriteria = entityQueryService.getSession().createCriteria(TradeLicense.class);
         searchCriteria.createAlias("licensee", "licc").createAlias("category", "cat").createAlias("tradeName", "subcat")
                 .createAlias("status", "licstatus");
-        if (StringUtils.isNotBlank(demandnoticeForm.getLicenseNumber()))
+        if (isNotBlank(demandnoticeForm.getLicenseNumber()))
             searchCriteria.add(Restrictions.eq("licenseNumber", demandnoticeForm.getLicenseNumber()).ignoreCase());
-        if (StringUtils.isNotBlank(demandnoticeForm.getOldLicenseNumber()))
+        if (isNotBlank(demandnoticeForm.getOldLicenseNumber()))
             searchCriteria
                     .add(Restrictions.eq("oldLicenseNumber", demandnoticeForm.getOldLicenseNumber()).ignoreCase());
         if (demandnoticeForm.getCategoryId() != null)

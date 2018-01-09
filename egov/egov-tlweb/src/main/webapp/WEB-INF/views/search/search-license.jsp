@@ -2,7 +2,7 @@
   ~    eGov  SmartCity eGovernance suite aims to improve the internal efficiency,transparency,
   ~    accountability and the service delivery of the government  organizations.
   ~
-  ~     Copyright (C) 2017  eGovernments Foundation
+  ~     Copyright (C) 2018  eGovernments Foundation
   ~
   ~     The updated version of eGov suite of products as by eGovernments Foundation
   ~     is available at http://www.egovernments.org
@@ -64,14 +64,23 @@
 				</div>
 				<div class="panel-body"></div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='license.applicationnumber' /></label>
+					<label class="col-sm-3 control-label text-right"> <spring:message
+							code='license.applicationnumber'/></label>
 					<div class="col-sm-3 add-margin">
-						<input type="text" id="applicationNumber" class="form-control typeahead" placeholder="" autocomplete="off"/>
-						<form:hidden path="applicationNumber" id="applicationNumber"/>						
+						<input type="text" id="applicationNumber" class="form-control typeahead" placeholder=""
+							   autocomplete="off"/>
+						<form:hidden path="applicationNumber" id="applicationNumber"/>
 					</div>
-					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.inactive' /></label>
+					<label class="col-sm-2 control-label text-right"> <spring:message
+							code='lbl.licenseapptype'/></label>
 					<div class="col-sm-3 add-margin">
-						<form:checkbox path="inactive" id="inactive" />
+						<form:select path="applicationTypeId" id="appType" cssClass="form-control"
+									 cssErrorClass="form-control error">
+							<form:option value="">
+								<spring:message code="lbl.select"/>
+							</form:option>
+							<form:options items="${applicationType}" itemValue="id" itemLabel="name"/>
+						</form:select>
 					</div>
 				</div>
 				<div class="form-group">
@@ -87,7 +96,7 @@
 					<label class="col-sm-2 control-label text-right"> <spring:message code='search.licensee.no' /></label>
 					<div class="col-sm-3 add-margin">
 						<input type="text" id="licenseNumber"class="form-control typeahead" placeholder="" autocomplete="off"/>
-						<form:hidden path="licenseNumber" id="licenseNumber"/>				
+						<form:hidden path="licenseNumber" id="licenseNumber"/>
 					</div>
 
 				</div>
@@ -118,7 +127,7 @@
 					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.establishmentname' /></label>
 					<div class="col-sm-3 add-margin">
 						<input type="text" id="tradeTitle" class="form-control typeahead" placeholder="" autocomplete="off" />
-						<form:hidden path="tradeTitle" id="tradeTitle"/>				
+						<form:hidden path="tradeTitle" id="tradeTitle"/>
 			       </div>
 				</div>
 				<div class="form-group">
@@ -130,14 +139,21 @@
 					<label class="col-sm-2 control-label text-right"> <spring:message code='search.license.propertyNo' /></label>
 					<div class="col-sm-3 add-margin">
 						<input type="text" id="propertyAssessmentNo" class="form-control typeahead" placeholder="" autocomplete="off" />
-						<form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>				
+						<form:hidden path="propertyAssessmentNo" id="propertyAssessmentNo"/>
 			    	</div>
 				</div>
 				<div class="form-group">
-					<label class="col-sm-3 control-label text-right"> <spring:message code='search.licensee.mobileNo' /></label>
+					<label class="col-sm-3 control-label text-right"> <spring:message
+							code='search.licensee.mobileNo'/></label>
 					<div class="col-sm-3 add-margin">
-						<input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder="" autocomplete="off" maxlength="10" data-pattern="number" />
+						<input type="text" id="mobileNo" class="form-control patternvalidation typeahead" placeholder=""
+							   autocomplete="off" maxlength="10" data-pattern="number"/>
 						<form:hidden path="mobileNo" id="mobileNo"/>
+					</div>
+					<label class="col-sm-2 control-label text-right"> <spring:message
+							code='search.license.inactive'/></label>
+					<div class="col-sm-3 add-margin">
+						<form:checkbox path="inactive" id="inactive"/>
 					</div>
 				</div>
 			</div>
